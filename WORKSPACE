@@ -25,6 +25,7 @@ maven_install(
     repositories = [
         "https://repo1.maven.org/maven2",
     ],
+    fetch_sources = True,
 )
 
 # For bazel for BEP proto:
