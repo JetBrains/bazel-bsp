@@ -50,6 +50,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,8 +66,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   private final String bazel;
 
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
+
+  public BepServer bepServer = null;
   private String execRoot = null;
   private String workspaceRoot = null;
+  private TreeSet<Uri> scalacClasspath = null;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
@@ -138,8 +142,25 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     // TODO: Parse this out of the toolchain or something
     target.setDataKind("scala");
     target.setTags(Lists.newArrayList("library"));
-    target.setData(new ScalaBuildTarget("org.scala-lang", "2.12.10", "2.12", ScalaPlatform.JVM, Lists.newArrayList()));
+    target.setData(new ScalaBuildTarget("org.scala-lang", "2.12.10", "2.12", ScalaPlatform.JVM, getScalacClasspath().stream().map(uri -> uri.toString()).collect(Collectors.toList())));
     return target;
+  }
+
+  private TreeSet<Uri> getScalacClasspath() {
+    if (scalacClasspath == null) {
+      // Force-populate cache to avoid deadlock when looking up execRoot from BEP listener.
+      getExecRoot();
+      buildTargetsWithBep(
+        Lists.newArrayList(
+          new BuildTargetIdentifier("@io_bazel_rules_scala_scala_library//:io_bazel_rules_scala_scala_library"),
+          new BuildTargetIdentifier("@io_bazel_rules_scala_scala_reflect//:io_bazel_rules_scala_scala_reflect"),
+          new BuildTargetIdentifier("@io_bazel_rules_scala_scala_compiler//:io_bazel_rules_scala_scala_compiler")
+        ),
+        Lists.newArrayList("--aspects=@bazel_bsp//:aspects.bzl%scala_compiler_classpath_aspect", "--output_groups=scala_compiler_classpath_files")
+      );
+      scalacClasspath = bepServer.fetchScalacClasspath();
+    }
+    return scalacClasspath;
   }
 
   private List<String> runBazelLines(String... args) {
@@ -169,10 +190,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     // TODO: Use proto output of query, rather than per-target queries
     return CompletableFuture.completedFuture(
-        new SourcesResult(
-            sourcesParams.getTargets().stream()
-                .map(target -> new SourcesItem(target, getSourceItems(target)))
-                .collect(Collectors.toList())));
+      new SourcesResult(
+        sourcesParams.getTargets().stream()
+          .map(target -> new SourcesItem(target, getSourceItems(target)))
+          .collect(Collectors.toList())));
   }
 
   private List<SourceItem> getSourceItems(BuildTargetIdentifier label) {
@@ -307,17 +328,22 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
-    List<String> args =
-        Lists.newArrayList(
-            bazel,
-            "build",
-            "--bes_backend=grpc://localhost:5001",
-            "--bes_lifecycle_events",
-            "--build_event_publish_all_actions");
+    return buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>());
+  }
+
+  private CompletableFuture<CompileResult> buildTargetsWithBep(List<BuildTargetIdentifier> targets, List<String> extraFlags) {
+    List<String> args = Lists.newArrayList(
+      bazel,
+      "build",
+      "--bes_backend=grpc://localhost:5001",
+      "--bes_lifecycle_events",
+      "--build_event_publish_all_actions"
+    );
     args.addAll(
-        compileParams.getTargets().stream()
-            .map(target -> target.getUri())
-            .collect(Collectors.toList()));
+            targets.stream()
+                    .map(target -> target.getUri())
+                    .collect(Collectors.toList()));
+    args.addAll(extraFlags);
     int exitCode = -1;
     try {
       Process process = new ProcessBuilder(args).start();
@@ -325,8 +351,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     } catch (InterruptedException | IOException e) {
       System.out.println("Failed to run bazel: " + e);
     }
-    return CompletableFuture.completedFuture(
-        new CompileResult(exitCode == 0 ? StatusCode.OK : StatusCode.ERROR));
+    return CompletableFuture.completedFuture(new CompileResult(exitCode == 0 ? StatusCode.OK : StatusCode.ERROR));
   }
 
   @Override

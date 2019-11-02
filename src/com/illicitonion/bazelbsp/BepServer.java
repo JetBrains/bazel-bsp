@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.Range;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.v1.BuildEvent;
@@ -20,18 +21,26 @@ import com.google.protobuf.Empty;
 import io.bazel.rules_scala.diagnostics.Diagnostics;
 import io.grpc.stub.StreamObserver;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private final BazelBspServer bspServer;
   private final BuildClient bspClient;
+  private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles = new HashMap<>();
+  private final TreeSet<Uri> compilerClasspathTextProtos = new TreeSet<>();
+  private final TreeSet<Uri> compilerClasspath = new TreeSet<>();
 
   public BepServer(BazelBspServer bspServer, BuildClient bspClient) {
     this.bspServer = bspServer;
@@ -41,6 +50,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   @Override
   public void publishLifecycleEvent(
       PublishLifecycleEventRequest request, StreamObserver<Empty> responseObserver) {
+    namedSetsOfFiles.clear();
     responseObserver.onNext(Empty.getDefaultInstance());
     responseObserver.onCompleted();
   }
@@ -72,6 +82,35 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         try {
           BuildEventStreamProtos.BuildEvent event =
               BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
+          if (event.getId().hasNamedSet()) {
+            namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
+          }
+          if (event.hasCompleted()) {
+            List<BuildEventStreamProtos.OutputGroup> outputGroups = event.getCompleted().getOutputGroupList();
+            if (outputGroups.size() == 1) {
+              BuildEventStreamProtos.OutputGroup outputGroup = outputGroups.get(0);
+              if ("scala_compiler_classpath_files".equals(outputGroup.getName())) {
+                for (BuildEventStreamProtos.BuildEventId.NamedSetOfFilesId fileSetId : outputGroup.getFileSetsList()) {
+                  for (BuildEventStreamProtos.File file : namedSetsOfFiles.get(fileSetId.getId()).getFilesList()) {
+                    URI protoPathUri;
+                    try {
+                      protoPathUri = new URI(file.getUri());
+                    } catch (URISyntaxException e) {
+                      throw new RuntimeException(e);
+                    }
+                    List<String> lines = com.google.common.io.Files.readLines(new File(protoPathUri), StandardCharsets.UTF_8);
+                    for (String line : lines) {
+                      List<String> parts = Splitter.on("\"").splitToList(line);
+                      if (parts.size() != 3) {
+                        throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
+                      }
+                      compilerClasspath.add(Uri.fromExecPath("exec-root://" + parts.get(1), bspServer.getExecRoot()));
+                    }
+                  }
+                }
+              }
+            }
+          }
           if (event.hasAction()) {
             BuildEventStreamProtos.ActionExecuted action = event.getAction();
             if (!"Scalac".equals(action.getType())) {
@@ -155,5 +194,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         target,
         diagnostics,
         true));
+  }
+
+  public TreeSet<Uri> fetchScalacClasspath() {
+    return compilerClasspath;
   }
 }

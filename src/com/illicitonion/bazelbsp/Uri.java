@@ -4,7 +4,7 @@ import com.google.common.base.Splitter;
 
 import java.util.List;
 
-public class Uri {
+public class Uri implements Comparable<Uri> {
     private final String uri;
 
     private Uri(String uri) {
@@ -84,5 +84,10 @@ public class Uri {
     @Override
     public String toString() {
         return uri;
+    }
+
+    @Override
+    public int compareTo(Uri other) {
+        return this.uri.compareTo(other.uri);
     }
 }

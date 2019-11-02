@@ -66,12 +66,14 @@ public class Main {
                 .setExecutorService(executor)
                 .create();
         launcher.startListening();
-        Server bepServer =
+        BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
+        bspServer.bepServer = bepServer;
+        Server server =
             ServerBuilder.forPort(5001)
-                .addService(new BepServer(bspServer, launcher.getRemoteProxy()))
+                .addService(bepServer)
                 .build()
                 .start();
-        bepServer.awaitTermination();
+        server.awaitTermination();
       } finally {
         executor.shutdown();
       }
