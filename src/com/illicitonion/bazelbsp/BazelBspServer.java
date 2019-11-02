@@ -322,8 +322,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
-    System.out.printf("DWH: Got buildTargetResources: %s%n", resourcesParams);
-    return null;
+    System.out.printf("DWH: Got buildTargetResources: %s - responding with stub empty reply%n", resourcesParams);
+    return CompletableFuture.completedFuture(new ResourcesResult(new ArrayList<>()));
   }
 
   @Override
