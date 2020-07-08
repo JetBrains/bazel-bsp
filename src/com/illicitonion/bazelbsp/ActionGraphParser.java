@@ -1,13 +1,8 @@
 package com.illicitonion.bazelbsp;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeSet;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO: Index, cache, etc
@@ -50,7 +45,7 @@ public class ActionGraphParser {
     return actionGraph.getTargetsList().stream()
         .filter(target -> needle.equals(target.getLabel()))
         .findFirst()
-        .orElseThrow(() -> new NoSuchElementException("Could not find " + needle))
+        .orElseThrow(() -> new NoSuchElementException("Could not find " + needle + ". Targets found: " + Arrays.toString(actionGraph.getTargetsList().toArray())))
         .getId();
   }
 

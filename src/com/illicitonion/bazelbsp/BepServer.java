@@ -28,11 +28,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -69,6 +65,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             .getTypeUrl()
             .equals("type.googleapis.com/build_event_stream.BuildEvent")) {
           handleEvent(request.getOrderedBuildEvent().getEvent());
+        } else {
+          System.out.println("Got this request " + request);
         }
         PublishBuildToolEventStreamResponse response =
             PublishBuildToolEventStreamResponse.newBuilder()
@@ -82,6 +80,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         try {
           BuildEventStreamProtos.BuildEvent event =
               BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
+          System.out.println("Got event" + event);
           if (event.getId().hasNamedSet()) {
             namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
           }
@@ -116,20 +115,31 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             if (!"Scalac".equals(action.getType())) {
               // Ignore file template writes and such.
               // TODO: Maybe include them as task notifications (rather than diagnostics).
+              System.out.println("Non scala type action found: " + event);
               return;
             }
             if (!action.hasDiagnosticOutput()) {
-              System.out.println("Skipping action missing diagnostic output");
+              System.out.println("Skipping action missing diagnostic output " + action);
               return;
             }
             // TODO: Handle "No file" diagnostics
-            System.out.println("DWH: Event: " + event);
+            System.out.println("DWH: Event: " + event + "\n\n");
             Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
             BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
-            Diagnostics.TargetDiagnostics targetDiagnostics = Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(action.getDiagnosticOutput().getUri().substring(7))));
-            for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
-              filesToDiagnostics.put(Uri.fromExecOrWorkspacePath(fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()), convert(target, fileDiagnostics));
+            for(BuildEventStreamProtos.File log : action.getActionMetadataLogsList()){
+              if(!log.getName().equals("diagnostics"))
+                continue;
+
+              System.out.println("Found diagnostics file in " + log.getUri());
+              Diagnostics.TargetDiagnostics targetDiagnostics =
+                      Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(log.getUri().substring(7))));
+              for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
+                filesToDiagnostics.put(Uri.fromExecOrWorkspacePath(fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()), convert(target, fileDiagnostics));
+              }
             }
+
+            System.out.println("Action Diagnostics: " + action.getDiagnosticOutput() + "\n\n");
+
             for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
               Uri sourceUri = Uri.fromFileUri(source.getUri());
               if (!filesToDiagnostics.containsKey(sourceUri)) {
@@ -150,6 +160,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
               }
             }
           }
+
         } catch (IOException e) {
           System.err.println("Error deserializing BEP proto: " + e);
         }

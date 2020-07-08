@@ -1,45 +1,6 @@
 package com.illicitonion.bazelbsp;
 
-import ch.epfl.scala.bsp4j.BuildServer;
-import ch.epfl.scala.bsp4j.BuildServerCapabilities;
-import ch.epfl.scala.bsp4j.BuildTarget;
-import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import ch.epfl.scala.bsp4j.CleanCacheParams;
-import ch.epfl.scala.bsp4j.CleanCacheResult;
-import ch.epfl.scala.bsp4j.CompileParams;
-import ch.epfl.scala.bsp4j.CompileProvider;
-import ch.epfl.scala.bsp4j.CompileResult;
-import ch.epfl.scala.bsp4j.DependencySourcesItem;
-import ch.epfl.scala.bsp4j.DependencySourcesParams;
-import ch.epfl.scala.bsp4j.DependencySourcesResult;
-import ch.epfl.scala.bsp4j.InitializeBuildParams;
-import ch.epfl.scala.bsp4j.InitializeBuildResult;
-import ch.epfl.scala.bsp4j.InverseSourcesParams;
-import ch.epfl.scala.bsp4j.InverseSourcesResult;
-import ch.epfl.scala.bsp4j.ResourcesParams;
-import ch.epfl.scala.bsp4j.ResourcesResult;
-import ch.epfl.scala.bsp4j.RunParams;
-import ch.epfl.scala.bsp4j.RunResult;
-import ch.epfl.scala.bsp4j.ScalaBuildServer;
-import ch.epfl.scala.bsp4j.ScalaBuildTarget;
-import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
-import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
-import ch.epfl.scala.bsp4j.ScalaPlatform;
-import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
-import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
-import ch.epfl.scala.bsp4j.ScalacOptionsItem;
-import ch.epfl.scala.bsp4j.ScalacOptionsParams;
-import ch.epfl.scala.bsp4j.ScalacOptionsResult;
-import ch.epfl.scala.bsp4j.SourceItem;
-import ch.epfl.scala.bsp4j.SourceItemKind;
-import ch.epfl.scala.bsp4j.SourcesItem;
-import ch.epfl.scala.bsp4j.SourcesParams;
-import ch.epfl.scala.bsp4j.SourcesResult;
-import ch.epfl.scala.bsp4j.StatusCode;
-import ch.epfl.scala.bsp4j.TestParams;
-import ch.epfl.scala.bsp4j.TestResult;
-import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -47,17 +8,12 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.protobuf.InvalidProtocolBufferException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -71,6 +27,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   private String execRoot = null;
   private String workspaceRoot = null;
   private TreeSet<Uri> scalacClasspath = null;
+  private BuildClient buildClient;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
@@ -103,11 +60,18 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
     // TODO: Parameterise this to allow importing a subset of //...
     // TODO: Run one batch query outputting a proto, rather than one per target
-    return CompletableFuture.completedFuture(
-        new WorkspaceBuildTargetsResult(
-            runBazelLines("query", "//...").stream()
-                .map(line -> getBuildTarget(new BuildTargetIdentifier(line)))
-                .collect(Collectors.toList())));
+    try{
+      return CompletableFuture.completedFuture(
+          new WorkspaceBuildTargetsResult(
+              runBazelLines("query", "//...").stream()
+                  .map(line -> getBuildTarget(new BuildTargetIdentifier(line)))
+                  .collect(Collectors.toList())));
+
+    }catch (RuntimeException e){
+      CompletableFuture<WorkspaceBuildTargetsResult> future = new CompletableFuture<>();
+      future.completeExceptionally(e);
+      return future;
+    }
   }
 
   private BuildTarget getBuildTarget(BuildTargetIdentifier label) {
@@ -179,9 +143,20 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
       }
       System.out.printf("Running: %s%n", argv);
       Process process = new ProcessBuilder(argv).start();
+      if(process.waitFor() != 0){
+        StringBuilder error = new StringBuilder();
+        String line;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        while ((line = reader.readLine()) != null)
+          error.append(line).append('\n');
 
+        String errorMessage = error.toString();
+        LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
+        buildClient.onBuildLogMessage(params);
+        throw new RuntimeException(errorMessage);
+      }
       return ByteStreams.toByteArray(process.getInputStream());
-    } catch (IOException e) {
+    } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -436,5 +411,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
     return targetsToSources.getOrDefault(target, new ArrayList<>());
+  }
+
+  public void setBuildClient(BuildClient buildClient) {
+    this.buildClient = buildClient;
   }
 }

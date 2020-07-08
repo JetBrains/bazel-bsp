@@ -65,8 +65,9 @@ public class Main {
                 .setRemoteInterface(BuildClient.class)
                 .setExecutorService(executor)
                 .create();
-        launcher.startListening();
+        bspServer.setBuildClient(launcher.getRemoteProxy());
         BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
+        launcher.startListening();
         bspServer.bepServer = bepServer;
         Server server =
             ServerBuilder.forPort(5001)
