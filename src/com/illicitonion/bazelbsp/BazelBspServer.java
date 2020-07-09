@@ -16,17 +16,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   private final String bazel;
+  private final String BES_BACKEND = "--bes_backend=grpc://localhost:5001";
+  private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
 
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
 
   public BepServer bepServer = null;
   private String execRoot = null;
   private String workspaceRoot = null;
-  private TreeSet<Uri> scalacClasspath = null;
+  private ScalaBuildTarget scalacClasspath = null;
   private BuildClient buildClient;
 
   public BazelBspServer(String pathToBazel) {
@@ -102,15 +105,17 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             new BuildTargetCapabilities(true, false, false));
     target.setBaseDirectory(Uri.packageDirFromLabel(label.getUri(), getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());
-    target.setLanguageIds(Lists.newArrayList("scala"));
-    // TODO: Parse this out of the toolchain or something
-    target.setDataKind("scala");
-    target.setTags(Lists.newArrayList("library"));
-    target.setData(new ScalaBuildTarget("org.scala-lang", "2.12.10", "2.12", ScalaPlatform.JVM, getScalacClasspath().stream().map(uri -> uri.toString()).collect(Collectors.toList())));
+    if(extensions.contains("scala")){
+      getScalaBuildTarget().ifPresent((buildTarget) -> {
+        target.setDataKind("scala");
+        target.setTags(Lists.newArrayList("library"));
+        target.setData(buildTarget);
+      });
+    }
     return target;
   }
 
-  private TreeSet<Uri> getScalacClasspath() {
+  private Optional<ScalaBuildTarget> getScalaBuildTarget() {
     if (scalacClasspath == null) {
       // Force-populate cache to avoid deadlock when looking up execRoot from BEP listener.
       getExecRoot();
@@ -122,9 +127,15 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         ),
         Lists.newArrayList("--aspects=@bazel_bsp//:aspects.bzl%scala_compiler_classpath_aspect", "--output_groups=scala_compiler_classpath_files")
       );
-      scalacClasspath = bepServer.fetchScalacClasspath();
+      List<String> classpath = bepServer.fetchScalacClasspath().stream().map(Uri::toString).collect(Collectors.toList());
+      List<String> scalaVersions = classpath.stream().filter(uri -> uri.contains("scala-library")).collect(Collectors.toList());
+      if(scalaVersions.size() != 1)
+        return Optional.empty();
+      String scalaVersion = scalaVersions.get(0).substring(scalaVersions.get(0).indexOf("scala-library-") + 14, scalaVersions.get(0).indexOf(".jar"));
+      scalacClasspath = new ScalaBuildTarget("org.scala-lang",
+              scalaVersion,  scalaVersion.substring(0, scalaVersion.lastIndexOf(".")), ScalaPlatform.JVM, classpath);
     }
-    return scalacClasspath;
+    return Optional.of(scalacClasspath);
   }
 
   private List<String> runBazelLines(String... args) {
@@ -136,11 +147,16 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   private byte[] runBazelBytes(String... args) {
     try {
-      List<String> argv = new ArrayList<>(args.length + 1);
+      List<String> argv = new ArrayList<>(args.length + 3);
       argv.add(bazel);
       for (String arg : args) {
         argv.add(arg);
       }
+      if(argv.size() > 1){
+        argv.add(2, BES_BACKEND);
+        argv.add(3, PUBLISH_ALL_ACTIONS);
+      }
+
       System.out.printf("Running: %s%n", argv);
       Process process = new ProcessBuilder(argv).start();
       if(process.waitFor() != 0){
@@ -310,13 +326,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     List<String> args = Lists.newArrayList(
       bazel,
       "build",
-      "--bes_backend=grpc://localhost:5001",
-      "--bes_lifecycle_events",
-      "--build_event_publish_all_actions"
+      BES_BACKEND,
+      PUBLISH_ALL_ACTIONS
     );
     args.addAll(
             targets.stream()
-                    .map(target -> target.getUri())
+                    .map(BuildTargetIdentifier::getUri)
                     .collect(Collectors.toList()));
     args.addAll(extraFlags);
     int exitCode = -1;
@@ -326,7 +341,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     } catch (InterruptedException | IOException e) {
       System.out.println("Failed to run bazel: " + e);
     }
-    return CompletableFuture.completedFuture(new CompileResult(exitCode == 0 ? StatusCode.OK : StatusCode.ERROR));
+    return CompletableFuture.completedFuture(new CompileResult(BepServer.convertExitCode(exitCode)));
   }
 
   @Override
@@ -371,26 +386,30 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
       return CompletableFuture.completedFuture(
           new ScalacOptionsResult(
               targets.stream()
-                  .map(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))
+                  .flatMap(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))
                   .collect(Collectors.toList())));
     } catch (InvalidProtocolBufferException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private ScalacOptionsItem collectScalacOptionsResult(
+  private Stream<ScalacOptionsItem> collectScalacOptionsResult(
       ActionGraphParser actionGraphParser,
       ArrayList<String> options,
       String execRoot,
       String target) {
-    return new ScalacOptionsItem(
-        new BuildTargetIdentifier(target),
-        options,
-        actionGraphParser.getInputs(target, ".jar").stream()
+
+    List<String> inputs = actionGraphParser.getInputs(target, ".jar").stream()
             .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-            .collect(Collectors.toList()),
-            // TODO: Handle multiple outputs
-            Uri.fromExecPath("exec-root://" + Iterables.getOnlyElement(actionGraphParser.getOutputs(target, ".jar")), execRoot).toString());
+            .collect(Collectors.toList());
+    return actionGraphParser.getOutputs(target, ".jar")
+            .stream().map(output ->
+                    new ScalacOptionsItem(
+                            new BuildTargetIdentifier(target),
+                            options,
+                            inputs,
+                            Uri.fromExecPath("exec-root://" + output, execRoot).toString())
+            );
   }
 
   @Override
