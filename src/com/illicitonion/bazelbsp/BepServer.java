@@ -59,7 +59,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             .equals("type.googleapis.com/build_event_stream.BuildEvent")) {
           handleEvent(request.getOrderedBuildEvent().getEvent());
         } else {
-          System.out.println("Got this request " + request);
+//          System.out.println("Got this request " + request);
         }
         PublishBuildToolEventStreamResponse response =
             PublishBuildToolEventStreamResponse.newBuilder()
@@ -164,15 +164,15 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     if (!"Scalac".equals(action.getType())) {
       // Ignore file template writes and such.
       // TODO: Maybe include them as task notifications (rather than diagnostics).
-      System.out.println("Non scala type action found: " + event);
+//      System.out.println("Non scala type action found: " + event);
       return;
     }
     if (!action.hasDiagnosticOutput()) {
-      System.out.println("Skipping action missing diagnostic output " + action);
+//      System.out.println("Skipping action missing diagnostic output " + action);
       return;
     }
     // TODO: Handle "No file" diagnostics
-    System.out.println("DWH: Event: " + event + "\n\n");
+//    System.out.println("DWH: Event: " + event + "\n\n");
     Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
     BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
     for(BuildEventStreamProtos.File log : action.getActionMetadataLogsList()){

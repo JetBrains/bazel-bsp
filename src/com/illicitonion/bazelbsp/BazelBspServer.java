@@ -31,6 +31,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   private String workspaceRoot = null;
   private ScalaBuildTarget scalacClasspath = null;
   private BuildClient buildClient;
+  private boolean isScalaProject = false;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
@@ -92,10 +93,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     for (SourceItem source : getSourceItems(label)) {
       if (source.getUri().endsWith(".scala")) {
         extensions.add("scala");
+        isScalaProject = true;
       } else if (source.getUri().endsWith(".java")) {
         extensions.add("java");
       }
     }
+    //TODO: Remove this whenever java binaries are natively supported
+    extensions.add("scala");
+
     BuildTarget target =
         new BuildTarget(
             label,
@@ -159,22 +164,39 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
       System.out.printf("Running: %s%n", argv);
       Process process = new ProcessBuilder(argv).start();
-      if(process.waitFor() != 0){
-        StringBuilder error = new StringBuilder();
-        String line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        while ((line = reader.readLine()) != null)
-          error.append(line).append('\n');
+      parseProcess(process);
 
-        String errorMessage = error.toString();
-        LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
-        buildClient.onBuildLogMessage(params);
-        throw new RuntimeException(errorMessage);
-      }
       return ByteStreams.toByteArray(process.getInputStream());
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private int parseProcess(Process process) throws IOException, InterruptedException {
+    Set<String> messageBuilder = new HashSet<>();
+    String line;
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+    while ((line = reader.readLine()) != null)
+      messageBuilder.add(line.trim());
+
+    String message = String.join("\n", messageBuilder);
+    int returnCode = process.waitFor();
+    if(returnCode != 0)
+      logError(message);
+    else
+      logMessage(message);
+    return returnCode;
+  }
+
+  private void logError(String errorMessage) {
+    LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
+    buildClient.onBuildLogMessage(params);
+    throw new RuntimeException(errorMessage);
+  }
+
+  private void logMessage(String message) {
+    LogMessageParams params = new LogMessageParams(MessageType.LOG, message);
+    buildClient.onBuildLogMessage(params);
   }
 
   @Override
@@ -281,19 +303,24 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
       }
       System.out.printf("Running: %s%n", argv);
       Process process = new ProcessBuilder(argv).start();
-
       List<String> output = new ArrayList<>();
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       String line;
       while ((line = reader.readLine()) != null) {
         output.add(line.trim());
       }
+
+      if(process.waitFor() != 0)
+        logError(String.join("\n", output));
+      else
+        logMessage(String.join("\n", output));
       System.out.printf("Returning: %s%n", output);
       return output;
-    } catch (IOException e) {
+    } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
+
 
   private List<String> lookupTransitiveSourceJars(String target) {
     // TODO: Use an aspect output group, rather than parsing stderr logging
@@ -337,7 +364,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     int exitCode = -1;
     try {
       Process process = new ProcessBuilder(args).start();
-      exitCode = process.waitFor();
+      System.out.println("Building targets....");
+      exitCode = parseProcess(process);
     } catch (InterruptedException | IOException e) {
       System.out.println("Failed to run bazel: " + e);
     }
@@ -381,7 +409,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
               runBazelBytes(
                   "aquery",
                   "--output=proto",
-                  "mnemonic(Scalac, " + Joiner.on(" + ").join(targets) + ")"));
+                  "mnemonic(" + (isScalaProject ? "Scalac" :  "Javac") + ", " + Joiner.on(" + ").join(targets) + ")"));
       ActionGraphParser parser = new ActionGraphParser(actionGraph);
       return CompletableFuture.completedFuture(
           new ScalacOptionsResult(
