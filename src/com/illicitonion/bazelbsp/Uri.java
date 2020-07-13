@@ -55,6 +55,7 @@ public class Uri implements Comparable<Uri> {
     }
 
     public static Uri fromWorkspacePath(String path, String workspaceRoot) {
+        System.out.println("From workspace path: " + path);
         return new Uri(String.format("file://%s/%s", workspaceRoot, path));
     }
 

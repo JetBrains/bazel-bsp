@@ -11,13 +11,13 @@ import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,16 +46,26 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     this.BES_BACKEND += port;
   }
 
+  private <T> CompletableFuture<T> executeCommand(Supplier<T> request){
+    CompletableFuture<T> execution = CompletableFuture.supplyAsync(request);
+    try {
+      execution.join();
+    } catch (CompletionException e){
+      return CompletableFuture.failedFuture(e.getCause());
+    }
+    return execution;
+  }
   @Override
   public CompletableFuture<InitializeBuildResult> buildInitialize(
       InitializeBuildParams initializeBuildParams) {
-    BuildServerCapabilities capabilities = new BuildServerCapabilities();
-    capabilities.setCompileProvider(new CompileProvider(Lists.newArrayList("scala", "java")));
-    capabilities.setDependencySourcesProvider(true);
-    capabilities.setInverseSourcesProvider(true);
-    return CompletableFuture.completedFuture(
-        new InitializeBuildResult(
-            Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities));
+    return executeCommand(() -> {
+      BuildServerCapabilities capabilities = new BuildServerCapabilities();
+      capabilities.setCompileProvider(new CompileProvider(Lists.newArrayList("scala", "java")));
+      capabilities.setDependencySourcesProvider(true);
+      capabilities.setInverseSourcesProvider(true);
+      return new InitializeBuildResult(
+              Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities);
+    });
   }
 
   @Override
@@ -73,18 +83,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
     // TODO: Parameterise this to allow importing a subset of //...
     // TODO: Run one batch query outputting a proto, rather than one per target
-    try{
-      return CompletableFuture.completedFuture(
-          new WorkspaceBuildTargetsResult(
-              runBazelLines("query", "//...").stream()
-                  .map(line -> getBuildTarget(new BuildTargetIdentifier(line)))
-                  .collect(Collectors.toList())));
-
-    }catch (RuntimeException e){
-      CompletableFuture<WorkspaceBuildTargetsResult> future = new CompletableFuture<>();
-      future.completeExceptionally(e);
-      return future;
-    }
+   return executeCommand(() -> new WorkspaceBuildTargetsResult(
+           runBazelLines("query", "//...").stream()
+                   .map(line -> getBuildTarget(new BuildTargetIdentifier(line)))
+                   .collect(Collectors.toList())));
   }
 
   private BuildTarget getBuildTarget(BuildTargetIdentifier label) {
@@ -211,16 +213,15 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     // TODO: Use proto output of query, rather than per-target queries
-    return CompletableFuture.completedFuture(
-      new SourcesResult(
-        sourcesParams.getTargets().stream()
-          .map(target -> {
-              SourcesItem item = new SourcesItem(target, getSourceItems(target));
-              List<String> list = Lists.newArrayList( Uri.fromAbsolutePath(getSourcesRoot(target.getUri())).toString());
-              item.setRoots(list);
-              return item;
-          })
-          .collect(Collectors.toList())));
+    return executeCommand(() -> new SourcesResult(
+            sourcesParams.getTargets().stream()
+                    .map(target -> {
+                      SourcesItem item = new SourcesItem(target, getSourceItems(target));
+                      List<String> list = Lists.newArrayList( Uri.fromAbsolutePath(getSourcesRoot(target.getUri())).toString());
+                      item.setRoots(list);
+                      return item;
+                    })
+                    .collect(Collectors.toList())));
   }
 
   private List<SourceItem> getSourceItems(BuildTargetIdentifier label) {
@@ -278,41 +279,43 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   @Override
   public CompletableFuture<InverseSourcesResult> buildTargetInverseSources(
       InverseSourcesParams inverseSourcesParams) {
-    String fileUri = inverseSourcesParams.getTextDocument().getUri();
-    String workspaceRoot = getWorkspaceRoot();
-    String prefix = Uri.fromWorkspacePath(getWorkspaceRoot(), "").toString();
-    if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
-      throw new RuntimeException(
-          "Could not resolve " + fileUri + " within workspace " + workspaceRoot);
-    }
-    List<String> targets =
-        runBazelLines(
-            "query", "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
-    return CompletableFuture.completedFuture(
-        new InverseSourcesResult(
-            targets.stream().map(BuildTargetIdentifier::new).collect(Collectors.toList())));
+    return executeCommand(() -> {
+      String fileUri = inverseSourcesParams.getTextDocument().getUri();
+      String workspaceRoot = getWorkspaceRoot();
+      String prefix = Uri.fromWorkspacePath(getWorkspaceRoot(), "").toString();
+      if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
+        throw new RuntimeException(
+                "Could not resolve " + fileUri + " within workspace " + workspaceRoot);
+      }
+      List<String> targets =
+              runBazelLines(
+                      "query", "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
+      return new InverseSourcesResult(
+              targets.stream().map(BuildTargetIdentifier::new).collect(Collectors.toList()));
+    });
   }
 
   @Override
   public CompletableFuture<DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
-    List<String> targets =
-        dependencySourcesParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
+    return executeCommand(() -> {
+      List<String> targets =
+              dependencySourcesParams.getTargets().stream()
+                      .map(BuildTargetIdentifier::getUri)
+                      .collect(Collectors.toList());
 
-    return CompletableFuture.completedFuture(
-        new DependencySourcesResult(
-            targets.stream().sorted()
-                .map(
-                    target -> {
-                      List<String> files =
-                          lookupTransitiveSourceJars(target).stream()
-                              .map(execPath -> Uri.fromExecPath(execPath, getExecRoot()).toString())
-                              .collect(Collectors.toList());
-                      return new DependencySourcesItem(new BuildTargetIdentifier(target), files);
-                    })
-                .collect(Collectors.toList())));
+      return new DependencySourcesResult(
+              targets.stream().sorted()
+                      .map(
+                              target -> {
+                                List<String> files =
+                                        lookupTransitiveSourceJars(target).stream()
+                                                .map(execPath -> Uri.fromExecPath(execPath, getExecRoot()).toString())
+                                                .collect(Collectors.toList());
+                                return new DependencySourcesItem(new BuildTargetIdentifier(target), files);
+                              })
+                      .collect(Collectors.toList()));
+    });
   }
 
   private List<String> runBazelStderr(String... args) {
@@ -371,26 +374,28 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   }
 
   private CompletableFuture<CompileResult> buildTargetsWithBep(List<BuildTargetIdentifier> targets, List<String> extraFlags) {
-    List<String> args = Lists.newArrayList(
-      bazel,
-      "build",
-      BES_BACKEND,
-      PUBLISH_ALL_ACTIONS
-    );
-    args.addAll(
-            targets.stream()
-                    .map(BuildTargetIdentifier::getUri)
-                    .collect(Collectors.toList()));
-    args.addAll(extraFlags);
-    int exitCode = -1;
-    try {
-      Process process = new ProcessBuilder(args).start();
-      System.out.println("Building targets: " + Arrays.toString(args.toArray()));
-      exitCode = parseProcess(process);
-    } catch (InterruptedException | IOException e) {
-      System.out.println("Failed to run bazel: " + e);
-    }
-    return CompletableFuture.completedFuture(new CompileResult(BepServer.convertExitCode(exitCode)));
+    return executeCommand(() -> {
+      List<String> args = Lists.newArrayList(
+              bazel,
+              "build",
+              BES_BACKEND,
+              PUBLISH_ALL_ACTIONS
+      );
+      args.addAll(
+              targets.stream()
+                      .map(BuildTargetIdentifier::getUri)
+                      .collect(Collectors.toList()));
+      args.addAll(extraFlags);
+      int exitCode = -1;
+      try {
+        Process process = new ProcessBuilder(args).start();
+        System.out.println("Building targets: " + Arrays.toString(args.toArray()));
+        exitCode = parseProcess(process);
+      } catch (InterruptedException | IOException e) {
+        System.out.println("Failed to run bazel: " + e);
+      }
+      return new CompileResult(BepServer.convertExitCode(exitCode));
+    });
   }
 
   @Override
@@ -415,31 +420,32 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    // TODO: Parse nested source roots out properly
-    // TODO: Generate SemanticDBs somehow
-    ArrayList<String> options = Lists.newArrayList();
+    return executeCommand(() -> {
+      // TODO: Parse nested source roots out properly
+      // TODO: Generate SemanticDBs somehow
+      ArrayList<String> options = Lists.newArrayList();
 
-    // TODO: Support non-scala deps
-    List<String> targets =
-        scalacOptionsParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
-    try {
-      AnalysisProtos.ActionGraphContainer actionGraph =
-          AnalysisProtos.ActionGraphContainer.parseFrom(
-              runBazelBytes(
-                  "aquery",
-                  "--output=proto",
-                  "mnemonic(" + (isScalaProject ? "Scalac" :  "Javac") + ", " + Joiner.on(" + ").join(targets) + ")"));
-      ActionGraphParser parser = new ActionGraphParser(actionGraph);
-      return CompletableFuture.completedFuture(
-          new ScalacOptionsResult(
-              targets.stream()
-                  .flatMap(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))
-                  .collect(Collectors.toList())));
-    } catch (InvalidProtocolBufferException e) {
-      throw new RuntimeException(e);
-    }
+      // TODO: Support non-scala deps
+      List<String> targets =
+              scalacOptionsParams.getTargets().stream()
+                      .map(BuildTargetIdentifier::getUri)
+                      .collect(Collectors.toList());
+      try {
+        AnalysisProtos.ActionGraphContainer actionGraph =
+                AnalysisProtos.ActionGraphContainer.parseFrom(
+                        runBazelBytes(
+                                "aquery",
+                                "--output=proto",
+                                "mnemonic(" + (isScalaProject ? "Scalac" :  "Javac") + ", " + Joiner.on(" + ").join(targets) + ")"));
+        ActionGraphParser parser = new ActionGraphParser(actionGraph);
+        return new ScalacOptionsResult(
+                        targets.stream()
+                                .flatMap(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))
+                                .collect(Collectors.toList()));
+      } catch (InvalidProtocolBufferException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   private Stream<ScalacOptionsItem> collectScalacOptionsResult(
