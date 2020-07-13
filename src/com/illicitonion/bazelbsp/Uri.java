@@ -18,6 +18,9 @@ public class Uri implements Comparable<Uri> {
         }
         return new Uri(uri);
     }
+    public static Uri fromAbsolutePath(String path) {
+        return new Uri("file://" + path);
+    }
 
     public static Uri fromExecPath(String execPath, String execRoot) {
         String prefix = "exec-root://";

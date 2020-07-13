@@ -3,6 +3,7 @@ package com.illicitonion.bazelbsp;
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
@@ -10,8 +11,10 @@ import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -21,8 +24,10 @@ import java.util.stream.Stream;
 public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   private final String bazel;
-  private final String BES_BACKEND = "--bes_backend=grpc://localhost:5001";
+  private String BES_BACKEND = "--bes_backend=grpc://localhost:";
   private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
+  public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
+          ImmutableSet.of("java", "scala", "javatests", "src", "testsrc");
 
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
 
@@ -35,6 +40,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
+  }
+
+  public void setBackendPort(int port) {
+    this.BES_BACKEND += port;
   }
 
   @Override
@@ -205,7 +214,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     return CompletableFuture.completedFuture(
       new SourcesResult(
         sourcesParams.getTargets().stream()
-          .map(target -> new SourcesItem(target, getSourceItems(target)))
+          .map(target -> {
+              SourcesItem item = new SourcesItem(target, getSourceItems(target));
+              List<String> list = Lists.newArrayList( Uri.fromAbsolutePath(getSourcesRoot(target.getUri())).toString());
+              item.setRoots(list);
+              return item;
+          })
           .collect(Collectors.toList())));
   }
 
@@ -232,12 +246,19 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                 "kind(\"generated file\", deps(" + label.getUri() + ", 1))")
             .stream()
             .map(fileLabel -> Uri.fromFileLabel(fileLabel, workspaceRoot).toString())
-            .map(uri -> new SourceItem(uri, SourceItemKind.FILE, true))
-            .collect(Collectors.toList()));
+            .map(uri ->
+              new SourceItem(uri, SourceItemKind.FILE, true)
+            ).collect(Collectors.toList()));
 
     targetsToSources.put(label, sources);
 
     return sources;
+  }
+
+  private String getSourcesRoot(String uri){
+    List<String> root = KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
+    System.out.println("Roots found for uri " + uri + " :" + Arrays.toString(root.toArray()));
+    return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.lastIndexOf(root.get(0)) + root.get(0).length()));
   }
 
   public synchronized String getWorkspaceRoot() {
@@ -282,7 +303,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
     return CompletableFuture.completedFuture(
         new DependencySourcesResult(
-            targets.stream()
+            targets.stream().sorted()
                 .map(
                     target -> {
                       List<String> files =
@@ -364,7 +385,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     int exitCode = -1;
     try {
       Process process = new ProcessBuilder(args).start();
-      System.out.println("Building targets....");
+      System.out.println("Building targets: " + Arrays.toString(args.toArray()));
       exitCode = parseProcess(process);
     } catch (InterruptedException | IOException e) {
       System.out.println("Failed to run bazel: " + e);

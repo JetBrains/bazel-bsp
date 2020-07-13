@@ -12,19 +12,27 @@ http_archive(
 )
 
 load("@rules_jvm_external//:defs.bzl", "maven_install")
+# For rules_scala
+http_archive(
+    name = "io_bazel_rules_scala",
+    url = "https://github.com/andrefmrocha/rules_scala/archive/8585c896774aac30b28092a32b90c97890a41c0b.tar.gz",
+    strip_prefix = "rules_scala-8585c896774aac30b28092a32b90c97890a41c0b",
+)
+
+load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls")
+
+
 
 maven_install(
     artifacts = [
 	"com.google.code.gson:gson:2.8.5",
 	"com.google.guava:guava:28.1-jre",
-	"ch.epfl.scala:bsp4j:2.0.0-M4+10-61e61e87",
+	"ch.epfl.scala:bsp4j:2.0.0-M11",
 	"org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.8.0",
         "org.eclipse.xtext:org.eclipse.xtext.xbase.lib:2.19.0",
 	"org.scala-lang:scala-compiler:2.12.10",
     ],
-    repositories = [
-        "https://repo1.maven.org/maven2",
-    ],
+    repositories = default_maven_server_urls(),
     fetch_sources = True,
 )
 
@@ -96,12 +104,7 @@ http_archive(
     sha256 = "aa04ccddcc6dcf57cf45b23ecccf296c7cabf08f63bcdc0767108ad8482db4f4",
 )
 
-# For rules_scala:
-http_archive(
-    name = "io_bazel_rules_scala",
-    strip_prefix = "rules_scala-4ebd9c0207b1de94cd42d90c5009ea2d07a54cda",
-    urls = ["https://github.com/illicitonion/rules_scala/archive/4ebd9c0207b1de94cd42d90c5009ea2d07a54cda.zip"],
-)
+
 
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 scala_register_toolchains()

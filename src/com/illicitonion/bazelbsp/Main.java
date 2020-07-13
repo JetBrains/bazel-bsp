@@ -67,13 +67,14 @@ public class Main {
                 .create();
         bspServer.setBuildClient(launcher.getRemoteProxy());
         BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
-        launcher.startListening();
         bspServer.bepServer = bepServer;
         Server server =
-            ServerBuilder.forPort(5001)
+            ServerBuilder.forPort(0)
                 .addService(bepServer)
                 .build()
                 .start();
+        bspServer.setBackendPort(server.getPort());
+        launcher.startListening();
         server.awaitTermination();
       } finally {
         executor.shutdown();
@@ -81,7 +82,7 @@ public class Main {
     } else if (args[0].equals("bep")) {
       String bazel = args.length > 1 ? args[1] : findOnPath("bazel");
       Server bepServer =
-          ServerBuilder.forPort(5001)
+          ServerBuilder.forPort(0)
               .addService(new BepServer(new BazelBspServer(bazel), null))
               .build()
               .start();
