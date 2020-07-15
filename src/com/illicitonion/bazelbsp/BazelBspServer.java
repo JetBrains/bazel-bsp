@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
+import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.BufferedReader;
@@ -63,6 +64,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
       capabilities.setCompileProvider(new CompileProvider(Lists.newArrayList("scala", "java")));
       capabilities.setDependencySourcesProvider(true);
       capabilities.setInverseSourcesProvider(true);
+      capabilities.setResourcesProvider(true);
       return new InitializeBuildResult(
               Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities);
     });
@@ -364,8 +366,24 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
   @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
-    System.out.printf("DWH: Got buildTargetResources: %s - responding with stub empty reply%n", resourcesParams);
-    return CompletableFuture.completedFuture(new ResourcesResult(new ArrayList<>()));
+    return executeCommand(() -> {
+      try {
+        Build.QueryResult query = Build.QueryResult.parseFrom(
+                runBazelBytes( "query", "--output=proto",
+                  "(" + resourcesParams.getTargets().stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")"
+                ));
+        return new ResourcesResult(query.getTargetList().stream().map(Build.Target::getRule)
+                .map(rule -> new ResourcesItem(
+                        new BuildTargetIdentifier(Uri.packageDirFromLabel(rule.getName(), getWorkspaceRoot()).toString()),
+                        rule.getAttributeList().stream()
+                          .filter(attribute -> attribute.getName().equals("resources") && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified())
+                          .flatMap(
+                                  attribute -> attribute.getStringListValueList().stream())
+                                    .map(label -> Uri.fromFileLabel(label, getWorkspaceRoot()).toString()).collect(Collectors.toList()))).collect(Collectors.toList()));
+      } catch (InvalidProtocolBufferException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   @Override
@@ -389,7 +407,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
       int exitCode = -1;
       try {
         Process process = new ProcessBuilder(args).start();
-        System.out.println("Building targets: " + Arrays.toString(args.toArray()));
         exitCode = parseProcess(process);
       } catch (InterruptedException | IOException e) {
         System.out.println("Failed to run bazel: " + e);
@@ -413,8 +430,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
-    System.out.printf("DWH: Got buildTargetCleanCache: %s%n", cleanCacheParams);
-    return null;
+    return executeCommand(() -> {
+      try {
+        return new CleanCacheResult(String.join("\n", runBazelLines("clean")), true);
+      } catch (RuntimeException e) {
+        return new CleanCacheResult(e.getMessage(), false);
+      }
+    });
   }
 
   @Override

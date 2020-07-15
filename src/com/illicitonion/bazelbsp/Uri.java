@@ -31,18 +31,16 @@ public class Uri implements Comparable<Uri> {
     }
 
     public static Uri fromFileLabel(String fileLabel, String workspaceRoot) {
-        if (!fileLabel.startsWith("//")) {
-            throw new IllegalArgumentException(String.format("%s didn't start with %s", fileLabel, "//"));
-        }
-        String fileLabelWithoutPrefix = fileLabel.substring(2);
-        List<String> parts = Splitter.on(':').splitToList(fileLabelWithoutPrefix);
-        if (parts.size() != 2) {
-            throw new IllegalArgumentException(String.format("Label %s didn't contain exactly one :", fileLabel));
-        }
+        List<String> parts = divideFileLabel(fileLabel);
         return new Uri(String.format("file://%s/%s/%s", workspaceRoot, parts.get(0), parts.get(1)));
     }
 
     public static Uri packageDirFromLabel(String fileLabel, String workspaceRoot) {
+        List<String> parts = divideFileLabel(fileLabel);
+        return new Uri(String.format("file://%s/%s", workspaceRoot, parts.get(0)));
+    }
+
+    private static List<String> divideFileLabel(String fileLabel) {
         if (!fileLabel.startsWith("//")) {
             throw new IllegalArgumentException(String.format("%s didn't start with %s", fileLabel, "//"));
         }
@@ -51,7 +49,7 @@ public class Uri implements Comparable<Uri> {
         if (parts.size() != 2) {
             throw new IllegalArgumentException(String.format("Label %s didn't contain exactly one :", fileLabel));
         }
-        return new Uri(String.format("file://%s/%s", workspaceRoot, parts.get(0)));
+        return parts;
     }
 
     public static Uri fromWorkspacePath(String path, String workspaceRoot) {

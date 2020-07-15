@@ -15,8 +15,8 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 # For rules_scala
 http_archive(
     name = "io_bazel_rules_scala",
-    url = "https://github.com/andrefmrocha/rules_scala/archive/8585c896774aac30b28092a32b90c97890a41c0b.tar.gz",
-    strip_prefix = "rules_scala-8585c896774aac30b28092a32b90c97890a41c0b",
+    url = "https://github.com/andrefmrocha/rules_scala/archive/2eff852880ecebc95919279990aff263fbf7ac62.tar.gz",
+    strip_prefix = "rules_scala-2eff852880ecebc95919279990aff263fbf7ac62",
 )
 
 load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls")
