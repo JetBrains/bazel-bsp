@@ -128,7 +128,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                         int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
                         fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
                         lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
-                        String lineDelimiter = String.join("", new String[]{lineLocation[0], lineLocation[1]});
                       }
                       System.out.println("Error: " + error);
                       System.out.println("File location: " + fileLocation);
@@ -204,7 +203,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processActionDiagnostics(BuildEventStreamProtos.BuildEvent event) throws IOException {
     BuildEventStreamProtos.ActionExecuted action = event.getAction();
-    if (!"Scalac".equals(action.getType())) {
+    if (!action.getType().equals("Scalac") && !action.getType().equals("Javac")) {
       // Ignore file template writes and such.
       // TODO: Maybe include them as task notifications (rather than diagnostics).
 //      System.out.println("Non scala type action found: " + event);

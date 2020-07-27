@@ -33,7 +33,7 @@ public class Main {
       System.exit(1);
     }
     if (args[0].equals("install")) {
-      handleInstall();
+      handleInstall(args.length > 1 ? Paths.get(args[1]) : null);
     } else if (args[0].equals("bsp")) {
       PrintStream stdout = System.out;
       InputStream stdin = System.in;
@@ -90,13 +90,13 @@ public class Main {
     }
   }
 
-  private static void handleInstall() throws IOException {
+  private static void handleInstall(Path path) throws IOException {
     List<String> argv = new ArrayList<>();
     argv.add(Paths.get(System.getProperty("java.home")).resolve("bin").resolve("java").toString());
     argv.add("-classpath");
     Splitter.on(":").splitToList(System.getProperty("java.class.path")).stream()
         .map(elem -> Paths.get(elem).toAbsolutePath().toString())
-        .forEach(elem -> argv.add(elem));
+        .forEach(argv::add);
     argv.add("com.illicitonion.bazelbsp.Main");
     argv.add("bsp");
     argv.add(findOnPath("bazel"));
@@ -107,7 +107,7 @@ public class Main {
             Constants.VERSION,
             Constants.BSP_VERSION,
             Lists.newArrayList("scala"));
-    Path bspDir = Paths.get(".bsp");
+    Path bspDir = path == null ? Paths.get(".bsp") : path.resolve(".bsp");
     Files.createDirectories(bspDir);
     Files.write(
         bspDir.resolve("bazelbsp.json"),
