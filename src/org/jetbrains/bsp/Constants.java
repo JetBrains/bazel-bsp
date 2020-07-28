@@ -1,4 +1,4 @@
-package com.illicitonion.bazelbsp;
+package org.jetbrains.bsp;
 
 public class Constants {
   public static final String NAME = "bazelbsp";

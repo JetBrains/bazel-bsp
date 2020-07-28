@@ -1,4 +1,4 @@
-package com.illicitonion.bazelbsp;
+package org.jetbrains.bsp;
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails;
 import ch.epfl.scala.bsp4j.BuildClient;
@@ -55,7 +55,7 @@ public class Main {
       System.setErr(logStream);
       ExecutorService executor = Executors.newCachedThreadPool();
       try {
-        BazelBspServer bspServer = new BazelBspServer(args[1]);
+        org.jetbrains.bsp.BazelBspServer bspServer = new org.jetbrains.bsp.BazelBspServer(args[1]);
         Launcher<BuildClient> launcher =
             new Launcher.Builder()
                 .traceMessages(traceWriter)
@@ -66,7 +66,7 @@ public class Main {
                 .setExecutorService(executor)
                 .create();
         bspServer.setBuildClient(launcher.getRemoteProxy());
-        BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
+        org.jetbrains.bsp.BepServer bepServer = new org.jetbrains.bsp.BepServer(bspServer, launcher.getRemoteProxy());
         bspServer.bepServer = bepServer;
         Server server =
             ServerBuilder.forPort(0)
@@ -102,9 +102,9 @@ public class Main {
     argv.add(findOnPath("bazel"));
     BspConnectionDetails details =
         new BspConnectionDetails(
-            Constants.NAME,
+            org.jetbrains.bsp.Constants.NAME,
             argv,
-            Constants.VERSION,
+            org.jetbrains.bsp.Constants.VERSION,
             Constants.BSP_VERSION,
             Lists.newArrayList("scala"));
     Path bspDir = path == null ? Paths.get(".bsp") : path.resolve(".bsp");

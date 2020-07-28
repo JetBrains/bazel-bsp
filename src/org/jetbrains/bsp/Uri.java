@@ -1,4 +1,4 @@
-package com.illicitonion.bazelbsp;
+package org.jetbrains.bsp;
 
 import com.google.common.base.Splitter;
 

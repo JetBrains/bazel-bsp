@@ -1,4 +1,4 @@
-package com.illicitonion.bazelbsp;
+package org.jetbrains.bsp;
 
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Joiner;
@@ -461,7 +461,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                                 "aquery",
                                 "--output=proto",
                                 "mnemonic(" + (isScalaProject ? "Scalac" :  "Javac") + ", " + Joiner.on(" + ").join(targets) + ")"));
-        ActionGraphParser parser = new ActionGraphParser(actionGraph);
+        org.jetbrains.bsp.ActionGraphParser parser = new org.jetbrains.bsp.ActionGraphParser(actionGraph);
         return new ScalacOptionsResult(
                         targets.stream()
                                 .flatMap(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))

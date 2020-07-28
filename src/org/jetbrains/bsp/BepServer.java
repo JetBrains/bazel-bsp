@@ -1,4 +1,4 @@
-package com.illicitonion.bazelbsp;
+package org.jetbrains.bsp;
 
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Splitter;
@@ -24,7 +24,7 @@ import java.util.*;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
-  private final BazelBspServer bspServer;
+  private final org.jetbrains.bsp.BazelBspServer bspServer;
   private final BuildClient bspClient;
   private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles = new HashMap<>();
   private final TreeSet<Uri> compilerClasspathTextProtos = new TreeSet<>();

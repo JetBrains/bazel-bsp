@@ -1,4 +1,4 @@
-package com.illicitonion.bazelbsp;
+package org.jetbrains.bsp;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 
