@@ -1,5 +1,8 @@
+load("@graknlabs_bazel_distribution//maven/templates:rules.bzl", "assemble_maven", "deploy_maven")
+
 java_binary(
-    name = "main",
+    name = "bsp",
+    tags = ["maven_coordinates=org.jetbrains.bsp:bazel-bsp_0.1:{pom_version}"],
     deps = [
         "@com_google_protobuf//:protobuf_java",
         "@googleapis//:google_devtools_build_v1_build_events_java_proto",
@@ -19,4 +22,24 @@ java_binary(
     ],
     main_class = "com.illicitonion.bazelbsp.Main",
     srcs = glob(["*.java"]),
+)
+
+assemble_maven(
+    name = "assemble-maven",
+    target = "//src/org/jetbrains/bsp:bsp",
+    package = "{maven_packages}",
+    project_name = "Bazel BSP",
+    project_description = "Bazel BSP - A Build Server Protocol implementation for Google's build system Bazel",
+    project_url = "https://github.com/andrefmrocha/bazel-bsp",
+    scm_url = "https://github.com/andrefmrocha/bazel-bsp.git",
+    version_file = "//central-sync:VERSION",
+    developers = {"1": ["name=Andre Rocha", "email=andre.rocha@jetbrains.com", "organization=JetBrains"],
+                  "2": ["name=Daniel Wagner-Hall", "email=dawagner@gmail.com", "organization=SeleniumHQ"],},
+    license = "mit"
+)
+
+deploy_maven(
+    name = "deploy-maven",
+    target = ":assemble-maven",
+    deployment_properties = "//central-sync:deployment.properties"
 )

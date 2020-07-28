@@ -97,7 +97,7 @@ public class Main {
     Splitter.on(":").splitToList(System.getProperty("java.class.path")).stream()
         .map(elem -> Paths.get(elem).toAbsolutePath().toString())
         .forEach(argv::add);
-    argv.add("com.illicitonion.bazelbsp.Main");
+    argv.add("org.jetbrains.bsp.Main");
     argv.add("bsp");
     argv.add(findOnPath("bazel"));
     BspConnectionDetails details =

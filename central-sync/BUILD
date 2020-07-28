@@ -1,0 +1,5 @@
+exports_files([
+    "VERSION",
+    "deployment.properties",
+])
+

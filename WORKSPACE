@@ -1,3 +1,5 @@
+workspace(name = "bazel_bsp")
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # For maven:
@@ -11,7 +13,6 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-load("@rules_jvm_external//:defs.bzl", "maven_install")
 # For rules_scala
 http_archive(
     name = "io_bazel_rules_scala",
@@ -19,22 +20,8 @@ http_archive(
     strip_prefix = "rules_scala-b02c7de3cd0f4a1dfedf7c6b9547f8421104630d",
 )
 
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls")
-
-
-
-maven_install(
-    artifacts = [
-	"com.google.code.gson:gson:2.8.5",
-	"com.google.guava:guava:28.1-jre",
-	"ch.epfl.scala:bsp4j:2.0.0-M11",
-	"org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.8.0",
-        "org.eclipse.xtext:org.eclipse.xtext.xbase.lib:2.19.0",
-	"org.scala-lang:scala-compiler:2.12.10",
-    ],
-    repositories = default_maven_server_urls(),
-    fetch_sources = True,
-)
+load("@bazel_bsp//:third_party.bzl", "dependencies")
+dependencies()
 
 # For bazel for BEP proto:
 http_archive(
@@ -136,4 +123,10 @@ http_archive(
     type = "tar.gz",
     url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib.{}.tar.gz".format (skylib_version, skylib_version),
     sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
+)
+
+git_repository(
+    name = "graknlabs_bazel_distribution",
+    remote = "https://github.com/graknlabs/bazel-distribution",
+    commit = "e181add439dc1cfb7b1c27db771ec741d5dd43e6",
 )
