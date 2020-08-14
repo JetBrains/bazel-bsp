@@ -1,0 +1,16 @@
+{
+  "name": "bazelbsp",
+  "argv": [
+    "java",
+    "-classpath",
+    "../bazel-out/darwin-fastbuild/bin/main/src/org/jetbrains/bsp/bsp_deploy.jar",
+    "org.jetbrains.bsp.Main",
+    "bsp",
+    "bazel"
+  ],
+  "version": "0.0.0",
+  "bspVersion": "2.0.0",
+  "languages": [
+    "scala"
+  ]
+}

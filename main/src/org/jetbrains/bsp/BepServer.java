@@ -209,10 +209,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 //      System.out.println("Non scala type action found: " + event);
       return;
     }
-    if (!action.hasDiagnosticOutput()) {
-//      System.out.println("Skipping action missing diagnostic output " + action);
-      return;
-    }
     // TODO: Handle "No file" diagnostics
 //    System.out.println("DWH: Event: " + event + "\n\n");
     Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();

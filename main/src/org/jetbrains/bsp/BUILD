@@ -20,13 +20,14 @@ java_binary(
         "@io_bazel//src/main/java/com/google/devtools/build/lib/buildeventstream/proto:build_event_stream_java_proto",
 	    "@io_bazel_rules_scala//src/protobuf/io/bazel/rules_scala:diagnostics_java_proto",
     ],
-    main_class = "com.illicitonion.bazelbsp.Main",
+    main_class = "org.jetbrains.bsp.Main",
     srcs = glob(["*.java"]),
+    visibility = ["//visibility:public"],
 )
 
 assemble_maven(
     name = "assemble-maven",
-    target = "//src/org/jetbrains/bsp:bsp",
+    target = "//main/src/org/jetbrains/bsp:bsp",
     package = "{maven_packages}",
     project_name = "Bazel BSP",
     project_description = "Bazel BSP - A Build Server Protocol implementation for Google's build system Bazel",

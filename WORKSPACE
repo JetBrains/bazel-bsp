@@ -13,13 +13,25 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
+# bazel-skylib 1.0.2 released 2019.03.20 (https://github.com/bazelbuild/bazel-skylib/releases/tag/1.0.2)
+skylib_version = "1.0.2"
+http_archive(
+    name = "bazel_skylib",
+    type = "tar.gz",
+    url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib.{}.tar.gz".format (skylib_version, skylib_version),
+    sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
+)
+
 # For rules_scala
 http_archive(
     name = "io_bazel_rules_scala",
-    url = "https://github.com/andrefmrocha/rules_scala/archive/b02c7de3cd0f4a1dfedf7c6b9547f8421104630d.tar.gz",
-    strip_prefix = "rules_scala-b02c7de3cd0f4a1dfedf7c6b9547f8421104630d",
+    url = "https://github.com/andrefmrocha/rules_scala/archive/da47d8d1a53985bbb542e62618e7ae5e82abae8d.tar.gz",
+    strip_prefix = "rules_scala-da47d8d1a53985bbb542e62618e7ae5e82abae8d",
 )
 
+
+load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
+bazel_version(name = "bazel_version")
 load("@bazel_bsp//:third_party.bzl", "dependencies")
 dependencies()
 
@@ -98,11 +110,11 @@ scala_register_toolchains()
 
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 scala_repositories((
-    "2.12.10",
+    "2.12.11",
     {
-       "scala_compiler": "cedc3b9c39d215a9a3ffc0cc75a1d784b51e9edc7f13051a1b4ad5ae22cfbc0c",
-       "scala_library": "0a57044d10895f8d3dd66ad4286891f607169d948845ac51e17b4c1cf0ab569d",
-       "scala_reflect": "56b609e1bab9144fb51525bfa01ccd72028154fc40a58685a1e9adcbe7835730",
+        "scala_compiler": "3e892546b72ab547cb77de4d840bcfd05c853e73390fed7370a8f19acb0735a0",
+        "scala_library": "0b3d6fd42958ee98715ba2ec5fe221f4ca1e694d7c981b0ae0cd68e97baf6dce",
+        "scala_reflect": "6ba385b450a6311a15c918cf8688b9af9327c6104f0ecbd35933cfcd3095fe04",
     }
 ))
 
@@ -116,17 +128,14 @@ http_archive(
     sha256 = protobuf_version_sha256,
 )
 
-# bazel-skylib 1.0.2 released 2019.03.20 (https://github.com/bazelbuild/bazel-skylib/releases/tag/1.0.2)
-skylib_version = "1.0.2"
-http_archive(
-    name = "bazel_skylib",
-    type = "tar.gz",
-    url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib.{}.tar.gz".format (skylib_version, skylib_version),
-    sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
-)
 
 git_repository(
     name = "graknlabs_bazel_distribution",
     remote = "https://github.com/graknlabs/bazel-distribution",
     commit = "e181add439dc1cfb7b1c27db771ec741d5dd43e6",
+)
+
+local_repository(
+    name = "sample_repo",
+    path = "sample-repo"
 )
