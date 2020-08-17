@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
     private final String bazel;
@@ -149,26 +150,33 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     @Override
     public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
         // TODO: Parameterise this to allow importing a subset of //...
-        // TODO: Run one batch query outputting a proto, rather than one per target
-        return executeCommand(() -> Either.forRight(new WorkspaceBuildTargetsResult(
-                runBazelLines("query", "//...").stream()
-                        .map(line -> getBuildTarget(new BuildTargetIdentifier(line)))
-                        .collect(Collectors.toList()))));
+        return executeCommand(() -> {
+            try {
+                Build.QueryResult queryResult = Build.QueryResult.parseFrom(runBazelBytes("query", "--output=proto", "//..."));
+                List<BuildTarget> targets = queryResult.getTargetList().stream()
+                        .map(Build.Target::getRule)
+                        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+                        .map(this::getBuildTarget).collect(Collectors.toList());
+                return Either.forRight(new WorkspaceBuildTargetsResult(targets));
+            } catch (InvalidProtocolBufferException e) {
+                return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+            }
+        });
     }
 
-    private BuildTarget getBuildTarget(BuildTargetIdentifier label) {
-        List<BuildTargetIdentifier> deps =
-                runBazelLines(
-                        "query",
-                        "--nohost_deps",
-                        "--noimplicit_deps",
-                        "kind(rule, deps(" + label.getUri() + ", 1))")
-                        .stream()
-                        .filter(l -> !l.equals(label.getUri()))
-                        .map(BuildTargetIdentifier::new)
-                        .collect(Collectors.toList());
+    private BuildTarget getBuildTarget(Build.Rule rule) {
+        String name = rule.getName();
+        List<BuildTargetIdentifier> deps = rule.getAttributeList()
+                .stream().filter(attribute -> attribute.getName().equals("deps"))
+                .flatMap(srcDeps -> srcDeps.getStringListValueList().stream())
+                .map(BuildTargetIdentifier::new)
+                .collect(Collectors.toList());
+
+        List<SourceItem> sources = getSourceItems(rule);
+
         SortedSet<String> extensions = new TreeSet<>();
-        for (SourceItem source : getSourceItems(label)) {
+
+        for (SourceItem source : sources) {
             if (source.getUri().endsWith(".scala")) {
                 extensions.add("scala");
                 isScalaProject = true;
@@ -179,6 +187,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         //TODO: Remove this whenever java binaries are natively supported
         extensions.add("scala");
 
+        BuildTargetIdentifier label = new BuildTargetIdentifier(name);
         BuildTarget target =
                 new BuildTarget(
                         label,
@@ -196,6 +205,22 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             });
         }
         return target;
+    }
+
+    private List<SourceItem> getSourceItems(Build.Rule rule) {
+        List<SourceItem> srcs = getSrcs(rule, false);
+        List<SourceItem> generatedSrcs = getSrcs(rule, true);
+        return Stream.concat(srcs.stream(), generatedSrcs.stream()).collect(Collectors.toList());
+    }
+
+    private List<SourceItem> getSrcs(Build.Rule rule, boolean isGenerated) {
+        String srcType = isGenerated ? "generated_srcs" : "srcs";
+        return rule.getAttributeList()
+                .stream().filter(attribute -> attribute.getName().equals(srcType))
+                .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
+                .map(dep -> Uri.fromFileLabel(dep, getWorkspaceRoot()))
+                .map(uri -> new SourceItem(uri.toString(), SourceItemKind.FILE, isGenerated))
+                .collect(Collectors.toList());
     }
 
     private Optional<ScalaBuildTarget> getScalaBuildTarget() {
@@ -277,48 +302,26 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
 
     @Override
     public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-        // TODO: Use proto output of query, rather than per-target queries
-        return executeCommand(() -> Either.forRight(new SourcesResult(
-                sourcesParams.getTargets().stream()
-                        .map(target -> {
-                            SourcesItem item = new SourcesItem(target, getSourceItems(target));
-                            List<String> list = Lists.newArrayList(Uri.fromAbsolutePath(getSourcesRoot(target.getUri())).toString());
-                            item.setRoots(list);
+        return executeCommand(() -> {
+            try {
+                Build.QueryResult queryResult = Build.QueryResult.parseFrom(runBazelBytes("query", "--output=proto",
+                        "(" + sourcesParams.getTargets().stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")"));
+
+                List<SourcesItem> sources = queryResult.getTargetList().stream()
+                        .map(Build.Target::getRule)
+                        .map(rule -> {
+                            List<SourceItem> items = this.getSourceItems(rule);
+                            List<String> roots = Lists.newArrayList(Uri.fromAbsolutePath(getSourcesRoot(rule.getName())).toString());
+                            SourcesItem item = new SourcesItem(new BuildTargetIdentifier(rule.getName()), items);
+                            item.setRoots(roots);
                             return item;
                         })
-                        .collect(Collectors.toList()))));
-    }
-
-    private List<SourceItem> getSourceItems(BuildTargetIdentifier label) {
-        // TODO: Use proto output of query, rather than two queries
-        String workspaceRoot = getWorkspaceRoot();
-
-        List<SourceItem> sources =
-                runBazelLines(
-                        "query",
-                        "--nohost_deps",
-                        "--noimplicit_deps",
-                        "kind(\"source file\", deps(" + label.getUri() + ", 1))")
-                        .stream()
-                        .map(fileLabel -> Uri.fromFileLabel(fileLabel, workspaceRoot).toString())
-                        .map(uri -> new SourceItem(uri, SourceItemKind.FILE, false))
                         .collect(Collectors.toList());
-
-        sources.addAll(
-                runBazelLines(
-                        "query",
-                        "--nohost_deps",
-                        "--noimplicit_deps",
-                        "kind(\"generated file\", deps(" + label.getUri() + ", 1))")
-                        .stream()
-                        .map(fileLabel -> Uri.fromFileLabel(fileLabel, workspaceRoot).toString())
-                        .map(uri ->
-                                new SourceItem(uri, SourceItemKind.FILE, true)
-                        ).collect(Collectors.toList()));
-
-        targetsToSources.put(label, sources);
-
-        return sources;
+                return Either.forRight(new SourcesResult(sources));
+            } catch (InvalidProtocolBufferException e) {
+                return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+            }
+        });
     }
 
     private String getSourcesRoot(String uri) {
@@ -347,16 +350,24 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         return executeCommand(() -> {
             String fileUri = inverseSourcesParams.getTextDocument().getUri();
             String workspaceRoot = getWorkspaceRoot();
-            String prefix = Uri.fromWorkspacePath(getWorkspaceRoot(), "").toString();
+            String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
             if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
                 throw new RuntimeException(
-                        "Could not resolve " + fileUri + " within workspace " + workspaceRoot);
+                        "Could not resolve " + fileUri + " within workspace " + prefix);
             }
-            List<String> targets =
-                    runBazelLines(
-                            "query", "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
-            return Either.forRight(new InverseSourcesResult(
-                    targets.stream().map(BuildTargetIdentifier::new).collect(Collectors.toList())));
+            try {
+                Build.QueryResult result = Build.QueryResult.parseFrom(
+                        runBazelBytes("query", "--output=proto", "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))"));
+                List<BuildTargetIdentifier> targets = result.getTargetList().stream()
+                        .map(Build.Target::getRule)
+                        .map(Build.Rule::getName)
+                        .map(BuildTargetIdentifier::new)
+                        .collect(Collectors.toList());
+
+                return Either.forRight(new InverseSourcesResult(targets));
+            } catch (InvalidProtocolBufferException e) {
+                return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+            }
         });
     }
 
@@ -431,13 +442,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         return executeCommand(() -> {
             try {
                 Build.QueryResult query = Build.QueryResult.parseFrom(
-                        runBazelBytes("query", "--output=proto",
-                                "(" + resourcesParams.getTargets().stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")"
-                        ));
+                        runBazelBytes("query", "--output=proto", "//..."));
                 ResourcesResult resourcesResult =
                         new ResourcesResult(
                                 query.getTargetList()
                                         .stream().map(Build.Target::getRule)
+                                        .filter(rule -> resourcesParams.getTargets().stream().anyMatch(target -> target.getUri().equals(rule.getName())))
                                         .filter(rule -> rule.getAttributeList().stream()
                                                 .anyMatch(attribute ->
                                                         attribute.getName().equals("resources") && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified())

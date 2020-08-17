@@ -24,9 +24,8 @@ public class BazelBspServerTest {
     private final BuildTargetIdentifier id1 = new BuildTargetIdentifier("//example:example");
     private final BuildTargetIdentifier id2 = new BuildTargetIdentifier("//dep:dep");
     private final BuildTargetIdentifier id3 = new BuildTargetIdentifier("//dep/deeper:deeper");
-    private final BuildTargetIdentifier resources = new BuildTargetIdentifier("//example:resources");
     private final WorkspaceBuildTargetsResult expectedBuildTargets = new WorkspaceBuildTargetsResult(Lists.newArrayList(
-            new BuildTarget(id1, Lists.newArrayList(), Lists.newArrayList("scala"), Lists.newArrayList(resources, id2), capabilities),
+            new BuildTarget(id1, Lists.newArrayList(), Lists.newArrayList("scala"), Lists.newArrayList(id2), capabilities),
             new BuildTarget(id2, Lists.newArrayList(), Lists.newArrayList("java", "scala"), Lists.newArrayList(id3), capabilities)
     ));
     private final List<String> dependencies = Lists.newArrayList(
@@ -54,6 +53,8 @@ public class BazelBspServerTest {
             new ResourcesItem(id1, Lists.newArrayList("sample-repo/example/file.txt", "sample-repo/example/file.txt"))
     ));
 
+    private final InverseSourcesResult expectedInverseSources = new InverseSourcesResult(Lists.newArrayList(id2));
+
     public BazelBspServerTest(String workspace) {
         this.workspace = workspace;
         this.client = TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(2));
@@ -64,6 +65,7 @@ public class BazelBspServerTest {
                 () -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
                 () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
                 () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
+                () -> client.testInverseSourcesResults(new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"), expectedInverseSources),
                 () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
                 client::testTargetsRunUnsuccessfully,
                 client::testTargetsTestUnsuccessfully,
