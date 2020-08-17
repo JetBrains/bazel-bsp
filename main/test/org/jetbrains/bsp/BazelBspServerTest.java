@@ -50,7 +50,7 @@ public class BazelBspServerTest {
     ));
 
     private final ResourcesResult expectedResources = new ResourcesResult(Lists.newArrayList(
-            new ResourcesItem(id1, Lists.newArrayList("sample-repo/example/file.txt", "sample-repo/example/file.txt"))
+            new ResourcesItem(id1, Lists.newArrayList("sample-repo/example/file.txt", "sample-repo/example/file2.txt"))
     ));
 
     private final InverseSourcesResult expectedInverseSources = new InverseSourcesResult(Lists.newArrayList(id2));

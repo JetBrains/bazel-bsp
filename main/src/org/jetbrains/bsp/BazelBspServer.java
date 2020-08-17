@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -443,6 +444,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             try {
                 Build.QueryResult query = Build.QueryResult.parseFrom(
                         runBazelBytes("query", "--output=proto", "//..."));
+                System.out.println("Resources query result " + query);
                 ResourcesResult resourcesResult =
                         new ResourcesResult(
                                 query.getTargetList()
@@ -473,9 +475,35 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         return rule.getAttributeList().stream()
                 .filter(attribute -> attribute.getName().equals("resources") && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified())
                 .flatMap(
-                        attribute -> attribute.getStringListValueList().stream())
-                .flatMap(label -> queryResult.getTargetList().stream().filter((target) -> target.hasRule() && target.getRule().getName().equals(label)))
-                .flatMap(resourceRule -> resourceRule.getRule().getAttributeList().stream().filter((attribute) -> attribute.getName().equals("srcs")))
+                        attribute -> {
+                            List<Build.Target> targetsRule = attribute.getStringListValueList().stream()
+                                    .map(label -> isPackage(queryResult, label))
+                                    .filter(targets -> !targets.isEmpty())
+                                    .flatMap(Collection::stream)
+                                    .collect(Collectors.toList());
+                            List<String> targetsResources = getResourcesOutOfRule(targetsRule);
+
+                            List<String> resources = attribute.getStringListValueList().stream()
+                                    .filter(label -> isPackage(queryResult, label).isEmpty())
+                                    .map(label -> Uri.fromFileLabel(label, getWorkspaceRoot()).toString())
+                                    .collect(Collectors.toList());
+
+                            return Stream.concat(targetsResources.stream(), resources.stream());
+                        }
+                )
+                .collect(Collectors.toList());
+    }
+
+    private List<? extends Build.Target> isPackage(Build.QueryResult queryResult, String label) {
+        return queryResult.getTargetList().stream()
+                .filter(target -> target.hasRule() && target.getRule().getName().equals(label))
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getResourcesOutOfRule(List<Build.Target> rules) {
+        return rules.stream()
+                .flatMap(resourceRule -> resourceRule.getRule().getAttributeList().stream())
+                .filter((srcAttribute) -> srcAttribute.getName().equals("srcs"))
                 .flatMap(resourceAttribute -> resourceAttribute.getStringListValueList().stream())
                 .map(src -> Uri.fromFileLabel(src, getWorkspaceRoot()).toString())
                 .collect(Collectors.toList());
