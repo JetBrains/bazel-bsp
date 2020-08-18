@@ -15,11 +15,11 @@ run_test() {
   RESPONSE_CODE=$?
   DURATION=$SECONDS
   if [ $RESPONSE_CODE -eq 0 ]; then
-    echo "${GREEN} Test \"$TEST_ARG\" successful ($DURATION sec) $NC"
+    echo -e "${GREEN} Test \"$TEST_ARG\" successful ($DURATION sec) $NC"
   else
     printf "\nLog:\n"
     echo "$RES"
-    echo "${RED} Test \"$TEST_ARG\" failed $NC ($DURATION sec) $NC"
+    echo -e "${RED} Test \"$TEST_ARG\" failed $NC ($DURATION sec) $NC"
     exit $RESPONSE_CODE
   fi
   set -e
