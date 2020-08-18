@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,6 +42,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     public BepServer bepServer = null;
     private String execRoot = null;
     private String workspaceRoot = null;
+    private String binRoot = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
     private boolean isScalaProject = false;
@@ -172,8 +172,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                 .flatMap(srcDeps -> srcDeps.getStringListValueList().stream())
                 .map(BuildTargetIdentifier::new)
                 .collect(Collectors.toList());
+        BuildTargetIdentifier label = new BuildTargetIdentifier(name);
 
-        List<SourceItem> sources = getSourceItems(rule);
+        List<SourceItem> sources = getSourceItems(rule, label);
 
         SortedSet<String> extensions = new TreeSet<>();
 
@@ -188,7 +189,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         //TODO: Remove this whenever java binaries are natively supported
         extensions.add("scala");
 
-        BuildTargetIdentifier label = new BuildTargetIdentifier(name);
+
         BuildTarget target =
                 new BuildTarget(
                         label,
@@ -208,10 +209,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         return target;
     }
 
-    private List<SourceItem> getSourceItems(Build.Rule rule) {
+    private List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
         List<SourceItem> srcs = getSrcs(rule, false);
-        List<SourceItem> generatedSrcs = getSrcs(rule, true);
-        return Stream.concat(srcs.stream(), generatedSrcs.stream()).collect(Collectors.toList());
+        srcs.addAll(getSrcs(rule, true));
+        targetsToSources.put(label, srcs);
+        return srcs;
     }
 
     private List<SourceItem> getSrcs(Build.Rule rule, boolean isGenerated) {
@@ -311,9 +313,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                 List<SourcesItem> sources = queryResult.getTargetList().stream()
                         .map(Build.Target::getRule)
                         .map(rule -> {
-                            List<SourceItem> items = this.getSourceItems(rule);
+                            BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
+                            List<SourceItem> items = this.getSourceItems(rule, label);
                             List<String> roots = Lists.newArrayList(Uri.fromAbsolutePath(getSourcesRoot(rule.getName())).toString());
-                            SourcesItem item = new SourcesItem(new BuildTargetIdentifier(rule.getName()), items);
+                            SourcesItem item = new SourcesItem(label, items);
                             item.setRoots(roots);
                             return item;
                         })
@@ -336,6 +339,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             workspaceRoot = Iterables.getOnlyElement(runBazelLines("info", "workspace"));
         }
         return workspaceRoot;
+    }
+
+    public synchronized String getBinRoot() {
+        if (binRoot == null) {
+            binRoot = Iterables.getOnlyElement(runBazelLines("info", "bazel-bin"));
+        }
+        return binRoot;
     }
 
     public synchronized String getExecRoot() {
@@ -528,6 +538,25 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                             .collect(Collectors.toList()));
             args.addAll(extraFlags);
             int exitCode = -1;
+
+            try {
+                Build.QueryResult queryResult = Build.QueryResult.parseFrom(
+                        runBazelBytes("query", "--output=proto",
+                                "(" + targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")")
+                );
+                final Map<String, String> diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
+
+                for (Build.Target target : queryResult.getTargetList()) {
+                    target.getRule().getRuleOutputList()
+                            .stream()
+                            .filter(output -> output.contains("diagnostics"))
+                            .forEach(output -> diagnosticsProtosLocations.put(target.getRule().getName(), convertOutputToPath(output)));
+                }
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+
+
             try {
                 Process process = new ProcessBuilder(args).start();
                 exitCode = parseProcess(process);
@@ -536,6 +565,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             }
             return Either.forRight(new CompileResult(BepServer.convertExitCode(exitCode)));
         });
+    }
+
+    private String convertOutputToPath(String output) {
+        String pathToFile = output.replaceAll("(//|:)", "/");
+        return getBinRoot() + pathToFile;
     }
 
     @Override

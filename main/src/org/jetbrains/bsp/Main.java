@@ -66,7 +66,7 @@ public class Main {
                 .setExecutorService(executor)
                 .create();
         bspServer.setBuildClient(launcher.getRemoteProxy());
-        org.jetbrains.bsp.BepServer bepServer = new org.jetbrains.bsp.BepServer(bspServer, launcher.getRemoteProxy());
+        BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
         bspServer.bepServer = bepServer;
         Server server =
             ServerBuilder.forPort(0)
