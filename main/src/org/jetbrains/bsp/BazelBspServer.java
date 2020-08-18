@@ -520,9 +520,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                     bazel,
                     "build",
                     BES_BACKEND,
-                    PUBLISH_ALL_ACTIONS,
-                    "--java_toolchain=@local_java_tools//:toolchain", //TODO: Remove this when java_tools is released
-                    "--host_java_toolchain=@local_java_tools//:toolchain"
+                    PUBLISH_ALL_ACTIONS
             );
             args.addAll(
                     targets.stream()

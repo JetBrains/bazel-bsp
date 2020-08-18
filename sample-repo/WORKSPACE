@@ -83,8 +83,3 @@ maven_install(
     ],
     fetch_sources = True,
 )
-
-http_archive(
-    name = "local_java_tools",
-    urls = ["file:///Users/andre.rocha/Projects/bazel-rebase/bazel/bazel-bin/src/java_tools_java11.zip"]
-)
