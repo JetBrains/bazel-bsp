@@ -153,7 +153,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         // TODO: Parameterise this to allow importing a subset of //...
         return executeCommand(() -> {
             try {
-                Build.QueryResult queryResult = Build.QueryResult.parseFrom(runBazelBytes("query", "--output=proto", "//..."));
+                Build.QueryResult queryResult = Build.QueryResult.parseFrom(
+                        runBazelBytes("query", "--output=proto", "kind(binary, //...) union kind(library, //...) union kind(test, //...)"));
                 List<BuildTarget> targets = queryResult.getTargetList().stream()
                         .map(Build.Target::getRule)
                         .filter(rule -> !rule.getRuleClass().equals("filegroup"))
@@ -602,11 +603,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
             ScalacOptionsParams scalacOptionsParams) {
         return executeCommand(() -> {
-            // TODO: Parse nested source roots out properly
-            // TODO: Generate SemanticDBs somehow
             ArrayList<String> options = Lists.newArrayList();
 
-            // TODO: Support non-scala deps
             List<String> targets =
                     scalacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
@@ -618,7 +616,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                                         "aquery",
                                         "--output=proto",
                                         "mnemonic(" + (isScalaProject ? "Scalac" : "Javac") + ", " + Joiner.on(" + ").join(targets) + ")"));
-                org.jetbrains.bsp.ActionGraphParser parser = new org.jetbrains.bsp.ActionGraphParser(actionGraph);
+                ActionGraphParser parser = new ActionGraphParser(actionGraph);
                 ScalacOptionsResult result = new ScalacOptionsResult(
                         targets.stream()
                                 .flatMap(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))
