@@ -203,14 +203,26 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
         if (extensions.contains("scala")) {
             getScalaBuildTarget().ifPresent((buildTarget) -> {
                 target.setDataKind(BuildTargetDataKind.SCALA);
-                target.setTags(Lists.newArrayList("library"));
+                target.setTags(Lists.newArrayList(getRuleType(rule)));
                 target.setData(buildTarget);
             });
-        } else if(extensions.contains("java")){
+        } else if (extensions.contains("java")) {
             target.setDataKind(BuildTargetDataKind.JVM);
-            target.setData(new Object());
+            target.setTags(Lists.newArrayList(getRuleType(rule)));
+            target.setData(getJVMBuildTarget());
         }
         return target;
+    }
+
+    private String getRuleType(Build.Rule rule) {
+        String ruleClass = rule.getRuleClass();
+        if(ruleClass.contains("library"))
+            return BuildTargetTag.LIBRARY;
+        if(ruleClass.contains("binary"))
+            return BuildTargetTag.APPLICATION;
+        if(ruleClass.contains("test"))
+            return BuildTargetTag.TEST;
+        return BuildTargetTag.NO_IDE;
     }
 
     private List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
@@ -249,8 +261,18 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             String scalaVersion = scalaVersions.get(0).substring(scalaVersions.get(0).indexOf("scala-library-") + 14, scalaVersions.get(0).indexOf(".jar"));
             scalacClasspath = new ScalaBuildTarget("org.scala-lang",
                     scalaVersion, scalaVersion.substring(0, scalaVersion.lastIndexOf(".")), ScalaPlatform.JVM, classpath);
+            scalacClasspath.setJvmBuildTarget(getJVMBuildTarget());
         }
         return Optional.of(scalacClasspath);
+    }
+
+    private JvmBuildTarget getJVMBuildTarget() {
+        Uri javaHome = Uri.fromAbsolutePath(System.getProperty("java.home"));
+        String javaVersion = System.getProperty("java.version");
+        return new JvmBuildTarget(
+                javaHome.toString(),
+                javaVersion
+        );
     }
 
     private List<String> runBazelLines(String... args) {

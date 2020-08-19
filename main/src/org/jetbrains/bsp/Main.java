@@ -106,7 +106,7 @@ public class Main {
             argv,
             org.jetbrains.bsp.Constants.VERSION,
             Constants.BSP_VERSION,
-            Lists.newArrayList("scala"));
+            Lists.newArrayList("scala", "java"));
     Path bspDir = path == null ? Paths.get(".bsp") : path.resolve(".bsp");
     Files.createDirectories(bspDir);
     Files.write(
