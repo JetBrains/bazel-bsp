@@ -207,7 +207,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                 target.setData(buildTarget);
             });
         } else if(extensions.contains("java")){
-            target.setData(BuildTargetDataKind.JVM);
+            target.setDataKind(BuildTargetDataKind.JVM);
             target.setData(new Object());
         }
         return target;
