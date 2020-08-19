@@ -2,25 +2,30 @@ package org.jetbrains.bsp;
 
 import com.google.common.base.Splitter;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 
 public class Uri implements Comparable<Uri> {
-    private final String uri;
+    private final URI uri;
+
+    private static final String ENC = StandardCharsets.UTF_8.toString();
 
     private Uri(String uri) {
+        this.uri = URI.create(uri);
+    }
+
+    private Uri(URI uri) {
         this.uri = uri;
     }
 
     public static Uri fromFileUri(String uri) {
-        String prefix = "file:///";
-        if (!uri.startsWith(prefix)) {
-            throw new IllegalArgumentException(String.format("%s didn't start with %s", uri, prefix));
-        }
         return new Uri(uri);
     }
+
     public static Uri fromAbsolutePath(String path) {
-        return new Uri("file://" + path);
+        return new Uri(Paths.get(path).toUri());
     }
 
     public static Uri fromExecPath(String execPath, String execRoot) {
@@ -28,17 +33,20 @@ public class Uri implements Comparable<Uri> {
         if (!execPath.startsWith(prefix)) {
             throw new IllegalArgumentException(String.format("%s didn't start with %s", execPath, prefix));
         }
-        return new Uri(String.format("file://%s/%s", execRoot, execPath.substring(prefix.length())));
+        String path = String.format("/%s/%s", execRoot, execPath.substring(prefix.length()));
+        return fromAbsolutePath(path);
     }
 
     public static Uri fromFileLabel(String fileLabel, String workspaceRoot) {
         List<String> parts = divideFileLabel(fileLabel);
-        return new Uri(String.format("file://%s/%s/%s", workspaceRoot, parts.get(0), parts.get(1)));
+        String path = String.format("/%s/%s/%s", workspaceRoot, parts.get(0), parts.get(1));
+        return fromAbsolutePath(path);
     }
 
     public static Uri packageDirFromLabel(String fileLabel, String workspaceRoot) {
         List<String> parts = divideFileLabel(fileLabel);
-        return new Uri(String.format("file://%s/%s", workspaceRoot, parts.get(0)));
+        String path = String.format("/%s/%s", workspaceRoot, parts.get(0));
+        return fromAbsolutePath(path);
     }
 
     private static List<String> divideFileLabel(String fileLabel) {
@@ -55,7 +63,8 @@ public class Uri implements Comparable<Uri> {
 
     public static Uri fromWorkspacePath(String path, String workspaceRoot) {
         System.out.println("From workspace path: " + path);
-        return new Uri(String.format("file://%s/%s", workspaceRoot, path));
+        String fullPath = String.format("/%s/%s", workspaceRoot, path);
+        return fromAbsolutePath(fullPath);
     }
 
     public static Uri fromExecOrWorkspacePath(String path, String execRoot, String workspaceRoot) {
@@ -86,7 +95,7 @@ public class Uri implements Comparable<Uri> {
 
     @Override
     public String toString() {
-        return Paths.get(uri).toUri().toString();
+        return uri.toString();
     }
 
     @Override
