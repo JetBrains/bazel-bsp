@@ -198,10 +198,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         target.setDisplayName(label.getUri());
         if (extensions.contains("scala")) {
             getScalaBuildTarget().ifPresent((buildTarget) -> {
-                target.setDataKind("scala");
+                target.setDataKind(BuildTargetDataKind.SCALA);
                 target.setTags(Lists.newArrayList("library"));
                 target.setData(buildTarget);
             });
+        } else if(extensions.contains("java")){
+            target.setData(BuildTargetDataKind.JVM);
+            target.setData(new Object());
         }
         return target;
     }
