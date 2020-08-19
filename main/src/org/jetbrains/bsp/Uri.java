@@ -2,6 +2,7 @@ package org.jetbrains.bsp;
 
 import com.google.common.base.Splitter;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Uri implements Comparable<Uri> {
@@ -85,7 +86,7 @@ public class Uri implements Comparable<Uri> {
 
     @Override
     public String toString() {
-        return uri;
+        return Paths.get(uri).toUri().toString();
     }
 
     @Override
