@@ -1,0 +1,2 @@
+build --java_toolchain=@bazel_tools//tools/jdk:toolchain_java8
+build --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_java8
