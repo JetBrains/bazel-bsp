@@ -79,7 +79,7 @@ public class BazelBspServerTest {
         boolean failed = false;
         for (Future<?> future : futures) {
             try {
-                future.get(6, TimeUnit.MINUTES);
+                future.get(18, TimeUnit.MINUTES);
             } catch (InterruptedException | TimeoutException e) {
                 System.err.println("Something wrong happened while running the test");
                 failed = true;
