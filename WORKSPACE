@@ -131,8 +131,8 @@ http_archive(
 
 git_repository(
     name = "graknlabs_bazel_distribution",
-    remote = "https://github.com/graknlabs/bazel-distribution",
-    commit = "e181add439dc1cfb7b1c27db771ec741d5dd43e6",
+    remote = "https://github.com/andrefmrocha/bazel-distribution",
+    commit = "f7f9381169092960d11b842c862fb6dc6e15567d",
 )
 
 local_repository(
