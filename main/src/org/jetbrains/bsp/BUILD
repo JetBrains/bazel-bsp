@@ -1,4 +1,4 @@
-load("@graknlabs_bazel_distribution//maven/templates:rules.bzl", "assemble_maven", "deploy_maven")
+load("@graknlabs_bazel_distribution//maven:rules.bzl", "assemble_maven", "deploy_maven")
 
 java_binary(
     name = "bsp",
@@ -42,5 +42,6 @@ assemble_maven(
 deploy_maven(
     name = "deploy-maven",
     target = ":assemble-maven",
-    deployment_properties = "//central-sync:deployment.properties"
+    snapshot = "https://oss.sonatype.org/content/repositories/snapshots/",
+    release = "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
 )
