@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class BazelBspServer implements BuildServer, ScalaBuildServer {
+public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 
     private final String bazel;
     private Path home;
@@ -194,16 +194,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
             }
         }
 
-        this.extensions.addAll(extensions);
-        List<String> languageIds = new ArrayList<>(extensions);
-        //TODO: Remove this whenever java binaries are natively supported
-        languageIds.add("scala");
 
+        this.extensions.addAll(extensions);
         BuildTarget target =
                 new BuildTarget(
                         label,
                         new ArrayList<>(),
-                        languageIds,
+                        new ArrayList<>(extensions),
                         deps,
                         new BuildTargetCapabilities(true, false, false));
         target.setBaseDirectory(Uri.packageDirFromLabel(label.getUri(), getWorkspaceRoot()).toString());
@@ -215,9 +212,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                 target.setData(buildTarget);
             });
         } else if (extensions.contains("java")) {
-            target.setDataKind(BuildTargetDataKind.SCALA);
+            target.setDataKind(BuildTargetDataKind.JVM);
             target.setTags(Lists.newArrayList(getRuleType(rule)));
-//            target.setData(getJVMBuildTarget());
+            target.setData(getJVMBuildTarget());
         }
         return target;
     }
@@ -698,25 +695,77 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
                     scalacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
                             .collect(Collectors.toList());
-            try {
-                String targetsUnion = Joiner.on(" + ").join(targets);
-                AnalysisProtos.ActionGraphContainer actionGraph =
-                        AnalysisProtos.ActionGraphContainer.parseFrom(
-                                runBazelStream(
-                                        "aquery",
-                                        "--output=proto",
-                                        getMnemonics(targetsUnion)));
-                ActionGraphParser parser = new ActionGraphParser(actionGraph);
-                ScalacOptionsResult result = new ScalacOptionsResult(
-                        targets.stream()
-                                .flatMap(target -> collectScalacOptionsResult(parser, options, getExecRoot(), target))
-                                .collect(Collectors.toList()));
-                System.out.println("Scalac options result" + result);
-                return Either.forRight(result);
-            } catch (IOException e) {
-                return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
-            }
+            Either<ResponseError, ActionGraphParser> either = parseActionGraph(targets, "Scalac");
+            if (either.isLeft())
+                return Either.forLeft(either.getLeft());
+
+            ScalacOptionsResult result = new ScalacOptionsResult(
+                    targets.stream()
+                            .flatMap(target ->
+                                    collectScalacOptionsResult(
+                                            either.getRight(),
+                                            options,
+                                            either.getRight().getInputsAsUri(target, ".jar", getExecRoot()),
+                                            target))
+                            .collect(Collectors.toList()));
+            return Either.forRight(result);
         });
+    }
+
+
+    @Override
+    public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(JavacOptionsParams javacOptionsParams) {
+        return executeCommand(() -> {
+            ArrayList<String> options = Lists.newArrayList();
+
+            List<String> targets =
+                    javacOptionsParams.getTargets().stream()
+                            .map(BuildTargetIdentifier::getUri)
+                            .collect(Collectors.toList());
+            Either<ResponseError, ActionGraphParser> either = parseActionGraph(targets, "Javac");
+            if (either.isLeft())
+                return Either.forLeft(either.getLeft());
+
+            JavacOptionsResult result = new JavacOptionsResult(
+                    targets.stream()
+                            .flatMap(target ->
+                                    collectJavacOptionsResult(
+                                            either.getRight(),
+                                            options,
+                                            either.getRight().getInputsAsUri(target, ".jar", getExecRoot()),
+                                            target))
+                            .collect(Collectors.toList()));
+            return Either.forRight(result);
+        });
+    }
+
+    private Stream<JavacOptionsItem> collectJavacOptionsResult(
+            ActionGraphParser actionGraphParser,
+            ArrayList<String> options,
+            List<String> inputs,
+            String target) {
+        return actionGraphParser
+                .getOutputs(target, Lists.newArrayList(".jar", ".js"))
+                .stream().map(output ->
+                        new JavacOptionsItem(
+                                new BuildTargetIdentifier(target),
+                                options,
+                                inputs,
+                                Uri.fromExecPath("exec-root://" + output, execRoot).toString())
+                );
+    }
+
+    private Either<ResponseError, ActionGraphParser> parseActionGraph(List<String> targets, String mnemonic) {
+        try {
+            AnalysisProtos.ActionGraphContainer actionGraph = AnalysisProtos.ActionGraphContainer.parseFrom(
+                    runBazelBytes(
+                            "aquery",
+                            "--output=proto",
+                            "mnemonic(" + mnemonic + ", " + Joiner.on(" + ").join(targets) + ")"));
+            return Either.forRight(new ActionGraphParser(actionGraph));
+        } catch (IOException e) {
+            return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+        }
     }
 
     private String getMnemonics(String targets) {
@@ -741,12 +790,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer {
     private Stream<ScalacOptionsItem> collectScalacOptionsResult(
             ActionGraphParser actionGraphParser,
             ArrayList<String> options,
-            String execRoot,
+            List<String> inputs,
             String target) {
         List<String> suffixes = Lists.newArrayList(".jar", ".js");
-        List<String> inputs = actionGraphParser.getInputs(target, suffixes).stream()
-                .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-                .collect(Collectors.toList());
+//        List<String> inputs = actionGraphParser.getInputs(target, suffixes).stream()
+//                .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
+//                .collect(Collectors.toList());
         return actionGraphParser.getOutputs(target, suffixes)
                 .stream().map(output ->
                         new ScalacOptionsItem(

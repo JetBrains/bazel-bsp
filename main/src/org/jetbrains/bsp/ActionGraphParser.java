@@ -1,5 +1,6 @@
 package org.jetbrains.bsp;
 
+import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 
 import java.util.*;
@@ -27,6 +28,12 @@ public class ActionGraphParser {
         .collect(Collectors.toCollection(TreeSet::new))
         .stream()
         .collect(Collectors.toList());
+  }
+
+  public List<String> getInputsAsUri(String target, String suffix, String execRoot) {
+    return getInputs(target, Lists.newArrayList(".jar")).stream()
+            .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
+            .collect(Collectors.toList());
   }
 
   public List<String> getOutputs(String target, List<String> suffixes) {
