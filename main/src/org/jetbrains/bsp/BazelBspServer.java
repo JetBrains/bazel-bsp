@@ -416,7 +416,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String getSourcesRoot(String uri) {
         List<String> root = KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
         System.out.println("Roots found for uri " + uri + " :" + Arrays.toString(root.toArray()));
-        return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.lastIndexOf(root.get(0)) + root.get(0).length()));
+        return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
     }
 
     public synchronized String getWorkspaceRoot() {
