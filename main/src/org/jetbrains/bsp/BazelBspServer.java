@@ -35,6 +35,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
     public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
             ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "testsrc");
+    private static final String SCALAC = "Scalac";
+    private static final String KOTLINC = "KotlinCompile";
+    private static final String JAVAC = "Javac";
 
     private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
 
@@ -47,7 +50,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String binRoot = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
-    private Set<String> extensions = new TreeSet<>();
 
     public BazelBspServer(String pathToBazel, Path home) {
         this.bazel = pathToBazel;
@@ -191,11 +193,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 extensions.add("java");
             } else if (source.getUri().endsWith(".kt")) {
                 extensions.add("kotlin");
+                extensions.add("java");
             }
         }
 
 
-        this.extensions.addAll(extensions);
         BuildTarget target =
                 new BuildTarget(
                         label,
@@ -211,7 +213,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 target.setTags(Lists.newArrayList(getRuleType(rule)));
                 target.setData(buildTarget);
             });
-        } else if (extensions.contains("java")) {
+        } else if (extensions.contains("java") || extensions.contains("kotlin")) {
             target.setDataKind(BuildTargetDataKind.JVM);
             target.setTags(Lists.newArrayList(getRuleType(rule)));
             target.setData(getJVMBuildTarget());
@@ -695,7 +697,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     scalacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
                             .collect(Collectors.toList());
-            Either<ResponseError, ActionGraphParser> either = parseActionGraph(targets, "Scalac");
+            Either<ResponseError, ActionGraphParser> either = parseActionGraph(getMnemonics(targets, Lists.newArrayList(SCALAC, JAVAC)));
             if (either.isLeft())
                 return Either.forLeft(either.getLeft());
 
@@ -722,7 +724,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     javacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
                             .collect(Collectors.toList());
-            Either<ResponseError, ActionGraphParser> either = parseActionGraph(targets, "Javac");
+
+            // TODO: Remove this when kotlin is natively supported
+            Either<ResponseError, ActionGraphParser> either =
+                    parseActionGraph(getMnemonics(targets, Lists.newArrayList(JAVAC, KOTLINC)));
             if (either.isLeft())
                 return Either.forLeft(either.getLeft());
 
@@ -755,35 +760,24 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 );
     }
 
-    private Either<ResponseError, ActionGraphParser> parseActionGraph(List<String> targets, String mnemonic) {
+    private Either<ResponseError, ActionGraphParser> parseActionGraph(String query) {
         try {
             AnalysisProtos.ActionGraphContainer actionGraph = AnalysisProtos.ActionGraphContainer.parseFrom(
                     runBazelBytes(
                             "aquery",
                             "--output=proto",
-                            "mnemonic(" + mnemonic + ", " + Joiner.on(" + ").join(targets) + ")"));
+                            query));
             return Either.forRight(new ActionGraphParser(actionGraph));
         } catch (IOException e) {
             return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
         }
     }
 
-    private String getMnemonics(String targets) {
-        return extensions.stream()
-                .map(extension -> {
-                    switch (extension) {
-                        case "scala":
-                            return "Scalac";
-                        case "java":
-                            return "Javac";
-                        case "kotlin":
-                            return "KotlinCompile";
-                        default:
-                            return null;
-                    }
-                })
+    private String getMnemonics(List<String> targets, List<String> languageIds) {
+        String targetsUnion = Joiner.on(" + ").join(targets);
+        return languageIds.stream()
                 .filter(Objects::nonNull)
-                .map(mnemonic -> "mnemonic(" + mnemonic + ", " + targets + ")")
+                .map(mnemonic -> "mnemonic(" + mnemonic + ", " + targetsUnion + ")")
                 .collect(Collectors.joining(" union "));
     }
 
