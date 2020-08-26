@@ -6,6 +6,10 @@ echo $dir
 
 test_bsp_server() {
   bazel build //main/src/org/jetbrains/bsp:bsp_deploy.jar
+  bsp_path="$(bazel info bazel-bin)/main/src/org/jetbrains/bsp/bsp_deploy.jar"
+  cd sample-repo
+  java -cp $bsp_path org.jetbrains.bsp.Main install
+  cd ..
   bazel run //main/test/org/jetbrains/bsp:bsp-test
 }
 
