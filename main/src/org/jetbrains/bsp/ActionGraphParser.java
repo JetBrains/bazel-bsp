@@ -13,7 +13,7 @@ public class ActionGraphParser {
     this.actionGraph = actionGraph;
   }
 
-  public List<String> getInputs(String target, String suffix) {
+  public List<String> getInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
         .flatMap(action -> action.getInputDepSetIdsList().stream())
         .flatMap(
@@ -23,21 +23,21 @@ public class ActionGraphParser {
               return expandDepsetToArtifacts(queue).stream();
             })
         .map(artifact -> "exec-root://" + artifact.getExecPath())
-        .filter(path -> path.endsWith(suffix))
+        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
         .collect(Collectors.toCollection(TreeSet::new))
         .stream()
         .collect(Collectors.toList());
   }
 
-  public List<String> getOutputs(String target, String suffix) {
+  public List<String> getOutputs(String target, List<String> suffixes) {
     Set<String> artifactIds =
         getActions(target).stream()
             .flatMap(action -> action.getOutputIdsList().stream())
             .collect(Collectors.toSet());
     return actionGraph.getArtifactsList().stream()
         .filter(artifact -> artifactIds.contains(artifact.getId()))
-        .map(artifact -> artifact.getExecPath())
-        .filter(path -> path.endsWith(suffix))
+        .map(AnalysisProtos.Artifact::getExecPath)
+        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
         .collect(Collectors.toList());
   }
 
@@ -45,7 +45,7 @@ public class ActionGraphParser {
     return actionGraph.getTargetsList().stream()
         .filter(target -> needle.equals(target.getLabel()))
         .findFirst()
-        .orElseThrow(() -> new NoSuchElementException("Could not find " + needle + ". Targets found: " + Arrays.toString(actionGraph.getTargetsList().toArray())))
+        .orElse(AnalysisProtos.Target.newBuilder().build())
         .getId();
   }
 

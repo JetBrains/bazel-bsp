@@ -14,14 +14,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
@@ -38,7 +32,7 @@ public class Main {
       PrintStream stdout = System.out;
       InputStream stdin = System.in;
 
-      Path home = Paths.get(".bazelbsp").toAbsolutePath();
+      Path home = getBazelBspPath();
       Files.createDirectories(home);
       Path log = home.resolve("bazelbsp.log");
       PrintStream logStream =
@@ -55,7 +49,7 @@ public class Main {
       System.setErr(logStream);
       ExecutorService executor = Executors.newCachedThreadPool();
       try {
-        org.jetbrains.bsp.BazelBspServer bspServer = new org.jetbrains.bsp.BazelBspServer(args[1]);
+        org.jetbrains.bsp.BazelBspServer bspServer = new org.jetbrains.bsp.BazelBspServer(args[1], home);
         Launcher<BuildClient> launcher =
             new Launcher.Builder()
                 .traceMessages(traceWriter)
@@ -83,11 +77,15 @@ public class Main {
       String bazel = args.length > 1 ? args[1] : findOnPath("bazel");
       Server bepServer =
           ServerBuilder.forPort(0)
-              .addService(new BepServer(new BazelBspServer(bazel), null))
+              .addService(new BepServer(new BazelBspServer(bazel, getBazelBspPath()), null))
               .build()
               .start();
       bepServer.awaitTermination();
     }
+  }
+
+  private static Path getBazelBspPath() {
+    return Paths.get(".bazelbsp").toAbsolutePath();
   }
 
   private static void handleInstall(Path path) throws IOException {
@@ -109,6 +107,18 @@ public class Main {
             Lists.newArrayList("scala", "java"));
     Path bspDir = path == null ? Paths.get(".bsp") : path.resolve(".bsp");
     Files.createDirectories(bspDir);
+    String aspectsFile = "aspects.bzl";
+    Path home = getBazelBspPath();
+    Files.copy(
+            Main.class.getResourceAsStream(aspectsFile),
+            home.resolve(aspectsFile),
+            StandardCopyOption.REPLACE_EXISTING
+    );
+    Files.newByteChannel(
+            home.resolve("BUILD"),
+            StandardOpenOption.CREATE,
+            StandardOpenOption.WRITE
+    );
     Files.write(
         bspDir.resolve("bazelbsp.json"),
         new GsonBuilder()

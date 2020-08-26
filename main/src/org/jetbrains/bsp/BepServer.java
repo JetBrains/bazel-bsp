@@ -207,7 +207,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
     private void processActionDiagnostics(BuildEventStreamProtos.BuildEvent event) throws IOException {
         BuildEventStreamProtos.ActionExecuted action = event.getAction();
-        if (!action.getType().equals("Scalac") && !action.getType().equals("Javac")) {
+        String actionType = action.getType();
+        if (!actionType.equals("Scalac") && !actionType.equals("Javac") && !actionType.equals("KotlinCompile")) {
             // Ignore file template writes and such.
             // TODO: Maybe include them as task notifications (rather than diagnostics).
             //      System.out.println("Non scala type action found: " + event);
@@ -226,6 +227,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         }
 
         if (filesToDiagnostics.isEmpty() && diagnosticsProtosLocations.containsKey(target.getUri())) {
+            System.out.println("Found diagnostics file in cache for " + target.getUri());
             getDiagnostics(filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
         }
 

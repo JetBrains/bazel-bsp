@@ -23,6 +23,7 @@ java_binary(
     main_class = "org.jetbrains.bsp.Main",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
+    resources = ["aspects.bzl"],
 )
 
 assemble_maven(
