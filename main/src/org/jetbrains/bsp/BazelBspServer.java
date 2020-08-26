@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 
     private final String bazel;
-    private Path home;
+    private final Path home;
     private String BES_BACKEND = "--bes_backend=grpc://localhost:";
     private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
     public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
@@ -624,13 +624,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             args.addAll(extraFlags);
             int exitCode = -1;
 
+            final Map<String, String> diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
             try {
                 Build.QueryResult queryResult = Build.QueryResult.parseFrom(
                         runBazelStream("query", "--output=proto",
                                 "(" + targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")")
                 );
 
-                final Map<String, String> diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
 
                 for (Build.Target target : queryResult.getTargetList()) {
                     target.getRule().getRuleOutputList()
@@ -652,6 +652,20 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             } catch (InterruptedException | IOException e) {
                 System.out.println("Failed to run bazel: " + e);
             }
+
+            for (Map.Entry<String, String> diagnostics : diagnosticsProtosLocations.entrySet()) {
+                String target = diagnostics.getKey();
+                String diagnosticsPath = diagnostics.getValue();
+                Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
+                try {
+                    BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
+                    bepServer.getDiagnostics(filesToDiagnostics, targetIdentifier, diagnosticsPath);
+                    bepServer.emitDiagnostics(filesToDiagnostics, targetIdentifier);
+                } catch (IOException e) {
+                    System.err.println("Failed to get diagnostics for " + target);
+                }
+            }
+
             return Either.forRight(new CompileResult(BepServer.convertExitCode(exitCode)));
         });
     }
@@ -707,7 +721,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                                     collectScalacOptionsResult(
                                             either.getRight(),
                                             options,
-                                            either.getRight().getInputsAsUri(target, ".jar", getExecRoot()),
+                                            either.getRight().getInputsAsUri(target, getExecRoot()),
                                             target))
                             .collect(Collectors.toList()));
             return Either.forRight(result);
@@ -737,7 +751,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                                     collectJavacOptionsResult(
                                             either.getRight(),
                                             options,
-                                            either.getRight().getInputsAsUri(target, ".jar", getExecRoot()),
+                                            either.getRight().getInputsAsUri(target, getExecRoot()),
                                             target))
                             .collect(Collectors.toList()));
             return Either.forRight(result);
@@ -817,7 +831,21 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
-        return targetsToSources.getOrDefault(target, new ArrayList<>());
+        if (targetsToSources.containsKey(target))
+            return targetsToSources.get(target);
+
+        try {
+            Build.QueryResult queryResult = Build.QueryResult.parseFrom(
+                    runBazelStream("query", "--output=proto", "kind(binary, //...) union kind(library, //...) union kind(test, //...)"));
+
+            return queryResult.getTargetList().stream()
+                    .map(Build.Target::getRule)
+                    .flatMap(rule -> this.getSourceItems(rule, target).stream())
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            System.err.println("Failed to query for sources of target " + target);
+            return new ArrayList<>();
+        }
     }
 
     public void setBuildClient(BuildClient buildClient) {

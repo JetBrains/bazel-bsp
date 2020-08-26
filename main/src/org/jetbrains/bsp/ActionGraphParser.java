@@ -30,8 +30,8 @@ public class ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  public List<String> getInputsAsUri(String target, String suffix, String execRoot) {
-    return getInputs(target, Lists.newArrayList(".jar")).stream()
+  public List<String> getInputsAsUri(String target, String execRoot) {
+    return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
             .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
             .collect(Collectors.toList());
   }

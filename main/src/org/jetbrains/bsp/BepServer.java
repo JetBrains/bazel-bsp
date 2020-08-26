@@ -218,19 +218,26 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         System.out.println("DWH: Event: " + event + "\n\n");
         Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
         BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
+        boolean hasDiagnosticsOutput = diagnosticsProtosLocations.containsKey(target.getUri());
         for (BuildEventStreamProtos.File log : action.getActionMetadataLogsList()) {
             if (!log.getName().equals("diagnostics"))
                 continue;
 
             System.out.println("Found diagnostics file in " + log.getUri());
+            if (hasDiagnosticsOutput)
+                diagnosticsProtosLocations.remove(target.getUri());
             getDiagnostics(filesToDiagnostics, target, log.getUri().substring(7));
         }
 
-        if (filesToDiagnostics.isEmpty() && diagnosticsProtosLocations.containsKey(target.getUri())) {
-            System.out.println("Found diagnostics file in cache for " + target.getUri());
+        if (filesToDiagnostics.isEmpty() && hasDiagnosticsOutput) {
             getDiagnostics(filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
+            diagnosticsProtosLocations.remove(target.getUri());
         }
 
+        emitDiagnostics(filesToDiagnostics, target);
+    }
+
+    public void emitDiagnostics(Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
         for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
             Uri sourceUri = Uri.fromFileUri(source.getUri());
             if (!filesToDiagnostics.containsKey(sourceUri)) {
@@ -251,7 +258,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         }
     }
 
-    private void getDiagnostics(Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target, String diagnosticsLocation) throws IOException {
+    public void getDiagnostics(Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target, String diagnosticsLocation) throws IOException {
         Diagnostics.TargetDiagnostics targetDiagnostics =
                 Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
         for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
