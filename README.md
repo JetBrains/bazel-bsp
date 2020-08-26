@@ -14,6 +14,7 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 | - | - | - | - | - | - | - |
 | Scala | ✅ | ✅ | ❌ | ❌ | [Toolchain Registration](docs/scala.md) | N/A |
 | Java | ✅ | ✅ | ❌ | ❌ | N/A | Compilation does not offer diagnostics |
+| Kotlin | ✅ | ✅ | ❌ | ❌ | N/A | N/A |
 
 ## Installation
 1. Please make sure to have followed the prerequisites guide before proceeding.
