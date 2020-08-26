@@ -29,6 +29,12 @@ public class ActionGraphParser {
         .collect(Collectors.toList());
   }
 
+  public List<String> getInputsAsUri(String target, String suffix, String execRoot) {
+    return getInputs(target, ".jar").stream()
+            .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
+            .collect(Collectors.toList());
+  }
+
   public List<String> getOutputs(String target, String suffix) {
     Set<String> artifactIds =
         getActions(target).stream()
