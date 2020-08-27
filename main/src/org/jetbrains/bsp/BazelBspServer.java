@@ -703,7 +703,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     scalacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
                             .collect(Collectors.toList());
-            Either<ResponseError, ActionGraphParser> either = parseActionGraph(getMnemonics(targets, Lists.newArrayList(SCALAC, JAVAC)));
+            String targetsUnion = Joiner.on(" + ").join(targets);
+            Map<String, List<String>> targetsOptions = getTargetsOptions(targetsUnion, "scalacopts");
+            Either<ResponseError, ActionGraphParser> either = parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
             if (either.isLeft())
                 return Either.forLeft(either.getLeft());
 
@@ -712,7 +714,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                             .flatMap(target ->
                                     collectScalacOptionsResult(
                                             either.getRight(),
-                                            new ArrayList<>(),
+                                            targetsOptions.getOrDefault(target, new ArrayList<>()),
                                             either.getRight().getInputsAsUri(target, getExecRoot()),
                                             target))
                             .collect(Collectors.toList()));
@@ -724,16 +726,16 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     @Override
     public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(JavacOptionsParams javacOptionsParams) {
         return executeCommand(() -> {
-            ArrayList<String> options = Lists.newArrayList();
-
             List<String> targets =
                     javacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
                             .collect(Collectors.toList());
 
+            String targetsUnion = Joiner.on(" + ").join(targets);
+            Map<String, List<String>> targetsOptions = getTargetsOptions(targetsUnion, "javacopts");
             // TODO: Remove this when kotlin is natively supported
             Either<ResponseError, ActionGraphParser> either =
-                    parseActionGraph(getMnemonics(targets, Lists.newArrayList(JAVAC, KOTLINC)));
+                    parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
             if (either.isLeft())
                 return Either.forLeft(either.getLeft());
 
@@ -742,7 +744,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                             .flatMap(target ->
                                     collectJavacOptionsResult(
                                             either.getRight(),
-                                            options,
+                                            targetsOptions.getOrDefault(target, new ArrayList<>()),
                                             either.getRight().getInputsAsUri(target, getExecRoot()),
                                             target))
                             .collect(Collectors.toList()));
@@ -750,9 +752,32 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         });
     }
 
+    private Map<String, List<String>> getTargetsOptions(String targetsUnion, String compilerOptionsName) {
+        try {
+            Build.QueryResult query = Build.QueryResult.parseFrom(
+                    runBazelStream("query", "--output=proto", "(" + targetsUnion + ")")
+            );
+
+            return query
+                    .getTargetList().stream()
+                    .map(Build.Target::getRule)
+                    .collect(
+                            Collectors.toMap(
+                                    Build.Rule::getName,
+                                    (rule) -> rule.getAttributeList().stream()
+                                            .filter(attr -> attr.getName().equals(compilerOptionsName))
+                                            .flatMap(attr -> attr.getStringListValueList().stream())
+                                            .collect(Collectors.toList())
+                            )
+                    );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Stream<JavacOptionsItem> collectJavacOptionsResult(
             ActionGraphParser actionGraphParser,
-            ArrayList<String> options,
+            List<String> options,
             List<String> inputs,
             String target) {
         return actionGraphParser
@@ -779,8 +804,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         }
     }
 
-    private String getMnemonics(List<String> targets, List<String> languageIds) {
-        String targetsUnion = Joiner.on(" + ").join(targets);
+    private String getMnemonics(String targetsUnion, List<String> languageIds) {
         return languageIds.stream()
                 .filter(Objects::nonNull)
                 .map(mnemonic -> "mnemonic(" + mnemonic + ", " + targetsUnion + ")")
@@ -789,13 +813,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private Stream<ScalacOptionsItem> collectScalacOptionsResult(
             ActionGraphParser actionGraphParser,
-            ArrayList<String> options,
+            List<String> options,
             List<String> inputs,
             String target) {
         List<String> suffixes = Lists.newArrayList(".jar", ".js");
-//        List<String> inputs = actionGraphParser.getInputs(target, suffixes).stream()
-//                .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-//                .collect(Collectors.toList());
         return actionGraphParser.getOutputs(target, suffixes)
                 .stream().map(output ->
                         new ScalacOptionsItem(

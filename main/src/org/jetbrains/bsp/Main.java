@@ -109,6 +109,7 @@ public class Main {
     Files.createDirectories(bspDir);
     String aspectsFile = "aspects.bzl";
     Path home = getBazelBspPath();
+    Files.createDirectories(home);
     Files.copy(
             Main.class.getResourceAsStream(aspectsFile),
             home.resolve(aspectsFile),
