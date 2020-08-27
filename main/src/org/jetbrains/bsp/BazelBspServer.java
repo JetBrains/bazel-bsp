@@ -50,6 +50,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String binRoot = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
+    private final List<String> fileExtensions = Lists.newArrayList(".scala", ".java", ".kt");
 
     public BazelBspServer(String pathToBazel, Path home) {
         this.bazel = pathToBazel;
@@ -160,7 +161,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         return executeCommand(() -> {
             try {
                 Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                        runBazelStream("query", "--output=proto", "kind(binary, //...) union kind(library, //...) union kind(test, //...)"));
+                        runBazelStream("query", "--output=proto", "--nohost_deps",
+                                "--noimplicit_deps", "kind(binary, //...) union kind(library, //...) union kind(test, //...)"));
                 List<BuildTarget> targets = queryResult.getTargetList().stream()
                         .map(Build.Target::getRule)
                         .filter(rule -> !rule.getRuleClass().equals("filegroup"))
@@ -174,7 +176,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private BuildTarget getBuildTarget(Build.Rule rule) {
         String name = rule.getName();
-        System.out.println("Getting targets for rule: " + name);
+        System.out.println("Getting targets for rule: " + rule);
         List<BuildTargetIdentifier> deps = rule.getAttributeList()
                 .stream().filter(attribute -> attribute.getName().equals("deps"))
                 .flatMap(srcDeps -> srcDeps.getStringListValueList().stream())
@@ -251,7 +253,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 .stream().filter(attribute -> attribute.getName().equals(srcType))
                 .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
                 .flatMap(dep -> {
-                    if (!dep.startsWith("@"))
+                    if (isSourceFile(dep))
                         return Lists.newArrayList(Uri.fromFileLabel(dep, getWorkspaceRoot())).stream();
 
                     try {
@@ -267,6 +269,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isSourceFile(String dep) {
+        return fileExtensions.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
     }
 
     private Optional<ScalaBuildTarget> getScalaBuildTarget() {
