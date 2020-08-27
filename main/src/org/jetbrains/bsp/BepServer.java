@@ -262,6 +262,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         Diagnostics.TargetDiagnostics targetDiagnostics =
                 Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
         for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
+            System.out.println("Inserting diagnostics for path: " + fileDiagnostics.getPath());
             filesToDiagnostics.put(Uri.fromExecOrWorkspacePath(fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()), convert(target, fileDiagnostics));
         }
     }

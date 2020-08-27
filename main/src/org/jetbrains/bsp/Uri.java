@@ -72,6 +72,8 @@ public class Uri implements Comparable<Uri> {
             return fromExecPath(path, execRoot);
         } else if (path.startsWith("workspace-root://")) {
             return fromWorkspacePath(path.substring("workspace-root://".length()), workspaceRoot);
+        } else if (path.contains("execroot/__main__")) {
+            return fromWorkspacePath(path.substring(execRoot.length()), workspaceRoot);
         } else {
             return fromWorkspacePath(path, workspaceRoot);
         }
