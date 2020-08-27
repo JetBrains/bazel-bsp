@@ -377,13 +377,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         return returnCode;
     }
 
-    private void logError(String errorMessage) {
+    protected void logError(String errorMessage) {
         LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
         buildClient.onBuildLogMessage(params);
         throw new RuntimeException(errorMessage);
     }
 
-    private void logMessage(String message) {
+    protected void logMessage(String message) {
         LogMessageParams params = new LogMessageParams(MessageType.LOG, message);
         buildClient.onBuildLogMessage(params);
     }
@@ -504,14 +504,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             while ((line = reader.readLine()) != null) {
                 output.add(line.trim());
             }
-
-            if (process.waitFor() != 0)
-                logError(String.join("\n", output));
-            else
-                logMessage(String.join("\n", output));
-            System.out.printf("Returning: %s%n", output);
             return output;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -705,8 +699,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
             ScalacOptionsParams scalacOptionsParams) {
         return executeCommand(() -> {
-            ArrayList<String> options = Lists.newArrayList();
-
             List<String> targets =
                     scalacOptionsParams.getTargets().stream()
                             .map(BuildTargetIdentifier::getUri)
@@ -720,7 +712,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                             .flatMap(target ->
                                     collectScalacOptionsResult(
                                             either.getRight(),
-                                            options,
+                                            new ArrayList<>(),
                                             either.getRight().getInputsAsUri(target, getExecRoot()),
                                             target))
                             .collect(Collectors.toList()));
