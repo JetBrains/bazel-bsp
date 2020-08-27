@@ -111,43 +111,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                     }
                     if (event.hasProgress()) {
                         BuildEventStreamProtos.Progress progress = event.getProgress();
-                        HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
-                        Arrays.stream(progress.getStderr().split("\n"))
-                                .filter(error -> error.contains("ERROR") && (error.contains("/" + workspace + ":") || error.contains("/" + build + ":")))
-                                .forEach(error -> {
-                                    String erroredFile = error.contains(workspace) ? workspace : build;
-                                    String[] lineLocation;
-                                    String fileLocation;
-
-                                    if (error.contains(" at /")) {
-                                        int endOfMessage = error.indexOf(" at /");
-                                        String fileInfo = error.substring(endOfMessage + 4);
-                                        int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
-                                        fileLocation = fileInfo.substring(0, urlEnd);
-                                        lineLocation = fileInfo.substring(urlEnd + 1).split(":");
-                                    } else {
-                                        int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
-                                        fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
-                                        lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
-                                    }
-                                    System.out.println("Error: " + error);
-                                    System.out.println("File location: " + fileLocation);
-                                    System.out.println("Line location: " + Arrays.toString(lineLocation));
-                                    Position position = new Position(Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
-                                    Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
-                                    diagnostic.setSeverity(DiagnosticSeverity.ERROR);
-                                    List<Diagnostic> diagnostics = fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
-                                    diagnostics.add(diagnostic);
-                                    fileDiagnostics.put(fileLocation, diagnostics);
-                                });
-
-                        fileDiagnostics.forEach((fileLocation, diagnostics) ->
-                                bspClient.onBuildPublishDiagnostics(new PublishDiagnosticsParams(
-                                        new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-                                        new BuildTargetIdentifier(""),
-                                        diagnostics,
-                                        false
-                                )));
+                        processStdErrDiagnostics(progress);
+                        String message = progress.getStderr().trim();
+                        if (!message.isEmpty())
+                            bspServer.logMessage(progress.getStderr().trim());
                     }
 
                 } catch (IOException e) {
@@ -165,6 +132,46 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 responseObserver.onCompleted();
             }
         };
+    }
+
+    private void processStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
+        HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
+        Arrays.stream(progress.getStderr().split("\n"))
+                .filter(error -> error.contains("ERROR") && (error.contains("/" + workspace + ":") || error.contains("/" + build + ":")))
+                .forEach(error -> {
+                    String erroredFile = error.contains(workspace) ? workspace : build;
+                    String[] lineLocation;
+                    String fileLocation;
+
+                    if (error.contains(" at /")) {
+                        int endOfMessage = error.indexOf(" at /");
+                        String fileInfo = error.substring(endOfMessage + 4);
+                        int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
+                        fileLocation = fileInfo.substring(0, urlEnd);
+                        lineLocation = fileInfo.substring(urlEnd + 1).split(":");
+                    } else {
+                        int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
+                        fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
+                        lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
+                    }
+                    System.out.println("Error: " + error);
+                    System.out.println("File location: " + fileLocation);
+                    System.out.println("Line location: " + Arrays.toString(lineLocation));
+                    Position position = new Position(Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
+                    Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
+                    diagnostic.setSeverity(DiagnosticSeverity.ERROR);
+                    List<Diagnostic> diagnostics = fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
+                    diagnostics.add(diagnostic);
+                    fileDiagnostics.put(fileLocation, diagnostics);
+                });
+
+        fileDiagnostics.forEach((fileLocation, diagnostics) ->
+                bspClient.onBuildPublishDiagnostics(new PublishDiagnosticsParams(
+                        new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
+                        new BuildTargetIdentifier(""),
+                        diagnostics,
+                        false
+                )));
     }
 
     public static StatusCode convertExitCode(int exitCode) {
