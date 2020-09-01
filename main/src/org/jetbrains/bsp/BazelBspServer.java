@@ -143,8 +143,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<InitializeBuildResult> buildInitialize(
             InitializeBuildParams initializeBuildParams) {
         return handleBuildInitialize(() -> {
+            final List<String> supportedLanguages = Lists.newArrayList("scala", "java", "kotlin");
             BuildServerCapabilities capabilities = new BuildServerCapabilities();
-            capabilities.setCompileProvider(new CompileProvider(Lists.newArrayList("scala", "java")));
+            capabilities.setCompileProvider(new CompileProvider(supportedLanguages));
+            capabilities.setRunProvider(new RunProvider(supportedLanguages));
+            capabilities.setTestProvider(new TestProvider(supportedLanguages));
             capabilities.setDependencySourcesProvider(true);
             capabilities.setInverseSourcesProvider(true);
             capabilities.setResourcesProvider(true);
@@ -208,7 +211,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private BuildTarget getBuildTarget(Build.Rule rule) {
         String name = rule.getName();
-        System.out.println("Getting targets for rule: " + rule);
+        System.out.println("Getting targets for rule: " + name);
         List<BuildTargetIdentifier> deps = rule.getAttributeList()
                 .stream().filter(attribute -> attribute.getName().equals("deps"))
                 .flatMap(srcDeps -> srcDeps.getStringListValueList().stream())
@@ -227,18 +230,18 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 extensions.add("java");
             } else if (source.getUri().endsWith(".kt")) {
                 extensions.add("kotlin");
-                extensions.add("java");
+                extensions.add("java"); //TODO(andrefmrocha): Remove this when kotlin is natively support
             }
         }
 
-
+        String ruleClass = rule.getRuleClass();
         BuildTarget target =
                 new BuildTarget(
                         label,
                         new ArrayList<>(),
                         new ArrayList<>(extensions),
                         deps,
-                        new BuildTargetCapabilities(true, false, false));
+                        new BuildTargetCapabilities(true, ruleClass.endsWith("_test"), ruleClass.endsWith("_binary")));
         target.setBaseDirectory(Uri.packageDirFromLabel(label.getUri(), getWorkspaceRoot()).toString());
         target.setDisplayName(label.getUri());
         if (extensions.contains("scala")) {
@@ -448,14 +451,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String getSourcesRoot(String uri) {
         Path path = Paths.get(convertOutputToPath(uri, getWorkspaceRoot()));
         String sourcesRoot = null;
-        while (sourcesRoot == null){
-            if(sourceRootPattern.matches(path))
+        while (sourcesRoot == null) {
+            if (sourceRootPattern.matches(path))
                 sourcesRoot = path.toString();
-            else if(defaultTestRootPattern.matches(path))
+            else if (defaultTestRootPattern.matches(path))
                 sourcesRoot = path.toString();
             else {
                 path = path.getParent();
-                if(path == null)
+                if (path == null)
                     sourcesRoot = getWorkspaceRoot();
             }
         }
@@ -562,7 +565,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                         parts ->
                                 parts.size() == 3
                                         && parts.get(0).equals("DEBUG:")
-                                        && parts.get(1).contains("external/bazel_bsp/aspects.bzl")
+                                        && parts.get(1).contains(".bazelbsp/aspects.bzl")
                                         && parts.get(2).endsWith(".jar"))
                 .map(parts -> "exec-root://" + parts.get(2))
                 .collect(Collectors.toList());
@@ -641,68 +644,66 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     @Override
     public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
-        return buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>());
+        return executeCommand(() -> buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
     }
 
-    private CompletableFuture<CompileResult> buildTargetsWithBep(List<BuildTargetIdentifier> targets, List<String> extraFlags) {
-        return executeCommand(() -> {
-            List<String> args = Lists.newArrayList(
-                    bazel,
-                    "build",
-                    BES_BACKEND,
-                    PUBLISH_ALL_ACTIONS
+    private Either<ResponseError, CompileResult> buildTargetsWithBep(List<BuildTargetIdentifier> targets, List<String> extraFlags) {
+        List<String> args = Lists.newArrayList(
+                bazel,
+                "build",
+                BES_BACKEND,
+                PUBLISH_ALL_ACTIONS
+        );
+        args.addAll(
+                targets.stream()
+                        .map(BuildTargetIdentifier::getUri)
+                        .collect(Collectors.toList()));
+        args.addAll(extraFlags);
+        int exitCode = -1;
+
+        final Map<String, String> diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
+        try {
+            Build.QueryResult queryResult = Build.QueryResult.parseFrom(
+                    runBazelStream("query", "--output=proto",
+                            "(" + targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")")
             );
-            args.addAll(
-                    targets.stream()
-                            .map(BuildTargetIdentifier::getUri)
-                            .collect(Collectors.toList()));
-            args.addAll(extraFlags);
-            int exitCode = -1;
 
-            final Map<String, String> diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
+
+            for (Build.Target target : queryResult.getTargetList()) {
+                target.getRule().getRuleOutputList()
+                        .stream()
+                        .filter(output -> output.contains("diagnostics"))
+                        .forEach(output -> diagnosticsProtosLocations.put(target.getRule().getName(), convertOutputToPath(output, getBinRoot())));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            getExecRoot();
+            getWorkspaceRoot();
+            getBinRoot();
+            Process process = new ProcessBuilder(args).start();
+            exitCode = parseProcess(process);
+        } catch (InterruptedException | IOException e) {
+            System.out.println("Failed to run bazel: " + e);
+        }
+
+        for (Map.Entry<String, String> diagnostics : diagnosticsProtosLocations.entrySet()) {
+            String target = diagnostics.getKey();
+            String diagnosticsPath = diagnostics.getValue();
+            Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
             try {
-                Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                        runBazelStream("query", "--output=proto",
-                                "(" + targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")")
-                );
-
-
-                for (Build.Target target : queryResult.getTargetList()) {
-                    target.getRule().getRuleOutputList()
-                            .stream()
-                            .filter(output -> output.contains("diagnostics"))
-                            .forEach(output -> diagnosticsProtosLocations.put(target.getRule().getName(), convertOutputToPath(output, getBinRoot())));
-                }
+                BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
+                bepServer.getDiagnostics(filesToDiagnostics, targetIdentifier, diagnosticsPath);
+                bepServer.emitDiagnostics(filesToDiagnostics, targetIdentifier);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Failed to get diagnostics for " + target);
             }
+        }
 
-
-            try {
-                getExecRoot();
-                getWorkspaceRoot();
-                getBinRoot();
-                Process process = new ProcessBuilder(args).start();
-                exitCode = parseProcess(process);
-            } catch (InterruptedException | IOException e) {
-                System.out.println("Failed to run bazel: " + e);
-            }
-
-            for (Map.Entry<String, String> diagnostics : diagnosticsProtosLocations.entrySet()) {
-                String target = diagnostics.getKey();
-                String diagnosticsPath = diagnostics.getValue();
-                Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
-                try {
-                    BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
-                    bepServer.getDiagnostics(filesToDiagnostics, targetIdentifier, diagnosticsPath);
-                    bepServer.emitDiagnostics(filesToDiagnostics, targetIdentifier);
-                } catch (IOException e) {
-                    System.err.println("Failed to get diagnostics for " + target);
-                }
-            }
-
-            return Either.forRight(new CompileResult(BepServer.convertExitCode(exitCode)));
-        });
+        return Either.forRight(new CompileResult(BepServer.convertExitCode(exitCode)));
     }
 
     private String convertOutputToPath(String output, String prefix) {
@@ -712,14 +713,60 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     @Override
     public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
-        System.out.printf("DWH: Got buildTargetTest: %s%n", testParams);
-        return CompletableFuture.completedFuture(new TestResult(StatusCode.ERROR));
+        return executeCommand(() -> {
+            Either<ResponseError, CompileResult> build = buildTargetsWithBep(Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
+            if (build.isLeft())
+                return Either.forLeft(build.getLeft());
+
+            CompileResult result = build.getRight();
+            if (result.getStatusCode() != StatusCode.OK)
+                return Either.forRight(new TestResult(result.getStatusCode()));
+
+            try {
+                Process process = startProcess(
+                        Lists.asList(
+                                "test",
+                                "(" +
+                                        Joiner.on("+").join(testParams.getTargets().stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList()))
+                                        + ")",
+                                testParams.getArguments().toArray(new String[0])
+                        ).toArray(new String[0])
+                );
+
+                int returnCode = parseProcess(process);
+                return Either.forRight(new TestResult(BepServer.convertExitCode(returnCode)));
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
     public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
-        System.out.printf("DWH: Got buildTargetRun: %s%n", runParams);
-        return CompletableFuture.completedFuture(new RunResult(StatusCode.ERROR));
+        return executeCommand(() -> {
+            Either<ResponseError, CompileResult> build = buildTargetsWithBep(Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
+            if (build.isLeft())
+                return Either.forLeft(build.getLeft());
+
+            CompileResult result = build.getRight();
+            if (result.getStatusCode() != StatusCode.OK)
+                return Either.forRight(new RunResult(result.getStatusCode()));
+
+            try {
+                Process process = startProcess(
+                        Lists.asList(
+                                "run",
+                                runParams.getTarget().getUri(),
+                                runParams.getArguments().toArray(new String[0])
+                        ).toArray(new String[0])
+                );
+
+                int returnCode = parseProcess(process);
+                return Either.forRight(new RunResult(BepServer.convertExitCode(returnCode)));
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -890,7 +937,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
         try {
             Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                    runBazelStream("query", "--output=proto", "kind(binary, //...) union kind(library, //...) union kind(test, //...)"));
+                    runBazelStream("query", "--output=proto", target.getUri()));
 
             return queryResult.getTargetList().stream()
                     .map(Build.Target::getRule)
