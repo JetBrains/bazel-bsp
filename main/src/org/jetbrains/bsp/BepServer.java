@@ -109,6 +109,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                     if (event.hasAction()) {
                         processActionDiagnostics(event);
                     }
+                    if (event.hasAborted()) {
+                        processAbortion(event.getAborted());
+                    }
                     if (event.hasProgress()) {
                         BuildEventStreamProtos.Progress progress = event.getProgress();
                         processStdErrDiagnostics(progress);
@@ -132,6 +135,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 responseObserver.onCompleted();
             }
         };
+    }
+
+    private void processAbortion(BuildEventStreamProtos.Aborted aborted) {
+        if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD)
+            bspServer.logError("Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
     }
 
     private void processStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {

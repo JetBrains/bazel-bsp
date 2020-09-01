@@ -50,7 +50,19 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String binRoot = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
-    private final List<String> fileExtensions = Lists.newArrayList(".scala", ".java", ".kt");
+    private final List<String> fileExtensions = Lists.newArrayList(
+    ".scala",
+            ".java",
+            ".kt",
+            ".kts",
+            ".sh",
+            ".bzl",
+            ".py",
+            ".js",
+            ".c",
+            ".h",
+            ".cpp",
+            ".hpp");
 
     public BazelBspServer(String pathToBazel, Path home) {
         this.bazel = pathToBazel;
@@ -126,9 +138,19 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             capabilities.setDependencySourcesProvider(true);
             capabilities.setInverseSourcesProvider(true);
             capabilities.setResourcesProvider(true);
+            checkBazelInstallation();
             return Either.forRight(new InitializeBuildResult(
                     Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities));
         });
+    }
+
+    private void checkBazelInstallation() {
+        try {
+            Process process = startProcess();
+            parseProcess(process);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -330,36 +352,30 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private byte[] runBazelBytes(String... args) {
         try {
-            List<String> argv = new ArrayList<>(args.length + 3);
-            argv.add(bazel);
-            argv.addAll(Arrays.asList(args));
-            if (argv.size() > 1) {
-                argv.add(2, BES_BACKEND);
-                argv.add(3, PUBLISH_ALL_ACTIONS);
-            }
-
-            System.out.printf("Running: %s%n", argv);
-            Process process = new ProcessBuilder(argv).start();
-
+            Process process = startProcess(args);
             return ByteStreams.toByteArray(process.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private Process startProcess(String... args) throws IOException {
+        List<String> argv = new ArrayList<>(args.length + 3);
+        argv.add(bazel);
+        argv.addAll(Arrays.asList(args));
+        if (argv.size() > 1) {
+            argv.add(2, BES_BACKEND);
+            argv.add(3, PUBLISH_ALL_ACTIONS);
+        }
+
+        System.out.printf("Running: %s%n", argv);
+        return new ProcessBuilder(argv).start();
+    }
+
 
     private InputStream runBazelStream(String... args) {
         try {
-            List<String> argv = new ArrayList<>(args.length + 3);
-            argv.add(bazel);
-            argv.addAll(Arrays.asList(args));
-            if (argv.size() > 1) {
-                argv.add(2, BES_BACKEND);
-                argv.add(3, PUBLISH_ALL_ACTIONS);
-            }
-
-            System.out.printf("Running: %s%n", argv);
-            Process process = new ProcessBuilder(argv).start();
+            Process process = startProcess(args);
 
             return process.getInputStream();
         } catch (IOException e) {
@@ -499,11 +515,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private List<String> runBazelStderr(String... args) {
         try {
-            List<String> argv = new ArrayList<>(args.length + 1);
-            argv.add(bazel);
-            argv.addAll(Arrays.asList(args));
-            System.out.printf("Running: %s%n", argv);
-            Process process = new ProcessBuilder(argv).start();
+            Process process = startProcess(args);
             List<String> output = new ArrayList<>();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String line;
