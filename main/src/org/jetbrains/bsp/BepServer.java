@@ -225,11 +225,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         String actionType = action.getType();
         if (!actionType.equals("Scalac") && !actionType.equals("Javac") && !actionType.equals("KotlinCompile")) {
             // Ignore file template writes and such.
-            // TODO: Maybe include them as task notifications (rather than diagnostics).
-            //      System.out.println("Non scala type action found: " + event);
+            // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
             return;
         }
-        // TODO: Handle "No file" diagnostics
         System.out.println("DWH: Event: " + event + "\n\n");
         Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
         BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
@@ -262,7 +260,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                         new ArrayList<>(),
                         true)));
             }
-            // TODO: Somehow signal that a failure with no diagnostics was a failure.
             if (bspClient != null) {
                 for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
                     for (PublishDiagnosticsParams param : values) {
@@ -286,12 +283,19 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         List<Diagnostic> diagnostics = new ArrayList<>();
         for (Diagnostics.Diagnostic diagProto : request.getDiagnosticsList()) {
             DiagnosticSeverity severity = null;
-            if (diagProto.getSeverity().equals(Diagnostics.Severity.ERROR)) {
+            Diagnostics.Severity protoSeverity = diagProto.getSeverity();
+            if (protoSeverity.equals(Diagnostics.Severity.ERROR)) {
                 severity = DiagnosticSeverity.ERROR;
-            } else if (diagProto.getSeverity().equals(Diagnostics.Severity.WARNING)) {
+            } else if (protoSeverity.equals(Diagnostics.Severity.WARNING)) {
                 severity = DiagnosticSeverity.WARNING;
+            } else if (protoSeverity.equals(Diagnostics.Severity.INFORMATION)) {
+                severity = DiagnosticSeverity.INFORMATION;
+            } else if (protoSeverity.equals(Diagnostics.Severity.HINT)) {
+                severity = DiagnosticSeverity.HINT;
+            } else if (protoSeverity.equals(Diagnostics.Severity.UNKNOWN)) {
+                severity = DiagnosticSeverity.ERROR;
             }
-            // TODO: Other severities
+
             Diagnostic diagnostic =
                     new Diagnostic(
                             new Range(

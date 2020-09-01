@@ -192,7 +192,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     @Override
     public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
-        // TODO: Parameterise this to allow importing a subset of //...
+        // TODO(illicitonion): Parameterise this to allow importing a subset of //...
         return executeCommand(() -> {
             try {
                 Build.QueryResult queryResult = Build.QueryResult.parseFrom(
@@ -556,7 +556,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
 
     private List<String> lookupTransitiveSourceJars(String target) {
-        // TODO: Use an aspect output group, rather than parsing stderr logging
+        // TODO(illicitonion): Use an aspect output group, rather than parsing stderr logging
         List<String> lines =
                 runBazelStderr("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target);
         return lines.stream()
@@ -821,7 +821,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
             String targetsUnion = Joiner.on(" + ").join(targets);
             Map<String, List<String>> targetsOptions = getTargetsOptions(targetsUnion, "javacopts");
-            // TODO: Remove this when kotlin is natively supported
+            // TODO(andrefmrocha): Remove this when kotlin is natively supported
             Either<ResponseError, ActionGraphParser> either =
                     parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
             if (either.isLeft())
@@ -919,7 +919,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
             ScalaTestClassesParams scalaTestClassesParams) {
         System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
-        // TODO: Populate
+        // TODO(illicitonion): Populate
         return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
     }
 
@@ -927,7 +927,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
             ScalaMainClassesParams scalaMainClassesParams) {
         System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
-        // TODO: Populate
+        // TODO(illicitonion): Populate
         return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
     }
 
