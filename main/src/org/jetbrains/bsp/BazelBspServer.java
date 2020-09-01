@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -51,7 +54,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
     private final List<String> fileExtensions = Lists.newArrayList(
-    ".scala",
+            ".scala",
             ".java",
             ".kt",
             ".kts",
@@ -63,6 +66,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             ".h",
             ".cpp",
             ".hpp");
+
+    private final PathMatcher sourceRootPattern = FileSystems.getDefault().getPathMatcher(
+            "glob:**/{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/{resources,scala,kotlin,java,jvm,proto,python,protobuf,py}"
+    );
+    private final PathMatcher defaultTestRootPattern = FileSystems.getDefault().getPathMatcher(
+            "glob:**/{test,tests}"
+    );
 
     public BazelBspServer(String pathToBazel, Path home) {
         this.bazel = pathToBazel;
@@ -436,6 +446,19 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     private String getSourcesRoot(String uri) {
+        Path path = Paths.get(convertOutputToPath(uri, getWorkspaceRoot()));
+        String sourcesRoot = null;
+        while (sourcesRoot == null){
+            if(sourceRootPattern.matches(path))
+                sourcesRoot = path.toString();
+            else if(defaultTestRootPattern.matches(path))
+                sourcesRoot = path.toString();
+            else {
+                path = path.getParent();
+                if(path == null)
+                    sourcesRoot = getWorkspaceRoot();
+            }
+        }
         List<String> root = KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
         System.out.println("Roots found for uri " + uri + " :" + Arrays.toString(root.toArray()));
         return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
@@ -648,7 +671,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     target.getRule().getRuleOutputList()
                             .stream()
                             .filter(output -> output.contains("diagnostics"))
-                            .forEach(output -> diagnosticsProtosLocations.put(target.getRule().getName(), convertOutputToPath(output)));
+                            .forEach(output -> diagnosticsProtosLocations.put(target.getRule().getName(), convertOutputToPath(output, getBinRoot())));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -682,9 +705,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         });
     }
 
-    private String convertOutputToPath(String output) {
+    private String convertOutputToPath(String output, String prefix) {
         String pathToFile = output.replaceAll("(//|:)", "/");
-        return getBinRoot() + pathToFile;
+        return prefix + pathToFile;
     }
 
     @Override
