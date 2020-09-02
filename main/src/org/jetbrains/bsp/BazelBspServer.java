@@ -36,8 +36,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private final Path home;
     private String BES_BACKEND = "--bes_backend=grpc://localhost:";
     private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
-    public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
-            ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "testsrc");
     private static final String SCALAC = "Scalac";
     private static final String KOTLINC = "KotlinCompile";
     private static final String JAVAC = "Javac";
@@ -449,7 +447,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     private String getSourcesRoot(String uri) {
-        Path path = Paths.get(convertOutputToPath(uri, getWorkspaceRoot()));
+        Path path = Paths.get(convertOutputToPath(uri, getWorkspaceRoot())).getParent();
         String sourcesRoot = null;
         while (sourcesRoot == null) {
             if (sourceRootPattern.matches(path))
@@ -462,9 +460,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     sourcesRoot = getWorkspaceRoot();
             }
         }
-        List<String> root = KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
-        System.out.println("Roots found for uri " + uri + " :" + Arrays.toString(root.toArray()));
-        return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
+        return sourcesRoot;
     }
 
     public synchronized String getWorkspaceRoot() {
