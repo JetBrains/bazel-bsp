@@ -1,6 +1,4 @@
-load("@graknlabs_bazel_distribution//maven:rules.bzl", "assemble_maven", "deploy_maven")
-
-java_binary(
+java_library(
     name = "bsp",
     tags = ["maven_coordinates=org.jetbrains.bsp:bazel-bsp:{pom_version}"],
     deps = [
@@ -20,29 +18,7 @@ java_binary(
         "@io_bazel//src/main/java/com/google/devtools/build/lib/buildeventstream/proto:build_event_stream_java_proto",
 	    "@io_bazel_rules_scala//src/protobuf/io/bazel/rules_scala:diagnostics_java_proto",
     ],
-    main_class = "org.jetbrains.bsp.Main",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     resources = ["aspects.bzl"],
-)
-
-assemble_maven(
-    name = "assemble-maven",
-    target = "//main/src/org/jetbrains/bsp:bsp",
-    package = "{maven_packages}",
-    project_name = "Bazel BSP",
-    project_description = "Bazel BSP - A Build Server Protocol implementation for Google's build system Bazel",
-    project_url = "https://github.com/jetbrains/bazel-bsp",
-    scm_url = "https://github.com/jetbrains/bazel-bsp.git",
-    version_file = "//central-sync:VERSION",
-    developers = {"1": ["name=Andre Rocha", "email=andre.rocha@jetbrains.com", "organization=JetBrains"],
-                  "2": ["name=Daniel Wagner-Hall", "email=dawagner@gmail.com", "organization=SeleniumHQ"],},
-    license = "mit"
-)
-
-deploy_maven(
-    name = "deploy-maven",
-    target = ":assemble-maven",
-    snapshot = "https://oss.sonatype.org/content/repositories/snapshots/",
-    release = "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
 )

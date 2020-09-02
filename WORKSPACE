@@ -3,13 +3,11 @@ workspace(name = "bazel_bsp")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # For maven:
-RULES_JVM_EXTERNAL_TAG = "3.3"
-RULES_JVM_EXTERNAL_SHA = "d85951a92c0908c80bd8551002d66cb23c3434409c814179c0ff026b53544dab"
+RULES_JVM_EXTERNAL_TAG = "ad2b8defc6faffaa595401dec94bad5716db0ab2"
 
 http_archive(
     name = "rules_jvm_external",
     strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
-    sha256 = RULES_JVM_EXTERNAL_SHA,
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
@@ -104,7 +102,6 @@ http_archive(
 )
 
 
-
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 scala_register_toolchains()
 
@@ -126,13 +123,6 @@ http_archive(
     url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % protobuf_version,
     strip_prefix = "protobuf-%s" % protobuf_version,
     sha256 = protobuf_version_sha256,
-)
-
-
-git_repository(
-    name = "graknlabs_bazel_distribution",
-    remote = "https://github.com/andrefmrocha/bazel-distribution",
-    commit = "d4a429f649c61085d7197da3a268c39d42b5a562",
 )
 
 local_repository(
