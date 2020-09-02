@@ -3,7 +3,7 @@ package org.jetbrains.bsp;
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 
     private final String bazel;
-    private final Path home;
     private String BES_BACKEND = "--bes_backend=grpc://localhost:";
     private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
     private static final String SCALAC = "Scalac";
@@ -51,7 +50,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String binRoot = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
-    private final List<String> fileExtensions = Lists.newArrayList(
+    private final List<String> FILE_EXTENSIONS = ImmutableList.of(
             ".scala",
             ".java",
             ".kt",
@@ -72,9 +71,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             "glob:**/{test,tests}"
     );
 
-    public BazelBspServer(String pathToBazel, Path home) {
+    public BazelBspServer(String pathToBazel) {
         this.bazel = pathToBazel;
-        this.home = home;
     }
 
     public void setBackendPort(int port) {
@@ -305,7 +303,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     private boolean isSourceFile(String dep) {
-        return fileExtensions.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
+        return FILE_EXTENSIONS.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
     }
 
     private Optional<ScalaBuildTarget> getScalaBuildTarget() {

@@ -49,7 +49,7 @@ public class Main {
       System.setErr(logStream);
       ExecutorService executor = Executors.newCachedThreadPool();
       try {
-        org.jetbrains.bsp.BazelBspServer bspServer = new org.jetbrains.bsp.BazelBspServer(args[1], home);
+        org.jetbrains.bsp.BazelBspServer bspServer = new org.jetbrains.bsp.BazelBspServer(args[1]);
         Launcher<BuildClient> launcher =
             new Launcher.Builder()
                 .traceMessages(traceWriter)
@@ -77,7 +77,7 @@ public class Main {
       String bazel = args.length > 1 ? args[1] : findOnPath("bazel");
       Server bepServer =
           ServerBuilder.forPort(0)
-              .addService(new BepServer(new BazelBspServer(bazel, getBazelBspPath()), null))
+              .addService(new BepServer(new BazelBspServer(bazel), null))
               .build()
               .start();
       bepServer.awaitTermination();
