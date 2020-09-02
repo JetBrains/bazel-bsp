@@ -35,9 +35,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private final String bazel;
     private String BES_BACKEND = "--bes_backend=grpc://localhost:";
     private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
-    private static final String SCALAC = "Scalac";
-    private static final String KOTLINC = "KotlinCompile";
-    private static final String JAVAC = "Javac";
+    protected static final String SCALAC = "Scalac";
+    protected static final String KOTLINC = "KotlinCompile";
+    protected static final String JAVAC = "Javac";
+    private static final List<String> SUPPORTED_LANGUAGES = ImmutableList.of("scala", "java", "kotlin");
 
     private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
 
@@ -64,10 +65,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             ".cpp",
             ".hpp");
 
-    private final PathMatcher sourceRootPattern = FileSystems.getDefault().getPathMatcher(
+    private final PathMatcher SOURCE_ROOT_PATTERN = FileSystems.getDefault().getPathMatcher(
             "glob:**/{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/{resources,scala,kotlin,java,jvm,proto,python,protobuf,py}"
     );
-    private final PathMatcher defaultTestRootPattern = FileSystems.getDefault().getPathMatcher(
+    private final PathMatcher DEFAULT_TEST_ROOT_PATTERN = FileSystems.getDefault().getPathMatcher(
             "glob:**/{test,tests}"
     );
 
@@ -139,11 +140,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<InitializeBuildResult> buildInitialize(
             InitializeBuildParams initializeBuildParams) {
         return handleBuildInitialize(() -> {
-            final List<String> supportedLanguages = Lists.newArrayList("scala", "java", "kotlin");
             BuildServerCapabilities capabilities = new BuildServerCapabilities();
-            capabilities.setCompileProvider(new CompileProvider(supportedLanguages));
-            capabilities.setRunProvider(new RunProvider(supportedLanguages));
-            capabilities.setTestProvider(new TestProvider(supportedLanguages));
+            capabilities.setCompileProvider(new CompileProvider(SUPPORTED_LANGUAGES));
+            capabilities.setRunProvider(new RunProvider(SUPPORTED_LANGUAGES));
+            capabilities.setTestProvider(new TestProvider(SUPPORTED_LANGUAGES));
             capabilities.setDependencySourcesProvider(true);
             capabilities.setInverseSourcesProvider(true);
             capabilities.setResourcesProvider(true);
@@ -226,7 +226,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 extensions.add("java");
             } else if (source.getUri().endsWith(".kt")) {
                 extensions.add("kotlin");
-                extensions.add("java"); //TODO(andrefmrocha): Remove this when kotlin is natively support
+                extensions.add("java"); //TODO(andrefmrocha): Remove this when kotlin is natively supported
             }
         }
 
@@ -448,9 +448,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         Path path = Paths.get(convertOutputToPath(uri, getWorkspaceRoot())).getParent();
         String sourcesRoot = null;
         while (sourcesRoot == null) {
-            if (sourceRootPattern.matches(path))
+            if (SOURCE_ROOT_PATTERN.matches(path))
                 sourcesRoot = path.toString();
-            else if (defaultTestRootPattern.matches(path))
+            else if (DEFAULT_TEST_ROOT_PATTERN.matches(path))
                 sourcesRoot = path.toString();
             else {
                 path = path.getParent();
