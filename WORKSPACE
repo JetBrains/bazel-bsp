@@ -3,7 +3,7 @@ workspace(name = "bazel_bsp")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # For maven:
-RULES_JVM_EXTERNAL_TAG = "ad2b8defc6faffaa595401dec94bad5716db0ab2"
+RULES_JVM_EXTERNAL_TAG = "daea21e70c4b941fd127208bf1b4c582a102c636"
 
 http_archive(
     name = "rules_jvm_external",
