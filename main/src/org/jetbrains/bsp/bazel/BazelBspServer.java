@@ -1,4 +1,4 @@
-package org.jetbrains.bsp;
+package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Joiner;
@@ -37,8 +37,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     protected static final String KOTLINC = "KotlinCompile";
     protected static final String JAVAC = "Javac";
     public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
-            ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "testsrc");
-    private static final List<String> SUPPORTED_LANGUAGES = ImmutableList.of("scala", "java", "kotlin");
+            ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
+    protected static final List<String> SUPPORTED_LANGUAGES = ImmutableList.of("scala", "java", "kotlin");
 
     private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
 
@@ -51,7 +51,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String workspaceRoot = null;
     private String binRoot = null;
     private String workspaceLabel = null;
-    private String javaHome = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
     private final List<String> FILE_EXTENSIONS = ImmutableList.of(
@@ -449,7 +448,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private String getSourcesRoot(String uri) {
         List<String> root = KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
-        return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.lastIndexOf(root.get(0)) + root.get(0).length()));
+        return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
     }
 
     public synchronized String getWorkspaceRoot() {
@@ -471,13 +470,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             execRoot = Iterables.getOnlyElement(runBazelLines("info", "execution_root"));
         }
         return execRoot;
-    }
-
-    public synchronized String getJavaHome() {
-        if (javaHome == null) {
-            javaHome = Iterables.getOnlyElement(runBazelLines("info", "java-home"));
-        }
-        return javaHome;
     }
 
     public synchronized String getWorkspaceLabel() {

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp;
+package org.jetbrains.bsp.bazel;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;

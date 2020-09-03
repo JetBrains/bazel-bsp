@@ -1,8 +1,7 @@
-package org.jetbrains.bsp;
+package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
@@ -14,6 +13,7 @@ import com.google.devtools.build.v1.PublishLifecycleEventRequest;
 import com.google.protobuf.Empty;
 import io.bazel.rules_scala.diagnostics.Diagnostics;
 import io.grpc.stub.StreamObserver;
+import org.jetbrains.bsp.bazel.BazelBspServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.*;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
-    private final org.jetbrains.bsp.BazelBspServer bspServer;
+    private final BazelBspServer bspServer;
     private final BuildClient bspClient;
     private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles = new HashMap<>();
     private final TreeSet<Uri> compilerClasspathTextProtos = new TreeSet<>();

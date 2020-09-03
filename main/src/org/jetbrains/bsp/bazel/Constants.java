@@ -1,4 +1,4 @@
-package org.jetbrains.bsp;
+package org.jetbrains.bsp.bazel;
 
 public class Constants {
   public static final String NAME = "bazelbsp";
