@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
@@ -38,6 +39,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     protected static final String SCALAC = "Scalac";
     protected static final String KOTLINC = "KotlinCompile";
     protected static final String JAVAC = "Javac";
+    public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
+            ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "testsrc");
     private static final List<String> SUPPORTED_LANGUAGES = ImmutableList.of("scala", "java", "kotlin");
 
     private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
@@ -65,13 +68,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             ".h",
             ".cpp",
             ".hpp");
-
-    private final PathMatcher SOURCE_ROOT_PATTERN = FileSystems.getDefault().getPathMatcher(
-            "glob:**/{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/{resources,scala,kotlin,java,jvm,proto,python,protobuf,py}"
-    );
-    private final PathMatcher DEFAULT_TEST_ROOT_PATTERN = FileSystems.getDefault().getPathMatcher(
-            "glob:**/{test,tests}"
-    );
 
     public BazelBspServer(String pathToBazel) {
         this.bazel = pathToBazel;
@@ -314,8 +310,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private Optional<ScalaBuildTarget> getScalaBuildTarget() {
         if (scalacClasspath == null) {
-            // Force-populate cache to avoid deadlock when looking up execRoot from BEP listener.
-            getExecRoot();
             buildTargetsWithBep(
                     Lists.newArrayList(
                             new BuildTargetIdentifier("@io_bazel_rules_scala_scala_library//:io_bazel_rules_scala_scala_library"),
@@ -452,20 +446,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     private String getSourcesRoot(String uri) {
-        Path path = Paths.get(convertOutputToPath(uri, getWorkspaceRoot())).getParent();
-        String sourcesRoot = null;
-        while (sourcesRoot == null) {
-            if (SOURCE_ROOT_PATTERN.matches(path))
-                sourcesRoot = path.toString();
-            else if (DEFAULT_TEST_ROOT_PATTERN.matches(path))
-                sourcesRoot = path.toString();
-            else {
-                path = path.getParent();
-                if (path == null)
-                    sourcesRoot = getWorkspaceRoot();
-            }
-        }
-        return sourcesRoot;
+        List<String> root = KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
+        return getWorkspaceRoot() + (root.size() == 0 ? "" : uri.substring(1, uri.lastIndexOf(root.get(0)) + root.get(0).length()));
     }
 
     public synchronized String getWorkspaceRoot() {
