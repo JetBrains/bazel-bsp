@@ -51,6 +51,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String workspaceRoot = null;
     private String binRoot = null;
     private String workspaceLabel = null;
+    private String javaHome = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
     private final List<String> FILE_EXTENSIONS = ImmutableList.of(
@@ -339,11 +340,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     private JvmBuildTarget getJVMBuildTarget() {
-        Uri javaHome = Uri.fromAbsolutePath(System.getProperty("java.home"));
-        String javaVersion = getJavaVersion();
+        //TODO(andrefmrocha): Properly determine jdk path
         return new JvmBuildTarget(
-                javaHome.toString(),
-                javaVersion
+                null,
+                getJavaVersion()
         );
     }
 
@@ -471,6 +471,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             execRoot = Iterables.getOnlyElement(runBazelLines("info", "execution_root"));
         }
         return execRoot;
+    }
+
+    public synchronized String getJavaHome() {
+        if (javaHome == null) {
+            javaHome = Iterables.getOnlyElement(runBazelLines("info", "java-home"));
+        }
+        return javaHome;
     }
 
     public synchronized String getWorkspaceLabel() {
