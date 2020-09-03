@@ -3,6 +3,7 @@ package org.jetbrains.bsp;
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.v1.BuildEvent;
@@ -34,7 +35,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     private final String workspace = "WORKSPACE";
     private final String build = "BUILD";
     private Map<String, String> diagnosticsProtosLocations = new HashMap<>();
-    private final static List<String> SUPPORTED_ACTIONS = ImmutableList.of(BazelBspServer.KOTLINC, BazelBspServer.JAVAC, BazelBspServer.SCALAC);
+    private final static Set<String> SUPPORTED_ACTIONS = ImmutableSet.of(BazelBspServer.KOTLINC, BazelBspServer.JAVAC, BazelBspServer.SCALAC);
 
     public BepServer(BazelBspServer bspServer, BuildClient bspClient) {
         this.bspServer = bspServer;
@@ -225,7 +226,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     private void processActionDiagnostics(BuildEventStreamProtos.BuildEvent event) throws IOException {
         BuildEventStreamProtos.ActionExecuted action = event.getAction();
         String actionType = action.getType();
-        if (SUPPORTED_ACTIONS.stream().noneMatch(type -> type.equals(actionType))) {
+        if (!SUPPORTED_ACTIONS.contains(actionType)) {
             // Ignore file template writes and such.
             // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
             return;

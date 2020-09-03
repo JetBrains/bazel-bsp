@@ -49,6 +49,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private String execRoot = null;
     private String workspaceRoot = null;
     private String binRoot = null;
+    private String workspaceLabel = null;
     private ScalaBuildTarget scalacClasspath = null;
     private BuildClient buildClient;
     private final List<String> FILE_EXTENSIONS = ImmutableList.of(
@@ -157,6 +158,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         try {
             Process process = startProcess();
             parseProcess(process);
+            // Force-populate cache to avoid deadlock when looking up information from BEP listener.
+            getExecRoot();
+            getWorkspaceRoot();
+            getBinRoot();
+            getWorkspaceLabel();
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -378,6 +384,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         }
 
         System.out.printf("Running: %s%n", argv);
+        System.out.println("Stack: " + Arrays.toString(Thread.currentThread().getStackTrace()));
         return new ProcessBuilder(argv).start();
     }
 
@@ -480,6 +487,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             execRoot = Iterables.getOnlyElement(runBazelLines("info", "execution_root"));
         }
         return execRoot;
+    }
+
+    public synchronized String getWorkspaceLabel() {
+        if (workspaceLabel == null) {
+            Path workspacePath = Paths.get(getExecRoot());
+            workspaceLabel = workspacePath.toFile().getName();
+        }
+        return workspaceLabel;
     }
 
     @Override
@@ -675,9 +690,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
 
         try {
-            getExecRoot();
-            getWorkspaceRoot();
-            getBinRoot();
             Process process = new ProcessBuilder(args).start();
             exitCode = parseProcess(process);
         } catch (InterruptedException | IOException e) {
@@ -928,6 +940,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
         if (targetsToSources.containsKey(target))
             return targetsToSources.get(target);
+
+        if(target.getUri().contains("@") && !target.getUri().contains("@" + getWorkspaceLabel()))
+            return ImmutableList.of();
 
         try {
             Build.QueryResult queryResult = Build.QueryResult.parseFrom(
