@@ -17,12 +17,9 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
@@ -47,6 +44,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private final CompletableFuture<Void> isInitialized = new CompletableFuture<>();
     private final CompletableFuture<Void> isFinished = new CompletableFuture<>();
+    private CompletableFuture<Void> processLock = null;
 
     public BepServer bepServer = null;
     private String execRoot = null;
@@ -159,7 +157,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             getWorkspaceRoot();
             getBinRoot();
             getWorkspaceLabel();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -193,9 +191,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         // TODO(illicitonion): Parameterise this to allow importing a subset of //...
         return executeCommand(() -> {
             try {
-                Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                        runBazelStream("query", "--output=proto", "--nohost_deps",
-                                "--noimplicit_deps", "kind(binary, //...) union kind(library, //...) union kind(test, //...)"));
+                Build.QueryResult queryResult = getQuery("query", "--output=proto", "--nohost_deps",
+                        "--noimplicit_deps", "kind(binary, //...) union kind(library, //...) union kind(test, //...)");
                 List<BuildTarget> targets = queryResult.getTargetList().stream()
                         .map(Build.Target::getRule)
                         .filter(rule -> !rule.getRuleClass().equals("filegroup"))
@@ -205,6 +202,18 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
             }
         });
+    }
+
+    private Build.QueryResult getQuery(String... args) throws IOException {
+        try {
+            Process process = startProcess(args);
+
+            Build.QueryResult queryResult = Build.QueryResult.parseFrom(process.getInputStream());
+            processLock.complete(null);
+            return queryResult;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private BuildTarget getBuildTarget(Build.Rule rule) {
@@ -290,8 +299,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                         return Lists.newArrayList(Uri.fromFileLabel(dep, getWorkspaceRoot())).stream();
 
                     try {
-                        Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                                runBazelStream("query", "--output=proto", dep));
+                        Build.QueryResult queryResult = getQuery("query", "--output=proto", dep);
                         return queryResult.getTargetList().stream()
                                 .map(Build.Target::getRule)
                                 .flatMap(queryRule -> getSrcsPaths(queryRule, srcType).stream())
@@ -362,13 +370,15 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     private byte[] runBazelBytes(String... args) {
         try {
             Process process = startProcess(args);
-            return ByteStreams.toByteArray(process.getInputStream());
-        } catch (IOException e) {
+            byte[] byteArray = ByteStreams.toByteArray(process.getInputStream());
+            processLock.complete(null);
+            return byteArray;
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Process startProcess(String... args) throws IOException {
+    private synchronized Process startProcess(String... args) throws IOException, InterruptedException, ExecutionException {
         List<String> argv = new ArrayList<>(args.length + 3);
         argv.add(bazel);
         argv.addAll(Arrays.asList(args));
@@ -377,20 +387,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             argv.add(3, PUBLISH_ALL_ACTIONS);
         }
 
+        if (processLock != null)
+            processLock.get();
         System.out.printf("Running: %s%n", argv);
-        System.out.println("Stack: " + Arrays.toString(Thread.currentThread().getStackTrace()));
+        processLock = new CompletableFuture<>();
         return new ProcessBuilder(argv).start();
-    }
-
-
-    private InputStream runBazelStream(String... args) {
-        try {
-            Process process = startProcess(args);
-
-            return process.getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private int parseProcess(Process process) throws IOException, InterruptedException {
@@ -406,6 +407,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             logError(message);
         else
             logMessage(message);
+        processLock.complete(null);
         return returnCode;
     }
 
@@ -424,8 +426,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
         return executeCommand(() -> {
             try {
-                Build.QueryResult queryResult = Build.QueryResult.parseFrom(runBazelStream("query", "--output=proto",
-                        "(" + sourcesParams.getTargets().stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")"));
+                Build.QueryResult queryResult = getQuery("query", "--output=proto",
+                        "(" + sourcesParams.getTargets().stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")");
 
                 List<SourcesItem> sources = queryResult.getTargetList().stream()
                         .map(Build.Target::getRule)
@@ -491,8 +493,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                         "Could not resolve " + fileUri + " within workspace " + prefix);
             }
             try {
-                Build.QueryResult result = Build.QueryResult.parseFrom(
-                        runBazelStream("query", "--output=proto", "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))"));
+                Build.QueryResult result = getQuery("query", "--output=proto", "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
                 List<BuildTargetIdentifier> targets = result.getTargetList().stream()
                         .map(Build.Target::getRule)
                         .map(Build.Rule::getName)
@@ -539,8 +540,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
             while ((line = reader.readLine()) != null) {
                 output.add(line.trim());
             }
+            processLock.complete(null);
             return output;
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -566,8 +568,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
         return executeCommand(() -> {
             try {
-                Build.QueryResult query = Build.QueryResult.parseFrom(
-                        runBazelStream("query", "--output=proto", "//..."));
+                Build.QueryResult query = getQuery("query", "--output=proto", "//...");
                 System.out.println("Resources query result " + query);
                 ResourcesResult resourcesResult =
                         new ResourcesResult(
@@ -654,9 +655,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
         final Map<String, String> diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
         try {
-            Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                    runBazelStream("query", "--output=proto",
-                            "(" + targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")")
+            Build.QueryResult queryResult = getQuery("query", "--output=proto",
+                    "(" + targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+")) + ")"
             );
 
 
@@ -672,6 +672,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
 
         try {
+            if(targetsToSources.isEmpty())
+                workspaceBuildTargets().wait();
+
             Process process = new ProcessBuilder(args).start();
             exitCode = parseProcess(process);
         } catch (InterruptedException | IOException e) {
@@ -723,7 +726,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
                 int returnCode = parseProcess(process);
                 return Either.forRight(new TestResult(BepServer.convertExitCode(returnCode)));
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -751,7 +754,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
                 int returnCode = parseProcess(process);
                 return Either.forRight(new RunResult(BepServer.convertExitCode(returnCode)));
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -830,9 +833,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     private Map<String, List<String>> getTargetsOptions(String targetsUnion, String compilerOptionsName) {
         try {
-            Build.QueryResult query = Build.QueryResult.parseFrom(
-                    runBazelStream("query", "--output=proto", "(" + targetsUnion + ")")
-            );
+            Build.QueryResult query = getQuery("query", "--output=proto", "(" + targetsUnion + ")");
 
             return query
                     .getTargetList().stream()
@@ -920,24 +921,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
-        if (targetsToSources.containsKey(target))
-            return targetsToSources.get(target);
-
-        if(target.getUri().contains("@") && !target.getUri().contains("@" + getWorkspaceLabel()))
-            return ImmutableList.of();
-
-        try {
-            Build.QueryResult queryResult = Build.QueryResult.parseFrom(
-                    runBazelStream("query", "--output=proto", target.getUri()));
-
-            return queryResult.getTargetList().stream()
-                    .map(Build.Target::getRule)
-                    .flatMap(rule -> this.getSourceItems(rule, target).stream())
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            System.err.println("Failed to query for sources of target " + target);
-            return new ArrayList<>();
-        }
+        return targetsToSources.getOrDefault(target, new ArrayList<>());
     }
 
     public void setBuildClient(BuildClient buildClient) {
