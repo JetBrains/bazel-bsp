@@ -20,13 +20,12 @@ public class BazelBspServerTest {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final ExecutionContext context = ExecutionContext.fromExecutor(executorService);
 
-    private final BuildTargetCapabilities capabilities = new BuildTargetCapabilities(true, false, false);
     private final BuildTargetIdentifier id1 = new BuildTargetIdentifier("//example:example");
     private final BuildTargetIdentifier id2 = new BuildTargetIdentifier("//dep:dep");
     private final BuildTargetIdentifier id3 = new BuildTargetIdentifier("//dep/deeper:deeper");
     private final WorkspaceBuildTargetsResult expectedBuildTargets = new WorkspaceBuildTargetsResult(Lists.newArrayList(
-            new BuildTarget(id1, Lists.newArrayList(), Lists.newArrayList("scala"), Lists.newArrayList(id2), capabilities),
-            new BuildTarget(id2, Lists.newArrayList(), Lists.newArrayList("java", "scala"), Lists.newArrayList(id3), capabilities)
+            new BuildTarget(id1, Lists.newArrayList(), Lists.newArrayList("scala"), Lists.newArrayList(id2), new BuildTargetCapabilities(true, false, true)),
+            new BuildTarget(id2, Lists.newArrayList(), Lists.newArrayList("java", "scala"), Lists.newArrayList(id3), new BuildTargetCapabilities(true, false, false))
     ));
     private final List<String> dependencies = Lists.newArrayList(
             "https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3-sources.jar",
@@ -67,8 +66,8 @@ public class BazelBspServerTest {
                 () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
                 () -> client.testInverseSourcesResults(new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"), expectedInverseSources),
                 () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
-                client::testTargetsRunUnsuccessfully,
-                client::testTargetsTestUnsuccessfully,
+//                client::testTargetsRunUnsuccessfully,
+//                client::testTargetsTestUnsuccessfully,
 //                client::testTargetCapabilities,
         };
         runTests(tests);

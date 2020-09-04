@@ -8,5 +8,5 @@ java_binary(
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:org_scala_lang_scala_library",
     ],
-    main_class = "org.jetbrains.bsp.BazelBspServerTest",
+    main_class = "org.jetbrains.bsp.bazel.BazelBspServerTest",
 )
