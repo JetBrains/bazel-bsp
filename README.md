@@ -18,18 +18,10 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 
 ## Installation
 1. Please make sure to have followed the prerequisites guide before proceeding.
-2. Clone this project and enter its folder:     
-``git clone https://github.com/andrefmrocha/bazel-bsp.git && cd bazel-bsp``
-3. Build the BSP Server:        
-``bazel build //main/src/org/jetbrains/bsp:bsp_deploy.jar``
-4. Note the current path to the project:        
-``bazel_bsp=$(pwd)``
-5. Change into the directory of your project
-6. Install the BSP Server:      
-``
-java -cp $bazel_bsp/bazel-bin/main/src/org/jetbrains/bsp/bsp_deploy.jar org.jetbrains.bsp.Main install
-``
-7. Add bsp generated folders to your `gitignore`: `.bsp` and `.bazelbsp`
+2. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
+3. Run
+`coursier launch org.jetbrains.bsp:bazel-bsp:0.1.0 -M org.jetbrains.bsp.bazel.Install`
+4. Add bsp generated folders to your `gitignore`: `.bsp` and `.bazelbsp`
 
 ## Extending
 In order to extend BSP server to other languages, make sure it can be supported with the current state of the  [BSP Protocol](https://github.com/build-server-protocol/build-server-protocol/tree/master/docs). Also, make sure there's a [client](https://build-server-protocol.github.io/docs/implementations.html#build-clients), that will be able to support those changes.
