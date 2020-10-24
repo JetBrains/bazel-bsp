@@ -4,6 +4,6 @@ java_export(
     name = "bsp",
     maven_coordinates = "org.jetbrains.bsp:bazel-bsp:0.1.0",
     runtime_deps = [
-        "//main/src/org/jetbrains/bsp/bazel:bsp"
+        "//main/src/org/jetbrains/bsp/bazel:bsp",
     ],
 )

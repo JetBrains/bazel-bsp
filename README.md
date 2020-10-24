@@ -33,3 +33,6 @@ Any non-JVM language, will also need to look into the `buildTarget/dependencySou
 To support Compilation Diagnostics for the given language, they must be supported in the bazel side. Find the rules' implementation for the language [here](https://github.com/bazelbuild/). Let the [diagnostics proto definition](https://github.com/bazelbuild/rules_scala/blob/master/src/protobuf/io/bazel/rules_scala/diagnostics.proto) live inside its repository and make it so that the compiler writes the diagnostics to the given file. **Make sure the file is an output of the `ctx.actions.run()` for the compilation action**. The current state also dictates that the file must have the keyword `diagnostics` in the name. In `BepServer.java`, the mnemonic of the compilation action of the language must be added to the `SUPPORTED_ACTIONS` constant. 
 
 Compilation Diagnostics should receive native support from bazel, accompany the state of that [here](https://github.com/bazelbuild/bazel/pull/11766).
+
+## Contributing
+This project follows [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html). You can download a formatter plugin for Intellij [here](https://plugins.jetbrains.com/plugin/8527-google-java-format).

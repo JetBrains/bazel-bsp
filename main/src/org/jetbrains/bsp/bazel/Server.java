@@ -2,8 +2,6 @@ package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
-import org.eclipse.lsp4j.jsonrpc.Launcher;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -14,6 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.eclipse.lsp4j.jsonrpc.Launcher;
 
 public class Server {
   public static void main(String[] args) throws Exception {
@@ -26,7 +25,7 @@ public class Server {
       PrintStream stdout = System.out;
       InputStream stdin = System.in;
 
-      Path home = Paths.get(".bazelbsp").toAbsolutePath();;
+      Path home = Paths.get(".bazelbsp").toAbsolutePath();
       Files.createDirectories(home);
       Path log = home.resolve("bazelbsp.log");
       PrintStream logStream =
@@ -56,11 +55,7 @@ public class Server {
         bspServer.setBuildClient(launcher.getRemoteProxy());
         BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
         bspServer.bepServer = bepServer;
-        io.grpc.Server server =
-            ServerBuilder.forPort(0)
-                .addService(bepServer)
-                .build()
-                .start();
+        io.grpc.Server server = ServerBuilder.forPort(0).addService(bepServer).build().start();
         bspServer.setBackendPort(server.getPort());
         launcher.startListening();
         server.awaitTermination();

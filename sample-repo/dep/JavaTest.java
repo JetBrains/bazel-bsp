@@ -1,5 +1,5 @@
 package dep;
 
 public class JavaTest {
-    public static final String value = "value";
+  public static final String value = "value";
 }
