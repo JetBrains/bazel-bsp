@@ -2,8 +2,12 @@ package org.jetbrains.bsp.bazel;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
-
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 // TODO(illicitonion): Index, cache, etc
@@ -32,8 +36,8 @@ public class ActionGraphParser {
 
   public List<String> getInputsAsUri(String target, String execRoot) {
     return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
-            .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-            .collect(Collectors.toList());
+        .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
+        .collect(Collectors.toList());
   }
 
   public List<String> getOutputs(String target, List<String> suffixes) {

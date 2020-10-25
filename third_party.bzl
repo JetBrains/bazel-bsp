@@ -1,19 +1,18 @@
-load("@rules_jvm_external//:specs.bzl", "maven","parse")
+load("@rules_jvm_external//:specs.bzl", "maven", "parse")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls")
 load("@io_bazel_rules_scala//scala:scala_maven_import_external.bzl", "scala_maven_import_external")
 
-def _dependency(coordinates,exclusions=None):
+def _dependency(coordinates, exclusions = None):
     artifact = parse.parse_maven_coordinate(coordinates)
     return maven.artifact(
-            group =  artifact['group'],
-            artifact = artifact['artifact'],
-            packaging =  artifact.get('packaging'),
-            classifier = artifact.get('classifier'),
-            version =  artifact['version'],
-            exclusions = exclusions,
-        )
-
+        group = artifact["group"],
+        artifact = artifact["artifact"],
+        packaging = artifact.get("packaging"),
+        classifier = artifact.get("classifier"),
+        version = artifact["version"],
+        exclusions = exclusions,
+    )
 
 _deps = [
     _dependency("com.google.code.gson:gson:2.8.5"),
