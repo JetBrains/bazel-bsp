@@ -83,6 +83,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
@@ -112,9 +113,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
       ImmutableList.of(
           ".scala", ".java", ".kt", ".kts", ".sh", ".bzl", ".py", ".js", ".c", ".h", ".cpp",
           ".hpp");
+
+  private final Semaphore processLock = new Semaphore(1, true);;
   public BepServer bepServer = null;
   private String BES_BACKEND = "--bes_backend=grpc://localhost:";
-  private CompletableFuture<Void> processLock = null;
   private String execRoot = null;
   private String workspaceRoot = null;
   private String binRoot = null;
@@ -286,7 +288,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
       Process process = startProcess(args);
 
       Build.QueryResult queryResult = Build.QueryResult.parseFrom(process.getInputStream());
-      processLock.complete(null);
+      processLock.release();
       return queryResult;
     } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException(e);
@@ -465,7 +467,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     try {
       Process process = startProcess(args);
       byte[] byteArray = ByteStreams.toByteArray(process.getInputStream());
-      processLock.complete(null);
+      processLock.release();
       return byteArray;
     } catch (IOException | InterruptedException | ExecutionException e) {
       throw new RuntimeException(e);
@@ -482,9 +484,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
       argv.add(3, PUBLISH_ALL_ACTIONS);
     }
 
-    if (processLock != null) processLock.get();
+    processLock.acquire();
     System.out.printf("Running: %s%n", argv);
-    processLock = new CompletableFuture<>();
     return new ProcessBuilder(argv).start();
   }
 
@@ -498,7 +499,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     int returnCode = process.waitFor();
     if (returnCode != 0) logError(message);
     else logMessage(message);
-    processLock.complete(null);
+    processLock.release();
     return returnCode;
   }
 
@@ -661,7 +662,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
       while ((line = reader.readLine()) != null) {
         output.add(line.trim());
       }
-      processLock.complete(null);
+      processLock.release();
       return output;
     } catch (IOException | InterruptedException | ExecutionException e) {
       throw new RuntimeException(e);
