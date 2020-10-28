@@ -60,17 +60,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -114,7 +111,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           ".scala", ".java", ".kt", ".kts", ".sh", ".bzl", ".py", ".js", ".c", ".h", ".cpp",
           ".hpp");
 
-  private final Semaphore processLock = new Semaphore(1, true);;
+  private final Semaphore processLock = new Semaphore(1, true);
   public BepServer bepServer = null;
   private String BES_BACKEND = "--bes_backend=grpc://localhost:";
   private String execRoot = null;
@@ -124,8 +121,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private ScalaBuildTarget scalacClasspath = null;
   private BuildClient buildClient;
 
+
+  private final ProcessRunner processRunner;
+
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
+    this.processRunner = new ProcessRunner(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
   }
 
   public void setBackendPort(int port) {
@@ -219,14 +220,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private void checkBazelInstallation() {
     try {
-      Process process = startProcess();
+      Process process = processRunner.startProcess();
       parseProcess(process);
       // Force-populate cache to avoid deadlock when looking up information from BEP listener.
       getExecRoot();
       getWorkspaceRoot();
       getBinRoot();
       getWorkspaceLabel();
-    } catch (IOException | InterruptedException | ExecutionException e) {
+    } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -285,12 +286,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private Build.QueryResult getQuery(String... args) throws IOException {
     try {
-      Process process = startProcess(args);
+      Process process = processRunner.startProcess(args);
 
       Build.QueryResult queryResult = Build.QueryResult.parseFrom(process.getInputStream());
       processLock.release();
       return queryResult;
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -454,41 +455,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return version;
   }
 
-  private List<String> runBazelLines(String... args) {
-    List<String> lines =
-        Splitter.on("\n")
-            .omitEmptyStrings()
-            .splitToList(new String(runBazelBytes(args), StandardCharsets.UTF_8));
-    System.out.printf("Returning: %s%n", lines);
-    return lines;
-  }
-
-  private byte[] runBazelBytes(String... args) {
-    try {
-      Process process = startProcess(args);
-      byte[] byteArray = ByteStreams.toByteArray(process.getInputStream());
-      processLock.release();
-      return byteArray;
-    } catch (IOException | InterruptedException | ExecutionException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private synchronized Process startProcess(String... args)
-      throws IOException, InterruptedException, ExecutionException {
-    List<String> argv = new ArrayList<>(args.length + 3);
-    argv.add(bazel);
-    argv.addAll(Arrays.asList(args));
-    if (argv.size() > 1) {
-      argv.add(2, BES_BACKEND);
-      argv.add(3, PUBLISH_ALL_ACTIONS);
-    }
-
-    processLock.acquire();
-    System.out.printf("Running: %s%n", argv);
-    return new ProcessBuilder(argv).start();
-  }
-
   private int parseProcess(Process process) throws IOException, InterruptedException {
     Set<String> messageBuilder = new HashSet<>();
     String line;
@@ -563,21 +529,21 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   public synchronized String getWorkspaceRoot() {
     if (workspaceRoot == null) {
-      workspaceRoot = Iterables.getOnlyElement(runBazelLines("info", "workspace"));
+      workspaceRoot = Iterables.getOnlyElement(processRunner.runBazelLines("info", "workspace"));
     }
     return workspaceRoot;
   }
 
   public synchronized String getBinRoot() {
     if (binRoot == null) {
-      binRoot = Iterables.getOnlyElement(runBazelLines("info", "bazel-bin"));
+      binRoot = Iterables.getOnlyElement(processRunner.runBazelLines("info", "bazel-bin"));
     }
     return binRoot;
   }
 
   public synchronized String getExecRoot() {
     if (execRoot == null) {
-      execRoot = Iterables.getOnlyElement(runBazelLines("info", "execution_root"));
+      execRoot = Iterables.getOnlyElement(processRunner.runBazelLines("info", "execution_root"));
     }
     return execRoot;
   }
@@ -653,26 +619,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         });
   }
 
-  private List<String> runBazelStderr(String... args) {
-    try {
-      Process process = startProcess(args);
-      List<String> output = new ArrayList<>();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        output.add(line.trim());
-      }
-      processLock.release();
-      return output;
-    } catch (IOException | InterruptedException | ExecutionException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private List<String> lookupTransitiveSourceJars(String target) {
     // TODO(illicitonion): Use an aspect output group, rather than parsing stderr logging
     List<String> lines =
-        runBazelStderr("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target);
+        processRunner.runBazelStderr("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target);
     return lines.stream()
         .map(line -> Splitter.on(" ").splitToList(line))
         .filter(
@@ -846,7 +796,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
           try {
             Process process =
-                startProcess(
+                processRunner.startProcess(
                     Lists.asList(
                             "test",
                             "("
@@ -861,7 +811,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
             int returnCode = parseProcess(process);
             return Either.forRight(new TestResult(BepServer.convertExitCode(returnCode)));
-          } catch (IOException | InterruptedException | ExecutionException e) {
+          } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
           }
         });
@@ -881,7 +831,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
           try {
             Process process =
-                startProcess(
+                processRunner.startProcess(
                     Lists.asList(
                             "run",
                             runParams.getTarget().getUri(),
@@ -890,7 +840,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
             int returnCode = parseProcess(process);
             return Either.forRight(new RunResult(BepServer.convertExitCode(returnCode)));
-          } catch (IOException | InterruptedException | ExecutionException e) {
+          } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
           }
         });
@@ -903,7 +853,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         () -> {
           CleanCacheResult result;
           try {
-            result = new CleanCacheResult(String.join("\n", runBazelLines("clean")), true);
+            result = new CleanCacheResult(String.join("\n", processRunner.runBazelLines("clean")), true);
           } catch (RuntimeException e) {
             result = new CleanCacheResult(e.getMessage(), false);
           }
@@ -1012,7 +962,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     try {
       AnalysisProtos.ActionGraphContainer actionGraph =
           AnalysisProtos.ActionGraphContainer.parseFrom(
-              runBazelBytes("aquery", "--output=proto", query));
+              processRunner.runBazelBytes("aquery", "--output=proto", query));
       return Either.forRight(new ActionGraphParser(actionGraph));
     } catch (IOException e) {
       return Either.forLeft(
