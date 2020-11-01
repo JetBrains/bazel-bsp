@@ -90,6 +90,11 @@ import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
+import org.jetbrains.bsp.bazel.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.resolvers.ProcessResolver;
+import org.jetbrains.bsp.bazel.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.utils.MnemonicsUtils;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 
@@ -122,17 +127,21 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private BuildClient buildClient;
 
 
-  private final ProcessRunner processRunner;
+  private final ProcessResolver processResolver;
   private final QueryResolver queryResolver;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
 
+  private final ScalaBspServer scalaBspServer;
+
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
-    this.processRunner = new ProcessRunner(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
-    this.queryResolver = new QueryResolver(processRunner, processLock);
+    this.processResolver = new ProcessResolver(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
+    this.queryResolver = new QueryResolver(processResolver, processLock);
     this.targetsResolver = new TargetsResolver(queryResolver);
-    this.actionGraphResolver = new ActionGraphResolver(processRunner);
+    this.actionGraphResolver = new ActionGraphResolver(processResolver);
+
+    this.scalaBspServer = new ScalaBspServer(targetsResolver, actionGraphResolver, SCALAC, JAVAC, getExecRoot());
   }
 
   public void setBackendPort(int port) {
@@ -226,7 +235,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private void checkBazelInstallation() {
     try {
-      Process process = processRunner.startProcess();
+      Process process = processResolver.startProcess();
       parseProcess(process);
       // Force-populate cache to avoid deadlock when looking up information from BEP listener.
       getExecRoot();
@@ -523,21 +532,21 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   public synchronized String getWorkspaceRoot() {
     if (workspaceRoot == null) {
-      workspaceRoot = Iterables.getOnlyElement(processRunner.runBazelLines("info", "workspace"));
+      workspaceRoot = Iterables.getOnlyElement(processResolver.runBazelLines("info", "workspace"));
     }
     return workspaceRoot;
   }
 
   public synchronized String getBinRoot() {
     if (binRoot == null) {
-      binRoot = Iterables.getOnlyElement(processRunner.runBazelLines("info", "bazel-bin"));
+      binRoot = Iterables.getOnlyElement(processResolver.runBazelLines("info", "bazel-bin"));
     }
     return binRoot;
   }
 
   public synchronized String getExecRoot() {
     if (execRoot == null) {
-      execRoot = Iterables.getOnlyElement(processRunner.runBazelLines("info", "execution_root"));
+      execRoot = Iterables.getOnlyElement(processResolver.runBazelLines("info", "execution_root"));
     }
     return execRoot;
   }
@@ -616,7 +625,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private List<String> lookupTransitiveSourceJars(String target) {
     // TODO(illicitonion): Use an aspect output group, rather than parsing stderr logging
     List<String> lines =
-        processRunner.runBazelStderr("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target);
+        processResolver.runBazelStderr("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target);
     return lines.stream()
         .map(line -> Splitter.on(" ").splitToList(line))
         .filter(
@@ -790,7 +799,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
           try {
             Process process =
-                processRunner.startProcess(
+                processResolver.startProcess(
                     Lists.asList(
                             "test",
                             "("
@@ -825,7 +834,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
           try {
             Process process =
-                processRunner.startProcess(
+                processResolver.startProcess(
                     Lists.asList(
                             "run",
                             runParams.getTarget().getUri(),
@@ -847,7 +856,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         () -> {
           CleanCacheResult result;
           try {
-            result = new CleanCacheResult(String.join("\n", processRunner.runBazelLines("clean")), true);
+            result = new CleanCacheResult(String.join("\n", processResolver.runBazelLines("clean")), true);
           } catch (RuntimeException e) {
             result = new CleanCacheResult(e.getMessage(), false);
           }
@@ -858,31 +867,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    return executeCommand(
-        () -> {
-          List<String> targets =
-              scalacOptionsParams.getTargets().stream()
-                  .map(BuildTargetIdentifier::getUri)
-                  .collect(Collectors.toList());
-          String targetsUnion = Joiner.on(" + ").join(targets);
-          Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
-          Either<ResponseError, ActionGraphParser> either =
-              actionGraphResolver.parseActionGraph(MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
-          if (either.isLeft()) return Either.forLeft(either.getLeft());
-
-          ScalacOptionsResult result =
-              new ScalacOptionsResult(
-                  targets.stream()
-                      .flatMap(
-                          target ->
-                              collectScalacOptionsResult(
-                                  either.getRight(),
-                                  targetsOptions.getOrDefault(target, new ArrayList<>()),
-                                  either.getRight().getInputsAsUri(target, getExecRoot()),
-                                  target))
-                      .collect(Collectors.toList()));
-          return Either.forRight(result);
-        });
+    return executeCommand(() -> scalaBspServer.buildTargetScalacOptions(scalacOptionsParams));
   }
 
   @Override
@@ -932,36 +917,16 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
   }
 
-  private Stream<ScalacOptionsItem> collectScalacOptionsResult(
-      ActionGraphParser actionGraphParser,
-      List<String> options,
-      List<String> inputs,
-      String target) {
-    List<String> suffixes = Lists.newArrayList(".jar", ".js");
-    return actionGraphParser.getOutputs(target, suffixes).stream()
-        .map(
-            output ->
-                new ScalacOptionsItem(
-                    new BuildTargetIdentifier(target),
-                    options,
-                    inputs,
-                    Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
-  }
-
   @Override
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
+    return scalaBspServer.buildTargetScalaTestClasses(scalaTestClassesParams);
   }
 
   @Override
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
+    return scalaBspServer.buildTargetScalaMainClasses(scalaMainClassesParams);
   }
 
   public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
