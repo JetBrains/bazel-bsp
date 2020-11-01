@@ -125,12 +125,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private final ProcessRunner processRunner;
   private final QueryResolver queryResolver;
   private final TargetsResolver targetsResolver;
+  private final ActionGraphResolver actionGraphResolver;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
     this.processRunner = new ProcessRunner(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
     this.queryResolver = new QueryResolver(processRunner, processLock);
     this.targetsResolver = new TargetsResolver(queryResolver);
+    this.actionGraphResolver = new ActionGraphResolver(processRunner);
   }
 
   public void setBackendPort(int port) {
@@ -865,7 +867,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           String targetsUnion = Joiner.on(" + ").join(targets);
           Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
           Either<ResponseError, ActionGraphParser> either =
-              parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
+              actionGraphResolver.parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
           if (either.isLeft()) return Either.forLeft(either.getLeft());
 
           ScalacOptionsResult result =
@@ -897,7 +899,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
           // TODO(andrefmrocha): Remove this when kotlin is natively supported
           Either<ResponseError, ActionGraphParser> either =
-              parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
+              actionGraphResolver.parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
           if (either.isLeft()) return Either.forLeft(either.getLeft());
 
           JavacOptionsResult result =
@@ -928,18 +930,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     options,
                     inputs,
                     Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
-  }
-
-  private Either<ResponseError, ActionGraphParser> parseActionGraph(String query) {
-    try {
-      AnalysisProtos.ActionGraphContainer actionGraph =
-          AnalysisProtos.ActionGraphContainer.parseFrom(
-              processRunner.runBazelBytes("aquery", "--output=proto", query));
-      return Either.forRight(new ActionGraphParser(actionGraph));
-    } catch (IOException e) {
-      return Either.forLeft(
-          new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
-    }
   }
 
   private String getMnemonics(String targetsUnion, List<String> languageIds) {
