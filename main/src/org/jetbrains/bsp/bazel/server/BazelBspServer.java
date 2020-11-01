@@ -123,10 +123,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
 
   private final ProcessRunner processRunner;
+  private final QueryResolver queryResolver;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
     this.processRunner = new ProcessRunner(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
+    this.queryResolver = new QueryResolver(processRunner, processLock);
   }
 
   public void setBackendPort(int port) {
@@ -264,7 +266,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         () -> {
           try {
             Build.QueryResult queryResult =
-                getQuery(
+                queryResolver.getQuery(
                     "query",
                     "--output=proto",
                     "--nohost_deps",
@@ -282,18 +284,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
           }
         });
-  }
-
-  private Build.QueryResult getQuery(String... args) throws IOException {
-    try {
-      Process process = processRunner.startProcess(args);
-
-      Build.QueryResult queryResult = Build.QueryResult.parseFrom(process.getInputStream());
-      processLock.release();
-      return queryResult;
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private BuildTarget getBuildTarget(Build.Rule rule) {
@@ -381,7 +371,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 return Lists.newArrayList(Uri.fromFileLabel(dep, getWorkspaceRoot())).stream();
 
               try {
-                Build.QueryResult queryResult = getQuery("query", "--output=proto", dep);
+                Build.QueryResult queryResult = queryResolver.getQuery("query", "--output=proto", dep);
                 return queryResult.getTargetList().stream()
                     .map(Build.Target::getRule)
                     .flatMap(queryRule -> getSrcsPaths(queryRule, srcType).stream())
@@ -486,7 +476,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         () -> {
           try {
             Build.QueryResult queryResult =
-                getQuery(
+                queryResolver.getQuery(
                     "query",
                     "--output=proto",
                     "("
@@ -570,7 +560,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           }
           try {
             Build.QueryResult result =
-                getQuery(
+                queryResolver.getQuery(
                     "query",
                     "--output=proto",
                     "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
@@ -640,7 +630,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return executeCommand(
         () -> {
           try {
-            Build.QueryResult query = getQuery("query", "--output=proto", "//...");
+            Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
             System.out.println("Resources query result " + query);
             ResourcesResult resourcesResult =
                 new ResourcesResult(
@@ -731,7 +721,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         bepServer.getDiagnosticsProtosLocations();
     try {
       Build.QueryResult queryResult =
-          getQuery(
+          queryResolver.getQuery(
               "query",
               "--output=proto",
               "("
@@ -926,7 +916,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private Map<String, List<String>> getTargetsOptions(
       String targetsUnion, String compilerOptionsName) {
     try {
-      Build.QueryResult query = getQuery("query", "--output=proto", "(" + targetsUnion + ")");
+      Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "(" + targetsUnion + ")");
 
       return query.getTargetList().stream()
           .map(Build.Target::getRule)
