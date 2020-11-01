@@ -124,11 +124,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private final ProcessRunner processRunner;
   private final QueryResolver queryResolver;
+  private final TargetsResolver targetsResolver;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
     this.processRunner = new ProcessRunner(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
     this.queryResolver = new QueryResolver(processRunner, processLock);
+    this.targetsResolver = new TargetsResolver(queryResolver);
   }
 
   public void setBackendPort(int port) {
@@ -861,7 +863,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                   .map(BuildTargetIdentifier::getUri)
                   .collect(Collectors.toList());
           String targetsUnion = Joiner.on(" + ").join(targets);
-          Map<String, List<String>> targetsOptions = getTargetsOptions(targetsUnion, "scalacopts");
+          Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
           Either<ResponseError, ActionGraphParser> either =
               parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
           if (either.isLeft()) return Either.forLeft(either.getLeft());
@@ -892,7 +894,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                   .collect(Collectors.toList());
 
           String targetsUnion = Joiner.on(" + ").join(targets);
-          Map<String, List<String>> targetsOptions = getTargetsOptions(targetsUnion, "javacopts");
+          Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
           // TODO(andrefmrocha): Remove this when kotlin is natively supported
           Either<ResponseError, ActionGraphParser> either =
               parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
@@ -911,26 +913,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                       .collect(Collectors.toList()));
           return Either.forRight(result);
         });
-  }
-
-  private Map<String, List<String>> getTargetsOptions(
-      String targetsUnion, String compilerOptionsName) {
-    try {
-      Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "(" + targetsUnion + ")");
-
-      return query.getTargetList().stream()
-          .map(Build.Target::getRule)
-          .collect(
-              Collectors.toMap(
-                  Build.Rule::getName,
-                  (rule) ->
-                      rule.getAttributeList().stream()
-                          .filter(attr -> attr.getName().equals(compilerOptionsName))
-                          .flatMap(attr -> attr.getStringListValueList().stream())
-                          .collect(Collectors.toList())));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private Stream<JavacOptionsItem> collectJavacOptionsResult(
