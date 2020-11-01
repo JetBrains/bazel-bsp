@@ -1,10 +1,11 @@
-package org.jetbrains.bsp.bazel;
+package org.jetbrains.bsp.bazel.resolvers;
 
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.resolvers.QueryResolver;
 
 public class TargetsResolver {
 

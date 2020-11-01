@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel;
+package org.jetbrains.bsp.bazel.resolvers;
 
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
@@ -6,17 +6,17 @@ import java.util.concurrent.Semaphore;
 
 public class QueryResolver {
 
-  private final ProcessRunner processRunner;
+  private final ProcessResolver processResolver;
   private final Semaphore processLock;
 
-  public QueryResolver(ProcessRunner processRunner, Semaphore processLock) {
-    this.processRunner = processRunner;
+  public QueryResolver(ProcessResolver processResolver, Semaphore processLock) {
+    this.processResolver = processResolver;
     this.processLock = processLock;
   }
 
   public Build.QueryResult getQuery(String... args) throws IOException {
     try {
-      Process process = processRunner.startProcess(args);
+      Process process = processResolver.startProcess(args);
 
       Build.QueryResult queryResult = Build.QueryResult.parseFrom(process.getInputStream());
       processLock.release();

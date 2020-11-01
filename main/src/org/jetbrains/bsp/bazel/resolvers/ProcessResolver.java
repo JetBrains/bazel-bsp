@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel;
+package org.jetbrains.bsp.bazel.resolvers;
 
 import com.google.common.base.Splitter;
 import com.google.common.io.ByteStreams;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class ProcessRunner {
+public class ProcessResolver {
 
   private final Semaphore processLock;
 
@@ -19,7 +19,7 @@ public class ProcessRunner {
   private final String besBackend;
   private final String publishAllActions;
 
-  public ProcessRunner(Semaphore processLock, String bazel, String besBackend, String publishAllActions) {
+  public ProcessResolver(Semaphore processLock, String bazel, String besBackend, String publishAllActions) {
     this.processLock = processLock;
     this.bazel = bazel;
     this.besBackend = besBackend;
