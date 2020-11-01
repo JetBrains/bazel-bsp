@@ -867,7 +867,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           String targetsUnion = Joiner.on(" + ").join(targets);
           Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
           Either<ResponseError, ActionGraphParser> either =
-              actionGraphResolver.parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
+              actionGraphResolver.parseActionGraph(MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(SCALAC, JAVAC)));
           if (either.isLeft()) return Either.forLeft(either.getLeft());
 
           ScalacOptionsResult result =
@@ -899,7 +899,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
           // TODO(andrefmrocha): Remove this when kotlin is natively supported
           Either<ResponseError, ActionGraphParser> either =
-              actionGraphResolver.parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
+              actionGraphResolver.parseActionGraph(MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
           if (either.isLeft()) return Either.forLeft(either.getLeft());
 
           JavacOptionsResult result =
@@ -930,13 +930,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     options,
                     inputs,
                     Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
-  }
-
-  private String getMnemonics(String targetsUnion, List<String> languageIds) {
-    return languageIds.stream()
-        .filter(Objects::nonNull)
-        .map(mnemonic -> "mnemonic(" + mnemonic + ", " + targetsUnion + ")")
-        .collect(Collectors.joining(" union "));
   }
 
   private Stream<ScalacOptionsItem> collectScalacOptionsResult(
