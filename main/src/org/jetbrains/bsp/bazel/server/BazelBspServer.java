@@ -21,7 +21,6 @@ import ch.epfl.scala.bsp4j.InitializeBuildResult;
 import ch.epfl.scala.bsp4j.InverseSourcesParams;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
-import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
@@ -41,7 +40,6 @@ import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaPlatform;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
-import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourceItem;
@@ -94,6 +92,8 @@ import org.jetbrains.bsp.bazel.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.resolvers.ProcessResolver;
 import org.jetbrains.bsp.bazel.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.servers.JavaBspServer;
+import org.jetbrains.bsp.bazel.servers.ScalaBspServer;
 import org.jetbrains.bsp.bazel.utils.MnemonicsUtils;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
@@ -133,6 +133,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private final ActionGraphResolver actionGraphResolver;
 
   private final ScalaBspServer scalaBspServer;
+  private final JavaBspServer javaBspServer;
 
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
@@ -142,6 +143,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     this.actionGraphResolver = new ActionGraphResolver(processResolver);
 
     this.scalaBspServer = new ScalaBspServer(targetsResolver, actionGraphResolver, SCALAC, JAVAC, getExecRoot());
+    this.javaBspServer = new JavaBspServer(targetsResolver, actionGraphResolver, JAVAC, KOTLINC, getExecRoot());
   }
 
   public void setBackendPort(int port) {
@@ -873,48 +875,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   @Override
   public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
-    return executeCommand(
-        () -> {
-          List<String> targets =
-              javacOptionsParams.getTargets().stream()
-                  .map(BuildTargetIdentifier::getUri)
-                  .collect(Collectors.toList());
-
-          String targetsUnion = Joiner.on(" + ").join(targets);
-          Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
-          // TODO(andrefmrocha): Remove this when kotlin is natively supported
-          Either<ResponseError, ActionGraphParser> either =
-              actionGraphResolver.parseActionGraph(MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
-          if (either.isLeft()) return Either.forLeft(either.getLeft());
-
-          JavacOptionsResult result =
-              new JavacOptionsResult(
-                  targets.stream()
-                      .flatMap(
-                          target ->
-                              collectJavacOptionsResult(
-                                  either.getRight(),
-                                  targetsOptions.getOrDefault(target, new ArrayList<>()),
-                                  either.getRight().getInputsAsUri(target, getExecRoot()),
-                                  target))
-                      .collect(Collectors.toList()));
-          return Either.forRight(result);
-        });
-  }
-
-  private Stream<JavacOptionsItem> collectJavacOptionsResult(
-      ActionGraphParser actionGraphParser,
-      List<String> options,
-      List<String> inputs,
-      String target) {
-    return actionGraphParser.getOutputs(target, Lists.newArrayList(".jar", ".js")).stream()
-        .map(
-            output ->
-                new JavacOptionsItem(
-                    new BuildTargetIdentifier(target),
-                    options,
-                    inputs,
-                    Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
+    return executeCommand(() -> javaBspServer.buildTargetJavacOptions(javacOptionsParams));
   }
 
   @Override
