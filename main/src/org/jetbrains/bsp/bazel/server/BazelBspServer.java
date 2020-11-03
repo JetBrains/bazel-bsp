@@ -294,9 +294,16 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private String getRuleType(Build.Rule rule) {
     String ruleClass = rule.getRuleClass();
-    if (ruleClass.contains("library")) return BuildTargetTag.LIBRARY;
-    if (ruleClass.contains("binary")) return BuildTargetTag.APPLICATION;
-    if (ruleClass.contains("test")) return BuildTargetTag.TEST;
+    if (ruleClass.contains("library")) {
+      return BuildTargetTag.LIBRARY;
+    }
+    if (ruleClass.contains("binary")) {
+      return BuildTargetTag.APPLICATION;
+    }
+    if (ruleClass.contains("test")) {
+      return BuildTargetTag.TEST;
+    }
+
     return BuildTargetTag.NO_IDE;
   }
 
@@ -319,7 +326,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           classpath.stream()
               .filter(uri -> uri.contains("scala-library"))
               .collect(Collectors.toList());
-      if (scalaVersions.size() != 1) return Optional.empty();
+      if (scalaVersions.size() != 1) {
+        return Optional.empty();
+      }
       String scalaVersion =
           scalaVersions
               .get(0)
@@ -335,6 +344,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
               classpath);
       scalacClasspath.setJvmBuildTarget(getJVMBuildTarget());
     }
+
     return Optional.of(scalacClasspath);
   }
 
@@ -414,9 +424,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
         .flatMap(
             dep -> {
-              if (isSourceFile(dep))
+              if (isSourceFile(dep)) {
                 return Lists.newArrayList(Uri.fromFileLabel(dep, getWorkspaceRoot())).stream();
-
+              }
               try {
                 Build.QueryResult queryResult = queryResolver.getQuery("query", "--output=proto", dep);
                 return queryResult.getTargetList().stream()
@@ -671,7 +681,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     }
 
     try {
-      if (targetsToSources.isEmpty()) workspaceBuildTargets().wait();
+      if (targetsToSources.isEmpty()) {
+        workspaceBuildTargets().wait();
+      }
 
       Process process = new ProcessBuilder(args).start();
       exitCode = parseProcess(process);
@@ -706,11 +718,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         () -> {
           Either<ResponseError, CompileResult> build =
               buildTargetsWithBep(Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
-          if (build.isLeft()) return Either.forLeft(build.getLeft());
+          if (build.isLeft()) {
+            return Either.forLeft(build.getLeft());
+          }
 
           CompileResult result = build.getRight();
-          if (result.getStatusCode() != StatusCode.OK)
+          if (result.getStatusCode() != StatusCode.OK) {
             return Either.forRight(new TestResult(result.getStatusCode()));
+          }
 
           try {
             Process process =
@@ -741,11 +756,14 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         () -> {
           Either<ResponseError, CompileResult> build =
               buildTargetsWithBep(Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
-          if (build.isLeft()) return Either.forLeft(build.getLeft());
+          if (build.isLeft()) {
+            return Either.forLeft(build.getLeft());
+          }
 
           CompileResult result = build.getRight();
-          if (result.getStatusCode() != StatusCode.OK)
+          if (result.getStatusCode() != StatusCode.OK) {
             return Either.forRight(new RunResult(result.getStatusCode()));
+          }
 
           try {
             Process process =
@@ -768,7 +786,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     Set<String> messageBuilder = new HashSet<>();
     String line;
     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-    while ((line = reader.readLine()) != null) messageBuilder.add(line.trim());
+    while ((line = reader.readLine()) != null) {
+      messageBuilder.add(line.trim());
+    }
 
     String message = String.join("\n", messageBuilder);
     int returnCode = process.waitFor();
@@ -823,32 +843,38 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private <T> CompletableFuture<T> handleBuildInitialize(
       Supplier<Either<ResponseError, T>> request) {
-    if (isFinished())
+    if (isFinished()) {
       return completeExceptionally(
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
+    }
+
     return getValue(request);
   }
 
   private <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
-    if (!isInitialized())
+    if (!isInitialized()) {
       return completeExceptionally(
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has not been initialized yet!", false));
+    }
+
     return getValue(request);
   }
 
   private <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
-    if (!isInitialized())
+    if (!isInitialized()) {
       return completeExceptionally(
           new ResponseError(
               ResponseErrorCode.serverNotInitialized,
               "Server has not been initialized yet!",
               false));
-    if (isFinished())
+    }
+    if (isFinished()) {
       return completeExceptionally(
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
+    }
 
     return getValue(request);
   }
@@ -883,8 +909,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
     }
 
-    if (either.isLeft()) return completeExceptionally(either.getLeft());
-    else return CompletableFuture.completedFuture(either.getRight());
+    if (either.isLeft()) {
+      return completeExceptionally(either.getLeft());
+    }
+    else {
+      return CompletableFuture.completedFuture(either.getRight());
+    }
   }
 
   public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
