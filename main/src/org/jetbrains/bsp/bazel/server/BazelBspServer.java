@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server;
 
-import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTarget;
@@ -24,8 +23,6 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
-import ch.epfl.scala.bsp4j.LogMessageParams;
-import ch.epfl.scala.bsp4j.MessageType;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesParams;
@@ -124,7 +121,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private String binRoot = null;
   private String workspaceLabel = null;
   private ScalaBuildTarget scalacClasspath = null;
-  private BuildClient buildClient;
 
 
   private final ProcessResolver processResolver;
@@ -135,6 +131,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private final ScalaBspServer scalaBspServer;
   private final JavaBspServer javaBspServer;
 
+  // TODO: created in setter `setBuildClient`, HAVE TO BE moved to the constructor
+  private BuildClientLogger buildClientLogger;
+
+  // TODO: imho bsp server creation on the server side is too ambiguous (constructor + setters)
   public BazelBspServer(String pathToBazel) {
     this.bazel = pathToBazel;
     this.processResolver = new ProcessResolver(processLock, bazel, BES_BACKEND, PUBLISH_ALL_ACTIONS);
@@ -150,70 +150,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     this.BES_BACKEND += port;
   }
 
-  private boolean isInitialized() {
-    try {
-      isInitialized.get(1, TimeUnit.SECONDS);
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-      return false;
-    }
-    return true;
-  }
-
-  private boolean isFinished() {
-    return isFinished.isDone();
-  }
-
-  private <T> CompletableFuture<T> completeExceptionally(ResponseError error) {
-    CompletableFuture<T> future = new CompletableFuture<>();
-    future.completeExceptionally(new ResponseErrorException(error));
-    return future;
-  }
-
-  private <T> CompletableFuture<T> handleBuildInitialize(
-      Supplier<Either<ResponseError, T>> request) {
-    if (isFinished())
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
-    return getValue(request);
-  }
-
-  private <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
-    if (!isInitialized())
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverErrorEnd, "Server has not been initialized yet!", false));
-    return getValue(request);
-  }
-
-  private <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
-    if (!isInitialized())
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverNotInitialized,
-              "Server has not been initialized yet!",
-              false));
-    if (isFinished())
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
-
-    return getValue(request);
-  }
-
-  private <T> CompletableFuture<T> getValue(Supplier<Either<ResponseError, T>> request) {
-    CompletableFuture<Either<ResponseError, T>> execution = CompletableFuture.supplyAsync(request);
-    Either<ResponseError, T> either;
-    try {
-      either = execution.get();
-    } catch (CompletionException | InterruptedException | ExecutionException e) {
-      e.printStackTrace();
-      return completeExceptionally(
-          new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
-    }
-
-    if (either.isLeft()) return completeExceptionally(either.getLeft());
-    else return CompletableFuture.completedFuture(either.getRight());
+  public void setBuildClientLogger(BuildClientLogger buildClientLogger) {
+    this.buildClientLogger = buildClientLogger;
   }
 
   @Override
@@ -362,48 +300,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return BuildTargetTag.NO_IDE;
   }
 
-  private List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
-    List<SourceItem> srcs = getSrcs(rule, false);
-    srcs.addAll(getSrcs(rule, true));
-    targetsToSources.put(label, srcs);
-    return srcs;
-  }
-
-  private List<SourceItem> getSrcs(Build.Rule rule, boolean isGenerated) {
-    String srcType = isGenerated ? "generated_srcs" : "srcs";
-    return getSrcsPaths(rule, srcType).stream()
-        .map(uri -> new SourceItem(uri.toString(), SourceItemKind.FILE, isGenerated))
-        .collect(Collectors.toList());
-  }
-
-  private List<Uri> getSrcsPaths(Build.Rule rule, String srcType) {
-    return rule.getAttributeList().stream()
-        .filter(attribute -> attribute.getName().equals(srcType))
-        .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
-        .flatMap(
-            dep -> {
-              if (isSourceFile(dep))
-                return Lists.newArrayList(Uri.fromFileLabel(dep, getWorkspaceRoot())).stream();
-
-              try {
-                Build.QueryResult queryResult = queryResolver.getQuery("query", "--output=proto", dep);
-                return queryResult.getTargetList().stream()
-                    .map(Build.Target::getRule)
-                    .flatMap(queryRule -> getSrcsPaths(queryRule, srcType).stream())
-                    .collect(Collectors.toList())
-                    .stream();
-              } catch (IOException e) {
-                return null;
-              }
-            })
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
-  }
-
-  private boolean isSourceFile(String dep) {
-    return FILE_EXTENSIONS.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
-  }
-
   private Optional<ScalaBuildTarget> getScalaBuildTarget() {
     if (scalacClasspath == null) {
       buildTargetsWithBep(
@@ -460,31 +356,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return version;
   }
 
-  private int parseProcess(Process process) throws IOException, InterruptedException {
-    Set<String> messageBuilder = new HashSet<>();
-    String line;
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-    while ((line = reader.readLine()) != null) messageBuilder.add(line.trim());
-
-    String message = String.join("\n", messageBuilder);
-    int returnCode = process.waitFor();
-    if (returnCode != 0) logError(message);
-    else logMessage(message);
-    processLock.release();
-    return returnCode;
-  }
-
-  protected void logError(String errorMessage) {
-    LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
-    buildClient.onBuildLogMessage(params);
-    throw new RuntimeException(errorMessage);
-  }
-
-  protected void logMessage(String message) {
-    LogMessageParams params = new LogMessageParams(MessageType.LOG, message);
-    buildClient.onBuildLogMessage(params);
-  }
-
   @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     return executeCommand(
@@ -506,7 +377,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     .map(
                         rule -> {
                           BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
-                          List<SourceItem> items = this.getSourceItems(rule, label);
+                          List<SourceItem> items = getSourceItems(rule, label);
                           List<String> roots =
                               Lists.newArrayList(
                                   Uri.fromAbsolutePath(getSourcesRoot(rule.getName())).toString());
@@ -521,6 +392,48 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
           }
         });
+  }
+
+  private List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
+    List<SourceItem> srcs = getSrcs(rule, false);
+    srcs.addAll(getSrcs(rule, true));
+    targetsToSources.put(label, srcs);
+    return srcs;
+  }
+
+  private List<SourceItem> getSrcs(Build.Rule rule, boolean isGenerated) {
+    String srcType = isGenerated ? "generated_srcs" : "srcs";
+    return getSrcsPaths(rule, srcType).stream()
+        .map(uri -> new SourceItem(uri.toString(), SourceItemKind.FILE, isGenerated))
+        .collect(Collectors.toList());
+  }
+
+  private List<Uri> getSrcsPaths(Build.Rule rule, String srcType) {
+    return rule.getAttributeList().stream()
+        .filter(attribute -> attribute.getName().equals(srcType))
+        .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
+        .flatMap(
+            dep -> {
+              if (isSourceFile(dep))
+                return Lists.newArrayList(Uri.fromFileLabel(dep, getWorkspaceRoot())).stream();
+
+              try {
+                Build.QueryResult queryResult = queryResolver.getQuery("query", "--output=proto", dep);
+                return queryResult.getTargetList().stream()
+                    .map(Build.Target::getRule)
+                    .flatMap(queryRule -> getSrcsPaths(queryRule, srcType).stream())
+                    .collect(Collectors.toList())
+                    .stream();
+              } catch (IOException e) {
+                return null;
+              }
+            })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
+  private boolean isSourceFile(String dep) {
+    return FILE_EXTENSIONS.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
   }
 
   private String getSourcesRoot(String uri) {
@@ -851,6 +764,24 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         });
   }
 
+  private int parseProcess(Process process) throws IOException, InterruptedException {
+    Set<String> messageBuilder = new HashSet<>();
+    String line;
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+    while ((line = reader.readLine()) != null) messageBuilder.add(line.trim());
+
+    String message = String.join("\n", messageBuilder);
+    int returnCode = process.waitFor();
+    if (returnCode != 0) {
+      buildClientLogger.logError(message);
+    }
+    else {
+      buildClientLogger.logMessage(message);
+    }
+    processLock.release();
+    return returnCode;
+  }
+
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
@@ -890,11 +821,73 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return scalaBspServer.buildTargetScalaMainClasses(scalaMainClassesParams);
   }
 
-  public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
-    return targetsToSources.getOrDefault(target, new ArrayList<>());
+  private <T> CompletableFuture<T> handleBuildInitialize(
+      Supplier<Either<ResponseError, T>> request) {
+    if (isFinished())
+      return completeExceptionally(
+          new ResponseError(
+              ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
+    return getValue(request);
   }
 
-  public void setBuildClient(BuildClient buildClient) {
-    this.buildClient = buildClient;
+  private <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
+    if (!isInitialized())
+      return completeExceptionally(
+          new ResponseError(
+              ResponseErrorCode.serverErrorEnd, "Server has not been initialized yet!", false));
+    return getValue(request);
+  }
+
+  private <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
+    if (!isInitialized())
+      return completeExceptionally(
+          new ResponseError(
+              ResponseErrorCode.serverNotInitialized,
+              "Server has not been initialized yet!",
+              false));
+    if (isFinished())
+      return completeExceptionally(
+          new ResponseError(
+              ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
+
+    return getValue(request);
+  }
+
+  private <T> CompletableFuture<T> completeExceptionally(ResponseError error) {
+    CompletableFuture<T> future = new CompletableFuture<>();
+    future.completeExceptionally(new ResponseErrorException(error));
+    return future;
+  }
+
+  private boolean isInitialized() {
+    try {
+      isInitialized.get(1, TimeUnit.SECONDS);
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean isFinished() {
+    return isFinished.isDone();
+  }
+
+  private <T> CompletableFuture<T> getValue(Supplier<Either<ResponseError, T>> request) {
+    CompletableFuture<Either<ResponseError, T>> execution = CompletableFuture.supplyAsync(request);
+    Either<ResponseError, T> either;
+    try {
+      either = execution.get();
+    } catch (CompletionException | InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+      return completeExceptionally(
+          new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+    }
+
+    if (either.isLeft()) return completeExceptionally(either.getLeft());
+    else return CompletableFuture.completedFuture(either.getRight());
+  }
+
+  public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
+    return targetsToSources.getOrDefault(target, new ArrayList<>());
   }
 }

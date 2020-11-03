@@ -57,9 +57,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final String build = "BUILD";
   private Map<String, String> diagnosticsProtosLocations = new HashMap<>();
 
-  public BepServer(BazelBspServer bspServer, BuildClient bspClient) {
+  private final BuildClientLogger buildClientLogger;
+
+  public BepServer(BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
     this.bspServer = bspServer;
     this.bspClient = bspClient;
+    this.buildClientLogger = buildClientLogger;
   }
 
   public static StatusCode convertExitCode(int exitCode) {
@@ -152,7 +155,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             BuildEventStreamProtos.Progress progress = event.getProgress();
             processStdErrDiagnostics(progress);
             String message = progress.getStderr().trim();
-            if (!message.isEmpty()) bspServer.logMessage(progress.getStderr().trim());
+            if (!message.isEmpty()) buildClientLogger.logMessage(progress.getStderr().trim());
           }
 
         } catch (IOException e) {
@@ -174,7 +177,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processAbortion(BuildEventStreamProtos.Aborted aborted) {
     if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD)
-      bspServer.logError(
+      buildClientLogger.logError(
           "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
   }
 
