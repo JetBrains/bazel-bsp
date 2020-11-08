@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel;
+package org.jetbrains.bsp.bazel.common;
 
 import com.google.common.base.Splitter;
 import java.net.URI;

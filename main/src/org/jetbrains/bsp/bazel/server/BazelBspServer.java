@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel;
+package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
@@ -92,6 +92,8 @@ import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
+import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.common.Uri;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 
@@ -100,8 +102,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   protected static final String SCALAC = "Scalac";
   protected static final String KOTLINC = "KotlinCompile";
   protected static final String JAVAC = "Javac";
-  protected static final List<String> SUPPORTED_LANGUAGES =
-      ImmutableList.of("scala", "java", "kotlin");
+
   private final String bazel;
   private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
@@ -201,9 +202,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return handleBuildInitialize(
         () -> {
           BuildServerCapabilities capabilities = new BuildServerCapabilities();
-          capabilities.setCompileProvider(new CompileProvider(SUPPORTED_LANGUAGES));
-          capabilities.setRunProvider(new RunProvider(SUPPORTED_LANGUAGES));
-          capabilities.setTestProvider(new TestProvider(SUPPORTED_LANGUAGES));
+          capabilities.setCompileProvider(new CompileProvider(Constants.SUPPORTED_LANGUAGES));
+          capabilities.setRunProvider(new RunProvider(Constants.SUPPORTED_LANGUAGES));
+          capabilities.setTestProvider(new TestProvider(Constants.SUPPORTED_LANGUAGES));
           capabilities.setDependencySourcesProvider(true);
           capabilities.setInverseSourcesProvider(true);
           capabilities.setResourcesProvider(true);

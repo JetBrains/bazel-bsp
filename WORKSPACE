@@ -134,8 +134,3 @@ http_archive(
     strip_prefix = "protobuf-%s" % protobuf_version,
     url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % protobuf_version,
 )
-
-local_repository(
-    name = "sample_repo",
-    path = "sample-repo",
-)

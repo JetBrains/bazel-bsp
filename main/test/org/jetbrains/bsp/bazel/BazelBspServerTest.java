@@ -2,16 +2,33 @@ package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
-import ch.epfl.scala.bsp4j.*;
+import ch.epfl.scala.bsp4j.BuildTarget;
+import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.DependencySourcesItem;
+import ch.epfl.scala.bsp4j.DependencySourcesResult;
+import ch.epfl.scala.bsp4j.InverseSourcesResult;
+import ch.epfl.scala.bsp4j.ResourcesItem;
+import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.SourceItem;
+import ch.epfl.scala.bsp4j.SourceItemKind;
+import ch.epfl.scala.bsp4j.SourcesItem;
+import ch.epfl.scala.bsp4j.SourcesResult;
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.Lists;
-import scala.concurrent.ExecutionContext;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import scala.concurrent.ExecutionContext;
 
 public class BazelBspServerTest {
   private final String outDirectory = "bazel-out";
