@@ -15,6 +15,7 @@ public class BuildClientLogger {
   public void logError(String errorMessage) {
     LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
     buildClient.onBuildLogMessage(params);
+    // TODO why this function throws exception?
     throw new RuntimeException(errorMessage);
   }
 
