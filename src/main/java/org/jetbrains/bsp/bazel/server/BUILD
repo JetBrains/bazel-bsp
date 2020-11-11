@@ -1,9 +1,12 @@
 java_library(
     name = "server",
-    srcs = glob(["**/*.java"]),
+    srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/resolvers",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/utils",
         "@com_google_protobuf//:protobuf_java",
         "@googleapis//:google_devtools_build_v1_build_events_java_proto",
         "@googleapis//:google_devtools_build_v1_publish_build_event_java_grpc",

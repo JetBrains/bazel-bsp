@@ -1,7 +1,7 @@
 package java.org.jetbrains.bsp.bazel.server.resolvers;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
-import java.org.jetbrains.bsp.bazel.server.ActionGraphParser;
+import java.org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import java.io.IOException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;

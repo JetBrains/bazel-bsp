@@ -7,6 +7,7 @@ import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import java.org.jetbrains.bsp.bazel.common.Uri;
+import java.org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
