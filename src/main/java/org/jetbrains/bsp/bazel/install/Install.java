@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.install;
 import ch.epfl.scala.bsp4j.BspConnectionDetails;
 import com.google.common.base.Splitter;
 import com.google.gson.GsonBuilder;
-import org.jetbrains.bsp.bazel.common.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,6 +22,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.jetbrains.bsp.bazel.common.Constants;
 
 public class Install {
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";

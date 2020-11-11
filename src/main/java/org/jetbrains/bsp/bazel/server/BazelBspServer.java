@@ -56,12 +56,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Uri;
-import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.ProcessResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -90,6 +84,12 @@ import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
+import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.ProcessResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
