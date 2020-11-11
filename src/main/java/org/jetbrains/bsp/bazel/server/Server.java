@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class Server {
   public static void main(String[] args) {
@@ -59,8 +60,9 @@ public class Server {
               .setRemoteInterface(BuildClient.class)
               .setExecutorService(executor)
               .create();
-      bspServer.setBuildClient(launcher.getRemoteProxy());
-      BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy());
+      BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
+      bspServer.setBuildClientLogger(buildClientLogger);
+      BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy(), buildClientLogger);
       bspServer.bepServer = bepServer;
       io.grpc.Server server = ServerBuilder.forPort(0).addService(bepServer).build().start();
       bspServer.setBackendPort(server.getPort());

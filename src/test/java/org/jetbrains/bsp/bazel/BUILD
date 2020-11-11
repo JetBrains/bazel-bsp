@@ -3,7 +3,7 @@ java_binary(
     srcs = ["BazelBspServerTest.java"],
     main_class = "org.jetbrains.bsp.bazel.BazelBspServerTest",
     deps = [
-        "//main/src/org/jetbrains/bsp/bazel/server",
+        "//src/main/java/org/jetbrains/bsp/bazel/server",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:ch_epfl_scala_bsp_testkit_2_13",
         "@maven//:com_google_guava_guava",

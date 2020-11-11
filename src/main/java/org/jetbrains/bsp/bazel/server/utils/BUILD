@@ -1,8 +1,5 @@
 java_library(
-    name = "common",
+    name = "utils",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
-    deps = [
-        "@maven//:com_google_guava_guava",
-    ],
 )

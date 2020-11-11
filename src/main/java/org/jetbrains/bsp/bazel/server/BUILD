@@ -3,7 +3,10 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
-        "//main/src/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/resolvers",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/utils",
         "@com_google_protobuf//:protobuf_java",
         "@googleapis//:google_devtools_build_v1_build_events_java_proto",
         "@googleapis//:google_devtools_build_v1_publish_build_event_java_grpc",
@@ -26,5 +29,5 @@ java_binary(
     name = "bsp-run",
     main_class = "org.jetbrains.bsp.bazel.Server",
     visibility = ["//visibility:public"],
-    runtime_deps = ["//main/src/org/jetbrains/bsp/bazel/server"],
+    runtime_deps = ["//src/main/java/org/jetbrains/bsp/bazel/server"],
 )

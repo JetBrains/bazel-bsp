@@ -4,7 +4,7 @@ java_library(
     resources = ["aspects.bzl"],
     visibility = ["//visibility:public"],
     deps = [
-        "//main/src/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/common",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
         "@maven//:com_google_guava_guava",
@@ -15,5 +15,5 @@ java_library(
 java_binary(
     name = "bsp-install",
     main_class = "org.jetbrains.bsp.bazel.install.Install",
-    runtime_deps = ["//main/src/org/jetbrains/bsp/bazel/install"],
+    runtime_deps = ["//src/main/java/org/jetbrains/bsp/bazel/install"],
 )
