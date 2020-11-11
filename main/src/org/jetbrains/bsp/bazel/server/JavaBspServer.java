@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.servers;
+package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
@@ -13,11 +13,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.ActionGraphParser;
-import org.jetbrains.bsp.bazel.Uri;
-import org.jetbrains.bsp.bazel.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.utils.MnemonicsUtils;
+import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 
 // TODO: This class *should* implement a `JavaBuildServer` interface,
 // TODO: now `buildTargetJavacOptions` method returns a `Either<ResponseError, JavacOptionsResult>`

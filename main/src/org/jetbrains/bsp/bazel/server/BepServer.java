@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -155,7 +156,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             BuildEventStreamProtos.Progress progress = event.getProgress();
             processStdErrDiagnostics(progress);
             String message = progress.getStderr().trim();
-            if (!message.isEmpty()) buildClientLogger.logMessage(progress.getStderr().trim());
+            if (!message.isEmpty()) {
+              buildClientLogger.logMessage(progress.getStderr().trim());
+            }
           }
 
         } catch (IOException e) {

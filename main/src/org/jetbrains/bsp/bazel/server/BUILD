@@ -1,6 +1,6 @@
 java_library(
     name = "server",
-    srcs = glob(["*.java"]),
+    srcs = glob(["**/*.java"]),
     visibility = ["//visibility:public"],
     deps = [
         "//main/src/org/jetbrains/bsp/bazel/common",
