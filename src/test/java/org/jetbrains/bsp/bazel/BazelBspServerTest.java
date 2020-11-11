@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel;
+package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;

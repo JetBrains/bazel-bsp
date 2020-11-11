@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel.server.resolvers;
+package org.jetbrains.bsp.bazel.server.resolvers;
 
 import com.google.common.base.Splitter;
 import com.google.common.io.ByteStreams;

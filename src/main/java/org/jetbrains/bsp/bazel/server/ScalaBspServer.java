@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -10,8 +10,8 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import java.org.jetbrains.bsp.bazel.common.Uri;
-import java.org.jetbrains.bsp.bazel.common.ActionGraphParser;
+import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import java.org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import java.org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import java.org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 
 // TODO: This class *should* implement a `ScalaBuildServer` interface,
 // TODO: now `buildTargetScalacOptions` method returns a `Either<ResponseError, ScalacOptionsResult>`

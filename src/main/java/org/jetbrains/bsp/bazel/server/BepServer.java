@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.org.jetbrains.bsp.bazel.common.Uri;
-import java.org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 

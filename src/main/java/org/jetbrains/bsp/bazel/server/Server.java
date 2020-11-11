@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
@@ -13,8 +13,8 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
-import java.org.jetbrains.bsp.bazel.common.Constants;
-import java.org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class Server {
   public static void main(String[] args) {

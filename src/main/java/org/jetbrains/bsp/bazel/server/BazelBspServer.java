@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
@@ -56,12 +56,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import java.org.jetbrains.bsp.bazel.common.Constants;
-import java.org.jetbrains.bsp.bazel.common.Uri;
-import java.org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import java.org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import java.org.jetbrains.bsp.bazel.server.resolvers.ProcessResolver;
-import java.org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.ProcessResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -90,7 +90,7 @@ import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
-import java.org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 

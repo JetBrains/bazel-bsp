@@ -1,9 +1,9 @@
-package java.org.jetbrains.bsp.bazel.install;
+package org.jetbrains.bsp.bazel.install;
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails;
 import com.google.common.base.Splitter;
 import com.google.gson.GsonBuilder;
-import java.org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.common.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;

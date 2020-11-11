@@ -1,4 +1,4 @@
-package java.org.jetbrains.bsp.bazel.server.utils;
+package org.jetbrains.bsp.bazel.server.utils;
 
 import java.util.List;
 import java.util.Objects;
