@@ -101,8 +101,8 @@ public class BazelBspServerTest {
         TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(2));
 
     Runnable[] tests = {
-      /*client::testResolveProject,
-      () -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
+      client::testResolveProject,
+      /*() -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
       () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
       () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
       () ->
