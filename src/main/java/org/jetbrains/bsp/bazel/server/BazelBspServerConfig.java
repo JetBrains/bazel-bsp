@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server;
 public class BazelBspServerConfig {
 
     private String pathToBazel = null;
-    private String projectPath = "//...";
+    private String[] targetProjectPaths = new String[] { "//..." };
 
     public BazelBspServerConfig(String pathToBazel) {
         this.pathToBazel = pathToBazel;
@@ -13,7 +13,7 @@ public class BazelBspServerConfig {
         if(args.length == 0) { throw new IllegalArgumentException("Configuration can't be built without any parameters"); }
         BazelBspServerConfig config = new BazelBspServerConfig(args[0]);
         if(args.length == 2) {
-            config.setProjectPath(args[1]);
+            config.setTargetProjectPaths(args[1].split(","));
         }
 
         return config;
@@ -23,12 +23,12 @@ public class BazelBspServerConfig {
         return this.pathToBazel;
     }
 
-    public String getProjectPath() {
-        return this.projectPath;
+    public String[] getTargetProjectPaths() {
+        return this.targetProjectPaths;
     }
 
-    public BazelBspServerConfig setProjectPath(String projectPath) {
-        this.projectPath = projectPath;
+    public BazelBspServerConfig setTargetProjectPaths(String[] projectPaths) {
+        this.targetProjectPaths = projectPaths;
         return this;
     }
 }

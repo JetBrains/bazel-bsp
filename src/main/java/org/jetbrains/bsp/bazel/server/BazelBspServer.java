@@ -173,19 +173,37 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     System.exit(0);
   }
 
+  private List<BuildTarget> getBuildTarget(String projectPath) throws IOException {
+    Build.QueryResult queryResult =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "--nohost_deps",
+            "--noimplicit_deps",
+            String.format("kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)", projectPath, projectPath, projectPath));
+        return queryResult.getTargetList().stream()
+            .map(Build.Target::getRule)
+            .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+            .map(this::getBuildTarget)
+            .collect(Collectors.toList());
+  }
+
   @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
-    return executeCommand(() -> {
-        String projectPath = this.configuration.getProjectPath();
-        Build.QueryResult queryResult = queryResolver.getQuery("query", "--output=proto", "--nohost_deps",
-            "--noimplicit_deps",
-            String.format("kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)", projectPath,
-                projectPath, projectPath));
-        List<BuildTarget> targets = queryResult.getTargetList().stream().map(Build.Target::getRule)
-            .filter(rule -> !rule.getRuleClass().equals("filegroup")).map(this::getBuildTarget)
-            .collect(Collectors.toList());
-        return Either.forRight(new WorkspaceBuildTargetsResult(targets));
-    });
+    return executeCommand(
+        () -> {
+          try {
+            String[] projectPaths = this.configuration.getTargetProjectPaths();
+            List<BuildTarget> targets = new ArrayList<>();
+            for (String projectPath: projectPaths) {
+              targets.addAll(getBuildTarget(projectPath));
+            }
+            return Either.forRight(new WorkspaceBuildTargetsResult(targets));
+          } catch (IOException e) {
+            return Either.forLeft(
+                new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+          }
+        });
   }
 
   private BuildTarget getBuildTarget(Build.Rule rule) {
