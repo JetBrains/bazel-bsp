@@ -101,7 +101,7 @@ public class BazelBspServerTest {
         TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(2));
 
     Runnable[] tests = {
-      client::testResolveProject,
+      /*client::testResolveProject,
       () -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
       () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
       () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
@@ -109,7 +109,7 @@ public class BazelBspServerTest {
           client.testInverseSourcesResults(
               new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
               expectedInverseSources),
-      () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
+      () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),*/
       //                client::testTargetsRunUnsuccessfully,
       //                client::testTargetsTestUnsuccessfully,
       //                client::testTargetCapabilities,
