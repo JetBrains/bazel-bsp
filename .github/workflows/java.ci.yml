@@ -18,5 +18,5 @@ jobs:
     - name: Run test
       working-directory: ../
       run: |
-	ls -la
+        ls -la
 	./test.sh
