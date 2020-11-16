@@ -102,9 +102,9 @@ public class BazelBspServerTest {
 
     Runnable[] tests = {
       client::testResolveProject,
-      /*() -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
+      () -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
       () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
-      () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
+      /*() -> client.testResourcesResults(expectedBuildTargets, expectedResources),
       () ->
           client.testInverseSourcesResults(
               new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
