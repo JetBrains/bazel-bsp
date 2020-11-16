@@ -24,8 +24,6 @@ public class Server {
     }
     boolean hasErrors = false;
 
-    String bazelPath = args[0];
-
     PrintStream stdout = System.out;
     InputStream stdin = System.in;
 
@@ -45,7 +43,7 @@ public class Server {
       System.setOut(logStream);
       System.setErr(logStream);
 
-      BazelBspServerConfig config = new BazelBspServerConfig(bazelPath);
+      BazelBspServerConfig config = BazelBspServerConfig.from(args);
       BazelBspServer bspServer = new BazelBspServer(config);
 
       Launcher<BuildClient> launcher = new Launcher.Builder().traceMessages(traceWriter).setOutput(stdout)
