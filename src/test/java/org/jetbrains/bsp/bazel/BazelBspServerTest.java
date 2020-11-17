@@ -109,7 +109,7 @@ public class BazelBspServerTest {
           client.testInverseSourcesResults(
               new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
               expectedInverseSources),
-//       () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
+      () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
 //       client::testTargetsRunUnsuccessfully,
 //       client::testTargetsTestUnsuccessfully,
 //       client::testTargetCapabilities,
