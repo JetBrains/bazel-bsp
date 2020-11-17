@@ -112,7 +112,7 @@ public class BazelBspServerTest {
 //       () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
 //       client::testTargetsRunUnsuccessfully,
 //       client::testTargetsTestUnsuccessfully,
-      client::testTargetCapabilities,
+//       client::testTargetCapabilities,
     };
     runTests(tests);
   }
