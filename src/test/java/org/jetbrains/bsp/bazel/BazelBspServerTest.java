@@ -111,8 +111,8 @@ public class BazelBspServerTest {
               expectedInverseSources),
 //       () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
 //       client::testTargetsRunUnsuccessfully,
-      client::testTargetsTestUnsuccessfully,
-//       client::testTargetCapabilities,
+//       client::testTargetsTestUnsuccessfully,
+      client::testTargetCapabilities,
     };
     runTests(tests);
   }
