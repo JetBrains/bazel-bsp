@@ -104,11 +104,11 @@ public class BazelBspServerTest {
       client::testResolveProject,
       () -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
 //       () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
-      () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
-//       () ->
-//           client.testInverseSourcesResults(
-//               new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
-//               expectedInverseSources),
+//       () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
+      () ->
+          client.testInverseSourcesResults(
+              new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
+              expectedInverseSources),
 //       () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
 //       client::testTargetsRunUnsuccessfully,
 //       client::testTargetsTestUnsuccessfully,
