@@ -103,7 +103,7 @@ public class BazelBspServerTest {
     Runnable[] tests = {
       client::testResolveProject,
       () -> client.testCompareWorkspaceTargetsResults(expectedBuildTargets),
-//       () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
+      () -> client.testSourcesResults(expectedBuildTargets, expectedSources),
 //       () -> client.testResourcesResults(expectedBuildTargets, expectedResources),
 //       () ->
 //           client.testInverseSourcesResults(
