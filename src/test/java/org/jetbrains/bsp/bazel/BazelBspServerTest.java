@@ -98,7 +98,7 @@ public class BazelBspServerTest {
   public BazelBspServerTest(String workspace) {
     this.workspace = workspace;
     this.client =
-        TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(2));
+        TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(4));
 
     Runnable[] tests = {
       client::testResolveProject,
