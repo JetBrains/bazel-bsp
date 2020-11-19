@@ -10,7 +10,7 @@ test_bsp_server() {
   cd sample-repo
   java -cp $bsp_path org.jetbrains.bsp.bazel.install.Install
   cd ..
-  bazel run //main/test/org/jetbrains/bsp/bazel:bsp-test
+  bazel run //src/test/java/org/jetbrains/bsp/bazel:bsp-test
 }
 
 run_test test_bsp_server

@@ -98,7 +98,7 @@ public class BazelBspServerTest {
   public BazelBspServerTest(String workspace) {
     this.workspace = workspace;
     this.client =
-        TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(2));
+        TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(4));
 
     Runnable[] tests = {
       client::testResolveProject,
@@ -110,9 +110,9 @@ public class BazelBspServerTest {
               new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
               expectedInverseSources),
       () -> client.testDependencySourcesResults(expectedBuildTargets, expectedDependencies),
-      //                client::testTargetsRunUnsuccessfully,
-      //                client::testTargetsTestUnsuccessfully,
-      //                client::testTargetCapabilities,
+//       client::testTargetsRunUnsuccessfully,
+//       client::testTargetsTestUnsuccessfully,
+//       client::testTargetCapabilities,
     };
     runTests(tests);
   }
@@ -127,7 +127,7 @@ public class BazelBspServerTest {
     boolean failed = false;
     for (Future<?> future : futures) {
       try {
-        future.get(6, TimeUnit.MINUTES);
+        future.get(15, TimeUnit.MINUTES);
       } catch (InterruptedException | TimeoutException e) {
         System.err.println("Something wrong happened while running the test");
         failed = true;
