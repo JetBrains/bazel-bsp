@@ -173,21 +173,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     System.exit(0);
   }
 
-  private List<BuildTarget> getBuildTarget(String projectPath) throws IOException {
-    Build.QueryResult queryResult =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
-            "--nohost_deps",
-            "--noimplicit_deps",
-            String.format("kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)", projectPath, projectPath, projectPath));
-        return queryResult.getTargetList().stream()
-            .map(Build.Target::getRule)
-            .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-            .map(this::getBuildTarget)
-            .collect(Collectors.toList());
-  }
-
   @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
     return executeCommand(
@@ -205,6 +190,22 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           }
         });
   }
+
+  private List<BuildTarget> getBuildTarget(String projectPath) throws IOException {
+    Build.QueryResult queryResult =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "--nohost_deps",
+            "--noimplicit_deps",
+            String.format("kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)", projectPath, projectPath, projectPath));
+        return queryResult.getTargetList().stream()
+            .map(Build.Target::getRule)
+            .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+            .map(this::getBuildTarget)
+            .collect(Collectors.toList());
+  }
+
 
   private BuildTarget getBuildTarget(Build.Rule rule) {
     String name = rule.getName();

@@ -10,7 +10,10 @@ public class BazelBspServerConfig {
     }
 
     static public BazelBspServerConfig from(String[] args) {
-        if(args.length == 0) { throw new IllegalArgumentException("Configuration can't be built without any parameters"); }
+        if(args.length == 0) { 
+            throw new IllegalArgumentException("Configuration can't be built without any parameters"); 
+        }
+
         BazelBspServerConfig config = new BazelBspServerConfig(args[0]);
         if(args.length == 2) {
             config.setTargetProjectPaths(args[1].split(","));
