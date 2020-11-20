@@ -178,7 +178,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return executeCommand(
         () -> {
           try {
-            String[] projectPaths = this.configuration.getTargetProjectPaths();
+            List<String> projectPaths = this.configuration.getTargetProjectPaths();
             List<BuildTarget> targets = new ArrayList<>();
             for (String projectPath: projectPaths) {
               targets.addAll(getBuildTarget(projectPath));
