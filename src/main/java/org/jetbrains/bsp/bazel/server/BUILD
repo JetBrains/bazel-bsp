@@ -4,6 +4,7 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
         "//src/main/java/org/jetbrains/bsp/bazel/server/resolvers",
         "//src/main/java/org/jetbrains/bsp/bazel/server/utils",
@@ -27,7 +28,7 @@ java_library(
 
 java_binary(
     name = "bsp-run",
-    main_class = "org.jetbrains.bsp.bazel.Server",
+    main_class = "org.jetbrains.bsp.bazel.server.Server",
     visibility = ["//visibility:public"],
     runtime_deps = ["//src/main/java/org/jetbrains/bsp/bazel/server"],
 )

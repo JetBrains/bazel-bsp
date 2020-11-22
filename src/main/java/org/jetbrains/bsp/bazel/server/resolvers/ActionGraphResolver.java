@@ -1,29 +1,27 @@
 package org.jetbrains.bsp.bazel.server.resolvers;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
+import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContainer;
 import java.io.IOException;
-import org.eclipse.lsp4j.jsonrpc.messages.Either;
-import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.data.ProcessResults;
 
 public class ActionGraphResolver {
 
-  private final ProcessResolver processResolver;
+  private final BazelRunner bazelRunner;
 
-  public ActionGraphResolver(ProcessResolver processResolver) {
-    this.processResolver = processResolver;
+  public ActionGraphResolver(BazelRunner bazelRunner) {
+    this.bazelRunner = bazelRunner;
   }
 
-  public Either<ResponseError, ActionGraphParser> parseActionGraph(String query) {
+  public ActionGraphParser parseActionGraph(String query) {
     try {
-      AnalysisProtos.ActionGraphContainer actionGraph =
-          AnalysisProtos.ActionGraphContainer.parseFrom(
-              processResolver.runBazelBytes("aquery", "--output=proto", query));
-      return Either.forRight(new ActionGraphParser(actionGraph));
+      ProcessResults process = bazelRunner.runBazelCommand("aquery", "--output=proto", query);
+      ActionGraphContainer actionGraphContainer =
+          AnalysisProtos.ActionGraphContainer.parseFrom(process.getStdoutStream());
+      return new ActionGraphParser(actionGraphContainer);
     } catch (IOException e) {
-      return Either.forLeft(
-          new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+      throw new RuntimeException(e);
     }
   }
 }
