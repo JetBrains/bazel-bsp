@@ -12,7 +12,6 @@ public class BazelBspServerSingleTest {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerSingleTest.class);
 
-
   private final String testName;
   private final Runnable testToRun;
 
@@ -38,11 +37,11 @@ public class BazelBspServerSingleTest {
 
   private boolean getSubmittedTestWithTimeout(Future<?> submittedTest, int timeoutInMinutes) {
     LOGGER.info("Running \"{}\" test...", testName);
+
     return Try.of(() -> submittedTest.get(timeoutInMinutes, TimeUnit.MINUTES))
         .onSuccess(e -> LOGGER.info("Test \"{}\" passed!", testName))
         .onFailure(e -> LOGGER.error("Test \"{}\" failed! Exception: {}", testName, e))
         .map(i -> true)
         .getOrElse(false);
   }
-
 }

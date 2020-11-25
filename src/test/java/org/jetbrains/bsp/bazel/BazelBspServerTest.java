@@ -16,10 +16,8 @@ public class BazelBspServerTest {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTest.class);
 
-
   private final TestClient client;
   private final ExecutorService executorService = Executors.newCachedThreadPool();
-
 
   public BazelBspServerTest() {
     LOGGER.info("Creating TestClient...");
@@ -33,7 +31,6 @@ public class BazelBspServerTest {
 
     LOGGER.info("Created TestClient");
   }
-
 
   public void run() {
     LOGGER.info("Running BazelBspServerTest...");

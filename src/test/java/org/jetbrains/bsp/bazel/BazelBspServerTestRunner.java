@@ -7,7 +7,6 @@ public class BazelBspServerTestRunner {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTestRunner.class);
 
-
   public static void main(String[] args) {
     LOGGER.info("Starting BazelBspServerTest...");
 
