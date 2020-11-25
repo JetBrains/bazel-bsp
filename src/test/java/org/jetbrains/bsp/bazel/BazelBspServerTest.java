@@ -12,23 +12,34 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 public class BazelBspServerTest {
+
+  private static Logger logger = LogManager.getLogger(BazelBspServerTest.class);
 
   private final TestClient client;
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
 
   public BazelBspServerTest() {
+    logger.info("Creating TestClient");
+
     this.client = TestClient$
         .MODULE$
         .testInitialStructure(
             BazelBspServerTestData.WORKSPACE_FULL_PATH,
             ImmutableMap.of(),
             BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+
+    logger.info("Created TestClient");
   }
 
 
   public void run() {
+    logger.info("Running BazelBspServerTest...");
+
     List<Runnable> testsTopRun = getTestsTopRun();
     runTests(testsTopRun);
   }
@@ -68,7 +79,7 @@ public class BazelBspServerTest {
 
   private boolean executeTestAndReturnTrueIfPassed(Future<?> submittedTest) {
     return Try.of(() -> submittedTest.get(BazelBspServerTestData.TEST_EXECUTION_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES))
-        .onFailure(e -> System.err.println("Test execution failed! Exception: " + e))
+        .onFailure(e -> logger.error("Test execution failed! Exception: { }", e))
         .map(i -> true)
         .getOrElse(false);
   }
@@ -78,9 +89,11 @@ public class BazelBspServerTest {
     int failExitCode = 1;
 
     if (didAllTestsPass) {
+      logger.info("All test passed - exiting with success");
       System.exit(successExitCode);
     }
 
+    logger.fatal("Test failed - exiting with fail");
     System.exit(failExitCode);
   }
 }
