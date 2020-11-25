@@ -12,6 +12,7 @@ import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.SourcesItem;
 import ch.epfl.scala.bsp4j.SourcesResult;
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -25,9 +26,15 @@ class BazelBspServerTestData {
   private static final String SAMPLE_REPO_EXAMPLE_PATH = SAMPLE_REPO_PATH + "/example";
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
+  private static final String BUILD_WORKSPACE_DIRECTORY = "BUILD_WORKSPACE_DIRECTORY";
+  private static final String WORKSPACE_DIR_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
+
   private static final BuildTargetIdentifier ID_1 = new BuildTargetIdentifier("//example:example");
   private static final BuildTargetIdentifier ID_2 = new BuildTargetIdentifier("//dep:dep");
   private static final BuildTargetIdentifier ID_3 = new BuildTargetIdentifier("//dep/deeper:deeper");
+
+
+  static final String WORKSPACE_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
 
 
   static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS =
@@ -87,6 +94,9 @@ class BazelBspServerTestData {
                   ImmutableList.of(
                       SAMPLE_REPO_EXAMPLE_PATH + "/file.txt", SAMPLE_REPO_EXAMPLE_PATH + "/file2.txt"))));
 
+
+  static final TextDocumentIdentifier INVERSE_SOURCES_DOCUMENT =
+      new TextDocumentIdentifier("file://" + WORKSPACE_FULL_PATH + "/dep/Dep.scala");
 
   static final InverseSourcesResult EXPECTED_INVERSE_SOURCES =
       new InverseSourcesResult(ImmutableList.of(ID_2));

@@ -17,33 +17,33 @@ import java.util.stream.Collectors;
 
 public class BazelBspServerTest {
 
-  private final String workspace;
   private final TestClient client;
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
 
-  public BazelBspServerTest(String workspace) {
-    this.workspace = workspace;
-    this.client = TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(4));
+  public BazelBspServerTest() {
+    this.client = TestClient$.MODULE$.testInitialStructure(BazelBspServerTestData.WORKSPACE_FULL_PATH, new HashMap<>(), Duration.ofMinutes(4));
   }
 
 
   public void run() {
-    List<Runnable> tests = ImmutableList.of(
+    List<Runnable> testsTopRun = getTestsTopRun();
+    runTests(testsTopRun);
+  }
+
+  private List<Runnable> getTestsTopRun() {
+    return ImmutableList.of(
         client::testResolveProject,
         () -> client.testCompareWorkspaceTargetsResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS),
         () -> client.testSourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_SOURCES),
         () -> client.testResourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_RESOURCES),
-        () ->
-            client.testInverseSourcesResults(
-                new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
-                BazelBspServerTestData.EXPECTED_INVERSE_SOURCES),
+        () -> client.testInverseSourcesResults(BazelBspServerTestData.INVERSE_SOURCES_DOCUMENT, BazelBspServerTestData.EXPECTED_INVERSE_SOURCES),
         () -> client.testDependencySourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_DEPENDENCIES)
+//         TODO one day we will uncomment them...
 //       client::testTargetsRunUnsuccessfully,
 //       client::testTargetsTestUnsuccessfully,
 //       client::testTargetCapabilities,
     );
-    runTests(tests);
   }
 
   private void runTests(List<Runnable> tests) {
