@@ -22,6 +22,7 @@ _deps = [
     _dependency("org.eclipse.xtext:org.eclipse.xtext.xbase.lib:2.19.0"),
     _dependency("commons-cli:commons-cli:jar:1.4"),
     _dependency("org.jetbrains:annotations:jar:20.1.0"),
+    _dependency("io.vavr:vavr:0.9.0"),
 ]
 
 def dependencies():

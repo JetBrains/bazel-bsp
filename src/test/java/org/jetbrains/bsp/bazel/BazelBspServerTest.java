@@ -4,13 +4,12 @@ import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.vavr.control.Try;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 public class BazelBspServerTest {
@@ -50,27 +49,38 @@ public class BazelBspServerTest {
   }
 
   private void runTests(List<Runnable> tests) {
-    List<Future<?>> executedTests = submitTestsForExecution(tests);
+    List<Future<?>> submittedTests = submitTestsForExecution(tests);
+    boolean didAllTestsPass = executeAllTestsAndReturnTrueIfAllPassed(submittedTests);
 
-    boolean failed = false;
-    for (Future<?> future : executedTests) {
-      try {
-        future.get(BazelBspServerTestData.TEST_EXECUTION_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
-      } catch (InterruptedException | TimeoutException e) {
-        System.err.println("Something wrong happened while running the test");
-        failed = true;
-      } catch (ExecutionException e) {
-        System.err.println(e.getMessage());
-        failed = true;
-      }
-    }
-
-    System.exit(failed ? 1 : 0);
+    exitProgramWithSuccessIfAllTestPassed(didAllTestsPass);
   }
 
   private List<Future<?>> submitTestsForExecution(List<Runnable> tests) {
     return tests.stream()
         .map(executorService::submit)
         .collect(Collectors.toList());
+  }
+
+  private boolean executeAllTestsAndReturnTrueIfAllPassed(List<Future<?>> submittedTests) {
+    return submittedTests.stream()
+        .allMatch(this::executeTestAndReturnTrueIfPassed);
+  }
+
+  private boolean executeTestAndReturnTrueIfPassed(Future<?> submittedTest) {
+    return Try.of(() -> submittedTest.get(BazelBspServerTestData.TEST_EXECUTION_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES))
+        .onFailure(e -> System.err.println("Test execution failed! Exception: " + e))
+        .map(i -> true)
+        .getOrElse(false);
+  }
+
+  private void exitProgramWithSuccessIfAllTestPassed(boolean didAllTestsPass) {
+    int successExitCode = 0;
+    int failExitCode = 1;
+
+    if (didAllTestsPass) {
+      System.exit(successExitCode);
+    }
+
+    System.exit(failExitCode);
   }
 }
