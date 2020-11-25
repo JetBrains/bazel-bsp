@@ -2,7 +2,7 @@ load("@rules_java//java:defs.bzl", "java_binary")
 
 java_binary(
     name = "bsp-test",
-    srcs = ["BazelBspServerTest.java"],
+    srcs = glob(["*.java"]),
     main_class = "org.jetbrains.bsp.bazel.BazelBspServerTest",
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/server",
