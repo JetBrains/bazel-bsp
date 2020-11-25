@@ -5,10 +5,11 @@ import org.apache.logging.log4j.Logger;
 
 public class BazelBspServerTestRunner {
 
-  private static Logger logger = LogManager.getLogger(BazelBspServerTestRunner.class);
+  private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTestRunner.class);
+
 
   public static void main(String[] args) {
-    logger.info("Starting BazelBspServerTest...");
+    LOGGER.info("Starting BazelBspServerTest...");
 
     BazelBspServerTest bazelBspServerTest = new BazelBspServerTest();
     bazelBspServerTest.run();
