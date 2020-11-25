@@ -3,8 +3,8 @@ package org.jetbrains.bsp.bazel;
 import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.google.common.collect.ImmutableList;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -24,35 +24,33 @@ public class BazelBspServerTest {
 
   public BazelBspServerTest(String workspace) {
     this.workspace = workspace;
-    this.client =
-        TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(4));
+    this.client = TestClient$.MODULE$.testInitialStructure(workspace, new HashMap<>(), Duration.ofMinutes(4));
+  }
 
-    Runnable[] tests = {
-      client::testResolveProject,
-      () -> client.testCompareWorkspaceTargetsResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS),
-      () -> client.testSourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_SOURCES),
-      () -> client.testResourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_RESOURCES),
-      () ->
-          client.testInverseSourcesResults(
-              new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
-              BazelBspServerTestData.EXPECTED_INVERSE_SOURCES),
-      () -> client.testDependencySourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_DEPENDENCIES),
+
+  public void run() {
+    List<Runnable> tests = ImmutableList.of(
+        client::testResolveProject,
+        () -> client.testCompareWorkspaceTargetsResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS),
+        () -> client.testSourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_SOURCES),
+        () -> client.testResourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_RESOURCES),
+        () ->
+            client.testInverseSourcesResults(
+                new TextDocumentIdentifier("file://" + workspace + "/dep/Dep.scala"),
+                BazelBspServerTestData.EXPECTED_INVERSE_SOURCES),
+        () -> client.testDependencySourcesResults(BazelBspServerTestData.EXPECTED_BUILD_TARGETS, BazelBspServerTestData.EXPECTED_DEPENDENCIES)
 //       client::testTargetsRunUnsuccessfully,
 //       client::testTargetsTestUnsuccessfully,
 //       client::testTargetCapabilities,
-    };
+    );
     runTests(tests);
   }
 
-  public static void main(String[] args) {
-    new BazelBspServerTest(System.getenv("BUILD_WORKSPACE_DIRECTORY") + "/sample-repo");
-  }
+  private void runTests(List<Runnable> tests) {
+    List<Future<?>> executedTests = submitTestsForExecution(tests);
 
-  private void runTests(Runnable[] tests) {
-    List<Future<?>> futures =
-        Arrays.stream(tests).map(executorService::submit).collect(Collectors.toList());
     boolean failed = false;
-    for (Future<?> future : futures) {
+    for (Future<?> future : executedTests) {
       try {
         future.get(15, TimeUnit.MINUTES);
       } catch (InterruptedException | TimeoutException e) {
@@ -65,5 +63,11 @@ public class BazelBspServerTest {
     }
 
     System.exit(failed ? 1 : 0);
+  }
+
+  private List<Future<?>> submitTestsForExecution(List<Runnable> tests) {
+    return tests.stream()
+        .map(executorService::submit)
+        .collect(Collectors.toList());
   }
 }
