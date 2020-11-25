@@ -15,6 +15,7 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
+import java.time.Duration;
 import java.util.List;
 
 class BazelBspServerTestData {
@@ -33,6 +34,9 @@ class BazelBspServerTestData {
   private static final BuildTargetIdentifier ID_2 = new BuildTargetIdentifier("//dep:dep");
   private static final BuildTargetIdentifier ID_3 = new BuildTargetIdentifier("//dep/deeper:deeper");
 
+
+  static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(4);
+  static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 15;
 
   static final String WORKSPACE_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
 

@@ -2,10 +2,8 @@ package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableList;
-import java.time.Duration;
-import java.util.HashMap;
+import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +20,12 @@ public class BazelBspServerTest {
 
 
   public BazelBspServerTest() {
-    this.client = TestClient$.MODULE$.testInitialStructure(BazelBspServerTestData.WORKSPACE_FULL_PATH, new HashMap<>(), Duration.ofMinutes(4));
+    this.client = TestClient$
+        .MODULE$
+        .testInitialStructure(
+            BazelBspServerTestData.WORKSPACE_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
   }
 
 
@@ -52,7 +55,7 @@ public class BazelBspServerTest {
     boolean failed = false;
     for (Future<?> future : executedTests) {
       try {
-        future.get(15, TimeUnit.MINUTES);
+        future.get(BazelBspServerTestData.TEST_EXECUTION_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
       } catch (InterruptedException | TimeoutException e) {
         System.err.println("Something wrong happened while running the test");
         failed = true;
