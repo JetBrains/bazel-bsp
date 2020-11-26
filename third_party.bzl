@@ -23,7 +23,6 @@ _deps = [
     _dependency("commons-cli:commons-cli:jar:1.4"),
     _dependency("org.jetbrains:annotations:jar:20.1.0"),
     _dependency("io.vavr:vavr:0.9.0"),
-    _dependency("org.projectlombok:lombok:1.18.4"),
     _dependency("org.apache.logging.log4j:log4j-api:2.6.1"),
     _dependency("org.apache.logging.log4j:log4j-core:2.6.1"),
 ]

@@ -12,7 +12,6 @@ java_binary(
         "@maven//:com_google_guava_guava",
         "@maven//:org_scala_lang_scala_library",
         "@maven//:io_vavr_vavr",
-        "@maven//:org_projectlombok_lombok",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
     ],
