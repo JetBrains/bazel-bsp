@@ -9,7 +9,7 @@ public class BazelBspServerConfig {
 
   private String pathToBazel = null;
   private List<String> targetProjectPaths =
-      Collections.unmodifiableList(Collections.singletonList("//... "));
+      Collections.unmodifiableList(Collections.singletonList("//..."));
 
   public BazelBspServerConfig(String pathToBazel) {
     this.pathToBazel = pathToBazel;
