@@ -475,7 +475,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     List<String> lines =
         bazelRunner
             .runBazelCommand("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target)
-            .getStdout();
+            .getStderr();
     return lines.stream()
         .map(line -> Splitter.on(" ").splitToList(line))
         .filter(
