@@ -15,12 +15,12 @@ public class BazelDataResolver {
   }
 
   public BazelData resolveBazelData() {
+    String execRoot = readOnlyBazelLine("info", "execution_root");
     String workspaceRoot = readOnlyBazelLine("info", "workspace");
     String binRoot = readOnlyBazelLine("info", "bazel-bin");
-    String execRoot = readOnlyBazelLine("info", "execution_root");
     Path workspacePath = Paths.get(execRoot);
     String workspaceLabel = workspacePath.toFile().getName();
-    return new BazelData(workspaceRoot, binRoot, execRoot, workspaceLabel);
+    return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel);
   }
 
   private String readOnlyBazelLine(String... args) {
