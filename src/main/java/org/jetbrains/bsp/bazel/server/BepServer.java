@@ -47,20 +47,22 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Set<String> SUPPORTED_ACTIONS =
       ImmutableSet.of(BazelBspServer.KOTLINC, BazelBspServer.JAVAC, BazelBspServer.SCALAC);
-  private final BazelBspServer bspServer;
-  private final BuildClient bspClient;
-  private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
-      new HashMap<>();
-  private final TreeSet<Uri> compilerClasspathTextProtos = new TreeSet<>();
-  private final TreeSet<Uri> compilerClasspath = new TreeSet<>();
-  private final Stack<TaskId> taskParkingLot = new Stack<>();
+
   private final String workspace = "WORKSPACE";
   private final String build = "BUILD";
-  private Map<String, String> diagnosticsProtosLocations = new HashMap<>();
 
   private final BuildClientLogger buildClientLogger;
+  private final BazelBspServer bspServer;
+  private final BuildClient bspClient;
 
-  public BepServer(BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
+  private final Stack<TaskId> taskParkingLot = new Stack<>();
+  private final TreeSet<Uri> compilerClasspath = new TreeSet<>();
+  private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
+      new HashMap<>();
+  private Map<String, String> diagnosticsProtosLocations = new HashMap<>();
+
+  public BepServer(
+      BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
     this.bspServer = bspServer;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
@@ -69,11 +71,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   public static StatusCode convertExitCode(int exitCode) {
     switch (exitCode) {
       case 0:
-        return StatusCode.forValue(1);
+        return StatusCode.OK;
       case 8:
-        return StatusCode.forValue(3);
+        return StatusCode.CANCELLED;
       default:
-        return StatusCode.forValue(2);
+        return StatusCode.ERROR;
     }
   }
 
@@ -99,14 +101,14 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             .getTypeUrl()
             .equals("type.googleapis.com/build_event_stream.BuildEvent")) {
           handleEvent(request.getOrderedBuildEvent().getEvent());
-        } else {
-          //          System.out.println("Got this request " + request);
         }
+
         PublishBuildToolEventStreamResponse response =
             PublishBuildToolEventStreamResponse.newBuilder()
                 .setStreamId(request.getOrderedBuildEvent().getStreamId())
                 .setSequenceNumber(request.getOrderedBuildEvent().getSequenceNumber())
                 .build();
+
         responseObserver.onNext(response);
       }
 
@@ -114,17 +116,23 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         try {
           BuildEventStreamProtos.BuildEvent event =
               BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
+
           System.out.println("Got event" + event + "\nevent-end\n");
+
           if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
             BuildEventStreamProtos.BuildStarted buildStarted = event.getStarted();
+
             TaskId taskId = new TaskId(buildStarted.getUuid());
             TaskStartParams startParams = new TaskStartParams(taskId);
             startParams.setEventTime(buildStarted.getStartTimeMillis());
+
             bspClient.onBuildTaskStart(startParams);
             taskParkingLot.add(taskId);
           }
+
           if (event.hasFinished()) {
             BuildEventStreamProtos.BuildFinished buildFinished = event.getFinished();
+
             if (taskParkingLot.size() == 0) {
               System.out.println("No start event id was found.");
               return;
@@ -136,6 +144,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             TaskFinishParams finishParams =
                 new TaskFinishParams(
                     taskParkingLot.pop(), convertExitCode(buildFinished.getExitCode().getCode()));
+
             finishParams.setEventTime(buildFinished.getFinishTimeMillis());
             bspClient.onBuildTaskFinish(finishParams);
           }
@@ -143,18 +152,23 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
           if (event.getId().hasNamedSet()) {
             namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
           }
+
           if (event.hasCompleted()) {
             processCompletionEvent(event);
           }
+
           if (event.hasAction()) {
             processActionDiagnostics(event);
           }
+
           if (event.hasAborted()) {
             processAbortion(event.getAborted());
           }
+
           if (event.hasProgress()) {
             BuildEventStreamProtos.Progress progress = event.getProgress();
             processStdErrDiagnostics(progress);
+
             String message = progress.getStderr().trim();
             if (!message.isEmpty()) {
               buildClientLogger.logMessage(progress.getStderr().trim());
@@ -179,13 +193,15 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processAbortion(BuildEventStreamProtos.Aborted aborted) {
-    if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD)
+    if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
       buildClientLogger.logError(
           "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+    }
   }
 
   private void processStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
     HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
+
     Arrays.stream(progress.getStderr().split("\n"))
         .filter(
             error ->
@@ -200,6 +216,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
               if (error.contains(" at /")) {
                 int endOfMessage = error.indexOf(" at /");
                 String fileInfo = error.substring(endOfMessage + 4);
+
                 int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
                 fileLocation = fileInfo.substring(0, urlEnd);
                 lineLocation = fileInfo.substring(urlEnd + 1).split(":");
@@ -208,17 +225,22 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
                 lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
               }
+
               System.out.println("Error: " + error);
               System.out.println("File location: " + fileLocation);
               System.out.println("Line location: " + Arrays.toString(lineLocation));
+
               Position position =
                   new Position(
                       Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
+
               Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
               diagnostic.setSeverity(DiagnosticSeverity.ERROR);
+
               List<Diagnostic> diagnostics =
                   fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
               diagnostics.add(diagnostic);
+
               fileDiagnostics.put(fileLocation, diagnostics);
             });
 
@@ -235,8 +257,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private void processCompletionEvent(BuildEventStreamProtos.BuildEvent event) throws IOException {
     List<BuildEventStreamProtos.OutputGroup> outputGroups =
         event.getCompleted().getOutputGroupList();
+
     if (outputGroups.size() == 1) {
       BuildEventStreamProtos.OutputGroup outputGroup = outputGroups.get(0);
+
       if ("scala_compiler_classpath_files".equals(outputGroup.getName())) {
         for (BuildEventStreamProtos.BuildEventId.NamedSetOfFilesId fileSetId :
             outputGroup.getFileSetsList()) {
@@ -248,14 +272,17 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             } catch (URISyntaxException e) {
               throw new RuntimeException(e);
             }
+
             List<String> lines =
                 com.google.common.io.Files.readLines(
                     new File(protoPathUri), StandardCharsets.UTF_8);
+
             for (String line : lines) {
               List<String> parts = Splitter.on("\"").splitToList(line);
               if (parts.size() != 3) {
                 throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
               }
+
               compilerClasspath.add(
                   Uri.fromExecPath("exec-root://" + parts.get(1), bspServer.getExecRoot()));
             }
@@ -269,20 +296,30 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       throws IOException {
     BuildEventStreamProtos.ActionExecuted action = event.getAction();
     String actionType = action.getType();
+
     if (!SUPPORTED_ACTIONS.contains(actionType)) {
       // Ignore file template writes and such.
       // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
       return;
     }
+
     System.out.println("DWH: Event: " + event + "\n\n");
+
     Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
     BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
     boolean hasDiagnosticsOutput = diagnosticsProtosLocations.containsKey(target.getUri());
+
     for (BuildEventStreamProtos.File log : action.getActionMetadataLogsList()) {
-      if (!log.getName().equals("diagnostics")) continue;
+      if (!log.getName().equals("diagnostics")) {
+        continue;
+      }
 
       System.out.println("Found diagnostics file in " + log.getUri());
-      if (hasDiagnosticsOutput) diagnosticsProtosLocations.remove(target.getUri());
+
+      if (hasDiagnosticsOutput) {
+        diagnosticsProtosLocations.remove(target.getUri());
+      }
+
       getDiagnostics(filesToDiagnostics, target, log.getUri().substring(7));
     }
 
@@ -308,6 +345,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                     new ArrayList<>(),
                     true)));
       }
+
       if (bspClient != null) {
         for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
           for (PublishDiagnosticsParams param : values) {
@@ -325,8 +363,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       throws IOException {
     Diagnostics.TargetDiagnostics targetDiagnostics =
         Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
+
     for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
       System.out.println("Inserting diagnostics for path: " + fileDiagnostics.getPath());
+
       filesToDiagnostics.put(
           Uri.fromExecOrWorkspacePath(
               fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()),
@@ -337,19 +377,25 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private List<PublishDiagnosticsParams> convert(
       BuildTargetIdentifier target, Diagnostics.FileDiagnostics request) {
     List<Diagnostic> diagnostics = new ArrayList<>();
+
     for (Diagnostics.Diagnostic diagProto : request.getDiagnosticsList()) {
       DiagnosticSeverity severity = null;
       Diagnostics.Severity protoSeverity = diagProto.getSeverity();
-      if (protoSeverity.equals(Diagnostics.Severity.ERROR)) {
-        severity = DiagnosticSeverity.ERROR;
-      } else if (protoSeverity.equals(Diagnostics.Severity.WARNING)) {
-        severity = DiagnosticSeverity.WARNING;
-      } else if (protoSeverity.equals(Diagnostics.Severity.INFORMATION)) {
-        severity = DiagnosticSeverity.INFORMATION;
-      } else if (protoSeverity.equals(Diagnostics.Severity.HINT)) {
-        severity = DiagnosticSeverity.HINT;
-      } else if (protoSeverity.equals(Diagnostics.Severity.UNKNOWN)) {
-        severity = DiagnosticSeverity.ERROR;
+
+      switch (protoSeverity) {
+        case ERROR:
+        case UNKNOWN:
+          severity = DiagnosticSeverity.ERROR;
+          break;
+        case WARNING:
+          severity = DiagnosticSeverity.WARNING;
+          break;
+        case INFORMATION:
+          severity = DiagnosticSeverity.INFORMATION;
+          break;
+        case HINT:
+          severity = DiagnosticSeverity.HINT;
+          break;
       }
 
       Diagnostic diagnostic =
@@ -362,11 +408,14 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                       diagProto.getRange().getEnd().getLine(),
                       diagProto.getRange().getEnd().getCharacter())),
               diagProto.getMessage());
+
       if (severity != null) {
         diagnostic.setSeverity(severity);
       }
+
       diagnostics.add(diagnostic);
     }
+
     return Lists.newArrayList(
         new PublishDiagnosticsParams(
             new TextDocumentIdentifier(
