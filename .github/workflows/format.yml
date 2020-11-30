@@ -20,4 +20,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: thompsonja/bazel-buildifier
+      - uses: thompsonja/bazel-buildifier@v0.2.1
