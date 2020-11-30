@@ -20,4 +20,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: thompsonja/bazel-buildifier@v0.2.1
+      - uses: agluszak/bazel-buildifier-action@v0.3
+      - run: git diff --exit-code
