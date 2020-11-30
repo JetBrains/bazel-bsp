@@ -20,9 +20,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: curl -f -L -o /usr/bin/buildifier \
-          "https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildifier" \
-          && chmod +x /usr/bin/buildifier
-      - run: buildifier -r .
-      - run: buildifier --lint=fix -r .
-      - run: git diff --exit-code
+      - uses: thompsonja/bazel-buildifier
