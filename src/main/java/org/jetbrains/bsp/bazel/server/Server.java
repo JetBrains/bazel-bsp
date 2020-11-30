@@ -63,9 +63,9 @@ public class Server {
       BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
       bspServer.setBuildClientLogger(buildClientLogger);
       BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy(), buildClientLogger);
-      bspServer.bepServer = bepServer;
+      bspServer.setBepServer(bepServer);
       io.grpc.Server server = ServerBuilder.forPort(0).addService(bepServer).build().start();
-      bspServer.setBackendPort(server.getPort());
+      bspServer.setBesBackendPort(server.getPort());
       launcher.startListening();
       server.awaitTermination();
     } catch (Exception e) {

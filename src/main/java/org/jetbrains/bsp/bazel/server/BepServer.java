@@ -56,11 +56,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final Stack<TaskId> taskParkingLot = new Stack<>();
   private final String workspace = "WORKSPACE";
   private final String build = "BUILD";
+  private final BuildClientLogger buildClientLogger;
   private Map<String, String> diagnosticsProtosLocations = new HashMap<>();
 
-  private final BuildClientLogger buildClientLogger;
-
-  public BepServer(BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
+  public BepServer(
+      BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
     this.bspServer = bspServer;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
@@ -69,11 +69,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   public static StatusCode convertExitCode(int exitCode) {
     switch (exitCode) {
       case 0:
-        return StatusCode.forValue(1);
+        return StatusCode.OK;
       case 8:
-        return StatusCode.forValue(3);
+        return StatusCode.CANCELLED;
       default:
-        return StatusCode.forValue(2);
+        return StatusCode.ERROR;
     }
   }
 
@@ -257,7 +257,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
               }
               compilerClasspath.add(
-                  Uri.fromExecPath("exec-root://" + parts.get(1), bspServer.getExecRoot()));
+                  Uri.fromExecPath(
+                      "exec-root://" + parts.get(1), bspServer.getBazelData().getExecRoot()));
             }
           }
         }
@@ -329,7 +330,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       System.out.println("Inserting diagnostics for path: " + fileDiagnostics.getPath());
       filesToDiagnostics.put(
           Uri.fromExecOrWorkspacePath(
-              fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()),
+              fileDiagnostics.getPath(),
+              bspServer.getBazelData().getExecRoot(),
+              bspServer.getBazelData().getWorkspaceRoot()),
           convert(target, fileDiagnostics));
     }
   }
@@ -371,7 +374,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         new PublishDiagnosticsParams(
             new TextDocumentIdentifier(
                 Uri.fromExecOrWorkspacePath(
-                        request.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot())
+                        request.getPath(),
+                        bspServer.getBazelData().getExecRoot(),
+                        bspServer.getBazelData().getWorkspaceRoot())
                     .toString()),
             target,
             diagnostics,
