@@ -17,6 +17,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
+import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import com.google.devtools.build.v1.BuildEvent;
 import com.google.devtools.build.v1.PublishBuildEventGrpc;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamRequest;
@@ -90,106 +91,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   @Override
   public StreamObserver<PublishBuildToolEventStreamRequest> publishBuildToolEventStream(
       StreamObserver<PublishBuildToolEventStreamResponse> responseObserver) {
-    return new StreamObserver<PublishBuildToolEventStreamRequest>() {
-
-      @Override
-      public void onNext(PublishBuildToolEventStreamRequest request) {
-        if (request
-            .getOrderedBuildEvent()
-            .getEvent()
-            .getBazelEvent()
-            .getTypeUrl()
-            .equals("type.googleapis.com/build_event_stream.BuildEvent")) {
-          handleEvent(request.getOrderedBuildEvent().getEvent());
-        }
-
-        PublishBuildToolEventStreamResponse response =
-            PublishBuildToolEventStreamResponse.newBuilder()
-                .setStreamId(request.getOrderedBuildEvent().getStreamId())
-                .setSequenceNumber(request.getOrderedBuildEvent().getSequenceNumber())
-                .build();
-
-        responseObserver.onNext(response);
-      }
-
-      @Override
-      public void onError(Throwable throwable) {
-        System.out.println("Error from BEP stream: " + throwable);
-      }
-
-      @Override
-      public void onCompleted() {
-        responseObserver.onCompleted();
-      }
-
-      private void handleEvent(BuildEvent buildEvent) {
-        try {
-          BuildEventStreamProtos.BuildEvent event =
-              BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
-
-          System.out.println("Got event" + event + "\nevent-end\n");
-
-          if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
-            BuildEventStreamProtos.BuildStarted buildStarted = event.getStarted();
-
-            TaskId taskId = new TaskId(buildStarted.getUuid());
-            TaskStartParams startParams = new TaskStartParams(taskId);
-            startParams.setEventTime(buildStarted.getStartTimeMillis());
-
-            bspClient.onBuildTaskStart(startParams);
-            taskParkingLot.add(taskId);
-          }
-
-          if (event.hasFinished()) {
-            BuildEventStreamProtos.BuildFinished buildFinished = event.getFinished();
-
-            if (taskParkingLot.size() == 0) {
-              System.out.println("No start event id was found.");
-              return;
-            } else if (taskParkingLot.size() > 1) {
-              System.out.println("More than 1 start event was found");
-              return;
-            }
-
-            TaskFinishParams finishParams =
-                new TaskFinishParams(
-                    taskParkingLot.pop(), convertExitCode(buildFinished.getExitCode().getCode()));
-
-            finishParams.setEventTime(buildFinished.getFinishTimeMillis());
-            bspClient.onBuildTaskFinish(finishParams);
-          }
-
-          if (event.getId().hasNamedSet()) {
-            namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
-          }
-
-          if (event.hasCompleted()) {
-            processCompletionEvent(event);
-          }
-
-          if (event.hasAction()) {
-            processActionDiagnostics(event);
-          }
-
-          if (event.hasAborted()) {
-            processAbortion(event.getAborted());
-          }
-
-          if (event.hasProgress()) {
-            BuildEventStreamProtos.Progress progress = event.getProgress();
-            processStdErrDiagnostics(progress);
-
-            String message = progress.getStderr().trim();
-            if (!message.isEmpty()) {
-              buildClientLogger.logMessage(progress.getStderr().trim());
-            }
-          }
-
-        } catch (IOException e) {
-          System.err.println("Error deserializing BEP proto: " + e);
-        }
-      }
-    };
+    return new BepStreamObserver(this, responseObserver);
   }
 
   public TreeSet<Uri> getCompilerClasspath() {
@@ -198,6 +100,74 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   public Map<String, String> getDiagnosticsProtosLocations() {
     return diagnosticsProtosLocations;
+  }
+
+  public void handleEvent(BuildEvent buildEvent) {
+    try {
+      BuildEventStreamProtos.BuildEvent event =
+          BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
+
+      System.out.println("Got event" + event + "\nevent-end\n");
+
+      if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
+        BuildEventStreamProtos.BuildStarted buildStarted = event.getStarted();
+
+        TaskId taskId = new TaskId(buildStarted.getUuid());
+        TaskStartParams startParams = new TaskStartParams(taskId);
+        startParams.setEventTime(buildStarted.getStartTimeMillis());
+
+        bspClient.onBuildTaskStart(startParams);
+        taskParkingLot.add(taskId);
+      }
+
+      if (event.hasFinished()) {
+        BuildEventStreamProtos.BuildFinished buildFinished = event.getFinished();
+
+        if (taskParkingLot.size() == 0) {
+          System.out.println("No start event id was found.");
+          return;
+        } else if (taskParkingLot.size() > 1) {
+          System.out.println("More than 1 start event was found");
+          return;
+        }
+
+        TaskFinishParams finishParams =
+            new TaskFinishParams(
+                taskParkingLot.pop(), convertExitCode(buildFinished.getExitCode().getCode()));
+
+        finishParams.setEventTime(buildFinished.getFinishTimeMillis());
+        bspClient.onBuildTaskFinish(finishParams);
+      }
+
+      if (event.getId().hasNamedSet()) {
+        namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
+      }
+
+      if (event.hasCompleted()) {
+        processCompletionEvent(event);
+      }
+
+      if (event.hasAction()) {
+        processActionDiagnostics(event);
+      }
+
+      if (event.hasAborted()) {
+        processAbortion(event.getAborted());
+      }
+
+      if (event.hasProgress()) {
+        BuildEventStreamProtos.Progress progress = event.getProgress();
+        processStdErrDiagnostics(progress);
+
+        String message = progress.getStderr().trim();
+        if (!message.isEmpty()) {
+          buildClientLogger.logMessage(progress.getStderr().trim());
+        }
+      }
+
+    } catch (IOException e) {
+      System.err.println("Error deserializing BEP proto: " + e);
+    }
   }
 
   public void collectDiagnostics(
@@ -289,7 +259,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         new PublishDiagnosticsParams(
             new TextDocumentIdentifier(
                 Uri.fromExecOrWorkspacePath(
-                    request.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot())
+                        request.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot())
                     .toString()),
             target,
             diagnostics,
@@ -297,8 +267,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processCompletionEvent(BuildEventStreamProtos.BuildEvent event) throws IOException {
-    List<BuildEventStreamProtos.OutputGroup> outputGroups =
-        event.getCompleted().getOutputGroupList();
+    List<OutputGroup> outputGroups = event.getCompleted().getOutputGroupList();
 
     if (outputGroups.size() == 1) {
       BuildEventStreamProtos.OutputGroup outputGroup = outputGroups.get(0);
@@ -366,7 +335,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
 
     if (filesToDiagnostics.isEmpty() && hasDiagnosticsOutput) {
-      collectDiagnostics(filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
+      collectDiagnostics(
+          filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
       diagnosticsProtosLocations.remove(target.getUri());
     }
 
