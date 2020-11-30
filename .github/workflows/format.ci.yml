@@ -15,4 +15,4 @@ jobs:
       - uses: axel-op/googlejavaformat-action@v3
         with:
           skipCommit: true
-          args: "--set-exit-if-changed"
+      - run: git diff --exit-code
