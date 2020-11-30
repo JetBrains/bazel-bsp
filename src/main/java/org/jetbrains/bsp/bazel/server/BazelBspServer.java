@@ -96,9 +96,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
       ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
-  protected static final String SCALAC = "Scalac";
-  protected static final String KOTLINC = "KotlinCompile";
-  protected static final String JAVAC = "Javac";
 
   private final String bazel;
   private final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
@@ -119,7 +116,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private String workspaceLabel = null;
   private ScalaBuildTarget scalacClasspath = null;
 
-
   private final ProcessResolver processResolver;
   private final QueryResolver queryResolver;
   private final TargetsResolver targetsResolver;
@@ -139,8 +135,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     this.targetsResolver = new TargetsResolver(queryResolver);
     this.actionGraphResolver = new ActionGraphResolver(processResolver);
 
-    this.scalaBspServer = new ScalaBspServer(targetsResolver, actionGraphResolver, SCALAC, JAVAC, getExecRoot());
-    this.javaBspServer = new JavaBspServer(targetsResolver, actionGraphResolver, JAVAC, KOTLINC, getExecRoot());
+    this.scalaBspServer = new ScalaBspServer(targetsResolver, actionGraphResolver, Constants.SCALAC,
+        Constants.JAVAC, getExecRoot());
+    this.javaBspServer = new JavaBspServer(targetsResolver, actionGraphResolver, Constants.JAVAC,
+        Constants.KOTLINC, getExecRoot());
   }
 
   public void setBackendPort(int port) {
