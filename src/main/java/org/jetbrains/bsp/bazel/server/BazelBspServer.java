@@ -318,7 +318,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
               "--aspects=@//.bazelbsp:aspects.bzl%scala_compiler_classpath_aspect",
               "--output_groups=scala_compiler_classpath_files"));
       List<String> classpath =
-          bepServer.fetchScalacClasspath().stream().map(Uri::toString).collect(Collectors.toList());
+          bepServer.getCompilerClasspath().stream().map(Uri::toString).collect(Collectors.toList());
       List<String> scalaVersions =
           classpath.stream()
               .filter(uri -> uri.contains("scala-library"))
@@ -694,7 +694,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
       try {
         BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
-        bepServer.getDiagnostics(filesToDiagnostics, targetIdentifier, diagnosticsPath);
+        bepServer.collectDiagnostics(filesToDiagnostics, targetIdentifier, diagnosticsPath);
         bepServer.emitDiagnostics(filesToDiagnostics, targetIdentifier);
       } catch (IOException e) {
         System.err.println("Failed to get diagnostics for " + target);

@@ -48,8 +48,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private static final Set<String> SUPPORTED_ACTIONS =
       ImmutableSet.of(BazelBspServer.KOTLINC, BazelBspServer.JAVAC, BazelBspServer.SCALAC);
 
-  private final String workspace = "WORKSPACE";
-  private final String build = "BUILD";
+  private final String WORKSPACE = "WORKSPACE";
+  private final String BUILD = "BUILD";
 
   private final BuildClientLogger buildClientLogger;
   private final BazelBspServer bspServer;
@@ -57,9 +57,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private final Stack<TaskId> taskParkingLot = new Stack<>();
   private final TreeSet<Uri> compilerClasspath = new TreeSet<>();
+  private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
   private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
       new HashMap<>();
-  private Map<String, String> diagnosticsProtosLocations = new HashMap<>();
 
   public BepServer(
       BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
@@ -110,6 +110,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 .build();
 
         responseObserver.onNext(response);
+      }
+
+      @Override
+      public void onError(Throwable throwable) {
+        System.out.println("Error from BEP stream: " + throwable);
+      }
+
+      @Override
+      public void onCompleted() {
+        responseObserver.onCompleted();
       }
 
       private void handleEvent(BuildEvent buildEvent) {
@@ -179,79 +189,111 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
           System.err.println("Error deserializing BEP proto: " + e);
         }
       }
-
-      @Override
-      public void onError(Throwable throwable) {
-        System.out.println("Error from BEP stream: " + throwable);
-      }
-
-      @Override
-      public void onCompleted() {
-        responseObserver.onCompleted();
-      }
     };
   }
 
-  private void processAbortion(BuildEventStreamProtos.Aborted aborted) {
-    if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
-      buildClientLogger.logError(
-          "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+  public TreeSet<Uri> getCompilerClasspath() {
+    return compilerClasspath;
+  }
+
+  public Map<String, String> getDiagnosticsProtosLocations() {
+    return diagnosticsProtosLocations;
+  }
+
+  public void collectDiagnostics(
+      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
+      BuildTargetIdentifier target,
+      String diagnosticsLocation)
+      throws IOException {
+    Diagnostics.TargetDiagnostics targetDiagnostics =
+        Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
+
+    for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
+      System.out.println("Inserting diagnostics for path: " + fileDiagnostics.getPath());
+
+      filesToDiagnostics.put(
+          Uri.fromExecOrWorkspacePath(
+              fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()),
+          convertDiagnostics(target, fileDiagnostics));
     }
   }
 
-  private void processStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
-    HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
-
-    Arrays.stream(progress.getStderr().split("\n"))
-        .filter(
-            error ->
-                error.contains("ERROR")
-                    && (error.contains("/" + workspace + ":") || error.contains("/" + build + ":")))
-        .forEach(
-            error -> {
-              String erroredFile = error.contains(workspace) ? workspace : build;
-              String[] lineLocation;
-              String fileLocation;
-
-              if (error.contains(" at /")) {
-                int endOfMessage = error.indexOf(" at /");
-                String fileInfo = error.substring(endOfMessage + 4);
-
-                int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
-                fileLocation = fileInfo.substring(0, urlEnd);
-                lineLocation = fileInfo.substring(urlEnd + 1).split(":");
-              } else {
-                int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
-                fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
-                lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
-              }
-
-              System.out.println("Error: " + error);
-              System.out.println("File location: " + fileLocation);
-              System.out.println("Line location: " + Arrays.toString(lineLocation));
-
-              Position position =
-                  new Position(
-                      Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
-
-              Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
-              diagnostic.setSeverity(DiagnosticSeverity.ERROR);
-
-              List<Diagnostic> diagnostics =
-                  fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
-              diagnostics.add(diagnostic);
-
-              fileDiagnostics.put(fileLocation, diagnostics);
-            });
-
-    fileDiagnostics.forEach(
-        (fileLocation, diagnostics) ->
-            bspClient.onBuildPublishDiagnostics(
+  public void emitDiagnostics(
+      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
+    for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
+      Uri sourceUri = Uri.fromFileUri(source.getUri());
+      if (!filesToDiagnostics.containsKey(sourceUri)) {
+        filesToDiagnostics.put(
+            sourceUri,
+            Lists.newArrayList(
                 new PublishDiagnosticsParams(
-                    new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-                    new BuildTargetIdentifier(""),
-                    diagnostics,
-                    false)));
+                    new TextDocumentIdentifier(sourceUri.toString()),
+                    target,
+                    new ArrayList<>(),
+                    true)));
+      }
+
+      if (bspClient != null) {
+        for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
+          for (PublishDiagnosticsParams param : values) {
+            bspClient.onBuildPublishDiagnostics(param);
+          }
+        }
+      }
+    }
+  }
+
+  private List<PublishDiagnosticsParams> convertDiagnostics(
+      BuildTargetIdentifier target, Diagnostics.FileDiagnostics request) {
+    List<Diagnostic> diagnostics = new ArrayList<>();
+
+    for (Diagnostics.Diagnostic diagProto : request.getDiagnosticsList()) {
+      DiagnosticSeverity severity = null;
+      Diagnostics.Severity protoSeverity = diagProto.getSeverity();
+
+      switch (protoSeverity) {
+        case ERROR:
+        case UNKNOWN:
+          severity = DiagnosticSeverity.ERROR;
+          break;
+        case WARNING:
+          severity = DiagnosticSeverity.WARNING;
+          break;
+        case INFORMATION:
+          severity = DiagnosticSeverity.INFORMATION;
+          break;
+        case HINT:
+          severity = DiagnosticSeverity.HINT;
+          break;
+      }
+
+      Diagnostic diagnostic =
+          new Diagnostic(
+              new Range(
+                  new Position(
+                      diagProto.getRange().getStart().getLine(),
+                      diagProto.getRange().getStart().getCharacter()),
+                  new Position(
+                      diagProto.getRange().getEnd().getLine(),
+                      diagProto.getRange().getEnd().getCharacter())),
+              diagProto.getMessage());
+
+      if (severity != null) {
+        diagnostic.setSeverity(severity);
+      }
+
+      diagnostics.add(diagnostic);
+    }
+
+    return Lists.newArrayList(
+        new PublishDiagnosticsParams(
+            new TextDocumentIdentifier(
+                Uri.fromExecOrWorkspacePath(
+                    request.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot())
+                    .toString()),
+            target,
+            diagnostics,
+            true));
   }
 
   private void processCompletionEvent(BuildEventStreamProtos.BuildEvent event) throws IOException {
@@ -320,122 +362,76 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         diagnosticsProtosLocations.remove(target.getUri());
       }
 
-      getDiagnostics(filesToDiagnostics, target, log.getUri().substring(7));
+      collectDiagnostics(filesToDiagnostics, target, log.getUri().substring(7));
     }
 
     if (filesToDiagnostics.isEmpty() && hasDiagnosticsOutput) {
-      getDiagnostics(filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
+      collectDiagnostics(filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
       diagnosticsProtosLocations.remove(target.getUri());
     }
 
     emitDiagnostics(filesToDiagnostics, target);
   }
 
-  public void emitDiagnostics(
-      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
-    for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
-      Uri sourceUri = Uri.fromFileUri(source.getUri());
-      if (!filesToDiagnostics.containsKey(sourceUri)) {
-        filesToDiagnostics.put(
-            sourceUri,
-            Lists.newArrayList(
+  private void processAbortion(BuildEventStreamProtos.Aborted aborted) {
+    if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
+      buildClientLogger.logError(
+          "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+    }
+  }
+
+  private void processStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
+    HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
+
+    Arrays.stream(progress.getStderr().split("\n"))
+        .filter(
+            error ->
+                error.contains("ERROR")
+                    && (error.contains("/" + WORKSPACE + ":") || error.contains("/" + BUILD + ":")))
+        .forEach(
+            error -> {
+              String erroredFile = error.contains(WORKSPACE) ? WORKSPACE : BUILD;
+              String[] lineLocation;
+              String fileLocation;
+
+              if (error.contains(" at /")) {
+                int endOfMessage = error.indexOf(" at /");
+                String fileInfo = error.substring(endOfMessage + 4);
+
+                int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
+                fileLocation = fileInfo.substring(0, urlEnd);
+                lineLocation = fileInfo.substring(urlEnd + 1).split(":");
+              } else {
+                int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
+                fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
+                lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
+              }
+
+              System.out.println("Error: " + error);
+              System.out.println("File location: " + fileLocation);
+              System.out.println("Line location: " + Arrays.toString(lineLocation));
+
+              Position position =
+                  new Position(
+                      Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
+
+              Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
+              diagnostic.setSeverity(DiagnosticSeverity.ERROR);
+
+              List<Diagnostic> diagnostics =
+                  fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
+              diagnostics.add(diagnostic);
+
+              fileDiagnostics.put(fileLocation, diagnostics);
+            });
+
+    fileDiagnostics.forEach(
+        (fileLocation, diagnostics) ->
+            bspClient.onBuildPublishDiagnostics(
                 new PublishDiagnosticsParams(
-                    new TextDocumentIdentifier(sourceUri.toString()),
-                    target,
-                    new ArrayList<>(),
-                    true)));
-      }
-
-      if (bspClient != null) {
-        for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
-          for (PublishDiagnosticsParams param : values) {
-            bspClient.onBuildPublishDiagnostics(param);
-          }
-        }
-      }
-    }
-  }
-
-  public void getDiagnostics(
-      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
-      BuildTargetIdentifier target,
-      String diagnosticsLocation)
-      throws IOException {
-    Diagnostics.TargetDiagnostics targetDiagnostics =
-        Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
-
-    for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
-      System.out.println("Inserting diagnostics for path: " + fileDiagnostics.getPath());
-
-      filesToDiagnostics.put(
-          Uri.fromExecOrWorkspacePath(
-              fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()),
-          convert(target, fileDiagnostics));
-    }
-  }
-
-  private List<PublishDiagnosticsParams> convert(
-      BuildTargetIdentifier target, Diagnostics.FileDiagnostics request) {
-    List<Diagnostic> diagnostics = new ArrayList<>();
-
-    for (Diagnostics.Diagnostic diagProto : request.getDiagnosticsList()) {
-      DiagnosticSeverity severity = null;
-      Diagnostics.Severity protoSeverity = diagProto.getSeverity();
-
-      switch (protoSeverity) {
-        case ERROR:
-        case UNKNOWN:
-          severity = DiagnosticSeverity.ERROR;
-          break;
-        case WARNING:
-          severity = DiagnosticSeverity.WARNING;
-          break;
-        case INFORMATION:
-          severity = DiagnosticSeverity.INFORMATION;
-          break;
-        case HINT:
-          severity = DiagnosticSeverity.HINT;
-          break;
-      }
-
-      Diagnostic diagnostic =
-          new Diagnostic(
-              new Range(
-                  new Position(
-                      diagProto.getRange().getStart().getLine(),
-                      diagProto.getRange().getStart().getCharacter()),
-                  new Position(
-                      diagProto.getRange().getEnd().getLine(),
-                      diagProto.getRange().getEnd().getCharacter())),
-              diagProto.getMessage());
-
-      if (severity != null) {
-        diagnostic.setSeverity(severity);
-      }
-
-      diagnostics.add(diagnostic);
-    }
-
-    return Lists.newArrayList(
-        new PublishDiagnosticsParams(
-            new TextDocumentIdentifier(
-                Uri.fromExecOrWorkspacePath(
-                        request.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot())
-                    .toString()),
-            target,
-            diagnostics,
-            true));
-  }
-
-  public TreeSet<Uri> fetchScalacClasspath() {
-    return compilerClasspath;
-  }
-
-  public Map<String, String> getDiagnosticsProtosLocations() {
-    return diagnosticsProtosLocations;
-  }
-
-  public void setDiagnosticsProtosLocations(Map<String, String> diagnosticsProtosLocations) {
-    this.diagnosticsProtosLocations = diagnosticsProtosLocations;
+                    new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
+                    new BuildTargetIdentifier(""),
+                    diagnostics,
+                    false)));
   }
 }
