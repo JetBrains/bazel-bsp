@@ -42,7 +42,9 @@ public class DiagnosticsDispatcher {
 
       filesToDiagnostics.put(
           Uri.fromExecOrWorkspacePath(
-              fileDiagnostics.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot()),
+              fileDiagnostics.getPath(),
+              bspServer.getBazelData().getExecRoot(),
+              bspServer.getBazelData().getWorkspaceRoot()),
           convertDiagnostics(target, fileDiagnostics));
     }
   }
@@ -118,7 +120,9 @@ public class DiagnosticsDispatcher {
         new PublishDiagnosticsParams(
             new TextDocumentIdentifier(
                 Uri.fromExecOrWorkspacePath(
-                        request.getPath(), bspServer.getExecRoot(), bspServer.getWorkspaceRoot())
+                        request.getPath(),
+                        bspServer.getBazelData().getExecRoot(),
+                        bspServer.getBazelData().getWorkspaceRoot())
                     .toString()),
             target,
             diagnostics,

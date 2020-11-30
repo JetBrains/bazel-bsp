@@ -210,7 +210,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
               }
 
               compilerClasspath.add(
-                  Uri.fromExecPath("exec-root://" + parts.get(1), bspServer.getExecRoot()));
+                  Uri.fromExecPath("exec-root://" + parts.get(1),
+                      bspServer.getBazelData().getExecRoot()));
             }
           }
         }

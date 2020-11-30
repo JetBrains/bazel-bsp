@@ -25,7 +25,8 @@ import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 
 // TODO: This class *should* implement a `ScalaBuildServer` interface,
-// TODO: now `buildTargetScalacOptions` method returns a `Either<ResponseError, ScalacOptionsResult>`
+// TODO: now `buildTargetScalacOptions` method returns a `Either<ResponseError,
+// ScalacOptionsResult>`
 // TODO: instead of a `CompletableFuture<ScalacOptionsResult>` because of the `BazelBspServer`
 // TODO: command executing (`executeCommand`) implementation.
 public class ScalaBspServer {
@@ -38,8 +39,12 @@ public class ScalaBspServer {
   private final String execRoot;
 
   // TODO: too many arguments!!, constants will be moved
-  public ScalaBspServer(TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String scalac,
-      String javac, String execRoot) {
+  public ScalaBspServer(
+      TargetsResolver targetsResolver,
+      ActionGraphResolver actionGraphResolver,
+      String scalac,
+      String javac,
+      String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
     this.scalac = scalac;
@@ -47,7 +52,8 @@ public class ScalaBspServer {
     this.execRoot = execRoot;
   }
 
-  public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(ScalacOptionsParams scalacOptionsParams) {
+  public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
+      ScalacOptionsParams scalacOptionsParams) {
     List<String> targets =
         scalacOptionsParams.getTargets().stream()
             .map(BuildTargetIdentifier::getUri)
@@ -55,10 +61,9 @@ public class ScalaBspServer {
     String targetsUnion = Joiner.on(" + ").join(targets);
     Map<String, List<String>> targetsOptions =
         targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
-    Either<ResponseError, ActionGraphParser> either =
+    ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
             MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(scalac, javac)));
-    if (either.isLeft()) return Either.forLeft(either.getLeft());
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(
@@ -66,9 +71,9 @@ public class ScalaBspServer {
                 .flatMap(
                     target ->
                         collectScalacOptionsResult(
-                            either.getRight(),
+                            actionGraphParser,
                             targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            either.getRight().getInputsAsUri(target, execRoot),
+                            actionGraphParser.getInputsAsUri(target, execRoot),
                             target))
                 .collect(Collectors.toList()));
     return Either.forRight(result);

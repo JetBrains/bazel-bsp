@@ -1,3 +1,5 @@
+load("@rules_java//java:defs.bzl", "java_library")
+
 java_library(
     name = "bsp",
     tags = ["maven_coordinates=org.jetbrains.bsp:bazel-bsp:{pom_version}"],

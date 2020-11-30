@@ -1,0 +1,24 @@
+name: Format
+
+on:
+  pull_request:
+    branches: [ dev, master ]
+
+jobs:
+  google-java-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "11"
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          skipCommit: true
+      - run: git diff --exit-code
+  buildifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: agluszak/bazel-buildifier-action@v0.3
+      - run: git diff --exit-code

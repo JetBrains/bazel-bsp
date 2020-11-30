@@ -33,8 +33,12 @@ public class JavaBspServer {
   private final String execRoot;
 
   // TODO: too many arguments!!, constants will be moved
-  public JavaBspServer(TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver,
-      String javac, String kotlinc, String execRoot) {
+  public JavaBspServer(
+      TargetsResolver targetsResolver,
+      ActionGraphResolver actionGraphResolver,
+      String javac,
+      String kotlinc,
+      String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
     this.javac = javac;
@@ -42,19 +46,20 @@ public class JavaBspServer {
     this.execRoot = execRoot;
   }
 
-  public Either<ResponseError,JavacOptionsResult> buildTargetJavacOptions(JavacOptionsParams javacOptionsParams) {
+  public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
+      JavacOptionsParams javacOptionsParams) {
     List<String> targets =
         javacOptionsParams.getTargets().stream()
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
 
     String targetsUnion = Joiner.on(" + ").join(targets);
-    Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
+    Map<String, List<String>> targetsOptions =
+        targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
-    Either<ResponseError, ActionGraphParser> either =
+    ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
             MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(javac, kotlinc)));
-    if (either.isLeft()) return Either.forLeft(either.getLeft());
 
     JavacOptionsResult result =
         new JavacOptionsResult(
@@ -62,9 +67,9 @@ public class JavaBspServer {
                 .flatMap(
                     target ->
                         collectJavacOptionsResult(
-                            either.getRight(),
+                            actionGraphParser,
                             targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            either.getRight().getInputsAsUri(target, execRoot),
+                            actionGraphParser.getInputsAsUri(target, execRoot),
                             target))
                 .collect(Collectors.toList()));
     return Either.forRight(result);
