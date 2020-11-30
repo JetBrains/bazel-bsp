@@ -55,8 +55,7 @@ http_archive(
 )
 
 load("@io_bazel_rules_scala//scala:scala_maven_import_external.bzl", "scala_maven_import_external")
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_scala_major_version", "scala_mvn_artifact")
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls")
+load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls", "default_scala_major_version", "scala_mvn_artifact")
 
 # Exp
 scala_maven_import_external(
