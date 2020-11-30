@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
 import org.jetbrains.bsp.bazel.common.Constants;
@@ -40,11 +41,11 @@ import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
-  private final BazelBspServer bspServer;
-  private final DiagnosticsDispatcher diagnosticsDispatcher;
-
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
+
+  private final BazelBspServer bspServer;
+  private final DiagnosticsDispatcher diagnosticsDispatcher;
 
   private final Stack<TaskId> taskParkingLot = new Stack<>();
   private final TreeSet<Uri> compilerClasspath = new TreeSet<>();
@@ -163,31 +164,40 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       return;
     }
 
-    TaskFinishParams finishParams =
-        new TaskFinishParams(
-            taskParkingLot.pop(),
-            BepServer.convertExitCode(buildFinished.getExitCode().getCode()));
-
+    StatusCode exitCode = BepServer.convertExitCode(buildFinished.getExitCode().getCode());
+    TaskFinishParams finishParams = new TaskFinishParams(taskParkingLot.pop(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
+
     bspClient.onBuildTaskFinish(finishParams);
   }
 
   private void processProgressEvent(BuildEventStreamProtos.Progress progress) {
-    processStdErrDiagnostics(progress);
+    HashMap<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
 
-    String message = progress.getStderr().trim();
-    if (!message.isEmpty()) {
-      buildClientLogger.logMessage(progress.getStderr().trim());
+    for (Entry<String, List<Diagnostic>> entry : fileDiagnostics.entrySet()) {
+      String fileLocation = entry.getKey();
+      List<Diagnostic> diagnostics = entry.getValue();
+
+      PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams(
+          new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
+          new BuildTargetIdentifier(""),
+          diagnostics,
+          false);
+
+      bspClient.onBuildPublishDiagnostics(publishDiagnosticsParams);
     }
+
+    buildClientLogger.logMessage(progress.getStderr().trim());
   }
 
-  private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) throws IOException {
+  private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete)
+      throws IOException {
     List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
 
     if (outputGroups.size() == 1) {
       BuildEventStreamProtos.OutputGroup outputGroup = outputGroups.get(0);
 
-      if ("scala_compiler_classpath_files".equals(outputGroup.getName())) {
+      if (outputGroup.getName().equals("scala_compiler_classpath_files")) {
         for (BuildEventStreamProtos.BuildEventId.NamedSetOfFilesId fileSetId :
             outputGroup.getFileSetsList()) {
           for (BuildEventStreamProtos.File file :
@@ -210,8 +220,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
               }
 
               compilerClasspath.add(
-                  Uri.fromExecPath("exec-root://" + parts.get(1),
-                      bspServer.getBazelData().getExecRoot()));
+                  Uri.fromExecPath(
+                      "exec-root://" + parts.get(1), bspServer.getBazelData().getExecRoot()));
             }
           }
         }
@@ -226,19 +236,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
-  private void processActionEvent(BuildEventStreamProtos.ActionExecuted action)
-      throws IOException {
-    String actionType = action.getType();
-
-    if (!Constants.SUPPORTED_ACTIONS.contains(actionType)) {
+  private void processActionEvent(BuildEventStreamProtos.ActionExecuted action) throws IOException {
+    if (!Constants.SUPPORTED_ACTIONS.contains(action.getType())) {
       // Ignore file template writes and such.
       // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
       return;
     }
 
-    Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
     BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
     boolean hasDiagnosticsOutput = diagnosticsProtosLocations.containsKey(target.getUri());
+    Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
 
     for (BuildEventStreamProtos.File log : action.getActionMetadataLogsList()) {
       if (!log.getName().equals("diagnostics")) {
@@ -251,7 +258,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         diagnosticsProtosLocations.remove(target.getUri());
       }
 
-      diagnosticsDispatcher.collectDiagnostics(filesToDiagnostics, target, log.getUri().substring(7));
+      diagnosticsDispatcher.collectDiagnostics(
+          filesToDiagnostics, target, log.getUri().substring(7));
     }
 
     if (filesToDiagnostics.isEmpty() && hasDiagnosticsOutput) {
@@ -263,7 +271,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     diagnosticsDispatcher.emitDiagnostics(filesToDiagnostics, target);
   }
 
-  private void processStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
+  private HashMap<String, List<Diagnostic>> parseStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
     HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
 
     Arrays.stream(progress.getStderr().split("\n"))
@@ -271,7 +279,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             error ->
                 error.contains("ERROR")
                     && (error.contains("/" + Constants.WORKSPACE_FILE_NAME + ":")
-                        || error.contains("/" + Constants.BUILD_FILE_NAME + ":")))
+                    || error.contains("/" + Constants.BUILD_FILE_NAME + ":")))
         .forEach(
             error -> {
               String erroredFile =
@@ -312,13 +320,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
               fileDiagnostics.put(fileLocation, diagnostics);
             });
 
-    fileDiagnostics.forEach(
-        (fileLocation, diagnostics) ->
-            bspClient.onBuildPublishDiagnostics(
-                new PublishDiagnosticsParams(
-                    new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-                    new BuildTargetIdentifier(""),
-                    diagnostics,
-                    false)));
+    return fileDiagnostics;
   }
 }
