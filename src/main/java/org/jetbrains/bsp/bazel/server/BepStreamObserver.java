@@ -6,12 +6,12 @@ import io.grpc.stub.StreamObserver;
 
 public class BepStreamObserver implements StreamObserver<PublishBuildToolEventStreamRequest> {
 
-  private final BepEventHandler eventHandler;
+  private final BepServer bepServer;
   private final StreamObserver<PublishBuildToolEventStreamResponse> responseObserver;
 
   public BepStreamObserver(
-      BepEventHandler eventHandler, StreamObserver<PublishBuildToolEventStreamResponse> responseObserver) {
-    this.eventHandler = eventHandler;
+      BepServer bepServer, StreamObserver<PublishBuildToolEventStreamResponse> responseObserver) {
+    this.bepServer = bepServer;
     this.responseObserver = responseObserver;
   }
 
@@ -23,7 +23,7 @@ public class BepStreamObserver implements StreamObserver<PublishBuildToolEventSt
         .getBazelEvent()
         .getTypeUrl()
         .equals("type.googleapis.com/build_event_stream.BuildEvent")) {
-      eventHandler.handle(request.getOrderedBuildEvent().getEvent());
+      bepServer.handleEvent(request.getOrderedBuildEvent().getEvent());
     }
 
     PublishBuildToolEventStreamResponse response =
