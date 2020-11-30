@@ -12,5 +12,4 @@ public class MnemonicsUtils {
         .map(mnemonic -> "mnemonic(" + mnemonic + ", " + targetsUnion + ")")
         .collect(Collectors.joining(" union "));
   }
-
 }
