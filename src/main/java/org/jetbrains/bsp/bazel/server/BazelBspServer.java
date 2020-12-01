@@ -1,6 +1,54 @@
 package org.jetbrains.bsp.bazel.server;
 
-import ch.epfl.scala.bsp4j.*;
+import ch.epfl.scala.bsp4j.BuildServer;
+import ch.epfl.scala.bsp4j.BuildServerCapabilities;
+import ch.epfl.scala.bsp4j.BuildTarget;
+import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
+import ch.epfl.scala.bsp4j.BuildTargetDataKind;
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.BuildTargetTag;
+import ch.epfl.scala.bsp4j.CleanCacheParams;
+import ch.epfl.scala.bsp4j.CleanCacheResult;
+import ch.epfl.scala.bsp4j.CompileParams;
+import ch.epfl.scala.bsp4j.CompileProvider;
+import ch.epfl.scala.bsp4j.CompileResult;
+import ch.epfl.scala.bsp4j.DependencySourcesItem;
+import ch.epfl.scala.bsp4j.DependencySourcesParams;
+import ch.epfl.scala.bsp4j.DependencySourcesResult;
+import ch.epfl.scala.bsp4j.InitializeBuildParams;
+import ch.epfl.scala.bsp4j.InitializeBuildResult;
+import ch.epfl.scala.bsp4j.InverseSourcesParams;
+import ch.epfl.scala.bsp4j.InverseSourcesResult;
+import ch.epfl.scala.bsp4j.JavaBuildServer;
+import ch.epfl.scala.bsp4j.JavacOptionsParams;
+import ch.epfl.scala.bsp4j.JavacOptionsResult;
+import ch.epfl.scala.bsp4j.JvmBuildTarget;
+import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
+import ch.epfl.scala.bsp4j.ResourcesItem;
+import ch.epfl.scala.bsp4j.ResourcesParams;
+import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.RunParams;
+import ch.epfl.scala.bsp4j.RunProvider;
+import ch.epfl.scala.bsp4j.RunResult;
+import ch.epfl.scala.bsp4j.ScalaBuildServer;
+import ch.epfl.scala.bsp4j.ScalaBuildTarget;
+import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
+import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
+import ch.epfl.scala.bsp4j.ScalaPlatform;
+import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
+import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
+import ch.epfl.scala.bsp4j.ScalacOptionsParams;
+import ch.epfl.scala.bsp4j.ScalacOptionsResult;
+import ch.epfl.scala.bsp4j.SourceItem;
+import ch.epfl.scala.bsp4j.SourceItemKind;
+import ch.epfl.scala.bsp4j.SourcesItem;
+import ch.epfl.scala.bsp4j.SourcesParams;
+import ch.epfl.scala.bsp4j.SourcesResult;
+import ch.epfl.scala.bsp4j.StatusCode;
+import ch.epfl.scala.bsp4j.TestParams;
+import ch.epfl.scala.bsp4j.TestProvider;
+import ch.epfl.scala.bsp4j.TestResult;
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -8,7 +56,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +81,11 @@ import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.resolvers.*;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.BazelDataResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
+import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 
@@ -124,21 +184,16 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
     return executeCommand(
         () -> {
-          try {
-            List<String> projectPaths = this.configuration.getTargetProjectPaths();
-            List<BuildTarget> targets = new ArrayList<>();
-            for (String projectPath : projectPaths) {
-              targets.addAll(getBuildTarget(projectPath));
-            }
-            return Either.forRight(new WorkspaceBuildTargetsResult(targets));
-          } catch (IOException e) {
-            return Either.forLeft(
-                new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
+          List<String> projectPaths = this.configuration.getTargetProjectPaths();
+          List<BuildTarget> targets = new ArrayList<>();
+          for (String projectPath : projectPaths) {
+            targets.addAll(getBuildTarget(projectPath));
           }
+          return Either.forRight(new WorkspaceBuildTargetsResult(targets));
         });
   }
 
-  private List<BuildTarget> getBuildTarget(String projectPath) throws IOException {
+  private List<BuildTarget> getBuildTarget(String projectPath) {
     Build.QueryResult queryResult =
         queryResolver.getQuery(
             "query",
