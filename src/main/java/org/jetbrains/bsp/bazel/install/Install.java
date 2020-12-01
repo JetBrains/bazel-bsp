@@ -7,23 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.jetbrains.bsp.bazel.common.Constants;
-
 
 public class Install {
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
@@ -229,8 +218,8 @@ public class Install {
             .hasArg()
             .argName("targets")
             .desc(
-                "Name of the bazel's targets that the server should import. Targets can be separated by a comma. "
-                    + "The default is to import all targets (//...)")
+                "Name of the bazel's targets that the server should import. Targets can be"
+                    + "separated by a comma. The default is to import all targets (//...)")
             .build();
 
     cliOptions.addOption(targets);

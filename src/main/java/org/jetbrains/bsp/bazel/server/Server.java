@@ -34,21 +34,31 @@ public class Server {
 
       Files.createDirectories(rootDir);
       Path log = rootDir.resolve(Constants.BAZELBSP_LOG_FILE_NAME);
-      PrintStream logStream = new PrintStream(
-          Files.newOutputStream(log, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
+      PrintStream logStream =
+          new PrintStream(
+              Files.newOutputStream(
+                  log, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
       Path traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
-      PrintWriter traceWriter = new PrintWriter(
-          Files.newOutputStream(traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
+      PrintWriter traceWriter =
+          new PrintWriter(
+              Files.newOutputStream(
+                  traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
       System.setOut(logStream);
       System.setErr(logStream);
 
       BazelBspServerConfig config = BazelBspServerConfig.from(args);
       BazelBspServer bspServer = new BazelBspServer(config);
 
-      Launcher<BuildClient> launcher = new Launcher.Builder().traceMessages(traceWriter).setOutput(stdout)
-          .setInput(stdin).setLocalService(bspServer).setRemoteInterface(BuildClient.class).setExecutorService(executor)
-          .create();
+      Launcher<BuildClient> launcher =
+          new Launcher.Builder()
+              .traceMessages(traceWriter)
+              .setOutput(stdout)
+              .setInput(stdin)
+              .setLocalService(bspServer)
+              .setRemoteInterface(BuildClient.class)
+              .setExecutorService(executor)
+              .create();
       BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
       bspServer.setBuildClientLogger(buildClientLogger);
       BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy(), buildClientLogger);
