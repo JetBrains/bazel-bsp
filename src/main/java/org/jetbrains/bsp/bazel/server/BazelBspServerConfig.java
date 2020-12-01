@@ -1,18 +1,17 @@
 package org.jetbrains.bsp.bazel.server;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class BazelBspServerConfig {
 
-  private String pathToBazel = null;
-  private List<String> targetProjectPaths =
-      Collections.unmodifiableList(Collections.singletonList("//..."));
+  private final String pathToBazel;
+  private final List<String> targetProjectPaths;
 
-  public BazelBspServerConfig(String pathToBazel) {
+  public BazelBspServerConfig(String pathToBazel, List<String> targetProjectPaths) {
     this.pathToBazel = pathToBazel;
+    this.targetProjectPaths = targetProjectPaths;
   }
 
   public static BazelBspServerConfig from(String[] args) {
@@ -20,12 +19,13 @@ public class BazelBspServerConfig {
       throw new IllegalArgumentException("Configuration can't be built without any parameters");
     }
 
-    BazelBspServerConfig config = new BazelBspServerConfig(args[0]);
-    if (args.length == 2) {
-      config.setTargetProjectPaths(new ArrayList<>(Arrays.asList(args[1].split(","))));
-    }
+    String pathToBazel = args[0];
+    List<String> targetProjectPaths =
+        args.length == 2
+            ? Arrays.asList(args[1].split(","))
+            : Collections.unmodifiableList(Collections.singletonList("//..."));
 
-    return config;
+    return new BazelBspServerConfig(pathToBazel, targetProjectPaths);
   }
 
   public String getBazelPath() {
@@ -34,10 +34,5 @@ public class BazelBspServerConfig {
 
   public List<String> getTargetProjectPaths() {
     return this.targetProjectPaths;
-  }
-
-  public BazelBspServerConfig setTargetProjectPaths(List<String> projectPaths) {
-    this.targetProjectPaths = Collections.unmodifiableList(new ArrayList<>(projectPaths));
-    return this;
   }
 }
