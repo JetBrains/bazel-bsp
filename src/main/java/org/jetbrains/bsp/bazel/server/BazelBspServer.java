@@ -91,9 +91,6 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
       ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
-  protected static final String SCALAC = "Scalac";
-  protected static final String KOTLINC = "KotlinCompile";
-  protected static final String JAVAC = "Javac";
 
   private static final List<String> FILE_EXTENSIONS =
       ImmutableList.of(
@@ -130,10 +127,18 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     this.scalaBspServer =
         new ScalaBspServer(
-            targetsResolver, actionGraphResolver, SCALAC, JAVAC, getBazelData().getExecRoot());
+            targetsResolver,
+            actionGraphResolver,
+            Constants.SCALAC,
+            Constants.JAVAC,
+            getBazelData().getExecRoot());
     this.javaBspServer =
         new JavaBspServer(
-            targetsResolver, actionGraphResolver, JAVAC, KOTLINC, getBazelData().getExecRoot());
+            targetsResolver,
+            actionGraphResolver,
+            Constants.JAVAC,
+            Constants.KOTLINC,
+            getBazelData().getExecRoot());
   }
 
   @Override

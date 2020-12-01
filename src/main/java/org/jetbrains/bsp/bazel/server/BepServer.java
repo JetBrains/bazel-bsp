@@ -178,11 +178,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       String fileLocation = entry.getKey();
       List<Diagnostic> diagnostics = entry.getValue();
 
-      PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams(
-          new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-          new BuildTargetIdentifier(""),
-          diagnostics,
-          false);
+      PublishDiagnosticsParams publishDiagnosticsParams =
+          new PublishDiagnosticsParams(
+              new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
+              new BuildTargetIdentifier(""),
+              diagnostics,
+              false);
 
       bspClient.onBuildPublishDiagnostics(publishDiagnosticsParams);
     }
@@ -271,7 +272,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     diagnosticsDispatcher.emitDiagnostics(filesToDiagnostics, target);
   }
 
-  private HashMap<String, List<Diagnostic>> parseStdErrDiagnostics(BuildEventStreamProtos.Progress progress) {
+  private HashMap<String, List<Diagnostic>> parseStdErrDiagnostics(
+      BuildEventStreamProtos.Progress progress) {
     HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
 
     Arrays.stream(progress.getStderr().split("\n"))
@@ -279,7 +281,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             error ->
                 error.contains("ERROR")
                     && (error.contains("/" + Constants.WORKSPACE_FILE_NAME + ":")
-                    || error.contains("/" + Constants.BUILD_FILE_NAME + ":")))
+                        || error.contains("/" + Constants.BUILD_FILE_NAME + ":")))
         .forEach(
             error -> {
               String erroredFile =
