@@ -118,16 +118,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
       LOGGER.info("Got event" + event + "\nevent-end\n");
 
-      if (event.getId().hasNamedSet()) {
-        namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
-      }
-
       if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
         processedStartedEvent(event.getStarted());
       }
 
       if (event.hasFinished()) {
         processFinishedEvent(event.getFinished());
+      }
+
+      if (event.getId().hasNamedSet()) {
+        namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
       }
 
       if (event.hasCompleted()) {
