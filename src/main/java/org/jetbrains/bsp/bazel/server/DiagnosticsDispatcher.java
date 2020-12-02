@@ -45,11 +45,7 @@ public class DiagnosticsDispatcher {
       LOGGER.info("Inserting diagnostics for path: " + fileDiagnostics.getPath());
 
       filesToDiagnostics.put(
-          Uri.fromExecOrWorkspacePath(
-              fileDiagnostics.getPath(),
-              bspServer.getBazelData().getExecRoot(),
-              bspServer.getBazelData().getWorkspaceRoot()),
-          convertDiagnostics(target, fileDiagnostics));
+          getUriForPath(fileDiagnostics.getPath()), convertDiagnostics(target, fileDiagnostics));
     }
   }
 
@@ -58,14 +54,7 @@ public class DiagnosticsDispatcher {
     for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
       Uri sourceUri = Uri.fromFileUri(source.getUri());
       if (!filesToDiagnostics.containsKey(sourceUri)) {
-        filesToDiagnostics.put(
-            sourceUri,
-            Lists.newArrayList(
-                new PublishDiagnosticsParams(
-                    new TextDocumentIdentifier(sourceUri.toString()),
-                    target,
-                    new ArrayList<>(),
-                    true)));
+        addSource(filesToDiagnostics, sourceUri, target);
       }
 
       if (bspClient != null) {
@@ -78,58 +67,74 @@ public class DiagnosticsDispatcher {
     }
   }
 
+  private void addSource(Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
+      Uri sourceUri, BuildTargetIdentifier target) {
+    PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams(
+        new TextDocumentIdentifier(sourceUri.toString()),
+        target,
+        new ArrayList<>(),
+        true);
+
+    filesToDiagnostics.put(
+        sourceUri,
+        Lists.newArrayList(publishDiagnosticsParams));
+  }
+
   private List<PublishDiagnosticsParams> convertDiagnostics(
       BuildTargetIdentifier target, Diagnostics.FileDiagnostics request) {
     List<Diagnostic> diagnostics = new ArrayList<>();
 
     for (Diagnostics.Diagnostic diagProto : request.getDiagnosticsList()) {
-      DiagnosticSeverity severity = null;
-      Diagnostics.Severity protoSeverity = diagProto.getSeverity();
-
-      switch (protoSeverity) {
-        case ERROR:
-        case UNKNOWN:
-          severity = DiagnosticSeverity.ERROR;
-          break;
-        case WARNING:
-          severity = DiagnosticSeverity.WARNING;
-          break;
-        case INFORMATION:
-          severity = DiagnosticSeverity.INFORMATION;
-          break;
-        case HINT:
-          severity = DiagnosticSeverity.HINT;
-          break;
-      }
-
-      Diagnostic diagnostic =
-          new Diagnostic(
-              new Range(
-                  new Position(
-                      diagProto.getRange().getStart().getLine(),
-                      diagProto.getRange().getStart().getCharacter()),
-                  new Position(
-                      diagProto.getRange().getEnd().getLine(),
-                      diagProto.getRange().getEnd().getCharacter())),
-              diagProto.getMessage());
-
-      if (severity != null) {
-        diagnostic.setSeverity(severity);
-      }
-
+      Diagnostic diagnostic = convertDiagnostic(diagProto);
       diagnostics.add(diagnostic);
     }
 
-    return Lists.newArrayList(
-        new PublishDiagnosticsParams(
-            new TextDocumentIdentifier(
-                Uri.fromExecOrWorkspacePath(
-                        request.getPath(),
-                        bspServer.getBazelData().getExecRoot(),
-                        bspServer.getBazelData().getWorkspaceRoot())
-                    .toString()),
-            target,
-            diagnostics,
-            true));
+    PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams(
+        new TextDocumentIdentifier(getUriForPath(request.getPath()).toString()),
+        target,
+        diagnostics,
+        true);
+
+    return Lists.newArrayList(publishDiagnosticsParams);
+  }
+
+  private Diagnostic convertDiagnostic(Diagnostics.Diagnostic diagProto) {
+    DiagnosticSeverity severity = convertSeverity(diagProto.getSeverity());
+
+    Position startPosition = new Position(
+        diagProto.getRange().getStart().getLine(),
+        diagProto.getRange().getStart().getCharacter());
+    Position endPosition = new Position(
+        diagProto.getRange().getEnd().getLine(),
+        diagProto.getRange().getEnd().getCharacter());
+    Range range = new Range(startPosition, endPosition);
+
+    Diagnostic diagnostic = new Diagnostic(range, diagProto.getMessage());
+    if (severity != null) {
+      diagnostic.setSeverity(severity);
+    }
+
+    return diagnostic;
+  }
+
+  private DiagnosticSeverity convertSeverity(Diagnostics.Severity protoSeverity) {
+    switch (protoSeverity) {
+      case ERROR:
+      case UNKNOWN:
+        return DiagnosticSeverity.ERROR;
+      case WARNING:
+        return DiagnosticSeverity.WARNING;
+      case INFORMATION:
+        return DiagnosticSeverity.INFORMATION;
+      case HINT:
+        return DiagnosticSeverity.HINT;
+      default:
+        return null;
+    }
+  }
+
+  private Uri getUriForPath(String path) {
+    return Uri.fromExecOrWorkspacePath(
+        path, bspServer.getBazelData().getExecRoot(), bspServer.getBazelData().getWorkspaceRoot());
   }
 }
