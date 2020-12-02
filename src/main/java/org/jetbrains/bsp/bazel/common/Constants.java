@@ -25,6 +25,5 @@ public class Constants {
 
   public static final List<String> SUPPORTED_LANGUAGES =
       ImmutableList.of("scala", "java", "kotlin");
-  public static final Set<String> SUPPORTED_ACTIONS =
-      ImmutableSet.of(KOTLINC, JAVAC, SCALAC);
+  public static final Set<String> SUPPORTED_ACTIONS = ImmutableSet.of(KOTLINC, JAVAC, SCALAC);
 }
