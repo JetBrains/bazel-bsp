@@ -95,12 +95,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   protected static final String KOTLINC = "KotlinCompile";
   protected static final String JAVAC = "Javac";
 
-  private static final List<String> FILE_EXTENSIONS =
+  private final List<String> FILE_EXTENSIONS =
       ImmutableList.of(
           ".scala", ".java", ".kt", ".kts", ".sh", ".bzl", ".py", ".js", ".c", ".h", ".cpp",
           ".hpp");
 
-  private final String pathToBazel;
+  private final BazelBspServerConfig configuration;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
   private final CompletableFuture<Void> isInitialized = new CompletableFuture<>();
   private final CompletableFuture<Void> isFinished = new CompletableFuture<>();
@@ -118,10 +118,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   // TODO: created in setter `setBuildClient`, HAVE TO BE moved to the constructor
   private BuildClientLogger buildClientLogger;
 
-  // TODO: imho bsp server creation on the server side is too ambiguous (constructor + setters)
-  public BazelBspServer(String pathToBazel) {
-    this.pathToBazel = pathToBazel;
-    this.bazelRunner = new BazelRunner(this.pathToBazel);
+  // TODO: imho bsp server creation on the server side is too ambiguous
+  // (constructor + setters)
+  public BazelBspServer(BazelBspServerConfig configuration) {
+    this.configuration = configuration;
+    this.bazelRunner = new BazelRunner(configuration.getBazelPath());
     this.queryResolver = new QueryResolver(bazelRunner);
     this.targetsResolver = new TargetsResolver(queryResolver);
     this.actionGraphResolver = new ActionGraphResolver(bazelRunner);
@@ -181,24 +182,32 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
-    // TODO(illicitonion): Parameterise this to allow importing a subset of //...
     return executeCommand(
         () -> {
-          Build.QueryResult queryResult =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
-                  "--nohost_deps",
-                  "--noimplicit_deps",
-                  "kind(binary, //...) union kind(library, //...) union kind(test, //...)");
-          List<BuildTarget> targets =
-              queryResult.getTargetList().stream()
-                  .map(Build.Target::getRule)
-                  .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-                  .map(this::getBuildTarget)
-                  .collect(Collectors.toList());
+          List<String> projectPaths = this.configuration.getTargetProjectPaths();
+          List<BuildTarget> targets = new ArrayList<>();
+          for (String projectPath : projectPaths) {
+            targets.addAll(getBuildTarget(projectPath));
+          }
           return Either.forRight(new WorkspaceBuildTargetsResult(targets));
         });
+  }
+
+  private List<BuildTarget> getBuildTarget(String projectPath) {
+    Build.QueryResult queryResult =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "--nohost_deps",
+            "--noimplicit_deps",
+            String.format(
+                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
+                projectPath, projectPath, projectPath));
+    return queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+        .map(this::getBuildTarget)
+        .collect(Collectors.toList());
   }
 
   private BuildTarget getBuildTarget(Build.Rule rule) {
@@ -471,7 +480,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   }
 
   private List<String> lookupTransitiveSourceJars(String target) {
-    // TODO(illicitonion): Use an aspect output group, rather than parsing stderr logging
+    // TODO(illicitonion): Use an aspect output group, rather than parsing stderr
+    // logging
     List<String> lines =
         bazelRunner
             .runBazelCommand("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target)

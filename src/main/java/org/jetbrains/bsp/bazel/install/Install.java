@@ -33,6 +33,7 @@ public class Install {
   private static final String BAZEL_SHORT_OPT = "b";
   private static final String HELP_SHORT_OPT = "h";
   private static final String DIRECTORY_SHORT_OPT = "d";
+  private static final String BAZEL_TARGETS_SHORT_OPT = "t";
 
   public static void main(String[] args) throws IOException {
     // This is the command line which will be used to start the BSP server. See:
@@ -55,6 +56,7 @@ public class Install {
         addDebuggerConnection(cmd, argv);
         argv.add(SERVER_CLASS_NAME);
         addBazelBinary(cmd, argv);
+        addBazelTargets(cmd, argv);
 
         BspConnectionDetails details = createBspConnectionDetails(argv);
         Path rootDir = getRootDir(cmd);
@@ -122,6 +124,13 @@ public class Install {
     if (cmd.hasOption(DEBUGGER_SHORT_OPT)) {
       String debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
       argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
+    }
+  }
+
+  private static void addBazelTargets(CommandLine cmd, List<String> argv) {
+    if (cmd.hasOption(BAZEL_TARGETS_SHORT_OPT)) {
+      String targets = cmd.getOptionValue(BAZEL_TARGETS_SHORT_OPT);
+      argv.add(targets);
     }
   }
 
@@ -212,6 +221,18 @@ public class Install {
             .build();
 
     cliOptions.addOption(directory);
+
+    Option targets =
+        Option.builder(BAZEL_TARGETS_SHORT_OPT)
+            .longOpt("targets")
+            .hasArg()
+            .argName("targets")
+            .desc(
+                "Name of the bazel's targets that the server should import. Targets can be"
+                    + "separated by a comma. The default is to import all targets (//...)")
+            .build();
+
+    cliOptions.addOption(targets);
 
     Option help = Option.builder(HELP_SHORT_OPT).longOpt("help").desc("Show help").build();
 
