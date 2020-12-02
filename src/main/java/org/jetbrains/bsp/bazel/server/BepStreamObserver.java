@@ -3,8 +3,12 @@ package org.jetbrains.bsp.bazel.server;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamRequest;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamResponse;
 import io.grpc.stub.StreamObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BepStreamObserver implements StreamObserver<PublishBuildToolEventStreamRequest> {
+
+  private static final Logger LOGGER = LogManager.getLogger(BepStreamObserver.class);
 
   private final BepServer bepServer;
   private final StreamObserver<PublishBuildToolEventStreamResponse> responseObserver;
@@ -37,7 +41,7 @@ public class BepStreamObserver implements StreamObserver<PublishBuildToolEventSt
 
   @Override
   public void onError(Throwable throwable) {
-    System.out.println("Error from BEP stream: " + throwable);
+    LOGGER.info("Error from BEP stream: " + throwable);
   }
 
   @Override

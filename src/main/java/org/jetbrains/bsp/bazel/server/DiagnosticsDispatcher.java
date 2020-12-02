@@ -17,9 +17,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Uri;
 
 public class DiagnosticsDispatcher {
+
+  private static final Logger LOGGER = LogManager.getLogger(DiagnosticsDispatcher.class);
 
   private final BazelBspServer bspServer;
   private final BuildClient bspClient;
@@ -38,7 +42,7 @@ public class DiagnosticsDispatcher {
         Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
 
     for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
-      System.out.println("Inserting diagnostics for path: " + fileDiagnostics.getPath());
+      LOGGER.info("Inserting diagnostics for path: " + fileDiagnostics.getPath());
 
       filesToDiagnostics.put(
           Uri.fromExecOrWorkspacePath(

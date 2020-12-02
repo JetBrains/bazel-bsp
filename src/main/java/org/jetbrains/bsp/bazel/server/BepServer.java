@@ -35,11 +35,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
+
+  private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
 
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
@@ -112,7 +116,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       BuildEventStreamProtos.BuildEvent event =
           BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
 
-      System.out.println("Got event" + event + "\nevent-end\n");
+      LOGGER.info("Got event" + event + "\nevent-end\n");
 
       if (event.getId().hasNamedSet()) {
         namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
@@ -142,7 +146,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         processProgressEvent(event.getProgress());
       }
     } catch (IOException e) {
-      System.err.println("Error deserializing BEP proto: " + e);
+      LOGGER.error("Error deserializing BEP proto: " + e);
     }
   }
 
@@ -157,10 +161,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
     if (taskParkingLot.empty()) {
-      System.out.println("No start event id was found.");
+      LOGGER.info("No start event id was found.");
       return;
     } else if (taskParkingLot.size() > 1) {
-      System.out.println("More than 1 start event was found");
+      LOGGER.info("More than 1 start event was found");
       return;
     }
 
@@ -253,7 +257,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         continue;
       }
 
-      System.out.println("Found diagnostics file in " + log.getUri());
+      LOGGER.info("Found diagnostics file in " + log.getUri());
 
       if (hasDiagnosticsOutput) {
         diagnosticsProtosLocations.remove(target.getUri());
@@ -304,9 +308,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
               }
 
-              System.out.println("Error: " + error);
-              System.out.println("File location: " + fileLocation);
-              System.out.println("Line location: " + Arrays.toString(lineLocation));
+              LOGGER.info("Error: " + error);
+              LOGGER.info("File location: " + fileLocation);
+              LOGGER.info("Line location: " + Arrays.toString(lineLocation));
 
               Position position =
                   new Position(
