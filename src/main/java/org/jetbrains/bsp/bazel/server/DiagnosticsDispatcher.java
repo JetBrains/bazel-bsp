@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Uri;
@@ -67,33 +68,30 @@ public class DiagnosticsDispatcher {
     }
   }
 
-  private void addSource(Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
-      Uri sourceUri, BuildTargetIdentifier target) {
-    PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams(
-        new TextDocumentIdentifier(sourceUri.toString()),
-        target,
-        new ArrayList<>(),
-        true);
+  private void addSource(
+      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
+      Uri sourceUri,
+      BuildTargetIdentifier target) {
+    PublishDiagnosticsParams publishDiagnosticsParams =
+        new PublishDiagnosticsParams(
+            new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
 
-    filesToDiagnostics.put(
-        sourceUri,
-        Lists.newArrayList(publishDiagnosticsParams));
+    filesToDiagnostics.put(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
   }
 
   private List<PublishDiagnosticsParams> convertDiagnostics(
       BuildTargetIdentifier target, Diagnostics.FileDiagnostics request) {
-    List<Diagnostic> diagnostics = new ArrayList<>();
+    List<Diagnostic> diagnostics =
+        request.getDiagnosticsList().stream()
+            .map(this::convertDiagnostic)
+            .collect(Collectors.toList());
 
-    for (Diagnostics.Diagnostic diagProto : request.getDiagnosticsList()) {
-      Diagnostic diagnostic = convertDiagnostic(diagProto);
-      diagnostics.add(diagnostic);
-    }
-
-    PublishDiagnosticsParams publishDiagnosticsParams = new PublishDiagnosticsParams(
-        new TextDocumentIdentifier(getUriForPath(request.getPath()).toString()),
-        target,
-        diagnostics,
-        true);
+    PublishDiagnosticsParams publishDiagnosticsParams =
+        new PublishDiagnosticsParams(
+            new TextDocumentIdentifier(getUriForPath(request.getPath()).toString()),
+            target,
+            diagnostics,
+            true);
 
     return Lists.newArrayList(publishDiagnosticsParams);
   }
@@ -101,12 +99,13 @@ public class DiagnosticsDispatcher {
   private Diagnostic convertDiagnostic(Diagnostics.Diagnostic diagProto) {
     DiagnosticSeverity severity = convertSeverity(diagProto.getSeverity());
 
-    Position startPosition = new Position(
-        diagProto.getRange().getStart().getLine(),
-        diagProto.getRange().getStart().getCharacter());
-    Position endPosition = new Position(
-        diagProto.getRange().getEnd().getLine(),
-        diagProto.getRange().getEnd().getCharacter());
+    Position startPosition =
+        new Position(
+            diagProto.getRange().getStart().getLine(),
+            diagProto.getRange().getStart().getCharacter());
+    Position endPosition =
+        new Position(
+            diagProto.getRange().getEnd().getLine(), diagProto.getRange().getEnd().getCharacter());
     Range range = new Range(startPosition, endPosition);
 
     Diagnostic diagnostic = new Diagnostic(range, diagProto.getMessage());
