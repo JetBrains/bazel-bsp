@@ -27,7 +27,7 @@ import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 
 // TODO: This class *should* implement a `ScalaBuildServer` interface,
 // TODO: now `buildTargetScalacOptions` method returns a `Either<ResponseError,
-// ScalacOptionsResult>`
+// TODO: ScalacOptionsResult>`
 // TODO: instead of a `CompletableFuture<ScalacOptionsResult>` because of the `BazelBspServer`
 // TODO: command executing (`executeCommand`) implementation.
 public class ScalaBspServer {
@@ -74,8 +74,6 @@ public class ScalaBspServer {
 
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
-    // TODO(illicitonion): Populate
     return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
   }
 
