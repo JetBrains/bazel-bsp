@@ -41,7 +41,7 @@ public class BepStreamObserver implements StreamObserver<PublishBuildToolEventSt
 
   @Override
   public void onError(Throwable throwable) {
-    LOGGER.info("Error from BEP stream: " + throwable);
+    LOGGER.info("Error from BEP stream: {}", throwable.toString());
   }
 
   @Override

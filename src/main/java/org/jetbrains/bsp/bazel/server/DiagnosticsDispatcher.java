@@ -43,7 +43,7 @@ public class DiagnosticsDispatcher {
         Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
 
     for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
-      LOGGER.info("Inserting diagnostics for path: " + fileDiagnostics.getPath());
+      LOGGER.info("Inserting diagnostics for path: {}", fileDiagnostics.getPath());
 
       filesToDiagnostics.put(
           getUriForPath(fileDiagnostics.getPath()), convertDiagnostics(target, fileDiagnostics));

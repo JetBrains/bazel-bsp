@@ -116,7 +116,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       BuildEventStreamProtos.BuildEvent event =
           BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
 
-      LOGGER.info("Got event" + event + "\nevent-end\n");
+      LOGGER.info("Got event {}", event);
 
       if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
         processedStartedEvent(event.getStarted());
@@ -146,7 +146,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         processProgressEvent(event.getProgress());
       }
     } catch (IOException e) {
-      LOGGER.error("Error deserializing BEP proto: " + e);
+      LOGGER.error("Error deserializing BEP proto: {}", e.toString());
     }
   }
 
@@ -257,7 +257,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         continue;
       }
 
-      LOGGER.info("Found diagnostics file in " + log.getUri());
+      LOGGER.info("Found diagnostics file in {}", log.getUri());
 
       if (hasDiagnosticsOutput) {
         diagnosticsProtosLocations.remove(target.getUri());
@@ -308,9 +308,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
               }
 
-              LOGGER.info("Error: " + error);
-              LOGGER.info("File location: " + fileLocation);
-              LOGGER.info("Line location: " + Arrays.toString(lineLocation));
+              LOGGER.info("Error: {}", error);
+              LOGGER.info("File location: {}", fileLocation);
+              LOGGER.info("Line location: {}", Arrays.toString(lineLocation));
 
               Position position =
                   new Position(
