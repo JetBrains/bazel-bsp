@@ -10,6 +10,7 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,17 +47,12 @@ public class ScalaBspServer {
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    List<String> targets =
-        scalacOptionsParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
-    String targetsUnion = Joiner.on(" + ").join(targets);
-    Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
+    List<String> targets = targetsResolver.getTargetsUris(scalacOptionsParams.getTargets());
+    Map<String, List<String>> targetsOptions = targetsResolver.getScalacTargetsOptions(targets);
+
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
+            MnemonicsUtils.getMnemonics(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(
@@ -70,18 +66,6 @@ public class ScalaBspServer {
                             target))
                 .collect(Collectors.toList()));
     return Either.forRight(result);
-  }
-
-  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
-      ScalaTestClassesParams scalaTestClassesParams) {
-    return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
-  }
-
-  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
-      ScalaMainClassesParams scalaMainClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
   }
 
   private Stream<ScalacOptionsItem> collectScalacOptionsResult(
@@ -98,5 +82,17 @@ public class ScalaBspServer {
                     options,
                     inputs,
                     Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
+  }
+
+  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
+      ScalaTestClassesParams scalaTestClassesParams) {
+    return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
+  }
+
+  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
+      ScalaMainClassesParams scalaMainClassesParams) {
+    System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
+    // TODO(illicitonion): Populate
+    return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
   }
 }

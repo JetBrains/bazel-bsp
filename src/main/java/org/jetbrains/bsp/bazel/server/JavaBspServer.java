@@ -39,19 +39,12 @@ public class JavaBspServer {
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
-    List<String> targets =
-        javacOptionsParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
-
-    String targetsUnion = Joiner.on(" + ").join(targets);
-    Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
+    List<String> targets = targetsResolver.getTargetsUris(javacOptionsParams.getTargets());
+    Map<String, List<String>> targetsOptions = targetsResolver.getJavacTargetsOptions(targets);
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC)));
+            MnemonicsUtils.getMnemonics(targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC)));
 
     JavacOptionsResult result =
         new JavacOptionsResult(
