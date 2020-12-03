@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
@@ -206,23 +205,25 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processProgressEvent(BuildEventStreamProtos.Progress progress) {
-    HashMap<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
+    Map<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
 
-    for (Entry<String, List<Diagnostic>> entry : fileDiagnostics.entrySet()) {
-      String fileLocation = entry.getKey();
-      List<Diagnostic> diagnostics = entry.getValue();
-
-      PublishDiagnosticsParams publishDiagnosticsParams =
-          new PublishDiagnosticsParams(
-              new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-              new BuildTargetIdentifier(""),
-              diagnostics,
-              false);
-
-      bspClient.onBuildPublishDiagnostics(publishDiagnosticsParams);
-    }
+    fileDiagnostics.entrySet().stream()
+        .map(this::createParamsFromEntry)
+        .forEach(bspClient::onBuildPublishDiagnostics);
 
     buildClientLogger.logMessage(progress.getStderr().trim());
+  }
+
+  private PublishDiagnosticsParams createParamsFromEntry(
+      Map.Entry<String, List<Diagnostic>> entry) {
+    String fileLocation = entry.getKey();
+    List<Diagnostic> diagnostics = entry.getValue();
+
+    return new PublishDiagnosticsParams(
+        new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
+        new BuildTargetIdentifier(""),
+        diagnostics,
+        false);
   }
 
   private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete)
