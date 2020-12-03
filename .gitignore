@@ -3,3 +3,6 @@
 /.idea/
 /.ijwb/
 /bazel-*
+
+# mac OS
+.DS_Store

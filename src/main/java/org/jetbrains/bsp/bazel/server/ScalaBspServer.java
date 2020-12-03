@@ -8,10 +8,12 @@ import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
+import com.google.common.collect.ImmutableList;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -50,38 +52,48 @@ public class ScalaBspServer {
     List<String> targets = targetsResolver.getTargetsUris(scalacOptionsParams.getTargets());
     Map<String, List<String>> targetsOptions = targetsResolver.getScalacTargetsOptions(targets);
 
-    ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
+    String targetsMnemonics = MnemonicsUtils.getMnemonics(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
+    ActionGraphParser actionGraphParser = actionGraphResolver.parseActionGraph(targetsMnemonics);
 
-    ScalacOptionsResult result =
-        new ScalacOptionsResult(
-            targets.stream()
-                .flatMap(
-                    target ->
-                        collectScalacOptionsResult(
-                            actionGraphParser,
-                            targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            actionGraphParser.getInputsAsUri(target, execRoot),
-                            target))
-                .collect(Collectors.toList()));
-    return Either.forRight(result);
+    return buildTargetScalacOptionsResult(targets, targetsOptions, actionGraphParser);
   }
 
-  private Stream<ScalacOptionsItem> collectScalacOptionsResult(
-      ActionGraphParser actionGraphParser,
-      List<String> options,
-      List<String> inputs,
-      String target) {
+  private Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptionsResult(List<String> targets,
+      Map<String, List<String>> targetsOptions, ActionGraphParser actionGraphParser) {
+    List<ScalacOptionsItem> scalacOptionsItems = getScalacOptionsResultItems(targets, targetsOptions,
+        actionGraphParser);
+    ScalacOptionsResult scalacOptionsResult = new ScalacOptionsResult(scalacOptionsItems);
+
+    return Either.forRight(scalacOptionsResult);
+  }
+
+  private List<ScalacOptionsItem> getScalacOptionsResultItems(List<String> targets,
+      Map<String, List<String>> targetsOptions,
+      ActionGraphParser actionGraphParser) {
+    return targets.stream()
+        .flatMap(target ->
+            collectScalacOptionsResult(
+                actionGraphParser,
+                targetsOptions.getOrDefault(target, new ArrayList<>()),
+                actionGraphParser.getInputsAsUri(target, execRoot),
+                target))
+        .collect(Collectors.toList());
+  }
+
+  private Stream<ScalacOptionsItem> collectScalacOptionsResult(ActionGraphParser actionGraphParser,
+      List<String> options, List<String> inputs, String target) {
     List<String> suffixes = ImmutableList.of(".jar", ".js");
+
     return actionGraphParser.getOutputs(target, suffixes).stream()
-        .map(
-            output ->
-                new ScalacOptionsItem(
-                    new BuildTargetIdentifier(target),
-                    options,
-                    inputs,
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
+        .map(output -> buildScalacOptionsItem(options, inputs, target, output));
+  }
+
+  private ScalacOptionsItem buildScalacOptionsItem(List<String> options, List<String> inputs, String target,
+      String output) {
+    BuildTargetIdentifier buildTargetIdentifier = new BuildTargetIdentifier(target);
+    String execRootUri = Uri.fromExecPath("exec-root://" + output, execRoot).toString();
+
+    return new ScalacOptionsItem(buildTargetIdentifier, options, inputs, execRootUri);
   }
 
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
