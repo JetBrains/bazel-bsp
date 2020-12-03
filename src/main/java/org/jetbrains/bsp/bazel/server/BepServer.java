@@ -89,14 +89,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     return new BepStreamObserver(this, responseObserver);
   }
 
-  public TreeSet<Uri> getCompilerClasspath() {
-    return compilerClasspath;
-  }
-
-  public Map<String, String> getDiagnosticsProtosLocations() {
-    return diagnosticsProtosLocations;
-  }
-
   public void collectDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
       BuildTargetIdentifier target,
@@ -358,5 +350,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             });
 
     return fileDiagnostics;
+  }
+
+  public TreeSet<Uri> getCompilerClasspath() {
+    return compilerClasspath;
+  }
+
+  public Map<String, String> getDiagnosticsProtosLocations() {
+    return diagnosticsProtosLocations;
   }
 }
