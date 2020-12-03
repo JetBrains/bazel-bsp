@@ -9,14 +9,17 @@ import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.Range;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import io.bazel.rules_scala.diagnostics.Diagnostics;
+import io.bazel.rules_scala.diagnostics.Diagnostics.Severity;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +28,15 @@ import org.jetbrains.bsp.bazel.common.Uri;
 public class DiagnosticsDispatcher {
 
   private static final Logger LOGGER = LogManager.getLogger(DiagnosticsDispatcher.class);
+
+  private final ImmutableMap<Severity, DiagnosticSeverity> CONVERTED_SEVERITY =
+      new ImmutableMap.Builder<Diagnostics.Severity, DiagnosticSeverity>()
+          .put(Severity.UNKNOWN, DiagnosticSeverity.ERROR)
+          .put(Severity.ERROR, DiagnosticSeverity.ERROR)
+          .put(Severity.WARNING, DiagnosticSeverity.WARNING)
+          .put(Severity.INFORMATION, DiagnosticSeverity.INFORMATION)
+          .put(Severity.HINT, DiagnosticSeverity.HINT)
+          .build();
 
   private final BazelBspServer bspServer;
   private final BuildClient bspClient;
@@ -97,7 +109,8 @@ public class DiagnosticsDispatcher {
   }
 
   private Diagnostic convertDiagnostic(Diagnostics.Diagnostic diagProto) {
-    DiagnosticSeverity severity = convertSeverity(diagProto.getSeverity());
+    Optional<DiagnosticSeverity> severity =
+        Optional.ofNullable(CONVERTED_SEVERITY.get(diagProto.getSeverity()));
 
     Position startPosition =
         new Position(
@@ -109,27 +122,9 @@ public class DiagnosticsDispatcher {
     Range range = new Range(startPosition, endPosition);
 
     Diagnostic diagnostic = new Diagnostic(range, diagProto.getMessage());
-    if (severity != null) {
-      diagnostic.setSeverity(severity);
-    }
+    severity.ifPresent(diagnostic::setSeverity);
 
     return diagnostic;
-  }
-
-  private DiagnosticSeverity convertSeverity(Diagnostics.Severity protoSeverity) {
-    switch (protoSeverity) {
-      case ERROR:
-      case UNKNOWN:
-        return DiagnosticSeverity.ERROR;
-      case WARNING:
-        return DiagnosticSeverity.WARNING;
-      case INFORMATION:
-        return DiagnosticSeverity.INFORMATION;
-      case HINT:
-        return DiagnosticSeverity.HINT;
-      default:
-        return null;
-    }
   }
 
   private Uri getUriForPath(String path) {
