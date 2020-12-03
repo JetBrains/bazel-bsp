@@ -113,40 +113,68 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   public void handleEvent(BuildEvent buildEvent) {
     try {
-      BuildEventStreamProtos.BuildEvent event =
-          BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
-
-      LOGGER.info("Got event {}", event);
-
-      if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
-        processedStartedEvent(event.getStarted());
-      }
-
-      if (event.hasFinished()) {
-        processFinishedEvent(event.getFinished());
-      }
-
-      if (event.getId().hasNamedSet()) {
-        namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
-      }
-
-      if (event.hasCompleted()) {
-        processCompletedEvent(event.getCompleted());
-      }
-
-      if (event.hasAction()) {
-        processActionEvent(event.getAction());
-      }
-
-      if (event.hasAborted()) {
-        processAbortedEvent(event.getAborted());
-      }
-
-      if (event.hasProgress()) {
-        processProgressEvent(event.getProgress());
-      }
+      processEvent(buildEvent);
     } catch (IOException e) {
       LOGGER.error("Error deserializing BEP proto: {}", e.toString());
+    }
+  }
+
+  void processEvent(BuildEvent buildEvent) throws IOException {
+    BuildEventStreamProtos.BuildEvent event =
+        BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
+
+    LOGGER.info("Got event {}", event);
+
+    processBuildStartedEventIfPresent(event);
+    processFinishedEventIfPresent(event);
+    fetchNamedSetIfPresent(event);
+    processCompletedEventIfPresent(event);
+    processActionEventIfPresent(event);
+    processAbortedEventIfPresent(event);
+    processProgressEventIfPresent(event);
+  }
+
+  private void fetchNamedSetIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.getId().hasNamedSet()) {
+      namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
+    }
+  }
+
+  private void processBuildStartedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
+      processedStartedEvent(event.getStarted());
+    }
+  }
+
+  private void processFinishedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasFinished()) {
+      processFinishedEvent(event.getFinished());
+    }
+  }
+
+  private void processCompletedEventIfPresent(BuildEventStreamProtos.BuildEvent event)
+      throws IOException {
+    if (event.hasCompleted()) {
+      processCompletedEvent(event.getCompleted());
+    }
+  }
+
+  private void processActionEventIfPresent(BuildEventStreamProtos.BuildEvent event)
+      throws IOException {
+    if (event.hasAction()) {
+      processActionEvent(event.getAction());
+    }
+  }
+
+  private void processAbortedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasAborted()) {
+      processAbortedEvent(event.getAborted());
+    }
+  }
+
+  private void processProgressEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasProgress()) {
+      processProgressEvent(event.getProgress());
     }
   }
 
@@ -163,7 +191,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     if (taskParkingLot.empty()) {
       LOGGER.info("No start event id was found.");
       return;
-    } else if (taskParkingLot.size() > 1) {
+    }
+
+    if (taskParkingLot.size() > 1) {
       LOGGER.info("More than 1 start event was found");
       return;
     }
