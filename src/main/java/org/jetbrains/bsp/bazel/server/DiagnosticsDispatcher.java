@@ -12,7 +12,9 @@ import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import io.bazel.rules_scala.diagnostics.Diagnostics;
+import io.bazel.rules_scala.diagnostics.Diagnostics.FileDiagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.Severity;
+import io.bazel.rules_scala.diagnostics.Diagnostics.TargetDiagnostics;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,7 +32,7 @@ public class DiagnosticsDispatcher {
   private static final Logger LOGGER = LogManager.getLogger(DiagnosticsDispatcher.class);
 
   private final Map<Severity, DiagnosticSeverity> CONVERTED_SEVERITY =
-      new ImmutableMap.Builder<Diagnostics.Severity, DiagnosticSeverity>()
+      new ImmutableMap.Builder<Severity, DiagnosticSeverity>()
           .put(Severity.UNKNOWN, DiagnosticSeverity.ERROR)
           .put(Severity.ERROR, DiagnosticSeverity.ERROR)
           .put(Severity.WARNING, DiagnosticSeverity.WARNING)
@@ -51,10 +53,10 @@ public class DiagnosticsDispatcher {
       BuildTargetIdentifier target,
       String diagnosticsLocation)
       throws IOException {
-    Diagnostics.TargetDiagnostics targetDiagnostics =
-        Diagnostics.TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
+    TargetDiagnostics targetDiagnostics =
+        TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
 
-    for (Diagnostics.FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
+    for (FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
       LOGGER.info("Inserting diagnostics for path: {}", fileDiagnostics.getPath());
 
       filesToDiagnostics.put(
@@ -70,11 +72,9 @@ public class DiagnosticsDispatcher {
         addSource(filesToDiagnostics, sourceUri, target);
       }
 
-      if (bspClient != null) {
-        for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
-          for (PublishDiagnosticsParams param : values) {
-            bspClient.onBuildPublishDiagnostics(param);
-          }
+      for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
+        for (PublishDiagnosticsParams param : values) {
+          bspClient.onBuildPublishDiagnostics(param);
         }
       }
     }
@@ -92,7 +92,7 @@ public class DiagnosticsDispatcher {
   }
 
   private List<PublishDiagnosticsParams> convertDiagnostics(
-      BuildTargetIdentifier target, Diagnostics.FileDiagnostics request) {
+      BuildTargetIdentifier target, FileDiagnostics request) {
     List<Diagnostic> diagnostics =
         request.getDiagnosticsList().stream()
             .map(this::convertDiagnostic)

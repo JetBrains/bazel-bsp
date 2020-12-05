@@ -21,12 +21,7 @@ public class BepStreamObserver implements StreamObserver<PublishBuildToolEventSt
 
   @Override
   public void onNext(PublishBuildToolEventStreamRequest request) {
-    if (request
-        .getOrderedBuildEvent()
-        .getEvent()
-        .getBazelEvent()
-        .getTypeUrl()
-        .equals("type.googleapis.com/build_event_stream.BuildEvent")) {
+    if (isRequestBazelBuildEvent(request)) {
       bepServer.handleEvent(request.getOrderedBuildEvent().getEvent());
     }
 
@@ -47,5 +42,14 @@ public class BepStreamObserver implements StreamObserver<PublishBuildToolEventSt
   @Override
   public void onCompleted() {
     responseObserver.onCompleted();
+  }
+
+  private boolean isRequestBazelBuildEvent(PublishBuildToolEventStreamRequest request) {
+    return request
+        .getOrderedBuildEvent()
+        .getEvent()
+        .getBazelEvent()
+        .getTypeUrl()
+        .equals("type.googleapis.com/build_event_stream.BuildEvent");
   }
 }

@@ -6,6 +6,7 @@ java_binary(
     main_class = "org.jetbrains.bsp.bazel.BazelBspServerTestRunner",
     resources = ["//src/test/resources:bsp-test-resources"],
     deps = [
+        "//src/main/java/org/jetbrains/bsp/bazel/common",
         "//src/main/java/org/jetbrains/bsp/bazel/server",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:ch_epfl_scala_bsp_testkit_2_13",
