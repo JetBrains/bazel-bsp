@@ -126,15 +126,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     this.scalaBspServer =
-        new ScalaBspServer(
-            targetsResolver,
-            actionGraphResolver,
-            getBazelData().getExecRoot());
+        new ScalaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
     this.javaBspServer =
-        new JavaBspServer(
-            targetsResolver,
-            actionGraphResolver,
-            getBazelData().getExecRoot());
+        new JavaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
 
   @Override
