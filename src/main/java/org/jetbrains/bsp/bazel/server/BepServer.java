@@ -104,25 +104,21 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   public void handleEvent(BuildEvent buildEvent) {
     try {
-      processEvent(buildEvent);
+      BuildEventStreamProtos.BuildEvent event =
+          BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
+
+      LOGGER.info("Got event {}", event);
+
+      processBuildStartedEventIfPresent(event);
+      processFinishedEventIfPresent(event);
+      fetchNamedSetIfPresent(event);
+      processCompletedEventIfPresent(event);
+      processActionEventIfPresent(event);
+      processAbortedEventIfPresent(event);
+      processProgressEventIfPresent(event);
     } catch (IOException e) {
       LOGGER.error("Error deserializing BEP proto: {}", e.toString());
     }
-  }
-
-  void processEvent(BuildEvent buildEvent) throws IOException {
-    BuildEventStreamProtos.BuildEvent event =
-        BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
-
-    LOGGER.info("Got event {}", event);
-
-    processBuildStartedEventIfPresent(event);
-    processFinishedEventIfPresent(event);
-    fetchNamedSetIfPresent(event);
-    processCompletedEventIfPresent(event);
-    processActionEventIfPresent(event);
-    processAbortedEventIfPresent(event);
-    processProgressEventIfPresent(event);
   }
 
   private void fetchNamedSetIfPresent(BuildEventStreamProtos.BuildEvent event) {
@@ -133,49 +129,23 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processBuildStartedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
-      processedStartedEvent(event.getStarted());
+      processBuildStartedEvent(event.getStarted());
     }
   }
 
-  private void processFinishedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
-    if (event.hasFinished()) {
-      processFinishedEvent(event.getFinished());
-    }
-  }
-
-  private void processCompletedEventIfPresent(BuildEventStreamProtos.BuildEvent event)
-      throws IOException {
-    if (event.hasCompleted()) {
-      processCompletedEvent(event.getCompleted());
-    }
-  }
-
-  private void processActionEventIfPresent(BuildEventStreamProtos.BuildEvent event)
-      throws IOException {
-    if (event.hasAction()) {
-      processActionEvent(event.getAction());
-    }
-  }
-
-  private void processAbortedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
-    if (event.hasAborted()) {
-      processAbortedEvent(event.getAborted());
-    }
-  }
-
-  private void processProgressEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
-    if (event.hasProgress()) {
-      processProgressEvent(event.getProgress());
-    }
-  }
-
-  private void processedStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
+  private void processBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
     TaskId taskId = new TaskId(buildStarted.getUuid());
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
 
     bspClient.onBuildTaskStart(startParams);
     taskParkingLot.add(taskId);
+  }
+
+  private void processFinishedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasFinished()) {
+      processFinishedEvent(event.getFinished());
+    }
   }
 
   private void processFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
@@ -196,26 +166,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     bspClient.onBuildTaskFinish(finishParams);
   }
 
-  private void processProgressEvent(BuildEventStreamProtos.Progress progress) {
-    Map<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
-
-    fileDiagnostics.entrySet().stream()
-        .map(this::createParamsFromEntry)
-        .forEach(bspClient::onBuildPublishDiagnostics);
-
-    buildClientLogger.logMessage(progress.getStderr().trim());
-  }
-
-  private PublishDiagnosticsParams createParamsFromEntry(
-      Map.Entry<String, List<Diagnostic>> entry) {
-    String fileLocation = entry.getKey();
-    List<Diagnostic> diagnostics = entry.getValue();
-
-    return new PublishDiagnosticsParams(
-        new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-        new BuildTargetIdentifier(""),
-        diagnostics,
-        false);
+  private void processCompletedEventIfPresent(BuildEventStreamProtos.BuildEvent event)
+      throws IOException {
+    if (event.hasCompleted()) {
+      processCompletedEvent(event.getCompleted());
+    }
   }
 
   private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete)
@@ -257,10 +212,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
-  private void processAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
-    if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
-      buildClientLogger.logError(
-          "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+  private void processActionEventIfPresent(BuildEventStreamProtos.BuildEvent event)
+      throws IOException {
+    if (event.hasAction()) {
+      processActionEvent(event.getAction());
     }
   }
 
@@ -297,6 +252,47 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
 
     diagnosticsDispatcher.emitDiagnostics(filesToDiagnostics, target);
+  }
+
+  private void processAbortedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasAborted()) {
+      processAbortedEvent(event.getAborted());
+    }
+  }
+
+  private void processAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
+    if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
+      buildClientLogger.logError(
+          "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+    }
+  }
+
+  private void processProgressEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasProgress()) {
+      processProgressEvent(event.getProgress());
+    }
+  }
+
+  private void processProgressEvent(BuildEventStreamProtos.Progress progress) {
+    Map<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
+
+    fileDiagnostics.entrySet().stream()
+        .map(this::createParamsFromEntry)
+        .forEach(bspClient::onBuildPublishDiagnostics);
+
+    buildClientLogger.logMessage(progress.getStderr().trim());
+  }
+
+  private PublishDiagnosticsParams createParamsFromEntry(
+      Map.Entry<String, List<Diagnostic>> entry) {
+    String fileLocation = entry.getKey();
+    List<Diagnostic> diagnostics = entry.getValue();
+
+    return new PublishDiagnosticsParams(
+        new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
+        new BuildTargetIdentifier(""),
+        diagnostics,
+        false);
   }
 
   private HashMap<String, List<Diagnostic>> parseStdErrDiagnostics(
