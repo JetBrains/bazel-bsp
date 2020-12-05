@@ -17,11 +17,9 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.util.List;
+import org.jetbrains.bsp.bazel.common.Constants;
 
 class BazelBspServerTestData {
-
-  private static final String JAVA = "java";
-  private static final String SCALA = "scala";
 
   private static final String SAMPLE_REPO_PATH = "sample-repo";
   private static final String SAMPLE_REPO_EXAMPLE_PATH = SAMPLE_REPO_PATH + "/example";
@@ -46,13 +44,13 @@ class BazelBspServerTestData {
               new BuildTarget(
                   ID_1,
                   ImmutableList.of(),
-                  ImmutableList.of(SCALA),
+                  ImmutableList.of(Constants.SCALA),
                   ImmutableList.of(ID_2),
                   new BuildTargetCapabilities(true, false, true)),
               new BuildTarget(
                   ID_2,
                   ImmutableList.of(),
-                  ImmutableList.of(JAVA, SCALA),
+                  ImmutableList.of(Constants.JAVA, Constants.SCALA),
                   ImmutableList.of(ID_3),
                   new BuildTargetCapabilities(true, false, false))));
 

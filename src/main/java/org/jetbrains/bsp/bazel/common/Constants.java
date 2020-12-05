@@ -1,9 +1,7 @@
 package org.jetbrains.bsp.bazel.common;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.util.List;
-import java.util.Set;
 
 public class Constants {
   public static final String NAME = "bazelbsp";
@@ -19,11 +17,14 @@ public class Constants {
   public static final String BAZELBSP_LOG_FILE_NAME = "bazelbsp.log";
   public static final String BAZELBSP_TRACE_JSON_FILE_NAME = "bazelbsp.trace.json";
 
-  public static final String SCALAC = "Scalac";
-  public static final String KOTLINC = "KotlinCompile";
-  public static final String JAVAC = "Javac";
+  public static final String SCALA = "scala";
+  public static final String JAVA = "java";
+  public static final String KOTLIN = "kotlin";
 
-  public static final List<String> SUPPORTED_LANGUAGES =
-      ImmutableList.of("scala", "java", "kotlin");
-  public static final Set<String> SUPPORTED_ACTIONS = ImmutableSet.of(KOTLINC, JAVAC, SCALAC);
+  public static final String SCALAC = "Scalac";
+  public static final String JAVAC = "Javac";
+  public static final String KOTLINC = "KotlinCompile";
+
+  public static final List<String> SUPPORTED_LANGUAGES = ImmutableList.of(SCALA, JAVA, KOTLIN);
+  public static final List<String> SUPPORTED_COMPILERS = ImmutableList.of(SCALAC, JAVAC, KOTLINC);
 }

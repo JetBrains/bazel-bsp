@@ -129,15 +129,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
         new ScalaBspServer(
             targetsResolver,
             actionGraphResolver,
-            Constants.SCALAC,
-            Constants.JAVAC,
             getBazelData().getExecRoot());
     this.javaBspServer =
         new JavaBspServer(
             targetsResolver,
             actionGraphResolver,
-            Constants.JAVAC,
-            Constants.KOTLINC,
             getBazelData().getExecRoot());
   }
 
@@ -223,12 +219,13 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     for (SourceItem source : sources) {
       if (source.getUri().endsWith(".scala")) {
-        extensions.add("scala");
+        extensions.add(Constants.SCALA);
       } else if (source.getUri().endsWith(".java")) {
-        extensions.add("java");
+        extensions.add(Constants.JAVA);
       } else if (source.getUri().endsWith(".kt")) {
-        extensions.add("kotlin");
-        extensions.add("java"); // TODO(andrefmrocha): Remove this when kotlin is natively supported
+        extensions.add(Constants.KOTLIN);
+        extensions.add(
+            Constants.JAVA); // TODO(andrefmrocha): Remove this when kotlin is natively supported
       }
     }
 
@@ -244,7 +241,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     target.setBaseDirectory(
         Uri.packageDirFromLabel(label.getUri(), getBazelData().getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());
-    if (extensions.contains("scala")) {
+    if (extensions.contains(Constants.SCALA)) {
       getScalaBuildTarget()
           .ifPresent(
               (buildTarget) -> {
@@ -252,7 +249,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 target.setTags(Lists.newArrayList(getRuleType(rule)));
                 target.setData(buildTarget);
               });
-    } else if (extensions.contains("java") || extensions.contains("kotlin")) {
+    } else if (extensions.contains(Constants.JAVA) || extensions.contains(Constants.KOTLIN)) {
       target.setDataKind(BuildTargetDataKind.JVM);
       target.setTags(Lists.newArrayList(getRuleType(rule)));
       target.setData(getJVMBuildTarget());

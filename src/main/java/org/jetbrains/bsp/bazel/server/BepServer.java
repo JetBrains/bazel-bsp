@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
@@ -51,7 +52,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final DiagnosticsDispatcher diagnosticsDispatcher;
 
   private final Stack<TaskId> taskParkingLot = new Stack<>();
-  private final TreeSet<Uri> compilerClasspath = new TreeSet<>();
+  private final Set<Uri> compilerClasspath = new TreeSet<>();
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
   private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
       new HashMap<>();
@@ -220,7 +221,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processActionEvent(BuildEventStreamProtos.ActionExecuted action) throws IOException {
-    if (!Constants.SUPPORTED_ACTIONS.contains(action.getType())) {
+    if (!Constants.SUPPORTED_COMPILERS.contains(action.getType())) {
       // Ignore file template writes and such.
       // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
       return;
@@ -295,9 +296,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         false);
   }
 
-  private HashMap<String, List<Diagnostic>> parseStdErrDiagnostics(
+  private Map<String, List<Diagnostic>> parseStdErrDiagnostics(
       BuildEventStreamProtos.Progress progress) {
-    HashMap<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
+    Map<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
 
     Arrays.stream(progress.getStderr().split("\n"))
         .filter(
@@ -348,7 +349,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     return fileDiagnostics;
   }
 
-  public TreeSet<Uri> getCompilerClasspath() {
+  public Set<Uri> getCompilerClasspath() {
     return compilerClasspath;
   }
 

@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
+import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
@@ -34,21 +35,13 @@ public class ScalaBspServer {
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
 
-  private final String scalac;
-  private final String javac;
   private final String execRoot;
 
   // TODO: too many arguments!!, constants will be moved
   public ScalaBspServer(
-      TargetsResolver targetsResolver,
-      ActionGraphResolver actionGraphResolver,
-      String scalac,
-      String javac,
-      String execRoot) {
+      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.scalac = scalac;
-    this.javac = javac;
     this.execRoot = execRoot;
   }
 
@@ -63,7 +56,8 @@ public class ScalaBspServer {
         targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(scalac, javac)));
+            MnemonicsUtils.getMnemonics(
+                targetsUnion, Lists.newArrayList(Constants.SCALAC, Constants.JAVAC)));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
+import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
@@ -27,22 +28,13 @@ public class JavaBspServer {
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
-
-  private final String javac;
-  private final String kotlinc;
   private final String execRoot;
 
   // TODO: too many arguments!!, constants will be moved
   public JavaBspServer(
-      TargetsResolver targetsResolver,
-      ActionGraphResolver actionGraphResolver,
-      String javac,
-      String kotlinc,
-      String execRoot) {
+      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.javac = javac;
-    this.kotlinc = kotlinc;
     this.execRoot = execRoot;
   }
 
@@ -59,7 +51,8 @@ public class JavaBspServer {
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(javac, kotlinc)));
+            MnemonicsUtils.getMnemonics(
+                targetsUnion, Lists.newArrayList(Constants.JAVAC, Constants.KOTLINC)));
 
     JavacOptionsResult result =
         new JavacOptionsResult(
