@@ -90,12 +90,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     return new BepStreamObserver(this, responseObserver);
   }
 
-  public void collectDiagnostics(
-      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
-      BuildTargetIdentifier target,
-      String diagnosticsLocation)
-      throws IOException {
-    diagnosticsDispatcher.collectDiagnostics(filesToDiagnostics, target, diagnosticsLocation);
+  public Map<Uri, List<PublishDiagnosticsParams>> collectDiagnostics(
+      BuildTargetIdentifier target, String diagnosticsLocation) {
+    return diagnosticsDispatcher.collectDiagnostics(target, diagnosticsLocation);
   }
 
   public void emitDiagnostics(
@@ -167,15 +164,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     bspClient.onBuildTaskFinish(finishParams);
   }
 
-  private void processCompletedEventIfPresent(BuildEventStreamProtos.BuildEvent event)
-      throws IOException {
+  private void processCompletedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasCompleted()) {
       processCompletedEvent(event.getCompleted());
     }
   }
 
-  private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete)
-      throws IOException {
+  private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) {
     List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
 
     if (outputGroups.size() == 1) {
@@ -193,19 +188,24 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
               throw new RuntimeException(e);
             }
 
-            List<String> lines =
-                com.google.common.io.Files.readLines(
-                    new File(protoPathUri), StandardCharsets.UTF_8);
+            // TODO(gerardd) the body of try-catch will be extracted
+            try {
+              List<String> lines =
+                  com.google.common.io.Files.readLines(
+                      new File(protoPathUri), StandardCharsets.UTF_8);
 
-            for (String line : lines) {
-              List<String> parts = Splitter.on("\"").splitToList(line);
-              if (parts.size() != 3) {
-                throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
+              for (String line : lines) {
+                List<String> parts = Splitter.on("\"").splitToList(line);
+                if (parts.size() != 3) {
+                  throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
+                }
+
+                compilerClasspath.add(
+                    Uri.fromExecPath(
+                        "exec-root://" + parts.get(1), bspServer.getBazelData().getExecRoot()));
               }
-
-              compilerClasspath.add(
-                  Uri.fromExecPath(
-                      "exec-root://" + parts.get(1), bspServer.getBazelData().getExecRoot()));
+            } catch (IOException e) {
+              throw new RuntimeException(e);
             }
           }
         }
@@ -213,14 +213,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
-  private void processActionEventIfPresent(BuildEventStreamProtos.BuildEvent event)
-      throws IOException {
+  private void processActionEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasAction()) {
       processActionEvent(event.getAction());
     }
   }
 
-  private void processActionEvent(BuildEventStreamProtos.ActionExecuted action) throws IOException {
+  private void processActionEvent(BuildEventStreamProtos.ActionExecuted action) {
     if (!Constants.SUPPORTED_COMPILERS.contains(action.getType())) {
       // Ignore file template writes and such.
       // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
@@ -228,31 +227,28 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
 
     BuildTargetIdentifier target = new BuildTargetIdentifier(action.getLabel());
-    boolean hasDiagnosticsOutput = diagnosticsProtosLocations.containsKey(target.getUri());
-    Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
 
-    for (BuildEventStreamProtos.File log : action.getActionMetadataLogsList()) {
-      if (!log.getName().equals("diagnostics")) {
-        continue;
+    Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics =
+        action.getActionMetadataLogsList().stream()
+            .filter(log -> log.getName().equals("diagnostics"))
+            .peek(log -> LOGGER.info("Found diagnostics file in {}", log.getUri()))
+            .map(log -> diagnosticsDispatcher.collectDiagnostics(target, log.getUri().substring(7)))
+            .collect(HashMap::new, Map::putAll, Map::putAll);
+
+    if (hasDiagnosticsOutput(target)) {
+      if (filesToDiagnostics.isEmpty()) {
+        filesToDiagnostics =
+            diagnosticsDispatcher.collectDiagnostics(
+                target, diagnosticsProtosLocations.get(target.getUri()));
       }
-
-      LOGGER.info("Found diagnostics file in {}", log.getUri());
-
-      if (hasDiagnosticsOutput) {
-        diagnosticsProtosLocations.remove(target.getUri());
-      }
-
-      diagnosticsDispatcher.collectDiagnostics(
-          filesToDiagnostics, target, log.getUri().substring(7));
-    }
-
-    if (filesToDiagnostics.isEmpty() && hasDiagnosticsOutput) {
-      diagnosticsDispatcher.collectDiagnostics(
-          filesToDiagnostics, target, diagnosticsProtosLocations.get(target.getUri()));
       diagnosticsProtosLocations.remove(target.getUri());
     }
 
     diagnosticsDispatcher.emitDiagnostics(filesToDiagnostics, target);
+  }
+
+  private boolean hasDiagnosticsOutput(BuildTargetIdentifier target) {
+    return diagnosticsProtosLocations.containsKey(target.getUri());
   }
 
   private void processAbortedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
