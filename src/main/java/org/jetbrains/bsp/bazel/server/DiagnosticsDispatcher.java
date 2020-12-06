@@ -48,47 +48,45 @@ public class DiagnosticsDispatcher {
     this.bspClient = bspClient;
   }
 
-  public void collectDiagnostics(
-      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
-      BuildTargetIdentifier target,
-      String diagnosticsLocation)
-      throws IOException {
-    TargetDiagnostics targetDiagnostics =
-        TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
+  public Map<Uri, List<PublishDiagnosticsParams>> collectDiagnostics(
+      BuildTargetIdentifier target, String diagnosticsLocation) {
+    try {
+      TargetDiagnostics targetDiagnostics =
+          TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
 
-    for (FileDiagnostics fileDiagnostics : targetDiagnostics.getDiagnosticsList()) {
-      LOGGER.info("Inserting diagnostics for path: {}", fileDiagnostics.getPath());
-
-      filesToDiagnostics.put(
-          getUriForPath(fileDiagnostics.getPath()), convertDiagnostics(target, fileDiagnostics));
+      return targetDiagnostics.getDiagnosticsList().stream()
+          .peek(diagnostics -> LOGGER.info("Collected diagnostics at: {}", diagnostics.getPath()))
+          .collect(
+              Collectors.toMap(
+                  diagnostics -> getUriForPath(diagnostics.getPath()),
+                  diagnostics -> convertDiagnostics(target, diagnostics)));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
     for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
-      Uri sourceUri = Uri.fromFileUri(source.getUri());
-      if (!filesToDiagnostics.containsKey(sourceUri)) {
-        addSource(filesToDiagnostics, sourceUri, target);
-      }
+      addSourceIfAbsent(filesToDiagnostics, Uri.fromFileUri(source.getUri()), target);
 
-      for (List<PublishDiagnosticsParams> values : filesToDiagnostics.values()) {
-        for (PublishDiagnosticsParams param : values) {
-          bspClient.onBuildPublishDiagnostics(param);
-        }
-      }
+      filesToDiagnostics.values().stream()
+          .flatMap(List::stream)
+          .forEach(bspClient::onBuildPublishDiagnostics);
     }
   }
 
-  private void addSource(
+  private void addSourceIfAbsent(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
       Uri sourceUri,
       BuildTargetIdentifier target) {
-    PublishDiagnosticsParams publishDiagnosticsParams =
-        new PublishDiagnosticsParams(
-            new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
+    if (!filesToDiagnostics.containsKey(sourceUri)) {
+      PublishDiagnosticsParams publishDiagnosticsParams =
+          new PublishDiagnosticsParams(
+              new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
 
-    filesToDiagnostics.put(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
+      filesToDiagnostics.put(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
+    }
   }
 
   private List<PublishDiagnosticsParams> convertDiagnostics(

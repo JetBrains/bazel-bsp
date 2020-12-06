@@ -23,7 +23,6 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
-import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
@@ -55,7 +54,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -610,14 +608,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     for (Map.Entry<String, String> diagnostics : diagnosticsProtosLocations.entrySet()) {
       String target = diagnostics.getKey();
       String diagnosticsPath = diagnostics.getValue();
-      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics = new HashMap<>();
-      try {
-        BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
-        bepServer.collectDiagnostics(filesToDiagnostics, targetIdentifier, diagnosticsPath);
-        bepServer.emitDiagnostics(filesToDiagnostics, targetIdentifier);
-      } catch (IOException e) {
-        System.err.println("Failed to get diagnostics for " + target);
-      }
+      BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
+      bepServer.emitDiagnostics(
+          bepServer.collectDiagnostics(targetIdentifier, diagnosticsPath), targetIdentifier);
     }
 
     return Either.forRight(new CompileResult(BepServer.convertExitCode(exitCode)));
