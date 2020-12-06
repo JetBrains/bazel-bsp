@@ -30,7 +30,6 @@ public class JavaBspServer {
   private final ActionGraphResolver actionGraphResolver;
   private final String execRoot;
 
-  // TODO: too many arguments!!, constants will be moved
   public JavaBspServer(
       TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
     this.targetsResolver = targetsResolver;

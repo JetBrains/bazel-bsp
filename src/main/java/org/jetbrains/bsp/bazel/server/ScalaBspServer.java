@@ -37,7 +37,6 @@ public class ScalaBspServer {
 
   private final String execRoot;
 
-  // TODO: too many arguments!!, constants will be moved
   public ScalaBspServer(
       TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
     this.targetsResolver = targetsResolver;
