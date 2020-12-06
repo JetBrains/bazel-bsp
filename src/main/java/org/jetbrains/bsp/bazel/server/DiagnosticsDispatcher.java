@@ -68,24 +68,16 @@ public class DiagnosticsDispatcher {
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
     for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
-      addSourceIfAbsent(filesToDiagnostics, Uri.fromFileUri(source.getUri()), target);
-
-      filesToDiagnostics.values().stream()
-          .flatMap(List::stream)
-          .forEach(bspClient::onBuildPublishDiagnostics);
-    }
-  }
-
-  private void addSourceIfAbsent(
-      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
-      Uri sourceUri,
-      BuildTargetIdentifier target) {
-    if (!filesToDiagnostics.containsKey(sourceUri)) {
+      Uri sourceUri = Uri.fromFileUri(source.getUri());
       PublishDiagnosticsParams publishDiagnosticsParams =
           new PublishDiagnosticsParams(
               new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
 
-      filesToDiagnostics.put(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
+      filesToDiagnostics.putIfAbsent(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
+
+      filesToDiagnostics.values().stream()
+          .flatMap(List::stream)
+          .forEach(bspClient::onBuildPublishDiagnostics);
     }
   }
 
