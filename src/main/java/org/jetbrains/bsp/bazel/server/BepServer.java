@@ -27,13 +27,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,8 +52,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final BazelBspServer bspServer;
   private final DiagnosticsDispatcher diagnosticsDispatcher;
 
-  private final Stack<TaskId> taskParkingLot = new Stack<>();
   private final Set<Uri> compilerClasspath = new TreeSet<>();
+  private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
   private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
       new HashMap<>();
@@ -137,7 +138,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     startParams.setEventTime(buildStarted.getStartTimeMillis());
 
     bspClient.onBuildTaskStart(startParams);
-    taskParkingLot.add(taskId);
+    startedEventTaskIds.push(taskId);
   }
 
   private void processFinishedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
@@ -147,18 +148,18 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
-    if (taskParkingLot.empty()) {
+    if (startedEventTaskIds.isEmpty()) {
       LOGGER.info("No start event id was found.");
       return;
     }
 
-    if (taskParkingLot.size() > 1) {
+    if (startedEventTaskIds.size() > 1) {
       LOGGER.info("More than 1 start event was found");
       return;
     }
 
     StatusCode exitCode = BepServer.convertExitCode(buildFinished.getExitCode().getCode());
-    TaskFinishParams finishParams = new TaskFinishParams(taskParkingLot.pop(), exitCode);
+    TaskFinishParams finishParams = new TaskFinishParams(startedEventTaskIds.pop(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
 
     bspClient.onBuildTaskFinish(finishParams);
