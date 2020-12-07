@@ -7,10 +7,10 @@ import ch.epfl.scala.bsp4j.DiagnosticSeverity;
 import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.Range;
-import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import io.bazel.rules_scala.diagnostics.Diagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.FileDiagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.Severity;
@@ -67,18 +67,24 @@ public class DiagnosticsDispatcher {
 
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
-    for (SourceItem source : bspServer.getCachedBuildTargetSources(target)) {
-      Uri sourceUri = Uri.fromFileUri(source.getUri());
-      PublishDiagnosticsParams publishDiagnosticsParams =
-          new PublishDiagnosticsParams(
-              new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
+    Streams.stream(bspServer.getCachedBuildTargetSources(target))
+        .map(source -> Uri.fromFileUri(source.getUri()))
+        .forEach(sourceUri -> addSourceAndPublish(sourceUri, filesToDiagnostics, target));
+  }
 
-      filesToDiagnostics.putIfAbsent(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
+  private void addSourceAndPublish(
+      Uri sourceUri,
+      Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics,
+      BuildTargetIdentifier target) {
+    PublishDiagnosticsParams publishDiagnosticsParams =
+        new PublishDiagnosticsParams(
+            new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
 
-      filesToDiagnostics.values().stream()
-          .flatMap(List::stream)
-          .forEach(bspClient::onBuildPublishDiagnostics);
-    }
+    filesToDiagnostics.putIfAbsent(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
+
+    filesToDiagnostics.values().stream()
+        .flatMap(List::stream)
+        .forEach(bspClient::onBuildPublishDiagnostics);
   }
 
   private List<PublishDiagnosticsParams> convertDiagnostics(
