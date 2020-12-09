@@ -13,6 +13,7 @@ import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.base.Splitter;
+import com.google.common.io.Files;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import com.google.devtools.build.v1.BuildEvent;
@@ -173,44 +174,44 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) {
     List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
-
     if (outputGroups.size() == 1) {
-      BuildEventStreamProtos.OutputGroup outputGroup = outputGroups.get(0);
-
+      OutputGroup outputGroup = outputGroups.get(0);
       if (outputGroup.getName().equals("scala_compiler_classpath_files")) {
-        for (BuildEventStreamProtos.BuildEventId.NamedSetOfFilesId fileSetId :
-            outputGroup.getFileSetsList()) {
-          for (BuildEventStreamProtos.File file :
-              namedSetsOfFiles.get(fileSetId.getId()).getFilesList()) {
-            URI protoPathUri;
-            try {
-              protoPathUri = new URI(file.getUri());
-            } catch (URISyntaxException e) {
-              throw new RuntimeException(e);
-            }
+        processFileSets(outputGroup);
+      }
+    }
+  }
 
-            // TODO(gerardd) the body of try-catch will be extracted
-            try {
-              List<String> lines =
-                  com.google.common.io.Files.readLines(
-                      new File(protoPathUri), StandardCharsets.UTF_8);
+  private void processFileSets(OutputGroup outputGroup) {
+    outputGroup.getFileSetsList().stream()
+        .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
+        .map(file -> parseUri(file.getUri()))
+        .forEach(this::parseClasspathFromFile);
+  }
 
-              for (String line : lines) {
-                List<String> parts = Splitter.on("\"").splitToList(line);
+  private URI parseUri(String uri) {
+    try {
+      return new URI(uri);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void parseClasspathFromFile(URI protoPathUri) {
+    try {
+      Files.readLines(new File(protoPathUri), StandardCharsets.UTF_8).stream()
+          .map(line -> Splitter.on("\"").splitToList(line))
+          .forEach(
+              parts -> {
                 if (parts.size() != 3) {
                   throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
                 }
-
                 compilerClasspath.add(
                     Uri.fromExecPath(
                         "exec-root://" + parts.get(1), bspServer.getBazelData().getExecRoot()));
-              }
-            } catch (IOException e) {
-              throw new RuntimeException(e);
-            }
-          }
-        }
-      }
+              });
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
