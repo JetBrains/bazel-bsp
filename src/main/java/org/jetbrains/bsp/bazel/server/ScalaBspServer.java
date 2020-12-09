@@ -99,6 +99,6 @@ public class ScalaBspServer {
                     new BuildTargetIdentifier(target),
                     options,
                     inputs,
-                    Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
   }
 }

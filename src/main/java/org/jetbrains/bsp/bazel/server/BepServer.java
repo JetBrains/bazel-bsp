@@ -36,6 +36,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
 
+  private static final int URI_PREFIX_LENGTH = 7;
+
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
 
@@ -117,7 +119,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processBuildStartedEvent(BuildEventStreamProtos.BuildEvent event) {
-    if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
+    if (event.hasStarted()
+        && event.getStarted().getCommand().equals(Constants.BAZEL_BUILD_COMMAND)) {
       consumeBuildStartedEvent(event.getStarted());
     }
   }
@@ -165,7 +168,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
     if (outputGroups.size() == 1) {
       OutputGroup outputGroup = outputGroups.get(0);
-      if (outputGroup.getName().equals("scala_compiler_classpath_files")) {
+      if (outputGroup.getName().equals(Constants.SCALA_COMPILER_CLASSPATH_FILES)) {
         processFileSets(outputGroup);
       }
     }
@@ -181,7 +184,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
             path ->
                 compilerClasspath.add(
                     Uri.fromExecPath(
-                        "exec-root://" + path, bspServer.getBazelData().getExecRoot())));
+                        Constants.EXEC_ROOT_PREFIX + path,
+                        bspServer.getBazelData().getExecRoot())));
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -201,9 +205,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
     Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics =
         action.getActionMetadataLogsList().stream()
-            .filter(log -> log.getName().equals("diagnostics"))
+            .filter(log -> log.getName().equals(Constants.DIAGNOSTICS))
             .peek(log -> LOGGER.info("Found diagnostics file in {}", log.getUri()))
-            .map(log -> diagnosticsDispatcher.collectDiagnostics(target, log.getUri().substring(7)))
+            .map(
+                log ->
+                    diagnosticsDispatcher.collectDiagnostics(
+                        target, log.getUri().substring(URI_PREFIX_LENGTH)))
             .collect(HashMap::new, Map::putAll, Map::putAll);
 
     if (hasDiagnosticsOutput(target)) {

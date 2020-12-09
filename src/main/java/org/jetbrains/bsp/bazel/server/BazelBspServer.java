@@ -468,7 +468,11 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     // TODO(illicitonion): Use an aspect output group, rather than parsing stderr logging
     List<String> lines =
         bazelRunner
-            .runBazelCommand("build", "--aspects", "@//.bazelbsp:aspects.bzl%print_aspect", target)
+            .runBazelCommand(
+                Constants.BAZEL_BUILD_COMMAND,
+                "--aspects",
+                "@//.bazelbsp:aspects.bzl%print_aspect",
+                target)
             .getStderr();
     return lines.stream()
         .map(line -> Splitter.on(" ").splitToList(line))
@@ -478,7 +482,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     && parts.get(0).equals("DEBUG:")
                     && parts.get(1).contains(".bazelbsp/aspects.bzl")
                     && parts.get(2).endsWith(".jar"))
-        .map(parts -> "exec-root://" + parts.get(2))
+        .map(parts -> Constants.EXEC_ROOT_PREFIX + parts.get(2))
         .collect(Collectors.toList());
   }
 
@@ -567,7 +571,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private Either<ResponseError, CompileResult> buildTargetsWithBep(
       List<BuildTargetIdentifier> targets, List<String> extraFlags) {
-    List<String> args = Lists.newArrayList("build");
+    List<String> args = Lists.newArrayList(Constants.BAZEL_BUILD_COMMAND);
     args.addAll(targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList()));
     args.addAll(extraFlags);
     int exitCode = -1;
@@ -586,7 +590,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
     for (Build.Target target : queryResult.getTargetList()) {
       target.getRule().getRuleOutputList().stream()
-          .filter(output -> output.contains("diagnostics"))
+          .filter(output -> output.contains(Constants.DIAGNOSTICS))
           .forEach(
               output ->
                   diagnosticsProtosLocations.put(
@@ -645,7 +649,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           ProcessResults processResults =
               bazelRunner.runBazelCommand(
                   Lists.asList(
-                      "test",
+                      Constants.BAZEL_TEST_COMMAND,
                       "(" + testTargets + ")",
                       testParams.getArguments().toArray(new String[0])));
 
@@ -672,7 +676,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           ProcessResults processResults =
               bazelRunner.runBazelCommand(
                   Lists.asList(
-                      "run",
+                      Constants.BAZEL_RUN_COMMAND,
                       runParams.getTarget().getUri(),
                       runParams.getArguments().toArray(new String[0])));
 
@@ -690,7 +694,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           try {
             result =
                 new CleanCacheResult(
-                    String.join("\n", bazelRunner.runBazelCommand("clean").getStdout()), true);
+                    String.join(
+                        "\n",
+                        bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
+                    true);
           } catch (RuntimeException e) {
             // TODO does it make sense to return a successful response here?
             // If we caught an exception here, there was an internal server error...

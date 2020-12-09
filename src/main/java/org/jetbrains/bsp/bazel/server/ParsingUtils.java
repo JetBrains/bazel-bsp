@@ -24,6 +24,10 @@ public class ParsingUtils {
 
   private static final Logger LOGGER = LogManager.getLogger(ParsingUtils.class);
 
+  private static final String ERROR = "ERROR";
+  private static final String ERROR_PREAMBLE = ERROR + ": ";
+  private static final String AT_PATH = " at /";
+
   public static URI parseUri(String uri) {
     try {
       return new URI(uri);
@@ -55,7 +59,7 @@ public class ParsingUtils {
   public static Map<String, List<Diagnostic>> parseStderrDiagnostics(Progress progress) {
     return Arrays.stream(progress.getStderr().split("\n"))
         .filter(
-            error -> error.contains("ERROR") && (isInWorkspaceFile(error) || isInBuildFile(error)))
+            error -> error.contains(ERROR) && (isInWorkspaceFile(error) || isInBuildFile(error)))
         .map(ParsingUtils::parseFileDiagnostic)
         .collect(
             Collectors.groupingBy(
@@ -65,14 +69,12 @@ public class ParsingUtils {
 
   private static FileDiagnostic parseFileDiagnostic(String error) {
     String erroredFile =
-        error.contains(Constants.WORKSPACE_FILE_NAME)
-            ? Constants.WORKSPACE_FILE_NAME
-            : Constants.BUILD_FILE_NAME;
-    int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
+        isInWorkspaceFile(error) ? Constants.WORKSPACE_FILE_NAME : Constants.BUILD_FILE_NAME;
     String fileInfo = extractFileInfo(error);
+    int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
     String fileLocation = fileInfo.substring(0, urlEnd);
 
-    String lineLocationDelimiter = error.contains(" at /") ? ":" : "(:)|( )";
+    String lineLocationDelimiter = error.contains(AT_PATH) ? ":" : "(:)|( )";
     String[] lineLocation = fileInfo.substring(urlEnd + 1).split(lineLocationDelimiter);
 
     LOGGER.info("Error: {}", error);
@@ -87,7 +89,9 @@ public class ParsingUtils {
 
   private static String extractFileInfo(String error) {
     int fileInfoStartIndex =
-        error.contains(" at /") ? error.indexOf(" at /") + 4 : error.indexOf("ERROR: ") + 7;
+        error.contains(AT_PATH)
+            ? error.indexOf(AT_PATH) + AT_PATH.length() - 1
+            : error.indexOf(ERROR_PREAMBLE) + ERROR_PREAMBLE.length();
     return error.substring(fileInfoStartIndex);
   }
 
