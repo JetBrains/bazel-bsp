@@ -6,15 +6,13 @@ import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.Range;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
-import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
+import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.Progress;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,57 +52,70 @@ public class ParsingUtils {
     }
   }
 
-  // TODO(gerardd33) refactor method
-  public static Map<String, List<Diagnostic>> parseStderrDiagnostics(
-      BuildEventStreamProtos.Progress progress) {
-    Map<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
-
-    Arrays.stream(progress.getStderr().split("\n"))
+  public static Map<String, List<Diagnostic>> parseStderrDiagnostics(Progress progress) {
+    return Arrays.stream(progress.getStderr().split("\n"))
         .filter(
-            error ->
-                error.contains("ERROR")
-                    && (error.contains("/" + Constants.WORKSPACE_FILE_NAME + ":")
-                        || error.contains("/" + Constants.BUILD_FILE_NAME + ":")))
-        .forEach(
-            error -> {
-              String erroredFile =
-                  error.contains(Constants.WORKSPACE_FILE_NAME)
-                      ? Constants.WORKSPACE_FILE_NAME
-                      : Constants.BUILD_FILE_NAME;
-              String[] lineLocation;
-              String fileLocation;
+            error -> error.contains("ERROR") && (isInWorkspaceFile(error) || isInBuildFile(error)))
+        .map(ParsingUtils::parseFileDiagnostic)
+        .collect(
+            Collectors.groupingBy(
+                FileDiagnostic::getFileLocation,
+                Collectors.mapping(FileDiagnostic::getDiagnostic, Collectors.toList())));
+  }
 
-              if (error.contains(" at /")) {
-                int endOfMessage = error.indexOf(" at /");
-                String fileInfo = error.substring(endOfMessage + 4);
+  private static FileDiagnostic parseFileDiagnostic(String error) {
+    String erroredFile =
+        error.contains(Constants.WORKSPACE_FILE_NAME)
+            ? Constants.WORKSPACE_FILE_NAME
+            : Constants.BUILD_FILE_NAME;
+    int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
+    String fileInfo = extractFileInfo(error);
+    String fileLocation = fileInfo.substring(0, urlEnd);
 
-                int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
-                fileLocation = fileInfo.substring(0, urlEnd);
-                lineLocation = fileInfo.substring(urlEnd + 1).split(":");
-              } else {
-                int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
-                fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
-                lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
-              }
+    String lineLocationDelimiter = error.contains(" at /") ? ":" : "(:)|( )";
+    String[] lineLocation = fileInfo.substring(urlEnd + 1).split(lineLocationDelimiter);
 
-              LOGGER.info("Error: {}", error);
-              LOGGER.info("File location: {}", fileLocation);
-              LOGGER.info("Line location: {}", Arrays.toString(lineLocation));
+    LOGGER.info("Error: {}", error);
 
-              Position position =
-                  new Position(
-                      Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
+    Position position =
+        new Position(Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
+    Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
+    diagnostic.setSeverity(DiagnosticSeverity.ERROR);
 
-              Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
-              diagnostic.setSeverity(DiagnosticSeverity.ERROR);
+    return new FileDiagnostic(diagnostic, fileLocation);
+  }
 
-              List<Diagnostic> diagnostics =
-                  fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
-              diagnostics.add(diagnostic);
+  private static String extractFileInfo(String error) {
+    int fileInfoStartIndex =
+        error.contains(" at /") ? error.indexOf(" at /") + 4 : error.indexOf("ERROR: ") + 7;
+    return error.substring(fileInfoStartIndex);
+  }
 
-              fileDiagnostics.put(fileLocation, diagnostics);
-            });
+  private static boolean isInWorkspaceFile(String error) {
+    return error.contains("/" + Constants.WORKSPACE_FILE_NAME + ":");
+  }
 
-    return fileDiagnostics;
+  private static boolean isInBuildFile(String error) {
+    return error.contains("/" + Constants.BUILD_FILE_NAME + ":");
+  }
+
+  private static class FileDiagnostic {
+
+    private final Diagnostic diagnostic;
+
+    private final String fileLocation;
+
+    public FileDiagnostic(Diagnostic diagnostic, String fileLocation) {
+      this.diagnostic = diagnostic;
+      this.fileLocation = fileLocation;
+    }
+
+    public Diagnostic getDiagnostic() {
+      return diagnostic;
+    }
+
+    public String getFileLocation() {
+      return fileLocation;
+    }
   }
 }
