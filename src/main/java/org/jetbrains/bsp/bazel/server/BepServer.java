@@ -3,17 +3,12 @@ package org.jetbrains.bsp.bazel.server;
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
-import ch.epfl.scala.bsp4j.DiagnosticSeverity;
-import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
-import ch.epfl.scala.bsp4j.Range;
 import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
-import com.google.common.base.Splitter;
-import com.google.common.io.Files;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import com.google.devtools.build.v1.BuildEvent;
@@ -23,14 +18,8 @@ import com.google.devtools.build.v1.PublishBuildToolEventStreamResponse;
 import com.google.devtools.build.v1.PublishLifecycleEventRequest;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -182,37 +171,17 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
+  // TODO FOR REVIEW: better naming suggestions?
   private void processFileSets(OutputGroup outputGroup) {
     outputGroup.getFileSetsList().stream()
         .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
-        .map(file -> parseUri(file.getUri()))
-        .forEach(this::parseClasspathFromFile);
-  }
-
-  private URI parseUri(String uri) {
-    try {
-      return new URI(uri);
-    } catch (URISyntaxException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void parseClasspathFromFile(URI protoPathUri) {
-    try {
-      Files.readLines(new File(protoPathUri), StandardCharsets.UTF_8).stream()
-          .map(line -> Splitter.on("\"").splitToList(line))
-          .forEach(
-              parts -> {
-                if (parts.size() != 3) {
-                  throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
-                }
+        .map(file -> ParsingUtils.parseUri(file.getUri()))
+        .flatMap(pathProtoUri -> ParsingUtils.parseClasspathFromFile(pathProtoUri).stream())
+        .forEach(
+            path ->
                 compilerClasspath.add(
                     Uri.fromExecPath(
-                        "exec-root://" + parts.get(1), bspServer.getBazelData().getExecRoot()));
-              });
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+                        "exec-root://" + path, bspServer.getBazelData().getExecRoot())));
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -273,7 +242,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void consumeProgressEvent(BuildEventStreamProtos.Progress progress) {
-    Map<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
+    Map<String, List<Diagnostic>> fileDiagnostics = ParsingUtils.parseStderrDiagnostics(progress);
 
     fileDiagnostics.entrySet().stream()
         .map(this::createParamsFromEntry)
@@ -292,59 +261,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         new BuildTargetIdentifier(""),
         diagnostics,
         false);
-  }
-
-  private Map<String, List<Diagnostic>> parseStdErrDiagnostics(
-      BuildEventStreamProtos.Progress progress) {
-    Map<String, List<Diagnostic>> fileDiagnostics = new HashMap<>();
-
-    Arrays.stream(progress.getStderr().split("\n"))
-        .filter(
-            error ->
-                error.contains("ERROR")
-                    && (error.contains("/" + Constants.WORKSPACE_FILE_NAME + ":")
-                        || error.contains("/" + Constants.BUILD_FILE_NAME + ":")))
-        .forEach(
-            error -> {
-              String erroredFile =
-                  error.contains(Constants.WORKSPACE_FILE_NAME)
-                      ? Constants.WORKSPACE_FILE_NAME
-                      : Constants.BUILD_FILE_NAME;
-              String[] lineLocation;
-              String fileLocation;
-
-              if (error.contains(" at /")) {
-                int endOfMessage = error.indexOf(" at /");
-                String fileInfo = error.substring(endOfMessage + 4);
-
-                int urlEnd = fileInfo.indexOf(erroredFile) + erroredFile.length();
-                fileLocation = fileInfo.substring(0, urlEnd);
-                lineLocation = fileInfo.substring(urlEnd + 1).split(":");
-              } else {
-                int urlEnd = error.indexOf(erroredFile) + erroredFile.length();
-                fileLocation = error.substring(error.indexOf("ERROR: ") + 7, urlEnd);
-                lineLocation = error.substring(urlEnd + 1).split("(:)|( )");
-              }
-
-              LOGGER.info("Error: {}", error);
-              LOGGER.info("File location: {}", fileLocation);
-              LOGGER.info("Line location: {}", Arrays.toString(lineLocation));
-
-              Position position =
-                  new Position(
-                      Integer.parseInt(lineLocation[0]), Integer.parseInt(lineLocation[1]));
-
-              Diagnostic diagnostic = new Diagnostic(new Range(position, position), error);
-              diagnostic.setSeverity(DiagnosticSeverity.ERROR);
-
-              List<Diagnostic> diagnostics =
-                  fileDiagnostics.getOrDefault(fileLocation, new ArrayList<>());
-              diagnostics.add(diagnostic);
-
-              fileDiagnostics.put(fileLocation, diagnostics);
-            });
-
-    return fileDiagnostics;
   }
 
   public Set<Uri> getCompilerClasspath() {
