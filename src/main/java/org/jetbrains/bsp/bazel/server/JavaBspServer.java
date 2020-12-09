@@ -5,7 +5,7 @@ import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class JavaBspServer {
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
             MnemonicsUtils.getMnemonics(
-                targetsUnion, Lists.newArrayList(Constants.JAVAC, Constants.KOTLINC)));
+                targetsUnion, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC)));
 
     JavacOptionsResult result =
         new JavacOptionsResult(
@@ -72,7 +72,7 @@ public class JavaBspServer {
       List<String> options,
       List<String> inputs,
       String target) {
-    return actionGraphParser.getOutputs(target, Lists.newArrayList(".jar", ".js")).stream()
+    return actionGraphParser.getOutputs(target, ImmutableList.of(".jar", ".js")).stream()
         .map(
             output ->
                 new JavacOptionsItem(

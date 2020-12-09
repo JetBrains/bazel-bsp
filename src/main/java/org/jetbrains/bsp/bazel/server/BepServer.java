@@ -108,31 +108,31 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
       LOGGER.info("Got event {}", event);
 
-      processBuildStartedEventIfPresent(event);
-      processFinishedEventIfPresent(event);
-      fetchNamedSetIfPresent(event);
-      processCompletedEventIfPresent(event);
-      processActionEventIfPresent(event);
-      processAbortedEventIfPresent(event);
-      processProgressEventIfPresent(event);
+      processBuildStartedEvent(event);
+      processFinishedEvent(event);
+      fetchNamedSet(event);
+      processCompletedEvent(event);
+      processActionEvent(event);
+      processAbortedEvent(event);
+      processProgressEvent(event);
     } catch (IOException e) {
       LOGGER.error("Error deserializing BEP proto: {}", e.toString());
     }
   }
 
-  private void fetchNamedSetIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void fetchNamedSet(BuildEventStreamProtos.BuildEvent event) {
     if (event.getId().hasNamedSet()) {
       namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
     }
   }
 
-  private void processBuildStartedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void processBuildStartedEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasStarted() && event.getStarted().getCommand().equals("build")) {
-      processBuildStartedEvent(event.getStarted());
+      consumeBuildStartedEvent(event.getStarted());
     }
   }
 
-  private void processBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
+  private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
     TaskId taskId = new TaskId(buildStarted.getUuid());
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
@@ -141,13 +141,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     startedEventTaskIds.push(taskId);
   }
 
-  private void processFinishedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void processFinishedEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasFinished()) {
-      processFinishedEvent(event.getFinished());
+      consumeFinishedEvent(event.getFinished());
     }
   }
 
-  private void processFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
+  private void consumeFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
     if (startedEventTaskIds.isEmpty()) {
       LOGGER.info("No start event id was found.");
       return;
@@ -165,13 +165,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     bspClient.onBuildTaskFinish(finishParams);
   }
 
-  private void processCompletedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void processCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasCompleted()) {
-      processCompletedEvent(event.getCompleted());
+      consumeCompletedEvent(event.getCompleted());
     }
   }
 
-  private void processCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) {
+  private void consumeCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) {
     List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
 
     if (outputGroups.size() == 1) {
@@ -214,13 +214,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
-  private void processActionEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasAction()) {
-      processActionEvent(event.getAction());
+      consumeActionEvent(event.getAction());
     }
   }
 
-  private void processActionEvent(BuildEventStreamProtos.ActionExecuted action) {
+  private void consumeActionEvent(BuildEventStreamProtos.ActionExecuted action) {
     if (!Constants.SUPPORTED_COMPILERS.contains(action.getType())) {
       // Ignore file template writes and such.
       // TODO(illicitonion): Maybe include them as task notifications (rather than diagnostics).
@@ -252,26 +252,26 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     return diagnosticsProtosLocations.containsKey(target.getUri());
   }
 
-  private void processAbortedEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void processAbortedEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasAborted()) {
-      processAbortedEvent(event.getAborted());
+      consumeAbortedEvent(event.getAborted());
     }
   }
 
-  private void processAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
+  private void consumeAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
     if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
       buildClientLogger.logError(
           "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
     }
   }
 
-  private void processProgressEventIfPresent(BuildEventStreamProtos.BuildEvent event) {
+  private void processProgressEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasProgress()) {
-      processProgressEvent(event.getProgress());
+      consumeProgressEvent(event.getProgress());
     }
   }
 
-  private void processProgressEvent(BuildEventStreamProtos.Progress progress) {
+  private void consumeProgressEvent(BuildEventStreamProtos.Progress progress) {
     Map<String, List<Diagnostic>> fileDiagnostics = parseStdErrDiagnostics(progress);
 
     fileDiagnostics.entrySet().stream()

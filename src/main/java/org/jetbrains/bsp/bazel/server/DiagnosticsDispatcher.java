@@ -31,7 +31,7 @@ public class DiagnosticsDispatcher {
 
   private static final Logger LOGGER = LogManager.getLogger(DiagnosticsDispatcher.class);
 
-  private final Map<Severity, DiagnosticSeverity> CONVERTED_SEVERITY =
+  private static final Map<Severity, DiagnosticSeverity> CONVERTED_SEVERITY =
       new ImmutableMap.Builder<Severity, DiagnosticSeverity>()
           .put(Severity.UNKNOWN, DiagnosticSeverity.ERROR)
           .put(Severity.ERROR, DiagnosticSeverity.ERROR)

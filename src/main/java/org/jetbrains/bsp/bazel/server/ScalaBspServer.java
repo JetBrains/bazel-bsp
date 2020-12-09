@@ -9,7 +9,7 @@ import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class ScalaBspServer {
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
             MnemonicsUtils.getMnemonics(
-                targetsUnion, Lists.newArrayList(Constants.SCALAC, Constants.JAVAC)));
+                targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(
@@ -91,7 +91,7 @@ public class ScalaBspServer {
       List<String> options,
       List<String> inputs,
       String target) {
-    List<String> suffixes = Lists.newArrayList(".jar", ".js");
+    List<String> suffixes = ImmutableList.of(".jar", ".js");
     return actionGraphParser.getOutputs(target, suffixes).stream()
         .map(
             output ->
