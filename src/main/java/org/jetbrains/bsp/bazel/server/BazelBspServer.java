@@ -84,6 +84,7 @@ import org.jetbrains.bsp.bazel.server.resolvers.BazelDataResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
 import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 

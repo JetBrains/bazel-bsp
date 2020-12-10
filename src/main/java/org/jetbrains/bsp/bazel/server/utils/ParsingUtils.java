@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.utils;
 
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.DiagnosticSeverity;
@@ -7,7 +7,6 @@ import ch.epfl.scala.bsp4j.Range;
 import ch.epfl.scala.bsp4j.StatusCode;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
-import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.Progress;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -65,8 +64,8 @@ public class ParsingUtils {
     }
   }
 
-  public static Map<String, List<Diagnostic>> parseStderrDiagnostics(Progress progress) {
-    return Arrays.stream(progress.getStderr().split("\n"))
+  public static Map<String, List<Diagnostic>> parseStderrDiagnostics(String stderr) {
+    return Arrays.stream(stderr.split("\n"))
         .filter(
             error -> error.contains(ERROR) && (isInWorkspaceFile(error) || isInBuildFile(error)))
         .map(ParsingUtils::parseFileDiagnostic)

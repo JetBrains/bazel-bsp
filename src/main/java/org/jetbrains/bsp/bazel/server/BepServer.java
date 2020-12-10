@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -42,7 +43,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final BuildClientLogger buildClientLogger;
 
   private final BazelBspServer bspServer;
-  private final DiagnosticsDispatcher diagnosticsDispatcher;
+  private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
   private final Set<Uri> compilerClasspath = new TreeSet<>();
   private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
@@ -55,7 +56,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     this.bspServer = bspServer;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
-    this.diagnosticsDispatcher = new DiagnosticsDispatcher(bspServer, bspClient);
+    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bspServer, bspClient);
   }
 
   @Override
@@ -237,7 +238,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void consumeProgressEvent(BuildEventStreamProtos.Progress progress) {
-    Map<String, List<Diagnostic>> fileDiagnostics = ParsingUtils.parseStderrDiagnostics(progress);
+    Map<String, List<Diagnostic>> fileDiagnostics =
+        ParsingUtils.parseStderrDiagnostics(progress.getStderr());
 
     fileDiagnostics.entrySet().stream()
         .map(this::createParamsFromEntry)

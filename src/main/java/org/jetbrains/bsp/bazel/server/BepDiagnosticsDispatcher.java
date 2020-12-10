@@ -26,9 +26,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Uri;
 
-public class DiagnosticsDispatcher {
+public class BepDiagnosticsDispatcher {
 
-  private static final Logger LOGGER = LogManager.getLogger(DiagnosticsDispatcher.class);
+  private static final Logger LOGGER = LogManager.getLogger(BepDiagnosticsDispatcher.class);
 
   private static final Map<Severity, DiagnosticSeverity> CONVERTED_SEVERITY =
       new ImmutableMap.Builder<Severity, DiagnosticSeverity>()
@@ -42,7 +42,7 @@ public class DiagnosticsDispatcher {
   private final BazelBspServer bspServer;
   private final BuildClient bspClient;
 
-  public DiagnosticsDispatcher(BazelBspServer bspServer, BuildClient bspClient) {
+  public BepDiagnosticsDispatcher(BazelBspServer bspServer, BuildClient bspClient) {
     this.bspServer = bspServer;
     this.bspClient = bspClient;
   }
