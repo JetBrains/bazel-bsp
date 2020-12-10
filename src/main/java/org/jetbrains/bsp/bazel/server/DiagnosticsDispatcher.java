@@ -8,6 +8,7 @@ import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.Range;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
@@ -18,7 +19,6 @@ import io.bazel.rules_scala.diagnostics.Diagnostics.TargetDiagnostics;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,7 +78,7 @@ public class DiagnosticsDispatcher {
       BuildTargetIdentifier target) {
     PublishDiagnosticsParams publishDiagnosticsParams =
         new PublishDiagnosticsParams(
-            new TextDocumentIdentifier(sourceUri.toString()), target, new ArrayList<>(), true);
+            new TextDocumentIdentifier(sourceUri.toString()), target, ImmutableList.of(), true);
 
     filesToDiagnostics.putIfAbsent(sourceUri, Lists.newArrayList(publishDiagnosticsParams));
 
