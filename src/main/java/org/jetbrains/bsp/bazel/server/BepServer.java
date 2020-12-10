@@ -169,17 +169,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     if (outputGroups.size() == 1) {
       OutputGroup outputGroup = outputGroups.get(0);
       if (outputGroup.getName().equals(Constants.SCALA_COMPILER_CLASSPATH_FILES)) {
-        processFileSets(outputGroup);
+        fetchScalaJars(outputGroup);
       }
     }
   }
 
-  // TODO FOR REVIEW: better naming suggestions?
-  private void processFileSets(OutputGroup outputGroup) {
+  private void fetchScalaJars(OutputGroup outputGroup) {
     outputGroup.getFileSetsList().stream()
         .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
         .map(file -> ParsingUtils.parseUri(file.getUri()))
-        .flatMap(pathProtoUri -> ParsingUtils.parseClasspathFromFile(pathProtoUri).stream())
+        .flatMap(pathProtoUri -> ParsingUtils.parseClasspathFromAspect(pathProtoUri).stream())
         .forEach(
             path ->
                 compilerClasspath.add(

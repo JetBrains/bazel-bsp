@@ -11,7 +11,6 @@ import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Streams;
 import io.bazel.rules_scala.diagnostics.Diagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.FileDiagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.Severity;
@@ -67,7 +66,7 @@ public class DiagnosticsDispatcher {
 
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
-    Streams.stream(bspServer.getCachedBuildTargetSources(target))
+    bspServer.getCachedBuildTargetSources(target).stream()
         .map(source -> Uri.fromFileUri(source.getUri()))
         .forEach(sourceUri -> addSourceAndPublish(sourceUri, filesToDiagnostics, target));
   }

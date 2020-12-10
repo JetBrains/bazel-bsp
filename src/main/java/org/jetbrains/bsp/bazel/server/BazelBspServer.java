@@ -803,8 +803,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     : CompletableFuture.completedFuture(either.getRight()));
   }
 
-  public Iterable<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
-    return targetsToSources.getOrDefault(target, new ArrayList<>());
+  public Collection<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
+    return targetsToSources.getOrDefault(target, ImmutableList.of());
   }
 
   public void setBesBackendPort(int port) {

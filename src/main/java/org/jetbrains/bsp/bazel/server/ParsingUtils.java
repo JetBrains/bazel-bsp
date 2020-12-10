@@ -36,16 +36,13 @@ public class ParsingUtils {
     }
   }
 
-  // TODO FOR REVIEW: naming suggestions? what exactly is the thing that it returns?
-  public static List<String> parseClasspathFromFile(URI protoPathUri) {
+  public static List<String> parseClasspathFromAspect(URI dependenciesAspectOutput) {
     try {
-      return Files.readLines(new File(protoPathUri), StandardCharsets.UTF_8).stream()
+      return Files.readLines(new File(dependenciesAspectOutput), StandardCharsets.UTF_8).stream()
           .map(line -> Splitter.on("\"").splitToList(line))
           .peek(
               parts -> {
                 if (parts.size() != 3) {
-                  // TODO FOR REVIEW: verify the slight change of semantics
-                  // TODO is it OK to throw an exception at the beginning if any line is corrupted?
                   throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + parts);
                 }
               })
