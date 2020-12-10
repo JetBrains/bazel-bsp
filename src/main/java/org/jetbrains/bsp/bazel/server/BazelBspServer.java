@@ -617,7 +617,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
           bepServer.collectDiagnostics(targetIdentifier, diagnosticsPath), targetIdentifier);
     }
 
-    return Either.forRight(new CompileResult(BepServer.convertExitCode(exitCode)));
+    return Either.forRight(new CompileResult(ParsingUtils.parseExitCode(exitCode)));
   }
 
   private String convertOutputToPath(String output, String prefix) {
@@ -654,7 +654,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                       testParams.getArguments().toArray(new String[0])));
 
           return Either.forRight(
-              new TestResult(BepServer.convertExitCode(processResults.getExitCode())));
+              new TestResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
         });
   }
 
@@ -681,7 +681,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                       runParams.getArguments().toArray(new String[0])));
 
           return Either.forRight(
-              new RunResult(BepServer.convertExitCode(processResults.getExitCode())));
+              new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
         });
   }
 

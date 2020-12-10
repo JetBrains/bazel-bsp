@@ -58,17 +58,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     this.diagnosticsDispatcher = new DiagnosticsDispatcher(bspServer, bspClient);
   }
 
-  public static StatusCode convertExitCode(int exitCode) {
-    switch (exitCode) {
-      case 0:
-        return StatusCode.OK;
-      case 8:
-        return StatusCode.CANCELLED;
-      default:
-        return StatusCode.ERROR;
-    }
-  }
-
   @Override
   public void publishLifecycleEvent(
       PublishLifecycleEventRequest request, StreamObserver<Empty> responseObserver) {
@@ -151,7 +140,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       return;
     }
 
-    StatusCode exitCode = BepServer.convertExitCode(buildFinished.getExitCode().getCode());
+    StatusCode exitCode = ParsingUtils.parseExitCode(buildFinished.getExitCode().getCode());
     TaskFinishParams finishParams = new TaskFinishParams(startedEventTaskIds.pop(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
 

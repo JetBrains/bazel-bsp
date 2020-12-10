@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.DiagnosticSeverity;
 import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.Range;
+import ch.epfl.scala.bsp4j.StatusCode;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.Progress;
@@ -33,6 +34,17 @@ public class ParsingUtils {
       return new URI(uri);
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  public static StatusCode parseExitCode(int exitCode) {
+    switch (exitCode) {
+      case 0:
+        return StatusCode.OK;
+      case 8:
+        return StatusCode.CANCELLED;
+      default:
+        return StatusCode.ERROR;
     }
   }
 
