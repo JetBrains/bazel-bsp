@@ -9,7 +9,7 @@ import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
+import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
@@ -34,21 +35,12 @@ public class ScalaBspServer {
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
 
-  private final String scalac;
-  private final String javac;
   private final String execRoot;
 
-  // TODO: too many arguments!!, constants will be moved
   public ScalaBspServer(
-      TargetsResolver targetsResolver,
-      ActionGraphResolver actionGraphResolver,
-      String scalac,
-      String javac,
-      String execRoot) {
+      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.scalac = scalac;
-    this.javac = javac;
     this.execRoot = execRoot;
   }
 
@@ -63,7 +55,8 @@ public class ScalaBspServer {
         targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(targetsUnion, Lists.newArrayList(scalac, javac)));
+            MnemonicsUtils.getMnemonics(
+                targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(
@@ -98,7 +91,7 @@ public class ScalaBspServer {
       List<String> options,
       List<String> inputs,
       String target) {
-    List<String> suffixes = Lists.newArrayList(".jar", ".js");
+    List<String> suffixes = ImmutableList.of(".jar", ".js");
     return actionGraphParser.getOutputs(target, suffixes).stream()
         .map(
             output ->
@@ -106,6 +99,6 @@ public class ScalaBspServer {
                     new BuildTargetIdentifier(target),
                     options,
                     inputs,
-                    Uri.fromExecPath("exec-root://" + output, execRoot).toString()));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
   }
 }
