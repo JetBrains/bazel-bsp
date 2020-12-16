@@ -126,7 +126,8 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     this.scalaBspServer =
-        new ScalaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+        new ScalaBspServer(
+            targetsResolver, actionGraphResolver, queryResolver, bazelData, getBazelData().getExecRoot());
     this.javaBspServer =
         new JavaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
@@ -733,7 +734,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   @Override
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    return scalaBspServer.buildTargetScalaTestClasses(scalaTestClassesParams);
+    return executeCommand(() -> scalaBspServer.buildTargetScalaTestClasses(scalaTestClassesParams));
   }
 
   @Override

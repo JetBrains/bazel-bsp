@@ -3,12 +3,14 @@ package org.jetbrains.bsp.bazel.server;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
+import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
+import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -23,8 +25,11 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 
@@ -37,13 +42,22 @@ public class ScalaBspServer {
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
+  private final QueryResolver queryResolver;
+  private final BazelData bazelData;
 
   private final String execRoot;
 
   public ScalaBspServer(
-      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
+      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver,
+      QueryResolver queryResolver,
+      BazelData bazelData,
+      String scalac,
+      String javac,
+      String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
+    this.queryResolver = queryResolver;
+    this.bazelData = bazelData;
     this.execRoot = execRoot;
   }
 
@@ -52,7 +66,7 @@ public class ScalaBspServer {
     List<String> targets = targetsResolver.getTargetsUris(scalacOptionsParams.getTargets());
     Map<String, List<String>> targetsOptions = targetsResolver.getScalacTargetsOptions(targets);
 
-    String targetsMnemonics = MnemonicsUtils.getMnemonics(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
+    String targetsMnemonics = MnemonicsUtils.getMnemonics(targets, mmutableList.of(Constants.SCALAC, Constants.JAVAC));
     ActionGraphParser actionGraphParser = actionGraphResolver.parseActionGraph(targetsMnemonics);
 
     return buildTargetScalacOptionsResult(targets, targetsOptions, actionGraphParser);
@@ -74,7 +88,7 @@ public class ScalaBspServer {
         .flatMap(target ->
             collectScalacOptionsResult(
                 actionGraphParser,
-                targetsOptions.getOrDefault(target, new ArrayList<>()),
+                targetsOptions.getOrDefault(target, ImmutableList.of()),
                 actionGraphParser.getInputsAsUri(target, execRoot),
                 target))
         .collect(Collectors.toList());
@@ -96,15 +110,51 @@ public class ScalaBspServer {
     return new ScalacOptionsItem(buildTargetIdentifier, options, inputs, execRootUri);
   }
 
-  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
+  public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
+    Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
+    ScalaTestClassesResult scalaTestClassesResult =
+        new ScalaTestClassesResult(
+            query.getTargetList().stream()
+                .map(Build.Target::getRule)
+                .filter(
+                    rule ->
+                        scalaTestClassesParams.getTargets().stream()
+                            .anyMatch(target -> target.getUri().equals(rule.getName())))
+                .filter(
+                    rule ->
+                        rule.getAttributeList().stream()
+                            .anyMatch(
+                                attribute ->
+                                    attribute.getName().equals("main_class")
+                                        && attribute.hasExplicitlySpecified()
+                                        && attribute.getExplicitlySpecified()))
+                .map(
+                    rule ->
+                        new ScalaTestClassesItem(
+                            new BuildTargetIdentifier(rule.getName()),
+                            getTestClasses(rule, query)))
+                .collect(Collectors.toList()));
+    return Either.forRight(scalaTestClassesResult);
+  }
+
+  private List<String> getTestClasses(Build.Rule rule, Build.QueryResult queryResult) {
+    return rule.getAttributeList().stream()
+        .filter(
+            attribute ->
+                attribute.getName().equals("main_class")
+                    && attribute.hasExplicitlySpecified()
+                    && attribute.getExplicitlySpecified())
+        .flatMap(attribute -> attribute.getStringListValueList().stream()
+            .map(label -> Uri.fromFileLabel(label, bazelData.getWorkspaceRoot()).toString())
+        )
+        .collect(Collectors.toList());
   }
 
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
     System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
     // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
+    return CompletableFuture.completedFuture(new ScalaMainClassesResult(ImmutableList.of()));
   }
 }
