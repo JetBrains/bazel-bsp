@@ -82,7 +82,7 @@ import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.BazelDataResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.BazelQueryRunner;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
@@ -101,7 +101,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   private final CompletableFuture<Void> isInitialized = new CompletableFuture<>();
   private final CompletableFuture<Void> isFinished = new CompletableFuture<>();
   private final BazelRunner bazelRunner;
-  private final QueryResolver queryResolver;
+  private final BazelQueryRunner bazelQueryRunner;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
   private final BazelDataResolver bazelDataResolver;
@@ -119,15 +119,15 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   public BazelBspServer(BazelBspServerConfig configuration) {
     this.configuration = configuration;
     this.bazelRunner = new BazelRunner(configuration.getBazelPath());
-    this.queryResolver = new QueryResolver(bazelRunner);
-    this.targetsResolver = new TargetsResolver(queryResolver);
+    this.bazelQueryRunner = new BazelQueryRunner(bazelRunner);
+    this.targetsResolver = new TargetsResolver(bazelQueryRunner);
     this.actionGraphResolver = new ActionGraphResolver(bazelRunner);
     this.bazelDataResolver = new BazelDataResolver(bazelRunner);
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     this.scalaBspServer =
         new ScalaBspServer(
-            targetsResolver, actionGraphResolver, queryResolver, bazelData, getBazelData().getExecRoot());
+            targetsResolver, actionGraphResolver, bazelQueryRunner, bazelData, getBazelData().getExecRoot());
     this.javaBspServer =
         new JavaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
@@ -190,7 +190,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private List<BuildTarget> getBuildTarget(String projectPath) {
     Build.QueryResult queryResult =
-        queryResolver.getQuery(
+        bazelQueryRunner.getQuery(
             "query",
             "--output=proto",
             "--nohost_deps",
@@ -339,9 +339,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return executeCommand(
         () -> {
           Build.QueryResult queryResult =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
+              bazelQueryRunner.queryWithProtobufOutput(
                   "("
                       + sourcesParams.getTargets().stream()
                           .map(BuildTargetIdentifier::getUri)
@@ -392,7 +390,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                     .stream();
               }
               Build.QueryResult queryResult =
-                  queryResolver.getQuery("query", "--output=proto", dep);
+                  bazelQueryRunner.queryWithProtobufOutput(dep);
               return queryResult.getTargetList().stream()
                   .map(Build.Target::getRule)
                   .flatMap(queryRule -> getSrcsPaths(queryRule, srcType).stream())
@@ -429,9 +427,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
                 "Could not resolve " + fileUri + " within workspace " + prefix);
           }
           Build.QueryResult result =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
+              bazelQueryRunner.queryWithProtobufOutput(
                   "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
           List<BuildTargetIdentifier> targets =
               result.getTargetList().stream()
@@ -502,7 +498,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
     return executeCommand(
         () -> {
-          Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
+          Build.QueryResult query = bazelQueryRunner.queryAllTargets();
           System.out.println("Resources query result " + query);
           ResourcesResult resourcesResult =
               new ResourcesResult(
@@ -591,9 +587,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     final Map<String, String> diagnosticsProtosLocations =
         bepServer.getDiagnosticsProtosLocations();
     Build.QueryResult queryResult =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
+        bazelQueryRunner.queryWithProtobufOutput(
             "("
                 + targets.stream()
                     .map(BuildTargetIdentifier::getUri)

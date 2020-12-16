@@ -23,6 +23,7 @@ public class Constants {
   public static final String BAZEL_RUN_COMMAND = "run";
   public static final String BAZEL_TEST_COMMAND = "test";
   public static final String BAZEL_CLEAN_COMMAND = "clean";
+  public static final String BAZEL_QUERY_COMMAND = "query";
 
   public static final String BUILD_FILE_NAME = "BUILD";
   public static final String WORKSPACE_FILE_NAME = "WORKSPACE";

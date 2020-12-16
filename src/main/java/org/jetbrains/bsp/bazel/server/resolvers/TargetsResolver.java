@@ -15,10 +15,10 @@ public class TargetsResolver {
   private static final String JAVA_TARGET_OPTIONS = "javacopts";
   private static final String SCALA_TARGET_OPTIONS = "scalacopts";
 
-  private final QueryResolver queryResolver;
+  private final BazelQueryRunner bazelQueryRunner;
 
-  public TargetsResolver(QueryResolver queryResolver) {
-    this.queryResolver = queryResolver;
+  public TargetsResolver(BazelQueryRunner bazelQueryRunner) {
+    this.bazelQueryRunner = bazelQueryRunner;
   }
 
   public List<String> getTargetsUris(List<BuildTargetIdentifier> buildTargetIdentifiers) {
@@ -39,7 +39,7 @@ public class TargetsResolver {
     String targetsUnion = Joiner.on(TARGETS_UNION_SEPARATOR).join(targets);
 
     QueryResult query =
-        queryResolver.getQuery("query", "--output=proto", "(" + targetsUnion + ")");
+        bazelQueryRunner.queryWithProtobufOutput("(" + targetsUnion + ")");
 
     return getTargetsOptionsAsMap(compilerOptionsName, query);
   }

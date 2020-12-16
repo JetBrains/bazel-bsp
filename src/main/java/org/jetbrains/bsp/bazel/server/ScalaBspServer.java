@@ -11,11 +11,6 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -25,11 +20,10 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.BazelQueryRunner;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 
@@ -42,21 +36,19 @@ public class ScalaBspServer {
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
-  private final QueryResolver queryResolver;
+  private final BazelQueryRunner bazelQueryRunner;
   private final BazelData bazelData;
 
   private final String execRoot;
 
   public ScalaBspServer(
       TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver,
-      QueryResolver queryResolver,
+      BazelQueryRunner bazelQueryRunner,
       BazelData bazelData,
-      String scalac,
-      String javac,
       String execRoot) {
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.queryResolver = queryResolver;
+    this.bazelQueryRunner = bazelQueryRunner;
     this.bazelData = bazelData;
     this.execRoot = execRoot;
   }
@@ -66,7 +58,7 @@ public class ScalaBspServer {
     List<String> targets = targetsResolver.getTargetsUris(scalacOptionsParams.getTargets());
     Map<String, List<String>> targetsOptions = targetsResolver.getScalacTargetsOptions(targets);
 
-    String targetsMnemonics = MnemonicsUtils.getMnemonics(targets, mmutableList.of(Constants.SCALAC, Constants.JAVAC));
+    String targetsMnemonics = MnemonicsUtils.getMnemonics(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
     ActionGraphParser actionGraphParser = actionGraphResolver.parseActionGraph(targetsMnemonics);
 
     return buildTargetScalacOptionsResult(targets, targetsOptions, actionGraphParser);
@@ -112,7 +104,7 @@ public class ScalaBspServer {
 
   public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
+    Build.QueryResult query = bazelQueryRunner.queryAllTargets();
     ScalaTestClassesResult scalaTestClassesResult =
         new ScalaTestClassesResult(
             query.getTargetList().stream()
