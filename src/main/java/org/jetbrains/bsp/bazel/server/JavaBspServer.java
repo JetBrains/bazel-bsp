@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
@@ -9,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -24,20 +26,33 @@ import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 // TODO: now `buildTargetJavacOptions` method returns a `Either<ResponseError, JavacOptionsResult>`
 // TODO: instead of a `CompletableFuture<JavacOptionsResult>` because of the `BazelBspServer`
 // TODO: command executing (`executeCommand`) implementation.
-public class JavaBspServer {
+public class JavaBspServer implements JavaBuildServer {
+
+  // TODO won't be cyclical, make dependencies more organised
+  private final BazelBspServer bazelBspServer;
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
   private final String execRoot;
 
   public JavaBspServer(
-      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
+      BazelBspServer bazelBspServer,
+      TargetsResolver targetsResolver,
+      ActionGraphResolver actionGraphResolver,
+      String execRoot) {
+    this.bazelBspServer = bazelBspServer;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
     this.execRoot = execRoot;
   }
 
-  public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
+  @Override
+  public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
+      JavacOptionsParams javacOptionsParams) {
+    return bazelBspServer.executeCommand(() -> handleBuildTargetJavacOptions(javacOptionsParams));
+  }
+
+  public Either<ResponseError, JavacOptionsResult> handleBuildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
     List<String> targets =
         javacOptionsParams.getTargets().stream()

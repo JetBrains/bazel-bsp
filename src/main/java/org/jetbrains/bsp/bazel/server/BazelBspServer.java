@@ -19,9 +19,6 @@ import ch.epfl.scala.bsp4j.InitializeBuildParams;
 import ch.epfl.scala.bsp4j.InitializeBuildResult;
 import ch.epfl.scala.bsp4j.InverseSourcesParams;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
-import ch.epfl.scala.bsp4j.JavaBuildServer;
-import ch.epfl.scala.bsp4j.JavacOptionsParams;
-import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesParams;
@@ -79,7 +76,7 @@ import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
-public class BazelBspServer implements BuildServer, JavaBuildServer {
+public class BazelBspServer implements BuildServer {
 
   public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
       ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
@@ -123,7 +120,7 @@ public class BazelBspServer implements BuildServer, JavaBuildServer {
         new ScalaBspServer(
             this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
     this.javaBspServer =
-        new JavaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+        new JavaBspServer(this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
 
   @Override
@@ -711,12 +708,6 @@ public class BazelBspServer implements BuildServer, JavaBuildServer {
           }
           return Either.forRight(result);
         });
-  }
-
-  @Override
-  public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
-      JavacOptionsParams javacOptionsParams) {
-    return executeCommand(() -> javaBspServer.buildTargetJavacOptions(javacOptionsParams));
   }
 
   private <T> CompletableFuture<T> handleBuildInitialize(
