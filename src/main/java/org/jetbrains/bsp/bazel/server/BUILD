@@ -6,6 +6,7 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//src/main/java/org/jetbrains/bsp/bazel/server/data",

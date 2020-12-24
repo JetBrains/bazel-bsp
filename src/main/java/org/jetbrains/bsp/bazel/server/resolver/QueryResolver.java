@@ -2,7 +2,8 @@ package org.jetbrains.bsp.bazel.server.resolver;
 
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
-import org.jetbrains.bsp.bazel.server.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 
 public class QueryResolver {
 

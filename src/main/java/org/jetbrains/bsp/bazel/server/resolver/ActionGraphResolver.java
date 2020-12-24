@@ -3,6 +3,9 @@ package org.jetbrains.bsp.bazel.server.resolver;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContainer;
 import java.io.IOException;
+import org.jetbrains.bsp.bazel.common.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.bazel.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
 import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
 
