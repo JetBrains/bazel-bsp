@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
@@ -30,7 +31,10 @@ import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 // ScalacOptionsResult>`
 // TODO: instead of a `CompletableFuture<ScalacOptionsResult>` because of the `BazelBspServer`
 // TODO: command executing (`executeCommand`) implementation.
-public class ScalaBspServer {
+public class ScalaBspServer implements ScalaBuildServer {
+
+  // TODO won't be cyclical, make dependencies more organised
+  private final BazelBspServer bazelBspServer;
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
@@ -38,13 +42,35 @@ public class ScalaBspServer {
   private final String execRoot;
 
   public ScalaBspServer(
-      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
+      BazelBspServer bazelBspServer,
+      TargetsResolver targetsResolver,
+      ActionGraphResolver actionGraphResolver,
+      String execRoot) {
+    this.bazelBspServer = bazelBspServer;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
     this.execRoot = execRoot;
   }
 
-  public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
+  @Override
+  public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
+      ScalacOptionsParams scalacOptionsParams) {
+    return bazelBspServer.executeCommand(() -> handleBuildTargetScalacOptions(scalacOptionsParams));
+  }
+
+  @Override
+  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
+      ScalaTestClassesParams scalaTestClassesParams) {
+    return handleBuildTargetScalaTestClasses(scalaTestClassesParams);
+  }
+
+  @Override
+  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
+      ScalaMainClassesParams scalaMainClassesParams) {
+    return handleBuildTargetScalaMainClasses(scalaMainClassesParams);
+  }
+
+  public Either<ResponseError, ScalacOptionsResult> handleBuildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
     List<String> targets =
         scalacOptionsParams.getTargets().stream()
@@ -72,14 +98,14 @@ public class ScalaBspServer {
     return Either.forRight(result);
   }
 
-  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
+  public CompletableFuture<ScalaTestClassesResult> handleBuildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
     System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
     // TODO(illicitonion): Populate
     return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
   }
 
-  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
+  public CompletableFuture<ScalaMainClassesResult> handleBuildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
     System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
     // TODO(illicitonion): Populate

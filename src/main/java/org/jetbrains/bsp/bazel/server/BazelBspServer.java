@@ -29,15 +29,8 @@ import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
 import ch.epfl.scala.bsp4j.RunProvider;
 import ch.epfl.scala.bsp4j.RunResult;
-import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
-import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
-import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaPlatform;
-import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
-import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
-import ch.epfl.scala.bsp4j.ScalacOptionsParams;
-import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.SourcesItem;
@@ -86,7 +79,7 @@ import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
-public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
+public class BazelBspServer implements BuildServer, JavaBuildServer {
 
   public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
       ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
@@ -125,8 +118,10 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     this.bazelDataResolver = new BazelDataResolver(bazelRunner);
     this.bazelData = bazelDataResolver.resolveBazelData();
 
+    // TODO won't be cyclical, make dependencies more organised
     this.scalaBspServer =
-        new ScalaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+        new ScalaBspServer(
+            this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
     this.javaBspServer =
         new JavaBspServer(targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
@@ -719,27 +714,9 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   }
 
   @Override
-  public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
-      ScalacOptionsParams scalacOptionsParams) {
-    return executeCommand(() -> scalaBspServer.buildTargetScalacOptions(scalacOptionsParams));
-  }
-
-  @Override
   public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
     return executeCommand(() -> javaBspServer.buildTargetJavacOptions(javacOptionsParams));
-  }
-
-  @Override
-  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
-      ScalaTestClassesParams scalaTestClassesParams) {
-    return scalaBspServer.buildTargetScalaTestClasses(scalaTestClassesParams);
-  }
-
-  @Override
-  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
-      ScalaMainClassesParams scalaMainClassesParams) {
-    return scalaBspServer.buildTargetScalaMainClasses(scalaMainClassesParams);
   }
 
   private <T> CompletableFuture<T> handleBuildInitialize(
@@ -763,7 +740,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
     return getValue(request);
   }
 
-  private <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
+  public <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
     if (!isInitialized()) {
       return completeExceptionally(
           new ResponseError(
