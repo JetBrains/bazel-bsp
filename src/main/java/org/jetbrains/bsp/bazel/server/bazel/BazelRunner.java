@@ -33,10 +33,6 @@ public class BazelRunner {
       LOGGER.fatal("BES port not set");
       throw new IllegalStateException("BES port not set");
     }
-    if (arguments.isEmpty()) {
-      LOGGER.fatal("Not enough arguments");
-      throw new IllegalArgumentException("Not enough arguments");
-    }
 
     List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
@@ -52,22 +48,32 @@ public class BazelRunner {
   }
 
   public ProcessResults runBazelCommand(String command, List<String> flags, List<String> arguments) {
+    if (arguments.isEmpty()) {
+      LOGGER.fatal("Not enough arguments");
+      throw new IllegalArgumentException("Not enough arguments");
+    }
+
     try {
-      List<String> processArgs = getProcessArgs(command, flags, arguments);
-      LOGGER.info("Running: {}", processArgs);
-
-      processLock.acquire();
-
-      ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
-      Process process = processBuilder.start();
-      int exitCode = process.waitFor();
-
-      processLock.release();
-
-      return new ProcessResults(process.getInputStream(), process.getErrorStream(), exitCode);
+      return runBazelProcess(command, flags, arguments);
     } catch (InterruptedException | IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private ProcessResults runBazelProcess(String command, List<String> flags, List<String> arguments)
+      throws InterruptedException, IOException {
+    List<String> processArgs = getProcessArgs(command, flags, arguments);
+    LOGGER.info("Running: {}", processArgs);
+
+    processLock.acquire();
+
+    ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
+    Process process = processBuilder.start();
+    int exitCode = process.waitFor();
+
+    processLock.release();
+
+    return new ProcessResults(process.getInputStream(), process.getErrorStream(), exitCode);
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
