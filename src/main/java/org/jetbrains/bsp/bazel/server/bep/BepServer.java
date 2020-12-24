@@ -10,8 +10,6 @@ import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
-import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
-import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import com.google.devtools.build.v1.BuildEvent;
 import com.google.devtools.build.v1.PublishBuildEventGrpc;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamRequest;
@@ -31,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
@@ -143,7 +142,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       return;
     }
 
-    StatusCode exitCode = ParsingUtils.parseExitCode(buildFinished.getExitCode().getCode());
+    StatusCode exitCode = ExitCodeMapper.mapExitCode(buildFinished.getExitCode().getCode());
     TaskFinishParams finishParams = new TaskFinishParams(startedEventTaskIds.pop(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
 
