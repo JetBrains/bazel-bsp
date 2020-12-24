@@ -28,39 +28,32 @@ public class BazelRunner {
     besBackendPort = port;
   }
 
-  public ProcessResults runBazelCommandBes(String... args) {
-    return runBazelCommandBes(Lists.newArrayList(args));
-  }
-
-  public ProcessResults runBazelCommandBes(List<String> args) {
+  public ProcessResults runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
     if (besBackendPort == null) {
       LOGGER.fatal("BES port not set");
       throw new IllegalStateException("BES port not set");
     }
-    if (args.size() < 1) {
+    if (arguments.isEmpty()) {
       LOGGER.fatal("Not enough arguments");
       throw new IllegalArgumentException("Not enough arguments");
     }
 
-    List<String> newArgs = getNewArgs(args);
-    return runBazelCommand(newArgs);
+    List<String> newFlags = getBesFlags(flags);
+    return runBazelCommand(command, newFlags, arguments);
   }
 
-  private List<String> getNewArgs(List<String> args) {
-    List<String> newArgs = new ArrayList<>(args);
-    newArgs.add(1, BES_BACKEND + besBackendPort);
-    newArgs.add(2, PUBLISH_ALL_ACTIONS);
+  private List<String> getBesFlags(List<String> flags) {
+    List<String> newFlags = new ArrayList<>();
+    newFlags.add(BES_BACKEND + besBackendPort);
+    newFlags.add(PUBLISH_ALL_ACTIONS);
+    newFlags.addAll(flags);
 
-    return newArgs;
+    return newFlags;
   }
 
-  public ProcessResults runBazelCommand(String... args) {
-    return runBazelCommand(Lists.newArrayList(args));
-  }
-
-  public ProcessResults runBazelCommand(List<String> args) {
+  public ProcessResults runBazelCommand(String command, List<String> flags, List<String> arguments) {
     try {
-      List<String> processArgs = getProcessArgs(args);
+      List<String> processArgs = getProcessArgs(command, flags, arguments);
       LOGGER.info("Running: {}", processArgs);
 
       processLock.acquire();
@@ -77,10 +70,13 @@ public class BazelRunner {
     }
   }
 
-  private List<String> getProcessArgs(List<String> args) {
+  private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
     List<String> processArgs = new ArrayList<>();
+
     processArgs.add(bazel);
-    processArgs.addAll(args);
+    processArgs.add(command);
+    processArgs.addAll(flags);
+    processArgs.addAll(arguments);
 
     return processArgs;
   }
