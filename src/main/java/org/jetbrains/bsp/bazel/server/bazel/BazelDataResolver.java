@@ -8,23 +8,23 @@ import org.jetbrains.bsp.bazel.server.data.BazelData;
 
 public class BazelDataResolver {
 
-  private final BazelRunner bazelRunner;
+  private final BazelInfoRunner bazelInfoRunner;
 
   public BazelDataResolver(BazelRunner bazelRunner) {
-    this.bazelRunner = bazelRunner;
+    this.bazelInfoRunner = new BazelInfoRunner(bazelRunner);
   }
 
   public BazelData resolveBazelData() {
-    String execRoot = readOnlyBazelLine("info", "execution_root");
-    String workspaceRoot = readOnlyBazelLine("info", "workspace");
-    String binRoot = readOnlyBazelLine("info", "bazel-bin");
+    String execRoot = readOnlyBazelLine("execution_root");
+    String workspaceRoot = readOnlyBazelLine("workspace");
+    String binRoot = readOnlyBazelLine("bazel-bin");
     Path workspacePath = Paths.get(execRoot);
     String workspaceLabel = workspacePath.toFile().getName();
     return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel);
   }
 
-  private String readOnlyBazelLine(String... args) {
-    ProcessResults processResults = bazelRunner.runBazelCommand(args);
+  private String readOnlyBazelLine(String argument) {
+    ProcessResults processResults = bazelInfoRunner.info(argument);
     List<String> output = processResults.getStdout();
     return Iterables.getOnlyElement(output);
   }
