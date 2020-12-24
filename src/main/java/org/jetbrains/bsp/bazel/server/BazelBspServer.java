@@ -16,22 +16,15 @@ import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.impl.JavaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.impl.ScalaBuildServerImpl;
-import org.jetbrains.bsp.bazel.server.bazel.ProcessResults;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolver.BazelDataResolver;
-import org.jetbrains.bsp.bazel.server.resolver.BazelRunner;
 import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.service.BuildServerService;
 import org.jetbrains.bsp.bazel.server.service.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.service.ScalaBuildServerService;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.bazel.BazelDataResolver;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildServer {
 

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bazel;
 
-import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
