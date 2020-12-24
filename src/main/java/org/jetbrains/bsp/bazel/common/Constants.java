@@ -41,7 +41,6 @@ public class Constants {
 
   public static final String BAZEL_BUILD_COMMAND = "build";
   public static final String BAZEL_RUN_COMMAND = "run";
-  public static final String BAZEL_CLEAN_COMMAND = "clean";
 
   public static final String BINARY_RULE_TYPE = "binary";
   public static final String LIBRARY_RULE_TYPE = "library";
