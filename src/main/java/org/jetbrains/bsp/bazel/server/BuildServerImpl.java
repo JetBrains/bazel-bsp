@@ -140,217 +140,237 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          Build.QueryResult queryResult =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
-                  "("
-                      + sourcesParams.getTargets().stream()
-                          .map(BuildTargetIdentifier::getUri)
-                          .collect(Collectors.joining("+"))
-                      + ")");
+        () -> handleBuildTargetSources(sourcesParams));
+  }
 
-          List<SourcesItem> sources =
-              queryResult.getTargetList().stream()
-                  .map(Build.Target::getRule)
-                  .map(
-                      rule -> {
-                        BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
-                        List<SourceItem> items = serverBuildManager.getSourceItems(rule, label);
-                        List<String> roots =
-                            Lists.newArrayList(
-                                Uri.fromAbsolutePath(
-                                        serverBuildManager.getSourcesRoot(rule.getName()))
-                                    .toString());
-                        SourcesItem item = new SourcesItem(label, items);
-                        item.setRoots(roots);
-                        return item;
-                      })
-                  .collect(Collectors.toList());
-          return Either.forRight(new SourcesResult(sources));
-        });
+  private Either<ResponseError, SourcesResult> handleBuildTargetSources(SourcesParams sourcesParams) {
+    Build.QueryResult queryResult =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "("
+                + sourcesParams.getTargets().stream()
+                .map(BuildTargetIdentifier::getUri)
+                .collect(Collectors.joining("+"))
+                + ")");
+
+    List<SourcesItem> sources =
+        queryResult.getTargetList().stream()
+            .map(Build.Target::getRule)
+            .map(
+                rule -> {
+                  BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
+                  List<SourceItem> items = serverBuildManager.getSourceItems(rule, label);
+                  List<String> roots =
+                      Lists.newArrayList(
+                          Uri.fromAbsolutePath(
+                              serverBuildManager.getSourcesRoot(rule.getName()))
+                              .toString());
+                  SourcesItem item = new SourcesItem(label, items);
+                  item.setRoots(roots);
+                  return item;
+                })
+            .collect(Collectors.toList());
+
+    return Either.forRight(new SourcesResult(sources));
   }
 
   @Override
   public CompletableFuture<InverseSourcesResult> buildTargetInverseSources(
       InverseSourcesParams inverseSourcesParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          String fileUri = inverseSourcesParams.getTextDocument().getUri();
-          String workspaceRoot = bazelData.getWorkspaceRoot();
-          String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
-          if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
-            throw new RuntimeException(
-                "Could not resolve " + fileUri + " within workspace " + prefix);
-          }
-          Build.QueryResult result =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
-                  "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
-          List<BuildTargetIdentifier> targets =
-              result.getTargetList().stream()
-                  .map(Build.Target::getRule)
-                  .map(Build.Rule::getName)
-                  .map(BuildTargetIdentifier::new)
-                  .collect(Collectors.toList());
+        () -> handleBuildTargetInverseSources(inverseSourcesParams));
+  }
 
-          return Either.forRight(new InverseSourcesResult(targets));
-        });
+  private Either<ResponseError, InverseSourcesResult> handleBuildTargetInverseSources(InverseSourcesParams inverseSourcesParams) {
+    String fileUri = inverseSourcesParams.getTextDocument().getUri();
+    String workspaceRoot = bazelData.getWorkspaceRoot();
+    String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
+    if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
+      throw new RuntimeException(
+          "Could not resolve " + fileUri + " within workspace " + prefix);
+    }
+    Build.QueryResult result =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
+    List<BuildTargetIdentifier> targets =
+        result.getTargetList().stream()
+            .map(Build.Target::getRule)
+            .map(Build.Rule::getName)
+            .map(BuildTargetIdentifier::new)
+            .collect(Collectors.toList());
+
+    return Either.forRight(new InverseSourcesResult(targets));
   }
 
   @Override
   public CompletableFuture<DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          List<String> targets =
-              dependencySourcesParams.getTargets().stream()
-                  .map(BuildTargetIdentifier::getUri)
-                  .collect(Collectors.toList());
+        () -> handleBuildTargetDependencySources(dependencySourcesParams));
+  }
 
-          DependencySourcesResult result =
-              new DependencySourcesResult(
-                  targets.stream()
-                      .sorted()
-                      .map(
-                          target -> {
-                            List<String> files =
-                                serverBuildManager.lookUpTransitiveSourceJars(target).stream()
-                                    .map(
-                                        execPath ->
-                                            Uri.fromExecPath(execPath, bazelData.getExecRoot())
-                                                .toString())
-                                    .collect(Collectors.toList());
-                            return new DependencySourcesItem(
-                                new BuildTargetIdentifier(target), files);
-                          })
-                      .collect(Collectors.toList()));
-          return Either.forRight(result);
-        });
+  private Either<ResponseError, DependencySourcesResult> handleBuildTargetDependencySources(DependencySourcesParams dependencySourcesParams) {
+    List<String> targets =
+        dependencySourcesParams.getTargets().stream()
+            .map(BuildTargetIdentifier::getUri)
+            .collect(Collectors.toList());
+
+    DependencySourcesResult result =
+        new DependencySourcesResult(
+            targets.stream()
+                .sorted()
+                .map(
+                    target -> {
+                      List<String> files =
+                          serverBuildManager.lookUpTransitiveSourceJars(target).stream()
+                              .map(
+                                  execPath ->
+                                      Uri.fromExecPath(execPath, bazelData.getExecRoot())
+                                          .toString())
+                              .collect(Collectors.toList());
+                      return new DependencySourcesItem(
+                          new BuildTargetIdentifier(target), files);
+                    })
+                .collect(Collectors.toList()));
+
+    return Either.forRight(result);
   }
 
   @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
-          System.out.println("Resources query result " + query);
-          ResourcesResult resourcesResult =
-              new ResourcesResult(
-                  query.getTargetList().stream()
-                      .map(Build.Target::getRule)
-                      .filter(
-                          rule ->
-                              resourcesParams.getTargets().stream()
-                                  .anyMatch(target -> target.getUri().equals(rule.getName())))
-                      .filter(
-                          rule ->
-                              rule.getAttributeList().stream()
-                                  .anyMatch(
-                                      attribute ->
-                                          attribute.getName().equals("resources")
-                                              && attribute.hasExplicitlySpecified()
-                                              && attribute.getExplicitlySpecified()))
-                      .map(
-                          rule ->
-                              new ResourcesItem(
-                                  new BuildTargetIdentifier(rule.getName()),
-                                  serverBuildManager.getResources(rule, query)))
-                      .collect(Collectors.toList()));
-          return Either.forRight(resourcesResult);
-        });
+        () -> handleBuildTargetResources(resourcesParams));
+  }
+
+  private Either<ResponseError, ResourcesResult> handleBuildTargetResources(ResourcesParams resourcesParams) {
+    Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
+    System.out.println("Resources query result " + query);
+    ResourcesResult resourcesResult =
+        new ResourcesResult(
+            query.getTargetList().stream()
+                .map(Build.Target::getRule)
+                .filter(
+                    rule ->
+                        resourcesParams.getTargets().stream()
+                            .anyMatch(target -> target.getUri().equals(rule.getName())))
+                .filter(
+                    rule ->
+                        rule.getAttributeList().stream()
+                            .anyMatch(
+                                attribute ->
+                                    attribute.getName().equals("resources")
+                                        && attribute.hasExplicitlySpecified()
+                                        && attribute.getExplicitlySpecified()))
+                .map(
+                    rule ->
+                        new ResourcesItem(
+                            new BuildTargetIdentifier(rule.getName()),
+                            serverBuildManager.getResources(rule, query)))
+                .collect(Collectors.toList()));
+
+    return Either.forRight(resourcesResult);
   }
 
   @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
     return serverRequestHelpers.executeCommand(
-        () ->
-            serverBuildManager.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
+        () -> handleBuildTargetCompile(compileParams));
+  }
+
+  private Either<ResponseError, CompileResult> handleBuildTargetCompile(CompileParams compileParams) {
+    return serverBuildManager.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>());
   }
 
   @Override
   public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          Either<ResponseError, CompileResult> build =
-              serverBuildManager.buildTargetsWithBep(
-                  Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
-          if (build.isLeft()) {
-            return Either.forLeft(build.getLeft());
-          }
+        () -> handleBuildTargetTest(testParams));
+  }
 
-          CompileResult result = build.getRight();
-          if (result.getStatusCode() != StatusCode.OK) {
-            return Either.forRight(new TestResult(result.getStatusCode()));
-          }
+  private Either<ResponseError, TestResult> handleBuildTargetTest(TestParams testParams) {
+    Either<ResponseError, CompileResult> build =
+        serverBuildManager.buildTargetsWithBep(
+            Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
+    if (build.isLeft()) {
+      return Either.forLeft(build.getLeft());
+    }
 
-          String testTargets =
-              Joiner.on("+")
-                  .join(
-                      testParams.getTargets().stream()
-                          .map(BuildTargetIdentifier::getUri)
-                          .collect(Collectors.toList()));
-          ProcessResults processResults =
-              bazelRunner.runBazelCommand(
-                  Lists.asList(
-                      Constants.BAZEL_TEST_COMMAND,
-                      "(" + testTargets + ")",
-                      testParams.getArguments().toArray(new String[0])));
+    CompileResult result = build.getRight();
+    if (result.getStatusCode() != StatusCode.OK) {
+      return Either.forRight(new TestResult(result.getStatusCode()));
+    }
 
-          return Either.forRight(
-              new TestResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
-        });
+    String testTargets =
+        Joiner.on("+")
+            .join(
+                testParams.getTargets().stream()
+                    .map(BuildTargetIdentifier::getUri)
+                    .collect(Collectors.toList()));
+    ProcessResults processResults =
+        bazelRunner.runBazelCommand(
+            Lists.asList(
+                Constants.BAZEL_TEST_COMMAND,
+                "(" + testTargets + ")",
+                testParams.getArguments().toArray(new String[0])));
+
+    return Either.forRight(
+        new TestResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
   }
 
   @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          Either<ResponseError, CompileResult> build =
-              serverBuildManager.buildTargetsWithBep(
-                  Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
-          if (build.isLeft()) {
-            return Either.forLeft(build.getLeft());
-          }
+        () -> handleBuildTargetRun(runParams));
+  }
 
-          CompileResult result = build.getRight();
-          if (result.getStatusCode() != StatusCode.OK) {
-            return Either.forRight(new RunResult(result.getStatusCode()));
-          }
+  private Either<ResponseError, RunResult> handleBuildTargetRun(RunParams runParams) {
+    Either<ResponseError, CompileResult> build =
+        serverBuildManager.buildTargetsWithBep(
+            Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
+    if (build.isLeft()) {
+      return Either.forLeft(build.getLeft());
+    }
 
-          ProcessResults processResults =
-              bazelRunner.runBazelCommand(
-                  Lists.asList(
-                      Constants.BAZEL_RUN_COMMAND,
-                      runParams.getTarget().getUri(),
-                      runParams.getArguments().toArray(new String[0])));
+    CompileResult result = build.getRight();
+    if (result.getStatusCode() != StatusCode.OK) {
+      return Either.forRight(new RunResult(result.getStatusCode()));
+    }
 
-          return Either.forRight(
-              new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
-        });
+    ProcessResults processResults =
+        bazelRunner.runBazelCommand(
+            Lists.asList(
+                Constants.BAZEL_RUN_COMMAND,
+                runParams.getTarget().getUri(),
+                runParams.getArguments().toArray(new String[0])));
+
+    return Either.forRight(
+        new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
   }
 
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
     return serverRequestHelpers.executeCommand(
-        () -> {
-          CleanCacheResult result;
-          try {
-            result =
-                new CleanCacheResult(
-                    String.join(
-                        "\n",
-                        bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
-                    true);
-          } catch (RuntimeException e) {
-            // TODO does it make sense to return a successful response here?
-            // If we caught an exception here, there was an internal server error...
-            result = new CleanCacheResult(e.getMessage(), false);
-          }
-          return Either.forRight(result);
-        });
+        () -> handleBuildTargetCleanCache(cleanCacheParams));
+  }
+
+  private Either<ResponseError, CleanCacheResult> handleBuildTargetCleanCache(CleanCacheParams cleanCacheParams) {
+    CleanCacheResult result;
+    try {
+      result =
+          new CleanCacheResult(
+              String.join(
+                  "\n",
+                  bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
+              true);
+    } catch (RuntimeException e) {
+      // TODO does it make sense to return a successful response here?
+      // If we caught an exception here, there was an internal server error...
+      result = new CleanCacheResult(e.getMessage(), false);
+    }
+    return Either.forRight(result);
   }
 }
