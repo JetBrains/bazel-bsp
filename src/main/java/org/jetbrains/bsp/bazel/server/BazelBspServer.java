@@ -5,7 +5,6 @@ import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import ch.epfl.scala.bsp4j.BuildTargetTag;
 import ch.epfl.scala.bsp4j.CompileResult;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
@@ -16,7 +15,6 @@ import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
@@ -53,15 +51,6 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 // TODO better names after splitting
 public class BazelBspServer {
-
-  public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
-      ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
-
-  private final List<String> FILE_EXTENSIONS =
-      ImmutableList.of(
-          ".scala", ".java", ".kt", ".kts", ".sh", ".bzl", ".py", ".js", ".c", ".h", ".cpp",
-          ".hpp");
-
   private final BazelBspServerConfig configuration;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
   private final CompletableFuture<Void> initializedStatus = new CompletableFuture<>();
@@ -84,7 +73,6 @@ public class BazelBspServer {
   // TODO: imho bsp server creation on the server side is too ambiguous
   // (constructor + setters)
   public BazelBspServer(BazelBspServerConfig configuration) {
-    this.buildServer = new BuildServerImpl(this);
     this.configuration = configuration;
     this.bazelRunner = new BazelRunner(configuration.getBazelPath());
     this.queryResolver = new QueryResolver(bazelRunner);
@@ -94,6 +82,7 @@ public class BazelBspServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     // TODO won't be cyclical, make dependencies more organised
+    this.buildServer = new BuildServerImpl(this);
     this.scalaBuildServer =
         new ScalaBuildServerImpl(
             this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
@@ -118,11 +107,11 @@ public class BazelBspServer {
     Set<String> extensions = new TreeSet<>();
 
     for (SourceItem source : sources) {
-      if (source.getUri().endsWith(".scala")) {
+      if (source.getUri().endsWith(Constants.SCALA_EXTENSION)) {
         extensions.add(Constants.SCALA);
-      } else if (source.getUri().endsWith(".java")) {
+      } else if (source.getUri().endsWith(Constants.JAVA_EXTENSION)) {
         extensions.add(Constants.JAVA);
-      } else if (source.getUri().endsWith(".kt")) {
+      } else if (source.getUri().endsWith(Constants.KOTLIN_EXTENSION)) {
         extensions.add(Constants.KOTLIN);
         extensions.add(
             Constants.JAVA); // TODO(andrefmrocha): Remove this when kotlin is natively supported
@@ -137,7 +126,9 @@ public class BazelBspServer {
             new ArrayList<>(extensions),
             deps,
             new BuildTargetCapabilities(
-                true, ruleClass.endsWith("_test"), ruleClass.endsWith("_binary")));
+                true,
+                ruleClass.endsWith("_" + Constants.TEST_RULE_TYPE),
+                ruleClass.endsWith("_" + Constants.BINARY_RULE_TYPE)));
     target.setBaseDirectory(
         Uri.packageDirFromLabel(label.getUri(), getBazelData().getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());
@@ -146,30 +137,15 @@ public class BazelBspServer {
           .ifPresent(
               (buildTarget) -> {
                 target.setDataKind(BuildTargetDataKind.SCALA);
-                target.setTags(Lists.newArrayList(getRuleType(rule)));
+                target.setTags(Lists.newArrayList(ParsingUtils.getRuleType(rule.getRuleClass())));
                 target.setData(buildTarget);
               });
     } else if (extensions.contains(Constants.JAVA) || extensions.contains(Constants.KOTLIN)) {
       target.setDataKind(BuildTargetDataKind.JVM);
-      target.setTags(Lists.newArrayList(getRuleType(rule)));
+      target.setTags(Lists.newArrayList(ParsingUtils.getRuleType(rule.getRuleClass())));
       target.setData(getJVMBuildTarget());
     }
     return target;
-  }
-
-  private String getRuleType(Build.Rule rule) {
-    String ruleClass = rule.getRuleClass();
-    if (ruleClass.contains("library")) {
-      return BuildTargetTag.LIBRARY;
-    }
-    if (ruleClass.contains("binary")) {
-      return BuildTargetTag.APPLICATION;
-    }
-    if (ruleClass.contains("test")) {
-      return BuildTargetTag.TEST;
-    }
-
-    return BuildTargetTag.NO_IDE;
   }
 
   private Optional<ScalaBuildTarget> getScalaBuildTarget() {
@@ -215,20 +191,7 @@ public class BazelBspServer {
 
   private JvmBuildTarget getJVMBuildTarget() {
     // TODO(andrefmrocha): Properly determine jdk path
-    return new JvmBuildTarget(null, getJavaVersion());
-  }
-
-  private String getJavaVersion() {
-    String version = System.getProperty("java.version");
-    if (version.startsWith("1.")) {
-      version = version.substring(0, 3);
-    } else {
-      int dot = version.indexOf(".");
-      if (dot != -1) {
-        version = version.substring(0, dot);
-      }
-    }
-    return version;
+    return new JvmBuildTarget(null, ParsingUtils.getJavaVersion());
   }
 
   public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
@@ -268,12 +231,12 @@ public class BazelBspServer {
   }
 
   private boolean isSourceFile(String dep) {
-    return FILE_EXTENSIONS.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
+    return Constants.FILE_EXTENSIONS.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
   }
 
   public String getSourcesRoot(String uri) {
     List<String> root =
-        KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
+        Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
     return getBazelData().getWorkspaceRoot()
         + (root.size() == 0
             ? ""
@@ -375,7 +338,7 @@ public class BazelBspServer {
               output ->
                   diagnosticsProtosLocations.put(
                       target.getRule().getName(),
-                      convertOutputToPath(output, getBazelData().getBinRoot())));
+                      ParsingUtils.convertOutputToPath(output, getBazelData().getBinRoot())));
     }
 
     try {
@@ -399,11 +362,6 @@ public class BazelBspServer {
     }
 
     return Either.forRight(new CompileResult(ParsingUtils.parseExitCode(exitCode)));
-  }
-
-  private String convertOutputToPath(String output, String prefix) {
-    String pathToFile = output.replaceAll("(//|:)", "/");
-    return prefix + pathToFile;
   }
 
   public <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {

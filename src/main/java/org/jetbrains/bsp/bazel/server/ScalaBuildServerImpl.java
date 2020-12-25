@@ -24,7 +24,7 @@ import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
+import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 // TODO: This class *should* implement a `ScalaBuildServer` interface,
 // TODO: now `buildTargetScalacOptions` method returns a `Either<ResponseError,
@@ -81,7 +81,7 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
         targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
     ActionGraphParser actionGraphParser =
         actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(
+            ParsingUtils.getMnemonics(
                 targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
 
     ScalacOptionsResult result =
