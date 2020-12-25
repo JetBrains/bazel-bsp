@@ -28,19 +28,18 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 // TODO: command executing (`executeCommand`) implementation.
 public class JavaBuildServerImpl implements JavaBuildServer {
 
-  // TODO won't be cyclical, make dependencies more organised
-  private final BazelBspServer bazelBspServer;
+  private final BazelBspServerRequestHelpers serverRequestHelpers;
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
   private final String execRoot;
 
   public JavaBuildServerImpl(
-      BazelBspServer bazelBspServer,
+      BazelBspServerRequestHelpers serverRequestHelpers,
       TargetsResolver targetsResolver,
       ActionGraphResolver actionGraphResolver,
       String execRoot) {
-    this.bazelBspServer = bazelBspServer;
+    this.serverRequestHelpers = serverRequestHelpers;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
     this.execRoot = execRoot;
@@ -49,7 +48,8 @@ public class JavaBuildServerImpl implements JavaBuildServer {
   @Override
   public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
-    return bazelBspServer.executeCommand(() -> handleBuildTargetJavacOptions(javacOptionsParams));
+    return serverRequestHelpers.executeCommand(
+        () -> handleBuildTargetJavacOptions(javacOptionsParams));
   }
 
   public Either<ResponseError, JavacOptionsResult> handleBuildTargetJavacOptions(

@@ -53,8 +53,16 @@ public class BuildServerImpl implements BuildServer {
   // TODO generally a more sensible dependency with this class, now just calls all of its methods
   private final BazelBspServer bazelBspServer;
 
-  public BuildServerImpl(BazelBspServer bazelBspServer) {
+  private final BazelBspServerLifetime serverLifetime;
+  private final BazelBspServerRequestHelpers serverRequestHelpers;
+
+  public BuildServerImpl(
+      BazelBspServer bazelBspServer,
+      BazelBspServerLifetime serverLifetime,
+      BazelBspServerRequestHelpers serverRequestHelpers) {
     this.bazelBspServer = bazelBspServer;
+    this.serverLifetime = serverLifetime;
+    this.serverRequestHelpers = serverRequestHelpers;
   }
 
   @Override
@@ -77,47 +85,47 @@ public class BuildServerImpl implements BuildServer {
 
   private <T> CompletableFuture<T> handleBuildInitialize(
       Supplier<Either<ResponseError, T>> request) {
-    if (bazelBspServer.isFinished()) {
-      return bazelBspServer.completeExceptionally(
+    if (serverLifetime.isFinished()) {
+      return serverRequestHelpers.completeExceptionally(
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
     }
 
-    return bazelBspServer.getValue(request);
+    return serverRequestHelpers.getValue(request);
   }
 
   @Override
   public void onBuildInitialized() {
-    bazelBspServer.setInitializedComplete();
+    serverLifetime.setInitializedComplete();
   }
 
   @Override
   public CompletableFuture<Object> buildShutdown() {
     return handleBuildShutdown(
         () -> {
-          bazelBspServer.setFinishedComplete();
+          serverLifetime.setFinishedComplete();
           return Either.forRight(new Object());
         });
   }
 
   private <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
-    if (!bazelBspServer.isInitialized()) {
-      return bazelBspServer.completeExceptionally(
+    if (!serverLifetime.isInitialized()) {
+      return serverRequestHelpers.completeExceptionally(
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has not been initialized yet!", false));
     }
 
-    return bazelBspServer.getValue(request);
+    return serverRequestHelpers.getValue(request);
   }
 
   @Override
   public void onBuildExit() {
-    bazelBspServer.forceFinished();
+    serverLifetime.forceFinished();
   }
 
   @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           // TODO pass configuration instead of calling a method
           List<String> projectPaths = bazelBspServer.getConfiguration().getTargetProjectPaths();
@@ -150,7 +158,7 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           Build.QueryResult queryResult =
               bazelBspServer
@@ -187,7 +195,7 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<InverseSourcesResult> buildTargetInverseSources(
       InverseSourcesParams inverseSourcesParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           String fileUri = inverseSourcesParams.getTextDocument().getUri();
           String workspaceRoot = bazelBspServer.getBazelData().getWorkspaceRoot();
@@ -217,7 +225,7 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           List<String> targets =
               dependencySourcesParams.getTargets().stream()
@@ -249,7 +257,7 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           Build.QueryResult query =
               bazelBspServer.getQueryResolver().getQuery("query", "--output=proto", "//...");
@@ -282,13 +290,13 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> bazelBspServer.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
   }
 
   @Override
   public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           Either<ResponseError, CompileResult> build =
               bazelBspServer.buildTargetsWithBep(
@@ -324,7 +332,7 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           Either<ResponseError, CompileResult> build =
               bazelBspServer.buildTargetsWithBep(
@@ -355,7 +363,7 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
-    return bazelBspServer.executeCommand(
+    return serverRequestHelpers.executeCommand(
         () -> {
           CleanCacheResult result;
           try {

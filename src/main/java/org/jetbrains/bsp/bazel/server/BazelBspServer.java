@@ -26,17 +26,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
@@ -51,10 +44,11 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 // TODO better names after splitting
 public class BazelBspServer {
+
+  // TODO tidy up the attributes
   private final BazelBspServerConfig configuration;
+  private final BazelBspServerLifetime serverLifetime;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
-  private final CompletableFuture<Void> initializedStatus = new CompletableFuture<>();
-  private final CompletableFuture<Void> finishedStatus = new CompletableFuture<>();
   private final BazelRunner bazelRunner;
   private final QueryResolver queryResolver;
   private final TargetsResolver targetsResolver;
@@ -64,6 +58,7 @@ public class BazelBspServer {
   private final BuildServer buildServer;
   private final ScalaBuildServer scalaBuildServer;
   private final JavaBuildServer javaBuildServer;
+  private final BazelBspServerRequestHelpers serverRequestHelpers;
   private BepServer bepServer = null;
   private int backendPort;
   private ScalaBuildTarget scalacClasspath = null;
@@ -74,6 +69,8 @@ public class BazelBspServer {
   // (constructor + setters)
   public BazelBspServer(BazelBspServerConfig configuration) {
     this.configuration = configuration;
+    this.serverLifetime = new BazelBspServerLifetime();
+    this.serverRequestHelpers = new BazelBspServerRequestHelpers(serverLifetime);
     this.bazelRunner = new BazelRunner(configuration.getBazelPath());
     this.queryResolver = new QueryResolver(bazelRunner);
     this.targetsResolver = new TargetsResolver(queryResolver);
@@ -82,13 +79,19 @@ public class BazelBspServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     // TODO won't be cyclical, make dependencies more organised
-    this.buildServer = new BuildServerImpl(this);
+    this.buildServer = new BuildServerImpl(this, serverLifetime, serverRequestHelpers);
     this.scalaBuildServer =
         new ScalaBuildServerImpl(
-            this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+            serverRequestHelpers,
+            targetsResolver,
+            actionGraphResolver,
+            getBazelData().getExecRoot());
     this.javaBuildServer =
         new JavaBuildServerImpl(
-            this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+            serverRequestHelpers,
+            targetsResolver,
+            actionGraphResolver,
+            getBazelData().getExecRoot());
   }
 
   public BuildTarget getBuildTarget(Build.Rule rule) {
@@ -362,75 +365,6 @@ public class BazelBspServer {
     }
 
     return Either.forRight(new CompileResult(ParsingUtils.parseExitCode(exitCode)));
-  }
-
-  public <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
-    if (!isInitialized()) {
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverNotInitialized,
-              "Server has not been initialized yet!",
-              false));
-    }
-    if (isFinished()) {
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
-    }
-
-    return getValue(request);
-  }
-
-  public <T> CompletableFuture<T> completeExceptionally(ResponseError error) {
-    CompletableFuture<T> future = new CompletableFuture<>();
-    future.completeExceptionally(new ResponseErrorException(error));
-    return future;
-  }
-
-  public <T> CompletableFuture<T> getValue(Supplier<Either<ResponseError, T>> request) {
-    return CompletableFuture.supplyAsync(request)
-        .exceptionally( // TODO remove eithers in next PR
-            exception -> {
-              exception.printStackTrace(); // TODO better logging
-              return Either.forLeft(
-                  new ResponseError(ResponseErrorCode.InternalError, exception.getMessage(), null));
-            })
-        .thenComposeAsync(
-            either ->
-                either.isLeft()
-                    ? completeExceptionally(either.getLeft())
-                    : CompletableFuture.completedFuture(either.getRight()));
-  }
-
-  public boolean isInitialized() {
-    try {
-      initializedStatus.get(1, TimeUnit.SECONDS);
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-      return false;
-    }
-    return true;
-  }
-
-  public boolean isFinished() {
-    return finishedStatus.isDone();
-  }
-
-  public void setInitializedComplete() {
-    initializedStatus.complete(null);
-  }
-
-  public void setFinishedComplete() {
-    finishedStatus.complete(null);
-  }
-
-  public void forceFinished() {
-    try {
-      finishedStatus.get(1, TimeUnit.SECONDS);
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-      System.exit(1);
-    }
-
-    System.exit(0);
   }
 
   public Collection<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {

@@ -33,8 +33,7 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 // TODO: command executing (`executeCommand`) implementation.
 public class ScalaBuildServerImpl implements ScalaBuildServer {
 
-  // TODO won't be cyclical, make dependencies more organised
-  private final BazelBspServer bazelBspServer;
+  private final BazelBspServerRequestHelpers serverRequestHelpers;
 
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
@@ -42,11 +41,11 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   private final String execRoot;
 
   public ScalaBuildServerImpl(
-      BazelBspServer bazelBspServer,
+      BazelBspServerRequestHelpers serverRequestHelpers,
       TargetsResolver targetsResolver,
       ActionGraphResolver actionGraphResolver,
       String execRoot) {
-    this.bazelBspServer = bazelBspServer;
+    this.serverRequestHelpers = serverRequestHelpers;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
     this.execRoot = execRoot;
@@ -55,7 +54,8 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    return bazelBspServer.executeCommand(() -> handleBuildTargetScalacOptions(scalacOptionsParams));
+    return serverRequestHelpers.executeCommand(
+        () -> handleBuildTargetScalacOptions(scalacOptionsParams));
   }
 
   @Override
