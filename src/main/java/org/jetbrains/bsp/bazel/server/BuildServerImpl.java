@@ -138,33 +138,7 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
-    return serverRequestHelpers.executeCommand(
-        () -> {
-          // TODO pass configuration instead of calling a method
-          List<String> projectPaths = serverConfig.getTargetProjectPaths();
-          List<BuildTarget> targets = new ArrayList<>();
-          for (String projectPath : projectPaths) {
-            targets.addAll(getBuildTarget(projectPath));
-          }
-          return Either.forRight(new WorkspaceBuildTargetsResult(targets));
-        });
-  }
-
-  private List<BuildTarget> getBuildTarget(String projectPath) {
-    Build.QueryResult queryResult =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
-            "--nohost_deps",
-            "--noimplicit_deps",
-            String.format(
-                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
-                projectPath, projectPath, projectPath));
-    return queryResult.getTargetList().stream()
-        .map(Build.Target::getRule)
-        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-        .map(serverBuildManager::getBuildTarget)
-        .collect(Collectors.toList());
+    return serverBuildManager.getWorkspaceBuildTargets();
   }
 
   @Override

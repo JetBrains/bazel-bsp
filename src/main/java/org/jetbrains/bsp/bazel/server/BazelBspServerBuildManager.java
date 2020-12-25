@@ -11,6 +11,7 @@ import ch.epfl.scala.bsp4j.ScalaBuildTarget;
 import ch.epfl.scala.bsp4j.ScalaPlatform;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -24,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -38,40 +40,50 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BazelBspServerBuildManager {
 
+  private final BazelBspServerConfig serverConfig;
+  private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
-
-  // TODO remove after fix
-  public void setBuildServer(BuildServer buildServer) {
-    this.buildServer = buildServer;
-  }
 
   public void setBepServer(BepServer bepServer) {
     this.bepServer = bepServer;
   }
 
-  // TODO cyclical and unnecessary, fix
-  private BuildServer buildServer;
   private BepServer bepServer;
 
   private final QueryResolver queryResolver;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
   private ScalaBuildTarget scalacClasspath = null;
 
-  public BazelBspServerBuildManager(
-      BazelData bazelData,
-      BazelRunner bazelRunner,
-      BuildServer buildServer,
-      BepServer bepServer,
+  public BazelBspServerBuildManager(BazelBspServerConfig serverConfig,
+      BazelBspServerRequestHelpers serverRequestHelpers,
+      BazelData bazelData, BazelRunner bazelRunner,
       QueryResolver queryResolver) {
+    this.serverConfig = serverConfig;
+    this.serverRequestHelpers = serverRequestHelpers;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
-    this.buildServer = buildServer;
-    this.bepServer = bepServer;
     this.queryResolver = queryResolver;
   }
 
-  public BuildTarget getBuildTarget(Build.Rule rule) {
+  private List<BuildTarget> getBuildTargetForProjectPath(String projectPath) {
+    Build.QueryResult queryResult =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "--nohost_deps",
+            "--noimplicit_deps",
+            String.format(
+                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
+                projectPath, projectPath, projectPath));
+    return queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+        .map(this::getBuildTargetForRule)
+        .collect(Collectors.toList());
+  }
+
+  public BuildTarget getBuildTargetForRule(Build.Rule rule) {
     String name = rule.getName();
     System.out.println("Getting targets for rule: " + name);
     List<BuildTargetIdentifier> deps =
@@ -83,7 +95,6 @@ public class BazelBspServerBuildManager {
     BuildTargetIdentifier label = new BuildTargetIdentifier(name);
 
     List<SourceItem> sources = getSourceItems(rule, label);
-
     Set<String> extensions = new TreeSet<>();
 
     for (SourceItem source : sources) {
@@ -201,7 +212,7 @@ public class BazelBspServerBuildManager {
     try {
       if (targetsToSources.isEmpty()) {
         // TODO probably should be done in a better way
-        buildServer.workspaceBuildTargets().wait();
+        getWorkspaceBuildTargets().wait();
       }
 
       ProcessResults processResults = bazelRunner.runBazelCommandBes(args);
@@ -219,6 +230,19 @@ public class BazelBspServerBuildManager {
     }
 
     return Either.forRight(new CompileResult(ParsingUtils.parseExitCode(exitCode)));
+  }
+
+  public CompletableFuture<WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
+    return serverRequestHelpers.executeCommand(
+        () -> {
+          // TODO pass configuration instead of calling a method
+          List<String> projectPaths = serverConfig.getTargetProjectPaths();
+          List<BuildTarget> targets = new ArrayList<>();
+          for (String projectPath : projectPaths) {
+            targets.addAll(getBuildTargetForProjectPath(projectPath));
+          }
+          return Either.forRight(new WorkspaceBuildTargetsResult(targets));
+        });
   }
 
   private JvmBuildTarget getJVMBuildTarget() {

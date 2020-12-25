@@ -58,18 +58,24 @@ public class BazelBspServer {
 
     // TODO problem - still a circular dependency
     this.serverBuildManager =
-        new BazelBspServerBuildManager(
-            bazelData, bazelRunner, null, null, queryResolver);
+        new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
 
     this.buildServer =
-        new BuildServerImpl(serverConfig, serverLifetime, serverRequestHelpers, serverBuildManager, bazelData, bazelRunner, queryResolver);
-    serverBuildManager.setBuildServer(buildServer);
+        new BuildServerImpl(
+            serverConfig,
+            serverLifetime,
+            serverRequestHelpers,
+            serverBuildManager,
+            bazelData,
+            bazelRunner,
+            queryResolver);
 
     integrateBsp(bspIntegration);
   }
 
   private void integrateBsp(BspIntegration bspIntegration) {
-    Launcher<BuildClient> launcher = new Launcher.Builder<BuildClient>()
+    Launcher<BuildClient> launcher =
+        new Launcher.Builder<BuildClient>()
             .traceMessages(bspIntegration.getTraceWriter())
             .setOutput(bspIntegration.getStdout())
             .setInput(bspIntegration.getStdin())
