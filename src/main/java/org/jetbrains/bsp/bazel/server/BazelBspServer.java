@@ -52,14 +52,16 @@ public class BazelBspServer {
     this.javaBuildServer =
         new JavaBuildServerImpl(
             serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
-    this.buildServer =
-        new BuildServerImpl(
-            serverLifetime,
+
+    BuildServerService buildServerService =
+        new BuildServerService(
             serverRequestHelpers,
+            serverLifetime,
             serverBuildManager,
             bazelData,
             bazelRunner,
             queryResolver);
+    this.buildServer = new BuildServerImpl(buildServerService, serverRequestHelpers);
 
     integrateBsp(bspIntegration);
   }
