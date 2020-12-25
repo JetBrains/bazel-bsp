@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
@@ -42,7 +43,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
 
-  private final BazelBspServer bspServer;
+  private final BazelData bazelData;
   private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
   private final Set<Uri> compilerClasspath = new TreeSet<>();
@@ -52,15 +53,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       new HashMap<>();
 
   public BepServer(
-      BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
-    this.bspServer = bspServer;
-    // TODO BepServer should get BazelData and BuildManager in the constructor.
-    // TODO To be fixed after the dependency between BepServer and BspServer is made more sensible.
+      BazelBspServer bspServer, BazelData bazelData, BuildClient bspClient, BuildClientLogger buildClientLogger) {
+    this.bazelData = bazelData;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
     this.diagnosticsDispatcher =
-        new BepDiagnosticsDispatcher(
-            bspServer.getBazelData(), bspServer.getServerBuildManager(), bspClient);
+        new BepDiagnosticsDispatcher(bazelData, bspServer.getServerBuildManager(), bspClient);
   }
 
   @Override
@@ -178,7 +176,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
                 compilerClasspath.add(
                     Uri.fromExecPath(
                         Constants.EXEC_ROOT_PREFIX + path,
-                        bspServer.getBazelData().getExecRoot())));
+                        bazelData.getExecRoot())));
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {

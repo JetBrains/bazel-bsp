@@ -56,7 +56,6 @@ public class BazelBspServer {
         new JavaBuildServerImpl(
             serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
 
-    // TODO problem - still a circular dependency
     this.serverBuildManager =
         new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
 
@@ -86,7 +85,7 @@ public class BazelBspServer {
     bspIntegration.setLauncher(launcher);
 
     this.buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
-    this.bepServer = new BepServer(this, launcher.getRemoteProxy(), buildClientLogger);
+    this.bepServer = new BepServer(this, bazelData, launcher.getRemoteProxy(), buildClientLogger);
     serverBuildManager.setBepServer(bepServer);
 
     bspIntegration.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
@@ -100,11 +99,6 @@ public class BazelBspServer {
   // Only used in BepServer because of the problems with circular dependency between it
   // and this class.
   // BazelData and BazelBspServerBuildManager should be added as dependencies in the constructor
-  @Deprecated
-  public BazelData getBazelData() {
-    return bazelData;
-  }
-
   @Deprecated
   public BazelBspServerBuildManager getServerBuildManager() {
     return serverBuildManager;
