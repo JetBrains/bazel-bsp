@@ -98,7 +98,8 @@ public class BazelBspServer {
         new ScalaBuildServerImpl(
             this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
     this.javaBuildServer =
-        new JavaBuildServerImpl(this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+        new JavaBuildServerImpl(
+            this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
 
   public BuildTarget getBuildTarget(Build.Rule rule) {
@@ -405,27 +406,6 @@ public class BazelBspServer {
     return prefix + pathToFile;
   }
 
-  public <T> CompletableFuture<T> handleBuildInitialize(
-      Supplier<Either<ResponseError, T>> request) {
-    if (isFinished()) {
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
-    }
-
-    return getValue(request);
-  }
-
-  public <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
-    if (!isInitialized()) {
-      return completeExceptionally(
-          new ResponseError(
-              ResponseErrorCode.serverErrorEnd, "Server has not been initialized yet!", false));
-    }
-
-    return getValue(request);
-  }
-
   public <T> CompletableFuture<T> executeCommand(Supplier<Either<ResponseError, T>> request) {
     if (!isInitialized()) {
       return completeExceptionally(
@@ -443,26 +423,13 @@ public class BazelBspServer {
     return getValue(request);
   }
 
-  private <T> CompletableFuture<T> completeExceptionally(ResponseError error) {
+  public <T> CompletableFuture<T> completeExceptionally(ResponseError error) {
     CompletableFuture<T> future = new CompletableFuture<>();
     future.completeExceptionally(new ResponseErrorException(error));
     return future;
   }
 
-  private boolean isInitialized() {
-    try {
-      initializedStatus.get(1, TimeUnit.SECONDS);
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-      return false;
-    }
-    return true;
-  }
-
-  private boolean isFinished() {
-    return finishedStatus.isDone();
-  }
-
-  private <T> CompletableFuture<T> getValue(Supplier<Either<ResponseError, T>> request) {
+  public <T> CompletableFuture<T> getValue(Supplier<Either<ResponseError, T>> request) {
     return CompletableFuture.supplyAsync(request)
         .exceptionally( // TODO remove eithers in next PR
             exception -> {
@@ -475,6 +442,37 @@ public class BazelBspServer {
                 either.isLeft()
                     ? completeExceptionally(either.getLeft())
                     : CompletableFuture.completedFuture(either.getRight()));
+  }
+
+  public boolean isInitialized() {
+    try {
+      initializedStatus.get(1, TimeUnit.SECONDS);
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      return false;
+    }
+    return true;
+  }
+
+  public boolean isFinished() {
+    return finishedStatus.isDone();
+  }
+
+  public void setInitializedComplete() {
+    initializedStatus.complete(null);
+  }
+
+  public void setFinishedComplete() {
+    finishedStatus.complete(null);
+  }
+
+  public void forceFinished() {
+    try {
+      finishedStatus.get(1, TimeUnit.SECONDS);
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      System.exit(1);
+    }
+
+    System.exit(0);
   }
 
   public Collection<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
@@ -499,14 +497,6 @@ public class BazelBspServer {
 
   public void setBepServer(BepServer bepServer) {
     this.bepServer = bepServer;
-  }
-
-  public CompletableFuture<Void> getInitializedStatus() {
-    return initializedStatus;
-  }
-
-  public CompletableFuture<Void> getFinishedStatus() {
-    return finishedStatus;
   }
 
   // TODO method instead of a getter
