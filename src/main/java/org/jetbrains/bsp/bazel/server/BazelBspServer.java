@@ -2,6 +2,8 @@ package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
+import ch.epfl.scala.bsp4j.JavaBuildServer;
+import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
@@ -19,6 +21,10 @@ public class BazelBspServer {
   private final BazelData bazelData;
 
   private BazelBspServerBuildManager serverBuildManager;
+
+  private BuildServer buildServer;
+  private JavaBuildServer javaBuildServer;
+  private ScalaBuildServer scalaBuildServer;
 
   public BazelBspServer(BazelBspServerConfig serverConfig) {
     this.serverConfig = serverConfig;
@@ -40,9 +46,13 @@ public class BazelBspServer {
         new BazelBspServerBuildManager(
             serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
 
-    new ScalaBuildServerImpl(serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
-    new JavaBuildServerImpl(serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
-    BuildServer buildServer =
+    this.scalaBuildServer =
+        new ScalaBuildServerImpl(
+            serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
+    this.javaBuildServer =
+        new JavaBuildServerImpl(
+            serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
+    this.buildServer =
         new BuildServerImpl(
             serverLifetime,
             serverRequestHelpers,
@@ -51,16 +61,16 @@ public class BazelBspServer {
             bazelRunner,
             queryResolver);
 
-    integrateBsp(bspIntegration, buildServer);
+    integrateBsp(bspIntegration);
   }
 
-  private void integrateBsp(BspIntegration bspIntegration, BuildServer buildServer) {
+  private void integrateBsp(BspIntegration bspIntegration) {
     Launcher<BuildClient> launcher =
         new Launcher.Builder<BuildClient>()
             .traceMessages(bspIntegration.getTraceWriter())
             .setOutput(bspIntegration.getStdout())
             .setInput(bspIntegration.getStdin())
-            .setLocalService(buildServer)
+            .setLocalService(this.buildServer)
             .setRemoteInterface(BuildClient.class)
             .setExecutorService(bspIntegration.getExecutor())
             .create();
