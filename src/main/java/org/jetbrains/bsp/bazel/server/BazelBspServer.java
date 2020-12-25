@@ -46,16 +46,6 @@ public class BazelBspServer {
     this.bazelDataResolver = new BazelDataResolver(bazelRunner);
     this.bazelData = bazelDataResolver.resolveBazelData();
 
-    // TODO problem - still a circular dependency
-    this.buildServer =
-        new BuildServerImpl(
-            serverConfig,
-            serverLifetime,
-            serverRequestHelpers,
-            bazelData,
-            bazelRunner,
-            queryResolver);
-
     this.scalaBuildServer =
         new ScalaBuildServerImpl(
             serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
@@ -63,9 +53,15 @@ public class BazelBspServer {
         new JavaBuildServerImpl(
             serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
 
+    // TODO problem - still a circular dependency
     this.serverBuildManager =
         new BazelBspServerBuildManager(
-            bazelData, bazelRunner, buildServer, bepServer, queryResolver);
+            bazelData, bazelRunner, null, null, queryResolver);
+
+    this.buildServer =
+        new BuildServerImpl(serverConfig, serverLifetime, serverRequestHelpers, serverBuildManager, bazelData, bazelRunner, queryResolver);
+
+    serverBuildManager.setBuildServer(buildServer);
   }
 
   public void setBuildClientLogger(BuildClientLogger buildClientLogger) {
@@ -83,6 +79,8 @@ public class BazelBspServer {
 
   public void setBepServer(BepServer bepServer) {
     this.bepServer = bepServer;
+    // TODO remove after fix
+    serverBuildManager.setBepServer(bepServer);
   }
 
   // TODO Remove after the dependency between BspServer and BepServer is made more sensible.

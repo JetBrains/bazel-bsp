@@ -41,9 +41,18 @@ public class BazelBspServerBuildManager {
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
 
+  // TODO remove after fix
+  public void setBuildServer(BuildServer buildServer) {
+    this.buildServer = buildServer;
+  }
+
+  public void setBepServer(BepServer bepServer) {
+    this.bepServer = bepServer;
+  }
+
   // TODO cyclical and unnecessary, fix
-  private final BuildServer buildServer;
-  private final BepServer bepServer;
+  private BuildServer buildServer;
+  private BepServer bepServer;
 
   private final QueryResolver queryResolver;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
