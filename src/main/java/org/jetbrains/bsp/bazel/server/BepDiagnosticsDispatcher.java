@@ -7,6 +7,7 @@ import ch.epfl.scala.bsp4j.DiagnosticSeverity;
 import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.Range;
+import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -18,6 +19,7 @@ import io.bazel.rules_scala.diagnostics.Diagnostics.TargetDiagnostics;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,12 +43,12 @@ public class BepDiagnosticsDispatcher {
           .build();
 
   private final BazelData bazelData;
-  private final BazelBspServerBuildManager serverBuildManager;
   private final BuildClient bspClient;
 
-  public BepDiagnosticsDispatcher(BazelData bazelData, BazelBspServerBuildManager serverBuildManager, BuildClient bspClient) {
+  private final Map<BuildTargetIdentifier, List<SourceItem>> buildTargetsSources = new HashMap<>();
+
+  public BepDiagnosticsDispatcher(BazelData bazelData, BuildClient bspClient) {
     this.bazelData = bazelData;
-    this.serverBuildManager = serverBuildManager;
     this.bspClient = bspClient;
   }
 
@@ -69,7 +71,7 @@ public class BepDiagnosticsDispatcher {
 
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
-    serverBuildManager.getCachedBuildTargetSources(target).stream()
+    buildTargetsSources.getOrDefault(target, ImmutableList.of()).stream()
         .map(source -> Uri.fromFileUri(source.getUri()))
         .forEach(sourceUri -> addSourceAndPublish(sourceUri, filesToDiagnostics, target));
   }
@@ -126,7 +128,10 @@ public class BepDiagnosticsDispatcher {
   }
 
   private Uri getUriForPath(String path) {
-    return Uri.fromExecOrWorkspacePath(
-        path, bazelData.getExecRoot(), bazelData.getWorkspaceRoot());
+    return Uri.fromExecOrWorkspacePath(path, bazelData.getExecRoot(), bazelData.getWorkspaceRoot());
+  }
+
+  public Map<BuildTargetIdentifier, List<SourceItem>> getBuildTargetsSources() {
+    return buildTargetsSources;
   }
 }

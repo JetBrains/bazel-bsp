@@ -57,7 +57,8 @@ public class BazelBspServer {
             serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
 
     this.serverBuildManager =
-        new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
+        new BazelBspServerBuildManager(
+            serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
 
     this.buildServer =
         new BuildServerImpl(
@@ -85,7 +86,7 @@ public class BazelBspServer {
     bspIntegration.setLauncher(launcher);
 
     this.buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
-    this.bepServer = new BepServer(this, bazelData, launcher.getRemoteProxy(), buildClientLogger);
+    this.bepServer = new BepServer(bazelData, launcher.getRemoteProxy(), buildClientLogger);
     serverBuildManager.setBepServer(bepServer);
 
     bspIntegration.setServer(ServerBuilder.forPort(0).addService(bepServer).build());

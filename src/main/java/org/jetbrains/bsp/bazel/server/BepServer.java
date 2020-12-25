@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
+import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
@@ -53,12 +54,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       new HashMap<>();
 
   public BepServer(
-      BazelBspServer bspServer, BazelData bazelData, BuildClient bspClient, BuildClientLogger buildClientLogger) {
+      BazelData bazelData, BuildClient bspClient, BuildClientLogger buildClientLogger) {
     this.bazelData = bazelData;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
-    this.diagnosticsDispatcher =
-        new BepDiagnosticsDispatcher(bazelData, bspServer.getServerBuildManager(), bspClient);
+    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelData, bspClient);
   }
 
   @Override
@@ -174,9 +174,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         .forEach(
             path ->
                 compilerClasspath.add(
-                    Uri.fromExecPath(
-                        Constants.EXEC_ROOT_PREFIX + path,
-                        bazelData.getExecRoot())));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + path, bazelData.getExecRoot())));
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -268,5 +266,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   public Map<String, String> getDiagnosticsProtosLocations() {
     return diagnosticsProtosLocations;
+  }
+
+  public Map<BuildTargetIdentifier, List<SourceItem>> getBuildTargetsSources() {
+    return diagnosticsDispatcher.getBuildTargetsSources();
   }
 }

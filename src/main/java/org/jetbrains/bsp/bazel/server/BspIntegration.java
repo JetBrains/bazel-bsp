@@ -21,8 +21,8 @@ public class BspIntegration {
 
   private io.grpc.Server server;
 
-  public BspIntegration(PrintStream stdout, InputStream stdin,
-      ExecutorService executor, PrintWriter traceWriter) {
+  public BspIntegration(
+      PrintStream stdout, InputStream stdin, ExecutorService executor, PrintWriter traceWriter) {
     this.stdout = stdout;
     this.stdin = stdin;
     this.executor = executor;

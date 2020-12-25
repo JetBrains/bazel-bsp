@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server;
 
-import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
@@ -13,12 +12,10 @@ import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,20 +41,16 @@ public class BazelBspServerBuildManager {
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
-
-  public void setBepServer(BepServer bepServer) {
-    this.bepServer = bepServer;
-  }
+  private final QueryResolver queryResolver;
 
   private BepServer bepServer;
+  private ScalaBuildTarget scalacClasspath;
 
-  private final QueryResolver queryResolver;
-  private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
-  private ScalaBuildTarget scalacClasspath = null;
-
-  public BazelBspServerBuildManager(BazelBspServerConfig serverConfig,
+  public BazelBspServerBuildManager(
+      BazelBspServerConfig serverConfig,
       BazelBspServerRequestHelpers serverRequestHelpers,
-      BazelData bazelData, BazelRunner bazelRunner,
+      BazelData bazelData,
+      BazelRunner bazelRunner,
       QueryResolver queryResolver) {
     this.serverConfig = serverConfig;
     this.serverRequestHelpers = serverRequestHelpers;
@@ -210,7 +203,7 @@ public class BazelBspServerBuildManager {
     }
 
     try {
-      if (targetsToSources.isEmpty()) {
+      if (bepServer.getBuildTargetsSources().isEmpty()) {
         // TODO probably should be done in a better way
         getWorkspaceBuildTargets().wait();
       }
@@ -253,7 +246,7 @@ public class BazelBspServerBuildManager {
   public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
     List<SourceItem> srcs = getSrcs(rule, false);
     srcs.addAll(getSrcs(rule, true));
-    targetsToSources.put(label, srcs);
+    bepServer.getBuildTargetsSources().put(label, srcs);
     return srcs;
   }
 
@@ -367,7 +360,7 @@ public class BazelBspServerBuildManager {
         .collect(Collectors.toList());
   }
 
-  public Collection<SourceItem> getCachedBuildTargetSources(BuildTargetIdentifier target) {
-    return targetsToSources.getOrDefault(target, ImmutableList.of());
+  public void setBepServer(BepServer bepServer) {
+    this.bepServer = bepServer;
   }
 }
