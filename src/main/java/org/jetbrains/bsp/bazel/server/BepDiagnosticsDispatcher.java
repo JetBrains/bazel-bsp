@@ -40,14 +40,13 @@ public class BepDiagnosticsDispatcher {
           .put(Severity.HINT, DiagnosticSeverity.HINT)
           .build();
 
-  // TODO adjust dependencies after extracting from BazelBspServer
-  private final BazelBspServer bspServer;
   private final BazelData bazelData;
+  private final BazelBspServerBuildManager serverBuildManager;
   private final BuildClient bspClient;
 
-  public BepDiagnosticsDispatcher(BazelBspServer bspServer, BazelData bazelData, BuildClient bspClient) {
-    this.bspServer = bspServer;
+  public BepDiagnosticsDispatcher(BazelData bazelData, BazelBspServerBuildManager serverBuildManager, BuildClient bspClient) {
     this.bazelData = bazelData;
+    this.serverBuildManager = serverBuildManager;
     this.bspClient = bspClient;
   }
 
@@ -70,7 +69,7 @@ public class BepDiagnosticsDispatcher {
 
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
-    bspServer.getCachedBuildTargetSources(target).stream()
+    serverBuildManager.getCachedBuildTargetSources(target).stream()
         .map(source -> Uri.fromFileUri(source.getUri()))
         .forEach(sourceUri -> addSourceAndPublish(sourceUri, filesToDiagnostics, target));
   }

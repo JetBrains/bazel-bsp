@@ -52,28 +52,27 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BuildServerImpl implements BuildServer {
 
-  // TODO won't be cyclical, make dependencies more organised
-  // TODO generally a more sensible dependency with this class, now just calls all of its methods
-  private final BazelBspServer bazelBspServer;
-
   private final BazelBspServerConfig serverConfig;
   private final BazelBspServerLifetime serverLifetime;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
+  private final BazelBspServerBuildManager serverBuildManager;
 
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
   private final QueryResolver queryResolver;
 
-  public BuildServerImpl(BazelBspServer bazelBspServer,
+  public BuildServerImpl(
       BazelBspServerConfig serverConfig,
       BazelBspServerLifetime serverLifetime,
       BazelBspServerRequestHelpers serverRequestHelpers,
-      BazelData bazelData, BazelRunner bazelRunner,
+      BazelBspServerBuildManager serverBuildManager,
+      BazelData bazelData,
+      BazelRunner bazelRunner,
       QueryResolver queryResolver) {
-    this.bazelBspServer = bazelBspServer;
     this.serverConfig = serverConfig;
     this.serverLifetime = serverLifetime;
     this.serverRequestHelpers = serverRequestHelpers;
+    this.serverBuildManager = serverBuildManager;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
     this.queryResolver = queryResolver;
@@ -164,7 +163,7 @@ public class BuildServerImpl implements BuildServer {
     return queryResult.getTargetList().stream()
         .map(Build.Target::getRule)
         .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-        .map(bazelBspServer::getBuildTarget)
+        .map(serverBuildManager::getBuildTarget)
         .collect(Collectors.toList());
   }
 
@@ -188,10 +187,11 @@ public class BuildServerImpl implements BuildServer {
                   .map(
                       rule -> {
                         BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
-                        List<SourceItem> items = bazelBspServer.getSourceItems(rule, label);
+                        List<SourceItem> items = serverBuildManager.getSourceItems(rule, label);
                         List<String> roots =
                             Lists.newArrayList(
-                                Uri.fromAbsolutePath(bazelBspServer.getSourcesRoot(rule.getName()))
+                                Uri.fromAbsolutePath(
+                                        serverBuildManager.getSourcesRoot(rule.getName()))
                                     .toString());
                         SourcesItem item = new SourcesItem(label, items);
                         item.setRoots(roots);
@@ -247,7 +247,7 @@ public class BuildServerImpl implements BuildServer {
                       .map(
                           target -> {
                             List<String> files =
-                                bazelBspServer.lookupTransitiveSourceJars(target).stream()
+                                serverBuildManager.lookUpTransitiveSourceJars(target).stream()
                                     .map(
                                         execPath ->
                                             Uri.fromExecPath(execPath, bazelData.getExecRoot())
@@ -287,7 +287,7 @@ public class BuildServerImpl implements BuildServer {
                           rule ->
                               new ResourcesItem(
                                   new BuildTargetIdentifier(rule.getName()),
-                                  bazelBspServer.getResources(rule, query)))
+                                  serverBuildManager.getResources(rule, query)))
                       .collect(Collectors.toList()));
           return Either.forRight(resourcesResult);
         });
@@ -296,7 +296,8 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
     return serverRequestHelpers.executeCommand(
-        () -> bazelBspServer.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
+        () ->
+            serverBuildManager.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
   }
 
   @Override
@@ -304,7 +305,7 @@ public class BuildServerImpl implements BuildServer {
     return serverRequestHelpers.executeCommand(
         () -> {
           Either<ResponseError, CompileResult> build =
-              bazelBspServer.buildTargetsWithBep(
+              serverBuildManager.buildTargetsWithBep(
                   Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
           if (build.isLeft()) {
             return Either.forLeft(build.getLeft());
@@ -338,7 +339,7 @@ public class BuildServerImpl implements BuildServer {
     return serverRequestHelpers.executeCommand(
         () -> {
           Either<ResponseError, CompileResult> build =
-              bazelBspServer.buildTargetsWithBep(
+              serverBuildManager.buildTargetsWithBep(
                   Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
           if (build.isLeft()) {
             return Either.forLeft(build.getLeft());
