@@ -32,7 +32,6 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   private final BazelBspServerRequestHelpers serverRequestHelpers;
 
   private final BazelData bazelData;
-
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
 
@@ -66,7 +65,7 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
     return handleBuildTargetScalaMainClasses(scalaMainClassesParams);
   }
 
-  public Either<ResponseError, ScalacOptionsResult> handleBuildTargetScalacOptions(
+  private Either<ResponseError, ScalacOptionsResult> handleBuildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
     List<String> targets =
         scalacOptionsParams.getTargets().stream()
@@ -94,14 +93,14 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
     return Either.forRight(result);
   }
 
-  public CompletableFuture<ScalaTestClassesResult> handleBuildTargetScalaTestClasses(
+  private CompletableFuture<ScalaTestClassesResult> handleBuildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
     System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
     // TODO(illicitonion): Populate
     return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
   }
 
-  public CompletableFuture<ScalaMainClassesResult> handleBuildTargetScalaMainClasses(
+  private CompletableFuture<ScalaMainClassesResult> handleBuildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
     System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
     // TODO(illicitonion): Populate

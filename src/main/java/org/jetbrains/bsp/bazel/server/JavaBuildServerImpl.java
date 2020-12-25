@@ -28,7 +28,6 @@ public class JavaBuildServerImpl implements JavaBuildServer {
   private final BazelBspServerRequestHelpers serverRequestHelpers;
 
   private final BazelData bazelData;
-
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
 
@@ -50,7 +49,7 @@ public class JavaBuildServerImpl implements JavaBuildServer {
         () -> handleBuildTargetJavacOptions(javacOptionsParams));
   }
 
-  public Either<ResponseError, JavacOptionsResult> handleBuildTargetJavacOptions(
+  private Either<ResponseError, JavacOptionsResult> handleBuildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
     List<String> targets =
         javacOptionsParams.getTargets().stream()

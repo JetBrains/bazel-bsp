@@ -27,7 +27,7 @@ public class BazelBspServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
   }
 
-  void startServer(BspIntegration bspIntegration) {
+  public void startServer(BspIntegration bspIntegration) {
     BazelBspServerLifetime serverLifetime = new BazelBspServerLifetime();
     BazelBspServerRequestHelpers serverRequestHelpers =
         new BazelBspServerRequestHelpers(serverLifetime);

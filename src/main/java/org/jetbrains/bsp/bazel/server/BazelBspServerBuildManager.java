@@ -59,23 +59,6 @@ public class BazelBspServerBuildManager {
     this.queryResolver = queryResolver;
   }
 
-  private List<BuildTarget> getBuildTargetForProjectPath(String projectPath) {
-    Build.QueryResult queryResult =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
-            "--nohost_deps",
-            "--noimplicit_deps",
-            String.format(
-                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
-                projectPath, projectPath, projectPath));
-    return queryResult.getTargetList().stream()
-        .map(Build.Target::getRule)
-        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-        .map(this::getBuildTargetForRule)
-        .collect(Collectors.toList());
-  }
-
   public BuildTarget getBuildTargetForRule(Build.Rule rule) {
     String name = rule.getName();
     System.out.println("Getting targets for rule: " + name);
@@ -132,6 +115,23 @@ public class BazelBspServerBuildManager {
     return target;
   }
 
+  private List<BuildTarget> getBuildTargetForProjectPath(String projectPath) {
+    Build.QueryResult queryResult =
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "--nohost_deps",
+            "--noimplicit_deps",
+            String.format(
+                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
+                projectPath, projectPath, projectPath));
+    return queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+        .map(this::getBuildTargetForRule)
+        .collect(Collectors.toList());
+  }
+
   private Optional<ScalaBuildTarget> getScalaBuildTarget() {
     if (scalacClasspath == null) {
       buildTargetsWithBep(
@@ -171,6 +171,11 @@ public class BazelBspServerBuildManager {
     }
 
     return Optional.of(scalacClasspath);
+  }
+
+  private JvmBuildTarget getJVMBuildTarget() {
+    // TODO(andrefmrocha): Properly determine jdk path
+    return new JvmBuildTarget(null, ParsingUtils.getJavaVersion());
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
@@ -236,11 +241,6 @@ public class BazelBspServerBuildManager {
           }
           return Either.forRight(new WorkspaceBuildTargetsResult(targets));
         });
-  }
-
-  private JvmBuildTarget getJVMBuildTarget() {
-    // TODO(andrefmrocha): Properly determine jdk path
-    return new JvmBuildTarget(null, ParsingUtils.getJavaVersion());
   }
 
   public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
