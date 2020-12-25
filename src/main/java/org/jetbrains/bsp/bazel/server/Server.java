@@ -47,8 +47,8 @@ public class Server {
       System.setOut(logStream);
       System.setErr(logStream);
 
-      BazelBspServerConfig config = BazelBspServerConfig.from(args);
-      BazelBspServer bspServer = new BazelBspServer(config);
+      BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
+      BazelBspServer bspServer = new BazelBspServer(serverConfig);
 
       Launcher<BuildClient> launcher =
           new Launcher.Builder()

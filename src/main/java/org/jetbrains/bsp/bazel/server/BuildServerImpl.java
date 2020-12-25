@@ -44,7 +44,10 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
+import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BuildServerImpl implements BuildServer {
@@ -53,16 +56,27 @@ public class BuildServerImpl implements BuildServer {
   // TODO generally a more sensible dependency with this class, now just calls all of its methods
   private final BazelBspServer bazelBspServer;
 
+  private final BazelBspServerConfig serverConfig;
   private final BazelBspServerLifetime serverLifetime;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
 
-  public BuildServerImpl(
-      BazelBspServer bazelBspServer,
+  private final BazelData bazelData;
+  private final BazelRunner bazelRunner;
+  private final QueryResolver queryResolver;
+
+  public BuildServerImpl(BazelBspServer bazelBspServer,
+      BazelBspServerConfig serverConfig,
       BazelBspServerLifetime serverLifetime,
-      BazelBspServerRequestHelpers serverRequestHelpers) {
+      BazelBspServerRequestHelpers serverRequestHelpers,
+      BazelData bazelData, BazelRunner bazelRunner,
+      QueryResolver queryResolver) {
     this.bazelBspServer = bazelBspServer;
+    this.serverConfig = serverConfig;
     this.serverLifetime = serverLifetime;
     this.serverRequestHelpers = serverRequestHelpers;
+    this.bazelData = bazelData;
+    this.bazelRunner = bazelRunner;
+    this.queryResolver = queryResolver;
   }
 
   @Override
@@ -128,7 +142,7 @@ public class BuildServerImpl implements BuildServer {
     return serverRequestHelpers.executeCommand(
         () -> {
           // TODO pass configuration instead of calling a method
-          List<String> projectPaths = bazelBspServer.getConfiguration().getTargetProjectPaths();
+          List<String> projectPaths = serverConfig.getTargetProjectPaths();
           List<BuildTarget> targets = new ArrayList<>();
           for (String projectPath : projectPaths) {
             targets.addAll(getBuildTarget(projectPath));
@@ -139,16 +153,14 @@ public class BuildServerImpl implements BuildServer {
 
   private List<BuildTarget> getBuildTarget(String projectPath) {
     Build.QueryResult queryResult =
-        bazelBspServer
-            .getQueryResolver()
-            .getQuery(
-                "query",
-                "--output=proto",
-                "--nohost_deps",
-                "--noimplicit_deps",
-                String.format(
-                    "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
-                    projectPath, projectPath, projectPath));
+        queryResolver.getQuery(
+            "query",
+            "--output=proto",
+            "--nohost_deps",
+            "--noimplicit_deps",
+            String.format(
+                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
+                projectPath, projectPath, projectPath));
     return queryResult.getTargetList().stream()
         .map(Build.Target::getRule)
         .filter(rule -> !rule.getRuleClass().equals("filegroup"))
@@ -161,16 +173,14 @@ public class BuildServerImpl implements BuildServer {
     return serverRequestHelpers.executeCommand(
         () -> {
           Build.QueryResult queryResult =
-              bazelBspServer
-                  .getQueryResolver()
-                  .getQuery(
-                      "query",
-                      "--output=proto",
-                      "("
-                          + sourcesParams.getTargets().stream()
-                              .map(BuildTargetIdentifier::getUri)
-                              .collect(Collectors.joining("+"))
-                          + ")");
+              queryResolver.getQuery(
+                  "query",
+                  "--output=proto",
+                  "("
+                      + sourcesParams.getTargets().stream()
+                          .map(BuildTargetIdentifier::getUri)
+                          .collect(Collectors.joining("+"))
+                      + ")");
 
           List<SourcesItem> sources =
               queryResult.getTargetList().stream()
@@ -198,19 +208,17 @@ public class BuildServerImpl implements BuildServer {
     return serverRequestHelpers.executeCommand(
         () -> {
           String fileUri = inverseSourcesParams.getTextDocument().getUri();
-          String workspaceRoot = bazelBspServer.getBazelData().getWorkspaceRoot();
+          String workspaceRoot = bazelData.getWorkspaceRoot();
           String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
           if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
             throw new RuntimeException(
                 "Could not resolve " + fileUri + " within workspace " + prefix);
           }
           Build.QueryResult result =
-              bazelBspServer
-                  .getQueryResolver()
-                  .getQuery(
-                      "query",
-                      "--output=proto",
-                      "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
+              queryResolver.getQuery(
+                  "query",
+                  "--output=proto",
+                  "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
           List<BuildTargetIdentifier> targets =
               result.getTargetList().stream()
                   .map(Build.Target::getRule)
@@ -242,9 +250,7 @@ public class BuildServerImpl implements BuildServer {
                                 bazelBspServer.lookupTransitiveSourceJars(target).stream()
                                     .map(
                                         execPath ->
-                                            Uri.fromExecPath(
-                                                    execPath,
-                                                    bazelBspServer.getBazelData().getExecRoot())
+                                            Uri.fromExecPath(execPath, bazelData.getExecRoot())
                                                 .toString())
                                     .collect(Collectors.toList());
                             return new DependencySourcesItem(
@@ -259,8 +265,7 @@ public class BuildServerImpl implements BuildServer {
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
     return serverRequestHelpers.executeCommand(
         () -> {
-          Build.QueryResult query =
-              bazelBspServer.getQueryResolver().getQuery("query", "--output=proto", "//...");
+          Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
           System.out.println("Resources query result " + query);
           ResourcesResult resourcesResult =
               new ResourcesResult(
@@ -317,13 +322,11 @@ public class BuildServerImpl implements BuildServer {
                           .map(BuildTargetIdentifier::getUri)
                           .collect(Collectors.toList()));
           ProcessResults processResults =
-              bazelBspServer
-                  .getBazelRunner()
-                  .runBazelCommand(
-                      Lists.asList(
-                          Constants.BAZEL_TEST_COMMAND,
-                          "(" + testTargets + ")",
-                          testParams.getArguments().toArray(new String[0])));
+              bazelRunner.runBazelCommand(
+                  Lists.asList(
+                      Constants.BAZEL_TEST_COMMAND,
+                      "(" + testTargets + ")",
+                      testParams.getArguments().toArray(new String[0])));
 
           return Either.forRight(
               new TestResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
@@ -347,13 +350,11 @@ public class BuildServerImpl implements BuildServer {
           }
 
           ProcessResults processResults =
-              bazelBspServer
-                  .getBazelRunner()
-                  .runBazelCommand(
-                      Lists.asList(
-                          Constants.BAZEL_RUN_COMMAND,
-                          runParams.getTarget().getUri(),
-                          runParams.getArguments().toArray(new String[0])));
+              bazelRunner.runBazelCommand(
+                  Lists.asList(
+                      Constants.BAZEL_RUN_COMMAND,
+                      runParams.getTarget().getUri(),
+                      runParams.getArguments().toArray(new String[0])));
 
           return Either.forRight(
               new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
@@ -371,10 +372,7 @@ public class BuildServerImpl implements BuildServer {
                 new CleanCacheResult(
                     String.join(
                         "\n",
-                        bazelBspServer
-                            .getBazelRunner()
-                            .runBazelCommand(Constants.BAZEL_CLEAN_COMMAND)
-                            .getStdout()),
+                        bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
                     true);
           } catch (RuntimeException e) {
             // TODO does it make sense to return a successful response here?

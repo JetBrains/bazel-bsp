@@ -46,7 +46,7 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 public class BazelBspServer {
 
   // TODO tidy up the attributes
-  private final BazelBspServerConfig configuration;
+  private final BazelBspServerConfig serverConfig;
   private final BazelBspServerLifetime serverLifetime;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
   private final BazelRunner bazelRunner;
@@ -67,11 +67,11 @@ public class BazelBspServer {
 
   // TODO: imho bsp server creation on the server side is too ambiguous
   // (constructor + setters)
-  public BazelBspServer(BazelBspServerConfig configuration) {
-    this.configuration = configuration;
+  public BazelBspServer(BazelBspServerConfig serverConfig) {
+    this.serverConfig = serverConfig;
     this.serverLifetime = new BazelBspServerLifetime();
     this.serverRequestHelpers = new BazelBspServerRequestHelpers(serverLifetime);
-    this.bazelRunner = new BazelRunner(configuration.getBazelPath());
+    this.bazelRunner = new BazelRunner(serverConfig.getBazelPath());
     this.queryResolver = new QueryResolver(bazelRunner);
     this.targetsResolver = new TargetsResolver(queryResolver);
     this.actionGraphResolver = new ActionGraphResolver(bazelRunner);
@@ -79,19 +79,15 @@ public class BazelBspServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     // TODO won't be cyclical, make dependencies more organised
-    this.buildServer = new BuildServerImpl(this, serverLifetime, serverRequestHelpers);
+    this.buildServer =
+        new BuildServerImpl(
+            this, serverConfig, serverLifetime, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
     this.scalaBuildServer =
         new ScalaBuildServerImpl(
-            serverRequestHelpers,
-            targetsResolver,
-            actionGraphResolver,
-            getBazelData().getExecRoot());
+            serverRequestHelpers, targetsResolver, actionGraphResolver, bazelData.getExecRoot());
     this.javaBuildServer =
         new JavaBuildServerImpl(
-            serverRequestHelpers,
-            targetsResolver,
-            actionGraphResolver,
-            getBazelData().getExecRoot());
+            serverRequestHelpers, targetsResolver, actionGraphResolver, bazelData.getExecRoot());
   }
 
   public BuildTarget getBuildTarget(Build.Rule rule) {
@@ -133,7 +129,7 @@ public class BazelBspServer {
                 ruleClass.endsWith("_" + Constants.TEST_RULE_TYPE),
                 ruleClass.endsWith("_" + Constants.BINARY_RULE_TYPE)));
     target.setBaseDirectory(
-        Uri.packageDirFromLabel(label.getUri(), getBazelData().getWorkspaceRoot()).toString());
+        Uri.packageDirFromLabel(label.getUri(), bazelData.getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());
     if (extensions.contains(Constants.SCALA)) {
       getScalaBuildTarget()
@@ -218,7 +214,7 @@ public class BazelBspServer {
         .flatMap(
             dep -> {
               if (isSourceFile(dep)) {
-                return Lists.newArrayList(Uri.fromFileLabel(dep, getBazelData().getWorkspaceRoot()))
+                return Lists.newArrayList(Uri.fromFileLabel(dep, bazelData.getWorkspaceRoot()))
                     .stream();
               }
               Build.QueryResult queryResult =
@@ -240,7 +236,7 @@ public class BazelBspServer {
   public String getSourcesRoot(String uri) {
     List<String> root =
         Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
-    return getBazelData().getWorkspaceRoot()
+    return bazelData.getWorkspaceRoot()
         + (root.size() == 0
             ? ""
             : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
@@ -291,8 +287,7 @@ public class BazelBspServer {
                       .filter(label -> isPackage(queryResult, label).isEmpty())
                       .map(
                           label ->
-                              Uri.fromFileLabel(label, getBazelData().getWorkspaceRoot())
-                                  .toString())
+                              Uri.fromFileLabel(label, bazelData.getWorkspaceRoot()).toString())
                       .collect(Collectors.toList());
 
               return Stream.concat(targetsResources.stream(), resources.stream());
@@ -311,7 +306,7 @@ public class BazelBspServer {
         .flatMap(resourceRule -> resourceRule.getRule().getAttributeList().stream())
         .filter((srcAttribute) -> srcAttribute.getName().equals("srcs"))
         .flatMap(resourceAttribute -> resourceAttribute.getStringListValueList().stream())
-        .map(src -> Uri.fromFileLabel(src, getBazelData().getWorkspaceRoot()).toString())
+        .map(src -> Uri.fromFileLabel(src, bazelData.getWorkspaceRoot()).toString())
         .collect(Collectors.toList());
   }
 
@@ -341,7 +336,7 @@ public class BazelBspServer {
               output ->
                   diagnosticsProtosLocations.put(
                       target.getRule().getName(),
-                      ParsingUtils.convertOutputToPath(output, getBazelData().getBinRoot())));
+                      ParsingUtils.convertOutputToPath(output, bazelData.getBinRoot())));
     }
 
     try {
@@ -379,30 +374,12 @@ public class BazelBspServer {
     this.buildClientLogger = buildClientLogger;
   }
 
-  public BazelData getBazelData() {
-    return bazelData;
-  }
-
   public BepServer getBepServer() {
     return bepServer;
   }
 
   public void setBepServer(BepServer bepServer) {
     this.bepServer = bepServer;
-  }
-
-  // TODO method instead of a getter
-  public QueryResolver getQueryResolver() {
-    return queryResolver;
-  }
-
-  public BazelRunner getBazelRunner() {
-    return bazelRunner;
-  }
-
-  // TODO do better
-  public BazelBspServerConfig getConfiguration() {
-    return configuration;
   }
 
   public BuildServer getBuildServer() {
