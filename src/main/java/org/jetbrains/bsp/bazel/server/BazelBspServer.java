@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server;
 
-import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
@@ -76,7 +75,7 @@ import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
-public class BazelBspServer implements BuildServer {
+public class BazelBspServer {
 
   public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
       ImmutableSet.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
@@ -96,8 +95,9 @@ public class BazelBspServer implements BuildServer {
   private final ActionGraphResolver actionGraphResolver;
   private final BazelDataResolver bazelDataResolver;
   private final BazelData bazelData;
-  private final ScalaBspServer scalaBspServer;
-  private final JavaBspServer javaBspServer;
+  private final BuildServerImpl buildServer;
+  private final ScalaBuildServerImpl scalaBuildServer;
+  private final JavaBuildServerImpl javaBuildServer;
   private BepServer bepServer = null;
   private int backendPort;
   private ScalaBuildTarget scalacClasspath = null;
@@ -116,14 +116,15 @@ public class BazelBspServer implements BuildServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     // TODO won't be cyclical, make dependencies more organised
-    this.scalaBspServer =
-        new ScalaBspServer(
+    this.buildServer = new BuildServerImpl(this);
+    this.scalaBuildServer =
+        new ScalaBuildServerImpl(
             this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
-    this.javaBspServer =
-        new JavaBspServer(this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+    this.javaBuildServer =
+        new JavaBuildServerImpl(
+            this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
 
-  @Override
   public CompletableFuture<InitializeBuildResult> buildInitialize(
       InitializeBuildParams initializeBuildParams) {
     return handleBuildInitialize(
@@ -141,12 +142,10 @@ public class BazelBspServer implements BuildServer {
         });
   }
 
-  @Override
   public void onBuildInitialized() {
     isInitialized.complete(null);
   }
 
-  @Override
   public CompletableFuture<Object> buildShutdown() {
     return handleBuildShutdown(
         () -> {
@@ -155,7 +154,6 @@ public class BazelBspServer implements BuildServer {
         });
   }
 
-  @Override
   public void onBuildExit() {
     try {
       isFinished.get(1, TimeUnit.SECONDS);
@@ -166,7 +164,6 @@ public class BazelBspServer implements BuildServer {
     System.exit(0);
   }
 
-  @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
     return executeCommand(
         () -> {
@@ -325,7 +322,6 @@ public class BazelBspServer implements BuildServer {
     return version;
   }
 
-  @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     return executeCommand(
         () -> {
@@ -407,7 +403,6 @@ public class BazelBspServer implements BuildServer {
             : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
   }
 
-  @Override
   public CompletableFuture<InverseSourcesResult> buildTargetInverseSources(
       InverseSourcesParams inverseSourcesParams) {
     return executeCommand(
@@ -435,7 +430,6 @@ public class BazelBspServer implements BuildServer {
         });
   }
 
-  @Override
   public CompletableFuture<DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
     return executeCommand(
@@ -489,7 +483,6 @@ public class BazelBspServer implements BuildServer {
         .collect(Collectors.toList());
   }
 
-  @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
     return executeCommand(
         () -> {
@@ -567,7 +560,6 @@ public class BazelBspServer implements BuildServer {
         .collect(Collectors.toList());
   }
 
-  @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
     return executeCommand(() -> buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
   }
@@ -628,7 +620,6 @@ public class BazelBspServer implements BuildServer {
     return prefix + pathToFile;
   }
 
-  @Override
   public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
     return executeCommand(
         () -> {
@@ -661,7 +652,6 @@ public class BazelBspServer implements BuildServer {
         });
   }
 
-  @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
     return executeCommand(
         () -> {
@@ -688,7 +678,6 @@ public class BazelBspServer implements BuildServer {
         });
   }
 
-  @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
     return executeCommand(
@@ -804,5 +793,10 @@ public class BazelBspServer implements BuildServer {
 
   public void setBepServer(BepServer bepServer) {
     this.bepServer = bepServer;
+  }
+
+  // TODO do better
+  public BuildServerImpl getBuildServer() {
+    return buildServer;
   }
 }

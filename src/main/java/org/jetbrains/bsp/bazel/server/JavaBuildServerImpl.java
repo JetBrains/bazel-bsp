@@ -26,7 +26,7 @@ import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 // TODO: now `buildTargetJavacOptions` method returns a `Either<ResponseError, JavacOptionsResult>`
 // TODO: instead of a `CompletableFuture<JavacOptionsResult>` because of the `BazelBspServer`
 // TODO: command executing (`executeCommand`) implementation.
-public class JavaBspServer implements JavaBuildServer {
+public class JavaBuildServerImpl implements JavaBuildServer {
 
   // TODO won't be cyclical, make dependencies more organised
   private final BazelBspServer bazelBspServer;
@@ -35,7 +35,7 @@ public class JavaBspServer implements JavaBuildServer {
   private final ActionGraphResolver actionGraphResolver;
   private final String execRoot;
 
-  public JavaBspServer(
+  public JavaBuildServerImpl(
       BazelBspServer bazelBspServer,
       TargetsResolver targetsResolver,
       ActionGraphResolver actionGraphResolver,

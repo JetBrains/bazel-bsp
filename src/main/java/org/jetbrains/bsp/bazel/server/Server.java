@@ -55,7 +55,7 @@ public class Server {
               .traceMessages(traceWriter)
               .setOutput(stdout)
               .setInput(stdin)
-              .setLocalService(bspServer)
+              .setLocalService(bspServer.getBuildServer())
               .setRemoteInterface(BuildClient.class)
               .setExecutorService(executor)
               .create();

@@ -31,7 +31,7 @@ import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
 // ScalacOptionsResult>`
 // TODO: instead of a `CompletableFuture<ScalacOptionsResult>` because of the `BazelBspServer`
 // TODO: command executing (`executeCommand`) implementation.
-public class ScalaBspServer implements ScalaBuildServer {
+public class ScalaBuildServerImpl implements ScalaBuildServer {
 
   // TODO won't be cyclical, make dependencies more organised
   private final BazelBspServer bazelBspServer;
@@ -41,7 +41,7 @@ public class ScalaBspServer implements ScalaBuildServer {
 
   private final String execRoot;
 
-  public ScalaBspServer(
+  public ScalaBuildServerImpl(
       BazelBspServer bazelBspServer,
       TargetsResolver targetsResolver,
       ActionGraphResolver actionGraphResolver,
