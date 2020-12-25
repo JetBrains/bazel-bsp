@@ -20,11 +20,11 @@ public class BazelBspServer {
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
 
-  private BazelBspServerBuildManager serverBuildManager;
-
   private BuildServer buildServer;
   private JavaBuildServer javaBuildServer;
   private ScalaBuildServer scalaBuildServer;
+
+  private BazelBspServerBuildManager serverBuildManager;
 
   public BazelBspServer(BazelBspServerConfig serverConfig) {
     this.serverConfig = serverConfig;
@@ -46,13 +46,6 @@ public class BazelBspServer {
         new BazelBspServerBuildManager(
             serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
 
-    this.scalaBuildServer =
-        new ScalaBuildServerImpl(
-            serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
-    this.javaBuildServer =
-        new JavaBuildServerImpl(
-            serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
-
     BuildServerService buildServerService =
         new BuildServerService(
             serverRequestHelpers,
@@ -61,6 +54,13 @@ public class BazelBspServer {
             bazelData,
             bazelRunner,
             queryResolver);
+    ScalaBuildServerService scalaBuildServerService =
+        new ScalaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
+    JavaBuildServerService javaBuildServerService =
+        new JavaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
+
+    this.scalaBuildServer = new ScalaBuildServerImpl(scalaBuildServerService, serverRequestHelpers);
+    this.javaBuildServer = new JavaBuildServerImpl(javaBuildServerService, serverRequestHelpers);
     this.buildServer = new BuildServerImpl(buildServerService, serverRequestHelpers);
 
     integrateBsp(bspIntegration);
