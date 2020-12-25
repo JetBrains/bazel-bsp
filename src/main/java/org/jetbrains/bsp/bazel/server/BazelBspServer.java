@@ -1,8 +1,10 @@
 package org.jetbrains.bsp.bazel.server;
 
+import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
+import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
@@ -34,7 +36,7 @@ public class BazelBspServer {
 
   // TODO: imho bsp server creation on the server side is too ambiguous
   // (constructor + setters)
-  public BazelBspServer(BazelBspServerConfig serverConfig) {
+  public BazelBspServer(BazelBspServerConfig serverConfig, BspIntegration bspIntegration) {
     this.serverConfig = serverConfig;
     this.serverLifetime = new BazelBspServerLifetime();
     this.serverRequestHelpers = new BazelBspServerRequestHelpers(serverLifetime);
@@ -60,27 +62,34 @@ public class BazelBspServer {
 
     this.buildServer =
         new BuildServerImpl(serverConfig, serverLifetime, serverRequestHelpers, serverBuildManager, bazelData, bazelRunner, queryResolver);
-
     serverBuildManager.setBuildServer(buildServer);
+
+    integrateBsp(bspIntegration);
   }
 
-  public void setBuildClientLogger(BuildClientLogger buildClientLogger) {
-    this.buildClientLogger = buildClientLogger;
+  private void integrateBsp(BspIntegration bspIntegration) {
+    Launcher<BuildClient> launcher =
+        new Launcher.Builder()
+            .traceMessages(bspIntegration.getTraceWriter())
+            .setOutput(bspIntegration.getStdout())
+            .setInput(bspIntegration.getStdin())
+            .setLocalService(buildServer)
+            .setRemoteInterface(BuildClient.class)
+            .setExecutorService(bspIntegration.getExecutor())
+            .create();
+    bspIntegration.setLauncher(launcher);
+
+    this.buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
+    this.bepServer = new BepServer(this, launcher.getRemoteProxy(), buildClientLogger);
+    serverBuildManager.setBepServer(bepServer);
   }
 
   public void setBesBackendPort(int port) {
     bazelRunner.setBesBackendPort(port);
   }
 
-  // TODO unnecessary?
-  public BuildServer getBuildServer() {
-    return buildServer;
-  }
-
-  public void setBepServer(BepServer bepServer) {
-    this.bepServer = bepServer;
-    // TODO remove after fix
-    serverBuildManager.setBepServer(bepServer);
+  public BepServer getBepServer() {
+    return bepServer;
   }
 
   // TODO Remove after the dependency between BspServer and BepServer is made more sensible.

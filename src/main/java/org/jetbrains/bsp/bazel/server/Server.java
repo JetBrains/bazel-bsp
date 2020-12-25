@@ -26,7 +26,6 @@ public class Server {
 
     PrintStream stdout = System.out;
     InputStream stdin = System.in;
-
     ExecutorService executor = Executors.newCachedThreadPool();
 
     try {
@@ -47,25 +46,14 @@ public class Server {
       System.setOut(logStream);
       System.setErr(logStream);
 
+      BspIntegration bspIntegration = new BspIntegration(stdout, stdin, executor, traceWriter);
       BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
-      BazelBspServer bspServer = new BazelBspServer(serverConfig);
+      BazelBspServer bspServer = new BazelBspServer(serverConfig, bspIntegration);
 
-      Launcher<BuildClient> launcher =
-          new Launcher.Builder()
-              .traceMessages(traceWriter)
-              .setOutput(stdout)
-              .setInput(stdin)
-              .setLocalService(bspServer.getBuildServer())
-              .setRemoteInterface(BuildClient.class)
-              .setExecutorService(executor)
-              .create();
-      BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
-      bspServer.setBuildClientLogger(buildClientLogger);
-      BepServer bepServer = new BepServer(bspServer, launcher.getRemoteProxy(), buildClientLogger);
-      bspServer.setBepServer(bepServer);
-      io.grpc.Server server = ServerBuilder.forPort(0).addService(bepServer).build().start();
+      io.grpc.Server server = ServerBuilder.forPort(0).addService(bspServer.getBepServer()).build().start();
       bspServer.setBesBackendPort(server.getPort());
-      launcher.startListening();
+
+      bspIntegration.getLauncher().startListening();
       server.awaitTermination();
     } catch (Exception e) {
       e.printStackTrace();
