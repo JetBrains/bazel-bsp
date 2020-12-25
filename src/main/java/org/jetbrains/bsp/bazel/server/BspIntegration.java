@@ -10,15 +10,11 @@ import org.eclipse.lsp4j.jsonrpc.Launcher;
 public class BspIntegration {
 
   private final PrintStream stdout;
-
   private final InputStream stdin;
-
   private final ExecutorService executor;
-
   private final PrintWriter traceWriter;
 
   private Launcher<BuildClient> launcher;
-
   private io.grpc.Server server;
 
   public BspIntegration(

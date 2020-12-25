@@ -14,32 +14,36 @@ import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 
 public class BazelBspServer {
 
-  private final BazelBspServerBuildManager serverBuildManager;
+  private final BazelBspServerConfig serverConfig;
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
 
-  public BazelBspServer(BazelBspServerConfig serverConfig, BspIntegration bspIntegration) {
+  private BazelBspServerBuildManager serverBuildManager;
+
+  public BazelBspServer(BazelBspServerConfig serverConfig) {
+    this.serverConfig = serverConfig;
+    this.bazelRunner = new BazelRunner(serverConfig.getBazelPath());
+    BazelDataResolver bazelDataResolver = new BazelDataResolver(bazelRunner);
+    this.bazelData = bazelDataResolver.resolveBazelData();
+  }
+
+  void startServer(BspIntegration bspIntegration) {
     BazelBspServerLifetime serverLifetime = new BazelBspServerLifetime();
     BazelBspServerRequestHelpers serverRequestHelpers =
         new BazelBspServerRequestHelpers(serverLifetime);
 
-    this.bazelRunner = new BazelRunner(serverConfig.getBazelPath());
     QueryResolver queryResolver = new QueryResolver(bazelRunner);
     TargetsResolver targetsResolver = new TargetsResolver(queryResolver);
     ActionGraphResolver actionGraphResolver = new ActionGraphResolver(bazelRunner);
-    BazelDataResolver bazelDataResolver = new BazelDataResolver(bazelRunner);
-    this.bazelData = bazelDataResolver.resolveBazelData();
-
-    new ScalaBuildServerImpl(serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
-    new JavaBuildServerImpl(serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
 
     this.serverBuildManager =
         new BazelBspServerBuildManager(
             serverConfig, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
 
+    new ScalaBuildServerImpl(serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
+    new JavaBuildServerImpl(serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
     BuildServer buildServer =
         new BuildServerImpl(
-            serverConfig,
             serverLifetime,
             serverRequestHelpers,
             serverBuildManager,

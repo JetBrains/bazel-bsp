@@ -51,7 +51,6 @@ import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BuildServerImpl implements BuildServer {
 
-  private final BazelBspServerConfig serverConfig;
   private final BazelBspServerLifetime serverLifetime;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelBspServerBuildManager serverBuildManager;
@@ -61,14 +60,12 @@ public class BuildServerImpl implements BuildServer {
   private final QueryResolver queryResolver;
 
   public BuildServerImpl(
-      BazelBspServerConfig serverConfig,
       BazelBspServerLifetime serverLifetime,
       BazelBspServerRequestHelpers serverRequestHelpers,
       BazelBspServerBuildManager serverBuildManager,
       BazelData bazelData,
       BazelRunner bazelRunner,
       QueryResolver queryResolver) {
-    this.serverConfig = serverConfig;
     this.serverLifetime = serverLifetime;
     this.serverRequestHelpers = serverRequestHelpers;
     this.serverBuildManager = serverBuildManager;

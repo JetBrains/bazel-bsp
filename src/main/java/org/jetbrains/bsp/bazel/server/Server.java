@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.server;
 
-import ch.epfl.scala.bsp4j.BuildClient;
-import io.grpc.ServerBuilder;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -12,9 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class Server {
   public static void main(String[] args) {
@@ -48,7 +44,8 @@ public class Server {
 
       BspIntegration bspIntegration = new BspIntegration(stdout, stdin, executor, traceWriter);
       BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
-      BazelBspServer bspServer = new BazelBspServer(serverConfig, bspIntegration);
+      BazelBspServer bspServer = new BazelBspServer(serverConfig);
+      bspServer.startServer(bspIntegration);
 
       io.grpc.Server server = bspIntegration.getServer().start();
       bspServer.setBesBackendPort(server.getPort());
