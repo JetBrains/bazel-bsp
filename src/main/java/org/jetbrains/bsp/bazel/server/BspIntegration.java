@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
-import io.grpc.Server;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -54,11 +53,11 @@ public class BspIntegration {
     this.launcher = launcher;
   }
 
-  public Server getServer() {
+  public io.grpc.Server getServer() {
     return server;
   }
 
-  public void setServer(Server server) {
+  public void setServer(io.grpc.Server server) {
     this.server = server;
   }
 }

@@ -50,7 +50,7 @@ public class Server {
       BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
       BazelBspServer bspServer = new BazelBspServer(serverConfig, bspIntegration);
 
-      io.grpc.Server server = ServerBuilder.forPort(0).addService(bspServer.getBepServer()).build().start();
+      io.grpc.Server server = bspIntegration.getServer().start();
       bspServer.setBesBackendPort(server.getPort());
 
       bspIntegration.getLauncher().startListening();

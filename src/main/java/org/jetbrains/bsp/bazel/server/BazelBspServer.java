@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
+import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
@@ -68,8 +69,7 @@ public class BazelBspServer {
   }
 
   private void integrateBsp(BspIntegration bspIntegration) {
-    Launcher<BuildClient> launcher =
-        new Launcher.Builder()
+    Launcher<BuildClient> launcher = new Launcher.Builder<BuildClient>()
             .traceMessages(bspIntegration.getTraceWriter())
             .setOutput(bspIntegration.getStdout())
             .setInput(bspIntegration.getStdin())
@@ -82,14 +82,12 @@ public class BazelBspServer {
     this.buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
     this.bepServer = new BepServer(this, launcher.getRemoteProxy(), buildClientLogger);
     serverBuildManager.setBepServer(bepServer);
+
+    bspIntegration.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }
 
   public void setBesBackendPort(int port) {
     bazelRunner.setBesBackendPort(port);
-  }
-
-  public BepServer getBepServer() {
-    return bepServer;
   }
 
   // TODO Remove after the dependency between BspServer and BepServer is made more sensible.
