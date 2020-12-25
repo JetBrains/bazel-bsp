@@ -18,31 +18,29 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
-// TODO: This class *should* implement a `JavaBuildServer` interface,
-// TODO: now `buildTargetJavacOptions` method returns a `Either<ResponseError, JavacOptionsResult>`
-// TODO: instead of a `CompletableFuture<JavacOptionsResult>` because of the `BazelBspServer`
-// TODO: command executing (`executeCommand`) implementation.
 public class JavaBuildServerImpl implements JavaBuildServer {
 
   private final BazelBspServerRequestHelpers serverRequestHelpers;
 
+  private final BazelData bazelData;
+
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
-  private final String execRoot;
 
   public JavaBuildServerImpl(
       BazelBspServerRequestHelpers serverRequestHelpers,
+      BazelData bazelData,
       TargetsResolver targetsResolver,
-      ActionGraphResolver actionGraphResolver,
-      String execRoot) {
+      ActionGraphResolver actionGraphResolver) {
     this.serverRequestHelpers = serverRequestHelpers;
+    this.bazelData = bazelData;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.execRoot = execRoot;
   }
 
   @Override
@@ -76,7 +74,7 @@ public class JavaBuildServerImpl implements JavaBuildServer {
                         collectJavacOptionsResult(
                             actionGraphParser,
                             targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            actionGraphParser.getInputsAsUri(target, execRoot),
+                            actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot()),
                             target))
                 .collect(Collectors.toList()));
     return Either.forRight(result);
@@ -94,6 +92,7 @@ public class JavaBuildServerImpl implements JavaBuildServer {
                     new BuildTargetIdentifier(target),
                     options,
                     inputs,
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, bazelData.getExecRoot())
+                        .toString()));
   }
 }

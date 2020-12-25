@@ -54,9 +54,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   public BepServer(
       BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
     this.bspServer = bspServer;
+    // TODO BepServer should get BazelData and other parts of the BspServer it needs
+    // TODO in the constructor. To be fixed after the dependency between BepServer and BspServer
+    // TODO is made more sensible
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
-    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bspServer, bspClient);
+    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bspServer, bspServer.getBazelData(), bspClient);
   }
 
   @Override

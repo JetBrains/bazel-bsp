@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.data.BazelData;
 
 public class BepDiagnosticsDispatcher {
 
@@ -39,11 +40,14 @@ public class BepDiagnosticsDispatcher {
           .put(Severity.HINT, DiagnosticSeverity.HINT)
           .build();
 
+  // TODO adjust dependencies after extracting from BazelBspServer
   private final BazelBspServer bspServer;
+  private final BazelData bazelData;
   private final BuildClient bspClient;
 
-  public BepDiagnosticsDispatcher(BazelBspServer bspServer, BuildClient bspClient) {
+  public BepDiagnosticsDispatcher(BazelBspServer bspServer, BazelData bazelData, BuildClient bspClient) {
     this.bspServer = bspServer;
+    this.bazelData = bazelData;
     this.bspClient = bspClient;
   }
 
@@ -124,6 +128,6 @@ public class BepDiagnosticsDispatcher {
 
   private Uri getUriForPath(String path) {
     return Uri.fromExecOrWorkspacePath(
-        path, bspServer.getBazelData().getExecRoot(), bspServer.getBazelData().getWorkspaceRoot());
+        path, bazelData.getExecRoot(), bazelData.getWorkspaceRoot());
   }
 }

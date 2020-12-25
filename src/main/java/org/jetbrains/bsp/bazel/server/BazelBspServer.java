@@ -81,13 +81,19 @@ public class BazelBspServer {
     // TODO won't be cyclical, make dependencies more organised
     this.buildServer =
         new BuildServerImpl(
-            this, serverConfig, serverLifetime, serverRequestHelpers, bazelData, bazelRunner, queryResolver);
+            this,
+            serverConfig,
+            serverLifetime,
+            serverRequestHelpers,
+            bazelData,
+            bazelRunner,
+            queryResolver);
     this.scalaBuildServer =
         new ScalaBuildServerImpl(
-            serverRequestHelpers, targetsResolver, actionGraphResolver, bazelData.getExecRoot());
+            serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
     this.javaBuildServer =
         new JavaBuildServerImpl(
-            serverRequestHelpers, targetsResolver, actionGraphResolver, bazelData.getExecRoot());
+            serverRequestHelpers, bazelData, targetsResolver, actionGraphResolver);
   }
 
   public BuildTarget getBuildTarget(Build.Rule rule) {
@@ -384,5 +390,13 @@ public class BazelBspServer {
 
   public BuildServer getBuildServer() {
     return buildServer;
+  }
+
+  // TODO Remove after the dependency between BspServer and BepServer is made more sensible.
+  // BazelData should be added as a dependency in the constructor instead of the whole
+  // BazelBspServer
+  @Deprecated
+  public BazelData getBazelData() {
+    return bazelData;
   }
 }
