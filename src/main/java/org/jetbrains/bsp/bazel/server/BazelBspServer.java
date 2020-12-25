@@ -1,43 +1,19 @@
 package org.jetbrains.bsp.bazel.server;
 
-import ch.epfl.scala.bsp4j.BuildServerCapabilities;
+import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.BuildTargetTag;
-import ch.epfl.scala.bsp4j.CleanCacheParams;
-import ch.epfl.scala.bsp4j.CleanCacheResult;
-import ch.epfl.scala.bsp4j.CompileParams;
-import ch.epfl.scala.bsp4j.CompileProvider;
 import ch.epfl.scala.bsp4j.CompileResult;
-import ch.epfl.scala.bsp4j.DependencySourcesItem;
-import ch.epfl.scala.bsp4j.DependencySourcesParams;
-import ch.epfl.scala.bsp4j.DependencySourcesResult;
-import ch.epfl.scala.bsp4j.InitializeBuildParams;
-import ch.epfl.scala.bsp4j.InitializeBuildResult;
-import ch.epfl.scala.bsp4j.InverseSourcesParams;
-import ch.epfl.scala.bsp4j.InverseSourcesResult;
+import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
-import ch.epfl.scala.bsp4j.ResourcesItem;
-import ch.epfl.scala.bsp4j.ResourcesParams;
-import ch.epfl.scala.bsp4j.ResourcesResult;
-import ch.epfl.scala.bsp4j.RunParams;
-import ch.epfl.scala.bsp4j.RunProvider;
-import ch.epfl.scala.bsp4j.RunResult;
+import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
 import ch.epfl.scala.bsp4j.ScalaPlatform;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
-import ch.epfl.scala.bsp4j.SourcesItem;
-import ch.epfl.scala.bsp4j.SourcesParams;
-import ch.epfl.scala.bsp4j.SourcesResult;
-import ch.epfl.scala.bsp4j.StatusCode;
-import ch.epfl.scala.bsp4j.TestParams;
-import ch.epfl.scala.bsp4j.TestProvider;
-import ch.epfl.scala.bsp4j.TestResult;
-import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -75,6 +51,7 @@ import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
+// TODO better names after splitting
 public class BazelBspServer {
 
   public static final ImmutableSet<String> KNOWN_SOURCE_ROOTS =
@@ -87,17 +64,17 @@ public class BazelBspServer {
 
   private final BazelBspServerConfig configuration;
   private final Map<BuildTargetIdentifier, List<SourceItem>> targetsToSources = new HashMap<>();
-  private final CompletableFuture<Void> isInitialized = new CompletableFuture<>();
-  private final CompletableFuture<Void> isFinished = new CompletableFuture<>();
+  private final CompletableFuture<Void> initializedStatus = new CompletableFuture<>();
+  private final CompletableFuture<Void> finishedStatus = new CompletableFuture<>();
   private final BazelRunner bazelRunner;
   private final QueryResolver queryResolver;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
   private final BazelDataResolver bazelDataResolver;
   private final BazelData bazelData;
-  private final BuildServerImpl buildServer;
-  private final ScalaBuildServerImpl scalaBuildServer;
-  private final JavaBuildServerImpl javaBuildServer;
+  private final BuildServer buildServer;
+  private final ScalaBuildServer scalaBuildServer;
+  private final JavaBuildServer javaBuildServer;
   private BepServer bepServer = null;
   private int backendPort;
   private ScalaBuildTarget scalacClasspath = null;
@@ -107,6 +84,7 @@ public class BazelBspServer {
   // TODO: imho bsp server creation on the server side is too ambiguous
   // (constructor + setters)
   public BazelBspServer(BazelBspServerConfig configuration) {
+    this.buildServer = new BuildServerImpl(this);
     this.configuration = configuration;
     this.bazelRunner = new BazelRunner(configuration.getBazelPath());
     this.queryResolver = new QueryResolver(bazelRunner);
@@ -116,84 +94,14 @@ public class BazelBspServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
 
     // TODO won't be cyclical, make dependencies more organised
-    this.buildServer = new BuildServerImpl(this);
     this.scalaBuildServer =
         new ScalaBuildServerImpl(
             this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
     this.javaBuildServer =
-        new JavaBuildServerImpl(
-            this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
+        new JavaBuildServerImpl(this, targetsResolver, actionGraphResolver, getBazelData().getExecRoot());
   }
 
-  public CompletableFuture<InitializeBuildResult> buildInitialize(
-      InitializeBuildParams initializeBuildParams) {
-    return handleBuildInitialize(
-        () -> {
-          BuildServerCapabilities capabilities = new BuildServerCapabilities();
-          capabilities.setCompileProvider(new CompileProvider(Constants.SUPPORTED_LANGUAGES));
-          capabilities.setRunProvider(new RunProvider(Constants.SUPPORTED_LANGUAGES));
-          capabilities.setTestProvider(new TestProvider(Constants.SUPPORTED_LANGUAGES));
-          capabilities.setDependencySourcesProvider(true);
-          capabilities.setInverseSourcesProvider(true);
-          capabilities.setResourcesProvider(true);
-          return Either.forRight(
-              new InitializeBuildResult(
-                  Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities));
-        });
-  }
-
-  public void onBuildInitialized() {
-    isInitialized.complete(null);
-  }
-
-  public CompletableFuture<Object> buildShutdown() {
-    return handleBuildShutdown(
-        () -> {
-          isFinished.complete(null);
-          return Either.forRight(new Object());
-        });
-  }
-
-  public void onBuildExit() {
-    try {
-      isFinished.get(1, TimeUnit.SECONDS);
-    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-      System.exit(1);
-    }
-
-    System.exit(0);
-  }
-
-  public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
-    return executeCommand(
-        () -> {
-          List<String> projectPaths = this.configuration.getTargetProjectPaths();
-          List<BuildTarget> targets = new ArrayList<>();
-          for (String projectPath : projectPaths) {
-            targets.addAll(getBuildTarget(projectPath));
-          }
-          return Either.forRight(new WorkspaceBuildTargetsResult(targets));
-        });
-  }
-
-  private List<BuildTarget> getBuildTarget(String projectPath) {
-    Build.QueryResult queryResult =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
-            "--nohost_deps",
-            "--noimplicit_deps",
-            String.format(
-                "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
-                projectPath, projectPath, projectPath));
-    return queryResult.getTargetList().stream()
-        .map(Build.Target::getRule)
-        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-        .map(this::getBuildTarget)
-        .collect(Collectors.toList());
-  }
-
-  private BuildTarget getBuildTarget(Build.Rule rule) {
+  public BuildTarget getBuildTarget(Build.Rule rule) {
     String name = rule.getName();
     System.out.println("Getting targets for rule: " + name);
     List<BuildTargetIdentifier> deps =
@@ -322,39 +230,7 @@ public class BazelBspServer {
     return version;
   }
 
-  public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    return executeCommand(
-        () -> {
-          Build.QueryResult queryResult =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
-                  "("
-                      + sourcesParams.getTargets().stream()
-                          .map(BuildTargetIdentifier::getUri)
-                          .collect(Collectors.joining("+"))
-                      + ")");
-
-          List<SourcesItem> sources =
-              queryResult.getTargetList().stream()
-                  .map(Build.Target::getRule)
-                  .map(
-                      rule -> {
-                        BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
-                        List<SourceItem> items = getSourceItems(rule, label);
-                        List<String> roots =
-                            Lists.newArrayList(
-                                Uri.fromAbsolutePath(getSourcesRoot(rule.getName())).toString());
-                        SourcesItem item = new SourcesItem(label, items);
-                        item.setRoots(roots);
-                        return item;
-                      })
-                  .collect(Collectors.toList());
-          return Either.forRight(new SourcesResult(sources));
-        });
-  }
-
-  private List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
+  public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
     List<SourceItem> srcs = getSrcs(rule, false);
     srcs.addAll(getSrcs(rule, true));
     targetsToSources.put(label, srcs);
@@ -394,7 +270,7 @@ public class BazelBspServer {
     return FILE_EXTENSIONS.stream().anyMatch(dep::endsWith) && !dep.startsWith("@");
   }
 
-  private String getSourcesRoot(String uri) {
+  public String getSourcesRoot(String uri) {
     List<String> root =
         KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
     return getBazelData().getWorkspaceRoot()
@@ -403,64 +279,7 @@ public class BazelBspServer {
             : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
   }
 
-  public CompletableFuture<InverseSourcesResult> buildTargetInverseSources(
-      InverseSourcesParams inverseSourcesParams) {
-    return executeCommand(
-        () -> {
-          String fileUri = inverseSourcesParams.getTextDocument().getUri();
-          String workspaceRoot = getBazelData().getWorkspaceRoot();
-          String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
-          if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
-            throw new RuntimeException(
-                "Could not resolve " + fileUri + " within workspace " + prefix);
-          }
-          Build.QueryResult result =
-              queryResolver.getQuery(
-                  "query",
-                  "--output=proto",
-                  "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
-          List<BuildTargetIdentifier> targets =
-              result.getTargetList().stream()
-                  .map(Build.Target::getRule)
-                  .map(Build.Rule::getName)
-                  .map(BuildTargetIdentifier::new)
-                  .collect(Collectors.toList());
-
-          return Either.forRight(new InverseSourcesResult(targets));
-        });
-  }
-
-  public CompletableFuture<DependencySourcesResult> buildTargetDependencySources(
-      DependencySourcesParams dependencySourcesParams) {
-    return executeCommand(
-        () -> {
-          List<String> targets =
-              dependencySourcesParams.getTargets().stream()
-                  .map(BuildTargetIdentifier::getUri)
-                  .collect(Collectors.toList());
-
-          DependencySourcesResult result =
-              new DependencySourcesResult(
-                  targets.stream()
-                      .sorted()
-                      .map(
-                          target -> {
-                            List<String> files =
-                                lookupTransitiveSourceJars(target).stream()
-                                    .map(
-                                        execPath ->
-                                            Uri.fromExecPath(execPath, getBazelData().getExecRoot())
-                                                .toString())
-                                    .collect(Collectors.toList());
-                            return new DependencySourcesItem(
-                                new BuildTargetIdentifier(target), files);
-                          })
-                      .collect(Collectors.toList()));
-          return Either.forRight(result);
-        });
-  }
-
-  private List<String> lookupTransitiveSourceJars(String target) {
+  public List<String> lookupTransitiveSourceJars(String target) {
     // TODO(illicitonion): Use an aspect output group, rather than parsing stderr
     // logging
     List<String> lines =
@@ -483,38 +302,7 @@ public class BazelBspServer {
         .collect(Collectors.toList());
   }
 
-  public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
-    return executeCommand(
-        () -> {
-          Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
-          System.out.println("Resources query result " + query);
-          ResourcesResult resourcesResult =
-              new ResourcesResult(
-                  query.getTargetList().stream()
-                      .map(Build.Target::getRule)
-                      .filter(
-                          rule ->
-                              resourcesParams.getTargets().stream()
-                                  .anyMatch(target -> target.getUri().equals(rule.getName())))
-                      .filter(
-                          rule ->
-                              rule.getAttributeList().stream()
-                                  .anyMatch(
-                                      attribute ->
-                                          attribute.getName().equals("resources")
-                                              && attribute.hasExplicitlySpecified()
-                                              && attribute.getExplicitlySpecified()))
-                      .map(
-                          rule ->
-                              new ResourcesItem(
-                                  new BuildTargetIdentifier(rule.getName()),
-                                  getResources(rule, query)))
-                      .collect(Collectors.toList()));
-          return Either.forRight(resourcesResult);
-        });
-  }
-
-  private List<String> getResources(Build.Rule rule, Build.QueryResult queryResult) {
+  public List<String> getResources(Build.Rule rule, Build.QueryResult queryResult) {
     return rule.getAttributeList().stream()
         .filter(
             attribute ->
@@ -560,11 +348,7 @@ public class BazelBspServer {
         .collect(Collectors.toList());
   }
 
-  public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
-    return executeCommand(() -> buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>()));
-  }
-
-  private Either<ResponseError, CompileResult> buildTargetsWithBep(
+  public Either<ResponseError, CompileResult> buildTargetsWithBep(
       List<BuildTargetIdentifier> targets, List<String> extraFlags) {
     List<String> args = Lists.newArrayList(Constants.BAZEL_BUILD_COMMAND);
     args.addAll(targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList()));
@@ -595,7 +379,8 @@ public class BazelBspServer {
 
     try {
       if (targetsToSources.isEmpty()) {
-        workspaceBuildTargets().wait();
+        // TODO probably should be done in a better way
+        buildServer.workspaceBuildTargets().wait();
       }
 
       ProcessResults processResults = bazelRunner.runBazelCommandBes(args);
@@ -620,86 +405,7 @@ public class BazelBspServer {
     return prefix + pathToFile;
   }
 
-  public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
-    return executeCommand(
-        () -> {
-          Either<ResponseError, CompileResult> build =
-              buildTargetsWithBep(Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
-          if (build.isLeft()) {
-            return Either.forLeft(build.getLeft());
-          }
-
-          CompileResult result = build.getRight();
-          if (result.getStatusCode() != StatusCode.OK) {
-            return Either.forRight(new TestResult(result.getStatusCode()));
-          }
-
-          String testTargets =
-              Joiner.on("+")
-                  .join(
-                      testParams.getTargets().stream()
-                          .map(BuildTargetIdentifier::getUri)
-                          .collect(Collectors.toList()));
-          ProcessResults processResults =
-              bazelRunner.runBazelCommand(
-                  Lists.asList(
-                      Constants.BAZEL_TEST_COMMAND,
-                      "(" + testTargets + ")",
-                      testParams.getArguments().toArray(new String[0])));
-
-          return Either.forRight(
-              new TestResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
-        });
-  }
-
-  public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
-    return executeCommand(
-        () -> {
-          Either<ResponseError, CompileResult> build =
-              buildTargetsWithBep(Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
-          if (build.isLeft()) {
-            return Either.forLeft(build.getLeft());
-          }
-
-          CompileResult result = build.getRight();
-          if (result.getStatusCode() != StatusCode.OK) {
-            return Either.forRight(new RunResult(result.getStatusCode()));
-          }
-
-          ProcessResults processResults =
-              bazelRunner.runBazelCommand(
-                  Lists.asList(
-                      Constants.BAZEL_RUN_COMMAND,
-                      runParams.getTarget().getUri(),
-                      runParams.getArguments().toArray(new String[0])));
-
-          return Either.forRight(
-              new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
-        });
-  }
-
-  public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
-      CleanCacheParams cleanCacheParams) {
-    return executeCommand(
-        () -> {
-          CleanCacheResult result;
-          try {
-            result =
-                new CleanCacheResult(
-                    String.join(
-                        "\n",
-                        bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
-                    true);
-          } catch (RuntimeException e) {
-            // TODO does it make sense to return a successful response here?
-            // If we caught an exception here, there was an internal server error...
-            result = new CleanCacheResult(e.getMessage(), false);
-          }
-          return Either.forRight(result);
-        });
-  }
-
-  private <T> CompletableFuture<T> handleBuildInitialize(
+  public <T> CompletableFuture<T> handleBuildInitialize(
       Supplier<Either<ResponseError, T>> request) {
     if (isFinished()) {
       return completeExceptionally(
@@ -710,7 +416,7 @@ public class BazelBspServer {
     return getValue(request);
   }
 
-  private <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
+  public <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
     if (!isInitialized()) {
       return completeExceptionally(
           new ResponseError(
@@ -745,7 +451,7 @@ public class BazelBspServer {
 
   private boolean isInitialized() {
     try {
-      isInitialized.get(1, TimeUnit.SECONDS);
+      initializedStatus.get(1, TimeUnit.SECONDS);
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
       return false;
     }
@@ -753,7 +459,7 @@ public class BazelBspServer {
   }
 
   private boolean isFinished() {
-    return isFinished.isDone();
+    return finishedStatus.isDone();
   }
 
   private <T> CompletableFuture<T> getValue(Supplier<Either<ResponseError, T>> request) {
@@ -795,8 +501,29 @@ public class BazelBspServer {
     this.bepServer = bepServer;
   }
 
+  public CompletableFuture<Void> getInitializedStatus() {
+    return initializedStatus;
+  }
+
+  public CompletableFuture<Void> getFinishedStatus() {
+    return finishedStatus;
+  }
+
+  // TODO method instead of a getter
+  public QueryResolver getQueryResolver() {
+    return queryResolver;
+  }
+
+  public BazelRunner getBazelRunner() {
+    return bazelRunner;
+  }
+
   // TODO do better
-  public BuildServerImpl getBuildServer() {
+  public BazelBspServerConfig getConfiguration() {
+    return configuration;
+  }
+
+  public BuildServer getBuildServer() {
     return buildServer;
   }
 }
