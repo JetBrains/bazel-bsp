@@ -77,19 +77,20 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<InitializeBuildResult> buildInitialize(
       InitializeBuildParams initializeBuildParams) {
-    return handleBuildInitialize(
-        () -> {
-          BuildServerCapabilities capabilities = new BuildServerCapabilities();
-          capabilities.setCompileProvider(new CompileProvider(Constants.SUPPORTED_LANGUAGES));
-          capabilities.setRunProvider(new RunProvider(Constants.SUPPORTED_LANGUAGES));
-          capabilities.setTestProvider(new TestProvider(Constants.SUPPORTED_LANGUAGES));
-          capabilities.setDependencySourcesProvider(true);
-          capabilities.setInverseSourcesProvider(true);
-          capabilities.setResourcesProvider(true);
-          return Either.forRight(
-              new InitializeBuildResult(
-                  Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities));
-        });
+    return handleBuildInitialize(this::buildInitializeToService);
+  }
+
+  private Either<ResponseError, InitializeBuildResult> buildInitializeToService() {
+    BuildServerCapabilities capabilities = new BuildServerCapabilities();
+    capabilities.setCompileProvider(new CompileProvider(Constants.SUPPORTED_LANGUAGES));
+    capabilities.setRunProvider(new RunProvider(Constants.SUPPORTED_LANGUAGES));
+    capabilities.setTestProvider(new TestProvider(Constants.SUPPORTED_LANGUAGES));
+    capabilities.setDependencySourcesProvider(true);
+    capabilities.setInverseSourcesProvider(true);
+    capabilities.setResourcesProvider(true);
+    return Either.forRight(
+        new InitializeBuildResult(
+            Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities));
   }
 
   private <T> CompletableFuture<T> handleBuildInitialize(
@@ -105,16 +106,21 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public void onBuildInitialized() {
+    handleOnBuildInitialized();
+  }
+
+  private void handleOnBuildInitialized() {
     serverLifetime.setInitializedComplete();
   }
 
   @Override
   public CompletableFuture<Object> buildShutdown() {
-    return handleBuildShutdown(
-        () -> {
-          serverLifetime.setFinishedComplete();
-          return Either.forRight(new Object());
-        });
+    return handleBuildShutdown(this::buildShutdownToService);
+  }
+
+  private Either<ResponseError, Object> buildShutdownToService() {
+    serverLifetime.setFinishedComplete();
+    return Either.forRight(new Object());
   }
 
   private <T> CompletableFuture<T> handleBuildShutdown(Supplier<Either<ResponseError, T>> request) {
@@ -129,29 +135,37 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public void onBuildExit() {
+    handleOnBuildExit();
+  }
+
+  private void handleOnBuildExit() {
     serverLifetime.forceFinished();
   }
 
   @Override
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
+    return handleWorkspaceBuildTargets();
+  }
+
+  private CompletableFuture<WorkspaceBuildTargetsResult> handleWorkspaceBuildTargets() {
     return serverBuildManager.getWorkspaceBuildTargets();
   }
 
   @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    return serverRequestHelpers.executeCommand(
-        () -> handleBuildTargetSources(sourcesParams));
+    return serverRequestHelpers.executeCommand(() -> handleBuildTargetSources(sourcesParams));
   }
 
-  private Either<ResponseError, SourcesResult> handleBuildTargetSources(SourcesParams sourcesParams) {
+  private Either<ResponseError, SourcesResult> handleBuildTargetSources(
+      SourcesParams sourcesParams) {
     Build.QueryResult queryResult =
         queryResolver.getQuery(
             "query",
             "--output=proto",
             "("
                 + sourcesParams.getTargets().stream()
-                .map(BuildTargetIdentifier::getUri)
-                .collect(Collectors.joining("+"))
+                    .map(BuildTargetIdentifier::getUri)
+                    .collect(Collectors.joining("+"))
                 + ")");
 
     List<SourcesItem> sources =
@@ -163,8 +177,7 @@ public class BuildServerImpl implements BuildServer {
                   List<SourceItem> items = serverBuildManager.getSourceItems(rule, label);
                   List<String> roots =
                       Lists.newArrayList(
-                          Uri.fromAbsolutePath(
-                              serverBuildManager.getSourcesRoot(rule.getName()))
+                          Uri.fromAbsolutePath(serverBuildManager.getSourcesRoot(rule.getName()))
                               .toString());
                   SourcesItem item = new SourcesItem(label, items);
                   item.setRoots(roots);
@@ -182,13 +195,13 @@ public class BuildServerImpl implements BuildServer {
         () -> handleBuildTargetInverseSources(inverseSourcesParams));
   }
 
-  private Either<ResponseError, InverseSourcesResult> handleBuildTargetInverseSources(InverseSourcesParams inverseSourcesParams) {
+  private Either<ResponseError, InverseSourcesResult> handleBuildTargetInverseSources(
+      InverseSourcesParams inverseSourcesParams) {
     String fileUri = inverseSourcesParams.getTextDocument().getUri();
     String workspaceRoot = bazelData.getWorkspaceRoot();
     String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
     if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
-      throw new RuntimeException(
-          "Could not resolve " + fileUri + " within workspace " + prefix);
+      throw new RuntimeException("Could not resolve " + fileUri + " within workspace " + prefix);
     }
     Build.QueryResult result =
         queryResolver.getQuery(
@@ -212,7 +225,8 @@ public class BuildServerImpl implements BuildServer {
         () -> handleBuildTargetDependencySources(dependencySourcesParams));
   }
 
-  private Either<ResponseError, DependencySourcesResult> handleBuildTargetDependencySources(DependencySourcesParams dependencySourcesParams) {
+  private Either<ResponseError, DependencySourcesResult> handleBuildTargetDependencySources(
+      DependencySourcesParams dependencySourcesParams) {
     List<String> targets =
         dependencySourcesParams.getTargets().stream()
             .map(BuildTargetIdentifier::getUri)
@@ -231,8 +245,7 @@ public class BuildServerImpl implements BuildServer {
                                       Uri.fromExecPath(execPath, bazelData.getExecRoot())
                                           .toString())
                               .collect(Collectors.toList());
-                      return new DependencySourcesItem(
-                          new BuildTargetIdentifier(target), files);
+                      return new DependencySourcesItem(new BuildTargetIdentifier(target), files);
                     })
                 .collect(Collectors.toList()));
 
@@ -241,11 +254,11 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
-    return serverRequestHelpers.executeCommand(
-        () -> handleBuildTargetResources(resourcesParams));
+    return serverRequestHelpers.executeCommand(() -> handleBuildTargetResources(resourcesParams));
   }
 
-  private Either<ResponseError, ResourcesResult> handleBuildTargetResources(ResourcesParams resourcesParams) {
+  private Either<ResponseError, ResourcesResult> handleBuildTargetResources(
+      ResourcesParams resourcesParams) {
     Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
     System.out.println("Resources query result " + query);
     ResourcesResult resourcesResult =
@@ -276,18 +289,17 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
-    return serverRequestHelpers.executeCommand(
-        () -> handleBuildTargetCompile(compileParams));
+    return serverRequestHelpers.executeCommand(() -> handleBuildTargetCompile(compileParams));
   }
 
-  private Either<ResponseError, CompileResult> handleBuildTargetCompile(CompileParams compileParams) {
+  private Either<ResponseError, CompileResult> handleBuildTargetCompile(
+      CompileParams compileParams) {
     return serverBuildManager.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>());
   }
 
   @Override
   public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
-    return serverRequestHelpers.executeCommand(
-        () -> handleBuildTargetTest(testParams));
+    return serverRequestHelpers.executeCommand(() -> handleBuildTargetTest(testParams));
   }
 
   private Either<ResponseError, TestResult> handleBuildTargetTest(TestParams testParams) {
@@ -322,8 +334,7 @@ public class BuildServerImpl implements BuildServer {
 
   @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
-    return serverRequestHelpers.executeCommand(
-        () -> handleBuildTargetRun(runParams));
+    return serverRequestHelpers.executeCommand(() -> handleBuildTargetRun(runParams));
   }
 
   private Either<ResponseError, RunResult> handleBuildTargetRun(RunParams runParams) {
@@ -346,25 +357,23 @@ public class BuildServerImpl implements BuildServer {
                 runParams.getTarget().getUri(),
                 runParams.getArguments().toArray(new String[0])));
 
-    return Either.forRight(
-        new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
+    return Either.forRight(new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
   }
 
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
-    return serverRequestHelpers.executeCommand(
-        () -> handleBuildTargetCleanCache(cleanCacheParams));
+    return serverRequestHelpers.executeCommand(() -> handleBuildTargetCleanCache(cleanCacheParams));
   }
 
-  private Either<ResponseError, CleanCacheResult> handleBuildTargetCleanCache(CleanCacheParams cleanCacheParams) {
+  private Either<ResponseError, CleanCacheResult> handleBuildTargetCleanCache(
+      CleanCacheParams cleanCacheParams) {
     CleanCacheResult result;
     try {
       result =
           new CleanCacheResult(
               String.join(
-                  "\n",
-                  bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
+                  "\n", bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
               true);
     } catch (RuntimeException e) {
       // TODO does it make sense to return a successful response here?
