@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.bazel;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.utils.BazelArgumentsUtils;
 
 public class BazelRunnerBuilder {
 
@@ -40,6 +41,13 @@ public class BazelRunnerBuilder {
 
   public BazelRunnerBuilder withArgument(String argument) {
     arguments.add(argument);
+
+    return this;
+  }
+
+  public BazelRunnerBuilder withTargets(List<String> targets) {
+    String joinedTargets = BazelArgumentsUtils.getJoinedBazelTargets(targets);
+    arguments.add(joinedTargets);
 
     return this;
   }

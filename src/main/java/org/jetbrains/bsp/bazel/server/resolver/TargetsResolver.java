@@ -22,7 +22,7 @@ public class TargetsResolver {
         bazelRunner.commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withArguments(targets)
+            .withTargets(targets)
             .runBazel();
     Build.QueryResult query = QueryResolver.getQueryResultForProcess(processResults);
 
