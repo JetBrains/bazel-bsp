@@ -7,6 +7,7 @@ java_library(
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data:bazel-data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils:bazel-utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",

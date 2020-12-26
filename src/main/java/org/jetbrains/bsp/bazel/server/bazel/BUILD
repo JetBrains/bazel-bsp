@@ -6,8 +6,8 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data:bazel-data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils:bazel-utils",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/data",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:com_google_guava_guava",

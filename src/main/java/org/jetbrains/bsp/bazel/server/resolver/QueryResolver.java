@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.server.resolver;
 
-import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
 import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.server.bazel.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 
 public class QueryResolver {

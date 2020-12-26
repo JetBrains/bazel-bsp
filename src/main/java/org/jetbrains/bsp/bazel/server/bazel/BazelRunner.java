@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 
 public class BazelRunner {
 

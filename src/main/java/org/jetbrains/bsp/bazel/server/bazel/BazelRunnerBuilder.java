@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bazel;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 
 public class BazelRunnerBuilder {
 

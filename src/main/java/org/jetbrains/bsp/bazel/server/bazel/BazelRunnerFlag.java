@@ -11,10 +11,6 @@ public enum BazelRunnerFlag {
     this.name = value;
   }
 
-  public boolean equalsName(String otherName) {
-    return name.equals(otherName);
-  }
-
   public String toString() {
     return this.name;
   }

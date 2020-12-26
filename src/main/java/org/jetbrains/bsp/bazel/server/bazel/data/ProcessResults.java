@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bazel;
+package org.jetbrains.bsp.bazel.server.bazel.data;
 
 import java.io.BufferedReader;
 import java.io.IOException;
