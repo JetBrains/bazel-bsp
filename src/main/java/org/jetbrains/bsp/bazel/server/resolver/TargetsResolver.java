@@ -4,18 +4,27 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 
 public class TargetsResolver {
 
-  private final QueryResolver queryResolver;
+  private final BazelRunner bazelRunner;
 
-  public TargetsResolver(QueryResolver queryResolver) {
-    this.queryResolver = queryResolver;
+  public TargetsResolver(BazelRunner bazelRunner) {
+    this.bazelRunner = bazelRunner;
   }
 
   public Map<String, List<String>> getTargetsOptions(
       List<String> targets, String compilerOptionsName) {
-    Build.QueryResult query = queryResolver.getQueryResultForTargets(targets);
+    ProcessResults processResults =
+        bazelRunner.commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withArguments(targets)
+            .runBazel();
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(processResults);
 
     return query.getTargetList().stream()
         .map(Build.Target::getRule)
