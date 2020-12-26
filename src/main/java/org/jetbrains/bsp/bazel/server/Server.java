@@ -11,8 +11,11 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
+import org.jetbrains.bsp.bazel.server.bsp.BspIntegration;
 
 public class Server {
+
   public static void main(String[] args) {
     if (args.length == 0) {
       System.err.printf("Expected path to bazel; got args: %s%n", Arrays.toString(args));

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.resolvers;
+package org.jetbrains.bsp.bazel.server.resolver;
 
 import com.google.common.collect.Lists;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
 
 public class BazelRunner {
+
   private static final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
   private static final String BES_BACKEND = "--bes_backend=grpc://localhost:";
 

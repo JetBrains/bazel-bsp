@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.bsp;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import java.io.InputStream;

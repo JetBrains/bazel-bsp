@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.utils;
+package org.jetbrains.bsp.bazel.server.util;
 
 import ch.epfl.scala.bsp4j.BuildTargetTag;
 import ch.epfl.scala.bsp4j.Diagnostic;
@@ -25,7 +25,6 @@ import org.jetbrains.bsp.bazel.common.Constants;
 public class ParsingUtils {
 
   private static final Logger LOGGER = LogManager.getLogger(ParsingUtils.class);
-
   private static final String ERROR = "ERROR";
   private static final String ERROR_PREAMBLE = ERROR + ": ";
   private static final String AT_PATH = " at /";

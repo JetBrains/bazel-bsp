@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.bsp;
 
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
@@ -32,9 +32,9 @@ import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
-import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.resolver.BazelRunner;
+import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
+import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class BazelBspServerBuildManager {
 
@@ -210,7 +210,6 @@ public class BazelBspServerBuildManager {
 
     try {
       if (bepServer.getBuildTargetsSources().isEmpty()) {
-        // TODO probably should be done in a better way
         getWorkspaceBuildTargets().wait();
       }
 
@@ -234,7 +233,6 @@ public class BazelBspServerBuildManager {
   public CompletableFuture<WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
     return serverRequestHelpers.executeCommand(
         () -> {
-          // TODO pass configuration instead of calling a method
           List<String> projectPaths = serverConfig.getTargetProjectPaths();
           List<BuildTarget> targets = new ArrayList<>();
           for (String projectPath : projectPaths) {

@@ -33,12 +33,11 @@ import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
-
   private static final int URI_PREFIX_LENGTH = 7;
 
   private final BuildClient bspClient;

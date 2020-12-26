@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.resolvers;
+package org.jetbrains.bsp.bazel.server.resolver;
 
 import com.google.common.collect.Iterables;
 import java.nio.file.Path;
@@ -8,6 +8,7 @@ import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
 
 public class BazelDataResolver {
+
   private final BazelRunner bazelRunner;
 
   public BazelDataResolver(BazelRunner bazelRunner) {

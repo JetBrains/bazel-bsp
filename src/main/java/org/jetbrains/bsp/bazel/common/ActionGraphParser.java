@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 // TODO(illicitonion): Index, cache, etc
 public class ActionGraphParser {
+
   private final AnalysisProtos.ActionGraphContainer actionGraph;
 
   public ActionGraphParser(AnalysisProtos.ActionGraphContainer actionGraph) {

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.service;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
@@ -17,9 +17,9 @@ import org.jetbrains.bsp.bazel.common.ActionGraphParser;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class JavaBuildServerService {
 

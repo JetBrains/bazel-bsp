@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.resolvers;
+package org.jetbrains.bsp.bazel.server.resolver;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContainer;

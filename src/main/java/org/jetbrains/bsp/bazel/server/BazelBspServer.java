@@ -6,14 +6,25 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
+import org.jetbrains.bsp.bazel.server.api.BuildServerImpl;
+import org.jetbrains.bsp.bazel.server.api.JavaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.api.ScalaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
+import org.jetbrains.bsp.bazel.server.bsp.BspIntegration;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.BazelDataResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolver.BazelDataResolver;
+import org.jetbrains.bsp.bazel.server.resolver.BazelRunner;
+import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
+import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.service.BuildServerService;
+import org.jetbrains.bsp.bazel.server.service.JavaBuildServerService;
+import org.jetbrains.bsp.bazel.server.service.ScalaBuildServerService;
 
 public class BazelBspServer {
 

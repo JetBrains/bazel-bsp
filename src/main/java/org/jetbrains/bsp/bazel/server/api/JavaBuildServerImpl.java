@@ -1,9 +1,11 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.api;
 
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import java.util.concurrent.CompletableFuture;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
+import org.jetbrains.bsp.bazel.server.service.JavaBuildServerService;
 
 public class JavaBuildServerImpl implements JavaBuildServer {
 

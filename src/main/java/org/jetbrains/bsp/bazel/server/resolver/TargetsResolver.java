@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.resolvers;
+package org.jetbrains.bsp.bazel.server.resolver;
 
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;

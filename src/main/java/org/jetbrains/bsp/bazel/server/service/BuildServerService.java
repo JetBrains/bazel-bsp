@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.service;
 
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
@@ -42,11 +42,14 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
+import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.data.ProcessResults;
-import org.jetbrains.bsp.bazel.server.resolvers.BazelRunner;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.resolver.BazelRunner;
+import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
+import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class BuildServerService {
 
