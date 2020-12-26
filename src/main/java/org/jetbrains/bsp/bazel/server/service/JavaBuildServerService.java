@@ -19,7 +19,6 @@ import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class JavaBuildServerService {
 
@@ -48,9 +47,7 @@ public class JavaBuildServerService {
         targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            ParsingUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC)));
+        actionGraphResolver.parseActionGraph(targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC));
 
     JavacOptionsResult result =
         new JavacOptionsResult(

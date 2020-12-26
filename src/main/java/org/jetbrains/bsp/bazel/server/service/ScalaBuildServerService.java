@@ -25,6 +25,8 @@ import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
 import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 
 public class ScalaBuildServerService {
 
@@ -51,9 +53,7 @@ public class ScalaBuildServerService {
     Map<String, List<String>> targetsOptions =
         targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            ParsingUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
+        actionGraphResolver.parseActionGraph(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(
