@@ -49,11 +49,11 @@ public class ScalaBuildServerService {
         scalacOptionsParams.getTargets().stream()
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
-    String targetsUnion = Joiner.on(" + ").join(targets);
+
     Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
+        targetsResolver.getTargetsOptions(targets, "scalacopts");
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
+        actionGraphResolver.getActionGraphParser(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(

@@ -19,7 +19,7 @@ public class ActionGraphResolver {
     this.bazelActionGraphQueryRunner = new BazelActionGraphQueryRunner(bazelRunner);
   }
 
-  public ActionGraphParser parseActionGraph(List<String> targets, List<String> languageIds) {
+  public ActionGraphParser getActionGraphParser(List<String> targets, List<String> languageIds) {
     try {
       ProcessResults process = bazelActionGraphQueryRunner.aquery(targets, languageIds);
       ActionGraphContainer actionGraphContainer =

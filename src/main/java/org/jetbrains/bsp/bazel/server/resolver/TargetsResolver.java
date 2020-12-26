@@ -14,9 +14,8 @@ public class TargetsResolver {
   }
 
   public Map<String, List<String>> getTargetsOptions(
-      String targetsUnion, String compilerOptionsName) {
-    Build.QueryResult query =
-        queryResolver.getQuery("query", "--output=proto", "(" + targetsUnion + ")");
+      List<String> targets, String compilerOptionsName) {
+    Build.QueryResult query = queryResolver.getQueryResultForTargets(targets);
 
     return query.getTargetList().stream()
         .map(Build.Target::getRule)
