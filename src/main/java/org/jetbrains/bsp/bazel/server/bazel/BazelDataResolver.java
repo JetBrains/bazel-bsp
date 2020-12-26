@@ -26,7 +26,8 @@ public class BazelDataResolver {
 
   private String readOnlyBazelLine(String argument) {
     ProcessResults processResults =
-        bazelRunner.commandBuilder()
+        bazelRunner
+            .commandBuilder()
             .info()
             .withArgument(argument)
             .runBazel();

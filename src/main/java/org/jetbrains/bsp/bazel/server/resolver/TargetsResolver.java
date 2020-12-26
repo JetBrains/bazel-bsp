@@ -19,7 +19,8 @@ public class TargetsResolver {
   public Map<String, List<String>> getTargetsOptions(
       List<String> targets, String compilerOptionsName) {
     ProcessResults processResults =
-        bazelRunner.commandBuilder()
+        bazelRunner
+            .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withTargets(targets)

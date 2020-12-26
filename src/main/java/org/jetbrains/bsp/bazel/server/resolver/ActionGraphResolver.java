@@ -21,7 +21,8 @@ public class ActionGraphResolver {
   public ActionGraphParser getActionGraphParser(List<String> targets, List<String> languageIds) {
     try {
       ProcessResults process =
-          bazelRunner.commandBuilder()
+          bazelRunner
+              .commandBuilder()
               .aquery()
               .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
               .withArgument(BazelArgumentsUtils.getMnemonicWithJoinedTargets(targets, languageIds))
