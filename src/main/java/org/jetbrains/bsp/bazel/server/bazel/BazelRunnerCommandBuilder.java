@@ -43,5 +43,4 @@ public class BazelRunnerCommandBuilder {
   public BazelRunnerBuilder test() {
     return new BazelRunnerBuilder(bazelRunner, BAZEL_TEST_COMMAND);
   }
-
 }

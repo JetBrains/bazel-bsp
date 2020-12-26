@@ -15,7 +15,8 @@ public final class BazelArgumentsUtils {
     return String.format("(%s)", joinedTargets);
   }
 
-  public static String getMnemonicWithJoinedTargets(List<String> targets, List<String> languageIds) {
+  public static String getMnemonicWithJoinedTargets(
+      List<String> targets, List<String> languageIds) {
     String joinedTargets = joinBazelTargets(targets);
     return getMnemonicsForTargets(joinedTargets, languageIds);
   }
