@@ -4,24 +4,29 @@ import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContainer;
 import java.io.IOException;
 import java.util.List;
-import org.jetbrains.bsp.bazel.common.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.bazel.BazelActionGraphQueryRunner;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.ProcessResults;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.utils.BazelArgumentsUtils;
 import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
 
 public class ActionGraphResolver {
 
-  private final BazelActionGraphQueryRunner bazelActionGraphQueryRunner;
+  private final BazelRunner bazelRunner;
 
   public ActionGraphResolver(BazelRunner bazelRunner) {
-    this.bazelActionGraphQueryRunner = new BazelActionGraphQueryRunner(bazelRunner);
+    this.bazelRunner = bazelRunner;
   }
 
   public ActionGraphParser getActionGraphParser(List<String> targets, List<String> languageIds) {
     try {
-      ProcessResults process = bazelActionGraphQueryRunner.aquery(targets, languageIds);
+      ProcessResults process =
+          bazelRunner.commandBuilder()
+              .aquery()
+              .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+              .withArgument(BazelArgumentsUtils.getMnemonicWithJoinedTargets(targets, languageIds))
+              .runBazel();
+
       ActionGraphContainer actionGraphContainer =
           AnalysisProtos.ActionGraphContainer.parseFrom(process.getStdoutStream());
       return new ActionGraphParser(actionGraphContainer);

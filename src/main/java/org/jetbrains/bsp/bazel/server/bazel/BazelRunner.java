@@ -23,11 +23,11 @@ public class BazelRunner {
     this.bazel = bazelBinaryPath;
   }
 
-  public void setBesBackendPort(int port) {
-    besBackendPort = port;
+  public BazelRunnerCommandBuilder commandBuilder() {
+    return new BazelRunnerCommandBuilder(this);
   }
 
-  public ProcessResults runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
+  ProcessResults runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
     if (besBackendPort == null) {
       LOGGER.fatal("BES port not set");
       throw new IllegalStateException("BES port not set");
@@ -46,7 +46,7 @@ public class BazelRunner {
     return newFlags;
   }
 
-  public ProcessResults runBazelCommand(String command, List<String> flags, List<String> arguments) {
+  ProcessResults runBazelCommand(String command, List<String> flags, List<String> arguments) {
     if (arguments.isEmpty()) {
       LOGGER.fatal("Not enough arguments");
       throw new IllegalArgumentException("Not enough arguments");
@@ -84,5 +84,9 @@ public class BazelRunner {
     processArgs.addAll(arguments);
 
     return processArgs;
+  }
+
+  public void setBesBackendPort(int port) {
+    besBackendPort = port;
   }
 }

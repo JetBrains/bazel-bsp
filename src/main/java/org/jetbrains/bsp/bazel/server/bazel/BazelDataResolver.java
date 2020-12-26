@@ -8,10 +8,10 @@ import org.jetbrains.bsp.bazel.server.data.BazelData;
 
 public class BazelDataResolver {
 
-  private final BazelInfoRunner bazelInfoRunner;
+  private final BazelRunner bazelRunner;
 
   public BazelDataResolver(BazelRunner bazelRunner) {
-    this.bazelInfoRunner = new BazelInfoRunner(bazelRunner);
+    this.bazelRunner = bazelRunner;
   }
 
   public BazelData resolveBazelData() {
@@ -24,7 +24,11 @@ public class BazelDataResolver {
   }
 
   private String readOnlyBazelLine(String argument) {
-    ProcessResults processResults = bazelInfoRunner.info(argument);
+    ProcessResults processResults =
+        bazelRunner.commandBuilder()
+            .info()
+            .withArgument(argument)
+            .runBazel();
     List<String> output = processResults.getStdout();
     return Iterables.getOnlyElement(output);
   }
