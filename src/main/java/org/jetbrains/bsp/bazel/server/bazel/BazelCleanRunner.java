@@ -12,7 +12,7 @@ public class BazelCleanRunner {
     this.bazelRunner = bazelRunner;
   }
 
-  public ProcessResults runClean() {
+  public ProcessResults clean() {
     return bazelRunner.runBazelCommand(BAZEL_CLEAN_COMMAND, ImmutableList.of(), ImmutableList.of());
   }
 }

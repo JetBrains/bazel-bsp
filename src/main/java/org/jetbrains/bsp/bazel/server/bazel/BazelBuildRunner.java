@@ -15,4 +15,8 @@ public class BazelBuildRunner {
   public ProcessResults build(List<String> flags, List<String> targets) {
     return bazelRunner.runBazelCommand(BAZEL_BUILD_COMMAND, flags, targets);
   }
+
+  public ProcessResults buildBes(List<String> flags, List<String> targets) {
+    return bazelRunner.runBazelCommandBes(BAZEL_BUILD_COMMAND, flags, targets);
+  }
 }

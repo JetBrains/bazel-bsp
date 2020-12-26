@@ -15,7 +15,7 @@ public class BazelTestRunner {
     this.bazelRunner = bazelRunner;
   }
 
-  public ProcessResults runTest(List<String> targets, List<String> arguments) {
+  public ProcessResults test(List<String> targets, List<String> arguments) {
     String joinedBazelTargets = BazelArgumentsUtils.getJoinedBazelTargets(targets);
     List<String> bazelArguments = getBazelArguments(joinedBazelTargets, arguments);
 
