@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 public class BepStreamObserver implements StreamObserver<PublishBuildToolEventStreamRequest> {
 
   private static final Logger LOGGER = LogManager.getLogger(BepStreamObserver.class);
+
   private static final String BUILD_EVENT_TYPE_URL =
       "type.googleapis.com/build_event_stream.BuildEvent";
 

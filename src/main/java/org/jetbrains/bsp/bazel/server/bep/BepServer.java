@@ -38,6 +38,7 @@ import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
+
   private static final int URI_PREFIX_LENGTH = 7;
 
   private final BuildClient bspClient;

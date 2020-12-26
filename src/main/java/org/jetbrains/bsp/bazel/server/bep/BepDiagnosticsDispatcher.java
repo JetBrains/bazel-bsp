@@ -32,6 +32,7 @@ import org.jetbrains.bsp.bazel.server.data.BazelData;
 public class BepDiagnosticsDispatcher {
 
   private static final Logger LOGGER = LogManager.getLogger(BepDiagnosticsDispatcher.class);
+
   private static final Map<Severity, DiagnosticSeverity> CONVERTED_SEVERITY =
       new ImmutableMap.Builder<Severity, DiagnosticSeverity>()
           .put(Severity.UNKNOWN, DiagnosticSeverity.ERROR)

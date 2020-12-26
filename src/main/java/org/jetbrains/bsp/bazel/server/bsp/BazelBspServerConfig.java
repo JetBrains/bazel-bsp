@@ -29,10 +29,10 @@ public class BazelBspServerConfig {
   }
 
   public String getBazelPath() {
-    return this.pathToBazel;
+    return pathToBazel;
   }
 
   public List<String> getTargetProjectPaths() {
-    return this.targetProjectPaths;
+    return targetProjectPaths;
   }
 }
