@@ -4,8 +4,8 @@ import com.google.common.collect.Iterables;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 
 public class BazelDataResolver {
 

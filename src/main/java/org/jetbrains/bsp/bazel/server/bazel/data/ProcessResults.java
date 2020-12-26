@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bazel.data;
 
+import ch.epfl.scala.bsp4j.StatusCode;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import ch.epfl.scala.bsp4j.StatusCode;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 
 public class ProcessResults {

@@ -4,9 +4,9 @@ import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContainer;
 import java.io.IOException;
 import java.util.List;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.utils.BazelArgumentsUtils;
 import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
 
