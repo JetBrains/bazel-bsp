@@ -52,7 +52,8 @@ public class ScalaBuildServerService {
     Map<String, List<String>> targetsOptions =
         targetsResolver.getTargetsOptions(targets, "scalacopts");
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.getActionGraphParser(targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
+        actionGraphResolver.getActionGraphParser(
+            targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(

@@ -41,10 +41,12 @@ public class JavaBuildServerService {
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
 
-    Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targets, "javacopts");
+    Map<String, List<String>> targetsOptions =
+        targetsResolver.getTargetsOptions(targets, "javacopts");
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.getActionGraphParser(targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC));
+        actionGraphResolver.getActionGraphParser(
+            targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC));
 
     JavacOptionsResult result =
         new JavacOptionsResult(

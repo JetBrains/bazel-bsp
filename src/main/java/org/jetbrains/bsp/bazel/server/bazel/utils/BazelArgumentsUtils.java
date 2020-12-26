@@ -35,5 +35,4 @@ public final class BazelArgumentsUtils {
   private static String getMnemonicForLanguageAndTargets(String languageId, String targets) {
     return String.format("mnemonic(%s, %s)", languageId, targets);
   }
-
 }

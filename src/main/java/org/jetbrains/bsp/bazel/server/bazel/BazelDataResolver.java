@@ -26,11 +26,7 @@ public class BazelDataResolver {
 
   private String readOnlyBazelLine(String argument) {
     ProcessResults processResults =
-        bazelRunner
-            .commandBuilder()
-            .info()
-            .withArgument(argument)
-            .runBazel();
+        bazelRunner.commandBuilder().info().withArgument(argument).runBazel();
     List<String> output = processResults.getStdout();
     return Iterables.getOnlyElement(output);
   }
