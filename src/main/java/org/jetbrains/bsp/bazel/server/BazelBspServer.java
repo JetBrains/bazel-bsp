@@ -739,7 +739,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
   @Override
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    return scalaBspServer.buildTargetScalaMainClasses(scalaMainClassesParams);
+    return executeCommand(() -> scalaBspServer.buildTargetScalaMainClasses(scalaMainClassesParams));
   }
 
   private <T> CompletableFuture<T> handleBuildInitialize(

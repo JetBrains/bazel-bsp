@@ -8,6 +8,8 @@ import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
+import ch.epfl.scala.bsp4j.ScalaMainClass;
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.collect.Lists;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.ActionGraphParser;
@@ -79,11 +83,27 @@ public class ScalaBspServer {
     return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
   }
 
-  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
+  public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
+    List<BuildTargetIdentifier> targets = scalaMainClassesParams.getTargets();
+    String targetsUnion = Joiner.on(" + ").join(getTargetUris(targets));
+    Map<String, List<String>> targetsOptions =
+        targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
+    Map<String, List<String>> mainClasses = targetsResolver.getTargetsMainClasses(targetsUnion);
+
+    ScalaMainClassesResult result =
+        new ScalaMainClassesResult(
+            targets.stream()
+                .map(
+                    target ->
+                        new ScalaMainClassesItem(
+                            target, collectMainClasses(target, mainClasses, targetsOptions)))
+                .collect(Collectors.toList()));
+    return Either.forRight(result);
+  }
+
+  private List<String> getTargetUris(List<BuildTargetIdentifier> targets) {
+    return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
   }
 
   private Stream<ScalacOptionsItem> collectScalacOptionsResult(
@@ -100,5 +120,19 @@ public class ScalaBspServer {
                     options,
                     inputs,
                     Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
+  }
+
+  private List<ScalaMainClass> collectMainClasses(
+      BuildTargetIdentifier target,
+      Map<String, List<String>> mainClassesNames,
+      Map<String, List<String>> targetsOptions) {
+    return mainClassesNames.getOrDefault(target.getUri(), Lists.newArrayList()).stream()
+        .map(
+            mainClassName ->
+                new ScalaMainClass(
+                    mainClassName,
+                    new ArrayList<>(),
+                    targetsOptions.getOrDefault(target.getUri(), new ArrayList<>())))
+        .collect(Collectors.toList());
   }
 }
