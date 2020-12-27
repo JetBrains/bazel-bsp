@@ -36,7 +36,7 @@ public class TargetsResolver {
             Collectors.toMap(
                 Build.Rule::getName,
                 (rule) ->
-                    getAttribute(rule, "main_class")
+                    getAttribute(rule, MAIN_CLASS_ATTR_NAME)
                         .map(Build.Attribute::getStringValue)
                         .collect(Collectors.toList())));
   }
