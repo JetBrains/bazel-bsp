@@ -18,10 +18,7 @@ public class TargetsResolver {
 
   public Map<String, List<String>> getTargetsOptions(
       String targetsUnion, String compilerOptionsName) {
-    Build.QueryResult query =
-        queryResolver.getQuery("query", "--output=proto", "(" + targetsUnion + ")");
-
-    return query.getTargetList().stream()
+    return queryTargets(targetsUnion).getTargetList().stream()
         .map(Build.Target::getRule)
         .collect(
             Collectors.toMap(
@@ -33,26 +30,22 @@ public class TargetsResolver {
   }
 
   public Map<String, List<String>> getTargetsMainClasses(String targetsUnion) {
-    Build.QueryResult query =
-        queryResolver.getQuery("query", "--output=proto", "(" + targetsUnion + ")");
-
-    return query.getTargetList().stream()
+    return queryTargets(targetsUnion).getTargetList().stream()
         .map(Build.Target::getRule)
         .collect(
             Collectors.toMap(
                 Build.Rule::getName,
                 (rule) ->
-                    getAttribute(rule, MAIN_CLASS_ATTR_NAME)
+                    getAttribute(rule, "main_class")
                         .map(Build.Attribute::getStringValue)
                         .collect(Collectors.toList())));
   }
 
   Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
-    return rule.getAttributeList().stream()
-        .filter(
-            attr ->
-                attr.getName().equals(name)
-                    && attr.hasExplicitlySpecified()
-                    && attr.getExplicitlySpecified());
+    return rule.getAttributeList().stream().filter(attr -> attr.getName().equals(name));
+  }
+
+  private Build.QueryResult queryTargets(String targets) {
+    return queryResolver.getQuery("query", "--output=proto", "(" + targets + ")");
   }
 }
