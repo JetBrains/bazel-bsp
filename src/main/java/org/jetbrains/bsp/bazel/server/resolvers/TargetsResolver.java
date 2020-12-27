@@ -42,7 +42,12 @@ public class TargetsResolver {
   }
 
   Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
-    return rule.getAttributeList().stream().filter(attr -> attr.getName().equals(name));
+    return rule.getAttributeList().stream()
+        .filter(
+            attr ->
+                attr.getName().equals(name)
+                    && attr.hasExplicitlySpecified()
+                    && attr.getExplicitlySpecified());
   }
 
   private Build.QueryResult queryTargets(String targets) {
