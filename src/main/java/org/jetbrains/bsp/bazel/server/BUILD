@@ -28,7 +28,7 @@ java_library(
 
 java_binary(
     name = "bsp-run",
-    main_class = "org.jetbrains.bsp.bazel.server.Server",
+    main_class = "org.jetbrains.bsp.bazel.server.ServerInitializer",
     visibility = ["//visibility:public"],
     runtime_deps = ["//src/main/java/org/jetbrains/bsp/bazel/server"],
 )

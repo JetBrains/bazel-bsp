@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server;
 
+import io.grpc.Server;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -14,15 +15,15 @@ import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegration;
 
-public class Server {
+public class ServerInitializer {
 
   public static void main(String[] args) {
     if (args.length == 0) {
       System.err.printf("Expected path to bazel; got args: %s%n", Arrays.toString(args));
       System.exit(1);
     }
-    boolean hasErrors = false;
 
+    boolean hasErrors = false;
     PrintStream stdout = System.out;
     InputStream stdin = System.in;
     ExecutorService executor = Executors.newCachedThreadPool();
@@ -50,7 +51,7 @@ public class Server {
       BazelBspServer bspServer = new BazelBspServer(serverConfig);
       bspServer.startServer(bspIntegration);
 
-      io.grpc.Server server = bspIntegration.getServer().start();
+      Server server = bspIntegration.getServer().start();
       bspServer.setBesBackendPort(server.getPort());
 
       bspIntegration.getLauncher().startListening();
