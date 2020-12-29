@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
-import org.jetbrains.bsp.bazel.server.bsp.BspIntegration;
+import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 
 public class ServerInitializer {
 
@@ -46,15 +46,15 @@ public class ServerInitializer {
       System.setOut(logStream);
       System.setErr(logStream);
 
-      BspIntegration bspIntegration = new BspIntegration(stdout, stdin, executor, traceWriter);
+      BspIntegrationData bspIntegrationData = new BspIntegrationData(stdout, stdin, executor, traceWriter);
       BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
       BazelBspServer bspServer = new BazelBspServer(serverConfig);
-      bspServer.startServer(bspIntegration);
+      bspServer.startServer(bspIntegrationData);
 
-      Server server = bspIntegration.getServer().start();
+      Server server = bspIntegrationData.getServer().start();
       bspServer.setBesBackendPort(server.getPort());
 
-      bspIntegration.getLauncher().startListening();
+      bspIntegrationData.getLauncher().startListening();
       server.awaitTermination();
     } catch (Exception e) {
       e.printStackTrace();

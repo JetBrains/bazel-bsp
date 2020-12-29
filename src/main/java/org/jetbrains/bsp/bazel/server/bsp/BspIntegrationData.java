@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.concurrent.ExecutorService;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 
-public class BspIntegration {
+public class BspIntegrationData {
 
   private final PrintStream stdout;
   private final InputStream stdin;
@@ -18,7 +18,7 @@ public class BspIntegration {
   private Launcher<BuildClient> launcher;
   private Server server;
 
-  public BspIntegration(
+  public BspIntegrationData(
       PrintStream stdout, InputStream stdin, ExecutorService executor, PrintWriter traceWriter) {
     this.stdout = stdout;
     this.stdin = stdin;

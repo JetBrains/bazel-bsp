@@ -6,15 +6,15 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
-import org.jetbrains.bsp.bazel.server.api.BuildServerImpl;
-import org.jetbrains.bsp.bazel.server.api.JavaBuildServerImpl;
-import org.jetbrains.bsp.bazel.server.api.ScalaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.impl.BuildServerImpl;
+import org.jetbrains.bsp.bazel.server.impl.JavaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.impl.ScalaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
-import org.jetbrains.bsp.bazel.server.bsp.BspIntegration;
+import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
@@ -45,7 +45,7 @@ public class BazelBspServer {
     this.bazelData = bazelDataResolver.resolveBazelData();
   }
 
-  public void startServer(BspIntegration bspIntegration) {
+  public void startServer(BspIntegrationData bspIntegrationData) {
     BazelBspServerLifetime serverLifetime = new BazelBspServerLifetime();
     BazelBspServerRequestHelpers serverRequestHelpers =
         new BazelBspServerRequestHelpers(serverLifetime);
@@ -75,26 +75,26 @@ public class BazelBspServer {
     this.javaBuildServer = new JavaBuildServerImpl(javaBuildServerService, serverRequestHelpers);
     this.buildServer = new BuildServerImpl(buildServerService, serverRequestHelpers);
 
-    integrateBsp(bspIntegration);
+    integrateBsp(bspIntegrationData);
   }
 
-  private void integrateBsp(BspIntegration bspIntegration) {
+  private void integrateBsp(BspIntegrationData bspIntegrationData) {
     Launcher<BuildClient> launcher =
         new Launcher.Builder<BuildClient>()
-            .traceMessages(bspIntegration.getTraceWriter())
-            .setOutput(bspIntegration.getStdout())
-            .setInput(bspIntegration.getStdin())
+            .traceMessages(bspIntegrationData.getTraceWriter())
+            .setOutput(bspIntegrationData.getStdout())
+            .setInput(bspIntegrationData.getStdin())
             .setLocalService(this.buildServer)
             .setRemoteInterface(BuildClient.class)
-            .setExecutorService(bspIntegration.getExecutor())
+            .setExecutorService(bspIntegrationData.getExecutor())
             .create();
-    bspIntegration.setLauncher(launcher);
+    bspIntegrationData.setLauncher(launcher);
 
     BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
     BepServer bepServer = new BepServer(bazelData, launcher.getRemoteProxy(), buildClientLogger);
     serverBuildManager.setBepServer(bepServer);
 
-    bspIntegration.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
+    bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }
 
   public void setBesBackendPort(int port) {
