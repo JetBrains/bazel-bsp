@@ -1,5 +1,6 @@
-package org.jetbrains.bsp.bazel.server.utils;
+package org.jetbrains.bsp.bazel.server.util;
 
+import ch.epfl.scala.bsp4j.BuildTargetTag;
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.DiagnosticSeverity;
 import ch.epfl.scala.bsp4j.Position;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +25,6 @@ import org.jetbrains.bsp.bazel.common.Constants;
 public class ParsingUtils {
 
   private static final Logger LOGGER = LogManager.getLogger(ParsingUtils.class);
-
   private static final String ERROR = "ERROR";
   private static final String ERROR_PREAMBLE = ERROR + ": ";
   private static final String AT_PATH = " at /";
@@ -45,6 +46,47 @@ public class ParsingUtils {
       default:
         return StatusCode.ERROR;
     }
+  }
+
+  public static String convertOutputToPath(String output, String prefix) {
+    String pathToFile = output.replaceAll("(//|:)", "/");
+    return prefix + pathToFile;
+  }
+
+  public static String getRuleType(String ruleClass) {
+    if (ruleClass.contains(Constants.LIBRARY_RULE_TYPE)) {
+      return BuildTargetTag.LIBRARY;
+    }
+
+    if (ruleClass.contains(Constants.BINARY_RULE_TYPE)) {
+      return BuildTargetTag.APPLICATION;
+    }
+
+    if (ruleClass.contains(Constants.TEST_RULE_TYPE)) {
+      return BuildTargetTag.TEST;
+    }
+
+    return BuildTargetTag.NO_IDE;
+  }
+
+  public static String getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      version = version.substring(0, 3);
+    } else {
+      int dot = version.indexOf(".");
+      if (dot != -1) {
+        version = version.substring(0, dot);
+      }
+    }
+    return version;
+  }
+
+  public static String getMnemonics(String targetsUnion, List<String> languageIds) {
+    return languageIds.stream()
+        .filter(Objects::nonNull)
+        .map(mnemonic -> "mnemonic(" + mnemonic + ", " + targetsUnion + ")")
+        .collect(Collectors.joining(" union "));
   }
 
   public static List<String> parseClasspathFromAspect(URI dependenciesAspectOutput) {

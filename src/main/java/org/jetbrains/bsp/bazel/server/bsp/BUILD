@@ -1,18 +1,14 @@
-load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("@rules_java//java:defs.bzl", "java_library")
 
 java_library(
-    name = "server",
+    name = "bsp",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//src/main/java/org/jetbrains/bsp/bazel/server/data",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/impl",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
         "//src/main/java/org/jetbrains/bsp/bazel/server/resolver",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/service",
         "//src/main/java/org/jetbrains/bsp/bazel/server/util",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
@@ -24,11 +20,4 @@ java_library(
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
         "@maven//:org_eclipse_xtext_org_eclipse_xtext_xbase_lib",
     ],
-)
-
-java_binary(
-    name = "bsp-run",
-    main_class = "org.jetbrains.bsp.bazel.server.ServerInitializer",
-    visibility = ["//visibility:public"],
-    runtime_deps = ["//src/main/java/org/jetbrains/bsp/bazel/server"],
 )

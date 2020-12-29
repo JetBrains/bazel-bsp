@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.common;
+package org.jetbrains.bsp.bazel.server.util;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
@@ -9,9 +9,11 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.common.Uri;
 
 // TODO(illicitonion): Index, cache, etc
 public class ActionGraphParser {
+
   private final AnalysisProtos.ActionGraphContainer actionGraph;
 
   public ActionGraphParser(AnalysisProtos.ActionGraphContainer actionGraph) {

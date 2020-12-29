@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.bsp;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,10 +29,10 @@ public class BazelBspServerConfig {
   }
 
   public String getBazelPath() {
-    return this.pathToBazel;
+    return pathToBazel;
   }
 
   public List<String> getTargetProjectPaths() {
-    return this.targetProjectPaths;
+    return targetProjectPaths;
   }
 }

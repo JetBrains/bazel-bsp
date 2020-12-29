@@ -1,9 +1,10 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.bep;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
+import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
@@ -30,8 +31,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -42,7 +44,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
 
-  private final BazelBspServer bspServer;
+  private final BazelData bazelData;
   private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
   private final Set<Uri> compilerClasspath = new TreeSet<>();
@@ -52,11 +54,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       new HashMap<>();
 
   public BepServer(
-      BazelBspServer bspServer, BuildClient bspClient, BuildClientLogger buildClientLogger) {
-    this.bspServer = bspServer;
+      BazelData bazelData, BuildClient bspClient, BuildClientLogger buildClientLogger) {
+    this.bazelData = bazelData;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
-    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bspServer, bspClient);
+    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelData, bspClient);
   }
 
   @Override
@@ -172,9 +174,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         .forEach(
             path ->
                 compilerClasspath.add(
-                    Uri.fromExecPath(
-                        Constants.EXEC_ROOT_PREFIX + path,
-                        bspServer.getBazelData().getExecRoot())));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + path, bazelData.getExecRoot())));
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -266,5 +266,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   public Map<String, String> getDiagnosticsProtosLocations() {
     return diagnosticsProtosLocations;
+  }
+
+  public Map<BuildTargetIdentifier, List<SourceItem>> getBuildTargetsSources() {
+    return diagnosticsDispatcher.getBuildTargetsSources();
   }
 }

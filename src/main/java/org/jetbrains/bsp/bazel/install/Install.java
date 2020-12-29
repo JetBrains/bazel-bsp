@@ -25,8 +25,9 @@ import org.apache.commons.cli.ParseException;
 import org.jetbrains.bsp.bazel.common.Constants;
 
 public class Install {
+
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
-  public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.Server";
+  public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.ServerInitializer";
 
   private static final String DEBUGGER_SHORT_OPT = "x";
   private static final String JAVA_SHORT_OPT = "j";

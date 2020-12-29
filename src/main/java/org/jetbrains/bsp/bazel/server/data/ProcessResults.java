@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessResults {
+
   private final InputStream stdout;
   private final InputStream stderr;
   private final int exitCode;
