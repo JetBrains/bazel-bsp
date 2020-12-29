@@ -42,12 +42,13 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
-import org.jetbrains.bsp.bazel.server.data.BazelData;
-import org.jetbrains.bsp.bazel.server.data.ProcessResults;
-import org.jetbrains.bsp.bazel.server.resolver.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
 import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
 import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
@@ -59,21 +60,18 @@ public class BuildServerService {
 
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
-  private final QueryResolver queryResolver;
 
   public BuildServerService(
       BazelBspServerRequestHelpers serverRequestHelpers,
       BazelBspServerLifetime serverLifetime,
       BazelBspServerBuildManager serverBuildManager,
       BazelData bazelData,
-      BazelRunner bazelRunner,
-      QueryResolver queryResolver) {
+      BazelRunner bazelRunner) {
     this.serverRequestHelpers = serverRequestHelpers;
     this.serverLifetime = serverLifetime;
     this.serverBuildManager = serverBuildManager;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
-    this.queryResolver = queryResolver;
   }
 
   public CompletableFuture<InitializeBuildResult> buildInitialize(
@@ -138,15 +136,20 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
+    List<String> targets = sourcesParams.getTargets().stream()
+        .map(BuildTargetIdentifier::getUri)
+        .collect(Collectors.toList());
+
+    ProcessResults processResults =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withTargets(targets)
+            .runBazel();
+
     Build.QueryResult queryResult =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
-            "("
-                + sourcesParams.getTargets().stream()
-                    .map(BuildTargetIdentifier::getUri)
-                    .collect(Collectors.joining("+"))
-                + ")");
+        QueryResolver.getQueryResultForProcess(processResults);
 
     List<SourcesItem> sources =
         queryResult.getTargetList().stream()
@@ -176,11 +179,18 @@ public class BuildServerService {
     if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
       throw new RuntimeException("Could not resolve " + fileUri + " within workspace " + prefix);
     }
-    Build.QueryResult result =
-        queryResolver.getQuery(
-            "query",
-            "--output=proto",
-            "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))");
+    String command =
+        "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))";
+    ProcessResults processResults =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withArgument(command)
+            .runBazel();
+
+    Build.QueryResult result = QueryResolver.getQueryResultForProcess(processResults);
+
     List<BuildTargetIdentifier> targets =
         result.getTargetList().stream()
             .map(Build.Target::getRule)
@@ -220,7 +230,16 @@ public class BuildServerService {
 
   public Either<ResponseError, ResourcesResult> buildTargetResources(
       ResourcesParams resourcesParams) {
-    Build.QueryResult query = queryResolver.getQuery("query", "--output=proto", "//...");
+    ProcessResults processResults =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withArgument("//...")
+            .runBazel();
+
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(processResults);
+
     System.out.println("Resources query result " + query);
     ResourcesResult resourcesResult =
         new ResourcesResult(
@@ -265,21 +284,20 @@ public class BuildServerService {
       return Either.forRight(new TestResult(result.getStatusCode()));
     }
 
-    String testTargets =
-        Joiner.on("+")
-            .join(
-                testParams.getTargets().stream()
-                    .map(BuildTargetIdentifier::getUri)
-                    .collect(Collectors.toList()));
-    ProcessResults processResults =
-        bazelRunner.runBazelCommand(
-            Lists.asList(
-                Constants.BAZEL_TEST_COMMAND,
-                "(" + testTargets + ")",
-                testParams.getArguments().toArray(new String[0])));
+    List<String> testTargets =
+        testParams.getTargets().stream()
+            .map(BuildTargetIdentifier::getUri)
+            .collect(Collectors.toList());
 
-    return Either.forRight(
-        new TestResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
+    ProcessResults processResults =
+        bazelRunner
+            .commandBuilder()
+            .test()
+            .withTargets(testTargets)
+            .withArguments(testParams.getArguments())
+            .runBazel();
+
+    return Either.forRight(new TestResult(processResults.getExitCode()));
   }
 
   public Either<ResponseError, RunResult> buildTargetRun(RunParams runParams) {
@@ -296,23 +314,30 @@ public class BuildServerService {
     }
 
     ProcessResults processResults =
-        bazelRunner.runBazelCommand(
-            Lists.asList(
-                Constants.BAZEL_RUN_COMMAND,
-                runParams.getTarget().getUri(),
-                runParams.getArguments().toArray(new String[0])));
+        bazelRunner
+            .commandBuilder()
+            .run()
+            .withArgument(runParams.getTarget().getUri())
+            .withArguments(runParams.getArguments())
+            .runBazel();
 
-    return Either.forRight(new RunResult(ParsingUtils.parseExitCode(processResults.getExitCode())));
+    return Either.forRight(new RunResult(processResults.getExitCode()));
   }
 
   public Either<ResponseError, CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
     CleanCacheResult result;
     try {
+      List<String> lines =
+          bazelRunner
+              .commandBuilder()
+              .clean()
+              .runBazel()
+              .getStdout();
+
       result =
           new CleanCacheResult(
-              String.join(
-                  "\n", bazelRunner.runBazelCommand(Constants.BAZEL_CLEAN_COMMAND).getStdout()),
+              String.join("\n", lines),
               true);
     } catch (RuntimeException e) {
       // TODO does it make sense to return a successful response here?

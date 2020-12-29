@@ -7,9 +7,10 @@ java_library(
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/resolver",
         "//src/main/java/org/jetbrains/bsp/bazel/server/util",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data:bazel-data",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
         "@maven//:ch_epfl_scala_bsp4j",

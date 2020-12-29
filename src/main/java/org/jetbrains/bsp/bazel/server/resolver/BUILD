@@ -9,7 +9,6 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data:bazel-data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils:bazel-utils",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/util",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",

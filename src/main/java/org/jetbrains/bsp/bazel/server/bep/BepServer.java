@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bep;
 
+import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
+import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
@@ -30,9 +32,10 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
-import org.jetbrains.bsp.bazel.server.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
+
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 

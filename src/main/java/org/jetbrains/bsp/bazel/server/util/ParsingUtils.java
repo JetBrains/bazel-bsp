@@ -36,17 +36,6 @@ public class ParsingUtils {
     }
   }
 
-  public static StatusCode parseExitCode(int exitCode) {
-    switch (exitCode) {
-      case 0:
-        return StatusCode.OK;
-      case 8:
-        return StatusCode.CANCELLED;
-      default:
-        return StatusCode.ERROR;
-    }
-  }
-
   public static String convertOutputToPath(String output, String prefix) {
     String pathToFile = output.replaceAll("(//|:)", "/");
     return prefix + pathToFile;

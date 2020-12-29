@@ -11,7 +11,6 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils:bazel-utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/impl",
         "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
         "//src/main/java/org/jetbrains/bsp/bazel/server/resolver",
