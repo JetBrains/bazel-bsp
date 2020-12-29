@@ -46,7 +46,8 @@ public class ServerInitializer {
       System.setOut(logStream);
       System.setErr(logStream);
 
-      BspIntegrationData bspIntegrationData = new BspIntegrationData(stdout, stdin, executor, traceWriter);
+      BspIntegrationData bspIntegrationData =
+          new BspIntegrationData(stdout, stdin, executor, traceWriter);
       BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
       BazelBspServer bspServer = new BazelBspServer(serverConfig);
       bspServer.startServer(bspIntegrationData);
