@@ -31,7 +31,7 @@ public class BazelBspServerLifetime {
     finishedStatus.complete(null);
   }
 
-  public void forceFinished() {
+  public void forceFinish() {
     try {
       finishedStatus.get(1, TimeUnit.SECONDS);
     } catch (InterruptedException | ExecutionException | TimeoutException e) {

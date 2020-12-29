@@ -130,7 +130,7 @@ public class BuildServerService {
   }
 
   public void onBuildExit() {
-    serverLifetime.forceFinished();
+    serverLifetime.forceFinish();
   }
 
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {

@@ -7,6 +7,7 @@ java_library(
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/common",
         "//src/main/java/org/jetbrains/bsp/bazel/server/data",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/util",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:com_google_guava_guava",
