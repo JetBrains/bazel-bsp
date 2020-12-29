@@ -30,11 +30,11 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
 import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
@@ -131,8 +131,7 @@ public class BazelBspServerBuildManager {
             .withArgument(command)
             .executeBazelCommand();
 
-    Build.QueryResult queryResult =
-        QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     return queryResult.getTargetList().stream()
         .map(Build.Target::getRule)
@@ -189,7 +188,8 @@ public class BazelBspServerBuildManager {
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
       List<BuildTargetIdentifier> targets, List<String> extraFlags) {
-    List<String> bazelTargets = targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
+    List<String> bazelTargets =
+        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
 
     StatusCode exitCode = StatusCode.ERROR;
 

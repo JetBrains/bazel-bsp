@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.server.bazel.utils;
 
 import com.google.common.base.Joiner;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class BazelArgumentsUtils {

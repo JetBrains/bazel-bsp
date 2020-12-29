@@ -6,13 +6,15 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
+import org.jetbrains.bsp.bazel.server.bazel.BazelDataResolver;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.impl.JavaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.impl.ScalaBuildServerImpl;
@@ -22,8 +24,6 @@ import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.service.BuildServerService;
 import org.jetbrains.bsp.bazel.server.service.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.service.ScalaBuildServerService;
-import org.jetbrains.bsp.bazel.server.bazel.BazelDataResolver;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 
 public class BazelBspServer {
 
@@ -53,16 +53,11 @@ public class BazelBspServer {
     ActionGraphResolver actionGraphResolver = new ActionGraphResolver(bazelRunner);
 
     this.serverBuildManager =
-        new BazelBspServerBuildManager(
-            serverConfig, serverRequestHelpers, bazelData, bazelRunner);
+        new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner);
 
     BuildServerService buildServerService =
         new BuildServerService(
-            serverRequestHelpers,
-            serverLifetime,
-            serverBuildManager,
-            bazelData,
-            bazelRunner);
+            serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
 
     ScalaBuildServerService scalaBuildServerService =
         new ScalaBuildServerService(bazelData, targetsResolver, actionGraphResolver);

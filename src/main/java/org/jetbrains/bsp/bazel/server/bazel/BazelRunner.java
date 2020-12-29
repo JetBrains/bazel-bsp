@@ -30,7 +30,8 @@ public class BazelRunner {
     return new BazelRunnerCommandBuilder(this);
   }
 
-  BazelProcessResult runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
+  BazelProcessResult runBazelCommandBes(
+      String command, List<String> flags, List<String> arguments) {
 
     List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
@@ -64,7 +65,8 @@ public class BazelRunner {
     }
   }
 
-  private BazelProcessResult runBazelProcess(String command, List<String> flags, List<String> arguments)
+  private BazelProcessResult runBazelProcess(
+      String command, List<String> flags, List<String> arguments)
       throws InterruptedException, IOException {
     List<String> processArgs = getProcessArgs(command, flags, arguments);
     LOGGER.info("Running: {}", processArgs);

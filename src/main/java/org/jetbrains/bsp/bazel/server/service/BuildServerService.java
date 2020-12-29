@@ -29,7 +29,6 @@ import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestProvider;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
@@ -44,11 +43,11 @@ import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
 
 public class BuildServerService {
@@ -135,9 +134,10 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    List<String> targets = sourcesParams.getTargets().stream()
-        .map(BuildTargetIdentifier::getUri)
-        .collect(Collectors.toList());
+    List<String> targets =
+        sourcesParams.getTargets().stream()
+            .map(BuildTargetIdentifier::getUri)
+            .collect(Collectors.toList());
 
     BazelProcessResult bazelProcessResult =
         bazelRunner
@@ -147,8 +147,7 @@ public class BuildServerService {
             .withTargets(targets)
             .executeBazelCommand();
 
-    Build.QueryResult queryResult =
-        QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     List<SourcesItem> sources =
         queryResult.getTargetList().stream()
@@ -178,8 +177,7 @@ public class BuildServerService {
     if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
       throw new RuntimeException("Could not resolve " + fileUri + " within workspace " + prefix);
     }
-    String command =
-        "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))";
+    String command = "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))";
     BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
@@ -327,17 +325,9 @@ public class BuildServerService {
       CleanCacheParams cleanCacheParams) {
     CleanCacheResult result;
     try {
-      List<String> lines =
-          bazelRunner
-              .commandBuilder()
-              .clean()
-              .executeBazelCommand()
-              .getStdout();
+      List<String> lines = bazelRunner.commandBuilder().clean().executeBazelCommand().getStdout();
 
-      result =
-          new CleanCacheResult(
-              String.join("\n", lines),
-              true);
+      result = new CleanCacheResult(String.join("\n", lines), true);
     } catch (RuntimeException e) {
       // TODO does it make sense to return a successful response here?
       // If we caught an exception here, there was an internal server error...
