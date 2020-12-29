@@ -3,10 +3,11 @@ package org.jetbrains.bsp.bazel.server.bazel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 
 public class BazelRunner {
 
@@ -17,7 +18,8 @@ public class BazelRunner {
 
   private final Semaphore processLock;
   private final String bazel;
-  private Integer besBackendPort;
+
+  private Optional<Integer> besBackendPort = Optional.empty();
 
   public BazelRunner(String bazelBinaryPath) {
     this.processLock = new Semaphore(1, true);
@@ -28,11 +30,7 @@ public class BazelRunner {
     return new BazelRunnerCommandBuilder(this);
   }
 
-  ProcessResults runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
-    if (besBackendPort == null) {
-      LOGGER.fatal("BES port not set");
-      throw new IllegalStateException("BES port not set");
-    }
+  BazelProcessResult runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
 
     List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
@@ -40,14 +38,20 @@ public class BazelRunner {
 
   private List<String> getBesFlags(List<String> flags) {
     List<String> newFlags = new ArrayList<>();
-    newFlags.add(BES_BACKEND + besBackendPort);
+    newFlags.add(getBesBackendAddress());
     newFlags.add(PUBLISH_ALL_ACTIONS);
     newFlags.addAll(flags);
 
     return newFlags;
   }
 
-  ProcessResults runBazelCommand(String command, List<String> flags, List<String> arguments) {
+  private String getBesBackendAddress() {
+    Integer port = besBackendPort.orElseThrow(() -> new IllegalStateException("BES port not set"));
+
+    return BES_BACKEND + port;
+  }
+
+  BazelProcessResult runBazelCommand(String command, List<String> flags, List<String> arguments) {
     if (arguments.isEmpty()) {
       LOGGER.fatal("Not enough arguments");
       throw new IllegalArgumentException("Not enough arguments");
@@ -60,7 +64,7 @@ public class BazelRunner {
     }
   }
 
-  private ProcessResults runBazelProcess(String command, List<String> flags, List<String> arguments)
+  private BazelProcessResult runBazelProcess(String command, List<String> flags, List<String> arguments)
       throws InterruptedException, IOException {
     List<String> processArgs = getProcessArgs(command, flags, arguments);
     LOGGER.info("Running: {}", processArgs);
@@ -73,7 +77,7 @@ public class BazelRunner {
 
     processLock.release();
 
-    return new ProcessResults(process.getInputStream(), process.getErrorStream(), exitCode);
+    return new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
@@ -88,6 +92,6 @@ public class BazelRunner {
   }
 
   public void setBesBackendPort(int port) {
-    besBackendPort = port;
+    besBackendPort = Optional.of(port);
   }
 }

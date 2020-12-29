@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.server.bazel;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.utils.BazelArgumentsUtils;
 
 public class BazelRunnerBuilder {
@@ -58,11 +58,18 @@ public class BazelRunnerBuilder {
     return this;
   }
 
-  public ProcessResults runBazel() {
+  public BazelRunnerBuilder withMnemonic(List<String> targets, List<String> languageIds) {
+    String argument = BazelArgumentsUtils.getMnemonicWithJoinedTargets(targets, languageIds);
+    this.arguments.add(argument);
+
+    return this;
+  }
+
+  public BazelProcessResult executeBazelCommand() {
     return bazelRunner.runBazelCommand(bazelCommand, flags, arguments);
   }
 
-  public ProcessResults runBazelBes() {
+  public BazelProcessResult executeBazelBesCommand() {
     return bazelRunner.runBazelCommandBes(bazelCommand, flags, arguments);
   }
 }

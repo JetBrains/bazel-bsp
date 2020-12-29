@@ -9,6 +9,7 @@ public final class BazelArgumentsUtils {
 
   private static final String JOIN_TARGETS_DELIMITER = "+";
   private static final String MNEMONIC_DELIMITER = " union ";
+  private static final String MNEMONIC_COMMAND = "mnemonic";
 
   public static String getJoinedBazelTargets(List<String> targets) {
     String joinedTargets = joinBazelTargets(targets);
@@ -27,12 +28,11 @@ public final class BazelArgumentsUtils {
 
   private static String getMnemonicsForTargets(String targets, List<String> languageIds) {
     return languageIds.stream()
-        .filter(Objects::nonNull)
         .map(languageId -> getMnemonicForLanguageAndTargets(languageId, targets))
         .collect(Collectors.joining(MNEMONIC_DELIMITER));
   }
 
   private static String getMnemonicForLanguageAndTargets(String languageId, String targets) {
-    return String.format("mnemonic(%s, %s)", languageId, targets);
+    return String.format("%s(%s, %s)", MNEMONIC_COMMAND, languageId, targets);
   }
 }

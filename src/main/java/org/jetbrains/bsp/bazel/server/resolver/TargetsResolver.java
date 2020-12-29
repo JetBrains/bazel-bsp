@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 
 public class TargetsResolver {
 
@@ -18,14 +18,14 @@ public class TargetsResolver {
 
   public Map<String, List<String>> getTargetsOptions(
       List<String> targets, String compilerOptionsName) {
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withTargets(targets)
-            .runBazel();
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(processResults);
+            .executeBazelCommand();
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     return query.getTargetList().stream()
         .map(Build.Target::getRule)

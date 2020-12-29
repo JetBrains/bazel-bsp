@@ -48,9 +48,8 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
-import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
 
 public class BuildServerService {
 
@@ -140,16 +139,16 @@ public class BuildServerService {
         .map(BuildTargetIdentifier::getUri)
         .collect(Collectors.toList());
 
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withTargets(targets)
-            .runBazel();
+            .executeBazelCommand();
 
     Build.QueryResult queryResult =
-        QueryResolver.getQueryResultForProcess(processResults);
+        QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     List<SourcesItem> sources =
         queryResult.getTargetList().stream()
@@ -181,15 +180,15 @@ public class BuildServerService {
     }
     String command =
         "kind(rule, rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1))";
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withArgument(command)
-            .runBazel();
+            .executeBazelCommand();
 
-    Build.QueryResult result = QueryResolver.getQueryResultForProcess(processResults);
+    Build.QueryResult result = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     List<BuildTargetIdentifier> targets =
         result.getTargetList().stream()
@@ -230,15 +229,15 @@ public class BuildServerService {
 
   public Either<ResponseError, ResourcesResult> buildTargetResources(
       ResourcesParams resourcesParams) {
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withArgument("//...")
-            .runBazel();
+            .executeBazelCommand();
 
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(processResults);
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     System.out.println("Resources query result " + query);
     ResourcesResult resourcesResult =
@@ -289,15 +288,15 @@ public class BuildServerService {
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
 
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .test()
             .withTargets(testTargets)
             .withArguments(testParams.getArguments())
-            .runBazel();
+            .executeBazelCommand();
 
-    return Either.forRight(new TestResult(processResults.getExitCode()));
+    return Either.forRight(new TestResult(bazelProcessResult.getStatusCode()));
   }
 
   public Either<ResponseError, RunResult> buildTargetRun(RunParams runParams) {
@@ -313,15 +312,15 @@ public class BuildServerService {
       return Either.forRight(new RunResult(result.getStatusCode()));
     }
 
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .run()
             .withArgument(runParams.getTarget().getUri())
             .withArguments(runParams.getArguments())
-            .runBazel();
+            .executeBazelCommand();
 
-    return Either.forRight(new RunResult(processResults.getExitCode()));
+    return Either.forRight(new RunResult(bazelProcessResult.getStatusCode()));
   }
 
   public Either<ResponseError, CleanCacheResult> buildTargetCleanCache(
@@ -332,7 +331,7 @@ public class BuildServerService {
           bazelRunner
               .commandBuilder()
               .clean()
-              .runBazel()
+              .executeBazelCommand()
               .getStdout();
 
       result =

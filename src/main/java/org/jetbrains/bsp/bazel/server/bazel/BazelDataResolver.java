@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 
 public class BazelDataResolver {
 
@@ -25,9 +25,9 @@ public class BazelDataResolver {
   }
 
   private String readOnlyBazelLine(String argument) {
-    ProcessResults processResults =
-        bazelRunner.commandBuilder().info().withArgument(argument).runBazel();
-    List<String> output = processResults.getStdout();
+    BazelProcessResult bazelProcessResult =
+        bazelRunner.commandBuilder().info().withArgument(argument).executeBazelCommand();
+    List<String> output = bazelProcessResult.getStdout();
     return Iterables.getOnlyElement(output);
   }
 }

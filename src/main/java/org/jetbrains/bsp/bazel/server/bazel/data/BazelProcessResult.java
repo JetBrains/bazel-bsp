@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 
-public class ProcessResults {
+public class BazelProcessResult {
 
   private final InputStream stdout;
   private final InputStream stderr;
   private final int exitCode;
 
-  public ProcessResults(InputStream stdout, InputStream stderr, int exitCode) {
+  public BazelProcessResult(InputStream stdout, InputStream stderr, int exitCode) {
     this.stdout = stdout;
     this.stderr = stderr;
     this.exitCode = exitCode;
@@ -29,7 +29,7 @@ public class ProcessResults {
     return stderr;
   }
 
-  public StatusCode getExitCode() {
+  public StatusCode getStatusCode() {
     return ExitCodeMapper.mapExitCode(exitCode);
   }
 

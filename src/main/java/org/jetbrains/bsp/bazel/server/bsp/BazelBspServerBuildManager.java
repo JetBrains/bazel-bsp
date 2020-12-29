@@ -33,7 +33,7 @@ import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.ProcessResults;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.resolver.QueryResolver;
 import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
@@ -121,7 +121,7 @@ public class BazelBspServerBuildManager {
             "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
             projectPath, projectPath, projectPath);
 
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .query()
@@ -129,10 +129,10 @@ public class BazelBspServerBuildManager {
             .withFlag(BazelRunnerFlag.NOHOST_DEPS)
             .withFlag(BazelRunnerFlag.NOIMPLICIT_DEPS)
             .withArgument(command)
-            .runBazel();
+            .executeBazelCommand();
 
     Build.QueryResult queryResult =
-        QueryResolver.getQueryResultForProcess(processResults);
+        QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     return queryResult.getTargetList().stream()
         .map(Build.Target::getRule)
@@ -195,15 +195,15 @@ public class BazelBspServerBuildManager {
 
     final Map<String, String> diagnosticsProtosLocations =
         bepServer.getDiagnosticsProtosLocations();
-    ProcessResults processResults =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withTargets(bazelTargets)
-            .runBazel();
+            .executeBazelCommand();
 
-    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(processResults);
+    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
     for (Build.Target target : queryResult.getTargetList()) {
       target.getRule().getRuleOutputList().stream()
@@ -225,8 +225,8 @@ public class BazelBspServerBuildManager {
               .commandBuilder()
               .build()
               .withTargets(bazelTargets)
-              .runBazelBes()
-              .getExitCode();
+              .executeBazelBesCommand()
+              .getStatusCode();
     } catch (InterruptedException e) {
       System.out.println("Failed to run bazel: " + e);
     }
@@ -278,16 +278,16 @@ public class BazelBspServerBuildManager {
                 return Lists.newArrayList(Uri.fromFileLabel(dep, bazelData.getWorkspaceRoot()))
                     .stream();
               }
-              ProcessResults processResults =
+              BazelProcessResult bazelProcessResult =
                   bazelRunner
                       .commandBuilder()
                       .query()
                       .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
                       .withArgument(dep)
-                      .runBazel();
+                      .executeBazelCommand();
 
               Build.QueryResult queryResult =
-                  QueryResolver.getQueryResultForProcess(processResults);
+                  QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
               return queryResult.getTargetList().stream()
                   .map(Build.Target::getRule)
@@ -321,7 +321,7 @@ public class BazelBspServerBuildManager {
             .run()
             .withFlag(BazelRunnerFlag.ASPECTS, "@//.bazelbsp:aspects.bzl%print_aspect")
             .withArgument(target)
-            .runBazel()
+            .executeBazelCommand()
             .getStderr();
 
     return lines.stream()
