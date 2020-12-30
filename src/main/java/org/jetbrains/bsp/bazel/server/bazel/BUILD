@@ -8,6 +8,7 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/common",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data:bazel-data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils:bazel-utils",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/parameters:bazel-parameters",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:ch_epfl_scala_bsp4j",

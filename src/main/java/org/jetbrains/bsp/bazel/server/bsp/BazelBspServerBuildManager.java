@@ -14,6 +14,7 @@ import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +32,8 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelQueryKindParameters;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -116,10 +118,12 @@ public class BazelBspServerBuildManager {
   }
 
   private List<BuildTarget> getBuildTargetForProjectPath(String projectPath) {
-    String command =
-        String.format(
-            "kind(binary, %s:all) union kind(library, %s:all) union kind(test, %s:all)",
-            projectPath, projectPath, projectPath);
+    List<BazelQueryKindParameters> kindParameters =
+        ImmutableList.of(
+            BazelQueryKindParameters.fromPatternAndInput("binary", projectPath),
+            BazelQueryKindParameters.fromPatternAndInput("library", projectPath),
+            BazelQueryKindParameters.fromPatternAndInput("test", projectPath)
+        );
 
     BazelProcessResult bazelProcessResult =
         bazelRunner
@@ -128,7 +132,7 @@ public class BazelBspServerBuildManager {
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withFlag(BazelRunnerFlag.NOHOST_DEPS)
             .withFlag(BazelRunnerFlag.NOIMPLICIT_DEPS)
-            .withArgument(command)
+            .withKinds(kindParameters)
             .executeBazelCommand();
 
     Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);

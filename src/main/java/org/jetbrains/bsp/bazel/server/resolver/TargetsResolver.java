@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 
 public class TargetsResolver {

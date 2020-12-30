@@ -2,7 +2,10 @@ package org.jetbrains.bsp.bazel.server.bazel;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelQueryKindParameters;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.utils.BazelArgumentsUtils;
 
 public class BazelRunnerBuilder {
@@ -33,14 +36,14 @@ public class BazelRunnerBuilder {
     return this;
   }
 
-  public BazelRunnerBuilder withFlags(List<String> flags) {
-    this.flags.addAll(flags);
+  public BazelRunnerBuilder withArgument(String argument) {
+    arguments.add(argument);
 
     return this;
   }
 
-  public BazelRunnerBuilder withArgument(String argument) {
-    arguments.add(argument);
+  public BazelRunnerBuilder withArguments(List<String> arguments) {
+    this.arguments.addAll(arguments);
 
     return this;
   }
@@ -52,14 +55,19 @@ public class BazelRunnerBuilder {
     return this;
   }
 
-  public BazelRunnerBuilder withArguments(List<String> arguments) {
-    this.arguments.addAll(arguments);
+  public BazelRunnerBuilder withMnemonic(List<String> targets, List<String> languageIds) {
+    String argument = BazelArgumentsUtils.getMnemonicWithJoinedTargets(targets, languageIds);
+    this.arguments.add(argument);
 
     return this;
   }
 
-  public BazelRunnerBuilder withMnemonic(List<String> targets, List<String> languageIds) {
-    String argument = BazelArgumentsUtils.getMnemonicWithJoinedTargets(targets, languageIds);
+  public BazelRunnerBuilder withKind(BazelQueryKindParameters parameter) {
+    return withKinds(ImmutableList.of(parameter));
+  }
+
+  public BazelRunnerBuilder withKinds(List<BazelQueryKindParameters> parameters) {
+    String argument = BazelArgumentsUtils.getQueryKindForPatternsAndExpressions(parameters);
     this.arguments.add(argument);
 
     return this;

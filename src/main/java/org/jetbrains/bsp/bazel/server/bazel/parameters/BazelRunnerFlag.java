@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bazel;
+package org.jetbrains.bsp.bazel.server.bazel.parameters;
 
 public enum BazelRunnerFlag {
   OUTPUT_PROTO("--output=proto"),
