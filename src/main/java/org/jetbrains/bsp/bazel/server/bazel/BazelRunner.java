@@ -16,13 +16,11 @@ public class BazelRunner {
   private static final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
   private static final String BES_BACKEND = "--bes_backend=grpc://localhost:";
 
-  private final Semaphore processLock;
   private final String bazel;
 
   private Optional<Integer> besBackendPort = Optional.empty();
 
   public BazelRunner(String bazelBinaryPath) {
-    this.processLock = new Semaphore(1, true);
     this.bazel = bazelBinaryPath;
   }
 
@@ -65,19 +63,15 @@ public class BazelRunner {
     }
   }
 
-  private BazelProcessResult runBazelProcess(
+  private synchronized BazelProcessResult runBazelProcess(
       String command, List<String> flags, List<String> arguments)
       throws InterruptedException, IOException {
     List<String> processArgs = getProcessArgs(command, flags, arguments);
     LOGGER.info("Running: {}", processArgs);
 
-    processLock.acquire();
-
     ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();
-
-    processLock.release();
 
     return new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
   }

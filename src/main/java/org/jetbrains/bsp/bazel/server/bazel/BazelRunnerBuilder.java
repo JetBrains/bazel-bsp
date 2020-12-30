@@ -23,52 +23,52 @@ public class BazelRunnerBuilder {
     this.arguments = new ArrayList<>();
   }
 
-  public BazelRunnerBuilder withFlag(BazelRunnerFlag flag) {
-    flags.add(flag.toString());
+  public BazelRunnerBuilder withFlag(BazelRunnerFlag bazelFlag) {
+    flags.add(bazelFlag.toString());
 
     return this;
   }
 
-  public BazelRunnerBuilder withFlag(BazelRunnerFlag flag, String value) {
-    flags.add(flag.toString());
+  public BazelRunnerBuilder withFlag(BazelRunnerFlag bazelFlag, String value) {
+    flags.add(bazelFlag.toString());
     flags.add(value);
 
     return this;
   }
 
-  public BazelRunnerBuilder withArgument(String argument) {
-    arguments.add(argument);
+  public BazelRunnerBuilder withArgument(String bazelArgument) {
+    arguments.add(bazelArgument);
 
     return this;
   }
 
-  public BazelRunnerBuilder withArguments(List<String> arguments) {
-    this.arguments.addAll(arguments);
+  public BazelRunnerBuilder withArguments(List<String> bazelArguments) {
+    arguments.addAll(bazelArguments);
 
     return this;
   }
 
-  public BazelRunnerBuilder withTargets(List<String> targets) {
-    String joinedTargets = BazelArgumentsUtils.getJoinedBazelTargets(targets);
+  public BazelRunnerBuilder withTargets(List<String> bazelTargets) {
+    String joinedTargets = BazelArgumentsUtils.getJoinedBazelTargets(bazelTargets);
     arguments.add(joinedTargets);
 
     return this;
   }
 
-  public BazelRunnerBuilder withMnemonic(List<String> targets, List<String> languageIds) {
-    String argument = BazelArgumentsUtils.getMnemonicWithJoinedTargets(targets, languageIds);
-    this.arguments.add(argument);
+  public BazelRunnerBuilder withMnemonic(List<String> bazelTargets, List<String> languageIds) {
+    String argument = BazelArgumentsUtils.getMnemonicWithJoinedTargets(bazelTargets, languageIds);
+    arguments.add(argument);
 
     return this;
   }
 
-  public BazelRunnerBuilder withKind(BazelQueryKindParameters parameter) {
-    return withKinds(ImmutableList.of(parameter));
+  public BazelRunnerBuilder withKind(BazelQueryKindParameters bazelParameter) {
+    return withKinds(ImmutableList.of(bazelParameter));
   }
 
-  public BazelRunnerBuilder withKinds(List<BazelQueryKindParameters> parameters) {
-    String argument = BazelArgumentsUtils.getQueryKindForPatternsAndExpressions(parameters);
-    this.arguments.add(argument);
+  public BazelRunnerBuilder withKinds(List<BazelQueryKindParameters> bazelParameters) {
+    String argument = BazelArgumentsUtils.getQueryKindForPatternsAndExpressions(bazelParameters);
+    arguments.add(argument);
 
     return this;
   }

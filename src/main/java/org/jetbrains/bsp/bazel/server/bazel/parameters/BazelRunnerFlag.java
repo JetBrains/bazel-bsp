@@ -9,10 +9,10 @@ public enum BazelRunnerFlag {
   private final String name;
 
   BazelRunnerFlag(String value) {
-    this.name = value;
+    name = value;
   }
 
   public String toString() {
-    return this.name;
+    return name;
   }
 }

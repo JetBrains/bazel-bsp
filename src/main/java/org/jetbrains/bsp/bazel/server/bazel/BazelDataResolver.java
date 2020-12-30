@@ -9,6 +9,10 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 
 public class BazelDataResolver {
 
+  private static final String EXECUTION_ROOT_PARAMETER = "execution_root";
+  private static final String WORKPLACE_ROOT_PARAMETER = "workspace";
+  private static final String BAZEL_BIN_ROOT_PARAMETER = "bazel-bin";
+
   private final BazelRunner bazelRunner;
 
   public BazelDataResolver(BazelRunner bazelRunner) {
@@ -16,9 +20,9 @@ public class BazelDataResolver {
   }
 
   public BazelData resolveBazelData() {
-    String execRoot = readOnlyBazelLine("execution_root");
-    String workspaceRoot = readOnlyBazelLine("workspace");
-    String binRoot = readOnlyBazelLine("bazel-bin");
+    String execRoot = readOnlyBazelLine(EXECUTION_ROOT_PARAMETER);
+    String workspaceRoot = readOnlyBazelLine(WORKPLACE_ROOT_PARAMETER);
+    String binRoot = readOnlyBazelLine(BAZEL_BIN_ROOT_PARAMETER);
     Path workspacePath = Paths.get(execRoot);
     String workspaceLabel = workspacePath.toFile().getName();
     return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel);
