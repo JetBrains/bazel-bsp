@@ -42,10 +42,10 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.common.Constants;
 import org.jetbrains.bsp.bazel.common.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelQueryKindParameters;
-import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelQueryKindParameters;
+import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
@@ -180,8 +180,7 @@ public class BuildServerService {
     }
     BazelQueryKindParameters kindParameter =
         BazelQueryKindParameters.fromPatternAndInput(
-            "rule",
-            "rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1)");
+            "rule", "rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1)");
 
     BazelProcessResult bazelProcessResult =
         bazelRunner

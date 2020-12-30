@@ -32,7 +32,8 @@ public final class BazelArgumentsUtils {
         .collect(Collectors.joining(FUNCTIONS_DELIMITER));
   }
 
-  public static String getQueryKindForPatternsAndExpressions(List<BazelQueryKindParameters> parameters) {
+  public static String getQueryKindForPatternsAndExpressions(
+      List<BazelQueryKindParameters> parameters) {
     return parameters.stream()
         .map(BazelArgumentsUtils::getQueryKind)
         .collect(Collectors.joining(FUNCTIONS_DELIMITER));
