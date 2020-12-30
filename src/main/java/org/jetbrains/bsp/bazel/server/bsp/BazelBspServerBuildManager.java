@@ -318,7 +318,7 @@ public class BazelBspServerBuildManager {
     List<String> lines =
         bazelRunner
             .commandBuilder()
-            .run()
+            .build()
             .withFlag(BazelRunnerFlag.ASPECTS, "@//.bazelbsp:aspects.bzl%print_aspect")
             .withArgument(target)
             .executeBazelCommand()
