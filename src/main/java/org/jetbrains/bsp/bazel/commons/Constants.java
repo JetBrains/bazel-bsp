@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.common;
+package org.jetbrains.bsp.bazel.commons;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;

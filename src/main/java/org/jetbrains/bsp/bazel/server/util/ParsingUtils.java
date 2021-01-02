@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class ParsingUtils {
 

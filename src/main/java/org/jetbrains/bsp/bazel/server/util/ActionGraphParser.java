@@ -9,7 +9,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.commons.Uri;
 
 // TODO(illicitonion): Index, cache, etc
 public class ActionGraphParser {
