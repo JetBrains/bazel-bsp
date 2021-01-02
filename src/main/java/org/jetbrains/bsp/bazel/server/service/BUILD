@@ -12,7 +12,7 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/resolver",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/resolvers",
         "//src/main/java/org/jetbrains/bsp/bazel/server/util",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
