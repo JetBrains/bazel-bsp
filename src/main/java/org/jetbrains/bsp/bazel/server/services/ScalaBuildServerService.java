@@ -22,7 +22,7 @@ import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
 public class ScalaBuildServerService {
 

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.util;
+package org.jetbrains.bsp.bazel.server.utils;
 
 import ch.epfl.scala.bsp4j.BuildTargetTag;
 import ch.epfl.scala.bsp4j.Diagnostic;

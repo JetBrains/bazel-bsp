@@ -10,7 +10,7 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/params",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/util",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/utils",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:com_google_guava_guava",
