@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.service;
+package org.jetbrains.bsp.bazel.server.services;
 
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
