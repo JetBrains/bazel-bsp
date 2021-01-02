@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.bazel.utils;
 import com.google.common.base.Joiner;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.server.bazel.parameters.BazelQueryKindParameters;
+import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 
 public final class BazelArgumentsUtils {
 
