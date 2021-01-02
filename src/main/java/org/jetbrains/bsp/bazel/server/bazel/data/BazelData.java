@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.data;
+package org.jetbrains.bsp.bazel.server.bazel.data;
 
 public class BazelData {
 

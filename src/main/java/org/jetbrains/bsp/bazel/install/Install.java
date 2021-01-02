@@ -22,7 +22,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class Install {
 

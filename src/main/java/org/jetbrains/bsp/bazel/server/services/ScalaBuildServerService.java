@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.service;
+package org.jetbrains.bsp.bazel.server.services;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -8,7 +8,6 @@ import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +17,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Uri;
-import org.jetbrains.bsp.bazel.server.data.BazelData;
-import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
+import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
 public class ScalaBuildServerService {
 
@@ -47,13 +45,12 @@ public class ScalaBuildServerService {
         scalacOptionsParams.getTargets().stream()
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
-    String targetsUnion = Joiner.on(" + ").join(targets);
+
     Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
+        targetsResolver.getTargetsOptions(targets, "scalacopts");
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            ParsingUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
+        actionGraphResolver.getActionGraphParser(
+            targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(

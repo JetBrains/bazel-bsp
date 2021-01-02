@@ -17,7 +17,7 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.util.List;
-import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.commons.Constants;
 
 class BazelBspServerTestData {
 

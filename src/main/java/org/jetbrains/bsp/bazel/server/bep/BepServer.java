@@ -29,11 +29,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Uri;
-import org.jetbrains.bsp.bazel.server.data.BazelData;
+import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -143,7 +144,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       return;
     }
 
-    StatusCode exitCode = ParsingUtils.parseExitCode(buildFinished.getExitCode().getCode());
+    StatusCode exitCode = ExitCodeMapper.mapExitCode(buildFinished.getExitCode().getCode());
     TaskFinishParams finishParams = new TaskFinishParams(startedEventTaskIds.pop(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
 

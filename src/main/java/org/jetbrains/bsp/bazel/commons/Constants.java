@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.common;
+package org.jetbrains.bsp.bazel.commons;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -40,9 +40,6 @@ public class Constants {
           ".hpp");
 
   public static final String BAZEL_BUILD_COMMAND = "build";
-  public static final String BAZEL_RUN_COMMAND = "run";
-  public static final String BAZEL_TEST_COMMAND = "test";
-  public static final String BAZEL_CLEAN_COMMAND = "clean";
 
   public static final String BINARY_RULE_TYPE = "binary";
   public static final String LIBRARY_RULE_TYPE = "library";

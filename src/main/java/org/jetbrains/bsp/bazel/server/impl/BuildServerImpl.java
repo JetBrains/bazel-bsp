@@ -22,7 +22,7 @@ import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
-import org.jetbrains.bsp.bazel.server.service.BuildServerService;
+import org.jetbrains.bsp.bazel.server.services.BuildServerService;
 
 public class BuildServerImpl implements BuildServer {
 

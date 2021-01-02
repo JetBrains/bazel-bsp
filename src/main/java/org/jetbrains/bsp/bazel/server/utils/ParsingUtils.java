@@ -1,11 +1,10 @@
-package org.jetbrains.bsp.bazel.server.util;
+package org.jetbrains.bsp.bazel.server.utils;
 
 import ch.epfl.scala.bsp4j.BuildTargetTag;
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.DiagnosticSeverity;
 import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.Range;
-import ch.epfl.scala.bsp4j.StatusCode;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 import java.io.File;
@@ -20,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.common.Constants;
+import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class ParsingUtils {
 
@@ -34,17 +33,6 @@ public class ParsingUtils {
       return new URI(uri);
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
-    }
-  }
-
-  public static StatusCode parseExitCode(int exitCode) {
-    switch (exitCode) {
-      case 0:
-        return StatusCode.OK;
-      case 8:
-        return StatusCode.CANCELLED;
-      default:
-        return StatusCode.ERROR;
     }
   }
 

@@ -1,10 +1,9 @@
-package org.jetbrains.bsp.bazel.server.service;
+package org.jetbrains.bsp.bazel.server.services;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +12,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Uri;
-import org.jetbrains.bsp.bazel.server.data.BazelData;
-import org.jetbrains.bsp.bazel.server.resolver.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolver.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.util.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.util.ParsingUtils;
+import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
 public class JavaBuildServerService {
 
@@ -43,14 +41,12 @@ public class JavaBuildServerService {
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
 
-    String targetsUnion = Joiner.on(" + ").join(targets);
     Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
+        targetsResolver.getTargetsOptions(targets, "javacopts");
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            ParsingUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC)));
+        actionGraphResolver.getActionGraphParser(
+            targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC));
 
     JavacOptionsResult result =
         new JavacOptionsResult(
