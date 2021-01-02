@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bazel;
 
+import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,7 @@ public class BazelRunner {
   }
 
   private List<String> getBesFlags(List<String> flags) {
-    List<String> newFlags = new ArrayList<>();
-    newFlags.add(getBesBackendAddress());
-    newFlags.add(PUBLISH_ALL_ACTIONS);
+    List<String> newFlags = Lists.newArrayList(getBesBackendAddress(), PUBLISH_ALL_ACTIONS);
     newFlags.addAll(flags);
 
     return newFlags;
@@ -76,10 +75,7 @@ public class BazelRunner {
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
-    List<String> processArgs = new ArrayList<>();
-
-    processArgs.add(bazel);
-    processArgs.add(command);
+    List<String> processArgs = Lists.newArrayList(bazel, command);
     processArgs.addAll(flags);
     processArgs.addAll(arguments);
 
