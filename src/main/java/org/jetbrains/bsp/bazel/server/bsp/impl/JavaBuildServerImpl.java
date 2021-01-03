@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.impl;
+package org.jetbrains.bsp.bazel.server.bsp.impl;
 
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
