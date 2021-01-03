@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bep.utils;
+package org.jetbrains.bsp.bazel.server.bep.parsers;
 
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;

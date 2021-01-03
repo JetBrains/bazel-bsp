@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bep.utils.error;
+package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
 import ch.epfl.scala.bsp4j.Position;
 
@@ -34,7 +34,6 @@ final class ErrorPositionParser {
 
     return LINE_LOCATION_DELIMITER;
   }
-
 
   private static Position getPosition(String[] lineLocation) {
     Integer lineNumber = getErrorLineNumber(lineLocation);

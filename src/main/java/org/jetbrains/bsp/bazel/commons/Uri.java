@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.commons;
 
 import com.google.common.base.Splitter;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 

@@ -1,13 +1,9 @@
 package org.jetbrains.bsp.bazel.server.utils;
 
 import ch.epfl.scala.bsp4j.BuildTargetTag;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class ParsingUtils {
-
-  private static final Logger LOGGER = LogManager.getLogger(ParsingUtils.class);
 
   public static String convertOutputToPath(String output, String prefix) {
     String pathToFile = output.replaceAll("(//|:)", "/");
@@ -42,5 +38,4 @@ public class ParsingUtils {
     }
     return version;
   }
-
 }

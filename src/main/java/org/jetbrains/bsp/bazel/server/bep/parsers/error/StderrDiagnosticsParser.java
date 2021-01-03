@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bep.utils.error;
+package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
 import ch.epfl.scala.bsp4j.Diagnostic;
 import com.google.common.base.Splitter;
@@ -32,7 +32,6 @@ public final class StderrDiagnosticsParser {
   }
 
   private static boolean isBazelError(String error) {
-    return ErrorFileParser.isInWorkspaceFile(error)
-        || ErrorFileParser.isInBuildFile(error);
+    return ErrorFileParser.isInWorkspaceFile(error) || ErrorFileParser.isInBuildFile(error);
   }
 }

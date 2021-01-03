@@ -34,9 +34,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
-import org.jetbrains.bsp.bazel.server.bep.utils.ClasspathParser;
+import org.jetbrains.bsp.bazel.server.bep.parsers.ClasspathParser;
+import org.jetbrains.bsp.bazel.server.bep.parsers.error.StderrDiagnosticsParser;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.bep.utils.error.StderrDiagnosticsParser;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 

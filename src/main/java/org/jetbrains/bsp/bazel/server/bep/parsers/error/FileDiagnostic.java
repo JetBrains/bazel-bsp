@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bep.utils.error;
+package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.DiagnosticSeverity;
@@ -51,5 +51,4 @@ class FileDiagnostic {
   public String getFileLocation() {
     return fileLocation;
   }
-
 }

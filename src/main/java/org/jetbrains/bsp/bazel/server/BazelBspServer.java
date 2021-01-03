@@ -19,12 +19,12 @@ import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.ScalaBuildServerImpl;
-import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
+import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
 
 public class BazelBspServer {
 

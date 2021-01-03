@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bep.utils.error;
+package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
 import org.jetbrains.bsp.bazel.commons.Constants;
 
@@ -41,7 +41,4 @@ final class ErrorFileParser {
 
     return errorPreamblePrefixEndingIndex;
   }
-
-
-
 }
