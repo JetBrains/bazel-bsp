@@ -38,7 +38,7 @@ import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.bsp.utils.ParsingUtils;
 
 public class BazelBspServerBuildManager {
 
@@ -186,7 +186,20 @@ public class BazelBspServerBuildManager {
 
   private JvmBuildTarget getJVMBuildTarget() {
     // TODO(andrefmrocha): Properly determine jdk path
-    return new JvmBuildTarget(null, ParsingUtils.getJavaVersion());
+    return new JvmBuildTarget(null, getJavaVersion());
+  }
+
+  private static String getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      version = version.substring(0, 3);
+    } else {
+      int dot = version.indexOf(".");
+      if (dot != -1) {
+        version = version.substring(0, dot);
+      }
+    }
+    return version;
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
@@ -202,6 +215,7 @@ public class BazelBspServerBuildManager {
         bazelRunner
             .commandBuilder()
             .query()
+            // TODO withFlags
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withTargets(bazelTargets)
             .executeBazelCommand();
