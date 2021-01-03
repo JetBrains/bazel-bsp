@@ -7,11 +7,11 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class ParsingUtils {
 
-  private static final Map<String, String> RULE_CLASS_TO_RULE_TYPE = ImmutableMap.of(
-      Constants.LIBRARY_RULE_TYPE, BuildTargetTag.LIBRARY,
-      Constants.BINARY_RULE_TYPE, BuildTargetTag.APPLICATION,
-      Constants.TEST_RULE_TYPE, BuildTargetTag.TEST
-  );
+  private static final Map<String, String> RULE_CLASS_TO_RULE_TYPE =
+      ImmutableMap.of(
+          Constants.LIBRARY_RULE_TYPE, BuildTargetTag.LIBRARY,
+          Constants.BINARY_RULE_TYPE, BuildTargetTag.APPLICATION,
+          Constants.TEST_RULE_TYPE, BuildTargetTag.TEST);
   private static final String DEFAULT_RULE_TYPE = BuildTargetTag.NO_IDE;
 
   public static String convertOutputToPath(String output, String prefix) {

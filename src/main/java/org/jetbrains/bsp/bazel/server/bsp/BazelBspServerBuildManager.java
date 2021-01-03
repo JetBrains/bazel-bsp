@@ -61,6 +61,19 @@ public class BazelBspServerBuildManager {
     this.bazelRunner = bazelRunner;
   }
 
+  private static String getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      version = version.substring(0, 3);
+    } else {
+      int dot = version.indexOf(".");
+      if (dot != -1) {
+        version = version.substring(0, dot);
+      }
+    }
+    return version;
+  }
+
   public BuildTarget getBuildTargetForRule(Build.Rule rule) {
     String name = rule.getName();
     System.out.println("Getting targets for rule: " + name);
@@ -187,19 +200,6 @@ public class BazelBspServerBuildManager {
   private JvmBuildTarget getJVMBuildTarget() {
     // TODO(andrefmrocha): Properly determine jdk path
     return new JvmBuildTarget(null, getJavaVersion());
-  }
-
-  private static String getJavaVersion() {
-    String version = System.getProperty("java.version");
-    if (version.startsWith("1.")) {
-      version = version.substring(0, 3);
-    } else {
-      int dot = version.indexOf(".");
-      if (dot != -1) {
-        version = version.substring(0, dot);
-      }
-    }
-    return version;
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
