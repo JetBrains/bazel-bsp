@@ -20,6 +20,7 @@ import com.google.devtools.build.v1.PublishLifecycleEventRequest;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -33,8 +34,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
+import org.jetbrains.bsp.bazel.server.bep.utils.ClasspathParser;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.bep.utils.ParsingUtils;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -170,8 +172,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private void fetchScalaJars(OutputGroup outputGroup) {
     outputGroup.getFileSetsList().stream()
         .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
-        .map(file -> ParsingUtils.parseUri(file.getUri()))
-        .flatMap(pathProtoUri -> ParsingUtils.parseClasspathFromAspect(pathProtoUri).stream())
+        .map(file -> URI.create(file.getUri()))
+        .flatMap(pathProtoUri -> ClasspathParser.fromAspect(pathProtoUri).stream())
         .forEach(
             path ->
                 compilerClasspath.add(

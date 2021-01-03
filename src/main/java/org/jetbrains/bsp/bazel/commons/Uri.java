@@ -8,7 +8,6 @@ import java.util.List;
 
 public class Uri implements Comparable<Uri> {
 
-  private static final String ENC = StandardCharsets.UTF_8.toString();
   private final URI uri;
 
   private Uri(String uri) {

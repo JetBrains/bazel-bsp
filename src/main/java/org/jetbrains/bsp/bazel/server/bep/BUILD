@@ -9,7 +9,7 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/logger",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/utils",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bep/utils",
         "@com_google_protobuf//:protobuf_java",
         "@googleapis//:google_devtools_build_v1_build_events_java_proto",
         "@googleapis//:google_devtools_build_v1_publish_build_event_java_grpc",
