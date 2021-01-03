@@ -215,8 +215,8 @@ public class BazelBspServerBuildManager {
         bazelRunner
             .commandBuilder()
             .query()
-            // TODO withFlags
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withFlags(extraFlags)
             .withTargets(bazelTargets)
             .executeBazelCommand();
 
