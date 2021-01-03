@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public final class ClasspathParser {
 
   private static final String ASPECTS_OUTPUT_FILE_LINE_DELIMITER = "\"";
+  private static final Integer ASPECTS_OUTPUT_FILE_CLASSPATH_VALID_PARTS_NUMBER = 1;
   private static final Integer ASPECTS_OUTPUT_FILE_CLASSPATH_LINE_INDEX = 1;
 
   public static List<String> fromAspect(URI dependenciesAspectOutput) {
@@ -37,7 +38,7 @@ public final class ClasspathParser {
   }
 
   private static void throwExceptionIfLineHasWrongFormat(List<String> lineParts) {
-    if (lineParts.size() != 3) {
+    if (lineParts.size() != ASPECTS_OUTPUT_FILE_CLASSPATH_VALID_PARTS_NUMBER) {
       throw new RuntimeException("Wrong parts in sketchy textproto parsing: " + lineParts);
     }
   }

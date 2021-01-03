@@ -36,7 +36,7 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.bep.utils.ClasspathParser;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.bep.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.bep.utils.error.StderrDiagnosticsParser;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -242,7 +242,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeProgressEvent(BuildEventStreamProtos.Progress progress) {
     Map<String, List<Diagnostic>> fileDiagnostics =
-        ParsingUtils.parseStderrDiagnostics(progress.getStderr());
+        StderrDiagnosticsParser.parse(progress.getStderr());
 
     fileDiagnostics.entrySet().stream()
         .map(this::createParamsFromEntry)
