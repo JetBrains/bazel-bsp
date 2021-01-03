@@ -17,7 +17,7 @@ import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
 
 public class JavaBuildServerService {
 

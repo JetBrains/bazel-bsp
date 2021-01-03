@@ -7,7 +7,6 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
 public class ActionGraphResolver {
 
