@@ -9,7 +9,7 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
-import org.jetbrains.bsp.bazel.server.services.ScalaBuildServerService;
+import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
 
 public class ScalaBuildServerImpl implements ScalaBuildServer {
 

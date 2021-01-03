@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.services;
+package org.jetbrains.bsp.bazel.server.bsp.services;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;

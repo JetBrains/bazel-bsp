@@ -7,7 +7,7 @@ java_library(
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/commons",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/services",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
