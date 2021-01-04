@@ -78,10 +78,12 @@ public class ScalaBuildServerService {
   public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
     List<BuildTargetIdentifier> targets = scalaMainClassesParams.getTargets();
-    String targetsUnion = Joiner.on(" + ").join(getTargetUris(targets));
+    List<String> targetUris =
+        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
+
     Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
-    Map<String, List<String>> mainClasses = targetsResolver.getTargetsMainClasses(targetsUnion);
+        targetsResolver.getTargetsOptions(targetUris, "scalacopts");
+    Map<String, List<String>> mainClasses = targetsResolver.getTargetsMainClasses(targetUris);
 
     ScalaMainClassesResult result =
         new ScalaMainClassesResult(
