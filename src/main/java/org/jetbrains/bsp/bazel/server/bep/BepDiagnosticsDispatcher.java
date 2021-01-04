@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.bep;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
@@ -7,6 +7,7 @@ import ch.epfl.scala.bsp4j.DiagnosticSeverity;
 import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
 import ch.epfl.scala.bsp4j.Range;
+import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -18,13 +19,15 @@ import io.bazel.rules_scala.diagnostics.Diagnostics.TargetDiagnostics;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 
 public class BepDiagnosticsDispatcher {
 
@@ -39,11 +42,13 @@ public class BepDiagnosticsDispatcher {
           .put(Severity.HINT, DiagnosticSeverity.HINT)
           .build();
 
-  private final BazelBspServer bspServer;
+  private final BazelData bazelData;
   private final BuildClient bspClient;
 
-  public BepDiagnosticsDispatcher(BazelBspServer bspServer, BuildClient bspClient) {
-    this.bspServer = bspServer;
+  private final Map<BuildTargetIdentifier, List<SourceItem>> buildTargetsSources = new HashMap<>();
+
+  public BepDiagnosticsDispatcher(BazelData bazelData, BuildClient bspClient) {
+    this.bazelData = bazelData;
     this.bspClient = bspClient;
   }
 
@@ -66,7 +71,7 @@ public class BepDiagnosticsDispatcher {
 
   public void emitDiagnostics(
       Map<Uri, List<PublishDiagnosticsParams>> filesToDiagnostics, BuildTargetIdentifier target) {
-    bspServer.getCachedBuildTargetSources(target).stream()
+    buildTargetsSources.getOrDefault(target, ImmutableList.of()).stream()
         .map(source -> Uri.fromFileUri(source.getUri()))
         .forEach(sourceUri -> addSourceAndPublish(sourceUri, filesToDiagnostics, target));
   }
@@ -123,7 +128,10 @@ public class BepDiagnosticsDispatcher {
   }
 
   private Uri getUriForPath(String path) {
-    return Uri.fromExecOrWorkspacePath(
-        path, bspServer.getBazelData().getExecRoot(), bspServer.getBazelData().getWorkspaceRoot());
+    return Uri.fromExecOrWorkspacePath(path, bazelData.getExecRoot(), bazelData.getWorkspaceRoot());
+  }
+
+  public Map<BuildTargetIdentifier, List<SourceItem>> getBuildTargetsSources() {
+    return buildTargetsSources;
   }
 }

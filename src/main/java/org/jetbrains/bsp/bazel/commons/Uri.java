@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.common;
+package org.jetbrains.bsp.bazel.commons;
 
 import com.google.common.base.Splitter;
 import java.net.URI;
@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Uri implements Comparable<Uri> {
+
   private static final String ENC = StandardCharsets.UTF_8.toString();
   private final URI uri;
 

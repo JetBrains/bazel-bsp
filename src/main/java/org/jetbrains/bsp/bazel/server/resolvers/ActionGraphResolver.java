@@ -3,8 +3,11 @@ package org.jetbrains.bsp.bazel.server.resolvers;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContainer;
 import java.io.IOException;
-import org.jetbrains.bsp.bazel.common.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.data.ProcessResults;
+import java.util.List;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
 public class ActionGraphResolver {
 
@@ -14,9 +17,16 @@ public class ActionGraphResolver {
     this.bazelRunner = bazelRunner;
   }
 
-  public ActionGraphParser parseActionGraph(String query) {
+  public ActionGraphParser getActionGraphParser(List<String> targets, List<String> languageIds) {
     try {
-      ProcessResults process = bazelRunner.runBazelCommand("aquery", "--output=proto", query);
+      BazelProcessResult process =
+          bazelRunner
+              .commandBuilder()
+              .aquery()
+              .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+              .withMnemonic(targets, languageIds)
+              .executeBazelCommand();
+
       ActionGraphContainer actionGraphContainer =
           AnalysisProtos.ActionGraphContainer.parseFrom(process.getStdoutStream());
       return new ActionGraphParser(actionGraphContainer);

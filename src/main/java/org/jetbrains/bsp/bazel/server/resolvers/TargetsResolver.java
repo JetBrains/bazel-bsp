@@ -4,21 +4,24 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import java.util.stream.Stream;
 
 public class TargetsResolver {
 
-  private final QueryResolver queryResolver;
+  private final BazelRunner bazelRunner;
 
   private static final String MAIN_CLASS_ATTR_NAME = "main_class";
 
-  public TargetsResolver(QueryResolver queryResolver) {
-    this.queryResolver = queryResolver;
+  public TargetsResolver(BazelRunner bazelRunner) {
+    this.bazelRunner = bazelRunner;
   }
 
   public Map<String, List<String>> getTargetsOptions(
-      String targetsUnion, String compilerOptionsName) {
-    return queryTargets(targetsUnion).getTargetList().stream()
+      List<String> targets, String compilerOptionsName) {
+    return queryTargets(targets).getTargetList().stream()
         .map(Build.Target::getRule)
         .collect(
             Collectors.toMap(
@@ -29,8 +32,8 @@ public class TargetsResolver {
                         .collect(Collectors.toList())));
   }
 
-  public Map<String, List<String>> getTargetsMainClasses(String targetsUnion) {
-    return queryTargets(targetsUnion).getTargetList().stream()
+  public Map<String, List<String>> getTargetsMainClasses(List<String> targets) {
+    return queryTargets(targets).getTargetList().stream()
         .map(Build.Target::getRule)
         .collect(
             Collectors.toMap(
@@ -41,7 +44,7 @@ public class TargetsResolver {
                         .collect(Collectors.toList())));
   }
 
-  Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
+  private Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
     return rule.getAttributeList().stream()
         .filter(
             attr ->
@@ -50,7 +53,14 @@ public class TargetsResolver {
                     && attr.getExplicitlySpecified());
   }
 
-  private Build.QueryResult queryTargets(String targets) {
-    return queryResolver.getQuery("query", "--output=proto", "(" + targets + ")");
+  private Build.QueryResult queryTargets(List<String> targets) {
+    BazelProcessResult bazelProcessResult =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withTargets(targets)
+            .executeBazelCommand();
+    return QueryResolver.getQueryResultForProcess(bazelProcessResult);
   }
 }

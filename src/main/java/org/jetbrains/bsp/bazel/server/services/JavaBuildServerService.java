@@ -1,10 +1,9 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.services;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,28 +12,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.common.ActionGraphParser;
-import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
+import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
-// TODO: This class *should* implement a `JavaBuildServer` interface,
-// TODO: now `buildTargetJavacOptions` method returns a `Either<ResponseError, JavacOptionsResult>`
-// TODO: instead of a `CompletableFuture<JavacOptionsResult>` because of the `BazelBspServer`
-// TODO: command executing (`executeCommand`) implementation.
-public class JavaBspServer {
+public class JavaBuildServerService {
 
+  private final BazelData bazelData;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
-  private final String execRoot;
 
-  public JavaBspServer(
-      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
+  public JavaBuildServerService(
+      BazelData bazelData,
+      TargetsResolver targetsResolver,
+      ActionGraphResolver actionGraphResolver) {
+    this.bazelData = bazelData;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.execRoot = execRoot;
   }
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
@@ -44,14 +41,12 @@ public class JavaBspServer {
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
 
-    String targetsUnion = Joiner.on(" + ").join(targets);
     Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "javacopts");
+        targetsResolver.getTargetsOptions(targets, "javacopts");
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC)));
+        actionGraphResolver.getActionGraphParser(
+            targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC));
 
     JavacOptionsResult result =
         new JavacOptionsResult(
@@ -61,7 +56,7 @@ public class JavaBspServer {
                         collectJavacOptionsResult(
                             actionGraphParser,
                             targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            actionGraphParser.getInputsAsUri(target, execRoot),
+                            actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot()),
                             target))
                 .collect(Collectors.toList()));
     return Either.forRight(result);
@@ -79,6 +74,7 @@ public class JavaBspServer {
                     new BuildTargetIdentifier(target),
                     options,
                     inputs,
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, bazelData.getExecRoot())
+                        .toString()));
   }
 }

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.services;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClass;
@@ -10,7 +10,6 @@ import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,30 +19,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.common.ActionGraphParser;
-import org.jetbrains.bsp.bazel.common.Constants;
-import org.jetbrains.bsp.bazel.common.Uri;
+import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.MnemonicsUtils;
+import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
 
-// TODO: This class *should* implement a `ScalaBuildServer` interface,
-// TODO: now `buildTargetScalacOptions` method returns a `Either<ResponseError,
-// ScalacOptionsResult>`
-// TODO: instead of a `CompletableFuture<ScalacOptionsResult>` because of the `BazelBspServer`
-// TODO: command executing (`executeCommand`) implementation.
-public class ScalaBspServer {
+public class ScalaBuildServerService {
 
+  private final BazelData bazelData;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
 
-  private final String execRoot;
-
-  public ScalaBspServer(
-      TargetsResolver targetsResolver, ActionGraphResolver actionGraphResolver, String execRoot) {
+  public ScalaBuildServerService(
+      BazelData bazelData,
+      TargetsResolver targetsResolver,
+      ActionGraphResolver actionGraphResolver) {
+    this.bazelData = bazelData;
     this.targetsResolver = targetsResolver;
     this.actionGraphResolver = actionGraphResolver;
-    this.execRoot = execRoot;
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
@@ -52,13 +47,12 @@ public class ScalaBspServer {
         scalacOptionsParams.getTargets().stream()
             .map(BuildTargetIdentifier::getUri)
             .collect(Collectors.toList());
-    String targetsUnion = Joiner.on(" + ").join(targets);
+
     Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targetsUnion, "scalacopts");
+        targetsResolver.getTargetsOptions(targets, "scalacopts");
     ActionGraphParser actionGraphParser =
-        actionGraphResolver.parseActionGraph(
-            MnemonicsUtils.getMnemonics(
-                targetsUnion, ImmutableList.of(Constants.SCALAC, Constants.JAVAC)));
+        actionGraphResolver.getActionGraphParser(
+            targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
 
     ScalacOptionsResult result =
         new ScalacOptionsResult(
@@ -68,7 +62,7 @@ public class ScalaBspServer {
                         collectScalacOptionsResult(
                             actionGraphParser,
                             targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            actionGraphParser.getInputsAsUri(target, execRoot),
+                            actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot()),
                             target))
                 .collect(Collectors.toList()));
     return Either.forRight(result);
@@ -117,7 +111,8 @@ public class ScalaBspServer {
                     new BuildTargetIdentifier(target),
                     options,
                     inputs,
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, execRoot).toString()));
+                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, bazelData.getExecRoot())
+                        .toString()));
   }
 
   private List<ScalaMainClass> collectMainClasses(

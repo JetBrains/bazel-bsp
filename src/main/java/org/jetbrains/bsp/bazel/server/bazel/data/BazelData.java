@@ -1,6 +1,7 @@
-package org.jetbrains.bsp.bazel.server.data;
+package org.jetbrains.bsp.bazel.server.bazel.data;
 
 public class BazelData {
+
   private final String execRoot;
   private final String workspaceRoot;
   private final String binRoot;
