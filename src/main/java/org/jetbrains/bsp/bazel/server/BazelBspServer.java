@@ -47,22 +47,22 @@ public class BazelBspServer {
   public void startServer(BspIntegrationData bspIntegrationData) {
     BazelBspServerLifetime serverLifetime = new BazelBspServerLifetime();
     BazelBspServerRequestHelpers serverRequestHelpers =
-            new BazelBspServerRequestHelpers(serverLifetime);
+        new BazelBspServerRequestHelpers(serverLifetime);
 
     TargetsResolver targetsResolver = new TargetsResolver(bazelRunner);
     ActionGraphResolver actionGraphResolver = new ActionGraphResolver(bazelRunner);
 
     this.serverBuildManager =
-            new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner);
+        new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner);
 
     BuildServerService buildServerService =
-            new BuildServerService(
-                    serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
+        new BuildServerService(
+            serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
 
     ScalaBuildServerService scalaBuildServerService =
-            new ScalaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
+        new ScalaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
     JavaBuildServerService javaBuildServerService =
-            new JavaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
+        new JavaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
 
     this.scalaBuildServer = new ScalaBuildServerImpl(scalaBuildServerService, serverRequestHelpers);
     this.javaBuildServer = new JavaBuildServerImpl(javaBuildServerService, serverRequestHelpers);
@@ -73,14 +73,14 @@ public class BazelBspServer {
 
   private void integrateBsp(BspIntegrationData bspIntegrationData) {
     Launcher<BuildClient> launcher =
-            new Launcher.Builder<BuildClient>()
-                    .traceMessages(bspIntegrationData.getTraceWriter())
-                    .setOutput(bspIntegrationData.getStdout())
-                    .setInput(bspIntegrationData.getStdin())
-                    .setLocalService(this.buildServer)
-                    .setRemoteInterface(BuildClient.class)
-                    .setExecutorService(bspIntegrationData.getExecutor())
-                    .create();
+        new Launcher.Builder<BuildClient>()
+            .traceMessages(bspIntegrationData.getTraceWriter())
+            .setOutput(bspIntegrationData.getStdout())
+            .setInput(bspIntegrationData.getStdin())
+            .setLocalService(this.buildServer)
+            .setRemoteInterface(BuildClient.class)
+            .setExecutorService(bspIntegrationData.getExecutor())
+            .create();
     bspIntegrationData.setLauncher(launcher);
 
     BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());

@@ -4,10 +4,10 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
-import java.util.stream.Stream;
 
 public class TargetsResolver {
 
