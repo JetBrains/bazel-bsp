@@ -4,7 +4,6 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
-import com.google.common.collect.ImmutableList;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.server.bazel.BazelDataResolver;
@@ -78,7 +77,7 @@ public class BazelBspServer {
             .traceMessages(bspIntegrationData.getTraceWriter())
             .setOutput(bspIntegrationData.getStdout())
             .setInput(bspIntegrationData.getStdin())
-            .setLocalServices(ImmutableList.of(buildServer, javaBuildServer, scalaBuildServer))
+            .setLocalService(buildServer)
             .setRemoteInterface(BuildClient.class)
             .setExecutorService(bspIntegrationData.getExecutor())
             .create();
