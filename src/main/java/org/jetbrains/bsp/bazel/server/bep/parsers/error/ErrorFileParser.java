@@ -7,18 +7,16 @@ final class ErrorFileParser {
   private static final String AT_PATH = " at /";
   private static final String ERROR_PREAMBLE = "ERROR: ";
 
-  private static final String WORKSPACE_FILE_NAME = "WORKSPACE";
-
   public static String getFileWithError(String error) {
     if (isInWorkspaceFile(error)) {
-      return WORKSPACE_FILE_NAME;
+      return Constants.WORKSPACE_FILE_NAME;
     }
 
     return Constants.BUILD_FILE_NAME;
   }
 
   public static boolean isInWorkspaceFile(String error) {
-    return error.contains("/" + WORKSPACE_FILE_NAME + ":");
+    return error.contains("/" + Constants.WORKSPACE_FILE_NAME + ":");
   }
 
   public static boolean isInBuildFile(String error) {

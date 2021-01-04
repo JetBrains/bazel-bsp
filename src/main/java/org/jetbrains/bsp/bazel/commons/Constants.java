@@ -46,6 +46,8 @@ public class Constants {
   public static final String TEST_RULE_TYPE = "test";
 
   public static final String BUILD_FILE_NAME = "BUILD";
+  public static final String WORKSPACE_FILE_NAME = "WORKSPACE";
+
   public static final String ASPECTS_FILE_NAME = "aspects.bzl";
   public static final String BAZELBSP_DIR_NAME = ".bazelbsp";
   public static final String BSP_DIR_NAME = ".bsp";
