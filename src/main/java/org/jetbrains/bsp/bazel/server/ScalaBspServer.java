@@ -126,7 +126,7 @@ public class ScalaBspServer {
       BuildTargetIdentifier target,
       Map<String, List<String>> mainClassesNames,
       Map<String, List<String>> targetsOptions) {
-    return mainClassesNames.getOrDefault(target.getUri(), Lists.newArrayList()).stream()
+    return mainClassesNames.getOrDefault(target.getUri(), new ArrayList<>()).stream()
         .map(
             mainClassName ->
                 new ScalaMainClass(
