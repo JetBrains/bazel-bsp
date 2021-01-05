@@ -15,7 +15,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
-import org.jetbrains.bsp.bazel.server.bsp.impl.AggregateBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.bsp.impl.BspImplementationHub;
 import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.ScalaBuildServerImpl;
@@ -32,8 +32,7 @@ public class BazelBspServer {
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
 
-  private AggregateBuildServerImpl aggregateBuildServerImpl;
-
+  private BspImplementationHub bspImplementationHub;
   private BazelBspServerBuildManager serverBuildManager;
 
   public BazelBspServer(BazelBspServerConfig serverConfig) {
@@ -69,8 +68,8 @@ public class BazelBspServer {
         new JavaBuildServerImpl(javaBuildServerService, serverRequestHelpers);
     BuildServer buildServer = new BuildServerImpl(buildServerService, serverRequestHelpers);
 
-    this.aggregateBuildServerImpl =
-        new AggregateBuildServerImpl(buildServer, scalaBuildServer, javaBuildServer);
+    this.bspImplementationHub =
+        new BspImplementationHub(buildServer, scalaBuildServer, javaBuildServer);
 
     integrateBsp(bspIntegrationData);
   }
@@ -81,13 +80,14 @@ public class BazelBspServer {
             .traceMessages(bspIntegrationData.getTraceWriter())
             .setOutput(bspIntegrationData.getStdout())
             .setInput(bspIntegrationData.getStdin())
-            .setLocalService(aggregateBuildServerImpl)
+            .setLocalService(bspImplementationHub)
             .setRemoteInterface(BuildClient.class)
             .setExecutorService(bspIntegrationData.getExecutor())
             .create();
-    bspIntegrationData.setLauncher(launcher);
 
+    bspIntegrationData.setLauncher(launcher);
     BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
+
     BepServer bepServer = new BepServer(bazelData, launcher.getRemoteProxy(), buildClientLogger);
     serverBuildManager.setBepServer(bepServer);
 

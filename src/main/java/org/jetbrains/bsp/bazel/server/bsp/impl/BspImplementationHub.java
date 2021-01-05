@@ -32,13 +32,13 @@ import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 
-public class AggregateBuildServerImpl implements BuildServer, ScalaBuildServer, JavaBuildServer {
+public class BspImplementationHub implements BuildServer, ScalaBuildServer, JavaBuildServer {
 
   private final BuildServer buildServer;
   private final ScalaBuildServer scalaBuildServer;
   private final JavaBuildServer javaBuildServer;
 
-  public AggregateBuildServerImpl(
+  public BspImplementationHub(
       BuildServer buildServer, ScalaBuildServer scalaBuildServer, JavaBuildServer javaBuildServer) {
     this.buildServer = buildServer;
     this.scalaBuildServer = scalaBuildServer;
