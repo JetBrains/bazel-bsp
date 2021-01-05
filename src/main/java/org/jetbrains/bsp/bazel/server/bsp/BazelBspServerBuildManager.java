@@ -38,7 +38,7 @@ import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.bsp.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 
 public class BazelBspServerBuildManager {
 
@@ -106,12 +106,13 @@ public class BazelBspServerBuildManager {
           .ifPresent(
               (buildTarget) -> {
                 target.setDataKind(BuildTargetDataKind.SCALA);
-                target.setTags(Lists.newArrayList(ParsingUtils.getRuleType(rule.getRuleClass())));
+                target.setTags(
+                    Lists.newArrayList(BuildManagerParsingUtils.getRuleType(rule.getRuleClass())));
                 target.setData(buildTarget);
               });
     } else if (extensions.contains(Constants.JAVA) || extensions.contains(Constants.KOTLIN)) {
       target.setDataKind(BuildTargetDataKind.JVM);
-      target.setTags(Lists.newArrayList(ParsingUtils.getRuleType(rule.getRuleClass())));
+      target.setTags(Lists.newArrayList(BuildManagerParsingUtils.getRuleType(rule.getRuleClass())));
       target.setData(getJVMBuildTarget());
     }
     return target;
@@ -229,7 +230,8 @@ public class BazelBspServerBuildManager {
               output ->
                   diagnosticsProtosLocations.put(
                       target.getRule().getName(),
-                      ParsingUtils.convertOutputToPath(output, bazelData.getBinRoot())));
+                      BuildManagerParsingUtils.convertOutputToPath(
+                          output, bazelData.getBinRoot())));
     }
 
     try {

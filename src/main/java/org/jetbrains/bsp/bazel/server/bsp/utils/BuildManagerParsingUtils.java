@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.bsp.utils;
 import ch.epfl.scala.bsp4j.BuildTargetTag;
 import org.jetbrains.bsp.bazel.commons.Constants;
 
-public class ParsingUtils {
+public class BuildManagerParsingUtils {
 
   public static String convertOutputToPath(String output, String prefix) {
     String pathToFile = output.replaceAll("(//|:)", "/");
