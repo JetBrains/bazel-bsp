@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp.impl;
+package org.jetbrains.bsp.bazel.server.bsp;
 
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.CleanCacheParams;
