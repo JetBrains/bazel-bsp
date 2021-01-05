@@ -37,8 +37,8 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
-import org.jetbrains.bsp.bazel.server.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.utils.ParsingUtils;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 
 public class BazelBspServerBuildManager {
 
@@ -106,12 +106,13 @@ public class BazelBspServerBuildManager {
           .ifPresent(
               (buildTarget) -> {
                 target.setDataKind(BuildTargetDataKind.SCALA);
-                target.setTags(Lists.newArrayList(ParsingUtils.getRuleType(rule.getRuleClass())));
+                target.setTags(
+                    Lists.newArrayList(BuildManagerParsingUtils.getRuleType(rule.getRuleClass())));
                 target.setData(buildTarget);
               });
     } else if (extensions.contains(Constants.JAVA) || extensions.contains(Constants.KOTLIN)) {
       target.setDataKind(BuildTargetDataKind.JVM);
-      target.setTags(Lists.newArrayList(ParsingUtils.getRuleType(rule.getRuleClass())));
+      target.setTags(Lists.newArrayList(BuildManagerParsingUtils.getRuleType(rule.getRuleClass())));
       target.setData(getJVMBuildTarget());
     }
     return target;
@@ -186,7 +187,20 @@ public class BazelBspServerBuildManager {
 
   private JvmBuildTarget getJVMBuildTarget() {
     // TODO(andrefmrocha): Properly determine jdk path
-    return new JvmBuildTarget(null, ParsingUtils.getJavaVersion());
+    return new JvmBuildTarget(null, getJavaVersion());
+  }
+
+  private String getJavaVersion() {
+    String version = System.getProperty("java.version");
+    if (version.startsWith("1.")) {
+      version = version.substring(0, 3);
+    } else {
+      int dot = version.indexOf(".");
+      if (dot != -1) {
+        version = version.substring(0, dot);
+      }
+    }
+    return version;
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
@@ -203,6 +217,7 @@ public class BazelBspServerBuildManager {
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withFlags(extraFlags)
             .withTargets(bazelTargets)
             .executeBazelCommand();
 
@@ -215,7 +230,8 @@ public class BazelBspServerBuildManager {
               output ->
                   diagnosticsProtosLocations.put(
                       target.getRule().getName(),
-                      ParsingUtils.convertOutputToPath(output, bazelData.getBinRoot())));
+                      BuildManagerParsingUtils.convertOutputToPath(
+                          output, bazelData.getBinRoot())));
     }
 
     try {

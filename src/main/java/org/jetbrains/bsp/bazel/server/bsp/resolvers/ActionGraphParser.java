@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.utils;
+package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;

@@ -36,6 +36,12 @@ public class BazelRunnerBuilder {
     return this;
   }
 
+  public BazelRunnerBuilder withFlags(List<String> bazelFlags) {
+    flags.addAll(bazelFlags);
+
+    return this;
+  }
+
   public BazelRunnerBuilder withArgument(String bazelArgument) {
     arguments.add(bazelArgument);
 

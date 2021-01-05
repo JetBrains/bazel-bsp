@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.impl;
+package org.jetbrains.bsp.bazel.server.bsp.impl;
 
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.CleanCacheParams;
@@ -22,7 +22,7 @@ import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
-import org.jetbrains.bsp.bazel.server.services.BuildServerService;
+import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
 
 public class BuildServerImpl implements BuildServer {
 

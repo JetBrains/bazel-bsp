@@ -15,15 +15,15 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
-import org.jetbrains.bsp.bazel.server.impl.BuildServerImpl;
-import org.jetbrains.bsp.bazel.server.impl.JavaBuildServerImpl;
-import org.jetbrains.bsp.bazel.server.impl.ScalaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
+import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.bsp.impl.ScalaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
+import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
+import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
 import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.services.BuildServerService;
-import org.jetbrains.bsp.bazel.server.services.JavaBuildServerService;
-import org.jetbrains.bsp.bazel.server.services.ScalaBuildServerService;
 
 public class BazelBspServer {
 
@@ -77,7 +77,7 @@ public class BazelBspServer {
             .traceMessages(bspIntegrationData.getTraceWriter())
             .setOutput(bspIntegrationData.getStdout())
             .setInput(bspIntegrationData.getStdin())
-            .setLocalService(this.buildServer)
+            .setLocalService(buildServer)
             .setRemoteInterface(BuildClient.class)
             .setExecutorService(bspIntegrationData.getExecutor())
             .create();

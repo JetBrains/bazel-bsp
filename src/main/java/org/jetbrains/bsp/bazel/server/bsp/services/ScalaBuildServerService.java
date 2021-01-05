@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.services;
+package org.jetbrains.bsp.bazel.server.bsp.services;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -20,9 +20,9 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.resolvers.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.utils.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
 
 public class ScalaBuildServerService {
 
