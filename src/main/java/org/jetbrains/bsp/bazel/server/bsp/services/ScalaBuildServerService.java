@@ -28,6 +28,8 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsUtils;
 
 public class ScalaBuildServerService {
 
+  private static final String SCALA_COMPILER_OPTIONS_NAME = "scalacopts";
+
   private final BazelData bazelData;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
@@ -37,16 +39,16 @@ public class ScalaBuildServerService {
       BazelRunner bazelRunner,
       ActionGraphResolver actionGraphResolver) {
     this.bazelData = bazelData;
-    this.targetsResolver = new TargetsResolver(bazelRunner);
     this.actionGraphResolver = actionGraphResolver;
+
+    this.targetsResolver = new TargetsResolver(bazelData, bazelRunner, SCALA_COMPILER_OPTIONS_NAME);
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
     List<String> targets = TargetsUtils.getTargetsUris(scalacOptionsParams.getTargets());
 
-    Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targets, "scalacopts");
+    Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targets);
     ActionGraphParser actionGraphParser =
         actionGraphResolver.getActionGraphParser(
             targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));

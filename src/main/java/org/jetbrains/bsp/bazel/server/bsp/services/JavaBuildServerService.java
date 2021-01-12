@@ -23,6 +23,8 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsUtils;
 
 public class JavaBuildServerService {
 
+  private static final String JAVA_COMPILER_OPTIONS_NAME = "javacopts";
+
   private final BazelData bazelData;
   private final TargetsResolver targetsResolver;
   private final ActionGraphResolver actionGraphResolver;
@@ -32,16 +34,16 @@ public class JavaBuildServerService {
       BazelRunner bazelRunner,
       ActionGraphResolver actionGraphResolver) {
     this.bazelData = bazelData;
-    this.targetsResolver = new TargetsResolver(bazelRunner);
     this.actionGraphResolver = actionGraphResolver;
+
+    this.targetsResolver = new TargetsResolver(bazelData, bazelRunner, JAVA_COMPILER_OPTIONS_NAME);
   }
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
     List<String> targets = TargetsUtils.getTargetsUris(javacOptionsParams.getTargets());
 
-    Map<String, List<String>> targetsOptions =
-        targetsResolver.getTargetsOptions(targets, "javacopts");
+    Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targets);
     // TODO(andrefmrocha): Remove this when kotlin is natively supported
     ActionGraphParser actionGraphParser =
         actionGraphResolver.getActionGraphParser(
