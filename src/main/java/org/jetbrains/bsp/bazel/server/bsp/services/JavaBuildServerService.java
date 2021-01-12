@@ -14,6 +14,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
@@ -28,10 +29,10 @@ public class JavaBuildServerService {
 
   public JavaBuildServerService(
       BazelData bazelData,
-      TargetsResolver targetsResolver,
+      BazelRunner bazelRunner,
       ActionGraphResolver actionGraphResolver) {
     this.bazelData = bazelData;
-    this.targetsResolver = targetsResolver;
+    this.targetsResolver = new TargetsResolver(bazelRunner);
     this.actionGraphResolver = actionGraphResolver;
   }
 

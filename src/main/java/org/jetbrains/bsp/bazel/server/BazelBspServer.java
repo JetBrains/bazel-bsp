@@ -19,7 +19,6 @@ import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.ScalaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsResolver;
 import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
@@ -49,7 +48,6 @@ public class BazelBspServer {
     BazelBspServerRequestHelpers serverRequestHelpers =
         new BazelBspServerRequestHelpers(serverLifetime);
 
-    TargetsResolver targetsResolver = new TargetsResolver(bazelRunner);
     ActionGraphResolver actionGraphResolver = new ActionGraphResolver(bazelRunner);
 
     this.serverBuildManager =
@@ -60,9 +58,9 @@ public class BazelBspServer {
             serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
 
     ScalaBuildServerService scalaBuildServerService =
-        new ScalaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
+        new ScalaBuildServerService(bazelData, bazelRunner, actionGraphResolver);
     JavaBuildServerService javaBuildServerService =
-        new JavaBuildServerService(bazelData, targetsResolver, actionGraphResolver);
+        new JavaBuildServerService(bazelData, bazelRunner, actionGraphResolver);
 
     this.scalaBuildServer = new ScalaBuildServerImpl(scalaBuildServerService, serverRequestHelpers);
     this.javaBuildServer = new JavaBuildServerImpl(javaBuildServerService, serverRequestHelpers);
