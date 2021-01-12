@@ -229,8 +229,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
     if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
-      buildClientLogger.logError(
-          "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+      String errorMessage =
+          String.format(
+              "Command aborted with reason %s: %s", aborted.getReason(), aborted.getDescription());
+      buildClientLogger.logError(errorMessage);
+
+      throw new RuntimeException(errorMessage);
     }
   }
 
