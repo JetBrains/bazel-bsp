@@ -41,7 +41,11 @@ public class ScalaBuildServerService {
     this.bazelData = bazelData;
     this.actionGraphResolver = actionGraphResolver;
 
-    this.targetsResolver = new TargetsResolver(bazelData, bazelRunner, SCALA_COMPILER_OPTIONS_NAME);
+    this.targetsResolver = TargetsResolver.builder()
+        .bazelData(bazelData)
+        .bazelRunner(bazelRunner)
+        .compilerOptionsName(SCALA_COMPILER_OPTIONS_NAME)
+        .build();
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(

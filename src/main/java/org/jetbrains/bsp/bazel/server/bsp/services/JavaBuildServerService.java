@@ -36,7 +36,12 @@ public class JavaBuildServerService {
     this.bazelData = bazelData;
     this.actionGraphResolver = actionGraphResolver;
 
-    this.targetsResolver = new TargetsResolver(bazelData, bazelRunner, JAVA_COMPILER_OPTIONS_NAME);
+    this.targetsResolver =
+        TargetsResolver.builder()
+          .bazelData(bazelData)
+          .bazelRunner(bazelRunner)
+          .compilerOptionsName(JAVA_COMPILER_OPTIONS_NAME)
+          .build();
   }
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
