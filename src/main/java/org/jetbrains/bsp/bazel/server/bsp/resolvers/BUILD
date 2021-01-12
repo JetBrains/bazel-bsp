@@ -11,7 +11,6 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/params",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers/targets",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:ch_epfl_scala_bsp4j",

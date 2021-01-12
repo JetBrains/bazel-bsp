@@ -50,7 +50,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsUtils;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class BuildServerService {
 

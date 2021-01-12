@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp.resolvers.targets;
+package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.List;
