@@ -17,6 +17,102 @@ import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
 public class TargetsResolver<T> {
 
+  private static final List<String> ACTION_GRAPH_SUFFIXES = ImmutableList.of(".jar", ".js");
+  private final BazelData bazelData;
+  private final BazelRunner bazelRunner;
+  private final ActionGraphResolver actionGraphResolver;
+  private final String compilerOptionsName;
+  private final List<String> languagesIds;
+  private final ResultItemsCollector<T> resultItemsCollector;
+
+  public TargetsResolver(
+      BazelData bazelData,
+      BazelRunner bazelRunner,
+      String compilerOptionsName,
+      List<String> languagesIds,
+      ResultItemsCollector<T> resultItemsCollector) {
+    this.bazelData = bazelData;
+    this.bazelRunner = bazelRunner;
+    this.compilerOptionsName = compilerOptionsName;
+    this.languagesIds = languagesIds;
+    this.resultItemsCollector = resultItemsCollector;
+
+    this.actionGraphResolver = new ActionGraphResolver(bazelRunner);
+  }
+
+  public static <T> Builder<T> builder() {
+    return new Builder<>();
+  }
+
+  public List<T> getResultItemsForTargets(List<BuildTargetIdentifier> buildTargetsIdentifiers) {
+    List<String> targets = TargetsUtils.getTargetsUris(buildTargetsIdentifiers);
+
+    return targets.stream()
+        .flatMap(target -> getResultItems(target, targets))
+        .collect(Collectors.toList());
+  }
+
+  private Stream<T> getResultItems(String target, List<String> allTargets) {
+    Map<String, List<String>> targetsOptions = getTargetsOptions(allTargets);
+    ActionGraphParser actionGraphParser =
+        actionGraphResolver.getActionGraphParser(allTargets, languagesIds);
+
+    return getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
+        actionGraphParser, targetsOptions, target);
+  }
+
+  private Map<String, List<String>> getTargetsOptions(List<String> targets) {
+    BazelProcessResult bazelProcessResult = queryBazel(targets);
+
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+
+    return query.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .collect(Collectors.toMap(Build.Rule::getName, this::collectRules));
+  }
+
+  private BazelProcessResult queryBazel(List<String> targets) {
+    return bazelRunner
+        .commandBuilder()
+        .query()
+        .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+        .withTargets(targets)
+        .executeBazelCommand();
+  }
+
+  private List<String> collectRules(Build.Rule rule) {
+    return rule.getAttributeList().stream()
+        .filter(this::isAttributeCompilerOptionsName)
+        .flatMap(attr -> attr.getStringListValueList().stream())
+        .collect(Collectors.toList());
+  }
+
+  private boolean isAttributeCompilerOptionsName(Build.Attribute attribute) {
+    return attribute.getName().equals(compilerOptionsName);
+  }
+
+  private Stream<T> getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
+      ActionGraphParser actionGraphParser,
+      Map<String, List<String>> targetsOptions,
+      String target) {
+
+    BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
+    List<String> options = targetsOptions.getOrDefault(target, ImmutableList.of());
+    List<String> inputs = actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot());
+
+    return actionGraphParser.getOutputs(target, ACTION_GRAPH_SUFFIXES).stream()
+        .map(this::mapActionGraphOutputsToClassDirectory)
+        .map(
+            classDirectory ->
+                resultItemsCollector.apply(targetIdentifier, options, inputs, classDirectory));
+  }
+
+  private String mapActionGraphOutputsToClassDirectory(String output) {
+    String execPath = Constants.EXEC_ROOT_PREFIX + output;
+
+    return Uri.fromExecPath(execPath, bazelData.getExecRoot()).toString();
+  }
+
   @FunctionalInterface
   public interface ResultItemsCollector<T> {
     T apply(
@@ -76,99 +172,4 @@ public class TargetsResolver<T> {
       }
     }
   }
-
-  private static final List<String> ACTION_GRAPH_SUFFIXES = ImmutableList.of(".jar", ".js");
-
-  private final BazelData bazelData;
-  private final BazelRunner bazelRunner;
-  private final ActionGraphResolver actionGraphResolver;
-
-  private final String compilerOptionsName;
-  private final List<String> languagesIds;
-  private final ResultItemsCollector<T> resultItemsCollector;
-
-  public TargetsResolver(
-      BazelData bazelData,
-      BazelRunner bazelRunner,
-      String compilerOptionsName,
-      List<String> languagesIds,
-      ResultItemsCollector<T> resultItemsCollector) {
-    this.bazelData = bazelData;
-    this.bazelRunner = bazelRunner;
-    this.compilerOptionsName = compilerOptionsName;
-    this.languagesIds = languagesIds;
-    this.resultItemsCollector = resultItemsCollector;
-
-    this.actionGraphResolver = new ActionGraphResolver(bazelRunner);
-  }
-
-  public static <T> Builder<T> builder() {
-    return new Builder<>();
-  }
-
-  public List<T> getResultItemsForTargets(List<BuildTargetIdentifier> buildTargetsIdentifiers) {
-    List<String> targets = TargetsUtils.getTargetsUris(buildTargetsIdentifiers);
-
-    return targets.stream()
-        .flatMap(target -> getResultItems(target, targets))
-        .collect(Collectors.toList());
-  }
-
-  private Stream<T> getResultItems(String target, List<String> allTargets) {
-    Map<String, List<String>> targetsOptions = getTargetsOptions(allTargets);
-    ActionGraphParser actionGraphParser = actionGraphResolver.getActionGraphParser(allTargets, languagesIds);
-
-    return getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(actionGraphParser, targetsOptions, target);
-  }
-
-  private Map<String, List<String>> getTargetsOptions(List<String> targets) {
-    BazelProcessResult bazelProcessResult = queryBazel(targets);
-
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
-
-    return query.getTargetList().stream()
-        .map(Build.Target::getRule)
-        .collect(Collectors.toMap(Build.Rule::getName, this::collectRules));
-  }
-
-  private BazelProcessResult queryBazel(List<String> targets) {
-    return bazelRunner
-        .commandBuilder()
-        .query()
-        .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-        .withTargets(targets)
-        .executeBazelCommand();
-  }
-
-  private List<String> collectRules(Build.Rule rule) {
-    return rule.getAttributeList().stream()
-        .filter(this::isAttributeCompilerOptionsName)
-        .flatMap(attr -> attr.getStringListValueList().stream())
-        .collect(Collectors.toList());
-  }
-
-  private boolean isAttributeCompilerOptionsName(Build.Attribute attribute) {
-    return attribute.getName().equals(compilerOptionsName);
-  }
-
-  private Stream<T> getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
-      ActionGraphParser actionGraphParser,
-      Map<String, List<String>> targetsOptions,
-      String target) {
-
-    BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
-    List<String> options = targetsOptions.getOrDefault(target, ImmutableList.of());
-    List<String> inputs = actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot());
-
-    return actionGraphParser.getOutputs(target, ACTION_GRAPH_SUFFIXES).stream()
-        .map(this::mapActionGraphOutputsToClassDirectory)
-        .map(classDirectory -> resultItemsCollector.apply(targetIdentifier, options, inputs, classDirectory));
-  }
-
-  private String mapActionGraphOutputsToClassDirectory(String output) {
-    String execPath = Constants.EXEC_ROOT_PREFIX + output;
-
-    return Uri.fromExecPath(execPath, bazelData.getExecRoot()).toString();
-  }
-
 }

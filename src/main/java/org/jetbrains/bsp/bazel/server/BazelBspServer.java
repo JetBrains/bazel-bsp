@@ -10,6 +10,7 @@ import org.jetbrains.bsp.bazel.server.bazel.BazelDataResolver;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
+import org.jetbrains.bsp.bazel.server.bep.loggers.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
@@ -22,7 +23,6 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
-import org.jetbrains.bsp.bazel.server.bep.loggers.BuildClientLogger;
 
 public class BazelBspServer {
 

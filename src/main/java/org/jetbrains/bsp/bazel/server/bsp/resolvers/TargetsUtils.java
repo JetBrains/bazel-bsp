@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 public final class TargetsUtils {
 
   public static List<String> getTargetsUris(List<BuildTargetIdentifier> targets) {
-    return targets.stream()
-        .map(BuildTargetIdentifier::getUri)
-        .collect(Collectors.toList());
+    return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
   }
 }

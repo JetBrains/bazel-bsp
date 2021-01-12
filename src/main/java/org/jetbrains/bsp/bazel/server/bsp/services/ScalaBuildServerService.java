@@ -21,13 +21,12 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
 public class ScalaBuildServerService {
 
   private static final String SCALA_COMPILER_OPTIONS_NAME = "scalacopts";
-  private static final List<String> SCALA_LANGUAGES_IDS = ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
+  private static final List<String> SCALA_LANGUAGES_IDS =
+      ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
   private final TargetsResolver<ScalacOptionsItem> targetsResolver;
 
-  public ScalaBuildServerService(
-      BazelData bazelData,
-      BazelRunner bazelRunner) {
+  public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
 
     this.targetsResolver =
         TargetsResolver.<ScalacOptionsItem>builder()
@@ -42,7 +41,8 @@ public class ScalaBuildServerService {
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
 
-    List<ScalacOptionsItem> resultItems = targetsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
+    List<ScalacOptionsItem> resultItems =
+        targetsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
     ScalacOptionsResult javacOptionsResult = new ScalacOptionsResult(resultItems);
     return Either.forRight(javacOptionsResult);
