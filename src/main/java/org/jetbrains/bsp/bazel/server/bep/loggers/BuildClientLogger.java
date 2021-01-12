@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.logger;
+package org.jetbrains.bsp.bazel.server.bep.loggers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.LogMessageParams;
