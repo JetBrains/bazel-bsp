@@ -18,6 +18,7 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class JavaBuildServerService {
 
@@ -36,10 +37,7 @@ public class JavaBuildServerService {
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
-    List<String> targets =
-        javacOptionsParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
+    List<String> targets = TargetsUtils.getTargetsUris(javacOptionsParams.getTargets());
 
     Map<String, List<String>> targetsOptions =
         targetsResolver.getTargetsOptions(targets, "javacopts");

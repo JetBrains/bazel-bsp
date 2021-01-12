@@ -23,6 +23,7 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class ScalaBuildServerService {
 
@@ -41,10 +42,7 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    List<String> targets =
-        scalacOptionsParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
+    List<String> targets = TargetsUtils.getTargetsUris(scalacOptionsParams.getTargets());
 
     Map<String, List<String>> targetsOptions =
         targetsResolver.getTargetsOptions(targets, "scalacopts");
