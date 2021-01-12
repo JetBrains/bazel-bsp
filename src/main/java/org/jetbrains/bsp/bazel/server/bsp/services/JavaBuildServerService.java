@@ -1,86 +1,44 @@
 package org.jetbrains.bsp.bazel.server.bsp.services;
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsUtils;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
 
 public class JavaBuildServerService {
 
   private static final String JAVA_COMPILER_OPTIONS_NAME = "javacopts";
+  // TODO(andrefmrocha): Remove this when kotlin is natively supported
+  private static final List<String> JAVA_LANGUAGES_IDS = ImmutableList.of(Constants.JAVAC, Constants.KOTLINC);
 
-  private final BazelData bazelData;
-  private final TargetsResolver targetsResolver;
-  private final ActionGraphResolver actionGraphResolver;
+  private final TargetsResolver<JavacOptionsItem> targetsResolver;
 
   public JavaBuildServerService(
       BazelData bazelData,
-      BazelRunner bazelRunner,
-      ActionGraphResolver actionGraphResolver) {
-    this.bazelData = bazelData;
-    this.actionGraphResolver = actionGraphResolver;
-
+      BazelRunner bazelRunner) {
     this.targetsResolver =
-        TargetsResolver.builder()
+        TargetsResolver.<JavacOptionsItem>builder()
           .bazelData(bazelData)
           .bazelRunner(bazelRunner)
           .compilerOptionsName(JAVA_COMPILER_OPTIONS_NAME)
+          .languagesIds(JAVA_LANGUAGES_IDS)
+          .resultItemsCollector(JavacOptionsItem::new)
           .build();
   }
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
-    List<String> targets = TargetsUtils.getTargetsUris(javacOptionsParams.getTargets());
+    List<JavacOptionsItem> resultItems = targetsResolver.getResultItemsForTargets(javacOptionsParams.getTargets());
 
-    Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targets);
-    // TODO(andrefmrocha): Remove this when kotlin is natively supported
-    ActionGraphParser actionGraphParser =
-        actionGraphResolver.getActionGraphParser(
-            targets, ImmutableList.of(Constants.JAVAC, Constants.KOTLINC));
-
-    JavacOptionsResult result =
-        new JavacOptionsResult(
-            targets.stream()
-                .flatMap(
-                    target ->
-                        collectJavacOptionsResult(
-                            actionGraphParser,
-                            targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot()),
-                            target))
-                .collect(Collectors.toList()));
-    return Either.forRight(result);
+    JavacOptionsResult javacOptionsResult = new JavacOptionsResult(resultItems);
+    return Either.forRight(javacOptionsResult);
   }
 
-  private Stream<JavacOptionsItem> collectJavacOptionsResult(
-      ActionGraphParser actionGraphParser,
-      List<String> options,
-      List<String> inputs,
-      String target) {
-    return actionGraphParser.getOutputs(target, ImmutableList.of(".jar", ".js")).stream()
-        .map(
-            output ->
-                new JavacOptionsItem(
-                    new BuildTargetIdentifier(target),
-                    options,
-                    inputs,
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, bazelData.getExecRoot())
-                        .toString()));
-  }
 }

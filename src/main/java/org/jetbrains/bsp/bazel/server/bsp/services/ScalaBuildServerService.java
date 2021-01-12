@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bsp.services;
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
@@ -11,64 +10,42 @@ import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.targets.TargetsUtils;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
 
 public class ScalaBuildServerService {
 
   private static final String SCALA_COMPILER_OPTIONS_NAME = "scalacopts";
+  private static final List<String> SCALA_LANGUAGES_IDS = ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
-  private final BazelData bazelData;
-  private final TargetsResolver targetsResolver;
-  private final ActionGraphResolver actionGraphResolver;
+  private final TargetsResolver<ScalacOptionsItem> targetsResolver;
 
   public ScalaBuildServerService(
       BazelData bazelData,
-      BazelRunner bazelRunner,
-      ActionGraphResolver actionGraphResolver) {
-    this.bazelData = bazelData;
-    this.actionGraphResolver = actionGraphResolver;
+      BazelRunner bazelRunner) {
 
-    this.targetsResolver = TargetsResolver.builder()
-        .bazelData(bazelData)
-        .bazelRunner(bazelRunner)
-        .compilerOptionsName(SCALA_COMPILER_OPTIONS_NAME)
-        .build();
+    this.targetsResolver =
+        TargetsResolver.<ScalacOptionsItem>builder()
+            .bazelData(bazelData)
+            .bazelRunner(bazelRunner)
+            .compilerOptionsName(SCALA_COMPILER_OPTIONS_NAME)
+            .languagesIds(SCALA_LANGUAGES_IDS)
+            .resultItemsCollector(ScalacOptionsItem::new)
+            .build();
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    List<String> targets = TargetsUtils.getTargetsUris(scalacOptionsParams.getTargets());
 
-    Map<String, List<String>> targetsOptions = targetsResolver.getTargetsOptions(targets);
-    ActionGraphParser actionGraphParser =
-        actionGraphResolver.getActionGraphParser(
-            targets, ImmutableList.of(Constants.SCALAC, Constants.JAVAC));
+    List<ScalacOptionsItem> resultItems = targetsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
-    ScalacOptionsResult result =
-        new ScalacOptionsResult(
-            targets.stream()
-                .flatMap(
-                    target ->
-                        collectScalacOptionsResult(
-                            actionGraphParser,
-                            targetsOptions.getOrDefault(target, new ArrayList<>()),
-                            actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot()),
-                            target))
-                .collect(Collectors.toList()));
-    return Either.forRight(result);
+    ScalacOptionsResult javacOptionsResult = new ScalacOptionsResult(resultItems);
+    return Either.forRight(javacOptionsResult);
   }
 
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
@@ -83,23 +60,5 @@ public class ScalaBuildServerService {
     System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
     // TODO(illicitonion): Populate
     return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
-  }
-
-  private Stream<ScalacOptionsItem> collectScalacOptionsResult(
-      ActionGraphParser actionGraphParser,
-      List<String> options,
-      List<String> inputs,
-      String target) {
-    List<String> suffixes = ImmutableList.of(".jar", ".js");
-
-    return actionGraphParser.getOutputs(target, suffixes).stream()
-        .map(
-            output ->
-                new ScalacOptionsItem(
-                    new BuildTargetIdentifier(target),
-                    options,
-                    inputs,
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + output, bazelData.getExecRoot())
-                        .toString()));
   }
 }

@@ -58,9 +58,9 @@ public class BazelBspServer {
             serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
 
     ScalaBuildServerService scalaBuildServerService =
-        new ScalaBuildServerService(bazelData, bazelRunner, actionGraphResolver);
+        new ScalaBuildServerService(bazelData, bazelRunner);
     JavaBuildServerService javaBuildServerService =
-        new JavaBuildServerService(bazelData, bazelRunner, actionGraphResolver);
+        new JavaBuildServerService(bazelData, bazelRunner);
 
     this.scalaBuildServer = new ScalaBuildServerImpl(scalaBuildServerService, serverRequestHelpers);
     this.javaBuildServer = new JavaBuildServerImpl(javaBuildServerService, serverRequestHelpers);
