@@ -27,7 +27,6 @@ public class ScalaBuildServerService {
   private final TargetsResolver<ScalacOptionsItem> targetsResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
-
     this.targetsResolver =
         TargetsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)

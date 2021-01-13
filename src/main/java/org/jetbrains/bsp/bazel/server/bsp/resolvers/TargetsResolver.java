@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -168,7 +167,7 @@ public class TargetsResolver<T> {
           || compilerOptionsName == null
           || languagesIds == null
           || resultItemsCollector == null) {
-        throw new InvalidParameterException("Every TargetsResolver.Builder field has to be set");
+        throw new IllegalStateException("Every TargetsResolver.Builder field has to be set");
       }
     }
   }
