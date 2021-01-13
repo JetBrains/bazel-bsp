@@ -19,7 +19,6 @@ import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.ScalaBuildServerImpl;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.ActionGraphResolver;
 import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
@@ -47,8 +46,6 @@ public class BazelBspServer {
     BazelBspServerLifetime serverLifetime = new BazelBspServerLifetime();
     BazelBspServerRequestHelpers serverRequestHelpers =
         new BazelBspServerRequestHelpers(serverLifetime);
-
-    ActionGraphResolver actionGraphResolver = new ActionGraphResolver(bazelRunner);
 
     this.serverBuildManager =
         new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner);

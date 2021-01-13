@@ -24,7 +24,7 @@ public class TargetsResolver<T> {
   private final List<String> languagesIds;
   private final ResultItemsCollector<T> resultItemsCollector;
 
-  public TargetsResolver(
+  private TargetsResolver(
       BazelData bazelData,
       BazelRunner bazelRunner,
       String compilerOptionsName,
