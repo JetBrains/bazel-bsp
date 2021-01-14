@@ -34,9 +34,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
+import org.jetbrains.bsp.bazel.server.bep.loggers.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.bep.parsers.ClasspathParser;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.StderrDiagnosticsParser;
-import org.jetbrains.bsp.bazel.server.logger.BuildClientLogger;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -229,8 +229,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
     if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
-      buildClientLogger.logError(
-          "Command aborted with reason " + aborted.getReason() + ": " + aborted.getDescription());
+      String errorMessage =
+          String.format(
+              "Command aborted with reason %s: %s", aborted.getReason(), aborted.getDescription());
+      buildClientLogger.logError(errorMessage);
+
+      throw new RuntimeException(errorMessage);
     }
   }
 

@@ -50,6 +50,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class BuildServerService {
 
@@ -135,10 +136,7 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    List<String> targets =
-        sourcesParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
+    List<String> targets = TargetsUtils.getTargetsUris(sourcesParams.getTargets());
 
     BazelProcessResult bazelProcessResult =
         bazelRunner
@@ -204,10 +202,7 @@ public class BuildServerService {
 
   public Either<ResponseError, DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
-    List<String> targets =
-        dependencySourcesParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
+    List<String> targets = TargetsUtils.getTargetsUris(dependencySourcesParams.getTargets());
 
     DependencySourcesResult result =
         new DependencySourcesResult(
@@ -285,10 +280,7 @@ public class BuildServerService {
       return Either.forRight(new TestResult(result.getStatusCode()));
     }
 
-    List<String> testTargets =
-        testParams.getTargets().stream()
-            .map(BuildTargetIdentifier::getUri)
-            .collect(Collectors.toList());
+    List<String> testTargets = TargetsUtils.getTargetsUris(testParams.getTargets());
 
     BazelProcessResult bazelProcessResult =
         bazelRunner

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.logger;
+package org.jetbrains.bsp.bazel.server.bep.loggers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.LogMessageParams;
@@ -14,13 +14,15 @@ public class BuildClientLogger {
 
   public void logError(String errorMessage) {
     LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
-    buildClient.onBuildLogMessage(params);
-    // TODO why this function throws exception?
-    throw new RuntimeException(errorMessage);
+    log(params);
   }
 
   public void logMessage(String message) {
     LogMessageParams params = new LogMessageParams(MessageType.LOG, message);
+    log(params);
+  }
+
+  private void log(LogMessageParams params) {
     buildClient.onBuildLogMessage(params);
   }
 }
