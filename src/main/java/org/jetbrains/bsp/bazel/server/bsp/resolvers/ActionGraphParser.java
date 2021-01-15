@@ -31,8 +31,7 @@ public class ActionGraphParser {
             })
         .map(artifact -> "exec-root://" + artifact.getExecPath())
         .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .collect(Collectors.toCollection(TreeSet::new))
-        .stream()
+        .distinct()
         .collect(Collectors.toList());
   }
 
