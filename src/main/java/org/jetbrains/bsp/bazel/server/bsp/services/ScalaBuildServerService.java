@@ -16,7 +16,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
 
 public class ScalaBuildServerService {
 
@@ -24,11 +24,11 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
-  private final TargetsResolver<ScalacOptionsItem> targetsResolver;
+  private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
-    this.targetsResolver =
-        TargetsResolver.<ScalacOptionsItem>builder()
+    this.targetsLanguageOptionsResolver =
+        TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
             .bazelRunner(bazelRunner)
             .compilerOptionsName(SCALA_COMPILER_OPTIONS_NAME)
@@ -41,7 +41,7 @@ public class ScalaBuildServerService {
       ScalacOptionsParams scalacOptionsParams) {
 
     List<ScalacOptionsItem> resultItems =
-        targetsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
+        targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
     ScalacOptionsResult javacOptionsResult = new ScalacOptionsResult(resultItems);
     return Either.forRight(javacOptionsResult);
