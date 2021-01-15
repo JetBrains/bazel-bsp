@@ -33,11 +33,11 @@ public class BazelBspServerTest {
   public void run() {
     LOGGER.info("Running BazelBspServerTest...");
 
-    List<BazelBspServerSingleTest> testsTopRun = getTestsTopRun();
+    List<BazelBspServerSingleTest> testsTopRun = getTestsToRun();
     runTests(testsTopRun);
   }
 
-  private List<BazelBspServerSingleTest> getTestsTopRun() {
+  private List<BazelBspServerSingleTest> getTestsToRun() {
     return ImmutableList.of(
         new BazelBspServerSingleTest("resolve project", client::testResolveProject),
         new BazelBspServerSingleTest(
