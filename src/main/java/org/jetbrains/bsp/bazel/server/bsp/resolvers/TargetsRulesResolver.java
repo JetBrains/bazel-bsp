@@ -19,24 +19,19 @@ public class TargetsRulesResolver<T> {
   private final Function<Build.Rule, T> mapper;
 
   private TargetsRulesResolver(
-      BazelRunner bazelRunner,
-      Predicate<Build.Rule> filter,
-      Function<Rule, T> mapper) {
+      BazelRunner bazelRunner, Predicate<Build.Rule> filter, Function<Rule, T> mapper) {
     this.bazelRunner = bazelRunner;
     this.filter = filter;
     this.mapper = mapper;
   }
 
   public static <T> TargetsRulesResolver<T> withBazelRunnerAndMapper(
-      BazelRunner bazelRunner,
-      Function<Rule, T> mapper) {
+      BazelRunner bazelRunner, Function<Rule, T> mapper) {
     return withBazelRunnerAndFilterAndMapper(bazelRunner, o -> true, mapper);
   }
 
   public static <T> TargetsRulesResolver<T> withBazelRunnerAndFilterAndMapper(
-      BazelRunner bazelRunner,
-      Predicate<Build.Rule> filter,
-      Function<Rule, T> mapper) {
+      BazelRunner bazelRunner, Predicate<Build.Rule> filter, Function<Rule, T> mapper) {
     return new TargetsRulesResolver<T>(bazelRunner, filter, mapper);
   }
 
