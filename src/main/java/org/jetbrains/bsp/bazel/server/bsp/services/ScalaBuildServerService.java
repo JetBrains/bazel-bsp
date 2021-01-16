@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.services;
 
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
+import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
@@ -39,7 +40,6 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-
     List<ScalacOptionsItem> resultItems =
         targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
@@ -47,11 +47,12 @@ public class ScalaBuildServerService {
     return Either.forRight(javacOptionsResult);
   }
 
-  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
+  public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
+    List<ScalaTestClassesItem> resultItems = new ArrayList<>();
+    ScalaTestClassesResult scalaTestClassesResult = new ScalaTestClassesResult(resultItems);
+
+    return Either.forRight(scalaTestClassesResult);
   }
 
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
