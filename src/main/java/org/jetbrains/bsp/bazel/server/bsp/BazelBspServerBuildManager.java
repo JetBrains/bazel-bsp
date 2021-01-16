@@ -287,7 +287,7 @@ public class BazelBspServerBuildManager {
         .collect(Collectors.toList());
   }
 
-  private List<Uri> getSrcsPaths(Build.Rule rule, String srcType) {
+  public List<Uri> getSrcsPaths(Build.Rule rule, String srcType) {
     return rule.getAttributeList().stream()
         .filter(attribute -> attribute.getName().equals(srcType))
         .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
