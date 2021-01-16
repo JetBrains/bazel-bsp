@@ -51,7 +51,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsRulesResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class BuildServerService {
@@ -138,11 +138,11 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    TargetsRulesResolver<SourcesItem> targetsRulesResolver =
-        TargetsRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
+    TargetRulesResolver<SourcesItem> targetRulesResolver =
+        TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
 
     List<SourcesItem> sourceItems =
-        targetsRulesResolver.getItemsForTargets(sourcesParams.getTargets());
+        targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
 
     SourcesResult sourcesResult = new SourcesResult(sourceItems);
 

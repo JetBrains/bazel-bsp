@@ -11,28 +11,28 @@ import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
-public class TargetsRulesResolver<T> {
+public class TargetRulesResolver<T> {
 
   private final BazelRunner bazelRunner;
 
   private final Predicate<Build.Rule> filter;
   private final Function<Build.Rule, T> mapper;
 
-  private TargetsRulesResolver(
+  private TargetRulesResolver(
       BazelRunner bazelRunner, Predicate<Build.Rule> filter, Function<Rule, T> mapper) {
     this.bazelRunner = bazelRunner;
     this.filter = filter;
     this.mapper = mapper;
   }
 
-  public static <T> TargetsRulesResolver<T> withBazelRunnerAndMapper(
+  public static <T> TargetRulesResolver<T> withBazelRunnerAndMapper(
       BazelRunner bazelRunner, Function<Rule, T> mapper) {
     return withBazelRunnerAndFilterAndMapper(bazelRunner, o -> true, mapper);
   }
 
-  public static <T> TargetsRulesResolver<T> withBazelRunnerAndFilterAndMapper(
+  public static <T> TargetRulesResolver<T> withBazelRunnerAndFilterAndMapper(
       BazelRunner bazelRunner, Predicate<Build.Rule> filter, Function<Rule, T> mapper) {
-    return new TargetsRulesResolver<T>(bazelRunner, filter, mapper);
+    return new TargetRulesResolver<T>(bazelRunner, filter, mapper);
   }
 
   public List<T> getItemsForTargets(List<BuildTargetIdentifier> targetsIds) {
