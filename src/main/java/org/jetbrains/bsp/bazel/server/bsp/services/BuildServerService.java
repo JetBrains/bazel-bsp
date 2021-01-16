@@ -29,6 +29,7 @@ import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestProvider;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerBuildManager;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class BuildServerService {
@@ -136,36 +138,38 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
-    List<String> targets = TargetsUtils.getTargetsUris(sourcesParams.getTargets());
+    TargetRulesResolver<SourcesItem> targetRulesResolver =
+        TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
 
-    BazelProcessResult bazelProcessResult =
-        bazelRunner
-            .commandBuilder()
-            .query()
-            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withTargets(targets)
-            .executeBazelCommand();
+    List<SourcesItem> sourceItems =
+        targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
 
-    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    SourcesResult sourcesResult = new SourcesResult(sourceItems);
 
-    List<SourcesItem> sources =
-        queryResult.getTargetList().stream()
-            .map(Build.Target::getRule)
-            .map(
-                rule -> {
-                  BuildTargetIdentifier label = new BuildTargetIdentifier(rule.getName());
-                  List<SourceItem> items = serverBuildManager.getSourceItems(rule, label);
-                  List<String> roots =
-                      Lists.newArrayList(
-                          Uri.fromAbsolutePath(serverBuildManager.getSourcesRoot(rule.getName()))
-                              .toString());
-                  SourcesItem item = new SourcesItem(label, items);
-                  item.setRoots(roots);
-                  return item;
-                })
-            .collect(Collectors.toList());
+    return Either.forRight(sourcesResult);
+  }
 
-    return Either.forRight(new SourcesResult(sources));
+  private SourcesItem mapBuildRuleToSourcesItem(Build.Rule rule) {
+    BuildTargetIdentifier ruleLabel = new BuildTargetIdentifier(rule.getName());
+    List<SourceItem> items = serverBuildManager.getSourceItems(rule, ruleLabel);
+    List<String> roots = getRuleRoots(rule);
+
+    return createSourcesForLabelAndItemsAndRoots(ruleLabel, items, roots);
+  }
+
+  private List<String> getRuleRoots(Build.Rule rule) {
+    String sourcesRootUriString = serverBuildManager.getSourcesRoot(rule.getName());
+    Uri uri = Uri.fromAbsolutePath(sourcesRootUriString);
+
+    return ImmutableList.of(uri.toString());
+  }
+
+  private SourcesItem createSourcesForLabelAndItemsAndRoots(
+      BuildTargetIdentifier label, List<SourceItem> items, List<String> roots) {
+    SourcesItem item = new SourcesItem(label, items);
+    item.setRoots(roots);
+
+    return item;
   }
 
   public Either<ResponseError, InverseSourcesResult> buildTargetInverseSources(

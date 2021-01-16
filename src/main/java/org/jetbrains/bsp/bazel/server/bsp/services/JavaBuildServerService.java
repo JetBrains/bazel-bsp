@@ -10,7 +10,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
 
 public class JavaBuildServerService {
 
@@ -19,11 +19,11 @@ public class JavaBuildServerService {
   private static final List<String> JAVA_LANGUAGES_IDS =
       ImmutableList.of(Constants.JAVAC, Constants.KOTLINC);
 
-  private final TargetsResolver<JavacOptionsItem> targetsResolver;
+  private final TargetsLanguageOptionsResolver<JavacOptionsItem> targetsLanguageOptionsResolver;
 
   public JavaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
-    this.targetsResolver =
-        TargetsResolver.<JavacOptionsItem>builder()
+    this.targetsLanguageOptionsResolver =
+        TargetsLanguageOptionsResolver.<JavacOptionsItem>builder()
             .bazelData(bazelData)
             .bazelRunner(bazelRunner)
             .compilerOptionsName(JAVA_COMPILER_OPTIONS_NAME)
@@ -35,7 +35,7 @@ public class JavaBuildServerService {
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
     List<JavacOptionsItem> resultItems =
-        targetsResolver.getResultItemsForTargets(javacOptionsParams.getTargets());
+        targetsLanguageOptionsResolver.getResultItemsForTargets(javacOptionsParams.getTargets());
 
     JavacOptionsResult javacOptionsResult = new JavacOptionsResult(resultItems);
     return Either.forRight(javacOptionsResult);

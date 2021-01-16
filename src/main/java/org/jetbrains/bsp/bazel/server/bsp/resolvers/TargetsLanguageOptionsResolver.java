@@ -14,9 +14,10 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
-public class TargetsResolver<T> {
+public class TargetsLanguageOptionsResolver<T> {
 
   private static final List<String> ACTION_GRAPH_SUFFIXES = ImmutableList.of(".jar", ".js");
+
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
   private final ActionGraphResolver actionGraphResolver;
@@ -24,7 +25,7 @@ public class TargetsResolver<T> {
   private final List<String> languagesIds;
   private final ResultItemsCollector<T> resultItemsCollector;
 
-  private TargetsResolver(
+  private TargetsLanguageOptionsResolver(
       BazelData bazelData,
       BazelRunner bazelRunner,
       String compilerOptionsName,
@@ -154,10 +155,10 @@ public class TargetsResolver<T> {
       return this;
     }
 
-    public TargetsResolver<T> build() {
+    public TargetsLanguageOptionsResolver<T> build() {
       throwExceptionIfAnyFieldIsNotFilled();
 
-      return new TargetsResolver<T>(
+      return new TargetsLanguageOptionsResolver<T>(
           bazelData, bazelRunner, compilerOptionsName, languagesIds, resultItemsCollector);
     }
 

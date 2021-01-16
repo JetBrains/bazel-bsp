@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.commons.Uri;
 
@@ -31,8 +30,7 @@ public class ActionGraphParser {
             })
         .map(artifact -> "exec-root://" + artifact.getExecPath())
         .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .collect(Collectors.toCollection(TreeSet::new))
-        .stream()
+        .distinct()
         .collect(Collectors.toList());
   }
 
