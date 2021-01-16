@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.services;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
@@ -9,14 +10,18 @@ import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
+import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
 
 public class ScalaBuildServerService {
@@ -25,9 +30,13 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
+  private final BazelRunner bazelRunner;
+  private final String workspaceRoot;
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
+    this.bazelRunner = bazelRunner;
+    this.workspaceRoot = bazelData.getWorkspaceRoot();
     this.targetsLanguageOptionsResolver =
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
@@ -49,10 +58,45 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    List<ScalaTestClassesItem> resultItems = new ArrayList<>();
+    TargetRulesResolver<ScalaTestClassesItem> targetRulesResolver =
+        TargetRulesResolver.withBazelRunnerAndFilterAndMapper(
+            bazelRunner,
+            this::doesAttributesContainMainClass,
+            this::map);
+
+    List<ScalaTestClassesItem> resultItems =
+        targetRulesResolver.getItemsForTargets(scalaTestClassesParams.getTargets());
+
     ScalaTestClassesResult scalaTestClassesResult = new ScalaTestClassesResult(resultItems);
 
     return Either.forRight(scalaTestClassesResult);
+  }
+
+  private boolean doesAttributesContainMainClass(Build.Rule rule) {
+    return rule.getAttributeList().stream()
+        .anyMatch(
+                attribute ->
+                    attribute.getName().equals("main_class")
+                        && attribute.hasExplicitlySpecified()
+                        && attribute.getExplicitlySpecified());
+  }
+
+  private ScalaTestClassesItem map(Build.Rule rule) {
+    return new ScalaTestClassesItem(
+        new BuildTargetIdentifier(rule.getName()),
+        getTestClasses(rule));
+  }
+
+  private List<String> getTestClasses(Build.Rule rule) {
+    return rule.getAttributeList().stream()
+        .filter(
+            attribute ->
+                attribute.getName().equals("main_class")
+                    && attribute.hasExplicitlySpecified()
+                    && attribute.getExplicitlySpecified())
+        .flatMap(attribute -> attribute.getStringListValueList().stream()
+            .map(label -> Uri.fromFileLabel(label, workspaceRoot).toString()))
+        .collect(Collectors.toList());
   }
 
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
