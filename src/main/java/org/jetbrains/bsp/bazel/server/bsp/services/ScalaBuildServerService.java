@@ -40,8 +40,7 @@ public class ScalaBuildServerService {
 
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
 
-  public ScalaBuildServerService(
-      BazelData bazelData, BazelRunner bazelRunner) {
+  public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
     this.bazelRunner = bazelRunner;
     this.targetsLanguageOptionsResolver =
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
