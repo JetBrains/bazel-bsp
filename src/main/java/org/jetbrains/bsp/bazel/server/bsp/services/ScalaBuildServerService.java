@@ -33,6 +33,7 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
+  private static final String SCALA_TEST_RULE_NAME = "scala_test";
   private static final String SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME = "main_class";
   private static final String SCALA_TEST_SRCS_CLASSES_ATTRIBUTE_NAME = "srcs";
 
@@ -65,7 +66,7 @@ public class ScalaBuildServerService {
       ScalaTestClassesParams scalaTestClassesParams) {
     TargetRulesResolver<ScalaTestClassesItem> targetRulesResolver =
         TargetRulesResolver.withBazelRunnerAndFilterAndMapper(
-            bazelRunner, this::doesAttributesContainTestClass, this::mapRuleToTestClassesItem);
+            bazelRunner, this::isScalaTestRule, this::mapRuleToTestClassesItem);
 
     List<ScalaTestClassesItem> resultItems =
         targetRulesResolver.getItemsForTargets(scalaTestClassesParams.getTargets());
@@ -110,9 +111,8 @@ public class ScalaBuildServerService {
         .collect(Collectors.toList());
   }
 
-  private boolean doesAttributesContainTestClass(Build.Rule rule) {
-    return TargetsUtils.doesRuleContainAttribute(rule, SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME)
-        || TargetsUtils.doesRuleContainAttribute(rule, SCALA_TEST_SRCS_CLASSES_ATTRIBUTE_NAME);
+  private boolean isScalaTestRule(Build.Rule rule) {
+    return rule.getName().equals(SCALA_TEST_RULE_NAME);
   }
 
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(

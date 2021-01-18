@@ -11,11 +11,6 @@ public final class TargetsUtils {
     return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
   }
 
-  public static boolean doesRuleContainAttribute(Build.Rule rule, String attributeName) {
-    return rule.getAttributeList().stream()
-        .anyMatch(attribute -> isAttributeSpecifiedAndHasGivenName(attribute, attributeName));
-  }
-
   public static boolean isAttributeSpecifiedAndHasGivenName(
       Build.Attribute attribute, String name) {
     boolean doesAttributeHaveGivenName = attribute.getName().equals(name);
