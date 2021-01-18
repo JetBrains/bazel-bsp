@@ -84,9 +84,9 @@ public class ScalaBuildServerService {
 
   private List<String> getTestClasses(Build.Rule rule) {
     List<String> mainClasses = getTestMainClasses(rule);
-    List<String> srscClasses = getTestSrcsClasses(rule);
+    List<String> srcsClasses = getTestSrcsClasses(rule);
 
-    return Stream.concat(mainClasses.stream(), srscClasses.stream()).collect(Collectors.toList());
+    return Stream.concat(mainClasses.stream(), srcsClasses.stream()).collect(Collectors.toList());
   }
 
   private List<String> getTestMainClasses(Build.Rule rule) {
@@ -111,8 +111,8 @@ public class ScalaBuildServerService {
   }
 
   private boolean doesAttributesContainTestClass(Build.Rule rule) {
-    return TargetsUtils.doesRuleAttributesContain(rule, SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME)
-        || TargetsUtils.doesRuleAttributesContain(rule, SCALA_TEST_SRCS_CLASSES_ATTRIBUTE_NAME);
+    return TargetsUtils.doesRuleContainAttribute(rule, SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME)
+        || TargetsUtils.doesRuleContainAttribute(rule, SCALA_TEST_SRCS_CLASSES_ATTRIBUTE_NAME);
   }
 
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
