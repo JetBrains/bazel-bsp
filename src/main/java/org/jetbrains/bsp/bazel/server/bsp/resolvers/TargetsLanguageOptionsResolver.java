@@ -61,7 +61,7 @@ public class TargetsLanguageOptionsResolver<T> {
         actionGraphParser, targetsOptions, target);
   }
 
-  private Map<String, List<String>> getTargetsOptions(List<String> targets) {
+  public Map<String, List<String>> getTargetsOptions(List<String> targets) {
     BazelProcessResult bazelProcessResult = queryBazel(targets);
 
     Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);

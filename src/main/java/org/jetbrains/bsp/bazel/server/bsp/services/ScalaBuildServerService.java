@@ -1,5 +1,8 @@
 package org.jetbrains.bsp.bazel.server.bsp.services;
 
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
+import ch.epfl.scala.bsp4j.ScalaMainClass;
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
@@ -17,16 +20,25 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
+import java.util.Map;
+import java.util.stream.Collectors;
+import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import java.util.stream.Stream;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class ScalaBuildServerService {
 
   private static final String SCALA_COMPILER_OPTIONS_NAME = "scalacopts";
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
+  private static final String MAIN_CLASS_ATTR_NAME = "main_class";
 
+  private final BazelRunner bazelRunner;
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
+    this.bazelRunner = bazelRunner;
     this.targetsLanguageOptionsResolver =
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
@@ -54,10 +66,56 @@ public class ScalaBuildServerService {
     return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
   }
 
-  public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
+  public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaMainClasses: %s%n", scalaMainClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaMainClassesResult(new ArrayList<>()));
+    List<BuildTargetIdentifier> targets = scalaMainClassesParams.getTargets();
+    List<String> targetUris = TargetsUtils.getTargetsUris(targets);
+    Map<String, List<String>> targetsOptions =
+        targetsLanguageOptionsResolver.getTargetsOptions(targetUris);
+
+    TargetRulesResolver<ScalaMainClassesItem> targetRulesResolver =
+        TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapRuleToMainClassesItem);
+
+    List<ScalaMainClassesItem> resultItems =
+        targetRulesResolver.getItemsForTargets(scalaMainClassesParams.getTargets());
+
+    ScalaMainClassesResult result = new ScalaMainClassesResult(resultItems);
+
+    return Either.forRight(result);
+  }
+
+  private ScalaMainClassesItem mapRuleToMainClassesItem(Build.Rule rule) {
+    BuildTargetIdentifier targetId = new BuildTargetIdentifier(rule.getName());
+
+    return new ScalaMainClassesItem(targetId, collectMainClasses(rule, targetsOptions));
+  }
+
+  private List<ScalaMainClass> collectMainClasses(
+      Build.Rule rule, Map<String, List<String>> targetsOptions) {
+    BuildTargetIdentifier targetId = new BuildTargetIdentifier(rule.getName());
+    List<String> mainClassesNames = getTargetMainClasses(rule);
+    return mainClassesNames.stream()
+        .map(
+            mainClassName ->
+                new ScalaMainClass(
+                    mainClassName,
+                    new ArrayList<>(),
+                    targetsOptions.getOrDefault(targetId.getUri(), new ArrayList<>())))
+        .collect(Collectors.toList());
+  }
+
+  public List<String> getTargetMainClasses(Build.Rule rule) {
+    return getAttribute(rule, MAIN_CLASS_ATTR_NAME)
+        .map(Build.Attribute::getStringValue)
+        .collect(Collectors.toList());
+  }
+
+  private Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
+    return rule.getAttributeList().stream()
+        .filter(
+            attr ->
+                attr.getName().equals(name)
+                    && attr.hasExplicitlySpecified()
+                    && attr.getExplicitlySpecified());
   }
 }

@@ -39,6 +39,7 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   @Override
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    return scalaBuildServerService.buildTargetScalaMainClasses(scalaMainClassesParams);
+    return serverRequestHelpers.executeCommand(
+        () -> scalaBuildServerService.buildTargetScalaMainClasses(scalaMainClassesParams));
   }
 }
