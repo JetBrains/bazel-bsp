@@ -13,11 +13,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build.Attribute;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -34,8 +32,6 @@ public class ScalaBuildServerService {
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
   private static final String SCALA_TEST_RULE_NAME = "scala_test";
-  private static final String SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME = "main_class";
-  private static final String SCALA_TEST_SRCS_CLASSES_ATTRIBUTE_NAME = "srcs";
 
   private final BazelRunner bazelRunner;
 
@@ -78,16 +74,9 @@ public class ScalaBuildServerService {
 
   private ScalaTestClassesItem mapRuleToTestClassesItem(Build.Rule rule) {
     BuildTargetIdentifier target = new BuildTargetIdentifier(rule.getName());
-    List<String> classes = getTestClasses(rule);
+    List<String> classes = getTestMainClasses(rule);
 
     return new ScalaTestClassesItem(target, classes);
-  }
-
-  private List<String> getTestClasses(Build.Rule rule) {
-    List<String> mainClasses = getTestMainClasses(rule);
-    List<String> srcsClasses = getTestSrcsClasses(rule);
-
-    return Stream.concat(mainClasses.stream(), srcsClasses.stream()).collect(Collectors.toList());
   }
 
   private List<String> getTestMainClasses(Build.Rule rule) {
@@ -95,19 +84,8 @@ public class ScalaBuildServerService {
         .filter(
             attribute ->
                 TargetsUtils.isAttributeSpecifiedAndHasGivenName(
-                    attribute, SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME))
+                    attribute, Constants.SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME))
         .map(Attribute::getStringValue)
-        .collect(Collectors.toList());
-  }
-
-  private List<String> getTestSrcsClasses(Build.Rule rule) {
-    return rule.getAttributeList().stream()
-        .filter(
-            attribute ->
-                TargetsUtils.isAttributeSpecifiedAndHasGivenName(
-                    attribute, SCALA_TEST_SRCS_CLASSES_ATTRIBUTE_NAME))
-        .map(Attribute::getStringListValueList)
-        .flatMap(Collection::stream)
         .collect(Collectors.toList());
   }
 
