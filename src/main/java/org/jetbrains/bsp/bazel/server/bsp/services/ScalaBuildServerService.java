@@ -84,7 +84,8 @@ public class ScalaBuildServerService {
   public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
     List<ScalaTestClassesItem> resultItems =
-        targetsScalaTestClassesRulesResolver.getItemsForTargets(scalaTestClassesParams.getTargets());
+        targetsScalaTestClassesRulesResolver.getItemsForTargets(
+            scalaTestClassesParams.getTargets());
 
     ScalaTestClassesResult scalaTestClassesResult = new ScalaTestClassesResult(resultItems);
 
