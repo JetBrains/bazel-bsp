@@ -33,12 +33,10 @@ public class ScalaBuildServerService {
 
   private static final String SCALA_TEST_RULE_NAME = "scala_test";
 
-  private final BazelRunner bazelRunner;
-
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
+  private final TargetRulesResolver<ScalaTestClassesItem> targetsScalaTestClassesRulesResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
-    this.bazelRunner = bazelRunner;
     this.targetsLanguageOptionsResolver =
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
@@ -47,29 +45,14 @@ public class ScalaBuildServerService {
             .languagesIds(SCALA_LANGUAGES_IDS)
             .resultItemsCollector(ScalacOptionsItem::new)
             .build();
-  }
 
-  public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
-      ScalacOptionsParams scalacOptionsParams) {
-    List<ScalacOptionsItem> resultItems =
-        targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
-
-    ScalacOptionsResult javacOptionsResult = new ScalacOptionsResult(resultItems);
-    return Either.forRight(javacOptionsResult);
-  }
-
-  public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
-      ScalaTestClassesParams scalaTestClassesParams) {
-    TargetRulesResolver<ScalaTestClassesItem> targetRulesResolver =
+    this.targetsScalaTestClassesRulesResolver =
         TargetRulesResolver.withBazelRunnerAndFilterAndMapper(
             bazelRunner, this::isScalaTestRule, this::mapRuleToTestClassesItem);
+  }
 
-    List<ScalaTestClassesItem> resultItems =
-        targetRulesResolver.getItemsForTargets(scalaTestClassesParams.getTargets());
-
-    ScalaTestClassesResult scalaTestClassesResult = new ScalaTestClassesResult(resultItems);
-
-    return Either.forRight(scalaTestClassesResult);
+  private boolean isScalaTestRule(Build.Rule rule) {
+    return rule.getName().equals(SCALA_TEST_RULE_NAME);
   }
 
   private ScalaTestClassesItem mapRuleToTestClassesItem(Build.Rule rule) {
@@ -89,8 +72,23 @@ public class ScalaBuildServerService {
         .collect(Collectors.toList());
   }
 
-  private boolean isScalaTestRule(Build.Rule rule) {
-    return rule.getName().equals(SCALA_TEST_RULE_NAME);
+  public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
+      ScalacOptionsParams scalacOptionsParams) {
+    List<ScalacOptionsItem> resultItems =
+        targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
+
+    ScalacOptionsResult javacOptionsResult = new ScalacOptionsResult(resultItems);
+    return Either.forRight(javacOptionsResult);
+  }
+
+  public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
+      ScalaTestClassesParams scalaTestClassesParams) {
+    List<ScalaTestClassesItem> resultItems =
+        targetsScalaTestClassesRulesResolver.getItemsForTargets(scalaTestClassesParams.getTargets());
+
+    ScalaTestClassesResult scalaTestClassesResult = new ScalaTestClassesResult(resultItems);
+
+    return Either.forRight(scalaTestClassesResult);
   }
 
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
