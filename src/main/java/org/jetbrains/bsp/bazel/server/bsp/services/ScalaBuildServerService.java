@@ -20,12 +20,10 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
-import java.util.Map;
 import java.util.stream.Collectors;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class ScalaBuildServerService {
 
@@ -68,11 +66,6 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    List<BuildTargetIdentifier> targets = scalaMainClassesParams.getTargets();
-    List<String> targetUris = TargetsUtils.getTargetsUris(targets);
-    Map<String, List<String>> targetsOptions =
-        targetsLanguageOptionsResolver.getTargetsOptions(targetUris);
-
     TargetRulesResolver<ScalaMainClassesItem> targetRulesResolver =
         TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapRuleToMainClassesItem);
 
@@ -86,21 +79,18 @@ public class ScalaBuildServerService {
 
   private ScalaMainClassesItem mapRuleToMainClassesItem(Build.Rule rule) {
     BuildTargetIdentifier targetId = new BuildTargetIdentifier(rule.getName());
-
-    return new ScalaMainClassesItem(targetId, collectMainClasses(rule, targetsOptions));
+    List<ScalaMainClass> mainClasses = collectMainClasses(rule);
+    return new ScalaMainClassesItem(targetId, mainClasses);
   }
 
-  private List<ScalaMainClass> collectMainClasses(
-      Build.Rule rule, Map<String, List<String>> targetsOptions) {
-    BuildTargetIdentifier targetId = new BuildTargetIdentifier(rule.getName());
+  private List<ScalaMainClass> collectMainClasses(Build.Rule rule) {
+    List<String> targetOptions =
+        getAttribute(rule, SCALA_COMPILER_OPTIONS_NAME)
+            .flatMap(attr -> attr.getStringListValueList().stream())
+            .collect(Collectors.toList());
     List<String> mainClassesNames = getTargetMainClasses(rule);
     return mainClassesNames.stream()
-        .map(
-            mainClassName ->
-                new ScalaMainClass(
-                    mainClassName,
-                    new ArrayList<>(),
-                    targetsOptions.getOrDefault(targetId.getUri(), new ArrayList<>())))
+        .map(mainClassName -> new ScalaMainClass(mainClassName, new ArrayList<>(), targetOptions))
         .collect(Collectors.toList());
   }
 
