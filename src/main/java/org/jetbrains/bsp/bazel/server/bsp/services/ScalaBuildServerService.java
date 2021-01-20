@@ -31,6 +31,7 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
   private static final String MAIN_CLASS_ATTR_NAME = "main_class";
+  private static final String ARGS_ATTR_NAME = "args";
 
   private final BazelRunner bazelRunner;
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
@@ -89,8 +90,15 @@ public class ScalaBuildServerService {
             .flatMap(attr -> attr.getStringListValueList().stream())
             .collect(Collectors.toList());
     List<String> mainClassesNames = getTargetMainClasses(rule);
+    List<String> arguments = getTargetArguments(rule);
     return mainClassesNames.stream()
-        .map(mainClassName -> new ScalaMainClass(mainClassName, new ArrayList<>(), targetOptions))
+        .map(mainClassName -> new ScalaMainClass(mainClassName, arguments, targetOptions))
+        .collect(Collectors.toList());
+  }
+
+  private List<String> getTargetArguments(Build.Rule rule) {
+    return getAttribute(rule, ARGS_ATTR_NAME)
+        .map(Build.Attribute::getStringValue)
         .collect(Collectors.toList());
   }
 
