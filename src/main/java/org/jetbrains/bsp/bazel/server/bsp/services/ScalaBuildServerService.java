@@ -53,8 +53,8 @@ public class ScalaBuildServerService {
     List<ScalacOptionsItem> resultItems =
         targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
-    ScalacOptionsResult javacOptionsResult = new ScalacOptionsResult(resultItems);
-    return Either.forRight(javacOptionsResult);
+    ScalacOptionsResult scalacOptionsResult = new ScalacOptionsResult(resultItems);
+    return Either.forRight(scalacOptionsResult);
   }
 
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
