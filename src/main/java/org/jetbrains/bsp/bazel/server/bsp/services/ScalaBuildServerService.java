@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.server.bsp.services;
 
-import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
-import ch.epfl.scala.bsp4j.ScalaMainClass;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.ScalaMainClass;
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
@@ -11,18 +11,19 @@ import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
+import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
-import java.util.stream.Collectors;
-import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import java.util.stream.Stream;
+
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 
 public class ScalaBuildServerService {
