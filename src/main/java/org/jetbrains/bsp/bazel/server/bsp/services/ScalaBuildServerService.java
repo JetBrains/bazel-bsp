@@ -94,7 +94,7 @@ public class ScalaBuildServerService {
         .collect(Collectors.toList());
   }
 
-  public List<String> getTargetMainClasses(Build.Rule rule) {
+  private List<String> getTargetMainClasses(Build.Rule rule) {
     return getAttribute(rule, MAIN_CLASS_ATTR_NAME)
         .map(Build.Attribute::getStringValue)
         .collect(Collectors.toList());
