@@ -8,6 +8,8 @@ import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.ScalaMainClass;
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.SourceItem;
@@ -109,8 +111,14 @@ class BazelBspServerTestData {
       new InverseSourcesResult(ImmutableList.of(ID_2));
 
   static final ScalaMainClassesParams SCALA_MAIN_CLASSES_PARAMS =
-      new ScalaMainClassesParams(Collections.emptyList());
+      new ScalaMainClassesParams(Collections.singletonList(ID_1));
 
   static final ScalaMainClassesResult EXPECTED_SCALA_MAIN_CLASSES =
-      new ScalaMainClassesResult(Collections.emptyList());
+      new ScalaMainClassesResult(
+          Collections.singletonList(
+              new ScalaMainClassesItem(
+                  ID_1,
+                  Collections.singletonList(
+                      new ScalaMainClass(
+                          "Example", Collections.emptyList(), Collections.emptyList())))));
 }
