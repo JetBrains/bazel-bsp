@@ -68,7 +68,13 @@ public class BazelBspServerTest {
             () ->
                 client.testDependencySourcesResults(
                     BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-                    BazelBspServerTestData.EXPECTED_DEPENDENCIES))
+                    BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
+        new BazelBspServerSingleTest(
+            "Scala main classes",
+            () ->
+                client.testScalaMainClasses(
+                    BazelBspServerTestData.SCALA_MAIN_CLASSES_PARAMS,
+                    BazelBspServerTestData.EXPECTED_SCALA_MAIN_CLASSES))
         //         TODO one day we will uncomment them...
         //        new BazelBspServerSingleTest(
         //            "targets run unsuccessfully",

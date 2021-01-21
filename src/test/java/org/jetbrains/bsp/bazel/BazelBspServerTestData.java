@@ -1,5 +1,9 @@
 package org.jetbrains.bsp.bazel;
 
+import ch.epfl.scala.bsp4j.ScalaMainClass;
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
+import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
+import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
@@ -16,6 +20,7 @@ import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.bsp.bazel.commons.Constants;
 
@@ -104,4 +109,10 @@ class BazelBspServerTestData {
 
   static final InverseSourcesResult EXPECTED_INVERSE_SOURCES =
       new InverseSourcesResult(ImmutableList.of(ID_2));
+
+  static final ScalaMainClassesParams SCALA_MAIN_CLASSES_PARAMS =
+      new ScalaMainClassesParams(Collections.emptyList());
+
+  static final ScalaMainClassesResult EXPECTED_SCALA_MAIN_CLASSES =
+      new ScalaMainClassesResult(Collections.emptyList());
 }
