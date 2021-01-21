@@ -30,8 +30,6 @@ public class ScalaBuildServerService {
   private static final String SCALA_COMPILER_OPTIONS_NAME = "scalacopts";
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
-  private static final String MAIN_CLASS_ATTR_NAME = "main_class";
-  private static final String ARGS_ATTR_NAME = "args";
 
   private final BazelRunner bazelRunner;
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
@@ -97,13 +95,13 @@ public class ScalaBuildServerService {
   }
 
   private List<String> getTargetArguments(Build.Rule rule) {
-    return getAttribute(rule, ARGS_ATTR_NAME)
+    return getAttribute(rule, Constants.ARGS_ATTR_NAME)
         .map(Build.Attribute::getStringValue)
         .collect(Collectors.toList());
   }
 
   private List<String> getTargetMainClasses(Build.Rule rule) {
-    return getAttribute(rule, MAIN_CLASS_ATTR_NAME)
+    return getAttribute(rule, Constants.MAIN_CLASS_ATTR_NAME)
         .map(Build.Attribute::getStringValue)
         .collect(Collectors.toList());
   }
