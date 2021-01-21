@@ -120,5 +120,5 @@ class BazelBspServerTestData {
                   ID_1,
                   Collections.singletonList(
                       new ScalaMainClass(
-                          "Example", Collections.emptyList(), Collections.emptyList())))));
+                          "example.Example", Collections.emptyList(), Collections.emptyList())))));
 }
