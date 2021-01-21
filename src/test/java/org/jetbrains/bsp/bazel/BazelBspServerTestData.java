@@ -1,9 +1,5 @@
 package org.jetbrains.bsp.bazel;
 
-import ch.epfl.scala.bsp4j.ScalaMainClass;
-import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
-import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
-import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
@@ -12,6 +8,8 @@ import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
+import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.SourcesItem;
