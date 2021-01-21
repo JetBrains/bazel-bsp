@@ -62,6 +62,12 @@ public class BuildServerImpl implements BuildServer {
   }
 
   @Override
+  public CompletableFuture<Object> workspaceReload() {
+    // TODO
+    return null;
+  }
+
+  @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     return serverRequestHelpers.executeCommand(
         () -> buildServerService.buildTargetSources(sourcesParams));
