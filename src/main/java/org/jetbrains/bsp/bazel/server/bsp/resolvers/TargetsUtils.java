@@ -13,10 +13,8 @@ public final class TargetsUtils {
 
   public static boolean isAttributeSpecifiedAndHasGivenName(
       Build.Attribute attribute, String name) {
-    boolean doesAttributeHaveGivenName = attribute.getName().equals(name);
+    boolean hasGivenName = attribute.getName().equals(name);
 
-    return doesAttributeHaveGivenName
-        && attribute.hasExplicitlySpecified()
-        && attribute.getExplicitlySpecified();
+    return hasGivenName && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified();
   }
 }
