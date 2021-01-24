@@ -110,4 +110,10 @@ public class BuildServerImpl implements BuildServer {
     return serverRequestHelpers.executeCommand(
         () -> buildServerService.buildTargetCleanCache(cleanCacheParams));
   }
+
+  @Override
+  public CompletableFuture<Object> workspaceReload() {
+    // TODO
+    return null;
+  }
 }
