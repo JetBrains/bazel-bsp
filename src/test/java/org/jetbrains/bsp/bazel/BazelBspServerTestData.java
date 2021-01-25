@@ -110,7 +110,7 @@ class BazelBspServerTestData {
       new InverseSourcesResult(ImmutableList.of(ID_2));
 
   static final ScalaTestClassesParams SCALA_TEST_CLASSES_PARAMS =
-      new ScalaTestClassesParams(ImmutableList.of(ID_4));
+      new ScalaTestClassesParams(ImmutableList.of(ID_1, ID_4));
 
   static final ScalaTestClassesResult EXPECTED_SCALA_TEST_CLASSES =
       new ScalaTestClassesResult(

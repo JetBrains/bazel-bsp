@@ -31,7 +31,7 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
-  private static final String SCALA_TEST_RULE_NAME = "scala_test";
+  private static final String SCALA_TEST_RULE_CLASS_NAME = "scala_test";
 
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
   private final TargetRulesResolver<ScalaTestClassesItem> targetsScalaTestClassesRulesResolver;
@@ -52,7 +52,7 @@ public class ScalaBuildServerService {
   }
 
   private boolean isScalaTestRule(Build.Rule rule) {
-    return rule.getName().equals(SCALA_TEST_RULE_NAME);
+    return rule.getRuleClass().equals(SCALA_TEST_RULE_CLASS_NAME);
   }
 
   private ScalaTestClassesItem mapRuleToTestClassesItem(Build.Rule rule) {
