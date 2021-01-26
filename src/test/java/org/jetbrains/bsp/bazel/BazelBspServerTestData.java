@@ -8,15 +8,15 @@ import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
+import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
+import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.SourcesItem;
 import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
-import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
-import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.util.List;
@@ -35,7 +35,8 @@ class BazelBspServerTestData {
   private static final BuildTargetIdentifier ID_2 = new BuildTargetIdentifier("//dep:dep");
   private static final BuildTargetIdentifier ID_3 =
       new BuildTargetIdentifier("//dep/deeper:deeper");
-  private static final BuildTargetIdentifier ID_4 = new BuildTargetIdentifier("//example:example-test");
+  private static final BuildTargetIdentifier ID_4 =
+      new BuildTargetIdentifier("//example:example-test");
 
   static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(4);
   static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 15;
