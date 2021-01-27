@@ -64,7 +64,7 @@ public class BuildServerImpl implements BuildServer {
   @Override
   public CompletableFuture<Object> workspaceReload() {
     // TODO
-    return null;
+    return CompletableFuture.completedFuture(null);
   }
 
   @Override
