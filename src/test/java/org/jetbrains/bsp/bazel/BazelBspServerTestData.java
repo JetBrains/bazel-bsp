@@ -34,7 +34,7 @@ class BazelBspServerTestData {
   private static final String WORKSPACE_DIR_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
 
   private static final BuildTargetIdentifier ID_1 =
-      new BuildTargetIdentifier("//example:example -nowarn -- arg1 arg2");
+      new BuildTargetIdentifier("//example:example");
   private static final BuildTargetIdentifier ID_2 = new BuildTargetIdentifier("//dep:dep");
   private static final BuildTargetIdentifier ID_3 =
       new BuildTargetIdentifier("//dep/deeper:deeper");
@@ -121,7 +121,5 @@ class BazelBspServerTestData {
                   ID_1,
                   Collections.singletonList(
                       new ScalaMainClass(
-                          "example.Example",
-                          ImmutableList.of("arg1", "arg2"),
-                          ImmutableList.of("nowarn"))))));
+                          "example.Example", ImmutableList.of(), ImmutableList.of())))));
 }
