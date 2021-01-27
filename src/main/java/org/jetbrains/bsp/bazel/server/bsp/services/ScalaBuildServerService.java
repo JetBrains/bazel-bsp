@@ -24,6 +24,7 @@ import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class ScalaBuildServerService {
 
@@ -106,10 +107,6 @@ public class ScalaBuildServerService {
 
   private Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
     return rule.getAttributeList().stream()
-        .filter(
-            attr ->
-                attr.getName().equals(name)
-                    && attr.hasExplicitlySpecified()
-                    && attr.getExplicitlySpecified());
+        .filter(attr -> TargetsUtils.isAttributeSpecifiedAndHasGivenName(attr, name));
   }
 }
