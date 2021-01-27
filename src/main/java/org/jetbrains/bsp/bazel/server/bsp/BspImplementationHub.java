@@ -72,8 +72,7 @@ public class BspImplementationHub implements BuildServer, ScalaBuildServer, Java
 
   @Override
   public CompletableFuture<Object> workspaceReload() {
-    // TODO
-    return CompletableFuture.completedFuture(null);
+    return buildServer.workspaceReload();
   }
 
   @Override
