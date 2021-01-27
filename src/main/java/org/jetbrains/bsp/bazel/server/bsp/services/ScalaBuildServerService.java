@@ -83,24 +83,23 @@ public class ScalaBuildServerService {
 
   private List<ScalaMainClass> collectMainClasses(Build.Rule rule) {
     List<String> targetOptions =
-        getAttribute(rule, SCALA_COMPILER_OPTIONS_NAME)
-            .flatMap(attr -> attr.getStringListValueList().stream())
-            .collect(Collectors.toList());
-    List<String> mainClassesNames = getTargetMainClasses(rule);
-    List<String> arguments = getTargetArguments(rule);
+        collectAttributesFromStringListValues(rule, SCALA_COMPILER_OPTIONS_NAME);
+    List<String> mainClassesNames =
+        collectAttributesFromStringValues(rule, Constants.MAIN_CLASS_ATTR_NAME);
+    List<String> arguments = collectAttributesFromStringListValues(rule, Constants.ARGS_ATTR_NAME);
     return mainClassesNames.stream()
         .map(mainClassName -> new ScalaMainClass(mainClassName, arguments, targetOptions))
         .collect(Collectors.toList());
   }
 
-  private List<String> getTargetArguments(Build.Rule rule) {
-    return getAttribute(rule, Constants.ARGS_ATTR_NAME)
-        .map(Build.Attribute::getStringValue)
+  private List<String> collectAttributesFromStringListValues(Build.Rule rule, String attrName) {
+    return getAttribute(rule, attrName)
+        .flatMap(attr -> attr.getStringListValueList().stream())
         .collect(Collectors.toList());
   }
 
-  private List<String> getTargetMainClasses(Build.Rule rule) {
-    return getAttribute(rule, Constants.MAIN_CLASS_ATTR_NAME)
+  private List<String> collectAttributesFromStringValues(Build.Rule rule, String attrName) {
+    return getAttribute(rule, attrName)
         .map(Build.Attribute::getStringValue)
         .collect(Collectors.toList());
   }
