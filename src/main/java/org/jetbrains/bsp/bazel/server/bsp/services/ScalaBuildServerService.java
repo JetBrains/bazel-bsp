@@ -31,11 +31,10 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
-  private final BazelRunner bazelRunner;
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
+  private final TargetRulesResolver<ScalaMainClassesItem> mainClassesItemTargetRulesResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
-    this.bazelRunner = bazelRunner;
     this.targetsLanguageOptionsResolver =
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
@@ -44,6 +43,8 @@ public class ScalaBuildServerService {
             .languagesIds(SCALA_LANGUAGES_IDS)
             .resultItemsCollector(ScalacOptionsItem::new)
             .build();
+    this.mainClassesItemTargetRulesResolver =
+        TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapRuleToMainClassesItem);
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
@@ -65,11 +66,9 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    TargetRulesResolver<ScalaMainClassesItem> targetRulesResolver =
-        TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapRuleToMainClassesItem);
 
     List<ScalaMainClassesItem> resultItems =
-        targetRulesResolver.getItemsForTargets(scalaMainClassesParams.getTargets());
+        mainClassesItemTargetRulesResolver.getItemsForTargets(scalaMainClassesParams.getTargets());
 
     ScalaMainClassesResult result = new ScalaMainClassesResult(resultItems);
 
