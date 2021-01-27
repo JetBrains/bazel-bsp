@@ -40,35 +40,35 @@ public class BazelBspServerTest {
   private List<BazelBspServerSingleTest> getTestsToRun() {
     return ImmutableList.of(
         new BazelBspServerSingleTest("resolve project", client::testResolveProject),
-//        new BazelBspServerSingleTest(
-//            "compare workspace targets results",
-//            () ->
-//                client.testCompareWorkspaceTargetsResults(
-//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS)),
-//        new BazelBspServerSingleTest(
-//            "sources results",
-//            () ->
-//                client.testSourcesResults(
-//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-//                    BazelBspServerTestData.EXPECTED_SOURCES)),
-//        new BazelBspServerSingleTest(
-//            "resources results",
-//            () ->
-//                client.testResourcesResults(
-//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-//                    BazelBspServerTestData.EXPECTED_RESOURCES)),
-//        new BazelBspServerSingleTest(
-//            "inverse sources results",
-//            () ->
-//                client.testInverseSourcesResults(
-//                    BazelBspServerTestData.INVERSE_SOURCES_DOCUMENT,
-//                    BazelBspServerTestData.EXPECTED_INVERSE_SOURCES)),
-//        new BazelBspServerSingleTest(
-//            "dependency sources results",
-//            () ->
-//                client.testDependencySourcesResults(
-//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-//                    BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
+        new BazelBspServerSingleTest(
+            "compare workspace targets results",
+            () ->
+                client.testCompareWorkspaceTargetsResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS)),
+        new BazelBspServerSingleTest(
+            "sources results",
+            () ->
+                client.testSourcesResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
+                    BazelBspServerTestData.EXPECTED_SOURCES)),
+        new BazelBspServerSingleTest(
+            "resources results",
+            () ->
+                client.testResourcesResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
+                    BazelBspServerTestData.EXPECTED_RESOURCES)),
+        new BazelBspServerSingleTest(
+            "inverse sources results",
+            () ->
+                client.testInverseSourcesResults(
+                    BazelBspServerTestData.INVERSE_SOURCES_DOCUMENT,
+                    BazelBspServerTestData.EXPECTED_INVERSE_SOURCES)),
+        new BazelBspServerSingleTest(
+            "dependency sources results",
+            () ->
+                client.testDependencySourcesResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
+                    BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
         new BazelBspServerSingleTest(
             "Scala main classes",
             () ->
