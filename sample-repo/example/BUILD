@@ -11,8 +11,13 @@ filegroup(
 scala_binary(
     name = "example",
     srcs = ["Example.scala"],
+    args = [
+        "arg1",
+        "arg2",
+    ],
     main_class = "example.Example",
     resources = [":resources"],
+    scalacopts = ["nowarn"],
     visibility = ["//visibility:public"],
     deps = ["//dep"],
 )
