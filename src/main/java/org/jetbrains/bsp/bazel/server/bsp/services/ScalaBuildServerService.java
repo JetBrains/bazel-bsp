@@ -13,7 +13,9 @@ import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,7 +30,8 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class ScalaBuildServerService {
 
-  private static final String SCALA_COMPILER_OPTIONS_NAME = "scalacopts";
+  private static final String SCALA_COMPILER_OPTIONS_ATTR_NAME = "scalacopts";
+  private static final String JVM_FLAGS_ATTR_NAME = "jvm_flags";
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
@@ -40,7 +43,7 @@ public class ScalaBuildServerService {
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
             .bazelRunner(bazelRunner)
-            .compilerOptionsName(SCALA_COMPILER_OPTIONS_NAME)
+            .compilerOptionsName(SCALA_COMPILER_OPTIONS_ATTR_NAME)
             .languagesIds(SCALA_LANGUAGES_IDS)
             .resultItemsCollector(ScalacOptionsItem::new)
             .build();
@@ -83,8 +86,11 @@ public class ScalaBuildServerService {
   }
 
   private List<ScalaMainClass> collectMainClasses(Build.Rule rule) {
-    List<String> targetOptions =
-        collectAttributesFromStringListValues(rule, SCALA_COMPILER_OPTIONS_NAME);
+    Set<String> targetOptionsSet =
+        new LinkedHashSet<>(
+            collectAttributesFromStringListValues(rule, SCALA_COMPILER_OPTIONS_ATTR_NAME));
+    targetOptionsSet.addAll(collectAttributesFromStringListValues(rule, JVM_FLAGS_ATTR_NAME));
+    List<String> targetOptions = new ArrayList<>(targetOptionsSet);
     List<String> mainClassesNames =
         collectAttributesFromStringValues(rule, Constants.MAIN_CLASS_ATTR_NAME);
     List<String> arguments = collectAttributesFromStringListValues(rule, Constants.ARGS_ATTR_NAME);
