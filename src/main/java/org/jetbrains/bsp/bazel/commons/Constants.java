@@ -26,6 +26,7 @@ public class Constants {
 
   public static final String MAIN_CLASS_ATTR_NAME = "main_class";
   public static final String ARGS_ATTR_NAME = "args";
+  public static final String JVM_FLAGS_ATTR_NAME = "jvm_flags";
 
   public static final List<String> FILE_EXTENSIONS =
       ImmutableList.of(

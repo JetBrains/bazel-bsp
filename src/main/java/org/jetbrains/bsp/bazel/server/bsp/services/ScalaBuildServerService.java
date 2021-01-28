@@ -31,7 +31,6 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 public class ScalaBuildServerService {
 
   private static final String SCALA_COMPILER_OPTIONS_ATTR_NAME = "scalacopts";
-  private static final String JVM_FLAGS_ATTR_NAME = "jvm_flags";
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
@@ -89,7 +88,8 @@ public class ScalaBuildServerService {
     Set<String> targetOptionsSet =
         new LinkedHashSet<>(
             collectAttributesFromStringListValues(rule, SCALA_COMPILER_OPTIONS_ATTR_NAME));
-    targetOptionsSet.addAll(collectAttributesFromStringListValues(rule, JVM_FLAGS_ATTR_NAME));
+    targetOptionsSet.addAll(
+        collectAttributesFromStringListValues(rule, Constants.JVM_FLAGS_ATTR_NAME));
     List<String> targetOptions = new ArrayList<>(targetOptionsSet);
     List<String> mainClassesNames =
         collectAttributesFromStringValues(rule, Constants.MAIN_CLASS_ATTR_NAME);
