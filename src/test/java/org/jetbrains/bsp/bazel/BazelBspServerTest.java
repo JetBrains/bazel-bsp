@@ -15,7 +15,7 @@ public class BazelBspServerTest {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTest.class);
 
-  private static final Integer SUCCES_EXIT_CODE = 0;
+  private static final Integer SUCCESS_EXIT_CODE = 0;
   private static final Integer FAIL_EXIT_CODE = 1;
 
   private final TestClient client;
@@ -121,7 +121,7 @@ public class BazelBspServerTest {
   private void exitProgramWithSuccessIfAllTestPassed(boolean didAllTestsPass) {
     if (didAllTestsPass) {
       LOGGER.info("All test passed - exiting with success");
-      System.exit(SUCCES_EXIT_CODE);
+      System.exit(SUCCESS_EXIT_CODE);
     }
 
     LOGGER.fatal("Test failed - exiting with fail");
