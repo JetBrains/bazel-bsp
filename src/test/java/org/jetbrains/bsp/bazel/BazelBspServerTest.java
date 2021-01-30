@@ -15,6 +15,9 @@ public class BazelBspServerTest {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTest.class);
 
+  private static final Integer SUCCESS_EXIT_CODE = 0;
+  private static final Integer FAIL_EXIT_CODE = 1;
+
   private final TestClient client;
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -68,7 +71,13 @@ public class BazelBspServerTest {
             () ->
                 client.testDependencySourcesResults(
                     BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-                    BazelBspServerTestData.EXPECTED_DEPENDENCIES))
+                    BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
+        new BazelBspServerSingleTest(
+            "Scala test classes",
+            () ->
+                client.testScalaTestClasses(
+                    BazelBspServerTestData.SCALA_TEST_CLASSES_PARAMS,
+                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES))
         //         TODO one day we will uncomment them...
         //        new BazelBspServerSingleTest(
         //            "targets run unsuccessfully",
@@ -110,15 +119,12 @@ public class BazelBspServerTest {
   }
 
   private void exitProgramWithSuccessIfAllTestPassed(boolean didAllTestsPass) {
-    int successExitCode = 0;
-    int failExitCode = 1;
-
     if (didAllTestsPass) {
       LOGGER.info("All test passed - exiting with success");
-      System.exit(successExitCode);
+      System.exit(SUCCESS_EXIT_CODE);
     }
 
     LOGGER.fatal("Test failed - exiting with fail");
-    System.exit(failExitCode);
+    System.exit(FAIL_EXIT_CODE);
   }
 }
