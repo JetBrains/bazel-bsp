@@ -187,7 +187,7 @@ class BazelBspServerTestData {
                   ImmutableList.of("-Werror", "-Xlint:all"),
                   ImmutableList.of(),
                   "")));
-  
+
   static final ScalacOptionsParams SCALAC_OPTIONS_PARAMS =
       new ScalacOptionsParams(ImmutableList.of(EXAMPLE_EXAMPLE_TARGET, DEP_DEP_TARGET));
 
