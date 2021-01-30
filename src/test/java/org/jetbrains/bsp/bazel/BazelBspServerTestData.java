@@ -6,6 +6,9 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.DependencySourcesItem;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
+import ch.epfl.scala.bsp4j.JavacOptionsItem;
+import ch.epfl.scala.bsp4j.JavacOptionsParams;
+import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaMainClass;
@@ -159,6 +162,14 @@ class BazelBspServerTestData {
       new ScalaTestClassesResult(
           ImmutableList.of(
               new ScalaTestClassesItem(ID_4, ImmutableList.of("example.ExampleTest"))));
+
+  static final JavacOptionsParams JAVAC_OPTIONS_PARAMS =
+      new JavacOptionsParams(ImmutableList.of(ID_1, ID_2));
+
+  static final JavacOptionsResult EXPECTED_JAVAC_OPTIONS =
+      new JavacOptionsResult(ImmutableList.of(
+          new JavacOptionsItem(ID_1, ImmutableList.of(), ImmutableList.of(), ""),
+          new JavacOptionsItem(ID_2, ImmutableList.of("-Werror", "-Xlint:all"), ImmutableList.of(), "")));
 
   static final ScalacOptionsParams SCALAC_OPTIONS_PARAMS =
       new ScalacOptionsParams(ImmutableList.of(ID_1, ID_2));

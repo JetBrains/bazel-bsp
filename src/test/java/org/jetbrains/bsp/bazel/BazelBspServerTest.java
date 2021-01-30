@@ -85,6 +85,12 @@ public class BazelBspServerTest {
                     BazelBspServerTestData.SCALA_TEST_CLASSES_PARAMS,
                     BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES)),
         new BazelBspServerSingleTest(
+            "javacopts test",
+            () ->
+                client.testJavacOptions(
+                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS,
+                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS)),
+        new BazelBspServerSingleTest(
             "scalacopts test",
             () ->
                 client.testScalacOptions(

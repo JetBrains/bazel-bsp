@@ -9,3 +9,10 @@ scala_library(
     visibility = ["//visibility:public"],
     deps = ["//dep/deeper"],
 )
+
+java_binary(
+    name = "java-dep",
+    srcs = glob(["*.java"]),
+    javacopts = ["-Werror", "-Xlint:all"],
+    visibility = ["//visibility:public"],
+)
