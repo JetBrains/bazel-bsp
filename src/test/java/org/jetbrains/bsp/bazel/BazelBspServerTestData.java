@@ -167,15 +167,19 @@ class BazelBspServerTestData {
       new JavacOptionsParams(ImmutableList.of(ID_1, ID_2));
 
   static final JavacOptionsResult EXPECTED_JAVAC_OPTIONS =
-      new JavacOptionsResult(ImmutableList.of(
-          new JavacOptionsItem(ID_1, ImmutableList.of(), ImmutableList.of(), ""),
-          new JavacOptionsItem(ID_2, ImmutableList.of("-Werror", "-Xlint:all"), ImmutableList.of(), "")));
+      new JavacOptionsResult(
+          ImmutableList.of(
+              new JavacOptionsItem(ID_1, ImmutableList.of(), ImmutableList.of(), ""),
+              new JavacOptionsItem(
+                  ID_2, ImmutableList.of("-Werror", "-Xlint:all"), ImmutableList.of(), "")));
 
   static final ScalacOptionsParams SCALAC_OPTIONS_PARAMS =
       new ScalacOptionsParams(ImmutableList.of(ID_1, ID_2));
 
   static final ScalacOptionsResult EXPECTED_SCALAC_OPTIONS =
-      new ScalacOptionsResult(ImmutableList.of(
-          new ScalacOptionsItem(ID_1, ImmutableList.of("-target:jvm-1.8"), ImmutableList.of(), ""),
-          new ScalacOptionsItem(ID_2, ImmutableList.of(), ImmutableList.of(), "")));
+      new ScalacOptionsResult(
+          ImmutableList.of(
+              new ScalacOptionsItem(
+                  ID_1, ImmutableList.of("-target:jvm-1.8"), ImmutableList.of(), ""),
+              new ScalacOptionsItem(ID_2, ImmutableList.of(), ImmutableList.of(), "")));
 }
