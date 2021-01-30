@@ -13,6 +13,9 @@ scala_library(
 java_binary(
     name = "java-dep",
     srcs = glob(["*.java"]),
-    javacopts = ["-Werror", "-Xlint:all"],
+    javacopts = [
+        "-Werror",
+        "-Xlint:all",
+    ],
     visibility = ["//visibility:public"],
 )
