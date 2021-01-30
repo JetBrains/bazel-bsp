@@ -19,6 +19,7 @@ scala_binary(
     main_class = "example.Example",
     resources = [":resources"],
     visibility = ["//visibility:public"],
+    scalacopts = ["-target:jvm-1.8"],
     deps = ["//dep"],
 )
 

@@ -15,6 +15,9 @@ import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
+import ch.epfl.scala.bsp4j.ScalacOptionsItem;
+import ch.epfl.scala.bsp4j.ScalacOptionsParams;
+import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.SourcesItem;
@@ -156,4 +159,12 @@ class BazelBspServerTestData {
       new ScalaTestClassesResult(
           ImmutableList.of(
               new ScalaTestClassesItem(ID_4, ImmutableList.of("example.ExampleTest"))));
+
+  static final ScalacOptionsParams SCALAC_OPTIONS_PARAMS =
+      new ScalacOptionsParams(ImmutableList.of(ID_1, ID_2));
+
+  static final ScalacOptionsResult EXPECTED_SCALAC_OPTIONS =
+      new ScalacOptionsResult(ImmutableList.of(
+          new ScalacOptionsItem(ID_1, ImmutableList.of("-target:jvm-1.8"), ImmutableList.of(), ""),
+          new ScalacOptionsItem(ID_2, ImmutableList.of(), ImmutableList.of(), "")));
 }
