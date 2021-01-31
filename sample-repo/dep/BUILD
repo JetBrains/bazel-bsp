@@ -1,4 +1,5 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "java_binary", "scala_library")
+load("@rules_java//java:defs.bzl", "java_binary")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
     name = "dep",
