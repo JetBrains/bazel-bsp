@@ -48,6 +48,7 @@ class BazelBspServerTestData {
       new BuildTargetIdentifier("//dep/deeper:deeper");
   private static final BuildTargetIdentifier ID_4 =
       new BuildTargetIdentifier("//example:example-test");
+  private static final BuildTargetIdentifier ID_8 = new BuildTargetIdentifier("//dep:java-dep");
   private static final BuildTargetIdentifier ID_5 =
       new BuildTargetIdentifier("//target_without_main_class:library");
   private static final BuildTargetIdentifier ID_6 =
@@ -164,14 +165,14 @@ class BazelBspServerTestData {
               new ScalaTestClassesItem(ID_4, ImmutableList.of("example.ExampleTest"))));
 
   static final JavacOptionsParams JAVAC_OPTIONS_PARAMS =
-      new JavacOptionsParams(ImmutableList.of(ID_1, ID_2));
+      new JavacOptionsParams(ImmutableList.of(ID_1, ID_8));
 
   static final JavacOptionsResult EXPECTED_JAVAC_OPTIONS =
       new JavacOptionsResult(
           ImmutableList.of(
               new JavacOptionsItem(ID_1, ImmutableList.of(), ImmutableList.of(), ""),
               new JavacOptionsItem(
-                  ID_2, ImmutableList.of("-Werror", "-Xlint:all"), ImmutableList.of(), "")));
+                  ID_8, ImmutableList.of("-Werror", "-Xlint:all"), ImmutableList.of(), "")));
 
   static final ScalacOptionsParams SCALAC_OPTIONS_PARAMS =
       new ScalacOptionsParams(ImmutableList.of(ID_1, ID_2));
