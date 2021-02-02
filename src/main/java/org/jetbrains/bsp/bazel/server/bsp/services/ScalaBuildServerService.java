@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.ScalaMainClass;
 import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
+import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
@@ -12,6 +13,7 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import com.google.devtools.build.lib.query2.proto.proto2api.Build.Attribute;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,8 +36,11 @@ public class ScalaBuildServerService {
   private static final List<String> SCALA_LANGUAGES_IDS =
       ImmutableList.of(Constants.SCALAC, Constants.JAVAC);
 
+  private static final String SCALA_TEST_RULE_CLASS_NAME = "scala_test";
+
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
   private final TargetRulesResolver<ScalaMainClassesItem> mainClassesItemTargetRulesResolver;
+  private final TargetRulesResolver<ScalaTestClassesItem> targetsScalaTestClassesRulesResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
     this.targetsLanguageOptionsResolver =
@@ -46,13 +51,38 @@ public class ScalaBuildServerService {
             .languagesIds(SCALA_LANGUAGES_IDS)
             .resultItemsCollector(ScalacOptionsItem::new)
             .build();
+
     this.mainClassesItemTargetRulesResolver =
         TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapRuleToMainClassesItem);
+
+    this.targetsScalaTestClassesRulesResolver =
+        TargetRulesResolver.withBazelRunnerAndFilterAndMapper(
+            bazelRunner, this::isScalaTestRule, this::mapRuleToTestClassesItem);
+  }
+
+  private boolean isScalaTestRule(Build.Rule rule) {
+    return rule.getRuleClass().equals(SCALA_TEST_RULE_CLASS_NAME);
+  }
+
+  private ScalaTestClassesItem mapRuleToTestClassesItem(Build.Rule rule) {
+    BuildTargetIdentifier target = new BuildTargetIdentifier(rule.getName());
+    List<String> classes = getTestMainClasses(rule);
+
+    return new ScalaTestClassesItem(target, classes);
+  }
+
+  private List<String> getTestMainClasses(Build.Rule rule) {
+    return rule.getAttributeList().stream()
+        .filter(
+            attribute ->
+                TargetsUtils.isAttributeSpecifiedAndHasGivenName(
+                    attribute, Constants.SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME))
+        .map(Attribute::getStringValue)
+        .collect(Collectors.toList());
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-
     List<ScalacOptionsItem> resultItems =
         targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
@@ -60,11 +90,15 @@ public class ScalaBuildServerService {
     return Either.forRight(scalacOptionsResult);
   }
 
-  public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
+  public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    System.out.printf("DWH: Got buildTargetScalaTestClasses: %s%n", scalaTestClassesParams);
-    // TODO(illicitonion): Populate
-    return CompletableFuture.completedFuture(new ScalaTestClassesResult(new ArrayList<>()));
+    List<ScalaTestClassesItem> resultItems =
+        targetsScalaTestClassesRulesResolver.getItemsForTargets(
+            scalaTestClassesParams.getTargets());
+
+    ScalaTestClassesResult scalaTestClassesResult = new ScalaTestClassesResult(resultItems);
+
+    return Either.forRight(scalaTestClassesResult);
   }
 
   public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(

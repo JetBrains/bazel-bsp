@@ -33,7 +33,8 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   @Override
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    return scalaBuildServerService.buildTargetScalaTestClasses(scalaTestClassesParams);
+    return serverRequestHelpers.executeCommand(
+        () -> scalaBuildServerService.buildTargetScalaTestClasses(scalaTestClassesParams));
   }
 
   @Override
