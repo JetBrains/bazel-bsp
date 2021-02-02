@@ -85,12 +85,8 @@ public class ScalaBuildServerService {
   }
 
   private List<ScalaMainClass> collectMainClasses(Build.Rule rule) {
-    Set<String> targetOptionsSet =
-        new LinkedHashSet<>(
-            collectAttributesFromStringListValues(rule, SCALA_COMPILER_OPTIONS_ATTR_NAME));
-    targetOptionsSet.addAll(
-        collectAttributesFromStringListValues(rule, Constants.JVM_FLAGS_ATTR_NAME));
-    List<String> targetOptions = new ArrayList<>(targetOptionsSet);
+    List<String> targetOptions =
+        collectAttributesFromStringListValues(rule, Constants.JVM_FLAGS_ATTR_NAME);
     List<String> mainClassesNames =
         collectAttributesFromStringValues(rule, Constants.MAIN_CLASS_ATTR_NAME);
     List<String> arguments = collectAttributesFromStringListValues(rule, Constants.ARGS_ATTR_NAME);

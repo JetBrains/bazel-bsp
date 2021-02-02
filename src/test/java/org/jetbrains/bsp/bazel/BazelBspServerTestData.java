@@ -111,7 +111,7 @@ class BazelBspServerTestData {
       new InverseSourcesResult(ImmutableList.of(ID_2));
 
   static final ScalaMainClassesParams SCALA_MAIN_CLASSES_PARAMS =
-      new ScalaMainClassesParams(Collections.singletonList(ID_1));
+      new ScalaMainClassesParams(ImmutableList.of(ID_1));
 
   static final ScalaMainClassesResult EXPECTED_SCALA_MAIN_CLASSES =
       new ScalaMainClassesResult(
@@ -122,5 +122,5 @@ class BazelBspServerTestData {
                       new ScalaMainClass(
                           "example.Example",
                           ImmutableList.of("arg1", "arg2"),
-                          ImmutableList.of("nowarn"))))));
+                          ImmutableList.of("-Xms2G -Xmx5G"))))));
 }

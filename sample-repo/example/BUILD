@@ -15,9 +15,9 @@ scala_binary(
         "arg1",
         "arg2",
     ],
+    jvm_flags = ["-Xms2G -Xmx5G"],
     main_class = "example.Example",
     resources = [":resources"],
-    scalacopts = ["nowarn"],
     visibility = ["//visibility:public"],
     deps = ["//dep"],
 )
