@@ -128,7 +128,7 @@ class BazelBspServerTestData {
                           "example.Example",
                           ImmutableList.of("arg1", "arg2"),
                           ImmutableList.of("-Xms2G -Xmx5G"))))));
-  
+
   static final ScalaTestClassesParams SCALA_TEST_CLASSES_PARAMS =
       new ScalaTestClassesParams(ImmutableList.of(ID_1, ID_4));
 
