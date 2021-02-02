@@ -35,7 +35,7 @@ public class ScalaBuildServerService {
   private static final String SCALA_TEST_RULE_CLASS_NAME = "scala_test";
 
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
-  private final TargetRulesResolver<ScalaMainClassesItem> mainClassesItemTargetRulesResolver;
+  private final TargetRulesResolver<ScalaMainClassesItem> targetsScalaMainClassesRulesResolver;
   private final TargetRulesResolver<ScalaTestClassesItem> targetsScalaTestClassesRulesResolver;
 
   public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
@@ -48,7 +48,7 @@ public class ScalaBuildServerService {
             .resultItemsCollector(ScalacOptionsItem::new)
             .build();
 
-    this.mainClassesItemTargetRulesResolver =
+    this.targetsScalaMainClassesRulesResolver =
         TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapRuleToMainClassesItem);
 
     this.targetsScalaTestClassesRulesResolver =
@@ -101,7 +101,8 @@ public class ScalaBuildServerService {
       ScalaMainClassesParams scalaMainClassesParams) {
 
     List<ScalaMainClassesItem> resultItems =
-        mainClassesItemTargetRulesResolver.getItemsForTargets(scalaMainClassesParams.getTargets());
+        targetsScalaMainClassesRulesResolver.getItemsForTargets(
+            scalaMainClassesParams.getTargets());
 
     ScalaMainClassesResult result = new ScalaMainClassesResult(resultItems);
 
