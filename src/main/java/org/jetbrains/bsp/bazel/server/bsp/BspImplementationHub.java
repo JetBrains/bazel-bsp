@@ -118,11 +118,6 @@ public class BspImplementationHub implements BuildServer, ScalaBuildServer, Java
   }
 
   @Override
-  public CompletableFuture<Object> workspaceReload() {
-    return buildServer.workspaceReload();
-  }
-
-  @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams params) {
     return scalaBuildServer.buildTargetScalacOptions(params);
