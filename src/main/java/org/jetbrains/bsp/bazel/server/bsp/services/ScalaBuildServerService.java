@@ -68,11 +68,7 @@ public class ScalaBuildServerService {
   }
 
   private List<String> getTestMainClasses(Build.Rule rule) {
-    return rule.getAttributeList().stream()
-        .filter(
-            attribute ->
-                TargetsUtils.isAttributeSpecifiedAndHasGivenName(
-                    attribute, Constants.SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME))
+    return getAttribute(rule, Constants.SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME)
         .map(Attribute::getStringValue)
         .collect(Collectors.toList());
   }
