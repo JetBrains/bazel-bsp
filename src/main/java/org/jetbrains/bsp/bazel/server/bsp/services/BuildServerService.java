@@ -335,4 +335,12 @@ public class BuildServerService {
     }
     return Either.forRight(result);
   }
+
+  public Either<ResponseError, Object> workspaceReload() {
+    bazelRunner.commandBuilder()
+        .sync()
+        .executeBazelCommand();
+
+    return Either.forRight(null);
+  }
 }
