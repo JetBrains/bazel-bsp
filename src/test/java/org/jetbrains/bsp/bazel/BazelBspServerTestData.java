@@ -42,6 +42,8 @@ class BazelBspServerTestData {
       new BuildTargetIdentifier("//dep/deeper:deeper");
   private static final BuildTargetIdentifier ID_4 =
       new BuildTargetIdentifier("//example:example-test");
+  private static final BuildTargetIdentifier ID_5 =
+      new BuildTargetIdentifier("//target_without_main_class:library");
 
   static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(4);
   static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 15;
@@ -116,7 +118,7 @@ class BazelBspServerTestData {
       new InverseSourcesResult(ImmutableList.of(ID_2));
 
   static final ScalaMainClassesParams SCALA_MAIN_CLASSES_PARAMS =
-      new ScalaMainClassesParams(ImmutableList.of(ID_1));
+      new ScalaMainClassesParams(ImmutableList.of(ID_1, ID_5));
 
   static final ScalaMainClassesResult EXPECTED_SCALA_MAIN_CLASSES =
       new ScalaMainClassesResult(
