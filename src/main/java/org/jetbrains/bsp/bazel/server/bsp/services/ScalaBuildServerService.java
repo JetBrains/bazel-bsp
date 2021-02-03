@@ -100,7 +100,11 @@ public class ScalaBuildServerService {
         targetsScalaMainClassesRulesResolver.getItemsForTargets(
             scalaMainClassesParams.getTargets());
 
-    ScalaMainClassesResult result = new ScalaMainClassesResult(resultItems);
+    ScalaMainClassesResult result =
+        new ScalaMainClassesResult(
+            resultItems.stream()
+                .filter(item -> !item.getClasses().isEmpty())
+                .collect(Collectors.toList()));
 
     return Either.forRight(result);
   }
