@@ -9,6 +9,7 @@ public class BazelRunnerCommandBuilder {
   private static final String BAZEL_QUERY_COMMAND = "query";
   private static final String BAZEL_RUN_COMMAND = "run";
   private static final String BAZEL_TEST_COMMAND = "test";
+  private static final String BAZEL_SYNC_COMMAND = "sync";
 
   private final BazelRunner bazelRunner;
 
@@ -42,5 +43,9 @@ public class BazelRunnerCommandBuilder {
 
   public BazelRunnerBuilder test() {
     return new BazelRunnerBuilder(bazelRunner, BAZEL_TEST_COMMAND);
+  }
+
+  public BazelRunnerBuilder sync() {
+    return new BazelRunnerBuilder(bazelRunner, BAZEL_SYNC_COMMAND);
   }
 }
