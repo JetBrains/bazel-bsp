@@ -73,6 +73,12 @@ public class BazelBspServerTest {
                     BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
                     BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
         new BazelBspServerSingleTest(
+            "Scala main classes",
+            () ->
+                client.testScalaMainClasses(
+                    BazelBspServerTestData.SCALA_MAIN_CLASSES_PARAMS,
+                    BazelBspServerTestData.EXPECTED_SCALA_MAIN_CLASSES)),
+        new BazelBspServerSingleTest(
             "Scala test classes",
             () ->
                 client.testScalaTestClasses(

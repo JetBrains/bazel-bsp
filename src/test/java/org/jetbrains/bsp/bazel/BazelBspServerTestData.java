@@ -8,6 +8,10 @@ import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.ScalaMainClass;
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
+import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
+import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
@@ -19,6 +23,7 @@ import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.bsp.bazel.commons.Constants;
 
@@ -37,9 +42,15 @@ class BazelBspServerTestData {
       new BuildTargetIdentifier("//dep/deeper:deeper");
   private static final BuildTargetIdentifier ID_4 =
       new BuildTargetIdentifier("//example:example-test");
+  private static final BuildTargetIdentifier ID_5 =
+      new BuildTargetIdentifier("//target_without_main_class:library");
+  private static final BuildTargetIdentifier ID_6 =
+      new BuildTargetIdentifier("//target_without_args:binary");
+  private static final BuildTargetIdentifier ID_7 =
+      new BuildTargetIdentifier("//target_without_jvm_flags:binary");
 
-  static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(4);
-  static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 15;
+  static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(6);
+  static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 25;
 
   static final String WORKSPACE_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
 
@@ -109,6 +120,34 @@ class BazelBspServerTestData {
 
   static final InverseSourcesResult EXPECTED_INVERSE_SOURCES =
       new InverseSourcesResult(ImmutableList.of(ID_2));
+
+  static final ScalaMainClassesParams SCALA_MAIN_CLASSES_PARAMS =
+      new ScalaMainClassesParams(ImmutableList.of(ID_1, ID_5, ID_6, ID_7));
+
+  static final ScalaMainClassesResult EXPECTED_SCALA_MAIN_CLASSES =
+      new ScalaMainClassesResult(
+          ImmutableList.of(
+              new ScalaMainClassesItem(
+                  ID_1,
+                  Collections.singletonList(
+                      new ScalaMainClass(
+                          "example.Example",
+                          ImmutableList.of("arg1", "arg2"),
+                          ImmutableList.of("-Xms2G -Xmx5G")))),
+              new ScalaMainClassesItem(
+                  ID_6,
+                  Collections.singletonList(
+                      new ScalaMainClass(
+                          "example.Example",
+                          ImmutableList.of(),
+                          ImmutableList.of("-Xms2G -Xmx5G")))),
+              new ScalaMainClassesItem(
+                  ID_7,
+                  Collections.singletonList(
+                      new ScalaMainClass(
+                          "example.Example",
+                          ImmutableList.of("arg1", "arg2"),
+                          ImmutableList.of())))));
 
   static final ScalaTestClassesParams SCALA_TEST_CLASSES_PARAMS =
       new ScalaTestClassesParams(ImmutableList.of(ID_1, ID_4));

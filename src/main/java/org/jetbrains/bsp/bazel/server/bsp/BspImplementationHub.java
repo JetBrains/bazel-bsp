@@ -71,6 +71,11 @@ public class BspImplementationHub implements BuildServer, ScalaBuildServer, Java
   }
 
   @Override
+  public CompletableFuture<Object> workspaceReload() {
+    return buildServer.workspaceReload();
+  }
+
+  @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams params) {
     return buildServer.buildTargetSources(params);
   }
@@ -110,11 +115,6 @@ public class BspImplementationHub implements BuildServer, ScalaBuildServer, Java
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(CleanCacheParams params) {
     return buildServer.buildTargetCleanCache(params);
-  }
-
-  @Override
-  public CompletableFuture<Object> workspaceReload() {
-    return buildServer.workspaceReload();
   }
 
   @Override

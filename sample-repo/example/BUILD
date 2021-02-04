@@ -11,6 +11,11 @@ filegroup(
 scala_binary(
     name = "example",
     srcs = ["Example.scala"],
+    args = [
+        "arg1",
+        "arg2",
+    ],
+    jvm_flags = ["-Xms2G -Xmx5G"],
     main_class = "example.Example",
     resources = [":resources"],
     visibility = ["//visibility:public"],
