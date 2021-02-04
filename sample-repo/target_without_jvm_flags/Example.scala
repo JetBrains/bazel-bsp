@@ -1,4 +1,4 @@
-package target_without_args
+package target_without_jvm_flags
 
 import java.util.ArrayList
 
