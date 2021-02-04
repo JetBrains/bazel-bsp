@@ -50,7 +50,7 @@ class BazelBspServerTestData {
       new BuildTargetIdentifier("//target_without_jvm_flags:binary");
 
   static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(4);
-  static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 20;
+  static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 25;
 
   static final String WORKSPACE_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
 
