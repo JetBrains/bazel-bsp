@@ -62,6 +62,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
+import com.google.devtools.build.lib.analysis.AnalysisProtosV2;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -944,6 +945,7 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
       JavacOptionsParams javacOptionsParams) {
     return executeCommand(
         () -> {
+          System.out.println("Starting javac");
           List<String> targets =
               javacOptionsParams.getTargets().stream()
                   .map(BuildTargetIdentifier::getUri)
@@ -951,11 +953,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
           String targetsUnion = Joiner.on(" + ").join(targets);
           Map<String, List<String>> targetsOptions = getTargetsOptions(targetsUnion, "javacopts");
+          System.out.println("Targets parsed");
           // TODO(andrefmrocha): Remove this when kotlin is natively supported
           Either<ResponseError, ActionGraphParser> either =
               parseActionGraph(getMnemonics(targetsUnion, Lists.newArrayList(JAVAC, KOTLINC)));
           if (either.isLeft()) return Either.forLeft(either.getLeft());
-
+          System.out.println("Graph parsed");
           JavacOptionsResult result =
               new JavacOptionsResult(
                   targets.stream()
@@ -1008,11 +1011,12 @@ public class BazelBspServer implements BuildServer, ScalaBuildServer, JavaBuildS
 
   private Either<ResponseError, ActionGraphParser> parseActionGraph(String query) {
     try {
-      AnalysisProtos.ActionGraphContainer actionGraph =
-          AnalysisProtos.ActionGraphContainer.parseFrom(
+      AnalysisProtosV2.ActionGraphContainer actionGraph =
+          AnalysisProtosV2.ActionGraphContainer.parseFrom(
               runBazelBytes("aquery", "--output=proto", query));
       return Either.forRight(new ActionGraphParser(actionGraph));
     } catch (IOException e) {
+      System.out.println("Error: " + e.getMessage());
       return Either.forLeft(
           new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null));
     }

@@ -104,9 +104,9 @@ py_repositories()
 
 http_archive(
     name = "googleapis",
-    sha256 = "a02d861fac93196fe020fd36ec2ad698d34e54c2394741be82b60c6c2334a4bf",
-    strip_prefix = "bazel-5ebe41f2900d71a99be08f7a675a79228506aec6/third_party/googleapis",
-    urls = ["https://github.com/andrefmrocha/bazel/archive/5ebe41f2900d71a99be08f7a675a79228506aec6.zip"],
+    sha256 = "4e5d2467df2994b13b2caaa0422985bedff804c3ae640fba23e63903172345ff",
+    strip_prefix = "bazel-caf13559e367da9c791cc5e559d2970400d5478b/third_party/googleapis",
+    urls = ["https://github.com/bazelbuild/bazel/archive/caf13559e367da9c791cc5e559d2970400d5478b.zip"],
 )
 
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")

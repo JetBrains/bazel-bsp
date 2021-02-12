@@ -12,6 +12,7 @@ java_library(
         "@googleapis//:google_devtools_build_v1_publish_build_event_proto",
         "@io_bazel//src/main/java/com/google/devtools/build/lib/buildeventstream/proto:build_event_stream_java_proto",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
+        "@io_bazel//src/main/protobuf:analysis_v2_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
         "@io_bazel_rules_scala//src/protobuf/io/bazel/rules_scala:diagnostics_java_proto",
