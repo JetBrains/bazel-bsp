@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp.resolvers;
+package org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.commons.Uri;
 
 // TODO(illicitonion): Index, cache, etc
-public class ActionGraphParser {
+public class ActionGraphV1Parser implements ActionGraphParser{
 
   private final AnalysisProtos.ActionGraphContainer actionGraph;
 
-  public ActionGraphParser(AnalysisProtos.ActionGraphContainer actionGraph) {
+  public ActionGraphV1Parser(AnalysisProtos.ActionGraphContainer actionGraph) {
     this.actionGraph = actionGraph;
   }
 
-  public List<String> getInputs(String target, List<String> suffixes) {
+  private List<String> getInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
         .flatMap(action -> action.getInputDepSetIdsList().stream())
         .flatMap(

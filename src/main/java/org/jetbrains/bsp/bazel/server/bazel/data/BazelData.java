@@ -6,12 +6,14 @@ public class BazelData {
   private final String workspaceRoot;
   private final String binRoot;
   private final String workspaceLabel;
+  private final String version;
 
-  public BazelData(String execRoot, String workspaceRoot, String binRoot, String workspaceLabel) {
+  public BazelData(String execRoot, String workspaceRoot, String binRoot, String workspaceLabel, String version) {
     this.execRoot = execRoot;
     this.workspaceRoot = workspaceRoot;
     this.binRoot = binRoot;
     this.workspaceLabel = workspaceLabel;
+    this.version = version;
   }
 
   public String getExecRoot() {
@@ -28,5 +30,9 @@ public class BazelData {
 
   public String getWorkspaceLabel() {
     return workspaceLabel;
+  }
+
+  public String getVersion() {
+    return version;
   }
 }

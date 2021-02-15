@@ -1,7 +1,7 @@
 load("@rules_java//java:defs.bzl", "java_library")
 
 java_library(
-    name = "resolvers",
+    name = "actiongraph",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
@@ -11,7 +11,6 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/params",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers/actiongraph",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:analysis_v2_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
