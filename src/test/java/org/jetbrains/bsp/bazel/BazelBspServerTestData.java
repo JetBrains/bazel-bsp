@@ -200,17 +200,17 @@ class BazelBspServerTestData {
                   ImmutableList.of(
                       "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
                       "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar",
-                      "__main__/bazel-out/darwin-fastbuild/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
-                      "__main__/bazel-out/darwin-fastbuild/bin/dep/deeper/deeper.jar",
-                      "__main__/bazel-out/darwin-fastbuild/bin/dep/dep.jar"),
-                  "__main__/bazel-out/darwin-fastbuild/bin/example/"),
+                      "/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
+                      "/bin/dep/deeper/deeper.jar",
+                      "/bin/dep/dep.jar"),
+                  "bin/example/"),
               new ScalacOptionsItem(
                   DEP_DEP_TARGET,
                   ImmutableList.of(),
                   ImmutableList.of(
                       "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
                       "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar",
-                      "__main__/bazel-out/darwin-fastbuild/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
-                      "__main__/bazel-out/darwin-fastbuild/bin/dep/deeper/deeper.jar"),
-                  "__main__/bazel-out/darwin-fastbuild/bin/dep/")));
+                      "bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
+                      "bin/dep/deeper/deeper.jar"),
+                  "bin/dep/")));
 }
