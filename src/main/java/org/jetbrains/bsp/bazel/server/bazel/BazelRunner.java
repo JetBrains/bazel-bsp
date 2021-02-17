@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bazel;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
@@ -72,7 +71,8 @@ public class BazelRunner {
     ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();
-    BazelProcessResult bazelProcessResult = new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
+    BazelProcessResult bazelProcessResult =
+        new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
 
     logBazelMessageAndThrowOnError(bazelProcessResult, exitCode);
 
