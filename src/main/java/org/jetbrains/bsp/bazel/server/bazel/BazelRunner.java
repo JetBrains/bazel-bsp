@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bazel;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelRunner {
 
@@ -18,6 +20,7 @@ public class BazelRunner {
   private final String bazel;
 
   private Optional<Integer> besBackendPort = Optional.empty();
+  private Optional<BuildClientLogger> buildClientLogger = Optional.empty();
 
   public BazelRunner(String bazelBinaryPath) {
     this.bazel = bazelBinaryPath;
@@ -69,8 +72,11 @@ public class BazelRunner {
     ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();
+    BazelProcessResult bazelProcessResult = new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
 
-    return new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
+    logBazelMessageAndThrowOnError(bazelProcessResult, exitCode);
+
+    return bazelProcessResult;
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
@@ -81,7 +87,31 @@ public class BazelRunner {
     return processArgs;
   }
 
+  private void logBazelMessageAndThrowOnError(BazelProcessResult bazelProcessResult, int exitCode) {
+    if (exitCode == 0) {
+      logBazelMessageOnSuccess(bazelProcessResult);
+    } else {
+      logBazelErrorAndThrowException(bazelProcessResult);
+    }
+  }
+
+  private void logBazelMessageOnSuccess(BazelProcessResult bazelProcessResult) {
+    String message = bazelProcessResult.getJoinedStderr();
+    buildClientLogger.ifPresent(logger -> logger.logMessage(message));
+  }
+
+  private void logBazelErrorAndThrowException(BazelProcessResult bazelProcessResult) {
+    String error = bazelProcessResult.getJoinedStderr();
+    buildClientLogger.ifPresent(logger -> logger.logError(error));
+
+    throw new RuntimeException(error);
+  }
+
   public void setBesBackendPort(int port) {
     besBackendPort = Optional.of(port);
+  }
+
+  public void setLogger(BuildClientLogger buildClientLogger) {
+    this.buildClientLogger = Optional.ofNullable(buildClientLogger);
   }
 }

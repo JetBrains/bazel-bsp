@@ -11,6 +11,8 @@ import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 
 public class BazelProcessResult {
 
+  private static final String LINES_DELIMITER = "\n";
+
   private final InputStream stdout;
   private final InputStream stderr;
   private final int exitCode;
@@ -35,6 +37,11 @@ public class BazelProcessResult {
 
   public List<String> getStdout() {
     return drainStream(stdout);
+  }
+
+  public String getJoinedStderr() {
+    List<String> lines = getStderr();
+    return String.join(LINES_DELIMITER, lines);
   }
 
   public List<String> getStderr() {
