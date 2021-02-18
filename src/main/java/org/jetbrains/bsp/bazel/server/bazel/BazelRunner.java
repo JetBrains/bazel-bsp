@@ -74,7 +74,7 @@ public class BazelRunner {
     BazelProcessResult bazelProcessResult =
         new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
 
-    logBazelMessageAndThrowOnError(bazelProcessResult, exitCode);
+    logBazelMessage(bazelProcessResult, exitCode);
 
     return bazelProcessResult;
   }
@@ -87,24 +87,22 @@ public class BazelRunner {
     return processArgs;
   }
 
-  private void logBazelMessageAndThrowOnError(BazelProcessResult bazelProcessResult, int exitCode) {
+  private void logBazelMessage(BazelProcessResult bazelProcessResult, int exitCode) {
     if (exitCode == 0) {
-      logBazelMessageOnSuccess(bazelProcessResult);
+      logBazelMessage(bazelProcessResult);
     } else {
-      logBazelErrorAndThrowException(bazelProcessResult);
+      logBazelError(bazelProcessResult);
     }
   }
 
-  private void logBazelMessageOnSuccess(BazelProcessResult bazelProcessResult) {
+  private void logBazelMessage(BazelProcessResult bazelProcessResult) {
     String message = bazelProcessResult.getJoinedStderr();
     buildClientLogger.ifPresent(logger -> logger.logMessage(message));
   }
 
-  private void logBazelErrorAndThrowException(BazelProcessResult bazelProcessResult) {
+  private void logBazelError(BazelProcessResult bazelProcessResult) {
     String error = bazelProcessResult.getJoinedStderr();
     buildClientLogger.ifPresent(logger -> logger.logError(error));
-
-    throw new RuntimeException(error);
   }
 
   public void setBesBackendPort(int port) {
