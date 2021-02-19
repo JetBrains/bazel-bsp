@@ -36,11 +36,14 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 class BazelBspServerTestData {
 
   private static final String SAMPLE_REPO_PATH = "sample-repo";
+  private static final String ACTION_GRAPH_V2 = "action-graph-v2";
   private static final String SAMPLE_REPO_EXAMPLE_PATH = SAMPLE_REPO_PATH + "/example";
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
+  private static final String TEST_RESOURCES_PATH = "test-resources";
   private static final String BUILD_WORKSPACE_DIRECTORY = "BUILD_WORKSPACE_DIRECTORY";
-  private static final String WORKSPACE_DIR_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
+  private static final String WORKSPACE_DIR_PATH =
+      System.getenv(BUILD_WORKSPACE_DIRECTORY) + "/" + TEST_RESOURCES_PATH;
 
   private static final BuildTargetIdentifier EXAMPLE_EXAMPLE_TARGET =
       new BuildTargetIdentifier("//example:example");
@@ -62,7 +65,8 @@ class BazelBspServerTestData {
   static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(6);
   static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 25;
 
-  static final String WORKSPACE_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
+  static final String SAMPLE_REPO_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
+  static final String ACTION_GRAPH_V2_FULL_PATH = WORKSPACE_DIR_PATH + "/" + ACTION_GRAPH_V2;
 
   static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS =
       new WorkspaceBuildTargetsResult(
@@ -126,7 +130,7 @@ class BazelBspServerTestData {
                       SAMPLE_REPO_EXAMPLE_PATH + "/file2.txt"))));
 
   static final TextDocumentIdentifier INVERSE_SOURCES_DOCUMENT =
-      new TextDocumentIdentifier("file://" + WORKSPACE_FULL_PATH + "/dep/Dep.scala");
+      new TextDocumentIdentifier("file://" + SAMPLE_REPO_FULL_PATH + "/dep/Dep.scala");
 
   static final InverseSourcesResult EXPECTED_INVERSE_SOURCES =
       new InverseSourcesResult(ImmutableList.of(DEP_DEP_TARGET));
@@ -213,4 +217,28 @@ class BazelBspServerTestData {
                       "bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
                       "bin/dep/deeper/deeper.jar"),
                   "bin/dep/")));
+
+  static final JavacOptionsParams JAVAC_OPTIONS_PARAMS_ACTION_GRAPH_V2 =
+      new JavacOptionsParams(ImmutableList.of(EXAMPLE_EXAMPLE_TARGET, DEP_JAVA_DEP_TARGET));
+
+  static final JavacOptionsResult EXPECTED_JAVAC_OPTIONS_ACTION_GRAPH_V2 =
+      new JavacOptionsResult(
+          ImmutableList.of(
+              new JavacOptionsItem(
+                  EXAMPLE_EXAMPLE_TARGET, ImmutableList.of(), ImmutableList.of(), "")));
+
+  static final ScalacOptionsParams SCALAC_OPTIONS_PARAMS_ACTION_GRAPH_V2 =
+      new ScalacOptionsParams(ImmutableList.of(EXAMPLE_EXAMPLE_TARGET, DEP_DEP_TARGET));
+
+  static final ScalacOptionsResult EXPECTED_SCALAC_OPTIONS_ACTION_GRAPH_V2 =
+      new ScalacOptionsResult(
+          ImmutableList.of(
+              new ScalacOptionsItem(
+                  EXAMPLE_EXAMPLE_TARGET,
+                  ImmutableList.of("-target:jvm-1.8"),
+                  ImmutableList.of(
+                      "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
+                      "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar",
+                      "/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar"),
+                  "bin/example/")));
 }

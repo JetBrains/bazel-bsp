@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,17 +20,10 @@ public class BazelBspServerTest {
   private static final Integer SUCCESS_EXIT_CODE = 0;
   private static final Integer FAIL_EXIT_CODE = 1;
 
-  private final TestClient client;
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
   public BazelBspServerTest() {
     LOGGER.info("Creating TestClient...");
-
-    this.client =
-        TestClient$.MODULE$.testInitialStructure(
-            BazelBspServerTestData.WORKSPACE_FULL_PATH,
-            ImmutableMap.of(),
-            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
 
     LOGGER.info("Created TestClient");
   }
@@ -36,11 +31,41 @@ public class BazelBspServerTest {
   public void run() {
     LOGGER.info("Running BazelBspServerTest...");
 
-    List<BazelBspServerSingleTest> testsTopRun = getTestsToRun();
-    runTests(testsTopRun);
+    List<BazelBspServerSingleTest> testsToRun =
+        Stream.concat(getSampleRepoTests().stream(), getActionGraphV2Tests().stream())
+            .collect(Collectors.toList());
+    runTests(testsToRun);
   }
 
-  private List<BazelBspServerSingleTest> getTestsToRun() {
+  private List<BazelBspServerSingleTest> getActionGraphV2Tests() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.ACTION_GRAPH_V2_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+
+    return ImmutableList.of(
+        new BazelBspServerSingleTest(
+            "actiong-graph-v2 javacopts test",
+            () ->
+                client.testJavacOptions(
+                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS_ACTION_GRAPH_V2,
+                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS_ACTION_GRAPH_V2)),
+        new BazelBspServerSingleTest(
+            "actiong-graph-v2 scalacopts test",
+            () ->
+                client.testScalacOptions(
+                    BazelBspServerTestData.SCALAC_OPTIONS_PARAMS_ACTION_GRAPH_V2,
+                    BazelBspServerTestData.EXPECTED_SCALAC_OPTIONS_ACTION_GRAPH_V2)));
+  }
+
+  private List<BazelBspServerSingleTest> getSampleRepoTests() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.SAMPLE_REPO_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+
     return ImmutableList.of(
         new BazelBspServerSingleTest("resolve project", client::testResolveProject),
         new BazelBspServerSingleTest(
