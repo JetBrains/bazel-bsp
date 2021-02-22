@@ -5,11 +5,11 @@ public class BazelRunnerCommandBuilder {
   private static final String BAZEL_AQUERY_COMMAND = "aquery";
   private static final String BAZEL_BUILD_COMMAND = "build";
   private static final String BAZEL_CLEAN_COMMAND = "clean";
+  private static final String BAZEL_FETCH_COMMAND = "fetch";
   private static final String BAZEL_INFO_COMMAND = "info";
   private static final String BAZEL_QUERY_COMMAND = "query";
   private static final String BAZEL_RUN_COMMAND = "run";
   private static final String BAZEL_TEST_COMMAND = "test";
-  private static final String BAZEL_SYNC_COMMAND = "sync";
 
   private final BazelRunner bazelRunner;
 
@@ -29,6 +29,10 @@ public class BazelRunnerCommandBuilder {
     return new BazelRunnerBuilder(bazelRunner, BAZEL_CLEAN_COMMAND);
   }
 
+  public BazelRunnerBuilder fetch() {
+    return new BazelRunnerBuilder(bazelRunner, BAZEL_FETCH_COMMAND);
+  }
+
   public BazelRunnerBuilder info() {
     return new BazelRunnerBuilder(bazelRunner, BAZEL_INFO_COMMAND);
   }
@@ -43,9 +47,5 @@ public class BazelRunnerCommandBuilder {
 
   public BazelRunnerBuilder test() {
     return new BazelRunnerBuilder(bazelRunner, BAZEL_TEST_COMMAND);
-  }
-
-  public BazelRunnerBuilder sync() {
-    return new BazelRunnerBuilder(bazelRunner, BAZEL_SYNC_COMMAND);
   }
 }

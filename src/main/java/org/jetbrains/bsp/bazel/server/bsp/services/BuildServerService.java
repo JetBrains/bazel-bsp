@@ -338,9 +338,9 @@ public class BuildServerService {
 
   public Either<ResponseError, Object> workspaceReload() {
     bazelRunner.commandBuilder()
-        .sync()
+        .fetch()
         .executeBazelCommand();
 
-    return Either.forRight(null);
+    return Either.forRight(new Object());
   }
 }
