@@ -11,22 +11,20 @@ import org.jetbrains.bsp.bazel.server.bazel.utils.ExitCodeMapper;
 
 public class BazelProcessResult {
 
+  private static final String LINES_DELIMITER = "\n";
+
   private final InputStream stdout;
-  private final InputStream stderr;
+  private final List<String> stderr;
   private final int exitCode;
 
   public BazelProcessResult(InputStream stdout, InputStream stderr, int exitCode) {
     this.stdout = stdout;
-    this.stderr = stderr;
+    this.stderr = drainStream(stderr);
     this.exitCode = exitCode;
   }
 
   public InputStream getStdoutStream() {
     return stdout;
-  }
-
-  public InputStream getStderrStream() {
-    return stderr;
   }
 
   public StatusCode getStatusCode() {
@@ -37,8 +35,13 @@ public class BazelProcessResult {
     return drainStream(stdout);
   }
 
+  public String getJoinedStderr() {
+    List<String> lines = getStderr();
+    return String.join(LINES_DELIMITER, lines);
+  }
+
   public List<String> getStderr() {
-    return drainStream(stderr);
+    return stderr;
   }
 
   private List<String> drainStream(InputStream stream) {
