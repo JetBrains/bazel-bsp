@@ -83,7 +83,19 @@ public class BazelBspServerTest {
             () ->
                 client.testScalaTestClasses(
                     BazelBspServerTestData.SCALA_TEST_CLASSES_PARAMS,
-                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES))
+                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES)),
+        new BazelBspServerSingleTest(
+            "javacopts test",
+            () ->
+                client.testJavacOptions(
+                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS,
+                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS)),
+        new BazelBspServerSingleTest(
+            "scalacopts test",
+            () ->
+                client.testScalacOptions(
+                    BazelBspServerTestData.SCALAC_OPTIONS_PARAMS,
+                    BazelBspServerTestData.EXPECTED_SCALAC_OPTIONS))
         //         TODO one day we will uncomment them...
         //        new BazelBspServerSingleTest(
         //            "targets run unsuccessfully",

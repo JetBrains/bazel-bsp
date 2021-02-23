@@ -1,3 +1,4 @@
+load("@rules_java//java:defs.bzl", "java_binary")
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
@@ -8,4 +9,14 @@ scala_library(
     ]),
     visibility = ["//visibility:public"],
     deps = ["//dep/deeper"],
+)
+
+java_binary(
+    name = "java-dep",
+    srcs = glob(["*.java"]),
+    javacopts = [
+        "-Werror",
+        "-Xlint:all",
+    ],
+    visibility = ["//visibility:public"],
 )

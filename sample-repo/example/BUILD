@@ -18,6 +18,7 @@ scala_binary(
     jvm_flags = ["-Xms2G -Xmx5G"],
     main_class = "example.Example",
     resources = [":resources"],
+    scalacopts = ["-target:jvm-1.8"],
     visibility = ["//visibility:public"],
     deps = ["//dep"],
 )
