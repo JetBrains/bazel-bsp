@@ -16,6 +16,9 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -107,7 +110,7 @@ public class BazelBspServerBuildManager {
         Uri.packageDirFromLabel(label.getUri(), bazelData.getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());
     if (extensions.contains(Constants.SCALA)) {
-      getScalaBuildTarget()
+      getScalaBuildTarget(rule)
           .ifPresent(
               (buildTarget) -> {
                 target.setDataKind(BuildTargetDataKind.SCALA);
@@ -118,7 +121,7 @@ public class BazelBspServerBuildManager {
     } else if (extensions.contains(Constants.JAVA) || extensions.contains(Constants.KOTLIN)) {
       target.setDataKind(BuildTargetDataKind.JVM);
       target.setTags(Lists.newArrayList(BuildManagerParsingUtils.getRuleType(rule.getRuleClass())));
-      target.setData(getJVMBuildTarget());
+      target.setData(getJVMBuildTarget(rule));
     }
     return target;
   }
@@ -149,7 +152,7 @@ public class BazelBspServerBuildManager {
         .collect(Collectors.toList());
   }
 
-  private Optional<ScalaBuildTarget> getScalaBuildTarget() {
+  private Optional<ScalaBuildTarget> getScalaBuildTarget(Build.Rule rule) {
     if (scalacClasspath == null) {
       buildTargetsWithBep(
           Lists.newArrayList(
@@ -184,15 +187,61 @@ public class BazelBspServerBuildManager {
               scalaVersion.substring(0, scalaVersion.lastIndexOf(".")),
               ScalaPlatform.JVM,
               classpath);
-      scalacClasspath.setJvmBuildTarget(getJVMBuildTarget());
+      scalacClasspath.setJvmBuildTarget(getJVMBuildTarget(rule));
     }
 
     return Optional.of(scalacClasspath);
   }
 
-  private JvmBuildTarget getJVMBuildTarget() {
+  private JvmBuildTarget getJVMBuildTarget(Build.Rule rule) {
     // TODO(andrefmrocha): Properly determine jdk path
-    return new JvmBuildTarget(null, getJavaVersion());
+    Optional<String> javaHomePath = getJavaPath(rule);
+    return new JvmBuildTarget(javaHomePath.orElse(null), getJavaVersion());
+  }
+
+  private Optional<String> getJavaPath(Build.Rule rule) {
+      List<String> traversingPath = Lists.newArrayList("$jvm", "$java_runtime", ":alias", "actual");
+      Optional<Build.Rule> jdkRule = traverseDependency(rule, traversingPath);
+
+      if(!jdkRule.isPresent())
+          return Optional.empty();
+
+      String jdkLocation = jdkRule.get().getLocation();
+      String localJdkPath = jdkLocation.substring(0, jdkLocation.indexOf("/BUILD"));
+      return Optional.of(localJdkPath);
+  }
+
+  private Optional<Build.Rule> traverseDependency(Build.Rule startingRule, List<String> attributesToTraverse){
+      Build.Rule currentRule = startingRule;
+
+      for(String attributeToTraverse: attributesToTraverse){
+          List<Build.Attribute> attributes = currentRule.getAttributeList()
+                  .stream()
+                  .filter((attribute) -> attribute.getName().equals(attributeToTraverse) && attribute.hasStringValue())
+                  .collect(Collectors.toList());
+
+          if(attributes.isEmpty()){
+              System.out.println("No attributes of type " + attributeToTraverse + " were found");
+              return Optional.empty();
+          }
+
+          BazelProcessResult processResult = bazelRunner.commandBuilder()
+                  .query()
+                  .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+                  .withArgument(attributes.get(0).getStringValue())
+                  .executeBazelCommand();
+
+          Optional<Build.Target> rule = QueryResolver.getQueryResultForProcess(processResult).getTargetList().stream().findFirst();
+
+          if(!rule.isPresent()){
+              System.out.println("No rule found for  " + attributeToTraverse);
+              return Optional.empty();
+          }
+
+          currentRule = rule.get().getRule();
+      }
+
+      return Optional.of(currentRule);
   }
 
   private String getJavaVersion() {
