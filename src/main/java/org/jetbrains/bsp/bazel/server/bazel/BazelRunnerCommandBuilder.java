@@ -5,6 +5,7 @@ public class BazelRunnerCommandBuilder {
   private static final String BAZEL_AQUERY_COMMAND = "aquery";
   private static final String BAZEL_BUILD_COMMAND = "build";
   private static final String BAZEL_CLEAN_COMMAND = "clean";
+  private static final String BAZEL_FETCH_COMMAND = "fetch";
   private static final String BAZEL_INFO_COMMAND = "info";
   private static final String BAZEL_QUERY_COMMAND = "query";
   private static final String BAZEL_RUN_COMMAND = "run";
@@ -26,6 +27,10 @@ public class BazelRunnerCommandBuilder {
 
   public BazelRunnerBuilder clean() {
     return new BazelRunnerBuilder(bazelRunner, BAZEL_CLEAN_COMMAND);
+  }
+
+  public BazelRunnerBuilder fetch() {
+    return new BazelRunnerBuilder(bazelRunner, BAZEL_FETCH_COMMAND);
   }
 
   public BazelRunnerBuilder info() {
