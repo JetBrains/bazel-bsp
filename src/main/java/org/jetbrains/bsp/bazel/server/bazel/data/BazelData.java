@@ -6,14 +6,14 @@ public class BazelData {
   private final String workspaceRoot;
   private final String binRoot;
   private final String workspaceLabel;
-  private final String version;
+  private final SemanticVersion version;
 
   public BazelData(String execRoot, String workspaceRoot, String binRoot, String workspaceLabel, String version) {
     this.execRoot = execRoot;
     this.workspaceRoot = workspaceRoot;
     this.binRoot = binRoot;
     this.workspaceLabel = workspaceLabel;
-    this.version = version;
+    this.version = new SemanticVersion(version);
   }
 
   public String getExecRoot() {
@@ -32,7 +32,7 @@ public class BazelData {
     return workspaceLabel;
   }
 
-  public String getVersion() {
+  public SemanticVersion getVersion() {
     return version;
   }
 }

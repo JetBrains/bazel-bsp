@@ -1,10 +1,16 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
+
+import java.io.IOException;
+import java.util.List;
+
 import com.google.devtools.build.lib.analysis.AnalysisProtosV2;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.data.SemanticVersion;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphParser;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphV1Parser;
@@ -17,7 +23,7 @@ public class ActionGraphResolver {
 
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
-  private static final String ACTION_GRAPH_V2_VERSION = "4.0.0";
+  private static final SemanticVersion ACTION_GRAPH_V2_VERSION = new SemanticVersion("4.0.0");
 
   public ActionGraphResolver(BazelRunner bazelRunner, BazelData bazelData) {
     this.bazelRunner = bazelRunner;
