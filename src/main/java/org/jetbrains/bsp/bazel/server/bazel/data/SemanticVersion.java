@@ -15,6 +15,10 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     this.version = version;
   }
 
+  static SemanticVersion fromReleaseData(String version) {
+    return new SemanticVersion(version.split(" ")[1]);
+  }
+
   @Override
   public int compareTo(SemanticVersion other) {
     if (other == null) return 1;

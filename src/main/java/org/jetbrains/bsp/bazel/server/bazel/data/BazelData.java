@@ -18,7 +18,7 @@ public class BazelData {
     this.workspaceRoot = workspaceRoot;
     this.binRoot = binRoot;
     this.workspaceLabel = workspaceLabel;
-    this.version = new SemanticVersion(version);
+    this.version = SemanticVersion.fromReleaseData(version);
   }
 
   public String getExecRoot() {
