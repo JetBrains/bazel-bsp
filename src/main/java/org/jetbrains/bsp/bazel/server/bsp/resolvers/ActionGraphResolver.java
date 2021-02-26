@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
-
+import com.google.devtools.build.lib.analysis.AnalysisProtosV2;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,9 +15,6 @@ import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphParser;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphV1Parser;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphV2Parser;
-
-import java.io.IOException;
-import java.util.List;
 
 public class ActionGraphResolver {
 

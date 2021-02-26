@@ -8,7 +8,12 @@ public class BazelData {
   private final String workspaceLabel;
   private final SemanticVersion version;
 
-  public BazelData(String execRoot, String workspaceRoot, String binRoot, String workspaceLabel, String version) {
+  public BazelData(
+      String execRoot,
+      String workspaceRoot,
+      String binRoot,
+      String workspaceLabel,
+      String version) {
     this.execRoot = execRoot;
     this.workspaceRoot = workspaceRoot;
     this.binRoot = binRoot;

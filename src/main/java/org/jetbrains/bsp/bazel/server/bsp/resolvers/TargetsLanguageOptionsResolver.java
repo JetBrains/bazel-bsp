@@ -14,7 +14,6 @@ import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphParser;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphV1Parser;
 
 public class TargetsLanguageOptionsResolver<T> {
 

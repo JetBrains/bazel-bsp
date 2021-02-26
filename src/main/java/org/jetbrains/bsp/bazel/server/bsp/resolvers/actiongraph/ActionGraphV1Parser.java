@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.commons.Uri;
 
 // TODO(illicitonion): Index, cache, etc
-public class ActionGraphV1Parser implements ActionGraphParser{
+public class ActionGraphV1Parser implements ActionGraphParser {
 
   private final AnalysisProtos.ActionGraphContainer actionGraph;
 
