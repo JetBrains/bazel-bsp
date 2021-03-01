@@ -26,19 +26,19 @@ public class ActionGraphV2Parser implements ActionGraphParser {
 
   private List<String> getInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
-            .flatMap(action -> action.getInputDepSetIdsList().stream())
-            .flatMap(
-                    depset -> {
-                      Queue<Integer> queue = new ArrayDeque<>();
-                      queue.add(depset);
-                      return expandDepsetToArtifacts(queue).stream();
-                    })
-            .map(AnalysisProtosV2.Artifact::getPathFragmentId)
-            .map(pathFragmentId -> "exec-root://" + constructPath(pathFragmentId))
-            .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-            .collect(Collectors.toCollection(TreeSet::new))
-            .stream()
-            .collect(Collectors.toList());
+        .flatMap(action -> action.getInputDepSetIdsList().stream())
+        .flatMap(
+            depset -> {
+              Queue<Integer> queue = new ArrayDeque<>();
+              queue.add(depset);
+              return expandDepsetToArtifacts(queue).stream();
+            })
+        .map(AnalysisProtosV2.Artifact::getPathFragmentId)
+        .map(pathFragmentId -> "exec-root://" + constructPath(pathFragmentId))
+        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
+        .collect(Collectors.toCollection(TreeSet::new))
+        .stream()
+        .collect(Collectors.toList());
   }
 
   private String constructPath(final Integer pathFragmentId) {

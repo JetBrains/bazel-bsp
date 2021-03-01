@@ -28,10 +28,8 @@ public class BazelBspServerTest {
   }
 
   @SafeVarargs
-  static <T> Stream<T> concat(Stream<T> ...streams){
-    return Stream.of(streams)
-            .reduce(Stream::concat)
-            .orElseGet(Stream::empty);
+  static <T> Stream<T> concat(Stream<T>... streams) {
+    return Stream.of(streams).reduce(Stream::concat).orElseGet(Stream::empty);
   }
 
   public void run() {
@@ -41,32 +39,31 @@ public class BazelBspServerTest {
         concat(
                 getSampleRepoTests().stream(),
                 getActionGraphV1Tests().stream(),
-                getActionGraphV2Tests().stream()
-        )
+                getActionGraphV2Tests().stream())
             .collect(Collectors.toList());
     runTests(testsToRun);
   }
 
   private List<BazelBspServerSingleTest> getActionGraphV1Tests() {
     TestClient client =
-            TestClient$.MODULE$.testInitialStructure(
-                    BazelBspServerTestData.SAMPLE_REPO_FULL_PATH,
-                    ImmutableMap.of(),
-                    BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.SAMPLE_REPO_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
 
     return ImmutableList.of(
-            new BazelBspServerSingleTest(
-                    "actiong-graph-v1 javacopts test",
-                    () ->
-                            client.testJavacOptions(
-                                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS,
-                                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS)),
-            new BazelBspServerSingleTest(
-                    "actiong-graph-v1 scalacopts test",
-                    () ->
-                            client.testScalacOptions(
-                                    BazelBspServerTestData.SCALAC_OPTIONS_PARAMS,
-                                    BazelBspServerTestData.EXPECTED_SCALAC_OPTIONS)));
+        new BazelBspServerSingleTest(
+            "actiong-graph-v1 javacopts test",
+            () ->
+                client.testJavacOptions(
+                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS,
+                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS)),
+        new BazelBspServerSingleTest(
+            "actiong-graph-v1 scalacopts test",
+            () ->
+                client.testScalacOptions(
+                    BazelBspServerTestData.SCALAC_OPTIONS_PARAMS,
+                    BazelBspServerTestData.EXPECTED_SCALAC_OPTIONS)));
   }
 
   private List<BazelBspServerSingleTest> getActionGraphV2Tests() {

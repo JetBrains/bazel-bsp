@@ -28,17 +28,17 @@ public class ActionGraphV1Parser implements ActionGraphParser {
 
   private List<String> getInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
-            .flatMap(action -> action.getInputDepSetIdsList().stream())
-            .flatMap(
-                    depset -> {
-                      Queue<String> queue = new ArrayDeque<>();
-                      queue.add(depset);
-                      return expandDepsetToArtifacts(queue).stream();
-                    })
-            .map(artifact -> "exec-root://" + artifact.getExecPath())
-            .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-            .distinct()
-            .collect(Collectors.toList());
+        .flatMap(action -> action.getInputDepSetIdsList().stream())
+        .flatMap(
+            depset -> {
+              Queue<String> queue = new ArrayDeque<>();
+              queue.add(depset);
+              return expandDepsetToArtifacts(queue).stream();
+            })
+        .map(artifact -> "exec-root://" + artifact.getExecPath())
+        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
+        .distinct()
+        .collect(Collectors.toList());
   }
 
   @Override
