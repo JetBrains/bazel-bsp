@@ -27,13 +27,46 @@ public class BazelBspServerTest {
     LOGGER.info("Created TestClient");
   }
 
+  @SafeVarargs
+  static <T> Stream<T> concat(Stream<T> ...streams){
+    return Stream.of(streams)
+            .reduce(Stream::concat)
+            .orElseGet(Stream::empty);
+  }
+
   public void run() {
     LOGGER.info("Running BazelBspServerTest...");
 
     List<BazelBspServerSingleTest> testsToRun =
-        Stream.concat(getSampleRepoTests().stream(), getActionGraphV2Tests().stream())
+        concat(
+                getSampleRepoTests().stream(),
+                getActionGraphV1Tests().stream(),
+                getActionGraphV2Tests().stream()
+        )
             .collect(Collectors.toList());
     runTests(testsToRun);
+  }
+
+  private List<BazelBspServerSingleTest> getActionGraphV1Tests() {
+    TestClient client =
+            TestClient$.MODULE$.testInitialStructure(
+                    BazelBspServerTestData.SAMPLE_REPO_FULL_PATH,
+                    ImmutableMap.of(),
+                    BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+
+    return ImmutableList.of(
+            new BazelBspServerSingleTest(
+                    "actiong-graph-v1 javacopts test",
+                    () ->
+                            client.testJavacOptions(
+                                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS,
+                                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS)),
+            new BazelBspServerSingleTest(
+                    "actiong-graph-v1 scalacopts test",
+                    () ->
+                            client.testScalacOptions(
+                                    BazelBspServerTestData.SCALAC_OPTIONS_PARAMS,
+                                    BazelBspServerTestData.EXPECTED_SCALAC_OPTIONS)));
   }
 
   private List<BazelBspServerSingleTest> getActionGraphV2Tests() {
@@ -107,19 +140,7 @@ public class BazelBspServerTest {
             () ->
                 client.testScalaTestClasses(
                     BazelBspServerTestData.SCALA_TEST_CLASSES_PARAMS,
-                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES)),
-        new BazelBspServerSingleTest(
-            "javacopts test",
-            () ->
-                client.testJavacOptions(
-                    BazelBspServerTestData.JAVAC_OPTIONS_PARAMS,
-                    BazelBspServerTestData.EXPECTED_JAVAC_OPTIONS)),
-        new BazelBspServerSingleTest(
-            "scalacopts test",
-            () ->
-                client.testScalacOptions(
-                    BazelBspServerTestData.SCALAC_OPTIONS_PARAMS,
-                    BazelBspServerTestData.EXPECTED_SCALAC_OPTIONS))
+                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES))
         //         TODO one day we will uncomment them...
         //        new BazelBspServerSingleTest(
         //            "targets run unsuccessfully",
