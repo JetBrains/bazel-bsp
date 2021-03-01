@@ -17,21 +17,28 @@ public class ActionGraphV2Parser implements ActionGraphParser {
             .collect(Collectors.toMap(AnalysisProtosV2.PathFragment::getId, fragment -> fragment));
   }
 
+  @Override
+  public List<String> getInputsAsUri(String target, String execRoot) {
+    return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
+        .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
+        .collect(Collectors.toList());
+  }
+
   private List<String> getInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
-        .flatMap(action -> action.getInputDepSetIdsList().stream())
-        .flatMap(
-            depset -> {
-              Queue<Integer> queue = new ArrayDeque<>();
-              queue.add(depset);
-              return expandDepsetToArtifacts(queue).stream();
-            })
-        .map(AnalysisProtosV2.Artifact::getPathFragmentId)
-        .map(pathFragmentId -> "exec-root://" + constructPath(pathFragmentId))
-        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .collect(Collectors.toCollection(TreeSet::new))
-        .stream()
-        .collect(Collectors.toList());
+            .flatMap(action -> action.getInputDepSetIdsList().stream())
+            .flatMap(
+                    depset -> {
+                      Queue<Integer> queue = new ArrayDeque<>();
+                      queue.add(depset);
+                      return expandDepsetToArtifacts(queue).stream();
+                    })
+            .map(AnalysisProtosV2.Artifact::getPathFragmentId)
+            .map(pathFragmentId -> "exec-root://" + constructPath(pathFragmentId))
+            .filter(path -> suffixes.stream().anyMatch(path::endsWith))
+            .collect(Collectors.toCollection(TreeSet::new))
+            .stream()
+            .collect(Collectors.toList());
   }
 
   private String constructPath(final Integer pathFragmentId) {
@@ -49,13 +56,6 @@ public class ActionGraphV2Parser implements ActionGraphParser {
   }
 
   @Override
-  public List<String> getInputsAsUri(String target, String execRoot) {
-    return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
-        .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-        .collect(Collectors.toList());
-  }
-
-  @Override
   public List<String> getOutputs(String target, List<String> suffixes) {
     Set<Integer> artifactIds =
         getActions(target).stream()
@@ -70,13 +70,11 @@ public class ActionGraphV2Parser implements ActionGraphParser {
   }
 
   private int getTargetId(String needle) {
-    int targetId =
-        actionGraph.getTargetsList().stream()
-            .filter(target -> needle.equals(target.getLabel()))
-            .findFirst()
-            .orElse(AnalysisProtosV2.Target.newBuilder().build())
-            .getId();
-    return targetId;
+    return actionGraph.getTargetsList().stream()
+        .filter(target -> needle.equals(target.getLabel()))
+        .findFirst()
+        .orElse(AnalysisProtosV2.Target.newBuilder().build())
+        .getId();
   }
 
   private List<AnalysisProtosV2.Action> getActions(String targetLabel) {

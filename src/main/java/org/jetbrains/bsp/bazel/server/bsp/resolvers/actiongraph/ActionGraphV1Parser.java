@@ -19,27 +19,29 @@ public class ActionGraphV1Parser implements ActionGraphParser {
     this.actionGraph = actionGraph;
   }
 
-  private List<String> getInputs(String target, List<String> suffixes) {
-    return getActions(target).stream()
-        .flatMap(action -> action.getInputDepSetIdsList().stream())
-        .flatMap(
-            depset -> {
-              Queue<String> queue = new ArrayDeque<>();
-              queue.add(depset);
-              return expandDepsetToArtifacts(queue).stream();
-            })
-        .map(artifact -> "exec-root://" + artifact.getExecPath())
-        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .distinct()
-        .collect(Collectors.toList());
-  }
-
+  @Override
   public List<String> getInputsAsUri(String target, String execRoot) {
     return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
         .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
         .collect(Collectors.toList());
   }
 
+  private List<String> getInputs(String target, List<String> suffixes) {
+    return getActions(target).stream()
+            .flatMap(action -> action.getInputDepSetIdsList().stream())
+            .flatMap(
+                    depset -> {
+                      Queue<String> queue = new ArrayDeque<>();
+                      queue.add(depset);
+                      return expandDepsetToArtifacts(queue).stream();
+                    })
+            .map(artifact -> "exec-root://" + artifact.getExecPath())
+            .filter(path -> suffixes.stream().anyMatch(path::endsWith))
+            .distinct()
+            .collect(Collectors.toList());
+  }
+
+  @Override
   public List<String> getOutputs(String target, List<String> suffixes) {
     Set<String> artifactIds =
         getActions(target).stream()
