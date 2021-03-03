@@ -4,8 +4,6 @@ import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import com.google.devtools.build.lib.analysis.AnalysisProtosV2;
 import java.io.IOException;
 import java.util.List;
-
-import com.google.devtools.build.lib.analysis.AnalysisProtosV2;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
@@ -37,18 +35,15 @@ public class ActionGraphResolver {
               .withMnemonic(targets, languageIds)
               .executeBazelBesCommand();
 
-      ActionGraphParser actionGraphParser;
-      if(bazelData.getVersion().compareTo(ACTION_GRAPH_V2_VERSION) < 0){
-       AnalysisProtos.ActionGraphContainer actionGraphContainer =
-        AnalysisProtos.ActionGraphContainer.parseFrom(process.getInputStream());
-       actionGraphParser = new ActionGraphV1Parser(actionGraphContainer);
+      if (bazelData.getVersion().compareTo(ACTION_GRAPH_V2_VERSION) < 0) {
+        AnalysisProtos.ActionGraphContainer actionGraphContainer =
+            AnalysisProtos.ActionGraphContainer.parseFrom(process.getInputStream());
+       return new ActionGraphV1Parser(actionGraphContainer);
       } else {
         AnalysisProtosV2.ActionGraphContainer actionGraphContainer =
           AnalysisProtosV2.ActionGraphContainer.parseFrom(process.getInputStream());
-        actionGraphParser = new ActionGraphV2Parser(actionGraphContainer);
+        return new ActionGraphV2Parser(actionGraphContainer);
       }
-
-      return actionGraphParser;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
