@@ -21,12 +21,6 @@ public class BazelBspServerTest {
 
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-  public BazelBspServerTest() {
-    LOGGER.info("Creating TestClient...");
-
-    LOGGER.info("Created TestClient");
-  }
-
   @SafeVarargs
   static <T> Stream<T> concat(Stream<T>... streams) {
     return Stream.of(streams).reduce(Stream::concat).orElseGet(Stream::empty);
