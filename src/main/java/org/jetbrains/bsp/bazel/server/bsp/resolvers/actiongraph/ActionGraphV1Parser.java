@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph;
 
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,8 +17,7 @@ public class ActionGraphV1Parser extends ActionGraphParser {
   protected Stream<String> buildInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
         .flatMap(action -> action.getInputDepSetIdsList().stream())
-        .flatMap(
-            depset -> expandDepsetToArtifacts(depset).stream())
+        .flatMap(depset -> expandDepsetToArtifacts(depset).stream())
         .map(artifact -> EXEC_ROOT + artifact.getExecPath());
   }
 
@@ -52,9 +50,12 @@ public class ActionGraphV1Parser extends ActionGraphParser {
   }
 
   private List<AnalysisProtos.Artifact> expandDepsetToArtifacts(String idToExpand) {
-    Queue<String> idsToExpand = new ArrayDeque<>(){{
-      add(idToExpand);
-    }};
+    Queue<String> idsToExpand =
+        new ArrayDeque<String>() {
+          {
+            add(idToExpand);
+          }
+        };
 
     HashSet<String> expandedIds = new HashSet<>();
 
