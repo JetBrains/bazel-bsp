@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph;
 
-import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtosV2;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.commons.Uri;
+import java.util.stream.Stream;
 
-public class ActionGraphV2Parser implements ActionGraphParser {
+public class ActionGraphV2Parser extends ActionGraphParser {
   private final AnalysisProtosV2.ActionGraphContainer actionGraph;
   private final Map<Integer, AnalysisProtosV2.PathFragment> pathFragmentMap;
 
@@ -18,41 +18,26 @@ public class ActionGraphV2Parser implements ActionGraphParser {
   }
 
   @Override
-  public List<String> getInputsAsUri(String target, String execRoot) {
-    return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
-        .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-        .collect(Collectors.toList());
-  }
-
-  private List<String> getInputs(String target, List<String> suffixes) {
+  protected Stream<String> buildInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
         .flatMap(action -> action.getInputDepSetIdsList().stream())
         .flatMap(
-            depset -> {
-              Queue<Integer> queue = new ArrayDeque<>();
-              queue.add(depset);
-              return expandDepsetToArtifacts(queue).stream();
-            })
+            depset -> expandDepsetToArtifacts(depset).stream())
         .map(AnalysisProtosV2.Artifact::getPathFragmentId)
-        .map(pathFragmentId -> "exec-root://" + constructPath(pathFragmentId))
-        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .collect(Collectors.toCollection(TreeSet::new))
-        .stream()
-        .collect(Collectors.toList());
+        .map(pathFragmentId -> EXEC_ROOT + constructPath(pathFragmentId));
   }
 
-  private String constructPath(final Integer pathFragmentId) {
+  private String constructPath(Integer pathFragmentId) {
     int currId = pathFragmentId;
-    Stack<String> pathStack = new Stack<>();
+    List<String> pathBuilder = new ArrayList<>();
     while (currId != 0) {
       AnalysisProtosV2.PathFragment fragment = pathFragmentMap.get(currId);
-      pathStack.add(fragment.getLabel());
+      pathBuilder.add(fragment.getLabel());
       currId = fragment.getParentId();
     }
-    final StringBuilder path = new StringBuilder();
-    while (pathStack.size() != 1) path.append(pathStack.pop()).append("/");
 
-    return path.append(pathStack.pop()).toString();
+    Collections.reverse(pathBuilder);
+    return String.join("/", pathBuilder);
   }
 
   @Override
@@ -69,9 +54,9 @@ public class ActionGraphV2Parser implements ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private int getTargetId(String needle) {
+  private int getTargetId(String targetLabel) {
     return actionGraph.getTargetsList().stream()
-        .filter(target -> needle.equals(target.getLabel()))
+        .filter(target -> targetLabel.equals(target.getLabel()))
         .findFirst()
         .orElse(AnalysisProtosV2.Target.newBuilder().build())
         .getId();
@@ -84,14 +69,18 @@ public class ActionGraphV2Parser implements ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private List<AnalysisProtosV2.Artifact> expandDepsetToArtifacts(Queue<Integer> idsToExpand) {
+  private List<AnalysisProtosV2.Artifact> expandDepsetToArtifacts(Integer idToExpand) {
+    Queue<Integer> idsToExpand = new ArrayDeque<>(){{
+      add(idToExpand);
+    }};
+
     HashSet<Integer> expandedIds = new HashSet<>();
 
     HashSet<Integer> artifactIds = new HashSet<>();
     while (!idsToExpand.isEmpty()) {
       Integer depsetId = idsToExpand.remove();
       if (expandedIds.contains(depsetId)) {
-        continue;
+        return Collections.emptyList();
       }
       expandedIds.add(depsetId);
       for (AnalysisProtosV2.DepSetOfFiles depset : actionGraph.getDepSetOfFilesList()) {

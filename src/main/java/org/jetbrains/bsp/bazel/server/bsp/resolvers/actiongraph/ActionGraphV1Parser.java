@@ -1,18 +1,13 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph;
 
-import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.commons.Uri;
+import java.util.stream.Stream;
 
 // TODO(illicitonion): Index, cache, etc
-public class ActionGraphV1Parser implements ActionGraphParser {
-
+public class ActionGraphV1Parser extends ActionGraphParser {
   private final AnalysisProtos.ActionGraphContainer actionGraph;
 
   public ActionGraphV1Parser(AnalysisProtos.ActionGraphContainer actionGraph) {
@@ -20,25 +15,12 @@ public class ActionGraphV1Parser implements ActionGraphParser {
   }
 
   @Override
-  public List<String> getInputsAsUri(String target, String execRoot) {
-    return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
-        .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-        .collect(Collectors.toList());
-  }
-
-  private List<String> getInputs(String target, List<String> suffixes) {
+  protected Stream<String> buildInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
         .flatMap(action -> action.getInputDepSetIdsList().stream())
         .flatMap(
-            depset -> {
-              Queue<String> queue = new ArrayDeque<>();
-              queue.add(depset);
-              return expandDepsetToArtifacts(queue).stream();
-            })
-        .map(artifact -> "exec-root://" + artifact.getExecPath())
-        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .distinct()
-        .collect(Collectors.toList());
+            depset -> expandDepsetToArtifacts(depset).stream())
+        .map(artifact -> EXEC_ROOT + artifact.getExecPath());
   }
 
   @Override
@@ -54,9 +36,9 @@ public class ActionGraphV1Parser implements ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private String getTargetId(String needle) {
+  private String getTargetId(String targetLabel) {
     return actionGraph.getTargetsList().stream()
-        .filter(target -> needle.equals(target.getLabel()))
+        .filter(target -> targetLabel.equals(target.getLabel()))
         .findFirst()
         .orElse(AnalysisProtos.Target.newBuilder().build())
         .getId();
@@ -69,7 +51,11 @@ public class ActionGraphV1Parser implements ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private List<AnalysisProtos.Artifact> expandDepsetToArtifacts(Queue<String> idsToExpand) {
+  private List<AnalysisProtos.Artifact> expandDepsetToArtifacts(String idToExpand) {
+    Queue<String> idsToExpand = new ArrayDeque<>(){{
+      add(idToExpand);
+    }};
+
     HashSet<String> expandedIds = new HashSet<>();
 
     HashSet<String> artifactIds = new HashSet<>();
