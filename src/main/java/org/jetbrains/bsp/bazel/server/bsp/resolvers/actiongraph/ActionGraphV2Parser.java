@@ -82,8 +82,9 @@ public class ActionGraphV2Parser extends ActionGraphParser {
       expandedIds.add(depsetId);
 
       actionGraph.getDepSetOfFilesList().stream()
-              .filter((depset) -> depsetId.equals(depset.getId()))
-              .forEach((depset) -> {
+          .filter((depset) -> depsetId.equals(depset.getId()))
+          .forEach(
+              (depset) -> {
                 idsToExpand.addAll(depset.getTransitiveDepSetIdsList());
                 artifactIds.addAll(depset.getDirectArtifactIdsList());
               });

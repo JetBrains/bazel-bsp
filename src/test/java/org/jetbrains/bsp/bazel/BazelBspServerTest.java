@@ -22,7 +22,7 @@ public class BazelBspServerTest {
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
   @SafeVarargs
-  static <T> Stream<T> concat(Stream<T>... streams) {
+  private static <T> Stream<T> concat(Stream<T>... streams) {
     return Stream.of(streams).reduce(Stream::concat).orElseGet(Stream::empty);
   }
 
