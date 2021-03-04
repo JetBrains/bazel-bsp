@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph;
 
+import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,12 +51,7 @@ public class ActionGraphV1Parser extends ActionGraphParser {
   }
 
   private List<AnalysisProtos.Artifact> expandDepsetToArtifacts(String idToExpand) {
-    Queue<String> idsToExpand =
-        new ArrayDeque<String>() {
-          {
-            add(idToExpand);
-          }
-        };
+    Queue<String> idsToExpand = new ArrayDeque<>(Lists.newArrayList(idToExpand));
 
     HashSet<String> expandedIds = new HashSet<>();
 
@@ -66,13 +62,13 @@ public class ActionGraphV1Parser extends ActionGraphParser {
         continue;
       }
       expandedIds.add(depsetId);
-      for (AnalysisProtos.DepSetOfFiles depset : actionGraph.getDepSetOfFilesList()) {
-        if (!depsetId.equals(depset.getId())) {
-          continue;
-        }
-        idsToExpand.addAll(depset.getTransitiveDepSetIdsList());
-        artifactIds.addAll(depset.getDirectArtifactIdsList());
-      }
+
+      actionGraph.getDepSetOfFilesList().stream()
+              .filter((depset) -> depsetId.equals(depset.getId()))
+              .forEach((depset) -> {
+                idsToExpand.addAll(depset.getTransitiveDepSetIdsList());
+                artifactIds.addAll(depset.getDirectArtifactIdsList());
+              });
     }
     return actionGraph.getArtifactsList().stream()
         .filter(artifact -> artifactIds.contains(artifact.getId()))
