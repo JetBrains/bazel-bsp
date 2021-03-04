@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 public class SemanticVersion implements Comparable<SemanticVersion> {
 
-  private static final String SEMANTIC_VERSION_REGEX = "[0-9]+(\\.[0-9]+)*";
+  private static final String SEMANTIC_VERSION_REGEX = "^([0-9]+)\\.([0-9]+)\\.([0-9]+)";
   private static final int MAJOR_VERSION_LOCATION = 0;
   private static final int MINOR_VERSION_LOCATION = 1;
   private static final int PATCH_VERSION_LOCATION = 2;
@@ -21,16 +21,13 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
 
   public SemanticVersion(String version) {
     if (version == null) {
-      throw new IllegalArgumentException("Version can not be null");
+      throw new IllegalArgumentException("Version can't be null");
     }
     if (!version.matches(SEMANTIC_VERSION_REGEX)) {
       throw new IllegalArgumentException("Invalid version format");
     }
 
     String[] parts = version.split("\\.");
-    if (parts.length != 3) {
-      throw new IllegalArgumentException("Invalid number of version parts");
-    }
 
     this.version = version;
     this.majorVersion = Integer.parseInt(parts[MAJOR_VERSION_LOCATION]);
@@ -42,15 +39,15 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     return new SemanticVersion(version.split(" ")[1]);
   }
 
-  public final int getMajorVersion() {
+  public int getMajorVersion() {
     return majorVersion;
   }
 
-  public final int getMinorVersion() {
+  public int getMinorVersion() {
     return minorVersion;
   }
 
-  public final int getPatchVersion() {
+  public int getPatchVersion() {
     return patchVersion;
   }
 
@@ -66,9 +63,15 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
 
   @Override
   public boolean equals(Object that) {
-    if (this == that) return true;
-    if (that == null) return false;
-    if (this.getClass() != that.getClass()) return false;
+    if (this == that) {
+      return true;
+    }
+    if (that == null) {
+      return false;
+    }
+    if (this.getClass() != that.getClass()) {
+      return false;
+    }
     return this.compareTo((SemanticVersion) that) == 0;
   }
 }
