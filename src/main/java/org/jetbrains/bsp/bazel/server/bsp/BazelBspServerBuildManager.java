@@ -255,7 +255,7 @@ public class BazelBspServerBuildManager {
               .build()
               .withFlag(
                   BazelRunnerFlag.ASPECTS, "@//.bazelbsp:aspects.bzl%fetch_java_target_version")
-              .withArgument("fetch_java_target_version")
+              .withArgument("@bazel_tools//tools/jdk:current_java_toolchain")
               .executeBazelCommand()
               .getStderr();
 
