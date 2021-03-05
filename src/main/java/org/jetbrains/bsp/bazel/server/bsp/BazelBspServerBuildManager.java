@@ -16,9 +16,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -56,6 +53,7 @@ public class BazelBspServerBuildManager {
 
   private BepServer bepServer;
   private ScalaBuildTarget scalacClasspath;
+  private String javaVersion;
 
   public BazelBspServerBuildManager(
       BazelBspServerConfig serverConfig,
@@ -194,67 +192,91 @@ public class BazelBspServerBuildManager {
   }
 
   private JvmBuildTarget getJVMBuildTarget(Build.Rule rule) {
-    // TODO(andrefmrocha): Properly determine jdk path
     Optional<String> javaHomePath = getJavaPath(rule);
-    return new JvmBuildTarget(javaHomePath.orElse(null), getJavaVersion());
+    return new JvmBuildTarget(javaHomePath.orElse(null), getJavaVersion().orElse(null));
   }
 
   private Optional<String> getJavaPath(Build.Rule rule) {
-      List<String> traversingPath = Lists.newArrayList("$jvm", "$java_runtime", ":alias", "actual");
-      Optional<Build.Rule> jdkRule = traverseDependency(rule, traversingPath);
+    List<String> traversingPath = Lists.newArrayList("$jvm", "$java_runtime", ":alias", "actual");
+    Optional<Build.Rule> jdkRule = traverseDependency(rule, traversingPath);
 
-      if(!jdkRule.isPresent())
-          return Optional.empty();
+    if (!jdkRule.isPresent()) {
+      return Optional.empty();
+    }
 
-      String jdkLocation = jdkRule.get().getLocation();
-      String localJdkPath = jdkLocation.substring(0, jdkLocation.indexOf("/BUILD"));
-      return Optional.of(localJdkPath);
+    String jdkLocation = jdkRule.get().getLocation();
+    String localJdkPath = jdkLocation.substring(0, jdkLocation.indexOf("/BUILD"));
+    return Optional.of(localJdkPath);
   }
 
-  private Optional<Build.Rule> traverseDependency(Build.Rule startingRule, List<String> attributesToTraverse){
-      Build.Rule currentRule = startingRule;
+  private Optional<Build.Rule> traverseDependency(
+      Build.Rule startingRule, List<String> attributesToTraverse) {
+    Build.Rule currentRule = startingRule;
 
-      for(String attributeToTraverse: attributesToTraverse){
-          List<Build.Attribute> attributes = currentRule.getAttributeList()
-                  .stream()
-                  .filter((attribute) -> attribute.getName().equals(attributeToTraverse) && attribute.hasStringValue())
-                  .collect(Collectors.toList());
+    for (String attributeToTraverse : attributesToTraverse) {
+      List<Build.Attribute> attributes =
+          currentRule.getAttributeList().stream()
+              .filter(
+                  (attribute) ->
+                      attribute.getName().equals(attributeToTraverse) && attribute.hasStringValue())
+              .collect(Collectors.toList());
 
-          if(attributes.isEmpty()){
-              System.out.println("No attributes of type " + attributeToTraverse + " were found");
-              return Optional.empty();
-          }
-
-          BazelProcessResult processResult = bazelRunner.commandBuilder()
-                  .query()
-                  .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-                  .withArgument(attributes.get(0).getStringValue())
-                  .executeBazelCommand();
-
-          Optional<Build.Target> rule = QueryResolver.getQueryResultForProcess(processResult).getTargetList().stream().findFirst();
-
-          if(!rule.isPresent()){
-              System.out.println("No rule found for  " + attributeToTraverse);
-              return Optional.empty();
-          }
-
-          currentRule = rule.get().getRule();
+      if (attributes.isEmpty()) {
+        return Optional.empty();
       }
 
-      return Optional.of(currentRule);
+      BazelProcessResult processResult =
+          bazelRunner
+              .commandBuilder()
+              .query()
+              .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+              .withArgument(attributes.get(0).getStringValue())
+              .executeBazelCommand();
+
+      Optional<Build.Target> rule =
+          QueryResolver.getQueryResultForProcess(processResult).getTargetList().stream()
+              .findFirst();
+
+      if (!rule.isPresent()) {
+        return Optional.empty();
+      }
+
+      currentRule = rule.get().getRule();
+    }
+
+    return Optional.of(currentRule);
   }
 
-  private String getJavaVersion() {
-    String version = System.getProperty("java.version");
-    if (version.startsWith("1.")) {
-      version = version.substring(0, 3);
-    } else {
-      int dot = version.indexOf(".");
-      if (dot != -1) {
-        version = version.substring(0, dot);
+  private Optional<String> getJavaVersion() {
+    if (javaVersion == null) {
+      List<String> lines =
+          bazelRunner
+              .commandBuilder()
+              .build()
+              .withFlag(
+                  BazelRunnerFlag.ASPECTS, "@//.bazelbsp:aspects.bzl%fetch_java_target_version")
+              .withArgument("fetch_java_target_version")
+              .executeBazelCommand()
+              .getStderr();
+
+      List<String> javaVersions =
+          lines.stream()
+              .map(line -> Splitter.on(" ").splitToList(line))
+              .filter(
+                  parts ->
+                      parts.size() == 3
+                          && parts.get(0).equals("DEBUG:")
+                          && parts.get(1).contains(".bazelbsp/aspects.bzl")
+                          && parts.get(2).chars().allMatch(Character::isDigit))
+              .map(parts -> parts.get(2))
+              .collect(Collectors.toList());
+
+      if (!javaVersions.isEmpty()) {
+        javaVersion = javaVersions.get(0);
       }
     }
-    return version;
+
+    return Optional.ofNullable(javaVersion);
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
