@@ -71,20 +71,20 @@ public class ActionGraphV2Parser extends ActionGraphParser {
   private List<AnalysisProtosV2.Artifact> expandDepsetToArtifacts(Integer idToExpand) {
     Queue<Integer> idsToExpand = new ArrayDeque<>(Lists.newArrayList(idToExpand));
 
-    HashSet<Integer> expandedIds = new HashSet<>();
+    Set<Integer> expandedIds = new HashSet<>();
 
-    HashSet<Integer> artifactIds = new HashSet<>();
+    Set<Integer> artifactIds = new HashSet<>();
     while (!idsToExpand.isEmpty()) {
       Integer depsetId = idsToExpand.remove();
       if (expandedIds.contains(depsetId)) {
-        return Collections.emptyList();
+        continue;
       }
       expandedIds.add(depsetId);
 
       actionGraph.getDepSetOfFilesList().stream()
-          .filter((depset) -> depsetId.equals(depset.getId()))
+          .filter(depset -> depsetId.equals(depset.getId()))
           .forEach(
-              (depset) -> {
+              depset -> {
                 idsToExpand.addAll(depset.getTransitiveDepSetIdsList());
                 artifactIds.addAll(depset.getDirectArtifactIdsList());
               });
