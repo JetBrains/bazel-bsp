@@ -20,6 +20,8 @@ public class BazelDataResolver {
   }
 
   public BazelData resolveBazelData() {
+    bazelRunner.commandBuilder().info().executeBazelCommand();
+
     String execRoot = readOnlyBazelLine(EXECUTION_ROOT_PARAMETER);
     String workspaceRoot = readOnlyBazelLine(WORKPLACE_ROOT_PARAMETER);
     String binRoot = readOnlyBazelLine(BAZEL_BIN_ROOT_PARAMETER);
