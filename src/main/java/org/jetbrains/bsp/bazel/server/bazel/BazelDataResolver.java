@@ -30,7 +30,7 @@ public class BazelDataResolver {
 
   private String readOnlyBazelLine(String argument) {
     BazelProcessResult bazelProcessResult =
-        bazelRunner.commandBuilder().info().withArgument(argument).executeBazelCommand();
+        bazelRunner.commandBuilder().info().withArgument(argument).executeBazelBesCommand();
     List<String> output = bazelProcessResult.getStdout();
     return Iterables.getOnlyElement(output);
   }

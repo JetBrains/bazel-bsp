@@ -58,6 +58,6 @@ public class TargetRulesResolver<T> {
         .query()
         .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
         .withTargets(targets)
-        .executeBazelCommand();
+        .executeBazelBesCommand();
   }
 }

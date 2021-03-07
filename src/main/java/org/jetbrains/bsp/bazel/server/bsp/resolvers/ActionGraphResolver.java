@@ -24,7 +24,7 @@ public class ActionGraphResolver {
               .aquery()
               .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
               .withMnemonic(targets, languageIds)
-              .executeBazelCommand();
+              .executeBazelBesCommand();
 
       ActionGraphContainer actionGraphContainer =
           AnalysisProtos.ActionGraphContainer.parseFrom(process.getStdoutStream());

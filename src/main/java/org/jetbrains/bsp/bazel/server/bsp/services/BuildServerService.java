@@ -190,7 +190,7 @@ public class BuildServerService {
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withKind(kindParameter)
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
     Build.QueryResult result = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
@@ -236,7 +236,7 @@ public class BuildServerService {
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withArgument("//...")
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
     Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
@@ -292,7 +292,7 @@ public class BuildServerService {
             .test()
             .withTargets(testTargets)
             .withArguments(testParams.getArguments())
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
     return Either.forRight(new TestResult(bazelProcessResult.getStatusCode()));
   }
@@ -316,7 +316,7 @@ public class BuildServerService {
             .run()
             .withArgument(runParams.getTarget().getUri())
             .withArguments(runParams.getArguments())
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
     return Either.forRight(new RunResult(bazelProcessResult.getStatusCode()));
   }
@@ -325,7 +325,7 @@ public class BuildServerService {
       CleanCacheParams cleanCacheParams) {
     CleanCacheResult result;
     try {
-      List<String> lines = bazelRunner.commandBuilder().clean().executeBazelCommand().getStdout();
+      List<String> lines = bazelRunner.commandBuilder().clean().executeBazelBesCommand().getStdout();
 
       result = new CleanCacheResult(String.join("\n", lines), true);
     } catch (RuntimeException e) {
@@ -337,7 +337,7 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, Object> workspaceReload() {
-    bazelRunner.commandBuilder().fetch().executeBazelCommand();
+    bazelRunner.commandBuilder().fetch().executeBazelBesCommand();
 
     return Either.forRight(new Object());
   }

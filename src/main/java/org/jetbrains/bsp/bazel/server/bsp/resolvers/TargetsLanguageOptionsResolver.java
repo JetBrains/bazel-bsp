@@ -46,16 +46,16 @@ public class TargetsLanguageOptionsResolver<T> {
 
   public List<T> getResultItemsForTargets(List<BuildTargetIdentifier> buildTargetsIdentifiers) {
     List<String> targets = TargetsUtils.getTargetsUris(buildTargetsIdentifiers);
+    ActionGraphParser actionGraphParser =
+        actionGraphResolver.getActionGraphParser(targets, languagesIds);
 
     return targets.stream()
-        .flatMap(target -> getResultItems(target, targets))
+        .flatMap(target -> getResultItems(target, targets, actionGraphParser))
         .collect(Collectors.toList());
   }
 
-  private Stream<T> getResultItems(String target, List<String> allTargets) {
+  private Stream<T> getResultItems(String target, List<String> allTargets, ActionGraphParser actionGraphParser) {
     Map<String, List<String>> targetsOptions = getTargetsOptions(allTargets);
-    ActionGraphParser actionGraphParser =
-        actionGraphResolver.getActionGraphParser(allTargets, languagesIds);
 
     return getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
         actionGraphParser, targetsOptions, target);
@@ -77,7 +77,7 @@ public class TargetsLanguageOptionsResolver<T> {
         .query()
         .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
         .withTargets(targets)
-        .executeBazelCommand();
+        .executeBazelBesCommand();
   }
 
   private List<String> collectRules(Build.Rule rule) {

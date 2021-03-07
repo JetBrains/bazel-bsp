@@ -133,7 +133,7 @@ public class BazelBspServerBuildManager {
             .withFlag(BazelRunnerFlag.NOHOST_DEPS)
             .withFlag(BazelRunnerFlag.NOIMPLICIT_DEPS)
             .withKinds(kindParameters)
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
     Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
@@ -219,7 +219,7 @@ public class BazelBspServerBuildManager {
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withFlags(extraFlags)
             .withTargets(bazelTargets)
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
     Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcessResult);
 
@@ -303,7 +303,7 @@ public class BazelBspServerBuildManager {
                       .query()
                       .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
                       .withArgument(dep)
-                      .executeBazelCommand();
+                      .executeBazelBesCommand();
 
               Build.QueryResult queryResult =
                   QueryResolver.getQueryResultForProcess(bazelProcessResult);
@@ -340,7 +340,7 @@ public class BazelBspServerBuildManager {
             .build()
             .withFlag(BazelRunnerFlag.ASPECTS, "@//.bazelbsp:aspects.bzl%print_aspect")
             .withArgument(target)
-            .executeBazelCommand()
+            .executeBazelBesCommand()
             .getStderr();
 
     return lines.stream()
