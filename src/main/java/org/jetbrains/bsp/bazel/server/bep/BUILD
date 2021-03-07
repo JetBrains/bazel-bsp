@@ -4,7 +4,7 @@ java_library(
     name = "bep",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
-    resources = ["//src/test/resources:bsp-test-resources"],
+    resources = ["//src/main/resources:bsp-main-resources"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/commons",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",

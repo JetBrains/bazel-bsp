@@ -43,8 +43,8 @@ public class ServerInitializer {
           new PrintWriter(
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
-      System.setOut(logStream);
-      System.setErr(logStream);
+//      System.setOut(logStream);
+//      System.setErr(logStream);
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
