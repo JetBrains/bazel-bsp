@@ -7,7 +7,7 @@
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
 
-    <File name="File" append="false" fileName=".bazelbsp/bazelbsp.log" immediateFlush="false">
+    <File name="File" fileName=".bazelbsp/bazelbsp.log">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </File>
 

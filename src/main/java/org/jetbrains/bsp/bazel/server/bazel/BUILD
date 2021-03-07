@@ -4,6 +4,7 @@ java_library(
     name = "bazel",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
+    resources = ["//src/test/resources:bsp-test-resources"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/commons",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",
