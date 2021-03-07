@@ -50,11 +50,6 @@ public class BazelRunner {
   }
 
   BazelProcessResult runBazelCommand(String command, List<String> flags, List<String> arguments) {
-    if (arguments.isEmpty()) {
-      LOGGER.fatal("Not enough arguments");
-      throw new IllegalArgumentException("Not enough arguments");
-    }
-
     try {
       return runBazelProcess(command, flags, arguments);
     } catch (InterruptedException | IOException e) {
