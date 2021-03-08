@@ -266,6 +266,7 @@ public class BazelBspServerBuildManager {
         () -> {
           List<String> projectPaths = serverConfig.getTargetProjectPaths();
           List<BuildTarget> targets = new ArrayList<>();
+
           for (String projectPath : projectPaths) {
             targets.addAll(getBuildTargetForProjectPath(projectPath));
           }

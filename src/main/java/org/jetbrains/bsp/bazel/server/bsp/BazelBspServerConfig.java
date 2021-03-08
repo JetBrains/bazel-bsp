@@ -23,7 +23,7 @@ public class BazelBspServerConfig {
     List<String> targetProjectPaths =
         args.length == 2
             ? Arrays.asList(args[1].split(","))
-            : Collections.unmodifiableList(Collections.singletonList("//..."));
+            : Collections.singletonList("//...");
 
     return new BazelBspServerConfig(pathToBazel, targetProjectPaths);
   }
