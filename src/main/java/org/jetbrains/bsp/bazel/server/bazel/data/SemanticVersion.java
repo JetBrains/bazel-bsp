@@ -8,7 +8,7 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
   private static final int MAJOR_VERSION_LOCATION = 0;
   private static final int MINOR_VERSION_LOCATION = 1;
   private static final int PATCH_VERSION_LOCATION = 2;
-  private final Comparator<SemanticVersion> comparator =
+  private static final Comparator<SemanticVersion> comparator =
       Comparator.nullsLast(
           Comparator.comparing(SemanticVersion::getMajorVersion)
               .thenComparing(SemanticVersion::getMinorVersion)
