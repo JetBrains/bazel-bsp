@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
+import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
 
 public class ScalaBuildServerImpl implements ScalaBuildServer {
@@ -26,21 +27,21 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    return serverRequestHelpers.executeCommand(
+    return serverRequestHelpers.executeCommand("buildTargetScalacOptions",
         () -> scalaBuildServerService.buildTargetScalacOptions(scalacOptionsParams));
   }
 
   @Override
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    return serverRequestHelpers.executeCommand(
+    return serverRequestHelpers.executeCommand("buildTargetScalaTestClasses",
         () -> scalaBuildServerService.buildTargetScalaTestClasses(scalaTestClassesParams));
   }
 
   @Override
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    return serverRequestHelpers.executeCommand(
+    return serverRequestHelpers.executeCommand("buildTargetScalaMainClasses",
         () -> scalaBuildServerService.buildTargetScalaMainClasses(scalaMainClassesParams));
   }
 }

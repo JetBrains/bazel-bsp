@@ -27,6 +27,8 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -41,6 +43,8 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 
 public class BazelBspServerBuildManager {
+
+  private static final Logger LOGGER = LogManager.getLogger(BazelBspServerBuildManager.class);
 
   private final BazelBspServerConfig serverConfig;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
@@ -63,7 +67,8 @@ public class BazelBspServerBuildManager {
 
   public BuildTarget getBuildTargetForRule(Build.Rule rule) {
     String name = rule.getName();
-    System.out.println("Getting targets for rule: " + name);
+    LOGGER.info("Getting targets for rule: " + name);
+
     List<BuildTargetIdentifier> deps =
         rule.getAttributeList().stream()
             .filter(attribute -> attribute.getName().equals("deps"))
@@ -217,7 +222,6 @@ public class BazelBspServerBuildManager {
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withFlags(extraFlags)
             .withTargets(bazelTargets)
             .executeBazelBesCommand();
 
@@ -243,17 +247,19 @@ public class BazelBspServerBuildManager {
           bazelRunner
               .commandBuilder()
               .build()
+              .withFlags(extraFlags)
               .withTargets(bazelTargets)
               .executeBazelBesCommand()
               .getStatusCode();
     } catch (InterruptedException e) {
-      System.out.println("Failed to run bazel: " + e);
+      LOGGER.error("Failed to run bazel: {}", e.toString());
     }
 
     for (Map.Entry<String, String> diagnostics : diagnosticsProtosLocations.entrySet()) {
       String target = diagnostics.getKey();
       String diagnosticsPath = diagnostics.getValue();
       BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
+      // TODO (abrams27) is it ok?
       bepServer.emitDiagnostics(
           bepServer.collectDiagnostics(targetIdentifier, diagnosticsPath), targetIdentifier);
     }
@@ -262,9 +268,10 @@ public class BazelBspServerBuildManager {
   }
 
   public CompletableFuture<WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
-    return serverRequestHelpers.executeCommand(
+    return serverRequestHelpers.executeCommand("workspaceBuildTargets",
         () -> {
           List<String> projectPaths = serverConfig.getTargetProjectPaths();
+          // TODO (abrams27) simplify
           List<BuildTarget> targets = new ArrayList<>();
 
           for (String projectPath : projectPaths) {
@@ -277,6 +284,7 @@ public class BazelBspServerBuildManager {
   public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
     List<SourceItem> srcs = getSrcs(rule, false);
     srcs.addAll(getSrcs(rule, true));
+    // TODO (abrams27) fix updating
     bepServer.getBuildTargetsSources().put(label, srcs);
     return srcs;
   }

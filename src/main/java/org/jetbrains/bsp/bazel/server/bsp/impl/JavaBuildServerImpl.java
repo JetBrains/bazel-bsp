@@ -22,7 +22,7 @@ public class JavaBuildServerImpl implements JavaBuildServer {
   @Override
   public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
-    return serverRequestHelpers.executeCommand(
+    return serverRequestHelpers.executeCommand("buildTargetJavacOptions",
         () -> javaBuildServerService.buildTargetJavacOptions(javacOptionsParams));
   }
 }

@@ -5,6 +5,8 @@ import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -13,6 +15,8 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
 
 public class JavaBuildServerService {
+
+  private static final Logger LOGGER = LogManager.getLogger(JavaBuildServerService.class);
 
   private static final String JAVA_COMPILER_OPTIONS_NAME = "javacopts";
   // TODO(andrefmrocha): Remove this when kotlin is natively supported
@@ -34,6 +38,8 @@ public class JavaBuildServerService {
 
   public Either<ResponseError, JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
+    LOGGER.info("buildTargetJavacOptions call with param: {}", javacOptionsParams);
+
     List<JavacOptionsItem> resultItems =
         targetsLanguageOptionsResolver.getResultItemsForTargets(javacOptionsParams.getTargets());
 
