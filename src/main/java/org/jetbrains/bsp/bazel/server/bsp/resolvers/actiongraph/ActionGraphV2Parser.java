@@ -53,7 +53,7 @@ public class ActionGraphV2Parser extends ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private int getTargetId(String targetLabel) {
+  private int findTargetIdForLabel(String targetLabel) {
     return actionGraph.getTargetsList().stream()
         .filter(target -> targetLabel.equals(target.getLabel()))
         .findFirst()
@@ -62,12 +62,16 @@ public class ActionGraphV2Parser extends ActionGraphParser {
   }
 
   private List<AnalysisProtosV2.Action> getActions(String targetLabel) {
-    int targetId = getTargetId(targetLabel);
+    int targetId = findTargetIdForLabel(targetLabel);
     return actionGraph.getActionsList().stream()
         .filter(action -> targetId == action.getTargetId())
         .collect(Collectors.toList());
   }
 
+  // From a given set of dependencies of a target, expand their dependency graph and their
+  // transitive dependencies
+  // This way, all of the Artifacts - the representation of source files or derived output files -
+  // that that target depends on are obtained
   private List<AnalysisProtosV2.Artifact> expandDepsetToArtifacts(Integer idToExpand) {
     Queue<Integer> idsToExpand = new ArrayDeque<>(Lists.newArrayList(idToExpand));
 
