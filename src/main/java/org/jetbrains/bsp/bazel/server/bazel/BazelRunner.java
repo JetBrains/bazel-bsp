@@ -56,6 +56,7 @@ public class BazelRunner {
     }
 
     try {
+      LOGGER.info("Waiting for bazel - command: {}, flags: {}, arguments: {}", command, flags, arguments);
       return runBazelProcess(command, flags, arguments);
     } catch (InterruptedException | IOException e) {
       throw new RuntimeException(e);
