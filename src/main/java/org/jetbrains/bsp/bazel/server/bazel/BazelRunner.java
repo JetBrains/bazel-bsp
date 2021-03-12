@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
@@ -71,7 +72,8 @@ public class BazelRunner {
 
     ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
     Process process = processBuilder.start();
-    int exitCode = process.waitFor();
+    process.waitFor(5, TimeUnit.MINUTES);
+    int exitCode = process.exitValue();
     BazelProcessResult bazelProcessResult =
         new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
 
