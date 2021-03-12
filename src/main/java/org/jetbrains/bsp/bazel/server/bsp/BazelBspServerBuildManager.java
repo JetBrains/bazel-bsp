@@ -46,6 +46,12 @@ public class BazelBspServerBuildManager {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerBuildManager.class);
 
+  public static final String DEBUG_MESSAGE = "DEBUG:";
+  public static final String ASPECT_LOCATION = ".bazelbsp/aspects.bzl";
+  public static final String FETCH_JAVA_VERSION_ASPECT =
+      "@//.bazelbsp:aspects.bzl%fetch_java_target_version";
+  public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
+      "@bazel_tools//tools/jdk:current_java_toolchain";
   private final BazelBspServerConfig serverConfig;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelData bazelData;
@@ -214,34 +220,34 @@ public class BazelBspServerBuildManager {
     Build.Rule currentRule = startingRule;
 
     for (String attributeToTraverse : attributesToTraverse) {
-      List<Build.Attribute> attributes =
+      Optional<Build.Rule> rule =
           currentRule.getAttributeList().stream()
               .filter(
-                  (attribute) ->
+                  attribute ->
                       attribute.getName().equals(attributeToTraverse) && attribute.hasStringValue())
-              .collect(Collectors.toList());
+              .findFirst()
+              .flatMap(
+                  attribute -> {
+                    BazelProcess processResult =
+                        bazelRunner
+                            .commandBuilder()
+                            .query()
+                            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+                            .withArgument(attribute.getStringValue())
+                            .executeBazelBesCommand();
 
-      if (attributes.isEmpty()) {
-        return Optional.empty();
-      }
-
-      BazelProcessResult processResult =
-          bazelRunner
-              .commandBuilder()
-              .query()
-              .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-              .withArgument(attributes.get(0).getStringValue())
-              .executeBazelCommand();
-
-      Optional<Build.Target> rule =
-          QueryResolver.getQueryResultForProcess(processResult).getTargetList().stream()
-              .findFirst();
+                    return QueryResolver.getQueryResultForProcess(processResult)
+                        .getTargetList()
+                        .stream()
+                        .findFirst();
+                  })
+              .map(Build.Target::getRule);
 
       if (!rule.isPresent()) {
         return Optional.empty();
       }
 
-      currentRule = rule.get().getRule();
+      currentRule = rule.get();
     }
 
     return Optional.of(currentRule);
@@ -253,27 +259,24 @@ public class BazelBspServerBuildManager {
           bazelRunner
               .commandBuilder()
               .build()
-              .withFlag(
-                  BazelRunnerFlag.ASPECTS, "@//.bazelbsp:aspects.bzl%fetch_java_target_version")
-              .withArgument("@bazel_tools//tools/jdk:current_java_toolchain")
+              .withFlag(BazelRunnerFlag.ASPECTS, FETCH_JAVA_VERSION_ASPECT)
+              .withArgument(BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN)
               .executeBazelCommand()
               .getStderr();
 
-      List<String> javaVersions =
+      Optional<String> javaVersion =
           lines.stream()
               .map(line -> Splitter.on(" ").splitToList(line))
               .filter(
                   parts ->
                       parts.size() == 3
-                          && parts.get(0).equals("DEBUG:")
-                          && parts.get(1).contains(".bazelbsp/aspects.bzl")
+                          && parts.get(0).equals(DEBUG_MESSAGE)
+                          && parts.get(1).contains(ASPECT_LOCATION)
                           && parts.get(2).chars().allMatch(Character::isDigit))
               .map(parts -> parts.get(2))
-              .collect(Collectors.toList());
+              .findFirst();
 
-      if (!javaVersions.isEmpty()) {
-        javaVersion = javaVersions.get(0);
-      }
+      javaVersion.ifPresent(version -> this.javaVersion = version);
     }
 
     return Optional.ofNullable(javaVersion);
@@ -430,8 +433,8 @@ public class BazelBspServerBuildManager {
         .filter(
             parts ->
                 parts.size() == 3
-                    && parts.get(0).equals("DEBUG:")
-                    && parts.get(1).contains(".bazelbsp/aspects.bzl")
+                    && parts.get(0).equals(DEBUG_MESSAGE)
+                    && parts.get(1).contains(ASPECT_LOCATION)
                     && parts.get(2).endsWith(".jar"))
         .map(parts -> Constants.EXEC_ROOT_PREFIX + parts.get(2))
         .collect(Collectors.toList());
