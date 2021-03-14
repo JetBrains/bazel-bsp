@@ -11,7 +11,7 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
 public class TargetsLanguageOptionsResolver<T> {
@@ -62,16 +62,16 @@ public class TargetsLanguageOptionsResolver<T> {
   }
 
   private Map<String, List<String>> getTargetsOptions(List<String> targets) {
-    BazelProcessResult bazelProcessResult = queryBazel(targets);
+    BazelProcess bazelProcess = queryBazel(targets);
 
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcess);
 
     return query.getTargetList().stream()
         .map(Build.Target::getRule)
         .collect(Collectors.toMap(Build.Rule::getName, this::collectRules));
   }
 
-  private BazelProcessResult queryBazel(List<String> targets) {
+  private BazelProcess queryBazel(List<String> targets) {
     return bazelRunner
         .commandBuilder()
         .query()

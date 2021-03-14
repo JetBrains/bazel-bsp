@@ -5,6 +5,7 @@ import com.google.devtools.build.lib.analysis.AnalysisProtos.ActionGraphContaine
 import java.io.IOException;
 import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
@@ -18,7 +19,7 @@ public class ActionGraphResolver {
 
   public ActionGraphParser getActionGraphParser(List<String> targets, List<String> languageIds) {
     try {
-      BazelProcessResult process =
+      BazelProcess process =
           bazelRunner
               .commandBuilder()
               .aquery()
@@ -27,7 +28,7 @@ public class ActionGraphResolver {
               .executeBazelBesCommand();
 
       ActionGraphContainer actionGraphContainer =
-          AnalysisProtos.ActionGraphContainer.parseFrom(process.getStdoutStream());
+          AnalysisProtos.ActionGraphContainer.parseFrom(process.getInputStream());
       return new ActionGraphParser(actionGraphContainer);
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -46,6 +46,7 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
@@ -206,7 +207,7 @@ public class BuildServerService {
         BazelQueryKindParameters.fromPatternAndInput(
             "rule", "rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1)");
 
-    BazelProcessResult bazelProcessResult =
+    BazelProcess bazelProcess =
         bazelRunner
             .commandBuilder()
             .query()
@@ -214,7 +215,7 @@ public class BuildServerService {
             .withKind(kindParameter)
             .executeBazelBesCommand();
 
-    Build.QueryResult result = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult result = QueryResolver.getQueryResultForProcess(bazelProcess);
 
     List<BuildTargetIdentifier> targets =
         result.getTargetList().stream()
@@ -256,7 +257,7 @@ public class BuildServerService {
       ResourcesParams resourcesParams) {
     LOGGER.info("buildTargetResources call with param: {}", resourcesParams);
 
-    BazelProcessResult bazelProcessResult =
+    BazelProcess bazelProcess =
         bazelRunner
             .commandBuilder()
             .query()
@@ -264,7 +265,7 @@ public class BuildServerService {
             .withArgument("//...")
             .executeBazelBesCommand();
 
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcess);
 
     LOGGER.info("Resources query result {}", query);
 
@@ -322,7 +323,8 @@ public class BuildServerService {
             .test()
             .withTargets(testTargets)
             .withArguments(testParams.getArguments())
-            .executeBazelBesCommand();
+            .executeBazelBesCommand()
+            .waitAndGetResult();
 
     return Either.forRight(new TestResult(bazelProcessResult.getStatusCode()));
   }
@@ -348,7 +350,8 @@ public class BuildServerService {
             .run()
             .withArgument(runParams.getTarget().getUri())
             .withArguments(runParams.getArguments())
-            .executeBazelBesCommand();
+            .executeBazelBesCommand()
+            .waitAndGetResult();
 
     return Either.forRight(new RunResult(bazelProcessResult.getStatusCode()));
   }
@@ -359,7 +362,13 @@ public class BuildServerService {
 
     CleanCacheResult result;
     try {
-      List<String> lines = bazelRunner.commandBuilder().clean().executeBazelBesCommand().getStdout();
+      List<String> lines =
+          bazelRunner
+              .commandBuilder()
+              .clean()
+              .executeBazelBesCommand()
+              .waitAndGetResult()
+              .getStdout();
 
       result = new CleanCacheResult(String.join("\n", lines), true);
     } catch (RuntimeException e) {
@@ -373,7 +382,11 @@ public class BuildServerService {
   public Either<ResponseError, Object> workspaceReload() {
     LOGGER.info("workspaceReload call");
 
-    bazelRunner.commandBuilder().fetch().executeBazelBesCommand();
+    bazelRunner
+        .commandBuilder()
+        .fetch()
+        .executeBazelBesCommand()
+        .waitAndGetResult();
 
     return Either.forRight(new Object());
   }

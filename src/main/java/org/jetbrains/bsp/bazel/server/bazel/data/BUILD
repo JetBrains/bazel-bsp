@@ -6,6 +6,7 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
+        "//src/main/java/org/jetbrains/bsp/bazel/server/loggers",
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

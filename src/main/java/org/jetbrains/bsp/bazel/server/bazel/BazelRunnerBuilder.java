@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.bazel;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bazel.utils.BazelArgumentsUtils;
@@ -79,11 +79,11 @@ public class BazelRunnerBuilder {
     return this;
   }
 
-  public BazelProcessResult executeBazelCommand() {
+  public BazelProcess executeBazelCommand() {
     return bazelRunner.runBazelCommand(bazelCommand, flags, arguments);
   }
 
-  public BazelProcessResult executeBazelBesCommand() {
+  public BazelProcess executeBazelBesCommand() {
     return bazelRunner.runBazelCommandBes(bazelCommand, flags, arguments);
   }
 }

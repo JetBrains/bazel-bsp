@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
@@ -47,12 +48,12 @@ public class TargetRulesResolver<T> {
 
   private Build.QueryResult getBuildQueryResult(List<BuildTargetIdentifier> targetsIds) {
     List<String> targets = TargetsUtils.getTargetsUris(targetsIds);
-    BazelProcessResult bazelProcessResult = queryBazel(targets);
+    BazelProcess bazelProcess = queryBazel(targets);
 
-    return QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    return QueryResolver.getQueryResultForProcess(bazelProcess);
   }
 
-  private BazelProcessResult queryBazel(List<String> targets) {
+  private BazelProcess queryBazel(List<String> targets) {
     return bazelRunner
         .commandBuilder()
         .query()

@@ -4,10 +4,9 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelRunner {
@@ -30,7 +29,7 @@ public class BazelRunner {
     return new BazelRunnerCommandBuilder(this);
   }
 
-  BazelProcessResult runBazelCommandBes(
+  BazelProcess runBazelCommandBes(
       String command, List<String> flags, List<String> arguments) {
 
     List<String> newFlags = getBesFlags(flags);
@@ -50,7 +49,7 @@ public class BazelRunner {
     return BES_BACKEND + port;
   }
 
-  BazelProcessResult runBazelCommand(String command, List<String> flags, List<String> arguments) {
+  BazelProcess runBazelCommand(String command, List<String> flags, List<String> arguments) {
     if (arguments.isEmpty()) {
       LOGGER.fatal("Not enough arguments");
       throw new IllegalArgumentException("Not enough arguments");
@@ -59,27 +58,20 @@ public class BazelRunner {
     try {
       LOGGER.info("Waiting for bazel - command: {}, flags: {}, arguments: {}", command, flags, arguments);
       return runBazelProcess(command, flags, arguments);
-    } catch (InterruptedException | IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private synchronized BazelProcessResult runBazelProcess(
-      String command, List<String> flags, List<String> arguments)
-      throws InterruptedException, IOException {
+  private synchronized BazelProcess runBazelProcess(
+      String command, List<String> flags, List<String> arguments) throws IOException {
     List<String> processArgs = getProcessArgs(command, flags, arguments);
     LOGGER.info("Running: {}", processArgs);
 
     ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
     Process process = processBuilder.start();
-    process.waitFor(5, TimeUnit.MINUTES);
-    int exitCode = process.exitValue();
-    BazelProcessResult bazelProcessResult =
-        new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
 
-    logBazelMessage(bazelProcessResult, exitCode);
-
-    return bazelProcessResult;
+    return new BazelProcess(process, buildClientLogger);
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
@@ -88,24 +80,6 @@ public class BazelRunner {
     processArgs.addAll(arguments);
 
     return processArgs;
-  }
-
-  private void logBazelMessage(BazelProcessResult bazelProcessResult, int exitCode) {
-    if (exitCode == 0) {
-      logBazelMessage(bazelProcessResult);
-    } else {
-      logBazelError(bazelProcessResult);
-    }
-  }
-
-  private void logBazelMessage(BazelProcessResult bazelProcessResult) {
-    String message = bazelProcessResult.getJoinedStderr();
-    buildClientLogger.ifPresent(logger -> logger.logMessage(message));
-  }
-
-  private void logBazelError(BazelProcessResult bazelProcessResult) {
-    String error = bazelProcessResult.getJoinedStderr();
-    buildClientLogger.ifPresent(logger -> logger.logError(error));
   }
 
   public void setBesBackendPort(int port) {
