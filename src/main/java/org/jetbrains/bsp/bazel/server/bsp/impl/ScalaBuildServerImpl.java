@@ -26,21 +26,24 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
-    return serverRequestHelpers.executeCommand("buildTargetScalacOptions",
+    return serverRequestHelpers.executeCommand(
+        "buildTargetScalacOptions",
         () -> scalaBuildServerService.buildTargetScalacOptions(scalacOptionsParams));
   }
 
   @Override
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
-    return serverRequestHelpers.executeCommand("buildTargetScalaTestClasses",
+    return serverRequestHelpers.executeCommand(
+        "buildTargetScalaTestClasses",
         () -> scalaBuildServerService.buildTargetScalaTestClasses(scalaTestClassesParams));
   }
 
   @Override
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
-    return serverRequestHelpers.executeCommand("buildTargetScalaMainClasses",
+    return serverRequestHelpers.executeCommand(
+        "buildTargetScalaMainClasses",
         () -> scalaBuildServerService.buildTargetScalaMainClasses(scalaMainClassesParams));
   }
 }

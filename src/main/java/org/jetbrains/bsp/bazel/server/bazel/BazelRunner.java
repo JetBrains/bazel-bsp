@@ -29,8 +29,7 @@ public class BazelRunner {
     return new BazelRunnerCommandBuilder(this);
   }
 
-  BazelProcess runBazelCommandBes(
-      String command, List<String> flags, List<String> arguments) {
+  BazelProcess runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
 
     List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
@@ -56,7 +55,8 @@ public class BazelRunner {
     }
 
     try {
-      LOGGER.info("Waiting for bazel - command: {}, flags: {}, arguments: {}", command, flags, arguments);
+      LOGGER.info(
+          "Waiting for bazel - command: {}, flags: {}, arguments: {}", command, flags, arguments);
       return runBazelProcess(command, flags, arguments);
     } catch (IOException e) {
       throw new RuntimeException(e);

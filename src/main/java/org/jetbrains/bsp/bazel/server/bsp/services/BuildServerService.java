@@ -88,8 +88,8 @@ public class BuildServerService {
     return processBuildInitialize("buildInitialize", this::handleBuildInitialize);
   }
 
-  private <T> CompletableFuture<T> processBuildInitialize(String methodName,
-      Supplier<Either<ResponseError, T>> request) {
+  private <T> CompletableFuture<T> processBuildInitialize(
+      String methodName, Supplier<Either<ResponseError, T>> request) {
     if (serverLifetime.isFinished()) {
       return serverRequestHelpers.completeExceptionally(
           methodName,
@@ -125,8 +125,8 @@ public class BuildServerService {
     return processBuildShutdown("buildShutdown", this::handleBuildShutdown);
   }
 
-  private <T> CompletableFuture<T> processBuildShutdown(String methodName,
-      Supplier<Either<ResponseError, T>> request) {
+  private <T> CompletableFuture<T> processBuildShutdown(
+      String methodName, Supplier<Either<ResponseError, T>> request) {
     if (!serverLifetime.isInitialized()) {
       return serverRequestHelpers.completeExceptionally(
           methodName,
@@ -382,11 +382,7 @@ public class BuildServerService {
   public Either<ResponseError, Object> workspaceReload() {
     LOGGER.info("workspaceReload call");
 
-    bazelRunner
-        .commandBuilder()
-        .fetch()
-        .executeBazelBesCommand()
-        .waitAndGetResult();
+    bazelRunner.commandBuilder().fetch().executeBazelBesCommand().waitAndGetResult();
 
     return Either.forRight(new Object());
   }

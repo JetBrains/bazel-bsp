@@ -269,7 +269,8 @@ public class BazelBspServerBuildManager {
   }
 
   public CompletableFuture<WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
-    return serverRequestHelpers.executeCommand("workspaceBuildTargets",
+    return serverRequestHelpers.executeCommand(
+        "workspaceBuildTargets",
         () -> {
           List<String> projectPaths = serverConfig.getTargetProjectPaths();
           // TODO (abrams27) simplify
@@ -315,8 +316,7 @@ public class BazelBspServerBuildManager {
                       .withArgument(dep)
                       .executeBazelBesCommand();
 
-              Build.QueryResult queryResult =
-                  QueryResolver.getQueryResultForProcess(bazelProcess);
+              Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcess);
 
               return queryResult.getTargetList().stream()
                   .map(Build.Target::getRule)
@@ -337,8 +337,8 @@ public class BazelBspServerBuildManager {
         Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
     return bazelData.getWorkspaceRoot()
         + (root.size() == 0
-        ? ""
-        : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
+            ? ""
+            : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
   }
 
   public List<String> lookUpTransitiveSourceJars(String target) {

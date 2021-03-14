@@ -21,9 +21,7 @@ public class BazelBspServerConfig {
 
     String pathToBazel = args[0];
     List<String> targetProjectPaths =
-        args.length == 2
-            ? Arrays.asList(args[1].split(","))
-            : Collections.singletonList("//...");
+        args.length == 2 ? Arrays.asList(args[1].split(",")) : Collections.singletonList("//...");
 
     return new BazelBspServerConfig(pathToBazel, targetProjectPaths);
   }

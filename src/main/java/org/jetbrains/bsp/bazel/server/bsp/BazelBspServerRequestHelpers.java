@@ -19,7 +19,8 @@ public class BazelBspServerRequestHelpers {
     this.serverLifetime = serverLifetime;
   }
 
-  public <T> CompletableFuture<T> executeCommand(String methodName, Supplier<Either<ResponseError, T>> request) {
+  public <T> CompletableFuture<T> executeCommand(
+      String methodName, Supplier<Either<ResponseError, T>> request) {
     if (!serverLifetime.isInitialized()) {
       return completeExceptionally(
           methodName,
@@ -38,11 +39,13 @@ public class BazelBspServerRequestHelpers {
     return getValue(methodName, request);
   }
 
-  public <T> CompletableFuture<T> getValue(String methodName, Supplier<Either<ResponseError, T>> request) {
+  public <T> CompletableFuture<T> getValue(
+      String methodName, Supplier<Either<ResponseError, T>> request) {
     return CompletableFuture.supplyAsync(request)
         .exceptionally( // TODO remove eithers in next PR
             exception -> {
-              LOGGER.error("{} call finishing with exception: {}", methodName, exception.getStackTrace());
+              LOGGER.error(
+                  "{} call finishing with exception: {}", methodName, exception.getStackTrace());
 
               return Either.forLeft(
                   new ResponseError(ResponseErrorCode.InternalError, exception.getMessage(), null));

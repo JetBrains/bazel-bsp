@@ -54,7 +54,8 @@ public class TargetsLanguageOptionsResolver<T> {
         .collect(Collectors.toList());
   }
 
-  private Stream<T> getResultItems(String target, List<String> allTargets, ActionGraphParser actionGraphParser) {
+  private Stream<T> getResultItems(
+      String target, List<String> allTargets, ActionGraphParser actionGraphParser) {
     Map<String, List<String>> targetsOptions = getTargetsOptions(allTargets);
 
     return getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
