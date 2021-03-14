@@ -30,21 +30,13 @@ public class ServerInitializer {
 
     try {
       Path rootDir = Paths.get(Constants.BAZELBSP_DIR_NAME).toAbsolutePath();
-
       Files.createDirectories(rootDir);
-//      Path log = rootDir.resolve(Constants.BAZELBSP_LOG_FILE_NAME);
-//      PrintStream logStream =
-//          new PrintStream(
-//              Files.newOutputStream(
-//                  log, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
       Path traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
       PrintWriter traceWriter =
           new PrintWriter(
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
-//      System.setOut(logStream);
-//      System.setErr(logStream);
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
