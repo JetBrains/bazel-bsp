@@ -27,7 +27,7 @@ public class JavaBuildServerService {
 
   public JavaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
     this.targetsLanguageOptionsResolver =
-        TargetsLanguageOptionsResolver.<JavacOptionsItem>builder()
+        TargetsLanguageOptionsResolver.<JavacOptionsItem> builder()
             .bazelData(bazelData)
             .bazelRunner(bazelRunner)
             .compilerOptionsName(JAVA_COMPILER_OPTIONS_NAME)

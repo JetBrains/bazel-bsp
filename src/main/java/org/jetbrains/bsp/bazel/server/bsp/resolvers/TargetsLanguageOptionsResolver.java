@@ -115,6 +115,7 @@ public class TargetsLanguageOptionsResolver<T> {
 
   @FunctionalInterface
   public interface ResultItemsCollector<T> {
+
     T apply(
         BuildTargetIdentifier target,
         List<String> options,

@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 
 public class QueryResolver {
 

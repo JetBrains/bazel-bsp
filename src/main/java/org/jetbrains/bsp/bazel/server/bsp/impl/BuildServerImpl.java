@@ -62,6 +62,12 @@ public class BuildServerImpl implements BuildServer {
   }
 
   @Override
+  public CompletableFuture<Object> workspaceReload() {
+    return serverRequestHelpers.executeCommand("workspaceReload",
+        buildServerService::workspaceReload);
+  }
+
+  @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     return serverRequestHelpers.executeCommand("buildTargetSources",
         () -> buildServerService.buildTargetSources(sourcesParams));
@@ -110,11 +116,5 @@ public class BuildServerImpl implements BuildServer {
       CleanCacheParams cleanCacheParams) {
     return serverRequestHelpers.executeCommand("buildTargetCleanCache",
         () -> buildServerService.buildTargetCleanCache(cleanCacheParams));
-  }
-
-  @Override
-  public CompletableFuture<Object> workspaceReload() {
-    return serverRequestHelpers.executeCommand("workspaceReload",
-        buildServerService::workspaceReload);
   }
 }

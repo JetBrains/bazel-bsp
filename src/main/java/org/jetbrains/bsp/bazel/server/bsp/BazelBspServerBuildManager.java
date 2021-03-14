@@ -36,7 +36,6 @@ import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcess;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -338,8 +337,8 @@ public class BazelBspServerBuildManager {
         Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
     return bazelData.getWorkspaceRoot()
         + (root.size() == 0
-            ? ""
-            : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
+        ? ""
+        : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
   }
 
   public List<String> lookUpTransitiveSourceJars(String target) {
