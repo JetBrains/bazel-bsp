@@ -1,8 +1,9 @@
-package org.jetbrains.bsp.bazel.server.bazel.data;
+package org.jetbrains.bsp.bazel.server.bazel;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.utils.BazelStreamReader;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
@@ -13,7 +14,7 @@ public class BazelProcess {
   private final Process process;
   private final Optional<BuildClientLogger> buildClientLogger;
 
-  public BazelProcess(Process process, Optional<BuildClientLogger> buildClientLogger) {
+  BazelProcess(Process process, Optional<BuildClientLogger> buildClientLogger) {
     this.process = process;
     this.buildClientLogger = buildClientLogger;
   }
