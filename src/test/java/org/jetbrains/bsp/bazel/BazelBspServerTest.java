@@ -27,14 +27,16 @@ public class BazelBspServerTest {
   }
 
   public void run() {
-    LOGGER.info("Running BazelBspServerTest...");
 
+    LOGGER.info("Creating TestClients...");
     List<BazelBspServerSingleTest> testsToRun =
         concat(
                 getSampleRepoTests().stream(),
                 getActionGraphV1Tests().stream(),
                 getActionGraphV2Tests().stream())
             .collect(Collectors.toList());
+
+    LOGGER.info("Created TestClients. Running BazelBspServerTest...");
     runTests(testsToRun);
   }
 

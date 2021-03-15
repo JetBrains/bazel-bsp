@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.commons.Uri;
 
 public abstract class ActionGraphParser {
+
   // Obtains all of the files outputted by this target that match a list of suffixes
   public abstract List<String> getOutputs(String target, List<String> suffixes);
 
