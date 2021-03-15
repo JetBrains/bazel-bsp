@@ -8,6 +8,8 @@ import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelProcess {
 
+  private static final int OK_EXIT_CODE = 0;
+
   private final Process process;
   private final Optional<BuildClientLogger> buildClientLogger;
 
@@ -31,7 +33,7 @@ public class BazelProcess {
   }
 
   private void logBazelMessage(BazelProcessResult bazelProcessResult, int exitCode) {
-    if (exitCode == 0) {
+    if (exitCode == OK_EXIT_CODE) {
       logBazelMessage(bazelProcessResult);
     } else {
       logBazelError(bazelProcessResult);
