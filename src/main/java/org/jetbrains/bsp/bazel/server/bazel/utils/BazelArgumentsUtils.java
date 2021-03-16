@@ -7,7 +7,7 @@ import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 
 public final class BazelArgumentsUtils {
 
-  private static final String JOIN_TARGETS_DELIMITER = "+";
+  private static final String JOIN_TARGETS_DELIMITER = " + ";
   private static final String FUNCTIONS_DELIMITER = " union ";
 
   private static final String MNEMONIC_COMMAND = "mnemonic";

@@ -27,6 +27,7 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
     return serverRequestHelpers.executeCommand(
+        "buildTargetScalacOptions",
         () -> scalaBuildServerService.buildTargetScalacOptions(scalacOptionsParams));
   }
 
@@ -34,6 +35,7 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   public CompletableFuture<ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
     return serverRequestHelpers.executeCommand(
+        "buildTargetScalaTestClasses",
         () -> scalaBuildServerService.buildTargetScalaTestClasses(scalaTestClassesParams));
   }
 
@@ -41,6 +43,7 @@ public class ScalaBuildServerImpl implements ScalaBuildServer {
   public CompletableFuture<ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
     return serverRequestHelpers.executeCommand(
+        "buildTargetScalaMainClasses",
         () -> scalaBuildServerService.buildTargetScalaMainClasses(scalaMainClassesParams));
   }
 }

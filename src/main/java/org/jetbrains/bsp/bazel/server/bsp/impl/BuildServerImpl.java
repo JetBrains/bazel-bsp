@@ -62,15 +62,22 @@ public class BuildServerImpl implements BuildServer {
   }
 
   @Override
+  public CompletableFuture<Object> workspaceReload() {
+    return serverRequestHelpers.executeCommand(
+        "workspaceReload", buildServerService::workspaceReload);
+  }
+
+  @Override
   public CompletableFuture<SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     return serverRequestHelpers.executeCommand(
-        () -> buildServerService.buildTargetSources(sourcesParams));
+        "buildTargetSources", () -> buildServerService.buildTargetSources(sourcesParams));
   }
 
   @Override
   public CompletableFuture<InverseSourcesResult> buildTargetInverseSources(
       InverseSourcesParams inverseSourcesParams) {
     return serverRequestHelpers.executeCommand(
+        "buildTargetInverseSources",
         () -> buildServerService.buildTargetInverseSources(inverseSourcesParams));
   }
 
@@ -78,41 +85,38 @@ public class BuildServerImpl implements BuildServer {
   public CompletableFuture<DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
     return serverRequestHelpers.executeCommand(
+        "buildTargetDependencySources",
         () -> buildServerService.buildTargetDependencySources(dependencySourcesParams));
   }
 
   @Override
   public CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams resourcesParams) {
     return serverRequestHelpers.executeCommand(
-        () -> buildServerService.buildTargetResources(resourcesParams));
+        "buildTargetResources", () -> buildServerService.buildTargetResources(resourcesParams));
   }
 
   @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams compileParams) {
     return serverRequestHelpers.executeCommand(
-        () -> buildServerService.buildTargetCompile(compileParams));
+        "buildTargetCompile", () -> buildServerService.buildTargetCompile(compileParams));
   }
 
   @Override
   public CompletableFuture<TestResult> buildTargetTest(TestParams testParams) {
     return serverRequestHelpers.executeCommand(
-        () -> buildServerService.buildTargetTest(testParams));
+        "buildTargetTest", () -> buildServerService.buildTargetTest(testParams));
   }
 
   @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams runParams) {
-    return serverRequestHelpers.executeCommand(() -> buildServerService.buildTargetRun(runParams));
+    return serverRequestHelpers.executeCommand(
+        "buildTargetRun", () -> buildServerService.buildTargetRun(runParams));
   }
 
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
     return serverRequestHelpers.executeCommand(
-        () -> buildServerService.buildTargetCleanCache(cleanCacheParams));
-  }
-
-  @Override
-  public CompletableFuture<Object> workspaceReload() {
-    return serverRequestHelpers.executeCommand(buildServerService::workspaceReload);
+        "buildTargetCleanCache", () -> buildServerService.buildTargetCleanCache(cleanCacheParams));
   }
 }

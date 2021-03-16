@@ -37,11 +37,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
@@ -55,6 +58,8 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class BuildServerService {
+
+  private static final Logger LOGGER = LogManager.getLogger(BuildServerService.class);
 
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelBspServerLifetime serverLifetime;
@@ -78,18 +83,21 @@ public class BuildServerService {
 
   public CompletableFuture<InitializeBuildResult> buildInitialize(
       InitializeBuildParams initializeBuildParams) {
-    return processBuildInitialize(this::handleBuildInitialize);
+    LOGGER.info("buildInitialize call with param: {}", initializeBuildParams);
+
+    return processBuildInitialize("buildInitialize", this::handleBuildInitialize);
   }
 
   private <T> CompletableFuture<T> processBuildInitialize(
-      Supplier<Either<ResponseError, T>> request) {
+      String methodName, Supplier<Either<ResponseError, T>> request) {
     if (serverLifetime.isFinished()) {
       return serverRequestHelpers.completeExceptionally(
+          methodName,
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false));
     }
 
-    return serverRequestHelpers.getValue(request);
+    return serverRequestHelpers.getValue(methodName, request);
   }
 
   private Either<ResponseError, InitializeBuildResult> handleBuildInitialize() {
@@ -106,22 +114,27 @@ public class BuildServerService {
   }
 
   public void onBuildInitialized() {
+    LOGGER.info("onBuildInitialized call");
+
     serverLifetime.setInitializedComplete();
   }
 
   public CompletableFuture<Object> buildShutdown() {
-    return processBuildShutdown(this::handleBuildShutdown);
+    LOGGER.info("buildShutdown call");
+
+    return processBuildShutdown("buildShutdown", this::handleBuildShutdown);
   }
 
   private <T> CompletableFuture<T> processBuildShutdown(
-      Supplier<Either<ResponseError, T>> request) {
+      String methodName, Supplier<Either<ResponseError, T>> request) {
     if (!serverLifetime.isInitialized()) {
       return serverRequestHelpers.completeExceptionally(
+          methodName,
           new ResponseError(
               ResponseErrorCode.serverErrorEnd, "Server has not been initialized yet!", false));
     }
 
-    return serverRequestHelpers.getValue(request);
+    return serverRequestHelpers.getValue(methodName, request);
   }
 
   private Either<ResponseError, Object> handleBuildShutdown() {
@@ -130,14 +143,20 @@ public class BuildServerService {
   }
 
   public void onBuildExit() {
+    LOGGER.info("onBuildExit call");
+
     serverLifetime.forceFinish();
   }
 
   public CompletableFuture<WorkspaceBuildTargetsResult> workspaceBuildTargets() {
+    LOGGER.info("workspaceBuildTargets call");
+
     return serverBuildManager.getWorkspaceBuildTargets();
   }
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
+    LOGGER.info("buildTargetSources call with param: {}", sourcesParams);
+
     TargetRulesResolver<SourcesItem> targetRulesResolver =
         TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
 
@@ -174,25 +193,29 @@ public class BuildServerService {
 
   public Either<ResponseError, InverseSourcesResult> buildTargetInverseSources(
       InverseSourcesParams inverseSourcesParams) {
+    LOGGER.info("buildTargetInverseSources call with param: {}", inverseSourcesParams);
+
     String fileUri = inverseSourcesParams.getTextDocument().getUri();
     String workspaceRoot = bazelData.getWorkspaceRoot();
     String prefix = Uri.fromWorkspacePath("", workspaceRoot).toString();
     if (!inverseSourcesParams.getTextDocument().getUri().startsWith(prefix)) {
+      LOGGER.error("Could not resolve {} within workspace {}", fileUri, prefix);
+
       throw new RuntimeException("Could not resolve " + fileUri + " within workspace " + prefix);
     }
     BazelQueryKindParameters kindParameter =
         BazelQueryKindParameters.fromPatternAndInput(
             "rule", "rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1)");
 
-    BazelProcessResult bazelProcessResult =
+    BazelProcess bazelProcess =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withKind(kindParameter)
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
-    Build.QueryResult result = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult result = QueryResolver.getQueryResultForProcess(bazelProcess);
 
     List<BuildTargetIdentifier> targets =
         result.getTargetList().stream()
@@ -206,6 +229,8 @@ public class BuildServerService {
 
   public Either<ResponseError, DependencySourcesResult> buildTargetDependencySources(
       DependencySourcesParams dependencySourcesParams) {
+    LOGGER.info("buildTargetDependencySources call with param: {}", dependencySourcesParams);
+
     List<String> targets = TargetsUtils.getTargetsUris(dependencySourcesParams.getTargets());
 
     DependencySourcesResult result =
@@ -230,17 +255,20 @@ public class BuildServerService {
 
   public Either<ResponseError, ResourcesResult> buildTargetResources(
       ResourcesParams resourcesParams) {
-    BazelProcessResult bazelProcessResult =
+    LOGGER.info("buildTargetResources call with param: {}", resourcesParams);
+
+    BazelProcess bazelProcess =
         bazelRunner
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
             .withArgument("//...")
-            .executeBazelCommand();
+            .executeBazelBesCommand();
 
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcess);
 
-    System.out.println("Resources query result " + query);
+    LOGGER.info("Resources query result {}", query);
+
     ResourcesResult resourcesResult =
         new ResourcesResult(
             query.getTargetList().stream()
@@ -268,10 +296,13 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, CompileResult> buildTargetCompile(CompileParams compileParams) {
+    LOGGER.info("buildTargetCompile call with param: {}", compileParams);
     return serverBuildManager.buildTargetsWithBep(compileParams.getTargets(), new ArrayList<>());
   }
 
   public Either<ResponseError, TestResult> buildTargetTest(TestParams testParams) {
+    LOGGER.info("buildTargetTest call with param: {}", testParams);
+
     Either<ResponseError, CompileResult> build =
         serverBuildManager.buildTargetsWithBep(
             Lists.newArrayList(testParams.getTargets()), new ArrayList<>());
@@ -292,12 +323,15 @@ public class BuildServerService {
             .test()
             .withTargets(testTargets)
             .withArguments(testParams.getArguments())
-            .executeBazelCommand();
+            .executeBazelBesCommand()
+            .waitAndGetResult();
 
     return Either.forRight(new TestResult(bazelProcessResult.getStatusCode()));
   }
 
   public Either<ResponseError, RunResult> buildTargetRun(RunParams runParams) {
+    LOGGER.info("buildTargetRun call with param: {}", runParams);
+
     Either<ResponseError, CompileResult> build =
         serverBuildManager.buildTargetsWithBep(
             Lists.newArrayList(runParams.getTarget()), new ArrayList<>());
@@ -316,16 +350,25 @@ public class BuildServerService {
             .run()
             .withArgument(runParams.getTarget().getUri())
             .withArguments(runParams.getArguments())
-            .executeBazelCommand();
+            .executeBazelBesCommand()
+            .waitAndGetResult();
 
     return Either.forRight(new RunResult(bazelProcessResult.getStatusCode()));
   }
 
   public Either<ResponseError, CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
+    LOGGER.info("buildTargetCleanCache call with param: {}", cleanCacheParams);
+
     CleanCacheResult result;
     try {
-      List<String> lines = bazelRunner.commandBuilder().clean().executeBazelCommand().getStdout();
+      List<String> lines =
+          bazelRunner
+              .commandBuilder()
+              .clean()
+              .executeBazelBesCommand()
+              .waitAndGetResult()
+              .getStdout();
 
       result = new CleanCacheResult(String.join("\n", lines), true);
     } catch (RuntimeException e) {
@@ -337,7 +380,9 @@ public class BuildServerService {
   }
 
   public Either<ResponseError, Object> workspaceReload() {
-    bazelRunner.commandBuilder().fetch().executeBazelCommand();
+    LOGGER.info("workspaceReload call");
+
+    bazelRunner.commandBuilder().fetch().executeBazelBesCommand().waitAndGetResult();
 
     return Either.forRight(new Object());
   }

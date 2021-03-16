@@ -17,6 +17,8 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build.Attribute;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -27,6 +29,8 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolv
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class ScalaBuildServerService {
+
+  private static final Logger LOGGER = LogManager.getLogger(JavaBuildServerService.class);
 
   private static final String SCALA_COMPILER_OPTIONS_ATTR_NAME = "scalacopts";
   private static final List<String> SCALA_LANGUAGES_IDS =
@@ -75,6 +79,8 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
+    LOGGER.info("buildTargetScalacOptions call with param: {}", scalacOptionsParams);
+
     List<ScalacOptionsItem> resultItems =
         targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
 
@@ -84,6 +90,8 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalaTestClassesResult> buildTargetScalaTestClasses(
       ScalaTestClassesParams scalaTestClassesParams) {
+    LOGGER.info("buildTargetScalaTestClasses call with param: {}", scalaTestClassesParams);
+
     List<ScalaTestClassesItem> resultItems =
         targetsScalaTestClassesRulesResolver.getItemsForTargets(
             scalaTestClassesParams.getTargets());
@@ -95,6 +103,7 @@ public class ScalaBuildServerService {
 
   public Either<ResponseError, ScalaMainClassesResult> buildTargetScalaMainClasses(
       ScalaMainClassesParams scalaMainClassesParams) {
+    LOGGER.info("buildTargetScalaMainClasses call with param: {}", scalaMainClassesParams);
 
     List<ScalaMainClassesItem> resultItems =
         targetsScalaMainClassesRulesResolver.getItemsForTargets(

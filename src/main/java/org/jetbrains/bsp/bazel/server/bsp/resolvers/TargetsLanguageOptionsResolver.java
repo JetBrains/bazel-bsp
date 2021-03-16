@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 
 public class TargetsLanguageOptionsResolver<T> {
@@ -46,38 +46,39 @@ public class TargetsLanguageOptionsResolver<T> {
 
   public List<T> getResultItemsForTargets(List<BuildTargetIdentifier> buildTargetsIdentifiers) {
     List<String> targets = TargetsUtils.getTargetsUris(buildTargetsIdentifiers);
+    ActionGraphParser actionGraphParser =
+        actionGraphResolver.getActionGraphParser(targets, languagesIds);
 
     return targets.stream()
-        .flatMap(target -> getResultItems(target, targets))
+        .flatMap(target -> getResultItems(target, targets, actionGraphParser))
         .collect(Collectors.toList());
   }
 
-  private Stream<T> getResultItems(String target, List<String> allTargets) {
+  private Stream<T> getResultItems(
+      String target, List<String> allTargets, ActionGraphParser actionGraphParser) {
     Map<String, List<String>> targetsOptions = getTargetsOptions(allTargets);
-    ActionGraphParser actionGraphParser =
-        actionGraphResolver.getActionGraphParser(allTargets, languagesIds);
 
     return getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
         actionGraphParser, targetsOptions, target);
   }
 
   private Map<String, List<String>> getTargetsOptions(List<String> targets) {
-    BazelProcessResult bazelProcessResult = queryBazel(targets);
+    BazelProcess bazelProcess = queryBazel(targets);
 
-    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcessResult);
+    Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcess);
 
     return query.getTargetList().stream()
         .map(Build.Target::getRule)
         .collect(Collectors.toMap(Build.Rule::getName, this::collectRules));
   }
 
-  private BazelProcessResult queryBazel(List<String> targets) {
+  private BazelProcess queryBazel(List<String> targets) {
     return bazelRunner
         .commandBuilder()
         .query()
         .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
         .withTargets(targets)
-        .executeBazelCommand();
+        .executeBazelBesCommand();
   }
 
   private List<String> collectRules(Build.Rule rule) {
@@ -115,6 +116,7 @@ public class TargetsLanguageOptionsResolver<T> {
 
   @FunctionalInterface
   public interface ResultItemsCollector<T> {
+
     T apply(
         BuildTargetIdentifier target,
         List<String> options,

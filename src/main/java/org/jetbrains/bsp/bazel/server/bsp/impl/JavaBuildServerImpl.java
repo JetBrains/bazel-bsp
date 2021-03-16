@@ -23,6 +23,7 @@ public class JavaBuildServerImpl implements JavaBuildServer {
   public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(
       JavacOptionsParams javacOptionsParams) {
     return serverRequestHelpers.executeCommand(
+        "buildTargetJavacOptions",
         () -> javaBuildServerService.buildTargetJavacOptions(javacOptionsParams));
   }
 }

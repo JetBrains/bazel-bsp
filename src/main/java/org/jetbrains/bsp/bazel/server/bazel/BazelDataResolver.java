@@ -25,13 +25,20 @@ public class BazelDataResolver {
     String binRoot = readOnlyBazelLine(BAZEL_BIN_ROOT_PARAMETER);
     Path workspacePath = Paths.get(execRoot);
     String workspaceLabel = workspacePath.toFile().getName();
+
     return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel);
   }
 
   private String readOnlyBazelLine(String argument) {
     BazelProcessResult bazelProcessResult =
-        bazelRunner.commandBuilder().info().withArgument(argument).executeBazelCommand();
+        bazelRunner
+            .commandBuilder()
+            .info()
+            .withArgument(argument)
+            .executeBazelCommand()
+            .waitAndGetResult();
     List<String> output = bazelProcessResult.getStdout();
+
     return Iterables.getOnlyElement(output);
   }
 }
