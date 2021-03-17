@@ -7,7 +7,6 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
-import org.jetbrains.bsp.bazel.server.bazel.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bazel.data.SemanticVersion;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphParser;
@@ -38,10 +37,10 @@ public class ActionGraphResolver {
       if (bazelData.getVersion().compareTo(ACTION_GRAPH_V2_VERSION) < 0) {
         AnalysisProtos.ActionGraphContainer actionGraphContainer =
             AnalysisProtos.ActionGraphContainer.parseFrom(process.getInputStream());
-       return new ActionGraphV1Parser(actionGraphContainer);
+        return new ActionGraphV1Parser(actionGraphContainer);
       } else {
         AnalysisProtosV2.ActionGraphContainer actionGraphContainer =
-          AnalysisProtosV2.ActionGraphContainer.parseFrom(process.getInputStream());
+            AnalysisProtosV2.ActionGraphContainer.parseFrom(process.getInputStream());
         return new ActionGraphV2Parser(actionGraphContainer);
       }
     } catch (IOException e) {
