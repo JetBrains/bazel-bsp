@@ -27,7 +27,7 @@ public class BuildClientLogger {
   }
 
   private void log(MessageType messageType, String message) {
-    LogMessageParams params = new LogMessageParams(messageType, message);
+    LogMessageParams params = new LogMessageParams(messageType, message.trim());
     buildClient.onBuildLogMessage(params);
   }
 }
