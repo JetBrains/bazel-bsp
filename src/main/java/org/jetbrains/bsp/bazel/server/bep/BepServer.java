@@ -252,7 +252,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         .map(this::createParamsFromEntry)
         .forEach(bspClient::onBuildPublishDiagnostics);
 
-    buildClientLogger.logMessage(progress.getStderr().strip());
+    buildClientLogger.logMessage(progress.getStderr().trim());
   }
 
   private PublishDiagnosticsParams createParamsFromEntry(
