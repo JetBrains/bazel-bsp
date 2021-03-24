@@ -21,7 +21,7 @@ public class BuildClientLogger {
   }
 
   private void logIfNotBlank(MessageType messageType, String message) {
-    if (!message.isBlank()) {
+    if (!message.trim().isEmpty()) {
       log(messageType, message);
     }
   }
