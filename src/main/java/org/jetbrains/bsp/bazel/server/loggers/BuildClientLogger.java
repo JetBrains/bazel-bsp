@@ -13,16 +13,21 @@ public class BuildClientLogger {
   }
 
   public void logError(String errorMessage) {
-    LogMessageParams params = new LogMessageParams(MessageType.ERROR, errorMessage);
-    log(params);
+    logIfNotBlank(MessageType.ERROR, errorMessage);
   }
 
   public void logMessage(String message) {
-    LogMessageParams params = new LogMessageParams(MessageType.LOG, message);
-    log(params);
+    logIfNotBlank(MessageType.LOG, message);
   }
 
-  private void log(LogMessageParams params) {
+  private void logIfNotBlank(MessageType messageType, String message) {
+    if (!message.trim().isEmpty()) {
+      log(messageType, message);
+    }
+  }
+
+  private void log(MessageType messageType, String message) {
+    LogMessageParams params = new LogMessageParams(messageType, message.trim());
     buildClient.onBuildLogMessage(params);
   }
 }
