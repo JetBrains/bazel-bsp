@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public final class ClasspathParser {
 
   private static final String ASPECTS_OUTPUT_FILE_LINE_DELIMITER = "\"";
-  private static final Integer ASPECTS_OUTPUT_FILE_CLASSPATH_VALID_PARTS_NUMBER = 1;
+  private static final Integer ASPECTS_OUTPUT_FILE_CLASSPATH_VALID_PARTS_NUMBER = 3;
   private static final Integer ASPECTS_OUTPUT_FILE_CLASSPATH_LINE_INDEX = 1;
 
   public static List<String> fromAspect(URI dependenciesAspectOutput) {

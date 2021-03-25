@@ -18,5 +18,6 @@ java_binary(
         "-Werror",
         "-Xlint:all",
     ],
+    main_class = "dep.JavaTest",
     visibility = ["//visibility:public"],
 )
