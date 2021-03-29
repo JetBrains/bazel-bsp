@@ -199,20 +199,16 @@ public class BazelBspServerBuildManager {
 
   private JvmBuildTarget getJVMBuildTarget(Build.Rule rule) {
     Optional<String> javaHomePath = getJavaPath(rule);
-    return new JvmBuildTarget(javaHomePath.orElse(null), getJavaVersion().orElse(null));
+    Optional<String> javaVersion = getJavaVersion();
+    return new JvmBuildTarget(javaHomePath.orElse(null), javaVersion.orElse(null));
   }
 
   private Optional<String> getJavaPath(Build.Rule rule) {
     List<String> traversingPath = Lists.newArrayList("$jvm", "$java_runtime", ":alias", "actual");
-    Optional<Build.Rule> jdkRule = traverseDependency(rule, traversingPath);
 
-    if (!jdkRule.isPresent()) {
-      return Optional.empty();
-    }
-
-    String jdkLocation = jdkRule.get().getLocation();
-    String localJdkPath = jdkLocation.substring(0, jdkLocation.indexOf("/BUILD"));
-    return Optional.of(localJdkPath);
+    return traverseDependency(rule, traversingPath)
+        .map(Build.Rule::getLocation)
+        .map(location -> location.substring(0, location.indexOf("/BUILD")));
   }
 
   private Optional<Build.Rule> traverseDependency(
@@ -226,21 +222,7 @@ public class BazelBspServerBuildManager {
                   attribute ->
                       attribute.getName().equals(attributeToTraverse) && attribute.hasStringValue())
               .findFirst()
-              .flatMap(
-                  attribute -> {
-                    BazelProcess processResult =
-                        bazelRunner
-                            .commandBuilder()
-                            .query()
-                            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-                            .withArgument(attribute.getStringValue())
-                            .executeBazelBesCommand();
-
-                    return QueryResolver.getQueryResultForProcess(processResult)
-                        .getTargetList()
-                        .stream()
-                        .findFirst();
-                  })
+              .flatMap(this::getTargetFromAttribute)
               .map(Build.Target::getRule);
 
       if (!rule.isPresent()) {
@@ -251,6 +233,19 @@ public class BazelBspServerBuildManager {
     }
 
     return Optional.of(currentRule);
+  }
+
+  private Optional<Build.Target> getTargetFromAttribute(Build.Attribute attribute) {
+    BazelProcess processResult =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withArgument(attribute.getStringValue())
+            .executeBazelBesCommand();
+
+    return QueryResolver.getQueryResultForProcess(processResult).getTargetList().stream()
+        .findFirst();
   }
 
   private Optional<String> getJavaVersion() {
