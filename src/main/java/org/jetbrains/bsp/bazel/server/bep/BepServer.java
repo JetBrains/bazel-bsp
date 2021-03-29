@@ -93,7 +93,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       BuildEventStreamProtos.BuildEvent event =
           BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
 
-      LOGGER.info("Got event {}", event);
+      LOGGER.debug("Got event {}", event);
 
       processBuildStartedEvent(event);
       processFinishedEvent(event);
@@ -137,12 +137,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
     if (startedEventTaskIds.isEmpty()) {
-      LOGGER.info("No start event id was found.");
+      LOGGER.debug("No start event id was found.");
       return;
     }
 
     if (startedEventTaskIds.size() > 1) {
-      LOGGER.info("More than 1 start event was found");
+      LOGGER.debug("More than 1 start event was found");
       return;
     }
 
