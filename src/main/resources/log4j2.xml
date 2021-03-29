@@ -3,17 +3,22 @@
 
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-7level %logger{36} - %msg%n"/>
     </Console>
 
     <File name="File" fileName=".bazelbsp/bazelbsp.log" append="false">
-      <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-7level %logger{36} - %msg%n"/>
+    </File>
+
+    <File name="FileAll" fileName=".bazelbsp/bazelbsp.all.log" append="false">
+      <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-7level %logger{36} - %msg%n"/>
     </File>
   </Appenders>
 
   <Loggers>
-    <Root level="info">
-      <AppenderRef ref="File"/>
+    <Root level="all">
+      <AppenderRef ref="File" level="info"/>
+      <AppenderRef ref="FileAll"/>
     </Root>
   </Loggers>
 
