@@ -13,6 +13,7 @@ import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphParser;
 
 public class TargetsLanguageOptionsResolver<T> {
 
@@ -37,7 +38,7 @@ public class TargetsLanguageOptionsResolver<T> {
     this.languagesIds = languagesIds;
     this.resultItemsCollector = resultItemsCollector;
 
-    this.actionGraphResolver = new ActionGraphResolver(bazelRunner);
+    this.actionGraphResolver = new ActionGraphResolver(bazelRunner, bazelData);
   }
 
   public static <T> Builder<T> builder() {

@@ -12,6 +12,7 @@ public class BazelDataResolver {
   private static final String EXECUTION_ROOT_PARAMETER = "execution_root";
   private static final String WORKPLACE_ROOT_PARAMETER = "workspace";
   private static final String BAZEL_BIN_ROOT_PARAMETER = "bazel-bin";
+  private static final String BAZEL_VERSION_PARAMETER = "release";
 
   private final BazelRunner bazelRunner;
 
@@ -23,10 +24,10 @@ public class BazelDataResolver {
     String execRoot = readOnlyBazelLine(EXECUTION_ROOT_PARAMETER);
     String workspaceRoot = readOnlyBazelLine(WORKPLACE_ROOT_PARAMETER);
     String binRoot = readOnlyBazelLine(BAZEL_BIN_ROOT_PARAMETER);
+    String version = readOnlyBazelLine(BAZEL_VERSION_PARAMETER);
     Path workspacePath = Paths.get(execRoot);
     String workspaceLabel = workspacePath.toFile().getName();
-
-    return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel);
+    return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel, version);
   }
 
   private String readOnlyBazelLine(String argument) {

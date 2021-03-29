@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp.resolvers;
+package org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph;
 
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.analysis.AnalysisProtos;
@@ -8,38 +8,25 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.commons.Uri;
+import java.util.stream.Stream;
 
 // TODO(illicitonion): Index, cache, etc
-public class ActionGraphParser {
-
+public class ActionGraphV1Parser extends ActionGraphParser {
   private final AnalysisProtos.ActionGraphContainer actionGraph;
 
-  public ActionGraphParser(AnalysisProtos.ActionGraphContainer actionGraph) {
+  public ActionGraphV1Parser(AnalysisProtos.ActionGraphContainer actionGraph) {
     this.actionGraph = actionGraph;
   }
 
-  public List<String> getInputs(String target, List<String> suffixes) {
+  @Override
+  protected Stream<String> buildInputs(String target, List<String> suffixes) {
     return getActions(target).stream()
         .flatMap(action -> action.getInputDepSetIdsList().stream())
-        .flatMap(
-            depset -> {
-              Queue<String> queue = new ArrayDeque<>();
-              queue.add(depset);
-              return expandDepsetToArtifacts(queue).stream();
-            })
-        .map(artifact -> "exec-root://" + artifact.getExecPath())
-        .filter(path -> suffixes.stream().anyMatch(path::endsWith))
-        .distinct()
-        .collect(Collectors.toList());
+        .flatMap(depset -> expandDepsetToArtifacts(depset).stream())
+        .map(artifact -> EXEC_ROOT + artifact.getExecPath());
   }
 
-  public List<String> getInputsAsUri(String target, String execRoot) {
-    return getInputs(target, Lists.newArrayList(".jar", "js")).stream()
-        .map(exec_path -> Uri.fromExecPath(exec_path, execRoot).toString())
-        .collect(Collectors.toList());
-  }
-
+  @Override
   public List<String> getOutputs(String target, List<String> suffixes) {
     Set<String> artifactIds =
         getActions(target).stream()
@@ -52,9 +39,9 @@ public class ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private String getTargetId(String needle) {
+  private String getTargetId(String targetLabel) {
     return actionGraph.getTargetsList().stream()
-        .filter(target -> needle.equals(target.getLabel()))
+        .filter(target -> targetLabel.equals(target.getLabel()))
         .findFirst()
         .orElse(AnalysisProtos.Target.newBuilder().build())
         .getId();
@@ -67,23 +54,26 @@ public class ActionGraphParser {
         .collect(Collectors.toList());
   }
 
-  private List<AnalysisProtos.Artifact> expandDepsetToArtifacts(Queue<String> idsToExpand) {
-    HashSet<String> expandedIds = new HashSet<>();
+  private List<AnalysisProtos.Artifact> expandDepsetToArtifacts(String idToExpand) {
+    Queue<String> idsToExpand = new ArrayDeque<>(Lists.newArrayList(idToExpand));
 
-    HashSet<String> artifactIds = new HashSet<>();
+    Set<String> expandedIds = new HashSet<>();
+
+    Set<String> artifactIds = new HashSet<>();
     while (!idsToExpand.isEmpty()) {
       String depsetId = idsToExpand.remove();
       if (expandedIds.contains(depsetId)) {
         continue;
       }
       expandedIds.add(depsetId);
-      for (AnalysisProtos.DepSetOfFiles depset : actionGraph.getDepSetOfFilesList()) {
-        if (!depsetId.equals(depset.getId())) {
-          continue;
-        }
-        idsToExpand.addAll(depset.getTransitiveDepSetIdsList());
-        artifactIds.addAll(depset.getDirectArtifactIdsList());
-      }
+
+      actionGraph.getDepSetOfFilesList().stream()
+          .filter(depset -> depsetId.equals(depset.getId()))
+          .forEach(
+              depset -> {
+                idsToExpand.addAll(depset.getTransitiveDepSetIdsList());
+                artifactIds.addAll(depset.getDirectArtifactIdsList());
+              });
     }
     return actionGraph.getArtifactsList().stream()
         .filter(artifact -> artifactIds.contains(artifact.getId()))
