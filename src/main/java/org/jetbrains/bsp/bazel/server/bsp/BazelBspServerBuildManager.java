@@ -208,7 +208,8 @@ public class BazelBspServerBuildManager {
 
     return traverseDependency(rule, traversingPath)
         .map(Build.Rule::getLocation)
-        .map(location -> location.substring(0, location.indexOf("/BUILD")));
+        .map(location -> location.substring(0, location.indexOf("/BUILD")))
+        .map(path -> Uri.fromAbsolutePath(path).toString());
   }
 
   private Optional<Build.Rule> traverseDependency(
