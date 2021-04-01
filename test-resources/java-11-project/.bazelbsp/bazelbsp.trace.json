@@ -1,0 +1,145 @@
+[Trace - 01:47:34 PM] Received request 'build/initialize - (1)'
+Params: {
+  "rootUri": "file:/home/andre/Projects/bazel-bsp/test-resources/java-11-project/",
+  "displayName": "Mock-Client",
+  "version": "0.0",
+  "bspVersion": "2.0",
+  "capabilities": {
+    "languageIds": [
+      "scala",
+      "java"
+    ]
+  },
+  "data": {}
+}
+
+
+[Trace - 01:47:34 PM] Sending response 'build/initialize - (1)'. Processing request took 43ms
+Result: {
+  "displayName": "bazelbsp",
+  "version": "0.0.0",
+  "bspVersion": "2.0.0",
+  "capabilities": {
+    "compileProvider": {
+      "languageIds": [
+        "scala",
+        "java",
+        "kotlin"
+      ]
+    },
+    "testProvider": {
+      "languageIds": [
+        "scala",
+        "java",
+        "kotlin"
+      ]
+    },
+    "runProvider": {
+      "languageIds": [
+        "scala",
+        "java",
+        "kotlin"
+      ]
+    },
+    "inverseSourcesProvider": true,
+    "dependencySourcesProvider": true,
+    "resourcesProvider": true
+  }
+}
+
+
+[Trace - 01:47:34 PM] Received notification 'build/initialized'
+Params: null
+
+
+[Trace - 01:47:34 PM] Received request 'workspace/buildTargets - (2)'
+Params: null
+
+
+[Trace - 01:47:39 PM] Sending notification 'build/logMessage'
+Params: {
+  "type": 4,
+  "message": "Loading: 0 packages loaded\nLoading: 0 packages loaded"
+}
+
+
+[Trace - 01:47:41 PM] Sending notification 'build/logMessage'
+Params: {
+  "type": 4,
+  "message": "Loading: 0 packages loaded\nLoading: 0 packages loaded"
+}
+
+
+[Trace - 01:47:42 PM] Sending notification 'build/logMessage'
+Params: {
+  "type": 4,
+  "message": "Loading: 0 packages loaded\nLoading: 0 packages loaded"
+}
+
+
+[Trace - 01:47:44 PM] Sending notification 'build/logMessage'
+Params: {
+  "type": 4,
+  "message": "Loading: 0 packages loaded\nLoading: 0 packages loaded"
+}
+
+
+[Trace - 01:47:46 PM] Sending notification 'build/logMessage'
+Params: {
+  "type": 4,
+  "message": "Loading: 0 packages loaded\nLoading: 0 packages loaded"
+}
+
+
+[Trace - 01:47:48 PM] Sending response 'workspace/buildTargets - (2)'. Processing request took 14009ms
+Result: {
+  "targets": [
+    {
+      "id": {
+        "uri": "//example:example"
+      },
+      "displayName": "//example:example",
+      "baseDirectory": "file:///home/andre/Projects/bazel-bsp/test-resources/java-11-project/example/",
+      "tags": [
+        "application"
+      ],
+      "languageIds": [
+        "java"
+      ],
+      "dependencies": [],
+      "capabilities": {
+        "canCompile": true,
+        "canTest": false,
+        "canRun": true,
+        "canDebug": false
+      },
+      "dataKind": "jvm",
+      "data": {
+        "javaHome": "file:///home/andre/.cache/bazel/_bazel_andre/cb944026d61249d1346d463f7631ce44/external/local_jdk/",
+        "javaVersion": "11"
+      }
+    }
+  ]
+}
+
+
+[Trace - 01:47:48 PM] Received request 'build/shutdown - (3)'
+Params: null
+
+
+[Trace - 01:47:48 PM] Sending response 'build/shutdown - (3)'. Processing request took 2ms
+Result: {}
+
+
+[Trace - 01:47:48 PM] Received request 'workspace/buildTargets - (4)'
+Params: null
+
+
+[Trace - 01:47:48 PM] Sending response 'workspace/buildTargets - (4)'. Processing request took 2ms
+Result: null
+
+
+[Trace - 01:47:48 PM] Received notification 'build/exit'
+Params: null
+
+

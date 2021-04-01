@@ -1,0 +1,17 @@
+{
+  "name": "bazelbsp",
+  "argv": [
+    "/home/andre/.asdf/installs/java/openjdk-11/bin/java",
+    "-classpath",
+    "/home/andre/.m2/repository/org/jetbrains/bsp/bazel-bsp/0.1.0/bazel-bsp-0.1.0.jar",
+    "org.jetbrains.bsp.bazel.server.ServerInitializer",
+    "/home/andre/.asdf/shims/bazel"
+  ],
+  "version": "0.0.0",
+  "bspVersion": "2.0.0",
+  "languages": [
+    "scala",
+    "java",
+    "kotlin"
+  ]
+}
