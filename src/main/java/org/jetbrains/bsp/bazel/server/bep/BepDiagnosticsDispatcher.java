@@ -59,7 +59,7 @@ public class BepDiagnosticsDispatcher {
           TargetDiagnostics.parseFrom(Files.readAllBytes(Paths.get(diagnosticsLocation)));
 
       return targetDiagnostics.getDiagnosticsList().stream()
-          .peek(diagnostics -> LOGGER.info("Collected diagnostics at: {}", diagnostics.getPath()))
+          .peek(diagnostics -> LOGGER.debug("Collected diagnostics at: {}", diagnostics.getPath()))
           .collect(
               Collectors.toMap(
                   diagnostics -> getUriForPath(diagnostics.getPath()),
