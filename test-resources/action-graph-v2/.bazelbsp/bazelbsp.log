@@ -1,12 +1,12 @@
-2021-03-23 18:46:06.684 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [execution_root]
-2021-03-23 18:46:06.704 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, execution_root]
-2021-03-23 18:46:07.662 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [workspace]
-2021-03-23 18:46:07.663 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, workspace]
-2021-03-23 18:46:08.008 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [bazel-bin]
-2021-03-23 18:46:08.009 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, bazel-bin]
-2021-03-23 18:46:08.504 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [release]
-2021-03-23 18:46:08.504 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, release]
-2021-03-23 18:46:09.523 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - buildInitialize call with param: InitializeBuildParams [
+2021-04-05 10:32:31.016 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [execution_root]
+2021-04-05 10:32:31.025 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, execution_root]
+2021-04-05 10:32:38.230 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [workspace]
+2021-04-05 10:32:38.230 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, workspace]
+2021-04-05 10:32:38.766 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [bazel-bin]
+2021-04-05 10:32:38.766 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, bazel-bin]
+2021-04-05 10:32:39.513 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: info, flags: [], arguments: [release]
+2021-04-05 10:32:39.513 [main] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, info, release]
+2021-04-05 10:32:40.619 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - buildInitialize call with param: InitializeBuildParams [
   rootUri = "file:/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/"
   displayName = "Mock-Client"
   version = "0.0"
@@ -19,7 +19,7 @@
   ]
   data = {}
 ]
-2021-03-23 18:46:09.540 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - buildInitialize call finishing with response: InitializeBuildResult [
+2021-04-05 10:32:40.631 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - buildInitialize call finishing with response: InitializeBuildResult [
   displayName = "bazelbsp"
   version = "0.0.0"
   bspVersion = "2.0.0"
@@ -45,6 +45,7 @@
         "kotlin"
       )
     ]
+    debugProvider = null
     inverseSourcesProvider = true
     dependencySourcesProvider = true
     resourcesProvider = true
@@ -55,8 +56,8 @@
   ]
   data = null
 ]
-2021-03-23 18:46:09.557 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - onBuildInitialized call
-2021-03-23 18:46:09.563 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService - buildTargetScalacOptions call with param: ScalacOptionsParams [
+2021-04-05 10:32:40.649 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - onBuildInitialized call
+2021-04-05 10:32:40.653 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService - buildTargetScalacOptions call with param: ScalacOptionsParams [
   targets = ArrayList (
     BuildTargetIdentifier [
       uri = "//example:example"
@@ -66,9 +67,9 @@
     ]
   )
 ]
-2021-03-23 18:46:09.570 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: aquery, flags: [--bes_backend=grpc://localhost:34993, --build_event_publish_all_actions, --output=proto], arguments: [mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)]
-2021-03-23 18:46:09.571 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, aquery, --bes_backend=grpc://localhost:34993, --build_event_publish_all_actions, --output=proto, mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)]
-2021-03-23 18:46:21.646 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:40.658 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: aquery, flags: [--bes_backend=grpc://localhost:45651, --build_event_publish_all_actions, --output=proto], arguments: [mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)]
+2021-04-05 10:32:40.658 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, aquery, --bes_backend=grpc://localhost:45651, --build_event_publish_all_actions, --output=proto, mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)]
+2021-04-05 10:32:54.106 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   started {
   }
 }
@@ -118,101 +119,24 @@ children {
   }
 }
 started {
-  uuid: "549d7584-2fda-4337-b494-9926833766ba"
-  start_time_millis: 1616525169930
+  uuid: "995e1708-ab33-49d0-a7d8-a6c9b22739a2"
+  start_time_millis: 1617618761109
   build_tool_version: "4.0.0"
-  options_description: "--nobuild --bes_backend=grpc://localhost:34993 --build_event_publish_all_actions --output=proto"
+  options_description: "--nobuild --bes_backend=grpc://localhost:45651 --build_event_publish_all_actions --output=proto"
   command: "aquery"
   working_directory: "/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
   workspace_directory: "/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-  server_pid: 6800
+  server_pid: 8938
 }
 
-2021-03-23 18:46:21.654 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  unstructured_command_line {
+2021-04-05 10:32:54.127 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  build_metadata {
   }
 }
-unstructured_command_line {
-  args: "aquery"
-  args: "--startup_time=16"
-  args: "--command_wait_time=0"
-  args: "--extract_data_time=0"
-  args: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
-  args: "--rc_source=client"
-  args: "--default_override=0:common=--isatty=0"
-  args: "--default_override=0:common=--terminal_columns=80"
-  args: "--client_env=PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
-  args: "--client_env=SHELL=/bin/bash"
-  args: "--client_env=LSCOLORS=Gxfxcxdxbxegedabagacad"
-  args: "--client_env=ZPLUG_LOG_LOAD_FAILURE=false"
-  args: "--client_env=ZPLUG_ROOT=/home/andre/.zplug"
-  args: "--client_env=LESS=-R"
-  args: "--client_env=_ZPLUG_VERSION=2.4.2"
-  args: "--client_env=FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
-  args: "--client_env=ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
-  args: "--client_env=JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
-  args: "--client_env=_ZPLUG_PREZTO=sorin-ionescu/prezto"
-  args: "--client_env=JAVA_HOMES=/home/andre/.asdf/installs/java/"
-  args: "--client_env=CLASSLOADER_PREFIX_PATH="
-  args: "--client_env=_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
-  args: "--client_env=ZPLUG_THREADS=16"
-  args: "--client_env=ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
-  args: "--client_env=CONDA_CHANGEPS1=no"
-  args: "--client_env=EDITOR=vim"
-  args: "--client_env=PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-  args: "--client_env=BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
-  args: "--client_env=LOGNAME=andre"
-  args: "--client_env=XDG_SESSION_TYPE=tty"
-  args: "--client_env=_ZPLUG_URL=https://github.com/zplug/zplug"
-  args: "--client_env=_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
-  args: "--client_env=PERIOD=30"
-  args: "--client_env=HOME=/home/andre"
-  args: "--client_env=LANG=C.UTF-8"
-  args: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
-  args: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
-  args: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
-  args: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
-  args: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
-  args: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
-  args: "--client_env=XDG_SESSION_CLASS=user"
-  args: "--client_env=TERM=xterm-termite"
-  args: "--client_env=ZSH=/home/andre/.oh-my-zsh"
-  args: "--client_env=ASDF_DIR=/home/andre/.asdf"
-  args: "--client_env=USER=andre"
-  args: "--client_env=ZPLUG_BIN=/home/andre/.zplug/bin"
-  args: "--client_env=TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-  args: "--client_env=ZPLUG_PROTOCOL=HTTPS"
-  args: "--client_env=VISUAL=vim"
-  args: "--client_env=PROMPT_EOL_MARK="
-  args: "--client_env=ZPLUG_USE_CACHE=true"
-  args: "--client_env=SHLVL=3"
-  args: "--client_env=ZPLUG_HOME=/home/andre/.zplug"
-  args: "--client_env=PAGER=less"
-  args: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
-  args: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
-  args: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
-  args: "--client_env=XDG_SESSION_ID=1"
-  args: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
-  args: "--client_env=RUNFILES_MANIFEST_ONLY="
-  args: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
-  args: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
-  args: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
-  args: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
-  args: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
-  args: "--client_env=BAZELISK_SKIP_WRAPPER=true"
-  args: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
-  args: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-  args: "--client_env=SSH_TTY=/dev/pts/0"
-  args: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
-  args: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
-  args: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-  args: "--bes_backend=grpc://localhost:34993"
-  args: "--build_event_publish_all_actions"
-  args: "--output=proto"
-  args: "mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)"
+build_metadata {
 }
 
-2021-03-23 18:46:21.663 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:54.146 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   structured_command_line {
     command_line_label: "tool"
   }
@@ -220,607 +144,7 @@ unstructured_command_line {
 structured_command_line {
 }
 
-2021-03-23 18:46:21.675 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  options_parsed {
-  }
-}
-options_parsed {
-  startup_options: "--max_idle_secs=10800"
-  startup_options: "--noshutdown_on_low_sys_mem"
-  startup_options: "--connect_timeout_secs=30"
-  startup_options: "--output_user_root=/home/andre/.cache/bazel/_bazel_andre"
-  startup_options: "--output_base=/home/andre/.cache/bazel/_bazel_andre/b2163d1020fcc4ad0b2625385d83bdad"
-  startup_options: "--failure_detail_out=/home/andre/.cache/bazel/_bazel_andre/b2163d1020fcc4ad0b2625385d83bdad/failure_detail.rawproto"
-  startup_options: "--expand_configs_in_place"
-  startup_options: "--idle_server_tasks"
-  startup_options: "--write_command_log"
-  startup_options: "--nowatchfs"
-  startup_options: "--nofatal_event_bus_exceptions"
-  startup_options: "--nowindows_enable_symlinks"
-  startup_options: "--noclient_debug"
-  startup_options: "--noincompatible_enable_execution_transition"
-  cmd_line: "--nobuild"
-  cmd_line: "--bes_backend=grpc://localhost:34993"
-  cmd_line: "--build_event_publish_all_actions"
-  cmd_line: "--output=proto"
-  explicit_cmd_line: "--bes_backend=grpc://localhost:34993"
-  explicit_cmd_line: "--build_event_publish_all_actions"
-  explicit_cmd_line: "--output=proto"
-  invocation_policy {
-  }
-}
-
-2021-03-23 18:46:21.682 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  build_metadata {
-  }
-}
-build_metadata {
-}
-
-2021-03-23 18:46:21.704 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  structured_command_line {
-    command_line_label: "original"
-  }
-}
-structured_command_line {
-  command_line_label: "original"
-  sections {
-    section_label: "executable"
-    chunk_list {
-      chunk: "bazel"
-    }
-  }
-  sections {
-    section_label: "startup options"
-    option_list {
-    }
-  }
-  sections {
-    section_label: "command"
-    chunk_list {
-      chunk: "aquery"
-    }
-  }
-  sections {
-    section_label: "command options"
-    option_list {
-      option {
-        combined_form: "--rc_source=client"
-        option_name: "rc_source"
-        option_value: "client"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--default_override=0:common=--isatty=0"
-        option_name: "default_override"
-        option_value: "0:common=--isatty=0"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--default_override=0:common=--terminal_columns=80"
-        option_name: "default_override"
-        option_value: "0:common=--terminal_columns=80"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--startup_time=16"
-        option_name: "startup_time"
-        option_value: "16"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--command_wait_time=0"
-        option_name: "command_wait_time"
-        option_value: "0"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--extract_data_time=0"
-        option_name: "extract_data_time"
-        option_value: "0"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
-        option_name: "binary_path"
-        option_value: "/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
-        option_name: "client_env"
-        option_value: "PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SHELL=/bin/bash"
-        option_name: "client_env"
-        option_value: "SHELL=/bin/bash"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LSCOLORS=Gxfxcxdxbxegedabagacad"
-        option_name: "client_env"
-        option_value: "LSCOLORS=Gxfxcxdxbxegedabagacad"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_LOG_LOAD_FAILURE=false"
-        option_name: "client_env"
-        option_value: "ZPLUG_LOG_LOAD_FAILURE=false"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_ROOT=/home/andre/.zplug"
-        option_name: "client_env"
-        option_value: "ZPLUG_ROOT=/home/andre/.zplug"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LESS=-R"
-        option_name: "client_env"
-        option_value: "LESS=-R"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_VERSION=2.4.2"
-        option_name: "client_env"
-        option_value: "_ZPLUG_VERSION=2.4.2"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
-        option_name: "client_env"
-        option_value: "FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
-        option_name: "client_env"
-        option_value: "ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
-        option_name: "client_env"
-        option_value: "JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_PREZTO=sorin-ionescu/prezto"
-        option_name: "client_env"
-        option_value: "_ZPLUG_PREZTO=sorin-ionescu/prezto"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=JAVA_HOMES=/home/andre/.asdf/installs/java/"
-        option_name: "client_env"
-        option_value: "JAVA_HOMES=/home/andre/.asdf/installs/java/"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=CLASSLOADER_PREFIX_PATH="
-        option_name: "client_env"
-        option_value: "CLASSLOADER_PREFIX_PATH="
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
-        option_name: "client_env"
-        option_value: "_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_THREADS=16"
-        option_name: "client_env"
-        option_value: "ZPLUG_THREADS=16"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
-        option_name: "client_env"
-        option_value: "ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=CONDA_CHANGEPS1=no"
-        option_name: "client_env"
-        option_value: "CONDA_CHANGEPS1=no"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=EDITOR=vim"
-        option_name: "client_env"
-        option_value: "EDITOR=vim"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        option_name: "client_env"
-        option_value: "PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        option_name: "client_env"
-        option_value: "BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LOGNAME=andre"
-        option_name: "client_env"
-        option_value: "LOGNAME=andre"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_SESSION_TYPE=tty"
-        option_name: "client_env"
-        option_value: "XDG_SESSION_TYPE=tty"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_URL=https://github.com/zplug/zplug"
-        option_name: "client_env"
-        option_value: "_ZPLUG_URL=https://github.com/zplug/zplug"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
-        option_name: "client_env"
-        option_value: "_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PERIOD=30"
-        option_name: "client_env"
-        option_value: "PERIOD=30"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=HOME=/home/andre"
-        option_name: "client_env"
-        option_value: "HOME=/home/andre"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LANG=C.UTF-8"
-        option_name: "client_env"
-        option_value: "LANG=C.UTF-8"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
-        option_name: "client_env"
-        option_value: "LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
-        option_name: "client_env"
-        option_value: "XDG_CURRENT_DESKTOP=GNOME"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
-        option_name: "client_env"
-        option_value: "VIRTUAL_ENV_DISABLE_PROMPT=12"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
-        option_name: "client_env"
-        option_value: "SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
-        option_name: "client_env"
-        option_value: "RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
-        option_name: "client_env"
-        option_value: "NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_SESSION_CLASS=user"
-        option_name: "client_env"
-        option_value: "XDG_SESSION_CLASS=user"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=TERM=xterm-termite"
-        option_name: "client_env"
-        option_value: "TERM=xterm-termite"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZSH=/home/andre/.oh-my-zsh"
-        option_name: "client_env"
-        option_value: "ZSH=/home/andre/.oh-my-zsh"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ASDF_DIR=/home/andre/.asdf"
-        option_name: "client_env"
-        option_value: "ASDF_DIR=/home/andre/.asdf"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=USER=andre"
-        option_name: "client_env"
-        option_value: "USER=andre"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_BIN=/home/andre/.zplug/bin"
-        option_name: "client_env"
-        option_value: "ZPLUG_BIN=/home/andre/.zplug/bin"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        option_name: "client_env"
-        option_value: "TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_PROTOCOL=HTTPS"
-        option_name: "client_env"
-        option_value: "ZPLUG_PROTOCOL=HTTPS"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=VISUAL=vim"
-        option_name: "client_env"
-        option_value: "VISUAL=vim"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PROMPT_EOL_MARK="
-        option_name: "client_env"
-        option_value: "PROMPT_EOL_MARK="
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_USE_CACHE=true"
-        option_name: "client_env"
-        option_value: "ZPLUG_USE_CACHE=true"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SHLVL=3"
-        option_name: "client_env"
-        option_value: "SHLVL=3"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_HOME=/home/andre/.zplug"
-        option_name: "client_env"
-        option_value: "ZPLUG_HOME=/home/andre/.zplug"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PAGER=less"
-        option_name: "client_env"
-        option_value: "PAGER=less"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        option_name: "client_env"
-        option_value: "BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
-        option_name: "client_env"
-        option_value: "ZPLUG_REPOS=/home/andre/.zplug/repos"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
-        option_name: "client_env"
-        option_value: "ZPLUG_LOG_LOAD_SUCCESS=false"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_SESSION_ID=1"
-        option_name: "client_env"
-        option_value: "XDG_SESSION_ID=1"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
-        option_name: "client_env"
-        option_value: "ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=RUNFILES_MANIFEST_ONLY="
-        option_name: "client_env"
-        option_value: "RUNFILES_MANIFEST_ONLY="
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
-        option_name: "client_env"
-        option_value: "XDG_RUNTIME_DIR=/run/user/1002"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
-        option_name: "client_env"
-        option_value: "SSH_CLIENT=82.155.18.118 63920 22"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
-        option_name: "client_env"
-        option_value: "_ZPLUG_CONFIG_SUBSHELL=:"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
-        option_name: "client_env"
-        option_value: "BROWSER=/usr/bin/vivaldi-stable"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
-        option_name: "client_env"
-        option_value: "ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BAZELISK_SKIP_WRAPPER=true"
-        option_name: "client_env"
-        option_value: "BAZELISK_SKIP_WRAPPER=true"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
-        option_name: "client_env"
-        option_value: "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        option_name: "client_env"
-        option_value: "JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SSH_TTY=/dev/pts/0"
-        option_name: "client_env"
-        option_value: "SSH_TTY=/dev/pts/0"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
-        option_name: "client_env"
-        option_value: "SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
-        option_name: "client_env"
-        option_value: "OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        option_name: "client_cwd"
-        option_value: "/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--bes_backend=grpc://localhost:34993"
-        option_name: "bes_backend"
-        option_value: "grpc://localhost:34993"
-        effect_tags: AFFECTS_OUTPUTS
-      }
-      option {
-        combined_form: "--build_event_publish_all_actions"
-        option_name: "build_event_publish_all_actions"
-        option_value: "1"
-        effect_tags: AFFECTS_OUTPUTS
-      }
-      option {
-        combined_form: "--output=proto"
-        option_name: "output"
-        option_value: "proto"
-        effect_tags: TERMINAL_OUTPUT
-      }
-    }
-  }
-  sections {
-    section_label: "residual"
-    chunk_list {
-      chunk: "mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)"
-    }
-  }
-}
-
-2021-03-23 18:46:21.716 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:54.205 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   structured_command_line {
     command_line_label: "canonical"
   }
@@ -1040,9 +364,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--startup_time=16"
+        combined_form: "--startup_time=21"
         option_name: "startup_time"
-        option_value: "16"
+        option_value: "21"
         effect_tags: AFFECTS_OUTPUTS
         effect_tags: BAZEL_MONITORING
         metadata_tags: HIDDEN
@@ -1282,9 +606,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         option_name: "client_env"
-        option_value: "SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        option_value: "SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -1422,9 +746,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=XDG_SESSION_ID=1"
+        combined_form: "--client_env=XDG_SESSION_ID=4"
         option_name: "client_env"
-        option_value: "XDG_SESSION_ID=1"
+        option_value: "XDG_SESSION_ID=4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -1450,9 +774,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
+        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
         option_name: "client_env"
-        option_value: "SSH_CLIENT=82.155.18.118 63920 22"
+        option_value: "SSH_CLIENT=82.155.18.118 64259 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -1499,9 +823,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_TTY=/dev/pts/0"
+        combined_form: "--client_env=SSH_TTY=/dev/pts/4"
         option_name: "client_env"
-        option_value: "SSH_TTY=/dev/pts/0"
+        option_value: "SSH_TTY=/dev/pts/4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -1527,9 +851,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--bes_backend=grpc://localhost:34993"
+        combined_form: "--bes_backend=grpc://localhost:45651"
         option_name: "bes_backend"
-        option_value: "grpc://localhost:34993"
+        option_value: "grpc://localhost:45651"
         effect_tags: AFFECTS_OUTPUTS
       }
       option {
@@ -1554,7 +878,684 @@ structured_command_line {
   }
 }
 
-2021-03-23 18:46:21.726 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:54.218 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  unstructured_command_line {
+  }
+}
+unstructured_command_line {
+  args: "aquery"
+  args: "--startup_time=21"
+  args: "--command_wait_time=0"
+  args: "--extract_data_time=0"
+  args: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
+  args: "--rc_source=client"
+  args: "--default_override=0:common=--isatty=0"
+  args: "--default_override=0:common=--terminal_columns=80"
+  args: "--client_env=PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
+  args: "--client_env=SHELL=/bin/bash"
+  args: "--client_env=LSCOLORS=Gxfxcxdxbxegedabagacad"
+  args: "--client_env=ZPLUG_LOG_LOAD_FAILURE=false"
+  args: "--client_env=ZPLUG_ROOT=/home/andre/.zplug"
+  args: "--client_env=LESS=-R"
+  args: "--client_env=_ZPLUG_VERSION=2.4.2"
+  args: "--client_env=FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
+  args: "--client_env=ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
+  args: "--client_env=JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
+  args: "--client_env=_ZPLUG_PREZTO=sorin-ionescu/prezto"
+  args: "--client_env=JAVA_HOMES=/home/andre/.asdf/installs/java/"
+  args: "--client_env=CLASSLOADER_PREFIX_PATH="
+  args: "--client_env=_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
+  args: "--client_env=ZPLUG_THREADS=16"
+  args: "--client_env=ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
+  args: "--client_env=CONDA_CHANGEPS1=no"
+  args: "--client_env=EDITOR=vim"
+  args: "--client_env=PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+  args: "--client_env=BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
+  args: "--client_env=LOGNAME=andre"
+  args: "--client_env=XDG_SESSION_TYPE=tty"
+  args: "--client_env=_ZPLUG_URL=https://github.com/zplug/zplug"
+  args: "--client_env=_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
+  args: "--client_env=PERIOD=30"
+  args: "--client_env=HOME=/home/andre"
+  args: "--client_env=LANG=C.UTF-8"
+  args: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
+  args: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
+  args: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
+  args: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
+  args: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
+  args: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
+  args: "--client_env=XDG_SESSION_CLASS=user"
+  args: "--client_env=TERM=xterm-termite"
+  args: "--client_env=ZSH=/home/andre/.oh-my-zsh"
+  args: "--client_env=ASDF_DIR=/home/andre/.asdf"
+  args: "--client_env=USER=andre"
+  args: "--client_env=ZPLUG_BIN=/home/andre/.zplug/bin"
+  args: "--client_env=TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+  args: "--client_env=ZPLUG_PROTOCOL=HTTPS"
+  args: "--client_env=VISUAL=vim"
+  args: "--client_env=PROMPT_EOL_MARK="
+  args: "--client_env=ZPLUG_USE_CACHE=true"
+  args: "--client_env=SHLVL=3"
+  args: "--client_env=ZPLUG_HOME=/home/andre/.zplug"
+  args: "--client_env=PAGER=less"
+  args: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
+  args: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
+  args: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
+  args: "--client_env=XDG_SESSION_ID=4"
+  args: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
+  args: "--client_env=RUNFILES_MANIFEST_ONLY="
+  args: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
+  args: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
+  args: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
+  args: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
+  args: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
+  args: "--client_env=BAZELISK_SKIP_WRAPPER=true"
+  args: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
+  args: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+  args: "--client_env=SSH_TTY=/dev/pts/4"
+  args: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
+  args: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
+  args: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+  args: "--bes_backend=grpc://localhost:45651"
+  args: "--build_event_publish_all_actions"
+  args: "--output=proto"
+  args: "mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)"
+}
+
+2021-04-05 10:32:54.240 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  options_parsed {
+  }
+}
+options_parsed {
+  startup_options: "--max_idle_secs=10800"
+  startup_options: "--noshutdown_on_low_sys_mem"
+  startup_options: "--connect_timeout_secs=30"
+  startup_options: "--output_user_root=/home/andre/.cache/bazel/_bazel_andre"
+  startup_options: "--output_base=/home/andre/.cache/bazel/_bazel_andre/b2163d1020fcc4ad0b2625385d83bdad"
+  startup_options: "--failure_detail_out=/home/andre/.cache/bazel/_bazel_andre/b2163d1020fcc4ad0b2625385d83bdad/failure_detail.rawproto"
+  startup_options: "--expand_configs_in_place"
+  startup_options: "--idle_server_tasks"
+  startup_options: "--write_command_log"
+  startup_options: "--nowatchfs"
+  startup_options: "--nofatal_event_bus_exceptions"
+  startup_options: "--nowindows_enable_symlinks"
+  startup_options: "--noclient_debug"
+  startup_options: "--noincompatible_enable_execution_transition"
+  cmd_line: "--nobuild"
+  cmd_line: "--bes_backend=grpc://localhost:45651"
+  cmd_line: "--build_event_publish_all_actions"
+  cmd_line: "--output=proto"
+  explicit_cmd_line: "--bes_backend=grpc://localhost:45651"
+  explicit_cmd_line: "--build_event_publish_all_actions"
+  explicit_cmd_line: "--output=proto"
+  invocation_policy {
+  }
+}
+
+2021-04-05 10:32:54.250 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  structured_command_line {
+    command_line_label: "original"
+  }
+}
+structured_command_line {
+  command_line_label: "original"
+  sections {
+    section_label: "executable"
+    chunk_list {
+      chunk: "bazel"
+    }
+  }
+  sections {
+    section_label: "startup options"
+    option_list {
+    }
+  }
+  sections {
+    section_label: "command"
+    chunk_list {
+      chunk: "aquery"
+    }
+  }
+  sections {
+    section_label: "command options"
+    option_list {
+      option {
+        combined_form: "--rc_source=client"
+        option_name: "rc_source"
+        option_value: "client"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--default_override=0:common=--isatty=0"
+        option_name: "default_override"
+        option_value: "0:common=--isatty=0"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--default_override=0:common=--terminal_columns=80"
+        option_name: "default_override"
+        option_value: "0:common=--terminal_columns=80"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--startup_time=21"
+        option_name: "startup_time"
+        option_value: "21"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--command_wait_time=0"
+        option_name: "command_wait_time"
+        option_value: "0"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--extract_data_time=0"
+        option_name: "extract_data_time"
+        option_value: "0"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
+        option_name: "binary_path"
+        option_value: "/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
+        option_name: "client_env"
+        option_value: "PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SHELL=/bin/bash"
+        option_name: "client_env"
+        option_value: "SHELL=/bin/bash"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LSCOLORS=Gxfxcxdxbxegedabagacad"
+        option_name: "client_env"
+        option_value: "LSCOLORS=Gxfxcxdxbxegedabagacad"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_LOG_LOAD_FAILURE=false"
+        option_name: "client_env"
+        option_value: "ZPLUG_LOG_LOAD_FAILURE=false"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_ROOT=/home/andre/.zplug"
+        option_name: "client_env"
+        option_value: "ZPLUG_ROOT=/home/andre/.zplug"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LESS=-R"
+        option_name: "client_env"
+        option_value: "LESS=-R"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_VERSION=2.4.2"
+        option_name: "client_env"
+        option_value: "_ZPLUG_VERSION=2.4.2"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
+        option_name: "client_env"
+        option_value: "FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
+        option_name: "client_env"
+        option_value: "ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
+        option_name: "client_env"
+        option_value: "JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_PREZTO=sorin-ionescu/prezto"
+        option_name: "client_env"
+        option_value: "_ZPLUG_PREZTO=sorin-ionescu/prezto"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=JAVA_HOMES=/home/andre/.asdf/installs/java/"
+        option_name: "client_env"
+        option_value: "JAVA_HOMES=/home/andre/.asdf/installs/java/"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=CLASSLOADER_PREFIX_PATH="
+        option_name: "client_env"
+        option_value: "CLASSLOADER_PREFIX_PATH="
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
+        option_name: "client_env"
+        option_value: "_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_THREADS=16"
+        option_name: "client_env"
+        option_value: "ZPLUG_THREADS=16"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
+        option_name: "client_env"
+        option_value: "ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=CONDA_CHANGEPS1=no"
+        option_name: "client_env"
+        option_value: "CONDA_CHANGEPS1=no"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=EDITOR=vim"
+        option_name: "client_env"
+        option_value: "EDITOR=vim"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        option_name: "client_env"
+        option_value: "PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        option_name: "client_env"
+        option_value: "BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LOGNAME=andre"
+        option_name: "client_env"
+        option_value: "LOGNAME=andre"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_SESSION_TYPE=tty"
+        option_name: "client_env"
+        option_value: "XDG_SESSION_TYPE=tty"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_URL=https://github.com/zplug/zplug"
+        option_name: "client_env"
+        option_value: "_ZPLUG_URL=https://github.com/zplug/zplug"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
+        option_name: "client_env"
+        option_value: "_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PERIOD=30"
+        option_name: "client_env"
+        option_value: "PERIOD=30"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=HOME=/home/andre"
+        option_name: "client_env"
+        option_value: "HOME=/home/andre"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LANG=C.UTF-8"
+        option_name: "client_env"
+        option_value: "LANG=C.UTF-8"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
+        option_name: "client_env"
+        option_value: "LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
+        option_name: "client_env"
+        option_value: "XDG_CURRENT_DESKTOP=GNOME"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
+        option_name: "client_env"
+        option_value: "VIRTUAL_ENV_DISABLE_PROMPT=12"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
+        option_name: "client_env"
+        option_value: "SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
+        option_name: "client_env"
+        option_value: "RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
+        option_name: "client_env"
+        option_value: "NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_SESSION_CLASS=user"
+        option_name: "client_env"
+        option_value: "XDG_SESSION_CLASS=user"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=TERM=xterm-termite"
+        option_name: "client_env"
+        option_value: "TERM=xterm-termite"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZSH=/home/andre/.oh-my-zsh"
+        option_name: "client_env"
+        option_value: "ZSH=/home/andre/.oh-my-zsh"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ASDF_DIR=/home/andre/.asdf"
+        option_name: "client_env"
+        option_value: "ASDF_DIR=/home/andre/.asdf"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=USER=andre"
+        option_name: "client_env"
+        option_value: "USER=andre"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_BIN=/home/andre/.zplug/bin"
+        option_name: "client_env"
+        option_value: "ZPLUG_BIN=/home/andre/.zplug/bin"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        option_name: "client_env"
+        option_value: "TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_PROTOCOL=HTTPS"
+        option_name: "client_env"
+        option_value: "ZPLUG_PROTOCOL=HTTPS"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=VISUAL=vim"
+        option_name: "client_env"
+        option_value: "VISUAL=vim"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PROMPT_EOL_MARK="
+        option_name: "client_env"
+        option_value: "PROMPT_EOL_MARK="
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_USE_CACHE=true"
+        option_name: "client_env"
+        option_value: "ZPLUG_USE_CACHE=true"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SHLVL=3"
+        option_name: "client_env"
+        option_value: "SHLVL=3"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_HOME=/home/andre/.zplug"
+        option_name: "client_env"
+        option_value: "ZPLUG_HOME=/home/andre/.zplug"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PAGER=less"
+        option_name: "client_env"
+        option_value: "PAGER=less"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        option_name: "client_env"
+        option_value: "BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
+        option_name: "client_env"
+        option_value: "ZPLUG_REPOS=/home/andre/.zplug/repos"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
+        option_name: "client_env"
+        option_value: "ZPLUG_LOG_LOAD_SUCCESS=false"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_SESSION_ID=4"
+        option_name: "client_env"
+        option_value: "XDG_SESSION_ID=4"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
+        option_name: "client_env"
+        option_value: "ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=RUNFILES_MANIFEST_ONLY="
+        option_name: "client_env"
+        option_value: "RUNFILES_MANIFEST_ONLY="
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
+        option_name: "client_env"
+        option_value: "XDG_RUNTIME_DIR=/run/user/1002"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
+        option_name: "client_env"
+        option_value: "SSH_CLIENT=82.155.18.118 64259 22"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
+        option_name: "client_env"
+        option_value: "_ZPLUG_CONFIG_SUBSHELL=:"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
+        option_name: "client_env"
+        option_value: "BROWSER=/usr/bin/vivaldi-stable"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
+        option_name: "client_env"
+        option_value: "ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BAZELISK_SKIP_WRAPPER=true"
+        option_name: "client_env"
+        option_value: "BAZELISK_SKIP_WRAPPER=true"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
+        option_name: "client_env"
+        option_value: "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        option_name: "client_env"
+        option_value: "JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SSH_TTY=/dev/pts/4"
+        option_name: "client_env"
+        option_value: "SSH_TTY=/dev/pts/4"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
+        option_name: "client_env"
+        option_value: "SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
+        option_name: "client_env"
+        option_value: "OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        option_name: "client_cwd"
+        option_value: "/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--bes_backend=grpc://localhost:45651"
+        option_name: "bes_backend"
+        option_value: "grpc://localhost:45651"
+        effect_tags: AFFECTS_OUTPUTS
+      }
+      option {
+        combined_form: "--build_event_publish_all_actions"
+        option_name: "build_event_publish_all_actions"
+        option_value: "1"
+        effect_tags: AFFECTS_OUTPUTS
+      }
+      option {
+        combined_form: "--output=proto"
+        option_name: "output"
+        option_value: "proto"
+        effect_tags: TERMINAL_OUTPUT
+      }
+    }
+  }
+  sections {
+    section_label: "residual"
+    chunk_list {
+      chunk: "mnemonic(Scalac, //example:example + //dep:dep) union mnemonic(Javac, //example:example + //dep:dep)"
+    }
+  }
+}
+
+2021-04-05 10:32:54.267 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
   }
 }
@@ -1572,7 +1573,7 @@ progress {
   stderr: "Loading: \nLoading: 0 packages loaded\nERROR: Skipping \'//dep:dep\': no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep\n"
 }
 
-2021-03-23 18:46:21.744 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:54.293 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -1582,7 +1583,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:22.750 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:55.301 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -1592,7 +1593,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:23.756 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:56.311 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -1602,7 +1603,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:25.361 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:32:57.921 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -1612,7 +1613,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:27.926 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:00.488 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -1622,7 +1623,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:32.028 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:04.598 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -1632,9 +1633,9 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:32.062 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: query, flags: [--bes_backend=grpc://localhost:34993, --build_event_publish_all_actions, --output=proto], arguments: [(//example:example + //dep:dep)]
-2021-03-23 18:46:32.062 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, query, --bes_backend=grpc://localhost:34993, --build_event_publish_all_actions, --output=proto, (//example:example + //dep:dep)]
-2021-03-23 18:46:42.500 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:04.674 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: query, flags: [--bes_backend=grpc://localhost:45651, --build_event_publish_all_actions, --output=proto], arguments: [(//example:example + //dep:dep)]
+2021-04-05 10:33:04.675 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, query, --bes_backend=grpc://localhost:45651, --build_event_publish_all_actions, --output=proto, (//example:example + //dep:dep)]
+2021-04-05 10:33:15.770 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   started {
   }
 }
@@ -1647,45 +1648,19 @@ children {
   }
 }
 started {
-  start_time_millis: 1616525192296
+  start_time_millis: 1617618785511
   build_tool_version: "4.0.0"
   command: "query"
-  server_pid: 6800
+  server_pid: 8938
 }
 
-2021-03-23 18:46:42.505 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.774 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
   }
 }
 children {
   progress {
     opaque_count: 1
-  }
-}
-children {
-  structured_command_line {
-    command_line_label: "tool"
-  }
-}
-progress {
-}
-
-2021-03-23 18:46:42.509 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  structured_command_line {
-    command_line_label: "tool"
-  }
-}
-structured_command_line {
-}
-
-2021-03-23 18:46:42.511 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  progress {
-    opaque_count: 1
-  }
-}
-children {
-  progress {
-    opaque_count: 2
   }
 }
 children {
@@ -1695,21 +1670,21 @@ children {
 progress {
 }
 
-2021-03-23 18:46:42.513 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.776 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   build_metadata {
   }
 }
 build_metadata {
 }
 
-2021-03-23 18:46:42.516 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.777 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
-    opaque_count: 2
+    opaque_count: 1
   }
 }
 children {
   progress {
-    opaque_count: 3
+    opaque_count: 2
   }
 }
 children {
@@ -1720,7 +1695,7 @@ children {
 progress {
 }
 
-2021-03-23 18:46:42.524 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.781 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   structured_command_line {
     command_line_label: "canonical"
   }
@@ -1933,9 +1908,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--startup_time=7"
+        combined_form: "--startup_time=11"
         option_name: "startup_time"
-        option_value: "7"
+        option_value: "11"
         effect_tags: AFFECTS_OUTPUTS
         effect_tags: BAZEL_MONITORING
         metadata_tags: HIDDEN
@@ -2175,9 +2150,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         option_name: "client_env"
-        option_value: "SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        option_value: "SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -2315,9 +2290,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=XDG_SESSION_ID=1"
+        combined_form: "--client_env=XDG_SESSION_ID=4"
         option_name: "client_env"
-        option_value: "XDG_SESSION_ID=1"
+        option_value: "XDG_SESSION_ID=4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -2343,9 +2318,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
+        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
         option_name: "client_env"
-        option_value: "SSH_CLIENT=82.155.18.118 63920 22"
+        option_value: "SSH_CLIENT=82.155.18.118 64259 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -2392,9 +2367,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_TTY=/dev/pts/0"
+        combined_form: "--client_env=SSH_TTY=/dev/pts/4"
         option_name: "client_env"
-        option_value: "SSH_TTY=/dev/pts/0"
+        option_value: "SSH_TTY=/dev/pts/4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -2420,9 +2395,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--bes_backend=grpc://localhost:34993"
+        combined_form: "--bes_backend=grpc://localhost:45651"
         option_name: "bes_backend"
-        option_value: "grpc://localhost:34993"
+        option_value: "grpc://localhost:45651"
         effect_tags: AFFECTS_OUTPUTS
       }
       option {
@@ -2447,7 +2422,588 @@ structured_command_line {
   }
 }
 
-2021-03-23 18:46:42.527 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.784 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  progress {
+    opaque_count: 2
+  }
+}
+children {
+  progress {
+    opaque_count: 3
+  }
+}
+children {
+  structured_command_line {
+    command_line_label: "original"
+  }
+}
+progress {
+}
+
+2021-04-05 10:33:15.789 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  structured_command_line {
+    command_line_label: "original"
+  }
+}
+structured_command_line {
+  command_line_label: "original"
+  sections {
+    section_label: "executable"
+    chunk_list {
+      chunk: "bazel"
+    }
+  }
+  sections {
+    section_label: "startup options"
+    option_list {
+    }
+  }
+  sections {
+    section_label: "command"
+    chunk_list {
+      chunk: "query"
+    }
+  }
+  sections {
+    section_label: "command options"
+    option_list {
+      option {
+        combined_form: "--rc_source=client"
+        option_name: "rc_source"
+        option_value: "client"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--default_override=0:common=--isatty=0"
+        option_name: "default_override"
+        option_value: "0:common=--isatty=0"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--default_override=0:common=--terminal_columns=80"
+        option_name: "default_override"
+        option_value: "0:common=--terminal_columns=80"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--startup_time=11"
+        option_name: "startup_time"
+        option_value: "11"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--command_wait_time=0"
+        option_name: "command_wait_time"
+        option_value: "0"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--extract_data_time=0"
+        option_name: "extract_data_time"
+        option_value: "0"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
+        option_name: "binary_path"
+        option_value: "/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
+        effect_tags: AFFECTS_OUTPUTS
+        effect_tags: BAZEL_MONITORING
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
+        option_name: "client_env"
+        option_value: "PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SHELL=/bin/bash"
+        option_name: "client_env"
+        option_value: "SHELL=/bin/bash"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LSCOLORS=Gxfxcxdxbxegedabagacad"
+        option_name: "client_env"
+        option_value: "LSCOLORS=Gxfxcxdxbxegedabagacad"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_LOG_LOAD_FAILURE=false"
+        option_name: "client_env"
+        option_value: "ZPLUG_LOG_LOAD_FAILURE=false"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_ROOT=/home/andre/.zplug"
+        option_name: "client_env"
+        option_value: "ZPLUG_ROOT=/home/andre/.zplug"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LESS=-R"
+        option_name: "client_env"
+        option_value: "LESS=-R"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_VERSION=2.4.2"
+        option_name: "client_env"
+        option_value: "_ZPLUG_VERSION=2.4.2"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
+        option_name: "client_env"
+        option_value: "FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
+        option_name: "client_env"
+        option_value: "ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
+        option_name: "client_env"
+        option_value: "JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_PREZTO=sorin-ionescu/prezto"
+        option_name: "client_env"
+        option_value: "_ZPLUG_PREZTO=sorin-ionescu/prezto"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=JAVA_HOMES=/home/andre/.asdf/installs/java/"
+        option_name: "client_env"
+        option_value: "JAVA_HOMES=/home/andre/.asdf/installs/java/"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=CLASSLOADER_PREFIX_PATH="
+        option_name: "client_env"
+        option_value: "CLASSLOADER_PREFIX_PATH="
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
+        option_name: "client_env"
+        option_value: "_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_THREADS=16"
+        option_name: "client_env"
+        option_value: "ZPLUG_THREADS=16"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
+        option_name: "client_env"
+        option_value: "ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=CONDA_CHANGEPS1=no"
+        option_name: "client_env"
+        option_value: "CONDA_CHANGEPS1=no"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=EDITOR=vim"
+        option_name: "client_env"
+        option_value: "EDITOR=vim"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        option_name: "client_env"
+        option_value: "PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        option_name: "client_env"
+        option_value: "BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LOGNAME=andre"
+        option_name: "client_env"
+        option_value: "LOGNAME=andre"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_SESSION_TYPE=tty"
+        option_name: "client_env"
+        option_value: "XDG_SESSION_TYPE=tty"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_URL=https://github.com/zplug/zplug"
+        option_name: "client_env"
+        option_value: "_ZPLUG_URL=https://github.com/zplug/zplug"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
+        option_name: "client_env"
+        option_value: "_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PERIOD=30"
+        option_name: "client_env"
+        option_value: "PERIOD=30"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=HOME=/home/andre"
+        option_name: "client_env"
+        option_value: "HOME=/home/andre"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LANG=C.UTF-8"
+        option_name: "client_env"
+        option_value: "LANG=C.UTF-8"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
+        option_name: "client_env"
+        option_value: "LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
+        option_name: "client_env"
+        option_value: "XDG_CURRENT_DESKTOP=GNOME"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
+        option_name: "client_env"
+        option_value: "VIRTUAL_ENV_DISABLE_PROMPT=12"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
+        option_name: "client_env"
+        option_value: "SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
+        option_name: "client_env"
+        option_value: "RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
+        option_name: "client_env"
+        option_value: "NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_SESSION_CLASS=user"
+        option_name: "client_env"
+        option_value: "XDG_SESSION_CLASS=user"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=TERM=xterm-termite"
+        option_name: "client_env"
+        option_value: "TERM=xterm-termite"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZSH=/home/andre/.oh-my-zsh"
+        option_name: "client_env"
+        option_value: "ZSH=/home/andre/.oh-my-zsh"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ASDF_DIR=/home/andre/.asdf"
+        option_name: "client_env"
+        option_value: "ASDF_DIR=/home/andre/.asdf"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=USER=andre"
+        option_name: "client_env"
+        option_value: "USER=andre"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_BIN=/home/andre/.zplug/bin"
+        option_name: "client_env"
+        option_value: "ZPLUG_BIN=/home/andre/.zplug/bin"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        option_name: "client_env"
+        option_value: "TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_PROTOCOL=HTTPS"
+        option_name: "client_env"
+        option_value: "ZPLUG_PROTOCOL=HTTPS"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=VISUAL=vim"
+        option_name: "client_env"
+        option_value: "VISUAL=vim"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PROMPT_EOL_MARK="
+        option_name: "client_env"
+        option_value: "PROMPT_EOL_MARK="
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_USE_CACHE=true"
+        option_name: "client_env"
+        option_value: "ZPLUG_USE_CACHE=true"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SHLVL=3"
+        option_name: "client_env"
+        option_value: "SHLVL=3"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_HOME=/home/andre/.zplug"
+        option_name: "client_env"
+        option_value: "ZPLUG_HOME=/home/andre/.zplug"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=PAGER=less"
+        option_name: "client_env"
+        option_value: "PAGER=less"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        option_name: "client_env"
+        option_value: "BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
+        option_name: "client_env"
+        option_value: "ZPLUG_REPOS=/home/andre/.zplug/repos"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
+        option_name: "client_env"
+        option_value: "ZPLUG_LOG_LOAD_SUCCESS=false"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_SESSION_ID=4"
+        option_name: "client_env"
+        option_value: "XDG_SESSION_ID=4"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
+        option_name: "client_env"
+        option_value: "ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=RUNFILES_MANIFEST_ONLY="
+        option_name: "client_env"
+        option_value: "RUNFILES_MANIFEST_ONLY="
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
+        option_name: "client_env"
+        option_value: "XDG_RUNTIME_DIR=/run/user/1002"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
+        option_name: "client_env"
+        option_value: "SSH_CLIENT=82.155.18.118 64259 22"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
+        option_name: "client_env"
+        option_value: "_ZPLUG_CONFIG_SUBSHELL=:"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
+        option_name: "client_env"
+        option_value: "BROWSER=/usr/bin/vivaldi-stable"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
+        option_name: "client_env"
+        option_value: "ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=BAZELISK_SKIP_WRAPPER=true"
+        option_name: "client_env"
+        option_value: "BAZELISK_SKIP_WRAPPER=true"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
+        option_name: "client_env"
+        option_value: "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        option_name: "client_env"
+        option_value: "JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SSH_TTY=/dev/pts/4"
+        option_name: "client_env"
+        option_value: "SSH_TTY=/dev/pts/4"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
+        option_name: "client_env"
+        option_value: "SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
+        option_name: "client_env"
+        option_value: "OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        option_name: "client_cwd"
+        option_value: "/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
+        effect_tags: CHANGES_INPUTS
+        metadata_tags: HIDDEN
+      }
+      option {
+        combined_form: "--bes_backend=grpc://localhost:45651"
+        option_name: "bes_backend"
+        option_value: "grpc://localhost:45651"
+        effect_tags: AFFECTS_OUTPUTS
+      }
+      option {
+        combined_form: "--build_event_publish_all_actions"
+        option_name: "build_event_publish_all_actions"
+        option_value: "1"
+        effect_tags: AFFECTS_OUTPUTS
+      }
+      option {
+        combined_form: "--output=proto"
+        option_name: "output"
+        option_value: "proto"
+        effect_tags: TERMINAL_OUTPUT
+      }
+    }
+  }
+  sections {
+    section_label: "residual"
+    chunk_list {
+      chunk: "(//example:example + //dep:dep)"
+    }
+  }
+}
+
+2021-04-05 10:33:15.791 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 3
   }
@@ -2458,19 +3014,45 @@ children {
   }
 }
 children {
+  structured_command_line {
+    command_line_label: "tool"
+  }
+}
+progress {
+}
+
+2021-04-05 10:33:15.792 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  structured_command_line {
+    command_line_label: "tool"
+  }
+}
+structured_command_line {
+}
+
+2021-04-05 10:33:15.793 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  progress {
+    opaque_count: 4
+  }
+}
+children {
+  progress {
+    opaque_count: 5
+  }
+}
+children {
   unstructured_command_line {
   }
 }
 progress {
 }
 
-2021-03-23 18:46:42.531 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.796 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   unstructured_command_line {
   }
 }
 unstructured_command_line {
   args: "query"
-  args: "--startup_time=7"
+  args: "--startup_time=11"
   args: "--command_wait_time=0"
   args: "--extract_data_time=0"
   args: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
@@ -2507,7 +3089,7 @@ unstructured_command_line {
   args: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
   args: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
   args: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
-  args: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+  args: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
   args: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
   args: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
   args: "--client_env=XDG_SESSION_CLASS=user"
@@ -2527,35 +3109,35 @@ unstructured_command_line {
   args: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
   args: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
   args: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
-  args: "--client_env=XDG_SESSION_ID=1"
+  args: "--client_env=XDG_SESSION_ID=4"
   args: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
   args: "--client_env=RUNFILES_MANIFEST_ONLY="
   args: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
-  args: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
+  args: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
   args: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
   args: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
   args: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
   args: "--client_env=BAZELISK_SKIP_WRAPPER=true"
   args: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
   args: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-  args: "--client_env=SSH_TTY=/dev/pts/0"
+  args: "--client_env=SSH_TTY=/dev/pts/4"
   args: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
   args: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
   args: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-  args: "--bes_backend=grpc://localhost:34993"
+  args: "--bes_backend=grpc://localhost:45651"
   args: "--build_event_publish_all_actions"
   args: "--output=proto"
   args: "(//example:example + //dep:dep)"
 }
 
-2021-03-23 18:46:42.533 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.800 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
-    opaque_count: 4
+    opaque_count: 5
   }
 }
 children {
   progress {
-    opaque_count: 5
+    opaque_count: 6
   }
 }
 children {
@@ -2565,7 +3147,7 @@ children {
 progress {
 }
 
-2021-03-23 18:46:42.536 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.802 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   options_parsed {
   }
 }
@@ -2584,598 +3166,17 @@ options_parsed {
   startup_options: "--nowindows_enable_symlinks"
   startup_options: "--noclient_debug"
   startup_options: "--noincompatible_enable_execution_transition"
-  cmd_line: "--bes_backend=grpc://localhost:34993"
+  cmd_line: "--bes_backend=grpc://localhost:45651"
   cmd_line: "--build_event_publish_all_actions"
   cmd_line: "--output=proto"
-  explicit_cmd_line: "--bes_backend=grpc://localhost:34993"
+  explicit_cmd_line: "--bes_backend=grpc://localhost:45651"
   explicit_cmd_line: "--build_event_publish_all_actions"
   explicit_cmd_line: "--output=proto"
   invocation_policy {
   }
 }
 
-2021-03-23 18:46:42.539 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  progress {
-    opaque_count: 5
-  }
-}
-children {
-  progress {
-    opaque_count: 6
-  }
-}
-children {
-  structured_command_line {
-    command_line_label: "original"
-  }
-}
-progress {
-}
-
-2021-03-23 18:46:42.547 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  structured_command_line {
-    command_line_label: "original"
-  }
-}
-structured_command_line {
-  command_line_label: "original"
-  sections {
-    section_label: "executable"
-    chunk_list {
-      chunk: "bazel"
-    }
-  }
-  sections {
-    section_label: "startup options"
-    option_list {
-    }
-  }
-  sections {
-    section_label: "command"
-    chunk_list {
-      chunk: "query"
-    }
-  }
-  sections {
-    section_label: "command options"
-    option_list {
-      option {
-        combined_form: "--rc_source=client"
-        option_name: "rc_source"
-        option_value: "client"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--default_override=0:common=--isatty=0"
-        option_name: "default_override"
-        option_value: "0:common=--isatty=0"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--default_override=0:common=--terminal_columns=80"
-        option_name: "default_override"
-        option_value: "0:common=--terminal_columns=80"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--startup_time=7"
-        option_name: "startup_time"
-        option_value: "7"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--command_wait_time=0"
-        option_name: "command_wait_time"
-        option_value: "0"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--extract_data_time=0"
-        option_name: "extract_data_time"
-        option_value: "0"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
-        option_name: "binary_path"
-        option_value: "/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
-        effect_tags: AFFECTS_OUTPUTS
-        effect_tags: BAZEL_MONITORING
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
-        option_name: "client_env"
-        option_value: "PATH=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-3.0.0-linux-x86_64/bin:/home/andre/.asdf/installs/nodejs/14.15.1/bin:/home/andre/.asdf/installs/nodejs/14.15.1/.npm/bin:/home/andre/.asdf/shims:/home/andre/.asdf/bin:/home/andre/.zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/apps/Flutter/flutter/bin:/root/.gem/ruby/2.6.0/bin:/home/andre/.local/bin:/home/andre/.config/bin:/.asdf/installs/nodejs/8.9.4/.npm/bin"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SHELL=/bin/bash"
-        option_name: "client_env"
-        option_value: "SHELL=/bin/bash"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LSCOLORS=Gxfxcxdxbxegedabagacad"
-        option_name: "client_env"
-        option_value: "LSCOLORS=Gxfxcxdxbxegedabagacad"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_LOG_LOAD_FAILURE=false"
-        option_name: "client_env"
-        option_value: "ZPLUG_LOG_LOAD_FAILURE=false"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_ROOT=/home/andre/.zplug"
-        option_name: "client_env"
-        option_value: "ZPLUG_ROOT=/home/andre/.zplug"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LESS=-R"
-        option_name: "client_env"
-        option_value: "LESS=-R"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_VERSION=2.4.2"
-        option_name: "client_env"
-        option_value: "_ZPLUG_VERSION=2.4.2"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
-        option_name: "client_env"
-        option_value: "FPATH=/home/andre/.oh-my-zsh/plugins/asdf:/home/andre/.oh-my-zsh/plugins/git:/home/andre/.oh-my-zsh/functions:/home/andre/.oh-my-zsh/completions:/home/andre/.zplug/misc/completions:/home/andre/.zplug/base/sources:/home/andre/.zplug/autoload:/home/andre/.zplug/base/utils:/home/andre/.zplug/base/job:/home/andre/.zplug/base/log:/home/andre/.zplug/base/io:/home/andre/.zplug/base/core:/home/andre/.zplug/base/base:/home/andre/.zplug/autoload/commands:/home/andre/.zplug/autoload/options:/home/andre/.zplug/autoload/tags:/usr/local/share/zsh/site-functions:/usr/share/zsh/vendor-functions:/usr/share/zsh/vendor-completions:/usr/share/zsh/functions/Calendar:/usr/share/zsh/functions/Chpwd:/usr/share/zsh/functions/Completion:/usr/share/zsh/functions/Completion/AIX:/usr/share/zsh/functions/Completion/BSD:/usr/share/zsh/functions/Completion/Base:/usr/share/zsh/functions/Completion/Cygwin:/usr/share/zsh/functions/Completion/Darwin:/usr/share/zsh/functions/Completion/Debian:/usr/share/zsh/functions/Completion/Linux:/usr/share/zsh/functions/Completion/Mandriva:/usr/share/zsh/functions/Completion/Redhat:/usr/share/zsh/functions/Completion/Solaris:/usr/share/zsh/functions/Completion/Unix:/usr/share/zsh/functions/Completion/X:/usr/share/zsh/functions/Completion/Zsh:/usr/share/zsh/functions/Completion/openSUSE:/usr/share/zsh/functions/Exceptions:/usr/share/zsh/functions/MIME:/usr/share/zsh/functions/Math:/usr/share/zsh/functions/Misc:/usr/share/zsh/functions/Newuser:/usr/share/zsh/functions/Prompts:/usr/share/zsh/functions/TCP:/usr/share/zsh/functions/VCS_Info:/usr/share/zsh/functions/VCS_Info/Backends:/usr/share/zsh/functions/Zftp:/usr/share/zsh/functions/Zle:/home/andre/.zplug/repos/zsh-users/zsh-completions/src"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
-        option_name: "client_env"
-        option_value: "ZPLUG_CACHE_DIR=/home/andre/.zplug/cache"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
-        option_name: "client_env"
-        option_value: "JAVA_HOME=/home/andre/.asdf/installs/java/openjdk-11"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_PREZTO=sorin-ionescu/prezto"
-        option_name: "client_env"
-        option_value: "_ZPLUG_PREZTO=sorin-ionescu/prezto"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=JAVA_HOMES=/home/andre/.asdf/installs/java/"
-        option_name: "client_env"
-        option_value: "JAVA_HOMES=/home/andre/.asdf/installs/java/"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=CLASSLOADER_PREFIX_PATH="
-        option_name: "client_env"
-        option_value: "CLASSLOADER_PREFIX_PATH="
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
-        option_name: "client_env"
-        option_value: "_ZPLUG_AWKPATH=/home/andre/.zplug/misc/contrib"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_THREADS=16"
-        option_name: "client_env"
-        option_value: "ZPLUG_THREADS=16"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
-        option_name: "client_env"
-        option_value: "ZPLUG_FILTER=fzf-tmux:fzf:peco:percol:fzy:zaw"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=CONDA_CHANGEPS1=no"
-        option_name: "client_env"
-        option_value: "CONDA_CHANGEPS1=no"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=EDITOR=vim"
-        option_name: "client_env"
-        option_value: "EDITOR=vim"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        option_name: "client_env"
-        option_value: "PWD=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        option_name: "client_env"
-        option_value: "BUILD_WORKSPACE_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LOGNAME=andre"
-        option_name: "client_env"
-        option_value: "LOGNAME=andre"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_SESSION_TYPE=tty"
-        option_name: "client_env"
-        option_value: "XDG_SESSION_TYPE=tty"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_URL=https://github.com/zplug/zplug"
-        option_name: "client_env"
-        option_value: "_ZPLUG_URL=https://github.com/zplug/zplug"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
-        option_name: "client_env"
-        option_value: "_ZPLUG_OHMYZSH=robbyrussell/oh-my-zsh"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PERIOD=30"
-        option_name: "client_env"
-        option_value: "PERIOD=30"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=HOME=/home/andre"
-        option_name: "client_env"
-        option_value: "HOME=/home/andre"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LANG=C.UTF-8"
-        option_name: "client_env"
-        option_value: "LANG=C.UTF-8"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
-        option_name: "client_env"
-        option_value: "LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
-        option_name: "client_env"
-        option_value: "XDG_CURRENT_DESKTOP=GNOME"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
-        option_name: "client_env"
-        option_value: "VIRTUAL_ENV_DISABLE_PROMPT=12"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
-        option_name: "client_env"
-        option_value: "SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
-        option_name: "client_env"
-        option_value: "RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
-        option_name: "client_env"
-        option_value: "NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_SESSION_CLASS=user"
-        option_name: "client_env"
-        option_value: "XDG_SESSION_CLASS=user"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=TERM=xterm-termite"
-        option_name: "client_env"
-        option_value: "TERM=xterm-termite"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZSH=/home/andre/.oh-my-zsh"
-        option_name: "client_env"
-        option_value: "ZSH=/home/andre/.oh-my-zsh"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ASDF_DIR=/home/andre/.asdf"
-        option_name: "client_env"
-        option_value: "ASDF_DIR=/home/andre/.asdf"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=USER=andre"
-        option_name: "client_env"
-        option_value: "USER=andre"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_BIN=/home/andre/.zplug/bin"
-        option_name: "client_env"
-        option_value: "ZPLUG_BIN=/home/andre/.zplug/bin"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        option_name: "client_env"
-        option_value: "TEST_SRCDIR=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_PROTOCOL=HTTPS"
-        option_name: "client_env"
-        option_value: "ZPLUG_PROTOCOL=HTTPS"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=VISUAL=vim"
-        option_name: "client_env"
-        option_value: "VISUAL=vim"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PROMPT_EOL_MARK="
-        option_name: "client_env"
-        option_value: "PROMPT_EOL_MARK="
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_USE_CACHE=true"
-        option_name: "client_env"
-        option_value: "ZPLUG_USE_CACHE=true"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SHLVL=3"
-        option_name: "client_env"
-        option_value: "SHLVL=3"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_HOME=/home/andre/.zplug"
-        option_name: "client_env"
-        option_value: "ZPLUG_HOME=/home/andre/.zplug"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=PAGER=less"
-        option_name: "client_env"
-        option_value: "PAGER=less"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        option_name: "client_env"
-        option_value: "BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
-        option_name: "client_env"
-        option_value: "ZPLUG_REPOS=/home/andre/.zplug/repos"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
-        option_name: "client_env"
-        option_value: "ZPLUG_LOG_LOAD_SUCCESS=false"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_SESSION_ID=1"
-        option_name: "client_env"
-        option_value: "XDG_SESSION_ID=1"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
-        option_name: "client_env"
-        option_value: "ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=RUNFILES_MANIFEST_ONLY="
-        option_name: "client_env"
-        option_value: "RUNFILES_MANIFEST_ONLY="
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
-        option_name: "client_env"
-        option_value: "XDG_RUNTIME_DIR=/run/user/1002"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
-        option_name: "client_env"
-        option_value: "SSH_CLIENT=82.155.18.118 63920 22"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
-        option_name: "client_env"
-        option_value: "_ZPLUG_CONFIG_SUBSHELL=:"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
-        option_name: "client_env"
-        option_value: "BROWSER=/usr/bin/vivaldi-stable"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
-        option_name: "client_env"
-        option_value: "ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=BAZELISK_SKIP_WRAPPER=true"
-        option_name: "client_env"
-        option_value: "BAZELISK_SKIP_WRAPPER=true"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
-        option_name: "client_env"
-        option_value: "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        option_name: "client_env"
-        option_value: "JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SSH_TTY=/dev/pts/0"
-        option_name: "client_env"
-        option_value: "SSH_TTY=/dev/pts/0"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
-        option_name: "client_env"
-        option_value: "SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
-        option_name: "client_env"
-        option_value: "OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        option_name: "client_cwd"
-        option_value: "/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-        effect_tags: CHANGES_INPUTS
-        metadata_tags: HIDDEN
-      }
-      option {
-        combined_form: "--bes_backend=grpc://localhost:34993"
-        option_name: "bes_backend"
-        option_value: "grpc://localhost:34993"
-        effect_tags: AFFECTS_OUTPUTS
-      }
-      option {
-        combined_form: "--build_event_publish_all_actions"
-        option_name: "build_event_publish_all_actions"
-        option_value: "1"
-        effect_tags: AFFECTS_OUTPUTS
-      }
-      option {
-        combined_form: "--output=proto"
-        option_name: "output"
-        option_value: "proto"
-        effect_tags: TERMINAL_OUTPUT
-      }
-    }
-  }
-  sections {
-    section_label: "residual"
-    chunk_list {
-      chunk: "(//example:example + //dep:dep)"
-    }
-  }
-}
-
-2021-03-23 18:46:42.606 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.857 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 6
   }
@@ -3194,7 +3195,7 @@ progress {
   stderr: "Loading: 0 packages loaded\n"
 }
 
-2021-03-23 18:46:42.609 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:15.860 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -3204,7 +3205,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:43.615 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:16.866 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -3214,7 +3215,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:44.621 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:17.873 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -3224,7 +3225,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:46.226 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:19.478 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -3234,7 +3235,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:48.791 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:22.044 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -3244,7 +3245,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:52.892 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:26.146 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -3254,9 +3255,9 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:46:52.930 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: query, flags: [--bes_backend=grpc://localhost:34993, --build_event_publish_all_actions, --output=proto], arguments: [(//example:example + //dep:dep)]
-2021-03-23 18:46:52.931 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, query, --bes_backend=grpc://localhost:34993, --build_event_publish_all_actions, --output=proto, (//example:example + //dep:dep)]
-2021-03-23 18:47:03.372 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:26.188 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Waiting for bazel - command: query, flags: [--bes_backend=grpc://localhost:45651, --build_event_publish_all_actions, --output=proto], arguments: [(//example:example + //dep:dep)]
+2021-04-05 10:33:26.188 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bazel.BazelRunner - Running: [/home/andre/.asdf/shims/bazel, query, --bes_backend=grpc://localhost:45651, --build_event_publish_all_actions, --output=proto, (//example:example + //dep:dep)]
+2021-04-05 10:33:36.611 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   started {
   }
 }
@@ -3269,13 +3270,13 @@ children {
   }
 }
 started {
-  start_time_millis: 1616525213161
+  start_time_millis: 1617618806389
   build_tool_version: "4.0.0"
   command: "query"
-  server_pid: 6800
+  server_pid: 8938
 }
 
-2021-03-23 18:47:03.377 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.613 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
   }
 }
@@ -3285,22 +3286,20 @@ children {
   }
 }
 children {
-  structured_command_line {
-    command_line_label: "tool"
+  build_metadata {
   }
 }
 progress {
 }
 
-2021-03-23 18:47:03.379 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  structured_command_line {
-    command_line_label: "tool"
+2021-04-05 10:33:36.615 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  build_metadata {
   }
 }
-structured_command_line {
+build_metadata {
 }
 
-2021-03-23 18:47:03.381 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.616 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 1
   }
@@ -3318,7 +3317,7 @@ children {
 progress {
 }
 
-2021-03-23 18:47:03.390 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.618 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   structured_command_line {
     command_line_label: "original"
   }
@@ -3367,9 +3366,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--startup_time=7"
+        combined_form: "--startup_time=8"
         option_name: "startup_time"
-        option_value: "7"
+        option_value: "8"
         effect_tags: AFFECTS_OUTPUTS
         effect_tags: BAZEL_MONITORING
         metadata_tags: HIDDEN
@@ -3609,9 +3608,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         option_name: "client_env"
-        option_value: "SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        option_value: "SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -3749,9 +3748,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=XDG_SESSION_ID=1"
+        combined_form: "--client_env=XDG_SESSION_ID=4"
         option_name: "client_env"
-        option_value: "XDG_SESSION_ID=1"
+        option_value: "XDG_SESSION_ID=4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -3777,9 +3776,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
+        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
         option_name: "client_env"
-        option_value: "SSH_CLIENT=82.155.18.118 63920 22"
+        option_value: "SSH_CLIENT=82.155.18.118 64259 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -3826,9 +3825,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_TTY=/dev/pts/0"
+        combined_form: "--client_env=SSH_TTY=/dev/pts/4"
         option_name: "client_env"
-        option_value: "SSH_TTY=/dev/pts/0"
+        option_value: "SSH_TTY=/dev/pts/4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -3854,9 +3853,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--bes_backend=grpc://localhost:34993"
+        combined_form: "--bes_backend=grpc://localhost:45651"
         option_name: "bes_backend"
-        option_value: "grpc://localhost:34993"
+        option_value: "grpc://localhost:45651"
         effect_tags: AFFECTS_OUTPUTS
       }
       option {
@@ -3881,7 +3880,7 @@ structured_command_line {
   }
 }
 
-2021-03-23 18:47:03.393 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.620 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 2
   }
@@ -3893,13 +3892,39 @@ children {
 }
 children {
   structured_command_line {
+    command_line_label: "tool"
+  }
+}
+progress {
+}
+
+2021-04-05 10:33:36.621 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  structured_command_line {
+    command_line_label: "tool"
+  }
+}
+structured_command_line {
+}
+
+2021-04-05 10:33:36.623 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+  progress {
+    opaque_count: 3
+  }
+}
+children {
+  progress {
+    opaque_count: 4
+  }
+}
+children {
+  structured_command_line {
     command_line_label: "canonical"
   }
 }
 progress {
 }
 
-2021-03-23 18:47:03.399 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.628 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   structured_command_line {
     command_line_label: "canonical"
   }
@@ -4112,9 +4137,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--startup_time=7"
+        combined_form: "--startup_time=8"
         option_name: "startup_time"
-        option_value: "7"
+        option_value: "8"
         effect_tags: AFFECTS_OUTPUTS
         effect_tags: BAZEL_MONITORING
         metadata_tags: HIDDEN
@@ -4354,9 +4379,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        combined_form: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         option_name: "client_env"
-        option_value: "SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+        option_value: "SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -4494,9 +4519,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=XDG_SESSION_ID=1"
+        combined_form: "--client_env=XDG_SESSION_ID=4"
         option_name: "client_env"
-        option_value: "XDG_SESSION_ID=1"
+        option_value: "XDG_SESSION_ID=4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -4522,9 +4547,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
+        combined_form: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
         option_name: "client_env"
-        option_value: "SSH_CLIENT=82.155.18.118 63920 22"
+        option_value: "SSH_CLIENT=82.155.18.118 64259 22"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -4571,9 +4596,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--client_env=SSH_TTY=/dev/pts/0"
+        combined_form: "--client_env=SSH_TTY=/dev/pts/4"
         option_name: "client_env"
-        option_value: "SSH_TTY=/dev/pts/0"
+        option_value: "SSH_TTY=/dev/pts/4"
         effect_tags: CHANGES_INPUTS
         metadata_tags: HIDDEN
       }
@@ -4599,9 +4624,9 @@ structured_command_line {
         metadata_tags: HIDDEN
       }
       option {
-        combined_form: "--bes_backend=grpc://localhost:34993"
+        combined_form: "--bes_backend=grpc://localhost:45651"
         option_name: "bes_backend"
-        option_value: "grpc://localhost:34993"
+        option_value: "grpc://localhost:45651"
         effect_tags: AFFECTS_OUTPUTS
       }
       option {
@@ -4626,31 +4651,7 @@ structured_command_line {
   }
 }
 
-2021-03-23 18:47:03.401 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  progress {
-    opaque_count: 3
-  }
-}
-children {
-  progress {
-    opaque_count: 4
-  }
-}
-children {
-  build_metadata {
-  }
-}
-progress {
-}
-
-2021-03-23 18:47:03.402 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
-  build_metadata {
-  }
-}
-build_metadata {
-}
-
-2021-03-23 18:47:03.403 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.630 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 4
   }
@@ -4667,13 +4668,13 @@ children {
 progress {
 }
 
-2021-03-23 18:47:03.405 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.632 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   unstructured_command_line {
   }
 }
 unstructured_command_line {
   args: "query"
-  args: "--startup_time=7"
+  args: "--startup_time=8"
   args: "--command_wait_time=0"
   args: "--extract_data_time=0"
   args: "--binary_path=/home/andre/.cache/bazelisk/downloads/bazelbuild/bazel-4.0.0-linux-x86_64/bin/bazel"
@@ -4710,7 +4711,7 @@ unstructured_command_line {
   args: "--client_env=LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
   args: "--client_env=XDG_CURRENT_DESKTOP=GNOME"
   args: "--client_env=VIRTUAL_ENV_DISABLE_PROMPT=12"
-  args: "--client_env=SSH_CONNECTION=82.155.18.118 63920 10.156.0.2 22"
+  args: "--client_env=SSH_CONNECTION=82.155.18.118 64259 10.156.0.2 22"
   args: "--client_env=RUNFILES_MANIFEST_FILE=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles/MANIFEST"
   args: "--client_env=NPM_CONFIG_PREFIX=/home/andre/.asdf/installs/nodejs/14.15.1/.npm"
   args: "--client_env=XDG_SESSION_CLASS=user"
@@ -4730,28 +4731,28 @@ unstructured_command_line {
   args: "--client_env=BUILD_WORKING_DIRECTORY=/home/andre/Projects/bazel-bsp"
   args: "--client_env=ZPLUG_REPOS=/home/andre/.zplug/repos"
   args: "--client_env=ZPLUG_LOG_LOAD_SUCCESS=false"
-  args: "--client_env=XDG_SESSION_ID=1"
+  args: "--client_env=XDG_SESSION_ID=4"
   args: "--client_env=ZPLUG_LOADFILE=/home/andre/.zplug/packages.zsh"
   args: "--client_env=RUNFILES_MANIFEST_ONLY="
   args: "--client_env=XDG_RUNTIME_DIR=/run/user/1002"
-  args: "--client_env=SSH_CLIENT=82.155.18.118 63920 22"
+  args: "--client_env=SSH_CLIENT=82.155.18.118 64259 22"
   args: "--client_env=_ZPLUG_CONFIG_SUBSHELL=:"
   args: "--client_env=BROWSER=/usr/bin/vivaldi-stable"
   args: "--client_env=ZPLUG_ERROR_LOG=/home/andre/.zplug/.error_log"
   args: "--client_env=BAZELISK_SKIP_WRAPPER=true"
   args: "--client_env=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1002/bus"
   args: "--client_env=JAVA_RUNFILES=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test.runfiles"
-  args: "--client_env=SSH_TTY=/dev/pts/0"
+  args: "--client_env=SSH_TTY=/dev/pts/4"
   args: "--client_env=SELF_LOCATION=/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/src/test/java/org/jetbrains/bsp/bazel/bsp-integration-test"
   args: "--client_env=OLDPWD=/home/andre/Projects/bazel-bsp/test-resources"
   args: "--client_cwd=/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2"
-  args: "--bes_backend=grpc://localhost:34993"
+  args: "--bes_backend=grpc://localhost:45651"
   args: "--build_event_publish_all_actions"
   args: "--output=proto"
   args: "(//example:example + //dep:dep)"
 }
 
-2021-03-23 18:47:03.410 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.634 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 5
   }
@@ -4768,7 +4769,7 @@ children {
 progress {
 }
 
-2021-03-23 18:47:03.413 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.636 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   options_parsed {
   }
 }
@@ -4787,17 +4788,17 @@ options_parsed {
   startup_options: "--nowindows_enable_symlinks"
   startup_options: "--noclient_debug"
   startup_options: "--noincompatible_enable_execution_transition"
-  cmd_line: "--bes_backend=grpc://localhost:34993"
+  cmd_line: "--bes_backend=grpc://localhost:45651"
   cmd_line: "--build_event_publish_all_actions"
   cmd_line: "--output=proto"
-  explicit_cmd_line: "--bes_backend=grpc://localhost:34993"
+  explicit_cmd_line: "--bes_backend=grpc://localhost:45651"
   explicit_cmd_line: "--build_event_publish_all_actions"
   explicit_cmd_line: "--output=proto"
   invocation_policy {
   }
 }
 
-2021-03-23 18:47:03.632 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.727 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   progress {
     opaque_count: 6
   }
@@ -4816,7 +4817,7 @@ progress {
   stderr: "Loading: 0 packages loaded\n"
 }
 
-2021-03-23 18:47:03.640 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:36.729 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -4826,7 +4827,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:47:04.646 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:37.733 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -4836,7 +4837,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:47:05.651 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:38.740 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -4846,7 +4847,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:47:07.257 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:40.345 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -4856,7 +4857,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:47:09.821 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:42.910 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -4866,7 +4867,7 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:47:13.922 [grpc-default-executor-1] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
+2021-04-05 10:33:47.012 [grpc-default-executor-0] INFO  org.jetbrains.bsp.bazel.server.bep.BepServer - Got event id {
   pattern {
     pattern: "//dep:dep"
   }
@@ -4876,13 +4877,13 @@ aborted {
   description: "no such package \'dep\': BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
-2021-03-23 18:47:13.951 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - buildTargetScalacOptions call finishing with response: ScalacOptionsResult [
+2021-04-05 10:33:47.035 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - buildTargetScalacOptions call finishing with response: ScalacOptionsResult [
   items = ArrayList ()
 ]
-2021-03-23 18:47:13.955 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - buildShutdown call
-2021-03-23 18:47:13.956 [ForkJoinPool.commonPool-worker-5] INFO  org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - buildShutdown call finishing with response: java.lang.Object@22d3320d
-2021-03-23 18:47:13.957 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - workspaceBuildTargets call
-2021-03-23 18:47:13.958 [pool-1-thread-1] ERROR org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - workspaceBuildTargets call finishing with error: Server has already shutdown!
-2021-03-23 18:47:13.961 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - onBuildExit call
+2021-04-05 10:33:47.038 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - buildShutdown call
+2021-04-05 10:33:47.039 [ForkJoinPool.commonPool-worker-3] INFO  org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - buildShutdown call finishing with response: java.lang.Object@750b1ef6
+2021-04-05 10:33:47.040 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - workspaceBuildTargets call
+2021-04-05 10:33:47.041 [pool-1-thread-1] ERROR org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers - workspaceBuildTargets call finishing with error: Server has already shutdown!
+2021-04-05 10:33:47.043 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - onBuildExit call
 server.bsp.BazelBspServerRequestHelpers - workspaceBuildTargets call finishing with error: Server has already shutdown!
-2021-03-23 18:47:03.353 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - onBuildExit call
+2021-04-05 10:33:36.593 [pool-1-thread-1] INFO  org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService - onBuildExit call

@@ -3,7 +3,7 @@
   "argv": [
     "/home/andre/.asdf/installs/java/openjdk-11/bin/java",
     "-classpath",
-    "/home/andre/.m2/repository/org/jetbrains/bsp/bazel-bsp/0.1.0/bazel-bsp-0.1.0.jar",
+    "/home/andre/.cache/bazel/_bazel_andre/8ccf630ed4625abf70b3abbd1b0aa232/execroot/bazel_bsp/bazel-out/k8-fastbuild/bin/bsp-project.jar",
     "org.jetbrains.bsp.bazel.server.ServerInitializer",
     "/home/andre/.asdf/shims/bazel"
   ],

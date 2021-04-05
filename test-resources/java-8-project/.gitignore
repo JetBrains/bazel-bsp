@@ -1,5 +1,5 @@
-/.bazelbsp/
-/.bsp/
-/.idea/
-/.ijwb/
-/bazel-*
+.bazelbsp/
+.bsp/
+.idea/
+.ijwb/
+bazel-*

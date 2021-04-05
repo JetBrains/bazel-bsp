@@ -1,4 +1,4 @@
-[Trace - 06:46:09 PM] Received request 'build/initialize - (1)'
+[Trace - 10:32:40 AM] Received request 'build/initialize - (1)'
 Params: {
   "rootUri": "file:/home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/",
   "displayName": "Mock-Client",
@@ -14,7 +14,7 @@ Params: {
 }
 
 
-[Trace - 06:46:09 PM] Sending response 'build/initialize - (1)'. Processing request took 46ms
+[Trace - 10:32:40 AM] Sending response 'build/initialize - (1)'. Processing request took 32ms
 Result: {
   "displayName": "bazelbsp",
   "version": "0.0.0",
@@ -48,11 +48,11 @@ Result: {
 }
 
 
-[Trace - 06:46:09 PM] Received notification 'build/initialized'
+[Trace - 10:32:40 AM] Received notification 'build/initialized'
 Params: null
 
 
-[Trace - 06:46:09 PM] Received request 'buildTarget/scalacOptions - (2)'
+[Trace - 10:32:40 AM] Received request 'buildTarget/scalacOptions - (2)'
 Params: {
   "targets": [
     {
@@ -65,260 +65,176 @@ Params: {
 }
 
 
-[Trace - 06:46:21 PM] Sending notification 'build/logMessage'
+[Trace - 10:32:54 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 4,
   "message": "Loading: \nLoading: 0 packages loaded\nERROR: Skipping \u0027//dep:dep\u0027: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:21 PM] Sending notification 'build/logMessage'
+[Trace - 10:32:54 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:22 PM] Sending notification 'build/logMessage'
+[Trace - 10:32:55 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:23 PM] Sending notification 'build/logMessage'
+[Trace - 10:32:56 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:25 PM] Sending notification 'build/logMessage'
+[Trace - 10:32:57 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:27 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:00 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:32 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:04 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:15 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 4,
   "message": "Loading: 0 packages loaded"
 }
 
 
-[Trace - 06:46:42 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:15 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:43 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:16 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:44 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:17 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:46 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:19 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:48 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:22 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:46:52 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:26 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
-Params: {
-  "type": 4,
-  "message": ""
-}
-
-
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:36 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 4,
   "message": "Loading: 0 packages loaded"
 }
 
 
-[Trace - 06:47:03 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:36 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:04 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:37 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:05 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:38 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:07 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:40 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:09 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:42 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:13 PM] Sending notification 'build/logMessage'
+[Trace - 10:33:47 AM] Sending notification 'build/logMessage'
 Params: {
   "type": 1,
   "message": "Command aborted with reason LOADING_FAILURE: no such package \u0027dep\u0027: BUILD file not found in any of the following directories. Add a BUILD file to a directory to mark it as a package.\n - /home/andre/Projects/bazel-bsp/test-resources/action-graph-v2/dep"
 }
 
 
-[Trace - 06:47:13 PM] Sending response 'buildTarget/scalacOptions - (2)'. Processing request took 64393ms
+[Trace - 10:33:47 AM] Sending response 'buildTarget/scalacOptions - (2)'. Processing request took 66384ms
 Result: {
   "items": []
 }
 
 
-[Trace - 06:47:13 PM] Received request 'build/shutdown - (3)'
+[Trace - 10:33:47 AM] Received request 'build/shutdown - (3)'
 Params: null
 
 
-[Trace - 06:47:13 PM] Sending response 'build/shutdown - (3)'. Processing request took 1ms
+[Trace - 10:33:47 AM] Sending response 'build/shutdown - (3)'. Processing request took 1ms
 Result: {}
 
 
-[Trace - 06:47:13 PM] Received request 'workspace/buildTargets - (4)'
+[Trace - 10:33:47 AM] Received request 'workspace/buildTargets - (4)'
 Params: null
 
 
-[Trace - 06:47:13 PM] Sending response 'workspace/buildTargets - (4)'. Processing request took 1ms
+[Trace - 10:33:47 AM] Sending response 'workspace/buildTargets - (4)'. Processing request took 1ms
 Result: null
 
 
-[Trace - 06:47:13 PM] Received notification 'build/exit'
+[Trace - 10:33:47 AM] Received notification 'build/exit'
 Params: null
 
 
