@@ -5,6 +5,8 @@ import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
 import ch.epfl.scala.bsp4j.CompileParams;
 import ch.epfl.scala.bsp4j.CompileResult;
+import ch.epfl.scala.bsp4j.DependencyModulesParams;
+import ch.epfl.scala.bsp4j.DependencyModulesResult;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InitializeBuildParams;
@@ -20,6 +22,7 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+import com.google.common.collect.ImmutableList;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
@@ -118,5 +121,12 @@ public class BuildServerImpl implements BuildServer {
       CleanCacheParams cleanCacheParams) {
     return serverRequestHelpers.executeCommand(
         "buildTargetCleanCache", () -> buildServerService.buildTargetCleanCache(cleanCacheParams));
+  }
+
+  // TODO: Implement Dependency Modules
+  @Override
+  public CompletableFuture<DependencyModulesResult> buildTargetDependencyModules(
+      DependencyModulesParams params) {
+    return CompletableFuture.completedFuture(new DependencyModulesResult(ImmutableList.of()));
   }
 }

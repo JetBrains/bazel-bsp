@@ -33,11 +33,56 @@ public class BazelBspServerTest {
         concat(
                 getSampleRepoTests().stream(),
                 getActionGraphV1Tests().stream(),
-                getActionGraphV2Tests().stream())
+                getActionGraphV2Tests().stream(),
+                getJava8ProjectTests().stream(),
+                getJava11ProjectTests().stream(),
+                getJavaDefaultProjectTests().stream())
             .collect(Collectors.toList());
 
     LOGGER.info("Created TestClients. Running BazelBspServerTest...");
     runTests(testsToRun);
+  }
+
+  private List<BazelBspServerSingleTest> getJava8ProjectTests() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.JAVA_8_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+    return ImmutableList.of(
+        new BazelBspServerSingleTest(
+            "java-8-project workspace build targets",
+            () ->
+                client.testCompareWorkspaceTargetsResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS_JAVA_8)));
+  }
+
+  private List<BazelBspServerSingleTest> getJava11ProjectTests() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.JAVA_11_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+    return ImmutableList.of(
+        new BazelBspServerSingleTest(
+            "java-11-project workspace build targets",
+            () ->
+                client.testCompareWorkspaceTargetsResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS_JAVA_11)));
+  }
+
+  private List<BazelBspServerSingleTest> getJavaDefaultProjectTests() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.JAVA_11_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+    return ImmutableList.of(
+        new BazelBspServerSingleTest(
+            "java-11-project workspace build targets",
+            () ->
+                client.testCompareWorkspaceTargetsResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS_JAVA_11)));
   }
 
   private List<BazelBspServerSingleTest> getActionGraphV1Tests() {

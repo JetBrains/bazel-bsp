@@ -28,3 +28,13 @@ def _scala_compiler_classpath_impl(target, ctx):
 scala_compiler_classpath_aspect = aspect(
     implementation = _scala_compiler_classpath_impl,
 )
+
+def _fetch_java_target_version(target, ctx):
+    if hasattr(ctx.rule.attr, "target_version"):
+        print(ctx.rule.attr.target_version)
+    return []
+
+fetch_java_target_version = aspect(
+    implementation = _fetch_java_target_version,
+    attr_aspects = ["_java_toolchain"],
+)

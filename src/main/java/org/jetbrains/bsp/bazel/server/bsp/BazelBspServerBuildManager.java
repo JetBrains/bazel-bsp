@@ -46,6 +46,12 @@ public class BazelBspServerBuildManager {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerBuildManager.class);
 
+  public static final String DEBUG_MESSAGE = "DEBUG:";
+  public static final String ASPECT_LOCATION = ".bazelbsp/aspects.bzl";
+  public static final String FETCH_JAVA_VERSION_ASPECT =
+      "@//.bazelbsp:aspects.bzl%fetch_java_target_version";
+  public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
+      "@bazel_tools//tools/jdk:current_java_toolchain";
   private final BazelBspServerConfig serverConfig;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelData bazelData;
@@ -53,6 +59,7 @@ public class BazelBspServerBuildManager {
 
   private BepServer bepServer;
   private ScalaBuildTarget scalacClasspath;
+  private String javaVersion;
 
   public BazelBspServerBuildManager(
       BazelBspServerConfig serverConfig,
@@ -107,7 +114,7 @@ public class BazelBspServerBuildManager {
         Uri.packageDirFromLabel(label.getUri(), bazelData.getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());
     if (extensions.contains(Constants.SCALA)) {
-      getScalaBuildTarget()
+      getScalaBuildTarget(rule)
           .ifPresent(
               (buildTarget) -> {
                 target.setDataKind(BuildTargetDataKind.SCALA);
@@ -118,7 +125,7 @@ public class BazelBspServerBuildManager {
     } else if (extensions.contains(Constants.JAVA) || extensions.contains(Constants.KOTLIN)) {
       target.setDataKind(BuildTargetDataKind.JVM);
       target.setTags(Lists.newArrayList(BuildManagerParsingUtils.getRuleType(rule.getRuleClass())));
-      target.setData(getJVMBuildTarget());
+      target.setData(getJVMBuildTarget(rule));
     }
     return target;
   }
@@ -149,7 +156,7 @@ public class BazelBspServerBuildManager {
         .collect(Collectors.toList());
   }
 
-  private Optional<ScalaBuildTarget> getScalaBuildTarget() {
+  private Optional<ScalaBuildTarget> getScalaBuildTarget(Build.Rule rule) {
     if (scalacClasspath == null) {
       buildTargetsWithBep(
           Lists.newArrayList(
@@ -184,28 +191,91 @@ public class BazelBspServerBuildManager {
               scalaVersion.substring(0, scalaVersion.lastIndexOf(".")),
               ScalaPlatform.JVM,
               classpath);
-      scalacClasspath.setJvmBuildTarget(getJVMBuildTarget());
+      scalacClasspath.setJvmBuildTarget(getJVMBuildTarget(rule));
     }
 
     return Optional.of(scalacClasspath);
   }
 
-  private JvmBuildTarget getJVMBuildTarget() {
-    // TODO(andrefmrocha): Properly determine jdk path
-    return new JvmBuildTarget(null, getJavaVersion());
+  private JvmBuildTarget getJVMBuildTarget(Build.Rule rule) {
+    Optional<String> javaHomePath = getJavaPath(rule);
+    Optional<String> javaVersion = getJavaVersion();
+    return new JvmBuildTarget(javaHomePath.orElse(null), javaVersion.orElse(null));
   }
 
-  private String getJavaVersion() {
-    String version = System.getProperty("java.version");
-    if (version.startsWith("1.")) {
-      version = version.substring(0, 3);
-    } else {
-      int dot = version.indexOf(".");
-      if (dot != -1) {
-        version = version.substring(0, dot);
+  private Optional<String> getJavaPath(Build.Rule rule) {
+    List<String> traversingPath = Lists.newArrayList("$jvm", "$java_runtime", ":alias", "actual");
+
+    return traverseDependency(rule, traversingPath)
+        .map(Build.Rule::getLocation)
+        .map(location -> location.substring(0, location.indexOf("/BUILD")))
+        .map(path -> Uri.fromAbsolutePath(path).toString());
+  }
+
+  private Optional<Build.Rule> traverseDependency(
+      Build.Rule startingRule, List<String> attributesToTraverse) {
+    Build.Rule currentRule = startingRule;
+
+    for (String attributeToTraverse : attributesToTraverse) {
+      Optional<Build.Rule> rule =
+          currentRule.getAttributeList().stream()
+              .filter(
+                  attribute ->
+                      attribute.getName().equals(attributeToTraverse) && attribute.hasStringValue())
+              .findFirst()
+              .flatMap(this::getTargetFromAttribute)
+              .map(Build.Target::getRule);
+
+      if (!rule.isPresent()) {
+        return Optional.empty();
       }
+
+      currentRule = rule.get();
     }
-    return version;
+
+    return Optional.of(currentRule);
+  }
+
+  private Optional<Build.Target> getTargetFromAttribute(Build.Attribute attribute) {
+    BazelProcess processResult =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withArgument(attribute.getStringValue())
+            .executeBazelBesCommand();
+
+    return QueryResolver.getQueryResultForProcess(processResult).getTargetList().stream()
+        .findFirst();
+  }
+
+  private Optional<String> getJavaVersion() {
+    if (javaVersion == null) {
+      List<String> lines =
+          bazelRunner
+              .commandBuilder()
+              .build()
+              .withFlag(BazelRunnerFlag.ASPECTS, FETCH_JAVA_VERSION_ASPECT)
+              .withArgument(BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN)
+              .executeBazelCommand()
+              .getStderr();
+
+      Optional<String> javaVersion =
+          lines.stream()
+              .map(line -> Splitter.on(" ").splitToList(line))
+              .filter(
+                  parts ->
+                      parts.size() == 3
+                          && parts.get(0).equals(DEBUG_MESSAGE)
+                          && parts.get(1).contains(ASPECT_LOCATION)
+                          && parts.get(2).chars().allMatch(Character::isDigit))
+              .map(parts -> parts.get(2))
+              .findFirst();
+
+      javaVersion.ifPresent(version -> this.javaVersion = version);
+    }
+
+    return Optional.ofNullable(javaVersion);
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
@@ -359,8 +429,8 @@ public class BazelBspServerBuildManager {
         .filter(
             parts ->
                 parts.size() == 3
-                    && parts.get(0).equals("DEBUG:")
-                    && parts.get(1).contains(".bazelbsp/aspects.bzl")
+                    && parts.get(0).equals(DEBUG_MESSAGE)
+                    && parts.get(1).contains(ASPECT_LOCATION)
                     && parts.get(2).endsWith(".jar"))
         .map(parts -> Constants.EXEC_ROOT_PREFIX + parts.get(2))
         .collect(Collectors.toList());

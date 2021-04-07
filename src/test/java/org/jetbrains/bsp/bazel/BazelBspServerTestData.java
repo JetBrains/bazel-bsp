@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
+import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.DependencySourcesItem;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
@@ -9,12 +10,15 @@ import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
+import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
+import ch.epfl.scala.bsp4j.ScalaBuildTarget;
 import ch.epfl.scala.bsp4j.ScalaMainClass;
 import ch.epfl.scala.bsp4j.ScalaMainClassesItem;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
+import ch.epfl.scala.bsp4j.ScalaPlatform;
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
@@ -37,6 +41,9 @@ class BazelBspServerTestData {
 
   private static final String SAMPLE_REPO_PATH = "sample-repo";
   private static final String ACTION_GRAPH_V2 = "action-graph-v2";
+  private static final String JAVA_8 = "java-8-project";
+  private static final String JAVA_11 = "java-11-project";
+  private static final String JAVA_DEFAULT = "java-default-project";
   private static final String SAMPLE_REPO_EXAMPLE_PATH = SAMPLE_REPO_PATH + "/example";
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
@@ -67,6 +74,31 @@ class BazelBspServerTestData {
 
   static final String SAMPLE_REPO_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
   static final String ACTION_GRAPH_V2_FULL_PATH = WORKSPACE_DIR_PATH + "/" + ACTION_GRAPH_V2;
+  static final String JAVA_8_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_8;
+  static final String JAVA_11_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_11;
+  static final String JAVA_DEFAULT_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_DEFAULT;
+  static final String DEFAULT_JAVA_HOME = "external/local_jdk/";
+
+  private static final JvmBuildTarget EXAMPLE_JVM_TARGET_JAVA_8 =
+      new JvmBuildTarget(DEFAULT_JAVA_HOME, "8");
+  private static final JvmBuildTarget EXAMPLE_JVM_TARGET_JAVA_8_SCALA_TARGET =
+      new JvmBuildTarget(null, "8");
+  private static final JvmBuildTarget EXAMPLE_JVM_TARGET_JAVA_11 =
+      new JvmBuildTarget(DEFAULT_JAVA_HOME, "11");
+
+  private static final List<String> SCALA_TARGET_JARS =
+      ImmutableList.of(
+          "__main__/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.8.jar",
+          "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
+          "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar");
+
+  private static final ScalaBuildTarget EXAMPLE_SCALA_TARGET =
+      new ScalaBuildTarget(
+          "org.scala-lang", "2.12.8", "2.12", ScalaPlatform.JVM, SCALA_TARGET_JARS) {
+        {
+          setJvmBuildTarget(EXAMPLE_JVM_TARGET_JAVA_8_SCALA_TARGET);
+        }
+      };
 
   static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS =
       new WorkspaceBuildTargetsResult(
@@ -82,7 +114,16 @@ class BazelBspServerTestData {
                   ImmutableList.of(),
                   ImmutableList.of(Constants.JAVA, Constants.SCALA),
                   ImmutableList.of(DEP_DEEPER_DEEPER_TARGET),
-                  new BuildTargetCapabilities(true, false, false))));
+                  new BuildTargetCapabilities(true, false, false)))) {
+        {
+          getTargets()
+              .forEach(
+                  target -> {
+                    target.setData(EXAMPLE_SCALA_TARGET);
+                    target.setDataKind(BuildTargetDataKind.SCALA);
+                  });
+        }
+      };
 
   static final List<String> DEPENDENCIES =
       ImmutableList.of(
@@ -241,4 +282,34 @@ class BazelBspServerTestData {
                       "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar",
                       "/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar"),
                   "bin/example/")));
+
+  static final BuildTarget EXAMPLE_JAVA_TARGET_JAVA_8 =
+      new BuildTarget(
+          EXAMPLE_EXAMPLE_TARGET,
+          ImmutableList.of(),
+          ImmutableList.of(Constants.JAVA),
+          ImmutableList.of(),
+          new BuildTargetCapabilities(true, false, true)) {
+        {
+          setData(EXAMPLE_JVM_TARGET_JAVA_8);
+          setDataKind(BuildTargetDataKind.JVM);
+        }
+      };
+  static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS_JAVA_8 =
+      new WorkspaceBuildTargetsResult(ImmutableList.of(EXAMPLE_JAVA_TARGET_JAVA_8));
+
+  static final BuildTarget EXAMPLE_JAVA_TARGET_JAVA_11 =
+      new BuildTarget(
+          EXAMPLE_EXAMPLE_TARGET,
+          ImmutableList.of(),
+          ImmutableList.of(Constants.JAVA),
+          ImmutableList.of(),
+          new BuildTargetCapabilities(true, false, true)) {
+        {
+          setData(EXAMPLE_JVM_TARGET_JAVA_11);
+          setDataKind(BuildTargetDataKind.JVM);
+        }
+      };
+  static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS_JAVA_11 =
+      new WorkspaceBuildTargetsResult(ImmutableList.of(EXAMPLE_JAVA_TARGET_JAVA_11));
 }
