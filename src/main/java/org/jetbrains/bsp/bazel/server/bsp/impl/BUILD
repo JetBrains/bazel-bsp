@@ -9,5 +9,6 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_google_guava_guava",
     ],
 )

@@ -5,6 +5,8 @@ import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
 import ch.epfl.scala.bsp4j.CompileParams;
 import ch.epfl.scala.bsp4j.CompileResult;
+import ch.epfl.scala.bsp4j.DependencyModulesParams;
+import ch.epfl.scala.bsp4j.DependencyModulesResult;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InitializeBuildParams;
@@ -115,6 +117,12 @@ public class BspImplementationHub implements BuildServer, ScalaBuildServer, Java
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(CleanCacheParams params) {
     return buildServer.buildTargetCleanCache(params);
+  }
+
+  @Override
+  public CompletableFuture<DependencyModulesResult> buildTargetDependencyModules(
+      DependencyModulesParams params) {
+    return buildServer.buildTargetDependencyModules(params);
   }
 
   @Override
