@@ -31,12 +31,8 @@ public class BazelBspServerTest {
     LOGGER.info("Creating TestClients...");
     List<BazelBspServerSingleTest> testsToRun =
         concat(
-                getSampleRepoTests().stream(),
-                getActionGraphV1Tests().stream(),
-                getActionGraphV2Tests().stream(),
-                getJava8ProjectTests().stream(),
-                getJava11ProjectTests().stream(),
-                getJavaDefaultProjectTests().stream())
+//                getActionGraphV1Tests().stream(),
+                getSampleRepoTests().stream())
             .collect(Collectors.toList());
 
     LOGGER.info("Created TestClients. Running BazelBspServerTest...");
@@ -137,48 +133,48 @@ public class BazelBspServerTest {
             BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
 
     return ImmutableList.of(
-        new BazelBspServerSingleTest("resolve project", client::testResolveProject),
-        new BazelBspServerSingleTest(
-            "compare workspace targets results",
-            () ->
-                client.testCompareWorkspaceTargetsResults(
-                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS)),
-        new BazelBspServerSingleTest(
-            "sources results",
-            () ->
-                client.testSourcesResults(
-                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-                    BazelBspServerTestData.EXPECTED_SOURCES)),
-        new BazelBspServerSingleTest(
-            "resources results",
-            () ->
-                client.testResourcesResults(
-                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-                    BazelBspServerTestData.EXPECTED_RESOURCES)),
+//        new BazelBspServerSingleTest("resolve project", client::testResolveProject),
+//        new BazelBspServerSingleTest(
+//            "compare workspace targets results",
+//            () ->
+//                client.testCompareWorkspaceTargetsResults(
+//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS)),
+//        new BazelBspServerSingleTest(
+//            "sources results",
+//            () ->
+//                client.testSourcesResults(
+//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
+//                    BazelBspServerTestData.EXPECTED_SOURCES)),
+//        new BazelBspServerSingleTest(
+//            "resources results",
+//            () ->
+//                client.testResourcesResults(
+//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
+//                    BazelBspServerTestData.EXPECTED_RESOURCES)),
         new BazelBspServerSingleTest(
             "inverse sources results",
             () ->
                 client.testInverseSourcesResults(
                     BazelBspServerTestData.INVERSE_SOURCES_DOCUMENT,
-                    BazelBspServerTestData.EXPECTED_INVERSE_SOURCES)),
-        new BazelBspServerSingleTest(
-            "dependency sources results",
-            () ->
-                client.testDependencySourcesResults(
-                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
-                    BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
-        new BazelBspServerSingleTest(
-            "Scala main classes",
-            () ->
-                client.testScalaMainClasses(
-                    BazelBspServerTestData.SCALA_MAIN_CLASSES_PARAMS,
-                    BazelBspServerTestData.EXPECTED_SCALA_MAIN_CLASSES)),
-        new BazelBspServerSingleTest(
-            "Scala test classes",
-            () ->
-                client.testScalaTestClasses(
-                    BazelBspServerTestData.SCALA_TEST_CLASSES_PARAMS,
-                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES))
+                    BazelBspServerTestData.EXPECTED_INVERSE_SOURCES))
+//        new BazelBspServerSingleTest(
+//            "dependency sources results",
+//            () ->
+//                client.testDependencySourcesResults(
+//                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS,
+//                    BazelBspServerTestData.EXPECTED_DEPENDENCIES)),
+//        new BazelBspServerSingleTest(
+//            "Scala main classes",
+//            () ->
+//                client.testScalaMainClasses(
+//                    BazelBspServerTestData.SCALA_MAIN_CLASSES_PARAMS,
+//                    BazelBspServerTestData.EXPECTED_SCALA_MAIN_CLASSES)),
+//        new BazelBspServerSingleTest(
+//            "Scala test classes",
+//            () ->
+//                client.testScalaTestClasses(
+//                    BazelBspServerTestData.SCALA_TEST_CLASSES_PARAMS,
+//                    BazelBspServerTestData.EXPECTED_SCALA_TEST_CLASSES))
         //         TODO one day we will uncomment them...
         //        new BazelBspServerSingleTest(
         //            "targets run unsuccessfully",

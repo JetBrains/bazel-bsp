@@ -45,11 +45,18 @@ test_bsp_server() {
     java -cp "$bsp_path" org.jetbrains.bsp.bazel.install.Install
     cd ..
   done
+
+  cd sample-repo
+  bazel query "kind(rule, rdeps(//..., dep/Dep.scala, 1))"
+  cd ..
   cd ..
 
   log_test_progress "Environment has been prepared!"
   log_test_progress "Running integration test..."
   bazel run //src/test/java/org/jetbrains/bsp/bazel:bsp-integration-test
+  exit_code=$?
+  cat test-resources/sample-repo/.bazelbsp/bazelbsp.log
+  return $exit_code
 }
 
 
