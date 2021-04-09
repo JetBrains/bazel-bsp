@@ -69,7 +69,7 @@ class BazelBspServerTestData {
   private static final BuildTargetIdentifier DEP_JAVA_DEP_TARGET =
       new BuildTargetIdentifier("//dep:java-dep");
 
-  static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(6);
+  static final Duration TEST_CLIENT_TIMEOUT_IN_MINUTES = Duration.ofMinutes(15);
   static final Integer TEST_EXECUTION_TIMEOUT_IN_MINUTES = 25;
 
   static final String SAMPLE_REPO_FULL_PATH = WORKSPACE_DIR_PATH + "/" + SAMPLE_REPO_PATH;
