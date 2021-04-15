@@ -5,20 +5,21 @@ import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 
-public class BazelBspJvmTargetManager {
+public class BazelBspJvmTargetManager extends Lazy<String> {
   public static final String FETCH_JAVA_VERSION_ASPECT =
       "@//.bazelbsp:aspects.bzl%fetch_java_target_version";
   public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
       "@bazel_tools//tools/jdk:current_java_toolchain";
   private final BazelRunner bazelRunner;
   private BazelBspAspectsManager bazelBspAspectsManager;
-  private String javaVersion;
 
   public BazelBspJvmTargetManager(
       BazelRunner bazelRunner, BazelBspAspectsManager bazelBspAspectsManager) {
@@ -79,20 +80,20 @@ public class BazelBspJvmTargetManager {
   }
 
   private Optional<String> getJavaVersion() {
-    if (javaVersion == null) {
-      bazelBspAspectsManager
-          .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN, FETCH_JAVA_VERSION_ASPECT)
-          .filter(
-              parts ->
-                  parts.size() == 3
-                      && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
-                      && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION)
-                      && parts.get(2).chars().allMatch(Character::isDigit))
-          .map(parts -> parts.get(2))
-          .findFirst()
-          .ifPresent(version -> this.javaVersion = version);
-    }
+    return bazelBspAspectsManager
+        .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN, FETCH_JAVA_VERSION_ASPECT)
+        .filter(
+            parts ->
+                parts.size() == 3
+                    && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
+                    && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION)
+                    && parts.get(2).chars().allMatch(Character::isDigit))
+        .map(parts -> parts.get(2))
+        .findFirst();
+  }
 
-    return Optional.ofNullable(javaVersion);
+  @Override
+  protected Supplier<Optional<String>> calculateValue() {
+    return this::getJavaVersion;
   }
 }

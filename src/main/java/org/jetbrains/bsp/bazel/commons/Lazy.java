@@ -1,0 +1,18 @@
+package org.jetbrains.bsp.bazel.commons;
+
+import java.util.Optional;
+import java.util.function.Supplier;
+
+public abstract class Lazy<T> {
+  private Optional<Optional<T>> value = Optional.empty();
+
+  protected abstract Supplier<Optional<T>> calculateValue();
+
+  public Optional<T> getValue() {
+    if (value.isEmpty()) {
+      value = Optional.of(calculateValue().get());
+    }
+
+    return value.get();
+  }
+}
