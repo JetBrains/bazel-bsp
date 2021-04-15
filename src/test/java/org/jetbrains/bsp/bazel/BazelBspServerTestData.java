@@ -78,6 +78,7 @@ class BazelBspServerTestData {
   static final String JAVA_11_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_11;
   static final String JAVA_DEFAULT_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_DEFAULT;
   static final String DEFAULT_JAVA_HOME = "external/local_jdk/";
+  static final String ENTIRE_REPO_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
 
   private static final JvmBuildTarget EXAMPLE_JVM_TARGET_JAVA_8 =
       new JvmBuildTarget(DEFAULT_JAVA_HOME, "8");

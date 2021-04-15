@@ -39,6 +39,9 @@ test_bsp_server() {
   cd test-resources
 
   log_test_progress "Installing BSP..."
+
+  java -cp "$bsp_path" org.jetbrains.bsp.bazel.install.Install
+
   for project in "${TEST_PROJECTS[@]}"
   do
     cd "$project"
