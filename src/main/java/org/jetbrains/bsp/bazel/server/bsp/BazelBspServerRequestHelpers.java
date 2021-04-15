@@ -45,7 +45,9 @@ public class BazelBspServerRequestHelpers {
         .exceptionally( // TODO remove eithers in next PR
             exception -> {
               LOGGER.error(
-                  "{} call finishing with exception: {}", methodName, exception.getStackTrace());
+                  "{} call finishing with exception: {}",
+                  methodName,
+                  exception.getCause().getStackTrace());
 
               return Either.forLeft(
                   new ResponseError(ResponseErrorCode.InternalError, exception.getMessage(), null));

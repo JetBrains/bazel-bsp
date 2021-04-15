@@ -4,7 +4,8 @@ public enum BazelRunnerFlag {
   OUTPUT_PROTO("--output=proto"),
   ASPECTS("--aspects"),
   NOHOST_DEPS("--nohost_deps"),
-  NOIMPLICIT_DEPS("--noimplicit_deps");
+  NOIMPLICIT_DEPS("--noimplicit_deps"),
+  NOBUILD("--nobuild");
 
   private final String name;
 

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp;
+package org.jetbrains.bsp.bazel.server.bsp.config;
 
 import java.util.Arrays;
 import java.util.Collections;

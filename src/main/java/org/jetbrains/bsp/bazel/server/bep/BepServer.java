@@ -24,10 +24,10 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -50,9 +50,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final BazelData bazelData;
   private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
-  private final Set<Uri> compilerClasspath = new TreeSet<>();
   private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
+  private final Map<String, Set<Uri>> outputGroupPaths = new HashMap<>();
   private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
       new HashMap<>();
 
@@ -161,6 +161,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) {
     List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
+    LOGGER.info("Consuming target completed event " + targetComplete);
     if (outputGroups.size() == 1) {
       OutputGroup outputGroup = outputGroups.get(0);
       if (outputGroup.getName().equals(Constants.SCALA_COMPILER_CLASSPATH_FILES)) {
@@ -174,10 +175,14 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
         .map(file -> URI.create(file.getUri()))
         .flatMap(pathProtoUri -> ClasspathParser.fromAspect(pathProtoUri).stream())
+        .peek(path -> LOGGER.info("Found path " + path))
         .forEach(
             path ->
-                compilerClasspath.add(
-                    Uri.fromExecPath(Constants.EXEC_ROOT_PREFIX + path, bazelData.getExecRoot())));
+                outputGroupPaths
+                    .computeIfAbsent(outputGroup.getName(), key -> new HashSet<>())
+                    .add(
+                        Uri.fromExecPath(
+                            Constants.EXEC_ROOT_PREFIX + path, bazelData.getExecRoot())));
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -267,8 +272,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         false);
   }
 
-  public Set<Uri> getCompilerClasspath() {
-    return compilerClasspath;
+  public Map<String, Set<Uri>> getOutputGroupPaths() {
+    return outputGroupPaths;
   }
 
   public Map<String, String> getDiagnosticsProtosLocations() {

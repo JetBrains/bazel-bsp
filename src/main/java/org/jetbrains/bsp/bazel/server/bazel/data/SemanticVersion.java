@@ -35,10 +35,6 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     this.patchVersion = Integer.parseInt(parts[PATCH_VERSION_LOCATION]);
   }
 
-  public static SemanticVersion fromReleaseData(String version) {
-    return new SemanticVersion(version.split(" ")[1]);
-  }
-
   public int getMajorVersion() {
     return majorVersion;
   }
@@ -49,6 +45,10 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
 
   public int getPatchVersion() {
     return patchVersion;
+  }
+
+  static SemanticVersion fromReleaseData(String version) {
+    return new SemanticVersion(version.split(" ")[1]);
   }
 
   @Override
