@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.CompileResult;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -102,5 +104,11 @@ public class BazelBspServerBuildManager {
       bazelBspQueryManager.getWorkspaceBuildTargets();
     }
     return bazelBspCompilationManager.buildTargetsWithBep(targets, extraFlags);
+  }
+
+  public List<Lazy<?>> getLazyVals() {
+    return ImmutableList.of(
+        bazelBspTargetManager.getBazelBspJvmTargetManager(),
+        bazelBspTargetManager.getBazelBspScalaTargetManager());
   }
 }

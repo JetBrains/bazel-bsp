@@ -48,4 +48,12 @@ public class BazelBspTargetManager {
       target.setData(bazelBspJvmTargetManager.getJVMBuildTarget(rule));
     }
   }
+
+  public BazelBspScalaTargetManager getBazelBspScalaTargetManager() {
+    return bazelBspScalaTargetManager;
+  }
+
+  public BazelBspJvmTargetManager getBazelBspJvmTargetManager() {
+    return bazelBspJvmTargetManager;
+  }
 }

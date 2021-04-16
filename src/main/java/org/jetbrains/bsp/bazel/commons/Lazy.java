@@ -15,4 +15,8 @@ public abstract class Lazy<T> {
 
     return value.get();
   }
+
+  public void recalculateValue() {
+    value = Optional.of(calculateValue().get());
+  }
 }
