@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO: these tests need some love again...
 public class BazelBspServerTest {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTest.class);
@@ -27,8 +28,8 @@ public class BazelBspServerTest {
   }
 
   public void run() {
-
     LOGGER.info("Creating TestClients...");
+
     List<BazelBspServerSingleTest> testsToRun =
         concat(
                 getSampleRepoTests().stream(),
