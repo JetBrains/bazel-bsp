@@ -6,11 +6,13 @@ import ch.epfl.scala.bsp4j.ScalaPlatform;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.commons.Lazy;
 
-public class BazelBspScalaTargetManager {
+public class BazelBspScalaTargetManager extends Lazy<ScalaBuildTarget> {
   private static final Logger LOGGER = LogManager.getLogger(BazelBspScalaTargetManager.class);
 
   public static final String SCALA_LIBRARY =
@@ -63,5 +65,10 @@ public class BazelBspScalaTargetManager {
             classpath);
 
     return Optional.of(scalaBuildTarget);
+  }
+
+  @Override
+  protected Supplier<Optional<ScalaBuildTarget>> calculateValue() {
+    return this::getScalaBuildTarget;
   }
 }

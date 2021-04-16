@@ -43,6 +43,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
@@ -383,6 +384,7 @@ public class BuildServerService {
     LOGGER.info("workspaceReload call");
 
     bazelRunner.commandBuilder().fetch().executeBazelBesCommand().waitAndGetResult();
+    serverBuildManager.getLazyVals().forEach(Lazy::recalculateValue);
 
     return Either.forRight(new Object());
   }
