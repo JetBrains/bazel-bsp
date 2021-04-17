@@ -4,13 +4,14 @@ import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 // TODO: these tests need some love again...
 public class BazelBspServerTest {
@@ -89,14 +90,13 @@ public class BazelBspServerTest {
 
   private List<BazelBspServerSingleTest> getEntireRepositoryImportTests() {
     TestClient client =
-            TestClient$.MODULE$.testInitialStructure(
-                    BazelBspServerTestData.ENTIRE_REPO_PATH,
-                    ImmutableMap.of(),
-                    BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.ENTIRE_REPO_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
     return ImmutableList.of(
-            new BazelBspServerSingleTest(
-                    "import entire repo",
-                    () -> client.testResolveProject(true, false)));
+        new BazelBspServerSingleTest(
+            "import entire repo", () -> client.testResolveProject(true, false)));
   }
 
   private List<BazelBspServerSingleTest> getActionGraphV1Tests() {
@@ -151,7 +151,8 @@ public class BazelBspServerTest {
             BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
 
     return ImmutableList.of(
-        new BazelBspServerSingleTest("resolve project", () -> client.testResolveProject(false, false)),
+        new BazelBspServerSingleTest(
+            "resolve project", () -> client.testResolveProject(false, false)),
         new BazelBspServerSingleTest(
             "compare workspace targets results",
             () ->

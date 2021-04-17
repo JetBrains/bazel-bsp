@@ -1,0 +1,17 @@
+{
+  "name": "bazelbsp",
+  "argv": [
+    "/Users/abrams/.sdkman/candidates/java/11.0.3.hs-adpt/bin/java",
+    "-classpath",
+    "/private/var/tmp/_bazel_abrams/d8f84e58fed668f0211f4a995af886e3/execroot/bazel_bsp/bazel-out/darwin-fastbuild/bin/bsp-project.jar",
+    "org.jetbrains.bsp.bazel.server.ServerInitializer",
+    "/usr/local/bin/bazel"
+  ],
+  "version": "0.0.0",
+  "bspVersion": "2.0.0",
+  "languages": [
+    "scala",
+    "java",
+    "kotlin"
+  ]
+}
