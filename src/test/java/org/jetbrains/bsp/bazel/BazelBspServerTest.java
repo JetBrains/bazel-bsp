@@ -4,14 +4,13 @@ import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 // TODO: these tests need some love again...
 public class BazelBspServerTest {
