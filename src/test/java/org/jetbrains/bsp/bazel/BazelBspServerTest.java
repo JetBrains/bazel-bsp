@@ -74,7 +74,6 @@ public class BazelBspServerTest {
   }
 
   private List<BazelBspServerSingleTest> getJavaDefaultProjectTests() {
-    System.out.println("JAVA11:" + BazelBspServerTestData.JAVA_11_FULL_PATH);
     TestClient client =
         TestClient$.MODULE$.testInitialStructure(
             BazelBspServerTestData.JAVA_11_FULL_PATH,
@@ -89,7 +88,6 @@ public class BazelBspServerTest {
   }
 
   private List<BazelBspServerSingleTest> getEntireRepositoryImportTests() {
-    System.out.println("REPO TEST:" + BazelBspServerTestData.ENTIRE_REPO_PATH);
     TestClient client =
         TestClient$.MODULE$.testInitialStructure(
             BazelBspServerTestData.ENTIRE_REPO_PATH,
