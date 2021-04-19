@@ -22,7 +22,7 @@ public class BazelRunnerCommandBuilder {
   }
 
   public BazelRunnerBuilder build() {
-    return new BazelRunnerBuilderWithoutMnemonics(bazelRunner, BAZEL_BUILD_COMMAND);
+    return new BazelRunnerBuilder(bazelRunner, BAZEL_BUILD_COMMAND);
   }
 
   public BazelRunnerBuilder clean() {

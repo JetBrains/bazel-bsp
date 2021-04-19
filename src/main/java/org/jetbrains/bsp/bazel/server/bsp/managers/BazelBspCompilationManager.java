@@ -65,7 +65,7 @@ public class BazelBspCompilationManager {
             .commandBuilder()
             .build()
             .withFlags(extraFlags)
-            .withTargets(bazelTargets)
+            .withArguments(bazelTargets) // TODO: Parameterize command builders for different cases
             .executeBazelBesCommand()
             .waitAndGetResult()
             .getStatusCode();
