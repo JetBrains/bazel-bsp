@@ -90,7 +90,7 @@ public class BazelBspServerTest {
   private List<BazelBspServerSingleTest> getEntireRepositoryImportTests() {
     TestClient client =
         TestClient$.MODULE$.testInitialStructure(
-            BazelBspServerTestData.ENTIRE_REPO_PATH,
+            BazelBspServerTestData.REPO_PATH,
             ImmutableMap.of(),
             BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
     return ImmutableList.of(

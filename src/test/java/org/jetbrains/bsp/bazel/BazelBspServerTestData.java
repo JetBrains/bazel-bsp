@@ -39,6 +39,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 
 class BazelBspServerTestData {
 
+  private static final String BUILD_WORKSPACE_DIRECTORY = "BUILD_WORKSPACE_DIRECTORY";
+  static final String REPO_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
+
   private static final String SAMPLE_REPO_PATH = "sample-repo";
   private static final String ACTION_GRAPH_V2 = "action-graph-v2";
   private static final String JAVA_8 = "java-8-project";
@@ -48,9 +51,7 @@ class BazelBspServerTestData {
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
   private static final String TEST_RESOURCES_PATH = "test-resources";
-  private static final String BUILD_WORKSPACE_DIRECTORY = "BUILD_WORKSPACE_DIRECTORY";
-  private static final String WORKSPACE_DIR_PATH =
-      System.getenv(BUILD_WORKSPACE_DIRECTORY) + "/" + TEST_RESOURCES_PATH;
+  private static final String WORKSPACE_DIR_PATH = REPO_PATH + "/" + TEST_RESOURCES_PATH;
 
   private static final BuildTargetIdentifier EXAMPLE_EXAMPLE_TARGET =
       new BuildTargetIdentifier("//example:example");
@@ -78,7 +79,6 @@ class BazelBspServerTestData {
   static final String JAVA_11_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_11;
   static final String JAVA_DEFAULT_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_DEFAULT;
   static final String DEFAULT_JAVA_HOME = "external/local_jdk/";
-  static final String ENTIRE_REPO_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
 
   private static final JvmBuildTarget EXAMPLE_JVM_TARGET_JAVA_8 =
       new JvmBuildTarget(DEFAULT_JAVA_HOME, "8");
