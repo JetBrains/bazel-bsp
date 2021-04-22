@@ -4,3 +4,5 @@
 /.ijwb/
 /bazel-*
 .DS_Store
+test-resources/.bazelbsp/
+test-resources/.bsp/

@@ -36,9 +36,13 @@ test_bsp_server() {
 
   bazel run --define "maven_repo=file://$HOME/.m2/repository" //:bsp.publish
   bsp_path="$(bazel info bazel-bin)/bsp-project.jar"
-  cd test-resources
 
   log_test_progress "Installing BSP..."
+
+  java -cp "$bsp_path" org.jetbrains.bsp.bazel.install.Install
+
+  cd test-resources
+
   for project in "${TEST_PROJECTS[@]}"
   do
     cd "$project"

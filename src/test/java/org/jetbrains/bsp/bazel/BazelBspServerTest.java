@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO: these tests need some love again...
 public class BazelBspServerTest {
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspServerTest.class);
@@ -27,8 +28,8 @@ public class BazelBspServerTest {
   }
 
   public void run() {
-
     LOGGER.info("Creating TestClients...");
+
     List<BazelBspServerSingleTest> testsToRun =
         concat(
                 getSampleRepoTests().stream(),
@@ -36,7 +37,8 @@ public class BazelBspServerTest {
                 getActionGraphV2Tests().stream(),
                 getJava8ProjectTests().stream(),
                 getJava11ProjectTests().stream(),
-                getJavaDefaultProjectTests().stream())
+                getJavaDefaultProjectTests().stream(),
+                getEntireRepositoryImportTests().stream())
             .collect(Collectors.toList());
 
     LOGGER.info("Created TestClients. Running BazelBspServerTest...");
@@ -83,6 +85,17 @@ public class BazelBspServerTest {
             () ->
                 client.testCompareWorkspaceTargetsResults(
                     BazelBspServerTestData.EXPECTED_BUILD_TARGETS_JAVA_11)));
+  }
+
+  private List<BazelBspServerSingleTest> getEntireRepositoryImportTests() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.REPO_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+    return ImmutableList.of(
+        new BazelBspServerSingleTest(
+            "import entire repo", () -> client.testResolveProject(true, false)));
   }
 
   private List<BazelBspServerSingleTest> getActionGraphV1Tests() {
@@ -137,7 +150,8 @@ public class BazelBspServerTest {
             BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
 
     return ImmutableList.of(
-        new BazelBspServerSingleTest("resolve project", client::testResolveProject),
+        new BazelBspServerSingleTest(
+            "resolve project", () -> client.testResolveProject(false, false)),
         new BazelBspServerSingleTest(
             "compare workspace targets results",
             () ->

@@ -39,6 +39,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 
 class BazelBspServerTestData {
 
+  private static final String BUILD_WORKSPACE_DIRECTORY = "BUILD_WORKSPACE_DIRECTORY";
+  static final String REPO_PATH = System.getenv(BUILD_WORKSPACE_DIRECTORY);
+
   private static final String SAMPLE_REPO_PATH = "sample-repo";
   private static final String ACTION_GRAPH_V2 = "action-graph-v2";
   private static final String JAVA_8 = "java-8-project";
@@ -48,9 +51,7 @@ class BazelBspServerTestData {
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
   private static final String TEST_RESOURCES_PATH = "test-resources";
-  private static final String BUILD_WORKSPACE_DIRECTORY = "BUILD_WORKSPACE_DIRECTORY";
-  private static final String WORKSPACE_DIR_PATH =
-      System.getenv(BUILD_WORKSPACE_DIRECTORY) + "/" + TEST_RESOURCES_PATH;
+  private static final String WORKSPACE_DIR_PATH = REPO_PATH + "/" + TEST_RESOURCES_PATH;
 
   private static final BuildTargetIdentifier EXAMPLE_EXAMPLE_TARGET =
       new BuildTargetIdentifier("//example:example");
