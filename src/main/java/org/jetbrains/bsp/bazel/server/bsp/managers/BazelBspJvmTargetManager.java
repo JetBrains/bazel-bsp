@@ -19,7 +19,7 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
   public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
       "@bazel_tools//tools/jdk:current_java_toolchain";
   private final BazelRunner bazelRunner;
-  private BazelBspAspectsManager bazelBspAspectsManager;
+  private final BazelBspAspectsManager bazelBspAspectsManager;
 
   public BazelBspJvmTargetManager(
       BazelRunner bazelRunner, BazelBspAspectsManager bazelBspAspectsManager) {

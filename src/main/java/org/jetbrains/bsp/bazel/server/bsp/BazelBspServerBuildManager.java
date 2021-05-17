@@ -22,10 +22,12 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspQueryManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspTargetManager;
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelCppTargetManager;
 
 public class BazelBspServerBuildManager {
 
   public static final String BAZEL_PRINT_ASPECT = "@//.bazelbsp:aspects.bzl%print_aspect";
+
   private final BazelBspServerConfig serverConfig;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelData bazelData;
@@ -34,6 +36,7 @@ public class BazelBspServerBuildManager {
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelBspTargetManager bazelBspTargetManager;
   private final BazelBspAspectsManager bazelBspAspectsManager;
+  private final BazelCppTargetManager bazelCppTargetManager;
 
   private BepServer bepServer;
 
@@ -49,7 +52,9 @@ public class BazelBspServerBuildManager {
     this.bazelBspCompilationManager = new BazelBspCompilationManager(bazelRunner, bazelData);
     this.bazelBspAspectsManager =
         new BazelBspAspectsManager(bazelBspCompilationManager, bazelRunner);
-    this.bazelBspTargetManager = new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager);
+    this.bazelCppTargetManager = new BazelCppTargetManager(bazelBspAspectsManager);
+    this.bazelBspTargetManager =
+        new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager, bazelCppTargetManager);
     this.bazelBspQueryManager =
         new BazelBspQueryManager(serverConfig, bazelData, bazelRunner, bazelBspTargetManager);
   }

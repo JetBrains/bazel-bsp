@@ -16,8 +16,8 @@ def _dependency(coordinates, exclusions = None):
 _deps = [
     _dependency("com.google.code.gson:gson:2.8.5"),
     _dependency("com.google.guava:guava:28.1-jre"),
-    _dependency("ch.epfl.scala:bsp4j:2.0.0-M13+37-43869cf9-SNAPSHOT"),
-    _dependency("ch.epfl.scala:bsp-testkit_2.13:2.0.0-M13+38-664bda5b-SNAPSHOT"),
+    _dependency("ch.epfl.scala:bsp4j:2.0.0-M13+46-d5591706-SNAPSHOT"),
+    _dependency("ch.epfl.scala:bsp-testkit_2.13:2.0.0-M13+46-d5591706-SNAPSHOT"),
     _dependency("org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.8.0"),
     _dependency("org.eclipse.xtext:org.eclipse.xtext.xbase.lib:2.19.0"),
     _dependency("commons-cli:commons-cli:jar:1.4"),

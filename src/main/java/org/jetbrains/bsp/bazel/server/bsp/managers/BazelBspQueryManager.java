@@ -75,7 +75,6 @@ public class BazelBspQueryManager {
     String name = rule.getName();
     LOGGER.info("Getting targets for rule: " + name);
 
-    LOGGER.info("Getting deps");
     List<BuildTargetIdentifier> deps =
         rule.getAttributeList().stream()
             .filter(attribute -> attribute.getName().equals("deps"))
@@ -83,19 +82,23 @@ public class BazelBspQueryManager {
             .map(BuildTargetIdentifier::new)
             .collect(Collectors.toList());
     BuildTargetIdentifier label = new BuildTargetIdentifier(name);
-    LOGGER.info("Getting source items");
+
     List<SourceItem> sources = getSourceItems(rule, label);
     Set<String> extensions = new TreeSet<>();
-    LOGGER.info("Got source items");
+
     for (SourceItem source : sources) {
-      if (source.getUri().endsWith(Constants.SCALA_EXTENSION)) {
+      if (Constants.SCALA_EXTENSIONS.stream().anyMatch(ext -> source.getUri().endsWith(ext))) {
         extensions.add(Constants.SCALA);
-      } else if (source.getUri().endsWith(Constants.JAVA_EXTENSION)) {
+      } else if (Constants.JAVA_EXTENSIONS.stream()
+          .anyMatch(ext -> source.getUri().endsWith(ext))) {
         extensions.add(Constants.JAVA);
-      } else if (source.getUri().endsWith(Constants.KOTLIN_EXTENSION)) {
+      } else if (Constants.KOTLIN_EXTENSIONS.stream()
+          .anyMatch(ext -> source.getUri().endsWith(ext))) {
         extensions.add(Constants.KOTLIN);
         extensions.add(
             Constants.JAVA); // TODO(andrefmrocha): Remove this when kotlin is natively supported
+      } else if (Constants.CPP_EXTENSIONS.stream().anyMatch(ext -> source.getUri().endsWith(ext))) {
+        extensions.add(Constants.CPP);
       }
     }
 
@@ -110,7 +113,6 @@ public class BazelBspQueryManager {
                 true,
                 ruleClass.endsWith("_" + Constants.TEST_RULE_TYPE),
                 ruleClass.endsWith("_" + Constants.BINARY_RULE_TYPE)));
-    LOGGER.info("Target: " + target);
     target.setBaseDirectory(
         Uri.packageDirFromLabel(label.getUri(), bazelData.getWorkspaceRoot()).toString());
     target.setDisplayName(label.getUri());

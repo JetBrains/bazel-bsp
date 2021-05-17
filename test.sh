@@ -3,7 +3,7 @@
 NC='\033[0m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-TEST_PROJECTS=("sample-repo" "action-graph-v2" "java-8-project" "java-11-project" "java-default-project")
+TEST_PROJECTS=("sample-repo" "action-graph-v2" "java-8-project" "java-11-project" "java-default-project" "cpp-project")
 
 log_test_progress() {
   echo -e "\n[TEST] $*"

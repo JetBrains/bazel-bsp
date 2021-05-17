@@ -5,6 +5,9 @@ import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
 import ch.epfl.scala.bsp4j.CompileParams;
 import ch.epfl.scala.bsp4j.CompileResult;
+import ch.epfl.scala.bsp4j.CppBuildServer;
+import ch.epfl.scala.bsp4j.CppOptionsParams;
+import ch.epfl.scala.bsp4j.CppOptionsResult;
 import ch.epfl.scala.bsp4j.DependencyModulesParams;
 import ch.epfl.scala.bsp4j.DependencyModulesResult;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
@@ -34,17 +37,23 @@ import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 
-public class BspImplementationHub implements BuildServer, ScalaBuildServer, JavaBuildServer {
+public class BspImplementationHub
+    implements BuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
 
   private final BuildServer buildServer;
   private final ScalaBuildServer scalaBuildServer;
   private final JavaBuildServer javaBuildServer;
+  private final CppBuildServer cppBuildServer;
 
   public BspImplementationHub(
-      BuildServer buildServer, ScalaBuildServer scalaBuildServer, JavaBuildServer javaBuildServer) {
+      BuildServer buildServer,
+      ScalaBuildServer scalaBuildServer,
+      JavaBuildServer javaBuildServer,
+      CppBuildServer cppBuildServer) {
     this.buildServer = buildServer;
     this.scalaBuildServer = scalaBuildServer;
     this.javaBuildServer = javaBuildServer;
+    this.cppBuildServer = cppBuildServer;
   }
 
   @Override
@@ -146,5 +155,11 @@ public class BspImplementationHub implements BuildServer, ScalaBuildServer, Java
   @Override
   public CompletableFuture<JavacOptionsResult> buildTargetJavacOptions(JavacOptionsParams params) {
     return javaBuildServer.buildTargetJavacOptions(params);
+  }
+
+  @Override
+  public CompletableFuture<CppOptionsResult> buildTargetCppOptions(
+      CppOptionsParams cppOptionsParams) {
+    return cppBuildServer.buildTargetCppOptions(cppOptionsParams);
   }
 }

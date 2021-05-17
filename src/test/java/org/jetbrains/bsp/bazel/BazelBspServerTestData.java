@@ -4,6 +4,10 @@ import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.CppBuildTarget;
+import ch.epfl.scala.bsp4j.CppOptionsItem;
+import ch.epfl.scala.bsp4j.CppOptionsParams;
+import ch.epfl.scala.bsp4j.CppOptionsResult;
 import ch.epfl.scala.bsp4j.DependencySourcesItem;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
@@ -47,6 +51,7 @@ class BazelBspServerTestData {
   private static final String JAVA_8 = "java-8-project";
   private static final String JAVA_11 = "java-11-project";
   private static final String JAVA_DEFAULT = "java-default-project";
+  private static final String CPP_PROJECT = "cpp-project";
   private static final String SAMPLE_REPO_EXAMPLE_PATH = SAMPLE_REPO_PATH + "/example";
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
@@ -77,6 +82,7 @@ class BazelBspServerTestData {
   static final String ACTION_GRAPH_V2_FULL_PATH = WORKSPACE_DIR_PATH + "/" + ACTION_GRAPH_V2;
   static final String JAVA_8_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_8;
   static final String JAVA_11_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_11;
+  static final String CPP_FULL_PATH = WORKSPACE_DIR_PATH + "/" + CPP_PROJECT;
   static final String JAVA_DEFAULT_FULL_PATH = WORKSPACE_DIR_PATH + "/" + JAVA_DEFAULT;
   static final String DEFAULT_JAVA_HOME = "external/local_jdk/";
 
@@ -86,6 +92,8 @@ class BazelBspServerTestData {
       new JvmBuildTarget(null, "8");
   private static final JvmBuildTarget EXAMPLE_JVM_TARGET_JAVA_11 =
       new JvmBuildTarget(DEFAULT_JAVA_HOME, "11");
+  private static final CppBuildTarget EXAMPLE_CPP_TARGET =
+      new CppBuildTarget(null, "compiler", "/bin/gcc", "/bin/gcc");
 
   private static final List<String> SCALA_TARGET_JARS =
       ImmutableList.of(
@@ -313,4 +321,36 @@ class BazelBspServerTestData {
       };
   static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS_JAVA_11 =
       new WorkspaceBuildTargetsResult(ImmutableList.of(EXAMPLE_JAVA_TARGET_JAVA_11));
+
+  static final BuildTargetIdentifier GOOGLE_TEST_IDENTIFIER =
+      new BuildTargetIdentifier("@com_google_googletest//:gtest_main");
+
+  static final BuildTarget EXAMPLE_CPP_BUILD_TARGET =
+      new BuildTarget(
+          EXAMPLE_EXAMPLE_TARGET,
+          ImmutableList.of(),
+          ImmutableList.of(Constants.CPP),
+          ImmutableList.of(GOOGLE_TEST_IDENTIFIER),
+          new BuildTargetCapabilities(true, false, true)) {
+        {
+          setData(EXAMPLE_CPP_TARGET);
+          setDataKind(BuildTargetDataKind.CPP);
+        }
+      };
+
+  static final WorkspaceBuildTargetsResult EXPECTED_BUILD_TARGETS_CPP =
+      new WorkspaceBuildTargetsResult(ImmutableList.of(EXAMPLE_CPP_BUILD_TARGET));
+
+  static final CppOptionsParams CPP_OPTIONS_PARAMS =
+      new CppOptionsParams(ImmutableList.of(EXAMPLE_EXAMPLE_TARGET));
+
+  static final CppOptionsItem CPP_OPTIONS_ITEM =
+      new CppOptionsItem(
+          EXAMPLE_EXAMPLE_TARGET,
+          ImmutableList.of("-Iexternal/gtest/include"),
+          ImmutableList.of("BOOST_FALLTHROUGH"),
+          ImmutableList.of("-pthread"));
+
+  static final CppOptionsResult CPP_OPTIONS_RESULT =
+      new CppOptionsResult(ImmutableList.of(CPP_OPTIONS_ITEM));
 }

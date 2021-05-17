@@ -38,11 +38,32 @@ public class BazelBspServerTest {
                 getJava8ProjectTests().stream(),
                 getJava11ProjectTests().stream(),
                 getJavaDefaultProjectTests().stream(),
-                getEntireRepositoryImportTests().stream())
+                getEntireRepositoryImportTests().stream(),
+                getCppProjects().stream())
             .collect(Collectors.toList());
 
     LOGGER.info("Created TestClients. Running BazelBspServerTest...");
     runTests(testsToRun);
+  }
+
+  private List<BazelBspServerSingleTest> getCppProjects() {
+    TestClient client =
+        TestClient$.MODULE$.testInitialStructure(
+            BazelBspServerTestData.CPP_FULL_PATH,
+            ImmutableMap.of(),
+            BazelBspServerTestData.TEST_CLIENT_TIMEOUT_IN_MINUTES);
+    return ImmutableList.of(
+        new BazelBspServerSingleTest(
+            "cpp project",
+            () ->
+                client.testCompareWorkspaceTargetsResults(
+                    BazelBspServerTestData.EXPECTED_BUILD_TARGETS_CPP)),
+        new BazelBspServerSingleTest(
+            "cpp options",
+            () ->
+                client.testCppOptions(
+                    BazelBspServerTestData.CPP_OPTIONS_PARAMS,
+                    BazelBspServerTestData.CPP_OPTIONS_RESULT)));
   }
 
   private List<BazelBspServerSingleTest> getJava8ProjectTests() {

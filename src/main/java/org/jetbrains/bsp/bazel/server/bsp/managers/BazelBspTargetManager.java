@@ -14,17 +14,21 @@ import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 public class BazelBspTargetManager {
   private final BazelBspScalaTargetManager bazelBspScalaTargetManager;
   private final BazelBspJvmTargetManager bazelBspJvmTargetManager;
+  private final BazelCppTargetManager bazelCppTargetManager;
 
   public BazelBspTargetManager(
-      BazelRunner bazelRunner, BazelBspAspectsManager bazelBspAspectsManager) {
+      BazelRunner bazelRunner,
+      BazelBspAspectsManager bazelBspAspectsManager,
+      BazelCppTargetManager bazelCppTargetManager) {
     this.bazelBspScalaTargetManager = new BazelBspScalaTargetManager(bazelBspAspectsManager);
+    this.bazelCppTargetManager = bazelCppTargetManager;
     this.bazelBspJvmTargetManager =
         new BazelBspJvmTargetManager(bazelRunner, bazelBspAspectsManager);
   }
 
   private Optional<ScalaBuildTarget> getScalaBuildTarget(Build.Rule rule) {
     return bazelBspScalaTargetManager
-        .getScalaBuildTarget()
+        .getValue()
         .map(
             target -> {
               target.setJvmBuildTarget(bazelBspJvmTargetManager.getJVMBuildTarget(rule));
@@ -46,6 +50,15 @@ public class BazelBspTargetManager {
       target.setDataKind(BuildTargetDataKind.JVM);
       target.setTags(Lists.newArrayList(BuildManagerParsingUtils.getRuleType(ruleClass)));
       target.setData(bazelBspJvmTargetManager.getJVMBuildTarget(rule));
+    } else if (extensions.contains(Constants.CPP)) {
+      bazelCppTargetManager
+          .getValue()
+          .ifPresent(
+              buildTarget -> {
+                target.setDataKind(BuildTargetDataKind.CPP);
+                target.setTags(Lists.newArrayList(BuildManagerParsingUtils.getRuleType(ruleClass)));
+                target.setData(buildTarget);
+              });
     }
   }
 

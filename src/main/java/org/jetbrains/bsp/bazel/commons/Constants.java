@@ -1,7 +1,9 @@
 package org.jetbrains.bsp.bazel.commons;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Constants {
 
@@ -12,6 +14,7 @@ public class Constants {
   public static final String SCALA = "scala";
   public static final String JAVA = "java";
   public static final String KOTLIN = "kotlin";
+  public static final String CPP = "cpp";
 
   public static final String SCALAC = "Scalac";
   public static final String JAVAC = "Javac";
@@ -20,28 +23,24 @@ public class Constants {
   public static final List<String> SUPPORTED_LANGUAGES = ImmutableList.of(SCALA, JAVA, KOTLIN);
   public static final List<String> SUPPORTED_COMPILERS = ImmutableList.of(SCALAC, JAVAC, KOTLINC);
 
-  public static final String SCALA_EXTENSION = ".scala";
-  public static final String JAVA_EXTENSION = ".java";
-  public static final String KOTLIN_EXTENSION = ".kt";
+  public static final List<String> SCALA_EXTENSIONS = ImmutableList.of(".scala");
+  public static final List<String> JAVA_EXTENSIONS = ImmutableList.of(".java");
+  public static final List<String> KOTLIN_EXTENSIONS = ImmutableList.of(".kt");
+  public static final List<String> CPP_EXTENSIONS =
+      ImmutableList.of(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp");
 
   public static final String MAIN_CLASS_ATTR_NAME = "main_class";
   public static final String ARGS_ATTR_NAME = "args";
   public static final String JVM_FLAGS_ATTR_NAME = "jvm_flags";
 
+  public static final List<String> OTHER_FILE_EXTENSIONS =
+      ImmutableList.of(".kts", ".sh", ".bzl", ".py", ".js", ".c", ".h", ".cpp", ".hpp");
+
   public static final List<String> FILE_EXTENSIONS =
-      ImmutableList.of(
-          SCALA_EXTENSION,
-          JAVA_EXTENSION,
-          KOTLIN_EXTENSION,
-          ".kts",
-          ".sh",
-          ".bzl",
-          ".py",
-          ".js",
-          ".c",
-          ".h",
-          ".cpp",
-          ".hpp");
+      ImmutableList.of(SCALA_EXTENSIONS, JAVA_EXTENSIONS, KOTLIN_EXTENSIONS, OTHER_FILE_EXTENSIONS)
+          .stream()
+          .flatMap(Collection::stream)
+          .collect(Collectors.toUnmodifiableList());
 
   public static final String BAZEL_BUILD_COMMAND = "build";
 
