@@ -62,14 +62,11 @@ public class CppBuildServerService {
           buildTargetIdentifier, ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
     } else {
       List<String> copts =
-          Arrays.stream(targetInfo.get(COPTS_LOCATION).split(","))
-              .collect(Collectors.toUnmodifiableList());
+          Arrays.stream(targetInfo.get(COPTS_LOCATION).split(",")).collect(Collectors.toList());
       List<String> defines =
-          Arrays.stream(targetInfo.get(DEFINES_LOCATION).split(","))
-              .collect(Collectors.toUnmodifiableList());
+          Arrays.stream(targetInfo.get(DEFINES_LOCATION).split(",")).collect(Collectors.toList());
       List<String> linkopts =
-          Arrays.stream(targetInfo.get(LINKOPTS_LOCATION).split(","))
-              .collect(Collectors.toUnmodifiableList());
+          Arrays.stream(targetInfo.get(LINKOPTS_LOCATION).split(",")).collect(Collectors.toList());
 
       boolean linkshared = false;
       if (targetInfo.get(LINKSHARED_LOCATION).equals("True")) {

@@ -27,7 +27,7 @@ public class BazelCppTargetManager extends Lazy<CppBuildTarget> {
                         && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION))
             .map(parts -> parts.get(2))
             .limit(2)
-            .collect(Collectors.toUnmodifiableList());
+            .collect(Collectors.toList());
 
     if (cppInfo.isEmpty()) return Optional.empty();
 

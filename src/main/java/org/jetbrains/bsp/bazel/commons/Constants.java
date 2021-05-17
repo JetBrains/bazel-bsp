@@ -40,7 +40,7 @@ public class Constants {
       ImmutableList.of(SCALA_EXTENSIONS, JAVA_EXTENSIONS, KOTLIN_EXTENSIONS, OTHER_FILE_EXTENSIONS)
           .stream()
           .flatMap(Collection::stream)
-          .collect(Collectors.toUnmodifiableList());
+          .collect(Collectors.toList());
 
   public static final String BAZEL_BUILD_COMMAND = "build";
 
