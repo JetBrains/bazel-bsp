@@ -4,14 +4,13 @@ import ch.epfl.scala.bsp.testkit.client.TestClient;
 import ch.epfl.scala.bsp.testkit.client.TestClient$;
 import ch.epfl.scala.bsp4j.*;
 import com.google.common.collect.Lists;
-import scala.concurrent.ExecutionContext;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import scala.concurrent.ExecutionContext;
 
 public class BazelBspServerTest {
   private final String outDirectory = "bazel-out";

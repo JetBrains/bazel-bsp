@@ -5,10 +5,10 @@ echo $dir
 . "${dir}"/test_runner.sh
 
 test_bsp_server() {
-  bazel run --define "maven_repo=file://$HOME/.m2/repository" //:bsp.publish
-  bsp_path="$(bazel info bazel-bin)/bsp-project.jar"
+  bazel build //main/src/org/jetbrains/bsp/bazel:bsp-install
+  bsp_path="$(bazel info bazel-bin)/main/src/org/jetbrains/bsp/bazel/bsp-install"
   cd sample-repo
-  java -cp $bsp_path org.jetbrains.bsp.bazel.Install
+  $bsp_path
   cd ..
   bazel run //main/test/org/jetbrains/bsp/bazel:bsp-test
 }

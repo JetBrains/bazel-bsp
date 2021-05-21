@@ -14,15 +14,18 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class Install {
   public static void main(String[] args) throws IOException {
     List<String> argv = new ArrayList<>();
     argv.add(Paths.get(System.getProperty("java.home")).resolve("bin").resolve("java").toString());
     argv.add("-classpath");
-    Splitter.on(":").splitToList(System.getProperty("java.class.path")).stream()
-        .map(elem -> Paths.get(elem).toAbsolutePath().toString())
-        .forEach(argv::add);
+    String classpath =
+        Splitter.on(":").splitToList(System.getProperty("java.class.path")).stream()
+            .map(elem -> Paths.get(elem).toAbsolutePath().toString())
+            .collect(Collectors.joining(":"));
+    argv.add(classpath);
     argv.add("org.jetbrains.bsp.bazel.Server");
     argv.add("bsp");
     argv.add(findOnPath("bazel"));

@@ -2,12 +2,13 @@ workspace(name = "bazel_bsp")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# For maven:
-RULES_JVM_EXTERNAL_TAG = "3bb065efc666579fc2eb4e154f9b7b6bf334af27"
+RULES_JVM_EXTERNAL_TAG = "4.0"
+RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
 
 http_archive(
     name = "rules_jvm_external",
     strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    sha256 = RULES_JVM_EXTERNAL_SHA,
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
@@ -118,9 +119,9 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 scala_repositories((
     "2.12.11",
     {
-        "scala_compiler": "3e892546b72ab547cb77de4d840bcfd05c853e73390fed7370a8f19acb0735a0",
-        "scala_library": "0b3d6fd42958ee98715ba2ec5fe221f4ca1e694d7c981b0ae0cd68e97baf6dce",
-        "scala_reflect": "6ba385b450a6311a15c918cf8688b9af9327c6104f0ecbd35933cfcd3095fe04",
+        "scala_compiler": "e901937dbeeae1715b231a7cfcd547a10d5bbf0dfb9d52d2886eae18b4d62ab6",
+        "scala_library": "dbfe77a3fc7a16c0c7cb6cb2b91fecec5438f2803112a744cb1b187926a138be",
+        "scala_reflect": "5f9e156aeba45ef2c4d24b303405db259082739015190b3b334811843bd90d6a",
     },
 ))
 
@@ -139,3 +140,14 @@ local_repository(
     name = "sample_repo",
     path = "sample-repo",
 )
+
+BAZEL_SONATYPE_TAG = "8c4bfd2a4c03c212446da134e0be3ab1ac605289"
+http_archive(
+    name = "bazel_sonatype",
+    strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
+)
+
+load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
+
+sonatype_dependencies()
