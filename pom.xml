@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>{groupId}</groupId>
+    <artifactId>{artifactId}</artifactId>
+    <version>{version}</version>
+
+    <name>Bazel BSP</name>
+    <description>
+        An implementation of the Build Server Protocol for Bazel. Allows clients such as IntelliJ to obtain build specific
+        information in order to improve the experience of users in the IDE.
+    </description>
+    <url>https://www.jetbrains.com/</url>
+
+    <dependencies>
+        {dependencies}
+    </dependencies>
+    <developers>
+        <developer>
+            <id>andrefmrocha</id>
+            <name>Andre Rocha</name>
+            <email>andrefmrocha@live.com.pt</email>
+            <url>https://github.com/andrefmrocha</url>
+        </developer>
+        <developer>
+            <id>jastice</id>
+            <name>Justin Kaeser</name>
+            <email>justin@justinkaeser.com</email>
+            <url>https://github.com/jastice</url>
+        </developer>
+        <developer>
+            <id>Abrams27</id>
+            <name>Marcin Abramowicz</name>
+            <email>abramowiczmarcin99@gmail.com</email>
+            <url>https://github.com/Abrams27</url>
+        </developer>
+        <developer>
+            <id>agluszak</id>
+            <name>Andrzej Głuszak</name>
+            <email>gluszak.andrzej@gmail.com</email>
+            <url>https://github.com/agluszak</url>
+        </developer>
+        <developer>
+            <id>gerardd33</id>
+            <name>Gerard Dróżdż</name>
+            <email>gerarddrozdz@gmail.com</email>
+            <url>https://github.com/gerardd33</url>
+        </developer>
+        <developer>
+            <id>magda-aug</id>
+            <name>Magdalena Augustyńska</name>
+            <email>augustynskamagda@gmail.com</email>
+            <url>https://github.com/magda-aug</url>
+        </developer>
+        <developer>
+            <id>illicitonion</id>
+            <name>Daniel Wagner-Hall</name>
+            <email>dawagner@gmail.com</email>
+            <url>https://github.com/illicitonion</url>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:github.com/JetBrains/bazel-bsp.git</connection>
+        <developerConnection>scm:git:git@github.com:JetBrains/bazel-bsp.git</developerConnection>
+        <url>https://github.com/JetBrains/bazel-bsp</url>
+    </scm>
+</project>

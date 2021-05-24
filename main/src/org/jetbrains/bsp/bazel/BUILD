@@ -8,6 +8,7 @@ sonatype_java_export(
     maven_coordinates = "org.jetbrains.bsp:bazel-bsp:0.1.0",
     maven_profile = "org.jetbrains",
     visibility = ["//visibility:public"],
+    pom_template = "//:pom.xml",
     deps = [
         "@com_google_protobuf//:protobuf_java",
         "@googleapis//:google_devtools_build_v1_build_events_java_proto",
