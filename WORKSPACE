@@ -3,10 +3,13 @@ workspace(name = "bazel_bsp")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # For maven:
-RULES_JVM_EXTERNAL_TAG = "3bb065efc666579fc2eb4e154f9b7b6bf334af27"
+RULES_JVM_EXTERNAL_TAG = "4.0"
+
+RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
 
 http_archive(
     name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
     strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
@@ -134,3 +137,15 @@ http_archive(
     strip_prefix = "protobuf-%s" % protobuf_version,
     url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % protobuf_version,
 )
+
+BAZEL_SONATYPE_TAG = "8c4bfd2a4c03c212446da134e0be3ab1ac605289"
+
+http_archive(
+    name = "bazel_sonatype",
+    strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
+)
+
+load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
+
+sonatype_dependencies()
