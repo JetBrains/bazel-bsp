@@ -15,6 +15,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -116,9 +117,12 @@ public class Install {
   private static void addJavaClasspath(List<String> argv) {
     argv.add("-classpath");
     String javaClassPath = readSystemProperty("java.class.path");
-    Splitter.on(":").splitToList(javaClassPath).stream()
-        .map(elem -> Paths.get(elem).toAbsolutePath().toString())
-        .forEach(argv::add);
+    String classpath =
+        Splitter.on(":").splitToList(javaClassPath).stream()
+            .map(elem -> Paths.get(elem).toAbsolutePath().toString())
+            .collect(Collectors.joining(":"));
+
+    argv.add(classpath);
   }
 
   private static void addDebuggerConnection(CommandLine cmd, List<String> argv) {

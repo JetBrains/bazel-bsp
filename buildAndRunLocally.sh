@@ -7,12 +7,12 @@ project_path=${1:-$PWD}
 
 echo -e "Building server..."
 echo -e "============================"
-bazel run --define "maven_repo=file://$HOME/.m2/repository" //:bsp.publish
-bsp_path="$(bazel info bazel-bin)/bsp-project.jar"
+bazel build //src/main/java/org/jetbrains/bsp/bazel:bsp-install
+bsp_path="$(bazel info bazel-bin)/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
 
 echo -e "\n\nRunning server at $project_path"
 echo -e "============================"
 cd $project_path || { echo "cd $project_path failed! EXITING"; exit 155; }
-java -cp "$bsp_path" org.jetbrains.bsp.bazel.install.Install
+$bsp_path
 
 echo -e "\n\nDone!"
