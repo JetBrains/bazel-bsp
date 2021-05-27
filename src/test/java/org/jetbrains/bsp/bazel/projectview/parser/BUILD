@@ -4,7 +4,7 @@ java_test(
     name = "ProjectViewParserImplTest",
     size = "small",
     srcs = ["ProjectViewParserImplTest.java"],
-    resources = ["//src/test/resources:bsp-test-resources"],
+    resources = ["//src/test/resources/projectview:projectview-resources"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],

@@ -1,0 +1,17 @@
+workspace_type: intellij_plugin
+
+build_flags:
+    --define=ij_product=android-studio-latest
+
+targets:
+    //aswb:aswb_bazel_dev
+    -//:aswb_tests
+    //:aswb_python_tests
+
+test_sources:
+    */tests/unittests*
+    */tests/integrationtests*
+    */tests/utils/integration*
+    */testcompat/unittests*
+    */testcompat/integrationtests*
+    */testcompat/utils/integration*

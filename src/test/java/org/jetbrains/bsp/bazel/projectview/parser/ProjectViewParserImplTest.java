@@ -1,12 +1,17 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -22,29 +27,9 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
-  public void shouldParseDirectoriesSection() {
-    String fileContentWithDirectories =
-        "directories: "
-            + ". "
-            + "-ijwb "
-            + "-plugin_dev "
-            + "-clwb "
-            + "\n"
-            + "workspace_type: intellij_plugin\n"
-            + "\n"
-            + "build_flags:\n"
-            + "  --define=ij_product=android-studio-latest\n"
-            + "\n"
-            + "test_sources:\n"
-            + "  */tests/unittests*\n"
-            + "  */tests/integrationtests*\n"
-            + "  */tests/utils/integration*\n"
-            + "  */testcompat/unittests*\n"
-            + "  */testcompat/integrationtests*\n"
-            + "  */testcompat/utils/integration*\n"
-            + "\n";
-
-    ProjectView projectView = parser.parse(fileContentWithDirectories);
+  public void shouldParseDirectoriesSection() throws IOException {
+    String projectViewFileContent = loadFileFromResources("projectViewWithDirectories.bazelproject");
+    ProjectView projectView = parser.parse(projectViewFileContent);
 
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
@@ -56,28 +41,10 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
-  public void shouldParseTargetsSection() {
-    String fileContentWithTargets =
-        "workspace_type: intellij_plugin\n"
-            + "\n"
-            + "build_flags:\n"
-            + "  --define=ij_product=android-studio-latest\n"
-            + "\n"
-            + "targets:\n"
-            + "  //aswb:aswb_bazel_dev\n"
-            + "  -//:aswb_tests\n"
-            + "  //:aswb_python_tests\n"
-            + "\n"
-            + "test_sources:\n"
-            + "  */tests/unittests*\n"
-            + "  */tests/integrationtests*\n"
-            + "  */tests/utils/integration*\n"
-            + "  */testcompat/unittests*\n"
-            + "  */testcompat/integrationtests*\n"
-            + "  */testcompat/utils/integration*\n"
-            + "\n";
+  public void shouldParseTargetsSection() throws IOException {
+    String projectViewFileContent = loadFileFromResources("projectViewWithTargets.bazelproject");
 
-    ProjectView projectView = parser.parse(fileContentWithTargets);
+    ProjectView projectView = parser.parse(projectViewFileContent);
 
     TargetsSection expectedTargetsSection =
         new TargetsSection(
@@ -89,34 +56,10 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
-  public void shouldParseSections() {
-    String fileContent =
-        "directories: "
-            + ". "
-            + "-ijwb "
-            + "-plugin_dev "
-            + "-clwb "
-            + "\n"
-            + "workspace_type: intellij_plugin\n"
-            + "\n"
-            + "targets:\n"
-            + "  //aswb:aswb_bazel_dev\n"
-            + "  -//:aswb_tests\n"
-            + "  //:aswb_python_tests\n"
-            + "\n"
-            + "build_flags:\n"
-            + "  --define=ij_product=android-studio-latest\n"
-            + "\n"
-            + "test_sources:\n"
-            + "  */tests/unittests*\n"
-            + "  */tests/integrationtests*\n"
-            + "  */tests/utils/integration*\n"
-            + "  */testcompat/unittests*\n"
-            + "  */testcompat/integrationtests*\n"
-            + "  */testcompat/utils/integration*\n"
-            + "\n";
+  public void shouldParseSections() throws IOException {
+    String projectViewFileContent = loadFileFromResources("projectView.bazelproject");
 
-    ProjectView projectView = parser.parse(fileContent);
+    ProjectView projectView = parser.parse(projectViewFileContent);
 
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
@@ -129,5 +72,13 @@ public class ProjectViewParserImplTest {
 
     assertEquals(Optional.of(expectedDirectoriesSection), projectView.getDirectories());
     assertEquals(Optional.of(expectedTargetsSection), projectView.getTargets());
+  }
+
+  private String loadFileFromResources(String fileName) throws IOException {
+    String filePath = String.format("/projectview/%s", fileName);
+    InputStream inputStream = ProjectViewParserImplTest.class.getResourceAsStream(filePath);
+
+    // we read file content instead of passing plain file due to bazel resources packaging
+    return CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
   }
 }
