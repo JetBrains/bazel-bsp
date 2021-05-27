@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public final class ProjectViewSectionSplitter {
 
   private static final String SECTION_HEADER_REGEX = "(^[a-z_]+[:]?)";
+  private static final String POSSIBLE_HEADER_ENDING_CHARACTER = ":";
 
   public static List<ProjectViewRawSection> split(String fileContent) {
     List<ProjectViewSectionHeaderPosition> sectionsHeadersPositions =
@@ -85,6 +86,6 @@ public final class ProjectViewSectionSplitter {
   }
 
   private static String removeEndingHeaderColonAndSpaces(String header) {
-    return header.replace(":", "").trim();
+    return header.replace(POSSIBLE_HEADER_ENDING_CHARACTER, "").trim();
   }
 }
