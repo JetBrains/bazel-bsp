@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections.specific;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.DirectoriesSectionParser;
 import org.junit.Before;
 import org.junit.Test;
 
