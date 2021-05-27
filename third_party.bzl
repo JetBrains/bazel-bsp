@@ -25,6 +25,7 @@ _deps = [
     _dependency("io.vavr:vavr:0.9.0"),
     _dependency("org.apache.logging.log4j:log4j-api:2.6.1"),
     _dependency("org.apache.logging.log4j:log4j-core:2.6.1"),
+    _dependency("junit:junit:4.12"),
 ]
 
 def dependencies():

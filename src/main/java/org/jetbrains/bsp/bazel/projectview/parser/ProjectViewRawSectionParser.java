@@ -1,0 +1,29 @@
+package org.jetbrains.bsp.bazel.projectview.parser;
+
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
+
+import java.util.List;
+import java.util.Optional;
+
+public class ProjectViewRawSectionParser<T extends ProjectViewSection> {
+
+  private final ProjectViewSectionParser<T> parser;
+
+  private ProjectViewRawSectionParser(ProjectViewSectionParser<T> parser) {
+    this.parser = parser;
+  }
+
+  public static <T extends ProjectViewSection> ProjectViewRawSectionParser<T> forParser(
+      ProjectViewSectionParser<T> parser) {
+    return new ProjectViewRawSectionParser<>(parser);
+  }
+
+  public Optional<T> parseRawSections(List<ProjectViewRawSection> rawSections) {
+    return rawSections.stream()
+        .filter(section -> parser.isSectionParsable(section.getSectionHeader()))
+        .findFirst()
+        .map(section -> parser.parse(section.getSectionBody()));
+  }
+}
