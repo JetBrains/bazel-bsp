@@ -5,15 +5,15 @@ java_test(
     size = "small",
     srcs = ["DirectoriesSectionParserTest.java"],
     resources = ["//src/test/resources:bsp-test-resources"],
-    deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
-    ],
     runtime_deps = [
         "@maven//:junit_junit",
-    ]
+    ],
+    deps = [
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
+    ],
 )
 
 java_test(
@@ -21,13 +21,13 @@ java_test(
     size = "small",
     srcs = ["TargetsSectionParserTest.java"],
     resources = ["//src/test/resources:bsp-test-resources"],
-    deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
-    ],
     runtime_deps = [
         "@maven//:junit_junit",
-    ]
+    ],
+    deps = [
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
+    ],
 )

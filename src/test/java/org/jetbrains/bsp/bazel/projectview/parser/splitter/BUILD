@@ -5,10 +5,10 @@ java_test(
     size = "small",
     srcs = ["ProjectViewSectionSplitterTest.java"],
     resources = ["//src/test/resources:bsp-test-resources"],
+    runtime_deps = [
+        "@maven//:junit_junit",
+    ],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ]
 )

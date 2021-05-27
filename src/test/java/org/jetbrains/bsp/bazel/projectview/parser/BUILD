@@ -5,13 +5,13 @@ java_test(
     size = "small",
     srcs = ["ProjectViewParserImplTest.java"],
     resources = ["//src/test/resources:bsp-test-resources"],
+    runtime_deps = [
+        "@maven//:junit_junit",
+    ],
     deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
     ],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ]
 )

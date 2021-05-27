@@ -5,12 +5,12 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
-        "@maven//:com_google_guava_guava",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
+        "@maven//:com_google_guava_guava",
     ],
 )

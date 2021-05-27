@@ -25,7 +25,7 @@ java_binary(
     runtime_deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/commons",
         "//src/main/java/org/jetbrains/bsp/bazel/install",
-        "//src/main/java/org/jetbrains/bsp/bazel/server",
         "//src/main/java/org/jetbrains/bsp/bazel/projectview",
+        "//src/main/java/org/jetbrains/bsp/bazel/server",
     ],
 )
