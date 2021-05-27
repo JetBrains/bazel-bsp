@@ -49,16 +49,19 @@ public class BazelBspCompilationManager {
 
     Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcess);
 
-    for (Build.Target target : queryResult.getTargetList()) {
-      target.getRule().getRuleOutputList().stream()
-          .filter(output -> output.contains(Constants.DIAGNOSTICS))
-          .forEach(
-              output ->
-                  diagnosticsProtosLocations.put(
-                      target.getRule().getName(),
-                      BuildManagerParsingUtils.convertOutputToPath(
-                          output, bazelData.getBinRoot())));
-    }
+    queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .filter(rule -> !rule.getName().startsWith("@"))
+        .forEach(
+            rule ->
+                rule.getRuleOutputList().stream()
+                    .filter(output -> output.contains(Constants.DIAGNOSTICS))
+                    .forEach(
+                        output ->
+                            diagnosticsProtosLocations.put(
+                                rule.getName(),
+                                BuildManagerParsingUtils.convertOutputToPath(
+                                    output, bazelData.getBinRoot()))));
 
     StatusCode exitCode =
         bazelRunner

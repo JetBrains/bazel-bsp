@@ -150,6 +150,33 @@ public class BazelBspQueryManager {
         .collect(Collectors.toList());
   }
 
+  public List<BuildTargetIdentifier> getTargetIdentifiersForDependencies(
+      List<BuildTargetIdentifier> targets) {
+    String targetsUnion =
+        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+"));
+    BazelQueryKindParameters kindParameters =
+        BazelQueryKindParameters.fromPatternAndInput(
+            "rule", String.format("deps(%s)", targetsUnion));
+
+    BazelProcess bazelProcess =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withFlag(BazelRunnerFlag.NOHOST_DEPS)
+            .withFlag(BazelRunnerFlag.KEEP_GOING)
+            .withKindsAndExcept(kindParameters, "//...")
+            .executeBazelBesCommand();
+
+    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcess);
+
+    return queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .map(Build.Rule::getName)
+        .map(BuildTargetIdentifier::new)
+        .collect(Collectors.toList());
+  }
+
   public List<String> getResources(Build.Rule rule, Build.QueryResult queryResult) {
     return rule.getAttributeList().stream()
         .filter(

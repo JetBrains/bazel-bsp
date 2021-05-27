@@ -24,6 +24,8 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspQueryManager;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
@@ -41,8 +43,16 @@ public class ScalaBuildServerService {
   private final TargetsLanguageOptionsResolver<ScalacOptionsItem> targetsLanguageOptionsResolver;
   private final TargetRulesResolver<ScalaMainClassesItem> targetsScalaMainClassesRulesResolver;
   private final TargetRulesResolver<ScalaTestClassesItem> targetsScalaTestClassesRulesResolver;
+  private final BazelBspCompilationManager bazelBspCompilationManager;
+  private final BazelBspQueryManager bazelBspQueryManager;
 
-  public ScalaBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
+  public ScalaBuildServerService(
+      BazelData bazelData,
+      BazelRunner bazelRunner,
+      BazelBspCompilationManager bazelBspCompilationManager,
+      BazelBspQueryManager bazelBspQueryManager) {
+    this.bazelBspCompilationManager = bazelBspCompilationManager;
+    this.bazelBspQueryManager = bazelBspQueryManager;
     this.targetsLanguageOptionsResolver =
         TargetsLanguageOptionsResolver.<ScalacOptionsItem>builder()
             .bazelData(bazelData)
@@ -80,6 +90,11 @@ public class ScalaBuildServerService {
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams scalacOptionsParams) {
     LOGGER.info("buildTargetScalacOptions call with param: {}", scalacOptionsParams);
+
+    // Make sure dependencies are cached
+    List<BuildTargetIdentifier> dependenciesTargets =
+        bazelBspQueryManager.getTargetIdentifiersForDependencies(scalacOptionsParams.getTargets());
+    bazelBspCompilationManager.buildTargetsWithBep(dependenciesTargets, ImmutableList.of());
 
     List<ScalacOptionsItem> resultItems =
         targetsLanguageOptionsResolver.getResultItemsForTargets(scalacOptionsParams.getTargets());
