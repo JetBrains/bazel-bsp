@@ -55,8 +55,7 @@ public class TargetsSectionParserTest {
 
     TargetsSection section = parser.parse(entryBody);
 
-    List<String> expectedIncludedTargets =
-        ImmutableList.of();
+    List<String> expectedIncludedTargets = ImmutableList.of();
     List<String> expectedExcludedTargets =
         ImmutableList.of("//aswb:aswb_bazel_dev", "//:aswb_tests", "//:aswb_python_tests");
 
@@ -70,8 +69,7 @@ public class TargetsSectionParserTest {
 
     TargetsSection section = parser.parse(entryBody);
 
-    List<String> expectedIncludedTargets =
-        ImmutableList.of("//:aswb_tests");
+    List<String> expectedIncludedTargets = ImmutableList.of("//:aswb_tests");
     List<String> expectedExcludedTargets =
         ImmutableList.of("//aswb:aswb_bazel_dev", "//:aswb_python_tests");
 

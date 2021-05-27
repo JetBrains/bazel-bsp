@@ -31,7 +31,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
   @Override
   public ProjectView parse(String projectViewFileContent) {
-    List<ProjectViewRawSection> rawSections = ProjectViewSectionSplitter.split(projectViewFileContent);
+    List<ProjectViewRawSection> rawSections =
+        ProjectViewSectionSplitter.split(projectViewFileContent);
 
     return buildFile(rawSections);
   }

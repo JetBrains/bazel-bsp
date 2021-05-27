@@ -26,7 +26,8 @@ public final class ProjectViewSectionSplitter {
     return getStartingAndEndingIndexes(matcher);
   }
 
-  private static List<ProjectViewSectionHeaderPosition> getStartingAndEndingIndexes(Matcher matcher) {
+  private static List<ProjectViewSectionHeaderPosition> getStartingAndEndingIndexes(
+      Matcher matcher) {
     ArrayList<ProjectViewSectionHeaderPosition> result = new ArrayList<>();
 
     while (matcher.find()) {
@@ -41,7 +42,8 @@ public final class ProjectViewSectionSplitter {
 
   private static List<ProjectViewRawSection> parseRawSections(
       String fileContent, List<ProjectViewSectionHeaderPosition> sectionsHeadersPositions) {
-    ListIterator<ProjectViewSectionHeaderPosition> iterator = sectionsHeadersPositions.listIterator();
+    ListIterator<ProjectViewSectionHeaderPosition> iterator =
+        sectionsHeadersPositions.listIterator();
     List<ProjectViewRawSection> result = new ArrayList<>();
 
     while (iterator.hasNext()) {

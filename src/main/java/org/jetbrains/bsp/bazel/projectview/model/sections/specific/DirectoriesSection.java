@@ -35,7 +35,8 @@ public class DirectoriesSection extends ProjectViewSection {
       return false;
     }
     DirectoriesSection that = (DirectoriesSection) o;
-    return Objects.equals(includedDirectories, that.includedDirectories) && Objects.equals(excludedDirectories, that.excludedDirectories);
+    return Objects.equals(includedDirectories, that.includedDirectories)
+        && Objects.equals(excludedDirectories, that.excludedDirectories);
   }
 
   @Override

@@ -6,13 +6,15 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHead
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ProjectViewListSectionParser<T extends ProjectViewSection> extends ProjectViewSectionParser<T> {
+public abstract class ProjectViewListSectionParser<T extends ProjectViewSection>
+    extends ProjectViewSectionParser<T> {
 
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
 
   private final boolean exclusionary;
 
-  protected ProjectViewListSectionParser(ProjectViewSectionHeader sectionHeader, boolean exclusionary) {
+  protected ProjectViewListSectionParser(
+      ProjectViewSectionHeader sectionHeader, boolean exclusionary) {
     super(sectionHeader);
     this.exclusionary = exclusionary;
   }
@@ -25,9 +27,7 @@ public abstract class ProjectViewListSectionParser<T extends ProjectViewSection>
   }
 
   private List<String> getIncludedEntries(List<String> entries) {
-    return entries.stream()
-        .filter(entry -> !isExcluded(entry))
-        .collect(Collectors.toList());
+    return entries.stream().filter(entry -> !isExcluded(entry)).collect(Collectors.toList());
   }
 
   protected List<String> parseExcludedEntries(String sectionBody) {

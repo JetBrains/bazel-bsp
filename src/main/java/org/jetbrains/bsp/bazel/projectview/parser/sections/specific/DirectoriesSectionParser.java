@@ -27,8 +27,6 @@ public class DirectoriesSectionParser extends ProjectViewListSectionParser<Direc
   }
 
   private List<Path> mapEntriesToPaths(List<String> entries) {
-    return entries.stream()
-        .map(Paths::get)
-        .collect(Collectors.toList());
+    return entries.stream().map(Paths::get).collect(Collectors.toList());
   }
 }

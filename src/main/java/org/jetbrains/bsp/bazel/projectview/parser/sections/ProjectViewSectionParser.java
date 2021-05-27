@@ -22,8 +22,6 @@ public abstract class ProjectViewSectionParser<T extends ProjectViewSection> {
   }
 
   protected List<String> splitSectionEntries(String sectionBody) {
-    return Splitter.on(Pattern.compile("[ \n]+"))
-        .omitEmptyStrings()
-        .splitToList(sectionBody);
+    return Splitter.on(Pattern.compile("[ \n]+")).omitEmptyStrings().splitToList(sectionBody);
   }
 }
