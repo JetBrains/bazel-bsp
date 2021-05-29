@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections.specific;
 
+import java.util.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewListSectionParser;
-
-import java.util.List;
 
 public class TargetsSectionParser extends ProjectViewListSectionParser<TargetsSection> {
 

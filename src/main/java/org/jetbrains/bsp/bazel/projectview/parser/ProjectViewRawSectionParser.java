@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import java.util.List;
+import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
-
-import java.util.List;
-import java.util.Optional;
 
 public class ProjectViewRawSectionParser<T extends ProjectViewSection> {
 

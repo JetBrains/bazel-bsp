@@ -1,16 +1,15 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections.specific;
 
-import com.google.common.collect.ImmutableList;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+
+import com.google.common.collect.ImmutableList;
+import org.junit.Before;
+import org.junit.Test;
+import java.util.List;
+import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser;
 
 public class TargetsSectionParserTest {
 

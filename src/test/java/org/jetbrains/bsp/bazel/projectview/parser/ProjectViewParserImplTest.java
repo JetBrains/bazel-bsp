@@ -1,21 +1,20 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 
 public class ProjectViewParserImplTest {
 
@@ -28,7 +27,8 @@ public class ProjectViewParserImplTest {
 
   @Test
   public void shouldParseDirectoriesSection() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectViewWithDirectories.bazelproject");
+    String projectViewFileContent =
+        loadFileFromResources("projectViewWithDirectories.bazelproject");
     ProjectView projectView = parser.parse(projectViewFileContent);
 
     DirectoriesSection expectedDirectoriesSection =

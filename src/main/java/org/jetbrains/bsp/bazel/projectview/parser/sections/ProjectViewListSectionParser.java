@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
 
 public abstract class ProjectViewListSectionParser<T extends ProjectViewSection>
     extends ProjectViewSectionParser<T> {

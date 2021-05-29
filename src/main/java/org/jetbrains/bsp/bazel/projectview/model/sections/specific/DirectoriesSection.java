@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections.specific;
 
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
 
 public class DirectoriesSection extends ProjectViewSection {
 

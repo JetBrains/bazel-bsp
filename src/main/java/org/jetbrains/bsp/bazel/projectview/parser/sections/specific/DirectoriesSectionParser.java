@@ -1,13 +1,12 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections.specific;
 
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewListSectionParser;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
+import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewListSectionParser;
 
 public class DirectoriesSectionParser extends ProjectViewListSectionParser<DirectoriesSection> {
 

@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import com.google.common.io.Files;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 /**
  * Project view file parser.
