@@ -4,4 +4,7 @@ java_library(
     name = "config",
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
+    deps = [
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model",
+    ]
 )
