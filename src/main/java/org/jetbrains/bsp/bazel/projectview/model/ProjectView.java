@@ -5,6 +5,10 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSectio
 
 import java.util.Optional;
 
+/**
+ * Representation of the project view file
+ * @link https://ij.bazel.build/docs/project-views.html
+ */
 public class ProjectView {
 
   private final Optional<DirectoriesSection> directories;

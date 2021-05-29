@@ -14,6 +14,27 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+/**
+ * Our default implementation of ProjectViewParser
+ *
+ * Logic schema:
+ * 1. extracting blocks:
+ *    <section header>:
+ *      <included section value 1>
+ *      <included section value 2>
+ *      - <excluded section value 1>
+ *      - <excluded section value 2>
+ * or:
+ *    <section header>: <section value>
+ *
+ * 2. looping through extracted and checking which block could be parsed by the given section parser
+ *
+ * 3. applying section specific parser to the chosen section
+ *
+ * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
+ * @see org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
+ * @see org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser
+ */
 class ProjectViewParserImpl implements ProjectViewParser {
 
   private static final ProjectViewRawSectionParser<DirectoriesSection> DIRECTORY_PARSER =
