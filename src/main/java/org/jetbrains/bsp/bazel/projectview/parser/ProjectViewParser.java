@@ -7,8 +7,7 @@ import java.nio.charset.Charset;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 /**
- * Project view file parser.
- * Its purpose is to parse *.bazelproject file and create ProjectView
+ * Project view file parser. Its purpose is to parse *.bazelproject file and create ProjectView
  *
  * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
  */

@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
 import java.util.Optional;
-
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 

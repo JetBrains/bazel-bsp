@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
-import org.junit.Before;
-import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +13,8 @@ import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ProjectViewParserImplTest {
 

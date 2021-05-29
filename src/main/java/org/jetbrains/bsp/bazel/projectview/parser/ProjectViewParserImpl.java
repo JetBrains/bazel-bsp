@@ -9,7 +9,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.TargetsSecti
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
 
-//@formatter:off
+// @formatter:off
 /**
  * Our default implementation of ProjectViewParser
  *

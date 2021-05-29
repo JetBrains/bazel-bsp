@@ -1,17 +1,17 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections.specific;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DirectoriesSectionParserTest {
 
