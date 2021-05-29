@@ -44,13 +44,6 @@ class ProjectViewParserImpl implements ProjectViewParser {
       ProjectViewRawSectionParser.forParser(new TargetsSectionParser());
 
   @Override
-  public ProjectView parse(File projectViewFile) throws IOException {
-    String fileContent = Files.asCharSource(projectViewFile, Charset.defaultCharset()).read();
-
-    return parse(fileContent);
-  }
-
-  @Override
   public ProjectView parse(String projectViewFileContent) {
     List<ProjectViewRawSection> rawSections =
         ProjectViewSectionSplitter.split(projectViewFileContent);
