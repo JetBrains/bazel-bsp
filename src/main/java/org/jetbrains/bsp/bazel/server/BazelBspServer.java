@@ -7,6 +7,7 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bazel.BazelDataResolver;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
@@ -29,16 +30,16 @@ import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelBspServer {
 
-  private final BazelBspServerConfig serverConfig;
+  private final ProjectView projectView;
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
 
   private BspImplementationHub bspImplementationHub;
   private BazelBspServerBuildManager serverBuildManager;
 
-  public BazelBspServer(BazelBspServerConfig serverConfig) {
-    this.serverConfig = serverConfig;
-    this.bazelRunner = new BazelRunner(serverConfig.getBazelPath());
+  public BazelBspServer(String pathToBazel, ProjectView projectView) {
+    this.projectView = projectView;
+    this.bazelRunner = new BazelRunner(pathToBazel);
     BazelDataResolver bazelDataResolver = new BazelDataResolver(bazelRunner);
     this.bazelData = bazelDataResolver.resolveBazelData();
   }
@@ -49,11 +50,11 @@ public class BazelBspServer {
         new BazelBspServerRequestHelpers(serverLifetime);
 
     this.serverBuildManager =
-        new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner);
+        new BazelBspServerBuildManager(projectView, serverRequestHelpers, bazelData, bazelRunner);
 
     BuildServerService buildServerService =
         new BuildServerService(
-            serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
+            serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner, projectView);
 
     ScalaBuildServerService scalaBuildServerService =
         new ScalaBuildServerService(bazelData, bazelRunner);

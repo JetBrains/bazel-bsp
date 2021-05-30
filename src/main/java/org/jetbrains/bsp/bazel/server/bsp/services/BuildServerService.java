@@ -1,42 +1,9 @@
 package org.jetbrains.bsp.bazel.server.bsp.services;
 
-import ch.epfl.scala.bsp4j.BuildServerCapabilities;
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import ch.epfl.scala.bsp4j.CleanCacheParams;
-import ch.epfl.scala.bsp4j.CleanCacheResult;
-import ch.epfl.scala.bsp4j.CompileParams;
-import ch.epfl.scala.bsp4j.CompileProvider;
-import ch.epfl.scala.bsp4j.CompileResult;
-import ch.epfl.scala.bsp4j.DependencySourcesItem;
-import ch.epfl.scala.bsp4j.DependencySourcesParams;
-import ch.epfl.scala.bsp4j.DependencySourcesResult;
-import ch.epfl.scala.bsp4j.InitializeBuildParams;
-import ch.epfl.scala.bsp4j.InitializeBuildResult;
-import ch.epfl.scala.bsp4j.InverseSourcesParams;
-import ch.epfl.scala.bsp4j.InverseSourcesResult;
-import ch.epfl.scala.bsp4j.ResourcesItem;
-import ch.epfl.scala.bsp4j.ResourcesParams;
-import ch.epfl.scala.bsp4j.ResourcesResult;
-import ch.epfl.scala.bsp4j.RunParams;
-import ch.epfl.scala.bsp4j.RunProvider;
-import ch.epfl.scala.bsp4j.RunResult;
-import ch.epfl.scala.bsp4j.SourceItem;
-import ch.epfl.scala.bsp4j.SourcesItem;
-import ch.epfl.scala.bsp4j.SourcesParams;
-import ch.epfl.scala.bsp4j.SourcesResult;
-import ch.epfl.scala.bsp4j.StatusCode;
-import ch.epfl.scala.bsp4j.TestParams;
-import ch.epfl.scala.bsp4j.TestProvider;
-import ch.epfl.scala.bsp4j.TestResult;
-import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+import ch.epfl.scala.bsp4j.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -45,6 +12,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
@@ -58,6 +26,12 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 public class BuildServerService {
 
   private static final Logger LOGGER = LogManager.getLogger(BuildServerService.class);
@@ -68,18 +42,21 @@ public class BuildServerService {
 
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
+  private final ProjectView projectView;
 
   public BuildServerService(
       BazelBspServerRequestHelpers serverRequestHelpers,
       BazelBspServerLifetime serverLifetime,
       BazelBspServerBuildManager serverBuildManager,
       BazelData bazelData,
-      BazelRunner bazelRunner) {
+      BazelRunner bazelRunner,
+      ProjectView projectView) {
     this.serverRequestHelpers = serverRequestHelpers;
     this.serverLifetime = serverLifetime;
     this.serverBuildManager = serverBuildManager;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
+    this.projectView = projectView;
   }
 
   public CompletableFuture<InitializeBuildResult> buildInitialize(
@@ -204,9 +181,13 @@ public class BuildServerService {
 
       throw new RuntimeException("Could not resolve " + fileUri + " within workspace " + prefix);
     }
+    String kindInput =
+        String.format(
+            "rdeps(%s, %s, 1)",
+            TargetsUtils.getAllProjectTargetsWithExcludedTargets(projectView),
+            fileUri.substring(prefix.length()));
     BazelQueryKindParameters kindParameter =
-        BazelQueryKindParameters.fromPatternAndInput(
-            "rule", "rdeps(//..., " + fileUri.substring(prefix.length()) + ", 1)");
+        BazelQueryKindParameters.fromPatternAndInput("rule", kindInput);
 
     BazelProcess bazelProcess =
         bazelRunner
@@ -263,7 +244,7 @@ public class BuildServerService {
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withArgument("//...")
+            .withArgument(TargetsUtils.getAllProjectTargetsWithExcludedTargets(projectView))
             .executeBazelBesCommand();
 
     Build.QueryResult query = QueryResolver.getQueryResultForProcess(bazelProcess);

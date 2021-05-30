@@ -15,7 +15,6 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.config.ServerArgsProjectViewProvider;
 
 public class ServerInitializer {
@@ -41,12 +40,12 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
+      String pathToBazel = args[0];
       ProjectView projectView = getProjectView(args);
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
-      BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
-      BazelBspServer bspServer = new BazelBspServer(serverConfig);
+      BazelBspServer bspServer = new BazelBspServer(pathToBazel, projectView);
       bspServer.startServer(bspIntegrationData);
 
       Server server = bspIntegrationData.getServer().start();
