@@ -41,11 +41,9 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      Optional<ProjectView> projectView = getProjectViewIfExists();
-
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
-      BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args, projectView);
+      BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
       BazelBspServer bspServer = new BazelBspServer(serverConfig);
       bspServer.startServer(bspIntegrationData);
 

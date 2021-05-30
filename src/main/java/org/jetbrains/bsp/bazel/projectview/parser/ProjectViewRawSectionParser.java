@@ -19,7 +19,12 @@ public class ProjectViewRawSectionParser<T extends ProjectViewSection> {
     return new ProjectViewRawSectionParser<>(parser);
   }
 
-  public Optional<T> parseRawSections(List<ProjectViewRawSection> rawSections) {
+  public T parseRawSections(List<ProjectViewRawSection> rawSections) {
+    return parseOptionalRawSections(rawSections)
+      .orElseThrow(() -> new IllegalArgumentException(this.parser.sectionName() + "section is required!"));
+  }
+
+  public Optional<T> parseOptionalRawSections(List<ProjectViewRawSection> rawSections) {
     return rawSections.stream()
         .filter(section -> parser.isSectionParsable(section.getSectionHeader()))
         .findFirst()
