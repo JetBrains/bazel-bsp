@@ -8,15 +8,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser;
-import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserFactory;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
+import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
+import org.jetbrains.bsp.bazel.server.bsp.config.ServerArgsProjectViewProvider;
 
 public class ServerInitializer {
 
@@ -41,6 +41,8 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
+      ProjectView projectView = getProjectView(args);
+
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
       BazelBspServerConfig serverConfig = BazelBspServerConfig.from(args);
@@ -64,14 +66,17 @@ public class ServerInitializer {
     }
   }
 
-  private static Optional<ProjectView> getProjectViewIfExists() throws IOException {
-    ProjectViewParser parser = ProjectViewParserFactory.getBasic();
-    File projectViewFile = new File(Constants.DEFAULT_PROJECT_VIEW_FILE);
+  private static ProjectView getProjectView(String[] args) {
+    ProjectViewProvider provider = getProjectViewProvider(args);
 
-    if (projectViewFile.isFile()) {
-      return Optional.of(parser.parse(projectViewFile));
+    return provider.create();
+  }
+
+  private static ProjectViewProvider getProjectViewProvider(String[] args) {
+    if (args.length == 2) {
+      return new ServerArgsProjectViewProvider(args[1]);
     }
 
-    return Optional.empty();
+    return new ProjectViewDefaultParserProvider();
   }
 }
