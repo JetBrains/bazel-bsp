@@ -26,15 +26,15 @@ public class ProjectViewParserImplTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowMissingDirectoriesSection() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectViewWithoutDirectories.bazelproject");
+    String projectViewFileContent =
+        loadFileFromResources("projectViewWithoutDirectories.bazelproject");
 
     parser.parse(projectViewFileContent);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowMissingTargetsSection() throws IOException {
-    String projectViewFileContent =
-        loadFileFromResources("projectViewWithoutTargets.bazelproject");
+    String projectViewFileContent = loadFileFromResources("projectViewWithoutTargets.bazelproject");
 
     parser.parse(projectViewFileContent);
   }
