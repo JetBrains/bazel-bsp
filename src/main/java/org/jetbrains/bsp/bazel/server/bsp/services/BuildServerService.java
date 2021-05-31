@@ -208,11 +208,7 @@ public class BuildServerService {
 
       throw new RuntimeException("Could not resolve " + fileUri + " within workspace " + prefix);
     }
-    String kindInput =
-        String.format(
-            "rdeps(%s, %s, 1)",
-            TargetsUtils.getAllProjectTargetsWithExcludedTargets(projectView),
-            fileUri.substring(prefix.length()));
+    String kindInput = TargetsUtils.getKindInput(projectView, fileUri, prefix);
     BazelQueryKindParameters kindParameter =
         BazelQueryKindParameters.fromPatternAndInput("rule", kindInput);
 

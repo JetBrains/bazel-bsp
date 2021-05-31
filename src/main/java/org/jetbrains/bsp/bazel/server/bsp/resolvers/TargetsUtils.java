@@ -5,6 +5,7 @@ import com.google.common.base.Joiner;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 
@@ -19,6 +20,13 @@ public final class TargetsUtils {
     boolean hasGivenName = attribute.getName().equals(name);
 
     return hasGivenName && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified();
+  }
+
+  public static String getKindInput(ProjectView projectView, String fileUri, String prefix) {
+    return String.format(
+        "rdeps(%s, %s, 1)",
+        TargetsUtils.getAllProjectTargetsWithExcludedTargets(projectView),
+        fileUri.substring(prefix.length()));
   }
 
   public static String getAllProjectTargetsWithExcludedTargets(ProjectView projectView) {
