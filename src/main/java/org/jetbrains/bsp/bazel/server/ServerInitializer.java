@@ -16,6 +16,7 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
+import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.config.ServerArgsProjectViewProvider;
 
 public class ServerInitializer {
@@ -41,12 +42,11 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      String pathToBazel = args[0];
-      ProjectView projectView = getProjectView(args);
+      BazelBspServerConfig bazelBspServerConfig = getBazelBspServerConfig(args)
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
-      BazelBspServer bspServer = new BazelBspServer(pathToBazel, projectView);
+      BazelBspServer bspServer = new BazelBspServer(bazelBspServerConfig);
       bspServer.startServer(bspIntegrationData);
 
       Server server = bspIntegrationData.getServer().start();
@@ -64,6 +64,12 @@ public class ServerInitializer {
     if (hasErrors) {
       System.exit(1);
     }
+  }
+
+  private static BazelBspServerConfig getBazelBspServerConfig(String[] args) {
+    String pathToBazel = args[0];
+    ProjectView projectView = getProjectView(args);
+    return new BazelBspServerConfig(pathToBazel, projectView);
   }
 
   private static ProjectView getProjectView(String[] args) {
