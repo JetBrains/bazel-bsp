@@ -61,11 +61,11 @@ public class BazelBspServer {
     BazelBspTargetManager bazelBspTargetManager =
         new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager, bazelCppTargetManager);
     BazelBspQueryManager bazelBspQueryManager =
-        new BazelBspQueryManager(serverConfig, bazelData, bazelRunner, bazelBspTargetManager);
+        new BazelBspQueryManager(
+            bazelBspServerConfig.getProjectView(), bazelData, bazelRunner, bazelBspTargetManager);
 
     this.serverBuildManager =
         new BazelBspServerBuildManager(
-            bazelBspServerConfig.getProjectView(),
             serverRequestHelpers,
             bazelData,
             bazelRunner,

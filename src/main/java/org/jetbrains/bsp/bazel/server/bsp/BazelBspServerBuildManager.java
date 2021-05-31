@@ -14,7 +14,6 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;

@@ -152,8 +152,7 @@ public class BazelBspQueryManager {
 
   public List<BuildTargetIdentifier> getTargetIdentifiersForDependencies(
       List<BuildTargetIdentifier> targets) {
-    String targetsUnion =
-        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+"));
+    String targetsUnion = TargetsUtils.getTargetsUnion(targets);
     BazelQueryKindParameters kindParameters =
         BazelQueryKindParameters.fromPatternAndInput(
             "rule", String.format("deps(%s)", targetsUnion));
