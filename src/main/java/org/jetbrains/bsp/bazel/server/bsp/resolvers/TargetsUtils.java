@@ -21,6 +21,10 @@ public final class TargetsUtils {
     return hasGivenName && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified();
   }
 
+  public static String getTargetsUnion(List<BuildTargetIdentifier> targets) {
+    return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+"));
+  }
+
   public static String getKindInput(ProjectView projectView, String fileUri, String prefix) {
     return String.format(
         "rdeps(%s, %s, 1)",

@@ -5,6 +5,7 @@ public enum BazelRunnerFlag {
   ASPECTS("--aspects"),
   NOHOST_DEPS("--nohost_deps"),
   NOIMPLICIT_DEPS("--noimplicit_deps"),
+  KEEP_GOING("--keep_going"),
   NOBUILD("--nobuild");
 
   private final String name;

@@ -49,16 +49,7 @@ public class BazelBspCompilationManager {
 
     Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcess);
 
-    for (Build.Target target : queryResult.getTargetList()) {
-      target.getRule().getRuleOutputList().stream()
-          .filter(output -> output.contains(Constants.DIAGNOSTICS))
-          .forEach(
-              output ->
-                  diagnosticsProtosLocations.put(
-                      target.getRule().getName(),
-                      BuildManagerParsingUtils.convertOutputToPath(
-                          output, bazelData.getBinRoot())));
-    }
+    cacheProtoLocations(diagnosticsProtosLocations, queryResult);
 
     StatusCode exitCode =
         bazelRunner
@@ -70,6 +61,12 @@ public class BazelBspCompilationManager {
             .waitAndGetResult()
             .getStatusCode();
 
+    emitDiagnosticsFromCache(diagnosticsProtosLocations);
+
+    return Either.forRight(new CompileResult(exitCode));
+  }
+
+  private void emitDiagnosticsFromCache(Map<String, String> diagnosticsProtosLocations) {
     for (Map.Entry<String, String> diagnostics : diagnosticsProtosLocations.entrySet()) {
       String target = diagnostics.getKey();
       String diagnosticsPath = diagnostics.getValue();
@@ -78,8 +75,29 @@ public class BazelBspCompilationManager {
       bepServer.emitDiagnostics(
           bepServer.collectDiagnostics(targetIdentifier, diagnosticsPath), targetIdentifier);
     }
+  }
 
-    return Either.forRight(new CompileResult(exitCode));
+  private void cacheProtoLocations(
+      Map<String, String> diagnosticsProtosLocations, Build.QueryResult queryResult) {
+    queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .filter(this::isWorkspacePackage)
+        .forEach(
+            rule ->
+                rule.getRuleOutputList().stream()
+                    .filter(output -> output.contains(Constants.DIAGNOSTICS))
+                    .forEach(output -> cacheProtos(diagnosticsProtosLocations, rule, output)));
+  }
+
+  private void cacheProtos(
+      Map<String, String> diagnosticsProtosLocations, Build.Rule rule, String output) {
+    diagnosticsProtosLocations.put(
+        rule.getName(),
+        BuildManagerParsingUtils.convertOutputToPath(output, bazelData.getBinRoot()));
+  }
+
+  private boolean isWorkspacePackage(Build.Rule rule) {
+    return !rule.getName().startsWith("@");
   }
 
   public void setBepServer(BepServer bepServer) {

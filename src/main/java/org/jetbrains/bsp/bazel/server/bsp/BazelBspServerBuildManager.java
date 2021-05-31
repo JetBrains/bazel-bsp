@@ -14,7 +14,6 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -39,20 +38,21 @@ public class BazelBspServerBuildManager {
   private BepServer bepServer;
 
   public BazelBspServerBuildManager(
-      ProjectView projectView,
       BazelBspServerRequestHelpers serverRequestHelpers,
       BazelData bazelData,
-      BazelRunner bazelRunner) {
+      BazelRunner bazelRunner,
+      BazelBspCompilationManager bazelBspCompilationManager,
+      BazelBspAspectsManager bazelBspAspectsManager,
+      BazelBspTargetManager bazelBspTargetManager,
+      BazelCppTargetManager bazelCppTargetManager,
+      BazelBspQueryManager bazelBspQueryManager) {
     this.serverRequestHelpers = serverRequestHelpers;
     this.bazelData = bazelData;
-    this.bazelBspCompilationManager = new BazelBspCompilationManager(bazelRunner, bazelData);
-    this.bazelBspAspectsManager =
-        new BazelBspAspectsManager(bazelBspCompilationManager, bazelRunner);
-    this.bazelCppTargetManager = new BazelCppTargetManager(bazelBspAspectsManager);
-    this.bazelBspTargetManager =
-        new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager, bazelCppTargetManager);
-    this.bazelBspQueryManager =
-        new BazelBspQueryManager(projectView, bazelData, bazelRunner, bazelBspTargetManager);
+    this.bazelBspCompilationManager = bazelBspCompilationManager;
+    this.bazelBspAspectsManager = bazelBspAspectsManager;
+    this.bazelCppTargetManager = bazelCppTargetManager;
+    this.bazelBspTargetManager = bazelBspTargetManager;
+    this.bazelBspQueryManager = bazelBspQueryManager;
   }
 
   public CompletableFuture<WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {

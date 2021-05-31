@@ -78,6 +78,16 @@ public class BazelRunnerBuilder {
     return this;
   }
 
+  public BazelRunnerBuilder withKindsAndExcept(
+      BazelQueryKindParameters parameters, String exception) {
+    String argument =
+        BazelArgumentsUtils.getQueryKindForPatternsAndExpressionsWithException(
+            ImmutableList.of(parameters), exception);
+    arguments.add(argument);
+
+    return this;
+  }
+
   public BazelProcess executeBazelCommand() {
     return bazelRunner.runBazelCommand(bazelCommand, flags, arguments);
   }

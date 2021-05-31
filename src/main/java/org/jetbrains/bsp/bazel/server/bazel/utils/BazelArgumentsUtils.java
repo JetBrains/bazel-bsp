@@ -12,6 +12,7 @@ public final class BazelArgumentsUtils {
 
   private static final String MNEMONIC_COMMAND = "mnemonic";
   private static final String KIND_COMMAND = "kind";
+  private static final String EXCEPT_COMMAND = "except";
 
   public static String getJoinedBazelTargets(List<String> targets) {
     String joinedTargets = joinBazelTargets(targets);
@@ -37,6 +38,12 @@ public final class BazelArgumentsUtils {
     return parameters.stream()
         .map(BazelArgumentsUtils::getQueryKind)
         .collect(Collectors.joining(FUNCTIONS_DELIMITER));
+  }
+
+  public static String getQueryKindForPatternsAndExpressionsWithException(
+      List<BazelQueryKindParameters> parameters, String exception) {
+    String kind = getQueryKindForPatternsAndExpressions(parameters);
+    return String.format("%s %s %s", kind, EXCEPT_COMMAND, exception);
   }
 
   public static String getQueryKind(BazelQueryKindParameters parameter) {
