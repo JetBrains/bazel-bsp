@@ -21,8 +21,8 @@ public class ProjectViewRawSectionParser<T extends ProjectViewSection> {
 
   public T parseRawSections(List<ProjectViewRawSection> rawSections) {
     return parseOptionalRawSections(rawSections)
-      .orElseThrow(
-          () -> new IllegalArgumentException(this.parser.sectionName() + "section is required!"));
+        .orElseThrow(
+            () -> new IllegalArgumentException(this.parser.sectionName() + "section is required!"));
   }
 
   public Optional<T> parseOptionalRawSections(List<ProjectViewRawSection> rawSections) {

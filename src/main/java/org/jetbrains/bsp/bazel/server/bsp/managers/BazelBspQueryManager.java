@@ -58,9 +58,9 @@ public class BazelBspQueryManager {
 
     List<BuildTarget> targets =
         projectInitTargets.stream()
-          .map(this::getBuildTargetForProjectPath)
-          .flatMap(Collection::stream)
-          .collect(Collectors.toList());
+            .map(this::getBuildTargetForProjectPath)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
 
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
   }
@@ -123,8 +123,8 @@ public class BazelBspQueryManager {
   }
 
   private List<BuildTarget> getBuildTargetForProjectPath(String target) {
-    String targetWithExcludedTargets = TargetsUtils
-        .getTargetWithExcludedTargets(projectView, target);
+    String targetWithExcludedTargets =
+        TargetsUtils.getTargetWithExcludedTargets(projectView, target);
     List<BazelQueryKindParameters> kindParameters =
         ImmutableList.of(
             BazelQueryKindParameters.fromPatternAndInput("binary", targetWithExcludedTargets),
