@@ -65,4 +65,6 @@ public class Constants {
   public static final String SCALA_COMPILER_CLASSPATH_FILES = "scala_compiler_classpath_files";
 
   public static final String SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME = "main_class";
+
+  public static final String DEFAULT_PROJECT_VIEW_FILE = "projectview.bazelproject";
 }

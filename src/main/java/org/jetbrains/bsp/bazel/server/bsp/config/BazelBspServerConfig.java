@@ -1,36 +1,22 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 public class BazelBspServerConfig {
 
   private final String pathToBazel;
-  private final List<String> targetProjectPaths;
+  private final ProjectView projectView;
 
-  public BazelBspServerConfig(String pathToBazel, List<String> targetProjectPaths) {
+  public BazelBspServerConfig(String pathToBazel, ProjectView projectView) {
     this.pathToBazel = pathToBazel;
-    this.targetProjectPaths = targetProjectPaths;
-  }
-
-  public static BazelBspServerConfig from(String[] args) {
-    if (args.length == 0) {
-      throw new IllegalArgumentException("Configuration can't be built without any parameters");
-    }
-
-    String pathToBazel = args[0];
-    List<String> targetProjectPaths =
-        args.length == 2 ? Arrays.asList(args[1].split(",")) : Collections.singletonList("//...");
-
-    return new BazelBspServerConfig(pathToBazel, targetProjectPaths);
+    this.projectView = projectView;
   }
 
   public String getBazelPath() {
     return pathToBazel;
   }
 
-  public List<String> getTargetProjectPaths() {
-    return targetProjectPaths;
+  public ProjectView getProjectView() {
+    return projectView;
   }
 }

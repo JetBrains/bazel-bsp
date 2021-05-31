@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
@@ -25,34 +24,19 @@ public class ProjectViewParserImplTest {
     this.parser = new ProjectViewParserImpl();
   }
 
-  @Test
-  public void shouldParseDirectoriesSection() throws IOException {
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowMissingDirectoriesSection() throws IOException {
     String projectViewFileContent =
-        loadFileFromResources("projectViewWithDirectories.bazelproject");
-    ProjectView projectView = parser.parse(projectViewFileContent);
+        loadFileFromResources("projectViewWithoutDirectories.bazelproject");
 
-    DirectoriesSection expectedDirectoriesSection =
-        new DirectoriesSection(
-            ImmutableList.of(Paths.get(".")),
-            ImmutableList.of(Paths.get("ijwb"), Paths.get("plugin_dev"), Paths.get("clwb")));
-
-    assertEquals(Optional.of(expectedDirectoriesSection), projectView.getDirectories());
-    assertEquals(Optional.empty(), projectView.getTargets());
+    parser.parse(projectViewFileContent);
   }
 
-  @Test
-  public void shouldParseTargetsSection() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectViewWithTargets.bazelproject");
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowMissingTargetsSection() throws IOException {
+    String projectViewFileContent = loadFileFromResources("projectViewWithoutTargets.bazelproject");
 
-    ProjectView projectView = parser.parse(projectViewFileContent);
-
-    TargetsSection expectedTargetsSection =
-        new TargetsSection(
-            ImmutableList.of("//aswb:aswb_bazel_dev", "//:aswb_python_tests"),
-            ImmutableList.of("//:aswb_tests"));
-
-    assertEquals(Optional.empty(), projectView.getDirectories());
-    assertEquals(Optional.of(expectedTargetsSection), projectView.getTargets());
+    parser.parse(projectViewFileContent);
   }
 
   @Test
@@ -70,8 +54,8 @@ public class ProjectViewParserImplTest {
             ImmutableList.of("//aswb:aswb_bazel_dev", "//:aswb_python_tests"),
             ImmutableList.of("//:aswb_tests"));
 
-    assertEquals(Optional.of(expectedDirectoriesSection), projectView.getDirectories());
-    assertEquals(Optional.of(expectedTargetsSection), projectView.getTargets());
+    assertEquals(expectedDirectoriesSection, projectView.getDirectories());
+    assertEquals(expectedTargetsSection, projectView.getTargets());
   }
 
   private String loadFileFromResources(String fileName) throws IOException {

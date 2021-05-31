@@ -29,16 +29,16 @@ import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelBspServer {
 
-  private final BazelBspServerConfig serverConfig;
+  private final BazelBspServerConfig bazelBspServerConfig;
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
 
   private BspImplementationHub bspImplementationHub;
   private BazelBspServerBuildManager serverBuildManager;
 
-  public BazelBspServer(BazelBspServerConfig serverConfig) {
-    this.serverConfig = serverConfig;
-    this.bazelRunner = new BazelRunner(serverConfig.getBazelPath());
+  public BazelBspServer(BazelBspServerConfig bazelBspServerConfig) {
+    this.bazelBspServerConfig = bazelBspServerConfig;
+    this.bazelRunner = new BazelRunner(bazelBspServerConfig.getBazelPath());
     BazelDataResolver bazelDataResolver = new BazelDataResolver(bazelRunner);
     this.bazelData = bazelDataResolver.resolveBazelData();
   }
@@ -49,11 +49,17 @@ public class BazelBspServer {
         new BazelBspServerRequestHelpers(serverLifetime);
 
     this.serverBuildManager =
-        new BazelBspServerBuildManager(serverConfig, serverRequestHelpers, bazelData, bazelRunner);
+        new BazelBspServerBuildManager(
+            bazelBspServerConfig.getProjectView(), serverRequestHelpers, bazelData, bazelRunner);
 
     BuildServerService buildServerService =
         new BuildServerService(
-            serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner);
+            serverRequestHelpers,
+            serverLifetime,
+            serverBuildManager,
+            bazelData,
+            bazelRunner,
+            bazelBspServerConfig.getProjectView());
 
     ScalaBuildServerService scalaBuildServerService =
         new ScalaBuildServerService(bazelData, bazelRunner);

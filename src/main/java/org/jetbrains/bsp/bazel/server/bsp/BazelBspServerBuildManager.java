@@ -14,10 +14,10 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspQueryManager;
@@ -28,10 +28,8 @@ public class BazelBspServerBuildManager {
 
   public static final String BAZEL_PRINT_ASPECT = "@//.bazelbsp:aspects.bzl%print_aspect";
 
-  private final BazelBspServerConfig serverConfig;
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelData bazelData;
-  private final BazelRunner bazelRunner;
   private final BazelBspQueryManager bazelBspQueryManager;
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelBspTargetManager bazelBspTargetManager;
@@ -41,14 +39,12 @@ public class BazelBspServerBuildManager {
   private BepServer bepServer;
 
   public BazelBspServerBuildManager(
-      BazelBspServerConfig serverConfig,
+      ProjectView projectView,
       BazelBspServerRequestHelpers serverRequestHelpers,
       BazelData bazelData,
       BazelRunner bazelRunner) {
-    this.serverConfig = serverConfig;
     this.serverRequestHelpers = serverRequestHelpers;
     this.bazelData = bazelData;
-    this.bazelRunner = bazelRunner;
     this.bazelBspCompilationManager = new BazelBspCompilationManager(bazelRunner, bazelData);
     this.bazelBspAspectsManager =
         new BazelBspAspectsManager(bazelBspCompilationManager, bazelRunner);
@@ -56,7 +52,7 @@ public class BazelBspServerBuildManager {
     this.bazelBspTargetManager =
         new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager, bazelCppTargetManager);
     this.bazelBspQueryManager =
-        new BazelBspQueryManager(serverConfig, bazelData, bazelRunner, bazelBspTargetManager);
+        new BazelBspQueryManager(projectView, bazelData, bazelRunner, bazelBspTargetManager);
   }
 
   public CompletableFuture<WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {

@@ -26,6 +26,10 @@ public abstract class ProjectViewSectionParser<T extends ProjectViewSection> {
     return sectionHeader.equals(this.sectionHeader.toString());
   }
 
+  public String sectionName() {
+    return sectionHeader.toString();
+  }
+
   protected List<String> splitSectionEntries(String sectionBody) {
     return Splitter.on(Pattern.compile("[ \n]+")).omitEmptyStrings().splitToList(sectionBody);
   }

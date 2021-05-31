@@ -23,43 +23,45 @@ import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
 import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
 public class BazelBspQueryManager {
   private static final Logger LOGGER = LogManager.getLogger(BazelBspQueryManager.class);
 
-  private final BazelBspServerConfig serverConfig;
+  private final ProjectView projectView;
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
   private final BazelBspTargetManager bazelBspTargetManager;
   private BepServer bepServer;
 
   public BazelBspQueryManager(
-      BazelBspServerConfig serverConfig,
+      ProjectView projectView,
       BazelData bazelData,
       BazelRunner bazelRunner,
       BazelBspTargetManager bazelBspTargetManager) {
-    this.serverConfig = serverConfig;
+    this.projectView = projectView;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
     this.bazelBspTargetManager = bazelBspTargetManager;
   }
 
   public Either<ResponseError, WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
-    List<String> projectPaths = serverConfig.getTargetProjectPaths();
-    // TODO (abrams27) simplify
-    List<BuildTarget> targets = new ArrayList<>();
+    List<String> projectInitTargets = projectView.getTargets().getIncludedTargets();
 
-    for (String projectPath : projectPaths) {
-      targets.addAll(getBuildTargetForProjectPath(projectPath));
-    }
+    List<BuildTarget> targets =
+        projectInitTargets.stream()
+            .map(this::getBuildTargetForProjectPath)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
   }
 
@@ -120,12 +122,14 @@ public class BazelBspQueryManager {
     return target;
   }
 
-  private List<BuildTarget> getBuildTargetForProjectPath(String projectPath) {
+  private List<BuildTarget> getBuildTargetForProjectPath(String target) {
+    String targetWithExcludedTargets =
+        TargetsUtils.getTargetWithExcludedTargets(projectView, target);
     List<BazelQueryKindParameters> kindParameters =
         ImmutableList.of(
-            BazelQueryKindParameters.fromPatternAndInput("binary", projectPath),
-            BazelQueryKindParameters.fromPatternAndInput("library", projectPath),
-            BazelQueryKindParameters.fromPatternAndInput("test", projectPath));
+            BazelQueryKindParameters.fromPatternAndInput("binary", targetWithExcludedTargets),
+            BazelQueryKindParameters.fromPatternAndInput("library", targetWithExcludedTargets),
+            BazelQueryKindParameters.fromPatternAndInput("test", targetWithExcludedTargets));
 
     BazelProcess bazelProcess =
         bazelRunner
