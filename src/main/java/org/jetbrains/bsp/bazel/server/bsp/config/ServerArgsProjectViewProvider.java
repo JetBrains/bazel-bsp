@@ -1,13 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
 import com.google.common.collect.ImmutableList;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
-
-import java.nio.file.Paths;
-import java.util.Arrays;
 
 public class ServerArgsProjectViewProvider implements ProjectViewProvider {
 
@@ -24,9 +23,6 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
     TargetsSection targetsSection =
         new TargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of());
 
-    return ProjectView.builder()
-        .directories(directoriesSection)
-        .targets(targetsSection)
-        .build();
+    return ProjectView.builder().directories(directoriesSection).targets(targetsSection).build();
   }
 }

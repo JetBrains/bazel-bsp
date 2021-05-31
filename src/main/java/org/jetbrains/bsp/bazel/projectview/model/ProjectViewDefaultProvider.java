@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
 import com.google.common.collect.ImmutableList;
+import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
-
-import java.nio.file.Paths;
 
 public class ProjectViewDefaultProvider implements ProjectViewProvider {
 
@@ -15,9 +14,6 @@ public class ProjectViewDefaultProvider implements ProjectViewProvider {
     TargetsSection targetsSection =
         new TargetsSection(ImmutableList.of("//..."), ImmutableList.of());
 
-    return ProjectView.builder()
-        .directories(directoriesSection)
-        .targets(targetsSection)
-        .build();
+    return ProjectView.builder().directories(directoriesSection).targets(targetsSection).build();
   }
 }

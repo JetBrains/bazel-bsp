@@ -1,12 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import io.vavr.control.Try;
+import java.io.File;
+import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewDefaultProvider;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
-import org.jetbrains.bsp.bazel.commons.Constants;
-
-import java.io.File;
 
 public class ProjectViewDefaultParserProvider implements ProjectViewProvider {
 

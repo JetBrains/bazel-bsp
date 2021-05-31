@@ -30,7 +30,6 @@ import org.jetbrains.bsp.bazel.server.bazel.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 
@@ -57,10 +56,11 @@ public class BazelBspQueryManager {
   public Either<ResponseError, WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
     List<String> projectInitTargets = projectView.getTargets().getIncludedTargets();
 
-    List<BuildTarget> targets = projectInitTargets.stream()
-        .map(this::getBuildTargetForProjectPath)
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
+    List<BuildTarget> targets =
+        projectInitTargets.stream()
+          .map(this::getBuildTargetForProjectPath)
+          .flatMap(Collection::stream)
+          .collect(Collectors.toList());
 
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
   }
@@ -123,7 +123,8 @@ public class BazelBspQueryManager {
   }
 
   private List<BuildTarget> getBuildTargetForProjectPath(String target) {
-    String targetWithExcludedTargets = TargetsUtils.getTargetWithExcludedTargets(projectView, target);
+    String targetWithExcludedTargets = TargetsUtils
+        .getTargetWithExcludedTargets(projectView, target);
     List<BazelQueryKindParameters> kindParameters =
         ImmutableList.of(
             BazelQueryKindParameters.fromPatternAndInput("binary", targetWithExcludedTargets),

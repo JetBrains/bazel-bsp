@@ -17,7 +17,6 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.BspImplementationHub;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.CppBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
@@ -54,7 +53,12 @@ public class BazelBspServer {
 
     BuildServerService buildServerService =
         new BuildServerService(
-            serverRequestHelpers, serverLifetime, serverBuildManager, bazelData, bazelRunner, projectView);
+            serverRequestHelpers,
+            serverLifetime,
+            serverBuildManager,
+            bazelData,
+            bazelRunner,
+            projectView);
 
     ScalaBuildServerService scalaBuildServerService =
         new ScalaBuildServerService(bazelData, bazelRunner);
