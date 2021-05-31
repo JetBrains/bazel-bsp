@@ -42,7 +42,7 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      BazelBspServerConfig bazelBspServerConfig = getBazelBspServerConfig(args)
+      BazelBspServerConfig bazelBspServerConfig = getBazelBspServerConfig(args);
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
