@@ -6,6 +6,8 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model",
+        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep",
@@ -14,8 +16,6 @@ java_library(
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/impl",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
-        "//src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//src/main/java/org/jetbrains/bsp/bazel/server/loggers",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
