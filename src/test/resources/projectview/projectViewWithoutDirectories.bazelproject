@@ -1,17 +1,13 @@
-workspace_type: intellij_plugin
-
-build_flags:
-    --define=ij_product=android-studio-latest
+workspace_type: not_parsed
 
 targets:
-    //aswb:aswb_bazel_dev
-    -//:aswb_tests
-    //:aswb_python_tests
+    //included_target1:test1
+    -//excluded_target1:test1
+    //included_target1:test2
+
+build_flags:
+    --not_parsed_flag
 
 test_sources:
-    */tests/unittests*
-    */tests/integrationtests*
-    */tests/utils/integration*
-    */testcompat/unittests*
-    */testcompat/integrationtests*
-    */testcompat/utils/integration*
+    *test/not/parsed1/*
+    *test/not/parsed2/*

@@ -48,11 +48,11 @@ public class ProjectViewParserImplTest {
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
             ImmutableList.of(Paths.get(".")),
-            ImmutableList.of(Paths.get("ijwb"), Paths.get("plugin_dev"), Paths.get("clwb")));
+            ImmutableList.of(Paths.get("excluded_dir1"), Paths.get("excluded_dir2"), Paths.get("excluded_dir3")));
     TargetsSection expectedTargetsSection =
         new TargetsSection(
-            ImmutableList.of("//aswb:aswb_bazel_dev", "//:aswb_python_tests"),
-            ImmutableList.of("//:aswb_tests"));
+            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
+            ImmutableList.of("//excluded_target1:test1"));
 
     assertEquals(expectedDirectoriesSection, projectView.getDirectories());
     assertEquals(expectedTargetsSection, projectView.getTargets());

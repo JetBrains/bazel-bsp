@@ -1,14 +1,10 @@
-directories: . -ijwb -plugin_dev -clwb
+directories: . -excluded_dir1 -excluded_dir2 -excluded_dir3
 
-workspace_type: intellij_plugin
+workspace_type: not_parsed
 
 build_flags:
-  --define=ij_product=android-studio-latest
+    --not_parsed_flag
 
 test_sources:
-    */tests/unittests*
-    */tests/integrationtests*
-    */tests/utils/integration*
-    */testcompat/unittests*
-    */testcompat/integrationtests*
-    */testcompat/utils/integration*
+    *test/not/parsed1/*
+    *test/not/parsed2/*
