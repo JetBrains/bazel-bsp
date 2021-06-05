@@ -21,7 +21,9 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseRegularFile() {
     String fileContent =
-        "directories: "
+        "import path/to/file.bazelproject"
+            + "\n"
+            + "directories: "
             + ". "
             + "-excluded_dir1 "
             + "-excluded_dir2 "
@@ -45,6 +47,7 @@ public class ProjectViewSectionSplitterTest {
     List<ProjectViewRawSection> result = ProjectViewSectionSplitter.split(fileContent);
     List<ProjectViewRawSection> expectedResult =
         ImmutableList.of(
+            new ProjectViewRawSection("import", " path/to/file.bazelproject\n"),
             new ProjectViewRawSection("directories", " . -excluded_dir1 -excluded_dir2 -excluded_dir3\n"),
             new ProjectViewRawSection(
                 "targets",
