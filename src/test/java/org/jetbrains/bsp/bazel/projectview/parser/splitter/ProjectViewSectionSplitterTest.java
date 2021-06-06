@@ -60,8 +60,7 @@ public class ProjectViewSectionSplitterTest {
             new ProjectViewRawSection("workspace_type", " not_parsed\n\n"),
             new ProjectViewRawSection("build_flags", "\n  --not_parsed_flag\n\n"),
             new ProjectViewRawSection(
-                "test_sources",
-                "\n  *test/not/parsed1/*\n  *test/not/parsed2/*\n\n"));
+                "test_sources", "\n  *test/not/parsed1/*\n  *test/not/parsed2/*\n\n"));
 
     assertEquals(expectedResult, result);
   }

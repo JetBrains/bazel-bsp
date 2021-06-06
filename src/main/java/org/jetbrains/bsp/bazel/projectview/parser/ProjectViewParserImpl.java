@@ -10,12 +10,11 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.TargetsSecti
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
 
-// @formatter:off
 /**
  * Our default implementation of ProjectViewParser
  *
  * Logic schema:
- * 1. extracting blocks:
+ * <p>1. extracting blocks:
  *    <section header>:
  *      <included section value 1>
  *      <included section value 2>
@@ -24,9 +23,10 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
  * or:
  *    <section header>: <section value>
  *
- * 2. looping through extracted and checking which block could be parsed by the given section parser
+ * <p>2. looping through extracted and checking which block could be parsed by the given section
+ * parser
  *
- * 3. applying section specific parser to the chosen section
+ * <p>3. applying section specific parser to the chosen section
  *
  * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
  * @see org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
