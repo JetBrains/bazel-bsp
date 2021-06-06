@@ -6,5 +6,6 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
+        "//src/main/java/org/jetbrains/bsp/bazel/commons",
     ],
 )

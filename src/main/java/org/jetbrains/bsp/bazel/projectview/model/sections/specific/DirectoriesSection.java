@@ -3,10 +3,11 @@ package org.jetbrains.bsp.bazel.projectview.model.sections.specific;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
 
-public class DirectoriesSection extends ProjectViewSection {
+public class DirectoriesSection extends ProjectViewSection<DirectoriesSection> {
 
   private final List<Path> includedDirectories;
   private final List<Path> excludedDirectories;
@@ -15,6 +16,14 @@ public class DirectoriesSection extends ProjectViewSection {
     super(ProjectViewSectionHeader.DIRECTORIES);
     this.includedDirectories = includedDirectories;
     this.excludedDirectories = excludedDirectories;
+  }
+
+  @Override
+  public DirectoriesSection merge(DirectoriesSection otherSection) {
+    List<Path> mergedIncludedDirectories = ListUtils.concat(includedDirectories, otherSection.includedDirectories);
+    List<Path> mergedExcludedDirectories = ListUtils.concat(excludedDirectories, otherSection.excludedDirectories);
+
+    return new DirectoriesSection(mergedIncludedDirectories, mergedExcludedDirectories);
   }
 
   public List<Path> getIncludedDirectories() {

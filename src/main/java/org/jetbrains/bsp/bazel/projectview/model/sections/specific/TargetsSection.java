@@ -2,10 +2,11 @@ package org.jetbrains.bsp.bazel.projectview.model.sections.specific;
 
 import java.util.List;
 import java.util.Objects;
+import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
 
-public class TargetsSection extends ProjectViewSection {
+public class TargetsSection extends ProjectViewSection<TargetsSection> {
 
   private final List<String> includedTargets;
   private final List<String> excludedTargets;
@@ -14,6 +15,14 @@ public class TargetsSection extends ProjectViewSection {
     super(ProjectViewSectionHeader.TARGETS);
     this.includedTargets = includedTargets;
     this.excludedTargets = excludedTargets;
+  }
+
+  @Override
+  public TargetsSection merge(TargetsSection otherSection) {
+    List<String> mergedIncludedTargets = ListUtils.concat(includedTargets, otherSection.includedTargets);
+    List<String> mergedExcludedTargets = ListUtils.concat(excludedTargets, otherSection.excludedTargets);
+
+    return new TargetsSection(mergedIncludedTargets, mergedExcludedTargets);
   }
 
   public List<String> getIncludedTargets() {

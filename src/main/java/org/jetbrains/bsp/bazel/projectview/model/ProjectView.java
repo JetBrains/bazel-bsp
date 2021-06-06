@@ -3,6 +3,10 @@ package org.jetbrains.bsp.bazel.projectview.model;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Representation of the project view file
  *
@@ -20,6 +24,13 @@ public class ProjectView {
 
   public static ProjectView.Builder builder() {
     return new Builder();
+  }
+
+  public ProjectView merge(ProjectView projectView) {
+    return ProjectView.builder()
+        .directories(directories.merge(projectView.directories))
+        .targets(targets.merge(projectView.targets))
+        .build();
   }
 
   public DirectoriesSection getDirectories() {
