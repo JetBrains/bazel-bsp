@@ -36,12 +36,14 @@ public class TargetsSectionParserTest {
 
   @Test
   public void shouldParseIncludedTargets() {
-    String entryBody = "  //test_included1:test1\n  //:test_included1:test2\n  //:test_included2:test1\n\n";
+    String entryBody =
+        "  //test_included1:test1\n  //:test_included1:test2\n  //:test_included2:test1\n\n";
 
     TargetsSection section = parser.parse(entryBody);
 
     List<String> expectedIncludedTargets =
-        ImmutableList.of("//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1");
+        ImmutableList.of(
+            "//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1");
     List<String> expectedExcludedTargets = ImmutableList.of();
 
     assertEquals(expectedIncludedTargets, section.getIncludedTargets());
@@ -50,13 +52,15 @@ public class TargetsSectionParserTest {
 
   @Test
   public void shouldParseExcludedTargets() {
-    String entryBody = "  -//test_excluded1:test1\n  -//test_excluded1:test2\n  -//test_excluded2:test1\n\n";
+    String entryBody =
+        "  -//test_excluded1:test1\n  -//test_excluded1:test2\n  -//test_excluded2:test1\n\n";
 
     TargetsSection section = parser.parse(entryBody);
 
     List<String> expectedIncludedTargets = ImmutableList.of();
     List<String> expectedExcludedTargets =
-        ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2", "//test_excluded2:test1");
+        ImmutableList.of(
+            "//test_excluded1:test1", "//test_excluded1:test2", "//test_excluded2:test1");
 
     assertEquals(expectedIncludedTargets, section.getIncludedTargets());
     assertEquals(expectedExcludedTargets, section.getExcludedTargets());
@@ -64,7 +68,8 @@ public class TargetsSectionParserTest {
 
   @Test
   public void shouldParseIncludedAndExcludedTargets() {
-    String entryBody = "  -//test_excluded1:test1\n  //test_included1:test1\n  -//test_excluded1:test2\n\n";
+    String entryBody =
+        "  -//test_excluded1:test1\n  //test_included1:test1\n  -//test_excluded1:test2\n\n";
 
     TargetsSection section = parser.parse(entryBody);
 

@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-public abstract class ProjectViewSection <T extends ProjectViewSection<T>> {
+public abstract class ProjectViewSection<T extends ProjectViewSection<T>> {
 
   protected final ProjectViewSectionHeader header;
 

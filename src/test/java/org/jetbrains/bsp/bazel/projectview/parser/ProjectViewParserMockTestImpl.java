@@ -12,7 +12,8 @@ public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
 
   @Override
   public ProjectView parse(Path projectViewPath) throws IOException {
-    InputStream inputStream = ProjectViewParserMockTestImpl.class.getResourceAsStream(projectViewPath.toString());
+    InputStream inputStream =
+        ProjectViewParserMockTestImpl.class.getResourceAsStream(projectViewPath.toString());
     // we read file content instead of passing plain file due to bazel resources packaging
     String fileContent = CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
 

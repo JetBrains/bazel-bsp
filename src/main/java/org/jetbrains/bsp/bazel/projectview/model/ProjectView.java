@@ -85,9 +85,6 @@ public class ProjectView {
 
   @Override
   public String toString() {
-    return "ProjectView{" +
-        "directories=" + directories +
-        ", targets=" + targets +
-        '}';
+    return "ProjectView{" + "directories=" + directories + ", targets=" + targets + '}';
   }
 }

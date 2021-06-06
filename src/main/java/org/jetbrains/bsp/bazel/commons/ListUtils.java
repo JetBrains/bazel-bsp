@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 public final class ListUtils {
 
   public static <T> List<T> concat(List<T> list1, List<T> list2) {
-    return Stream.concat(list1.stream(), list2.stream())
-        .collect(Collectors.toList());
+    return Stream.concat(list1.stream(), list2.stream()).collect(Collectors.toList());
   }
 }

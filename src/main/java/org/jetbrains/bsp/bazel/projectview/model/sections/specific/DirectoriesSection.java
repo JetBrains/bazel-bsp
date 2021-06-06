@@ -20,8 +20,10 @@ public class DirectoriesSection extends ProjectViewSection<DirectoriesSection> {
 
   @Override
   public DirectoriesSection merge(DirectoriesSection otherSection) {
-    List<Path> mergedIncludedDirectories = ListUtils.concat(includedDirectories, otherSection.includedDirectories);
-    List<Path> mergedExcludedDirectories = ListUtils.concat(excludedDirectories, otherSection.excludedDirectories);
+    List<Path> mergedIncludedDirectories =
+        ListUtils.concat(includedDirectories, otherSection.includedDirectories);
+    List<Path> mergedExcludedDirectories =
+        ListUtils.concat(excludedDirectories, otherSection.excludedDirectories);
 
     return new DirectoriesSection(mergedIncludedDirectories, mergedExcludedDirectories);
   }
@@ -54,9 +56,11 @@ public class DirectoriesSection extends ProjectViewSection<DirectoriesSection> {
 
   @Override
   public String toString() {
-    return "DirectoriesSection{" +
-        "includedDirectories=" + includedDirectories +
-        ", excludedDirectories=" + excludedDirectories +
-        '}';
+    return "DirectoriesSection{"
+        + "includedDirectories="
+        + includedDirectories
+        + ", excludedDirectories="
+        + excludedDirectories
+        + '}';
   }
 }

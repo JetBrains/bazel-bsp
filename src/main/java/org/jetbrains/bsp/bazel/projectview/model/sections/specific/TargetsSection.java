@@ -19,8 +19,10 @@ public class TargetsSection extends ProjectViewSection<TargetsSection> {
 
   @Override
   public TargetsSection merge(TargetsSection otherSection) {
-    List<String> mergedIncludedTargets = ListUtils.concat(includedTargets, otherSection.includedTargets);
-    List<String> mergedExcludedTargets = ListUtils.concat(excludedTargets, otherSection.excludedTargets);
+    List<String> mergedIncludedTargets =
+        ListUtils.concat(includedTargets, otherSection.includedTargets);
+    List<String> mergedExcludedTargets =
+        ListUtils.concat(excludedTargets, otherSection.excludedTargets);
 
     return new TargetsSection(mergedIncludedTargets, mergedExcludedTargets);
   }
@@ -53,9 +55,11 @@ public class TargetsSection extends ProjectViewSection<TargetsSection> {
 
   @Override
   public String toString() {
-    return "TargetsSection{" +
-        "includedTargets=" + includedTargets +
-        ", excludedTargets=" + excludedTargets +
-        '}';
+    return "TargetsSection{"
+        + "includedTargets="
+        + includedTargets
+        + ", excludedTargets="
+        + excludedTargets
+        + '}';
   }
 }

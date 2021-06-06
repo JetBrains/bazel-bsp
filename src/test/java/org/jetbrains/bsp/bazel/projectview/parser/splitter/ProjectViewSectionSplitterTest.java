@@ -48,7 +48,8 @@ public class ProjectViewSectionSplitterTest {
     List<ProjectViewRawSection> expectedResult =
         ImmutableList.of(
             new ProjectViewRawSection("import", " path/to/file.bazelproject\n"),
-            new ProjectViewRawSection("directories", " . -excluded_dir1 -excluded_dir2 -excluded_dir3\n"),
+            new ProjectViewRawSection(
+                "directories", " . -excluded_dir1 -excluded_dir2 -excluded_dir3\n"),
             new ProjectViewRawSection(
                 "targets",
                 "\n"
@@ -57,14 +58,10 @@ public class ProjectViewSectionSplitterTest {
                     + "  //included_target1:test2\n"
                     + "\n"),
             new ProjectViewRawSection("workspace_type", " not_parsed\n\n"),
-            new ProjectViewRawSection(
-                "build_flags", "\n  --not_parsed_flag\n\n"),
+            new ProjectViewRawSection("build_flags", "\n  --not_parsed_flag\n\n"),
             new ProjectViewRawSection(
                 "test_sources",
-                "\n"
-                    + "  *test/not/parsed1/*\n"
-                    + "  *test/not/parsed2/*\n"
-                    + "\n"));
+                "\n  *test/not/parsed1/*\n  *test/not/parsed2/*\n\n"));
 
     assertEquals(expectedResult, result);
   }

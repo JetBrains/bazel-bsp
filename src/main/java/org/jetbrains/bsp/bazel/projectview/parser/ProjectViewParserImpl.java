@@ -52,7 +52,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
         ProjectViewSectionSplitter.split(projectViewFileContent);
 
     ProjectView projectView = buildFile(rawSections);
-    Optional<ProjectView> importedProjectView = projectViewImportParser.parseRawSections(rawSections);
+    Optional<ProjectView> importedProjectView =
+        projectViewImportParser.parseRawSections(rawSections);
 
     return mergeProjectViewIfNeeded(projectView, importedProjectView);
   }
@@ -64,9 +65,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .build();
   }
 
-  private ProjectView mergeProjectViewIfNeeded(ProjectView projectView, Optional<ProjectView> importedProjectView) {
-    return importedProjectView
-        .map(imported -> imported.merge(projectView))
-        .orElse(projectView);
+  private ProjectView mergeProjectViewIfNeeded(
+      ProjectView projectView, Optional<ProjectView> importedProjectView) {
+    return importedProjectView.map(imported -> imported.merge(projectView)).orElse(projectView);
   }
 }
