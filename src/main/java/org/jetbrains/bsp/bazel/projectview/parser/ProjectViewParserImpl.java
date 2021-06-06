@@ -12,11 +12,13 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
 
 /**
  * Our default implementation of ProjectViewParser
- * Logic schema:
+ *
+ * <p>Logic schema:
  * <p>1. extracting blocks:
  * <section header>: <included section value 1> <included section value 2>
  * - <excluded section value 1> - <excluded section value 2>
- * or: <section header>: <section value>
+ *
+ * <p>or: <section header>: <section value>
  *
  * <p>2. looping through extracted and checking which block could be parsed by the given section
  * parser
