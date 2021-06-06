@@ -28,8 +28,12 @@ public class ProjectViewRawSectionParser<T extends ProjectViewSection> {
 
   public Optional<T> parseOptionalRawSections(List<ProjectViewRawSection> rawSections) {
     return rawSections.stream()
-        .filter(section -> parser.isSectionParsable(section.getSectionHeader()))
+        .filter(this::isSectionParsable)
         .findFirst()
         .map(section -> parser.parse(section.getSectionBody()));
+  }
+
+  private boolean isSectionParsable(ProjectViewRawSection rawSection) {
+    return parser.isSectionParsable(rawSection.getSectionHeader());
   }
 }
