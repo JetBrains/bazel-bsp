@@ -1,4 +1,4 @@
-import projectViewToImport.bazelproject
+import /projectview/projectViewToImport.bazelproject
 
 directories: -excluded_dir2 -excluded_dir3
 

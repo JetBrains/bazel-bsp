@@ -50,4 +50,12 @@ public class TargetsSection extends ProjectViewSection<TargetsSection> {
   public int hashCode() {
     return Objects.hash(includedTargets, excludedTargets);
   }
+
+  @Override
+  public String toString() {
+    return "TargetsSection{" +
+        "includedTargets=" + includedTargets +
+        ", excludedTargets=" + excludedTargets +
+        '}';
+  }
 }

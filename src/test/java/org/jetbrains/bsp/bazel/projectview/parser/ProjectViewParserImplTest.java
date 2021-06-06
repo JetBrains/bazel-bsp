@@ -2,12 +2,9 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.CharStreams;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
@@ -21,29 +18,25 @@ public class ProjectViewParserImplTest {
 
   @Before
   public void before() {
-    this.parser = new ProjectViewParserImpl();
+    this.parser = new ProjectViewParserMockTestImpl();
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowMissingDirectoriesSection() throws IOException {
-    String projectViewFileContent =
-        loadFileFromResources("projectViewWithoutDirectories.bazelproject");
-
-    parser.parse(projectViewFileContent);
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithoutDirectories.bazelproject");
+    parser.parse(projectViewFilePath);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowMissingTargetsSection() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectViewWithoutTargets.bazelproject");
-
-    parser.parse(projectViewFileContent);
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithoutTargets.bazelproject");
+    parser.parse(projectViewFilePath);
   }
 
   @Test
   public void shouldParseFile() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectView.bazelproject");
-
-    ProjectView projectView = parser.parse(projectViewFileContent);
+    Path projectViewFilePath = Paths.get("/projectview/projectView.bazelproject");
+    ProjectView projectView = parser.parse(projectViewFilePath);
 
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
@@ -54,15 +47,18 @@ public class ProjectViewParserImplTest {
             ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
             ImmutableList.of("//excluded_target1:test1"));
 
-    assertEquals(expectedDirectoriesSection, projectView.getDirectories());
-    assertEquals(expectedTargetsSection, projectView.getTargets());
+    ProjectView expectedProjectView = ProjectView.builder()
+        .directories(expectedDirectoriesSection)
+        .targets(expectedTargetsSection)
+        .build();
+
+    assertEquals(expectedProjectView, projectView);
   }
 
   @Test
   public void shouldParseFileWithImport() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectViewWithImport.bazelproject");
-
-    ProjectView projectView = parser.parse(projectViewFileContent);
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithImport.bazelproject");
+    ProjectView projectView = parser.parse(projectViewFilePath);
 
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
@@ -73,15 +69,11 @@ public class ProjectViewParserImplTest {
             ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
             ImmutableList.of("//excluded_target1:test1"));
 
-    assertEquals(expectedDirectoriesSection, projectView.getDirectories());
-    assertEquals(expectedTargetsSection, projectView.getTargets());
-  }
+    ProjectView expectedProjectView = ProjectView.builder()
+        .directories(expectedDirectoriesSection)
+        .targets(expectedTargetsSection)
+        .build();
 
-  private String loadFileFromResources(String fileName) throws IOException {
-    String filePath = String.format("/projectview/%s", fileName);
-    InputStream inputStream = ProjectViewParserImplTest.class.getResourceAsStream(filePath);
-
-    // we read file content instead of passing plain file due to bazel resources packaging
-    return CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
+    assertEquals(expectedProjectView, projectView);
   }
 }

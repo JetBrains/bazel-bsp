@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import java.util.List;
+import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
@@ -39,12 +40,21 @@ class ProjectViewParserImpl implements ProjectViewParser {
   private static final ProjectViewRawSectionParser<TargetsSection> TARGETS_PARSER =
       ProjectViewRawSectionParser.forParser(new TargetsSectionParser());
 
+  private final ProjectViewImportParser projectViewImportParser;
+
+  public ProjectViewParserImpl() {
+    this.projectViewImportParser = new ProjectViewImportParser(this);
+  }
+
   @Override
   public ProjectView parse(String projectViewFileContent) {
     List<ProjectViewRawSection> rawSections =
         ProjectViewSectionSplitter.split(projectViewFileContent);
 
-    return buildFile(rawSections);
+    ProjectView projectView = buildFile(rawSections);
+    Optional<ProjectView> importedProjectView = projectViewImportParser.parseRawSections(rawSections);
+
+    return mergeProjectViewIfNeeded(projectView, importedProjectView);
   }
 
   private ProjectView buildFile(List<ProjectViewRawSection> rawSections) {
@@ -52,5 +62,11 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .directories(DIRECTORY_PARSER.parseRawSections(rawSections))
         .targets(TARGETS_PARSER.parseRawSections(rawSections))
         .build();
+  }
+
+  private ProjectView mergeProjectViewIfNeeded(ProjectView projectView, Optional<ProjectView> importedProjectView) {
+    return importedProjectView
+        .map(imported -> imported.merge(projectView))
+        .orElse(projectView);
   }
 }

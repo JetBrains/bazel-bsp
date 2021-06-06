@@ -51,4 +51,12 @@ public class DirectoriesSection extends ProjectViewSection<DirectoriesSection> {
   public int hashCode() {
     return Objects.hash(includedDirectories, excludedDirectories);
   }
+
+  @Override
+  public String toString() {
+    return "DirectoriesSection{" +
+        "includedDirectories=" + includedDirectories +
+        ", excludedDirectories=" + excludedDirectories +
+        '}';
+  }
 }

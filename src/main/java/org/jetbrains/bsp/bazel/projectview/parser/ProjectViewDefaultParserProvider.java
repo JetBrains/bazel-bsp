@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import io.vavr.control.Try;
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewDefaultProvider;
@@ -9,22 +10,19 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 
 public class ProjectViewDefaultParserProvider implements ProjectViewProvider {
 
-  private final ProjectViewParser parser;
-  private final File projectViewFile;
-
-  private final ProjectViewProvider defaultProvider;
-
-  public ProjectViewDefaultParserProvider() {
-    this.parser = new ProjectViewParserImpl();
-    this.projectViewFile = new File(Constants.DEFAULT_PROJECT_VIEW_FILE);
-    this.defaultProvider = new ProjectViewDefaultProvider();
-  }
+  private static final ProjectViewParser PARSER = new ProjectViewParserImpl();
+  private static final Path PROJECT_VIEW_FILE = Paths.get(Constants.DEFAULT_PROJECT_VIEW_FILE);
+  private static final ProjectViewProvider PROJECT_VIEW_PROVIDER = new ProjectViewDefaultProvider();
 
   @Override
   public ProjectView create() {
-    return Try.success(projectViewFile)
-        .filter(File::isFile)
-        .mapTry(parser::parse)
-        .getOrElse(defaultProvider::create);
+    return Try.success(PROJECT_VIEW_FILE)
+        .filter(this::doesProjectViewFileExists)
+        .mapTry(PARSER::parse)
+        .getOrElse(PROJECT_VIEW_PROVIDER::create);
+  }
+
+  private boolean doesProjectViewFileExists(Path projectViewFile) {
+    return projectViewFile.toFile().isFile();
   }
 }
