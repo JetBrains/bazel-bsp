@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
  * Our default implementation of ProjectViewParser
  *
  * <p>Logic schema:
+ *
  * <p>1. extracting blocks:
  * <section header>: <included section value 1> <included section value 2>
  * - <excluded section value 1> - <excluded section value 2>
