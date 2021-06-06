@@ -52,9 +52,9 @@ public class ProjectViewParserImplTest {
 
     ProjectView expectedProjectView =
         ProjectView.builder()
-          .directories(expectedDirectoriesSection)
-          .targets(expectedTargetsSection)
-          .build();
+            .directories(expectedDirectoriesSection)
+            .targets(expectedTargetsSection)
+            .build();
 
     assertEquals(expectedProjectView, projectView);
   }
@@ -67,10 +67,10 @@ public class ProjectViewParserImplTest {
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
             ImmutableList.of(Paths.get(".")),
-            ImmutableList.of
-                (Paths.get("excluded_dir1"),
-                    Paths.get("excluded_dir2"),
-                    Paths.get("excluded_dir3")));
+            ImmutableList.of(
+                Paths.get("excluded_dir1"),
+                Paths.get("excluded_dir2"),
+                Paths.get("excluded_dir3")));
     TargetsSection expectedTargetsSection =
         new TargetsSection(
             ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
@@ -78,9 +78,9 @@ public class ProjectViewParserImplTest {
 
     ProjectView expectedProjectView =
         ProjectView.builder()
-          .directories(expectedDirectoriesSection)
-          .targets(expectedTargetsSection)
-          .build();
+            .directories(expectedDirectoriesSection)
+            .targets(expectedTargetsSection)
+            .build();
 
     assertEquals(expectedProjectView, projectView);
   }
