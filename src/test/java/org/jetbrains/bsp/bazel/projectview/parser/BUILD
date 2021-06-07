@@ -3,7 +3,10 @@ load("@rules_java//java:defs.bzl", "java_test")
 java_test(
     name = "ProjectViewParserImplTest",
     size = "small",
-    srcs = ["ProjectViewParserImplTest.java"],
+    srcs = [
+        "ProjectViewParserImplTest.java",
+        "ProjectViewParserMockTestImpl.java",
+    ],
     resources = ["//src/test/resources/projectview:projectview-resources"],
     runtime_deps = [
         "@maven//:junit_junit",

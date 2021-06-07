@@ -21,55 +21,46 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseRegularFile() {
     String fileContent =
-        "directories: "
+        "import path/to/file.bazelproject"
+            + "\n"
+            + "directories: "
             + ". "
-            + "-ijwb "
-            + "-plugin_dev "
-            + "-clwb "
+            + "-excluded_dir1 "
+            + "-excluded_dir2 "
+            + "-excluded_dir3"
             + "\n"
             + "targets:\n"
-            + "  //aswb:aswb_bazel_dev\n"
-            + "  //:aswb_tests\n"
-            + "  //:aswb_python_tests\n"
+            + "  //included_target1:test1\n"
+            + "  -//excluded_target1:test1\n"
+            + "  //included_target1:test2\n"
             + "\n"
-            + "workspace_type: intellij_plugin\n"
+            + "workspace_type: not_parsed\n"
             + "\n"
             + "build_flags:\n"
-            + "  --define=ij_product=android-studio-latest\n"
+            + "  --not_parsed_flag\n"
             + "\n"
             + "test_sources:\n"
-            + "  */tests/unittests*\n"
-            + "  */tests/integrationtests*\n"
-            + "  */tests/utils/integration*\n"
-            + "  */testcompat/unittests*\n"
-            + "  */testcompat/integrationtests*\n"
-            + "  */testcompat/utils/integration*\n"
+            + "  *test/not/parsed1/*\n"
+            + "  *test/not/parsed2/*\n"
             + "\n";
 
     List<ProjectViewRawSection> result = ProjectViewSectionSplitter.split(fileContent);
     List<ProjectViewRawSection> expectedResult =
         ImmutableList.of(
-            new ProjectViewRawSection("directories", " . -ijwb -plugin_dev -clwb \n"),
+            new ProjectViewRawSection("import", " path/to/file.bazelproject\n"),
+            new ProjectViewRawSection(
+                "directories", " . -excluded_dir1 -excluded_dir2 -excluded_dir3\n"),
             new ProjectViewRawSection(
                 "targets",
                 "\n"
-                    + "  //aswb:aswb_bazel_dev\n"
-                    + "  //:aswb_tests\n"
-                    + "  //:aswb_python_tests\n"
+                    + "  //included_target1:test1\n"
+                    + "  -//excluded_target1:test1\n"
+                    + "  //included_target1:test2\n"
                     + "\n"),
-            new ProjectViewRawSection("workspace_type", " intellij_plugin\n\n"),
+            new ProjectViewRawSection("workspace_type", " not_parsed\n\n"),
+            new ProjectViewRawSection("build_flags", "\n  --not_parsed_flag\n\n"),
             new ProjectViewRawSection(
-                "build_flags", "\n  --define=ij_product=android-studio-latest\n\n"),
-            new ProjectViewRawSection(
-                "test_sources",
-                "\n"
-                    + "  */tests/unittests*\n"
-                    + "  */tests/integrationtests*\n"
-                    + "  */tests/utils/integration*\n"
-                    + "  */testcompat/unittests*\n"
-                    + "  */testcompat/integrationtests*\n"
-                    + "  */testcompat/utils/integration*\n"
-                    + "\n"));
+                "test_sources", "\n  *test/not/parsed1/*\n  *test/not/parsed2/*\n\n"));
 
     assertEquals(expectedResult, result);
   }

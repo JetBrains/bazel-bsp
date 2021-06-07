@@ -1,0 +1,7 @@
+import /projectview/projectViewToImport.bazelproject
+
+directories: -excluded_dir2 -excluded_dir3
+
+targets:
+    -//excluded_target1:test1
+    //included_target1:test2

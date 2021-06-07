@@ -2,12 +2,9 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.CharStreams;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
@@ -21,48 +18,70 @@ public class ProjectViewParserImplTest {
 
   @Before
   public void before() {
-    this.parser = new ProjectViewParserImpl();
+    this.parser = new ProjectViewParserMockTestImpl();
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowMissingDirectoriesSection() throws IOException {
-    String projectViewFileContent =
-        loadFileFromResources("projectViewWithoutDirectories.bazelproject");
-
-    parser.parse(projectViewFileContent);
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithoutDirectories.bazelproject");
+    parser.parse(projectViewFilePath);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowMissingTargetsSection() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectViewWithoutTargets.bazelproject");
-
-    parser.parse(projectViewFileContent);
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithoutTargets.bazelproject");
+    parser.parse(projectViewFilePath);
   }
 
   @Test
-  public void shouldParseSections() throws IOException {
-    String projectViewFileContent = loadFileFromResources("projectView.bazelproject");
-
-    ProjectView projectView = parser.parse(projectViewFileContent);
+  public void shouldParseFile() throws IOException {
+    Path projectViewFilePath = Paths.get("/projectview/projectView.bazelproject");
+    ProjectView projectView = parser.parse(projectViewFilePath);
 
     DirectoriesSection expectedDirectoriesSection =
         new DirectoriesSection(
             ImmutableList.of(Paths.get(".")),
-            ImmutableList.of(Paths.get("ijwb"), Paths.get("plugin_dev"), Paths.get("clwb")));
+            ImmutableList.of(
+                Paths.get("excluded_dir1"),
+                Paths.get("excluded_dir2"),
+                Paths.get("excluded_dir3")));
     TargetsSection expectedTargetsSection =
         new TargetsSection(
-            ImmutableList.of("//aswb:aswb_bazel_dev", "//:aswb_python_tests"),
-            ImmutableList.of("//:aswb_tests"));
+            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
+            ImmutableList.of("//excluded_target1:test1"));
 
-    assertEquals(expectedDirectoriesSection, projectView.getDirectories());
-    assertEquals(expectedTargetsSection, projectView.getTargets());
+    ProjectView expectedProjectView =
+        ProjectView.builder()
+            .directories(expectedDirectoriesSection)
+            .targets(expectedTargetsSection)
+            .build();
+
+    assertEquals(expectedProjectView, projectView);
   }
 
-  private String loadFileFromResources(String fileName) throws IOException {
-    String filePath = String.format("/projectview/%s", fileName);
-    InputStream inputStream = ProjectViewParserImplTest.class.getResourceAsStream(filePath);
+  @Test
+  public void shouldParseFileWithImport() throws IOException {
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithImport.bazelproject");
+    ProjectView projectView = parser.parse(projectViewFilePath);
 
-    // we read file content instead of passing plain file due to bazel resources packaging
-    return CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
+    DirectoriesSection expectedDirectoriesSection =
+        new DirectoriesSection(
+            ImmutableList.of(Paths.get(".")),
+            ImmutableList.of(
+                Paths.get("excluded_dir1"),
+                Paths.get("excluded_dir2"),
+                Paths.get("excluded_dir3")));
+    TargetsSection expectedTargetsSection =
+        new TargetsSection(
+            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
+            ImmutableList.of("//excluded_target1:test1"));
+
+    ProjectView expectedProjectView =
+        ProjectView.builder()
+            .directories(expectedDirectoriesSection)
+            .targets(expectedTargetsSection)
+            .build();
+
+    assertEquals(expectedProjectView, projectView);
   }
 }

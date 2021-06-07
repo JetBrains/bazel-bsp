@@ -38,12 +38,13 @@ public class DirectoriesSectionParserTest {
 
   @Test
   public void shouldParseIncludedDirectories() {
-    String entryBody = "ijwb plugin_dev clwb \n";
+    String entryBody = "test_included1 test_included2 test_included3 \n";
 
     DirectoriesSection section = parser.parse(entryBody);
 
     List<Path> expectedIncludedPaths =
-        ImmutableList.of(Paths.get("ijwb"), Paths.get("plugin_dev"), Paths.get("clwb"));
+        ImmutableList.of(
+            Paths.get("test_included1"), Paths.get("test_included2"), Paths.get("test_included3"));
     List<Path> expectedExcludedPaths = ImmutableList.of();
 
     assertEquals(expectedIncludedPaths, section.getIncludedDirectories());
@@ -52,13 +53,14 @@ public class DirectoriesSectionParserTest {
 
   @Test
   public void shouldParseExcludedDirectories() {
-    String entryBody = "-ijwb -plugin_dev -clwb \n";
+    String entryBody = "-test_excluded1 -test_excluded2 -test_excluded3 \n";
 
     DirectoriesSection section = parser.parse(entryBody);
 
     List<Path> expectedIncludedPaths = ImmutableList.of();
     List<Path> expectedExcludedPaths =
-        ImmutableList.of(Paths.get("ijwb"), Paths.get("plugin_dev"), Paths.get("clwb"));
+        ImmutableList.of(
+            Paths.get("test_excluded1"), Paths.get("test_excluded2"), Paths.get("test_excluded3"));
 
     assertEquals(expectedIncludedPaths, section.getIncludedDirectories());
     assertEquals(expectedExcludedPaths, section.getExcludedDirectories());
@@ -66,12 +68,14 @@ public class DirectoriesSectionParserTest {
 
   @Test
   public void shouldParseIncludedAndExcludedDirectories() {
-    String entryBody = "ijwb -plugin_dev clwb \n-test\n";
+    String entryBody = "test_included1 -test_excluded1 test_included2 \n-test_excluded2\n";
 
     DirectoriesSection section = parser.parse(entryBody);
 
-    List<Path> expectedIncludedPaths = ImmutableList.of(Paths.get("ijwb"), Paths.get("clwb"));
-    List<Path> expectedExcludedPaths = ImmutableList.of(Paths.get("plugin_dev"), Paths.get("test"));
+    List<Path> expectedIncludedPaths =
+        ImmutableList.of(Paths.get("test_included1"), Paths.get("test_included2"));
+    List<Path> expectedExcludedPaths =
+        ImmutableList.of(Paths.get("test_excluded1"), Paths.get("test_excluded2"));
 
     assertEquals(expectedIncludedPaths, section.getIncludedDirectories());
     assertEquals(expectedExcludedPaths, section.getExcludedDirectories());
