@@ -23,7 +23,10 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 1. Please make sure to have followed the prerequisites guide before proceeding.
 2. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
 3. Run
-`coursier launch -r sonatype:snapshots org.jetbrains.bsp:bazel-bsp:0.1.0-SNAPSHOT -M org.jetbrains.bsp.bazel.Install`
+```
+./buildAndRunLocally.sh
+coursier launch -r sonatype:snapshots -r central -r file:///~/.m2/repository org.jetbrains.bsp:bazel-bsp:0.1.0 -M org.jetbrains.bsp.bazel.install.Install
+```
 4. Add bsp generated folders to your `gitignore`: `.bsp` and `.bazelbsp`
 
 ## Extending
