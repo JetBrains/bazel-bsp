@@ -60,6 +60,32 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
+  public void shouldParseFileWithTabs() throws IOException {
+    Path projectViewFilePath = Paths.get("/projectview/projectViewWithTabs.bazelproject");
+    ProjectView projectView = parser.parse(projectViewFilePath);
+
+    DirectoriesSection expectedDirectoriesSection =
+        new DirectoriesSection(
+            ImmutableList.of(Paths.get(".")),
+            ImmutableList.of(
+                Paths.get("excluded_dir1"),
+                Paths.get("excluded_dir2"),
+                Paths.get("excluded_dir3")));
+    TargetsSection expectedTargetsSection =
+        new TargetsSection(
+            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
+            ImmutableList.of("//excluded_target1:test1"));
+
+    ProjectView expectedProjectView =
+        ProjectView.builder()
+            .directories(expectedDirectoriesSection)
+            .targets(expectedTargetsSection)
+            .build();
+
+    assertEquals(expectedProjectView, projectView);
+  }
+
+  @Test
   public void shouldParseFileWithImport() throws IOException {
     Path projectViewFilePath = Paths.get("/projectview/projectViewWithImport.bazelproject");
     ProjectView projectView = parser.parse(projectViewFilePath);
