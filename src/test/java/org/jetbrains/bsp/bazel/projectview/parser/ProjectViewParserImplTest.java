@@ -14,6 +14,25 @@ import org.junit.Test;
 
 public class ProjectViewParserImplTest {
 
+  private static final DirectoriesSection EXPECTED_DIRECTORIES_SECTION =
+      new DirectoriesSection(
+          ImmutableList.of(Paths.get(".")),
+          ImmutableList.of(
+              Paths.get("excluded_dir1"),
+              Paths.get("excluded_dir2"),
+              Paths.get("excluded_dir3")));
+  private static final TargetsSection EXPECTED_TARGETS_SECTION =
+      new TargetsSection(
+          ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
+          ImmutableList.of("//excluded_target1:test1"));
+
+  private static final ProjectView EXPECTED_PROJECT_VIEW =
+      ProjectView.builder()
+          .directories(EXPECTED_DIRECTORIES_SECTION)
+          .targets(EXPECTED_TARGETS_SECTION)
+          .build();
+
+
   private ProjectViewParser parser;
 
   @Before
@@ -38,25 +57,7 @@ public class ProjectViewParserImplTest {
     Path projectViewFilePath = Paths.get("/projectview/projectView.bazelproject");
     ProjectView projectView = parser.parse(projectViewFilePath);
 
-    DirectoriesSection expectedDirectoriesSection =
-        new DirectoriesSection(
-            ImmutableList.of(Paths.get(".")),
-            ImmutableList.of(
-                Paths.get("excluded_dir1"),
-                Paths.get("excluded_dir2"),
-                Paths.get("excluded_dir3")));
-    TargetsSection expectedTargetsSection =
-        new TargetsSection(
-            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
-            ImmutableList.of("//excluded_target1:test1"));
-
-    ProjectView expectedProjectView =
-        ProjectView.builder()
-            .directories(expectedDirectoriesSection)
-            .targets(expectedTargetsSection)
-            .build();
-
-    assertEquals(expectedProjectView, projectView);
+    assertEquals(EXPECTED_PROJECT_VIEW, projectView);
   }
 
   @Test
@@ -64,25 +65,7 @@ public class ProjectViewParserImplTest {
     Path projectViewFilePath = Paths.get("/projectview/projectViewWithTabs.bazelproject");
     ProjectView projectView = parser.parse(projectViewFilePath);
 
-    DirectoriesSection expectedDirectoriesSection =
-        new DirectoriesSection(
-            ImmutableList.of(Paths.get(".")),
-            ImmutableList.of(
-                Paths.get("excluded_dir1"),
-                Paths.get("excluded_dir2"),
-                Paths.get("excluded_dir3")));
-    TargetsSection expectedTargetsSection =
-        new TargetsSection(
-            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
-            ImmutableList.of("//excluded_target1:test1"));
-
-    ProjectView expectedProjectView =
-        ProjectView.builder()
-            .directories(expectedDirectoriesSection)
-            .targets(expectedTargetsSection)
-            .build();
-
-    assertEquals(expectedProjectView, projectView);
+    assertEquals(EXPECTED_PROJECT_VIEW, projectView);
   }
 
   @Test
@@ -90,24 +73,6 @@ public class ProjectViewParserImplTest {
     Path projectViewFilePath = Paths.get("/projectview/projectViewWithImport.bazelproject");
     ProjectView projectView = parser.parse(projectViewFilePath);
 
-    DirectoriesSection expectedDirectoriesSection =
-        new DirectoriesSection(
-            ImmutableList.of(Paths.get(".")),
-            ImmutableList.of(
-                Paths.get("excluded_dir1"),
-                Paths.get("excluded_dir2"),
-                Paths.get("excluded_dir3")));
-    TargetsSection expectedTargetsSection =
-        new TargetsSection(
-            ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
-            ImmutableList.of("//excluded_target1:test1"));
-
-    ProjectView expectedProjectView =
-        ProjectView.builder()
-            .directories(expectedDirectoriesSection)
-            .targets(expectedTargetsSection)
-            .build();
-
-    assertEquals(expectedProjectView, projectView);
+    assertEquals(EXPECTED_PROJECT_VIEW, projectView);
   }
 }
