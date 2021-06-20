@@ -17,10 +17,8 @@ public class ProjectViewParserImplTest {
   private static final DirectoriesSection EXPECTED_DIRECTORIES_SECTION =
       new DirectoriesSection(
           ImmutableList.of(Paths.get(".")),
-          ImmutableList.of(
-              Paths.get("excluded_dir1"),
-              Paths.get("excluded_dir2"),
-              Paths.get("excluded_dir3")));
+          ImmutableList.of(Paths.get("excluded_dir1"), Paths.get("excluded_dir2"), Paths.get("excluded_dir3")));
+
   private static final TargetsSection EXPECTED_TARGETS_SECTION =
       new TargetsSection(
           ImmutableList.of("//included_target1:test1", "//included_target1:test2"),
@@ -31,7 +29,6 @@ public class ProjectViewParserImplTest {
           .directories(EXPECTED_DIRECTORIES_SECTION)
           .targets(EXPECTED_TARGETS_SECTION)
           .build();
-
 
   private ProjectViewParser parser;
 
