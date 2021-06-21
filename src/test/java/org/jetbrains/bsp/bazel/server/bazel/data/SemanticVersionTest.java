@@ -29,4 +29,13 @@ public class SemanticVersionTest {
     assertEquals(2, version.getMinorVersion());
     assertEquals(3, version.getPatchVersion());
   }
+
+  @Test
+  public void shouldParseHomebrewVersion() {
+    SemanticVersion version = new SemanticVersion("1.2.3-homebrew");
+
+    assertEquals(1, version.getMajorVersion());
+    assertEquals(2, version.getMinorVersion());
+    assertEquals(3, version.getPatchVersion());
+  }
 }
