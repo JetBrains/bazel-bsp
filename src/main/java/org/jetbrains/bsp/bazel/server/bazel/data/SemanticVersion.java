@@ -1,13 +1,16 @@
 package org.jetbrains.bsp.bazel.server.bazel.data;
 
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SemanticVersion implements Comparable<SemanticVersion> {
 
-  private static final String SEMANTIC_VERSION_REGEX = "^([0-9]+)\\.([0-9]+)\\.([0-9]+)";
-  private static final int MAJOR_VERSION_LOCATION = 0;
-  private static final int MINOR_VERSION_LOCATION = 1;
-  private static final int PATCH_VERSION_LOCATION = 2;
+  private static final String SEMANTIC_VERSION_REGEX =
+      "^([0-9]+)\\.([0-9]+)\\.([0-9]+)[\\-a-zA-Z]*";
+  private static final int MAJOR_VERSION_GROUP_ID = 1;
+  private static final int MINOR_VERSION_GROUP_ID = 2;
+  private static final int PATCH_VERSION_GROUP_ID = 3;
   private static final Comparator<SemanticVersion> comparator =
       Comparator.nullsLast(
           Comparator.comparing(SemanticVersion::getMajorVersion)
@@ -23,16 +26,18 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     if (version == null) {
       throw new IllegalArgumentException("Version can't be null");
     }
-    if (!version.matches(SEMANTIC_VERSION_REGEX)) {
+
+    Pattern pattern = Pattern.compile(SEMANTIC_VERSION_REGEX);
+    Matcher matcher = pattern.matcher(version);
+
+    if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid version format");
     }
 
-    String[] parts = version.split("\\.");
-
     this.version = version;
-    this.majorVersion = Integer.parseInt(parts[MAJOR_VERSION_LOCATION]);
-    this.minorVersion = Integer.parseInt(parts[MINOR_VERSION_LOCATION]);
-    this.patchVersion = Integer.parseInt(parts[PATCH_VERSION_LOCATION]);
+    this.majorVersion = Integer.parseInt(matcher.group(MAJOR_VERSION_GROUP_ID));
+    this.minorVersion = Integer.parseInt(matcher.group(MINOR_VERSION_GROUP_ID));
+    this.patchVersion = Integer.parseInt(matcher.group(PATCH_VERSION_GROUP_ID));
   }
 
   public int getMajorVersion() {
