@@ -42,6 +42,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
 
+  private static final List<String> EXCLUDED_PROGRESS_MESSAGES =
+      List.of("Loading: 0 packages loaded");
+
   private static final int URI_PREFIX_LENGTH = 7;
 
   private final BuildClient bspClient;
@@ -257,7 +260,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         .map(this::createParamsFromEntry)
         .forEach(bspClient::onBuildPublishDiagnostics);
 
-    buildClientLogger.logMessage(progress.getStderr().trim());
+    logProgress(progress);
   }
 
   private PublishDiagnosticsParams createParamsFromEntry(
@@ -270,6 +273,18 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         new BuildTargetIdentifier(""),
         diagnostics,
         false);
+  }
+
+  private void logProgress(BuildEventStreamProtos.Progress progress) {
+    String progressMessage = progress.getStderr().trim();
+
+    if (shouldMessageBeLogged(progressMessage)) {
+      buildClientLogger.logMessage(progressMessage);
+    }
+  }
+
+  private boolean shouldMessageBeLogged(String message) {
+    return EXCLUDED_PROGRESS_MESSAGES.stream().noneMatch(message::startsWith);
   }
 
   public Map<String, Set<Uri>> getOutputGroupPaths() {
