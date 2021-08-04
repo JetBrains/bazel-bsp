@@ -10,6 +10,7 @@ import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import com.google.devtools.build.v1.BuildEvent;
@@ -43,7 +44,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
 
   private static final List<String> EXCLUDED_PROGRESS_MESSAGES =
-      List.of("Loading: 0 packages loaded");
+      ImmutableList.of("Loading: 0 packages loaded");
 
   private static final int URI_PREFIX_LENGTH = 7;
 
