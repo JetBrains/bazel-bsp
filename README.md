@@ -24,9 +24,9 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 ## Installation
 ### Easy way (coursier)
 1. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
-2. Run in the  direcotry where Bazel BSP should be installed: 
+2. Run in the directory where Bazel BSP should be installed: 
 ```
-cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:0.1.0 -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:0.1.0 -M org.jetbrains.bsp.bazel.Install
 ```
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
 
