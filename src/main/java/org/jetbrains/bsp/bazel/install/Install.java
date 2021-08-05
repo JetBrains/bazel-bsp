@@ -64,7 +64,8 @@ public class Install {
         Path rootDir = getRootDir(cmd);
         writeConfigurationFiles(rootDir, details);
 
-        System.out.println("Bazel BSP server installed in " + rootDir.toString());
+        String currentDirectory = getCurrentDirectory();
+        System.out.println("Bazel BSP server installed in '" + currentDirectory + "'.");
       }
     } catch (ParseException e) {
       writer.println(e.getMessage());
@@ -263,5 +264,9 @@ public class Install {
       throw new NoSuchElementException("Could not read " + name + " system property");
     }
     return property;
+  }
+
+  private static String getCurrentDirectory() {
+    return System.getProperty("user.dir");
   }
 }
