@@ -2,13 +2,15 @@ workspace(name = "bazel_bsp")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# For maven:
 RULES_JVM_EXTERNAL_TAG = "4.0"
+
 RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
 
 http_archive(
     name = "rules_jvm_external",
-    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
     sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
@@ -105,9 +107,9 @@ py_repositories()
 
 http_archive(
     name = "googleapis",
-    sha256 = "a02d861fac93196fe020fd36ec2ad698d34e54c2394741be82b60c6c2334a4bf",
-    strip_prefix = "bazel-5ebe41f2900d71a99be08f7a675a79228506aec6/third_party/googleapis",
-    urls = ["https://github.com/andrefmrocha/bazel/archive/5ebe41f2900d71a99be08f7a675a79228506aec6.zip"],
+    sha256 = "4e5d2467df2994b13b2caaa0422985bedff804c3ae640fba23e63903172345ff",
+    strip_prefix = "bazel-caf13559e367da9c791cc5e559d2970400d5478b/third_party/googleapis",
+    urls = ["https://github.com/bazelbuild/bazel/archive/caf13559e367da9c791cc5e559d2970400d5478b.zip"],
 )
 
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
@@ -136,12 +138,8 @@ http_archive(
     url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % protobuf_version,
 )
 
-local_repository(
-    name = "sample_repo",
-    path = "sample-repo",
-)
-
 BAZEL_SONATYPE_TAG = "8c4bfd2a4c03c212446da134e0be3ab1ac605289"
+
 http_archive(
     name = "bazel_sonatype",
     strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,

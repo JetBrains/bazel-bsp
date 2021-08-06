@@ -1,9 +1,8 @@
-/.bazelbsp/bazelbsp.log
-/.bazelbsp/bazelbsp.trace.json
-/.bsp/bazelbsp.json
+/.bazelbsp/
+/.bsp/
 /.idea/
 /.ijwb/
 /bazel-*
-/sample-repo/.bazelbsp/bazelbsp.trace.json
-/sample-repo/.bazelbsp/bazelbsp.log
-/sample-repo/bazel-*
+.DS_Store
+test-resources/.bazelbsp/
+test-resources/.bsp/
