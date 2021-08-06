@@ -9,10 +9,11 @@ echo -e "Building server..."
 echo -e "============================"
 bazel build //src/main/java/org/jetbrains/bsp/bazel:bsp-install
 bsp_path="$(bazel info bazel-bin)/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
-
-echo -e "\n\nRunning server at $project_path"
 echo -e "============================"
-cd $project_path || { echo "cd $project_path failed! EXITING"; exit 155; }
+echo -e "Building done."
+
+echo -e "\nInstalling server at '$project_path' ..."
+cd "$project_path" || { echo "cd $project_path failed! EXITING"; exit 155; }
 $bsp_path
 
-echo -e "\n\nDone!"
+echo -e "\nDone! Enjoy Bazel BSP!"
