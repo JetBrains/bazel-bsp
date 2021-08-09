@@ -83,10 +83,7 @@ http_archive(
     name = "rules_proto",
     sha256 = RULES_PROTO_SHA,
     strip_prefix = "rules_proto-%s" % RULES_PROTO_TAG,
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/%s.tar.gz" % RULES_PROTO_TAG,
-        "https://github.com/bazelbuild/rules_proto/archive/%s.tar.gz" % RULES_PROTO_TAG,
-    ],
+    url = "https://github.com/bazelbuild/rules_proto/archive/%s.tar.gz" % RULES_PROTO_TAG,
 )
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
@@ -99,17 +96,15 @@ http_archive(
     name = "rules_java",
     sha256 = RULES_JAVA_SHA,
     strip_prefix = "rules_java-%s" % RULES_JAVA_TAG,
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_java/archive/%s.zip" % RULES_JAVA_TAG,
+    url =
         "https://github.com/bazelbuild/rules_java/archive/%s.zip" % RULES_JAVA_TAG,
-    ],
 )
 
 http_archive(
     name = "io_grpc_grpc_java",
     sha256 = IO_GRPC_GRPC_JAVA_SHA,
     strip_prefix = "grpc-java-%s" % IO_GRPC_GRPC_JAVA_TAG,
-    urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % IO_GRPC_GRPC_JAVA_TAG],
+    url = "https://github.com/grpc/grpc-java/archive/v%s.zip" % IO_GRPC_GRPC_JAVA_TAG,
 )
 
 load("@io_grpc_grpc_java//:repositories.bzl", "grpc_java_repositories")
@@ -120,7 +115,7 @@ http_archive(
     name = "io_bazel",
     sha256 = IO_BAZEL_SHA,
     strip_prefix = "bazel-%s" % IO_BAZEL_TAG,
-    urls = ["https://github.com/andrefmrocha/bazel/archive/%s.zip" % IO_BAZEL_TAG],
+    url = "https://github.com/andrefmrocha/bazel/archive/%s.zip" % IO_BAZEL_TAG,
 )
 
 http_archive(
@@ -148,7 +143,7 @@ http_archive(
     name = "googleapis",
     sha256 = GOOGLEAPIS_SHA,
     strip_prefix = "bazel-%s/third_party/googleapis" % GOOGLEAPIS_TAG,
-    urls = ["https://github.com/bazelbuild/bazel/archive/%s.zip" % GOOGLEAPIS_TAG],
+    url = "https://github.com/bazelbuild/bazel/archive/%s.zip" % GOOGLEAPIS_TAG,
 )
 
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
