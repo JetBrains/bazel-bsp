@@ -25,10 +25,13 @@ http_archive(
 )
 
 # For rules_scala
+RULES_SCALA_SHA = "1a19bdedae7c62e9541315476c506c8e7a92c3ce0e7cbbfb57f12a429849f19d"
+
 http_archive(
     name = "io_bazel_rules_scala",
     strip_prefix = "rules_scala-d6186617cfe64cef2074b23ca58daac75fe40d42",
     url = "https://github.com/andrefmrocha/rules_scala/archive/d6186617cfe64cef2074b23ca58daac75fe40d42.tar.gz",
+    sha256 = RULES_SCALA_SHA,
 )
 
 load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
@@ -144,6 +147,7 @@ http_archive(
     name = "bazel_sonatype",
     strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
     url = "https://github.com/JetBrains/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
+    sha256 = "58b616d7ef1d28bc627c1b945c704cb2fe4cf49deb87fc0ce074a452c457ec2b",
 )
 
 load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
