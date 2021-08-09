@@ -41,7 +41,7 @@ test_bsp_server() {
 
   $bsp_path
 
-  cd test-resources
+  cd e2e/test-resources
 
   for project in "${TEST_PROJECTS[@]}"
   do
