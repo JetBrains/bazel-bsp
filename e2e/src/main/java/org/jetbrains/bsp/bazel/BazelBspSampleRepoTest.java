@@ -35,11 +35,11 @@ import java.util.List;
 
 public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
-  private static final String SAMPLE_REPO_NAME = "sample-repo";
+  private static final String REPO_NAME = "sample-repo";
   private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(8);
 
   public BazelBspSampleRepoTest() {
-    super(SAMPLE_REPO_NAME, CLIENT_TIMEOUT);
+    super(REPO_NAME, CLIENT_TIMEOUT);
   }
 
   // we cannot use `bazel test ...` because testrunner blocks bazel deamon,
@@ -91,7 +91,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     WorkspaceBuildTargetsResult expectedWorkspaceBuildTargetsResult =
         getExpectedWorkspaceBuildTargetsResult();
 
-    String exampleScalaSourceUri = String.format("%s/example/Example.scala", SAMPLE_REPO_NAME);
+    String exampleScalaSourceUri = String.format("%s/example/Example.scala", REPO_NAME);
     SourceItem exampleScalaSource =
         new SourceItem(exampleScalaSourceUri, SourceItemKind.FILE, false);
 
@@ -99,13 +99,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new SourcesItem(
             new BuildTargetIdentifier("//example:example"), ImmutableList.of(exampleScalaSource));
 
-    String testScalaUri = String.format("%s/dep/Test.scala", SAMPLE_REPO_NAME);
+    String testScalaUri = String.format("%s/dep/Test.scala", REPO_NAME);
     SourceItem testScalaSource = new SourceItem(testScalaUri, SourceItemKind.FILE, false);
 
-    String javaTestJavaUri = String.format("%s/dep/JavaTest.java", SAMPLE_REPO_NAME);
+    String javaTestJavaUri = String.format("%s/dep/JavaTest.java", REPO_NAME);
     SourceItem javaTestJavaSource = new SourceItem(javaTestJavaUri, SourceItemKind.FILE, false);
 
-    String depScalaUri = String.format("%s/dep/Dep.scala", SAMPLE_REPO_NAME);
+    String depScalaUri = String.format("%s/dep/Dep.scala", REPO_NAME);
     SourceItem depScalaSource = new SourceItem(depScalaUri, SourceItemKind.FILE, false);
 
     SourcesItem depDepSources =
@@ -127,8 +127,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     WorkspaceBuildTargetsResult expectedWorkspaceBuildTargetsResult =
         getExpectedWorkspaceBuildTargetsResult();
 
-    String fileTxtUri = String.format("%s/example/file.txt", SAMPLE_REPO_NAME);
-    String file2TxtUri = String.format("%s/example/file2.txt", SAMPLE_REPO_NAME);
+    String fileTxtUri = String.format("%s/example/file.txt", REPO_NAME);
+    String file2TxtUri = String.format("%s/example/file2.txt", REPO_NAME);
 
     ResourcesItem exampleExampleResource =
         new ResourcesItem(
@@ -146,8 +146,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
   }
 
   private BazelBspTestScenarioStep inverseSourcesResults() {
-    String depScalaUri =
-        String.format("file://%s/dep/Dep.scala", getTestingRepoPath(SAMPLE_REPO_NAME));
+    String depScalaUri = String.format("file://%s/dep/Dep.scala", getTestingRepoPath(REPO_NAME));
     TextDocumentIdentifier inverseSourcesDocument = new TextDocumentIdentifier(depScalaUri);
 
     InverseSourcesResult expectedInverseSourcesResult =
