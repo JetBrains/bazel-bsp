@@ -3,8 +3,8 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "base",
     srcs = glob(["*.java"]),
-    visibility = ["//visibility:public"],
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//visibility:public"],
     deps = [
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:ch_epfl_scala_bsp_testkit_2_13",

@@ -130,19 +130,24 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     String fileTxtUri = String.format("%s/example/file.txt", SAMPLE_REPO_NAME);
     String file2TxtUri = String.format("%s/example/file2.txt", SAMPLE_REPO_NAME);
 
-    ResourcesItem exampleExampleResource = new ResourcesItem(
-        new BuildTargetIdentifier("//example:example"),
-        ImmutableList.of(fileTxtUri, file2TxtUri));
+    ResourcesItem exampleExampleResource =
+        new ResourcesItem(
+            new BuildTargetIdentifier("//example:example"),
+            ImmutableList.of(fileTxtUri, file2TxtUri));
 
-    ResourcesResult expectedResourcesResult = new ResourcesResult(ImmutableList.of(exampleExampleResource));
+    ResourcesResult expectedResourcesResult =
+        new ResourcesResult(ImmutableList.of(exampleExampleResource));
 
     return new BazelBspTestScenarioStep(
         "resources results",
-        () -> testClient.testResourcesResults(expectedWorkspaceBuildTargetsResult, expectedResourcesResult));
+        () ->
+            testClient.testResourcesResults(
+                expectedWorkspaceBuildTargetsResult, expectedResourcesResult));
   }
 
   private BazelBspTestScenarioStep inverseSourcesResults() {
-    String depScalaUri = String.format("file://%s/dep/Dep.scala", getTestingRepoPath(SAMPLE_REPO_NAME));
+    String depScalaUri =
+        String.format("file://%s/dep/Dep.scala", getTestingRepoPath(SAMPLE_REPO_NAME));
     TextDocumentIdentifier inverseSourcesDocument = new TextDocumentIdentifier(depScalaUri);
 
     InverseSourcesResult expectedInverseSourcesResult =
@@ -150,68 +155,77 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "inverse sources results",
-        () -> testClient.testInverseSourcesResults(inverseSourcesDocument, expectedInverseSourcesResult));
+        () ->
+            testClient.testInverseSourcesResults(
+                inverseSourcesDocument, expectedInverseSourcesResult));
   }
 
   private BazelBspTestScenarioStep scalaMainClasses() {
     ScalaMainClassesParams scalaMainClassesParams =
-        new ScalaMainClassesParams(ImmutableList.of(
+        new ScalaMainClassesParams(
+            ImmutableList.of(
+                new BuildTargetIdentifier("//example:example"),
+                new BuildTargetIdentifier("//target_without_main_class:library"),
+                new BuildTargetIdentifier("//target_without_args:binary"),
+                new BuildTargetIdentifier("//target_without_jvm_flags:binary")));
+
+    ScalaMainClass exampleExampleMainClass =
+        new ScalaMainClass(
+            "example.Example", ImmutableList.of("arg1", "arg2"), ImmutableList.of("-Xms2G -Xmx5G"));
+    ScalaMainClassesItem exampleExampleMainClasses =
+        new ScalaMainClassesItem(
             new BuildTargetIdentifier("//example:example"),
-            new BuildTargetIdentifier("//target_without_main_class:library"),
+            ImmutableList.of(exampleExampleMainClass));
+
+    ScalaMainClass withoutArgsBinaryMainClass =
+        new ScalaMainClass(
+            "example.Example", ImmutableList.of(), ImmutableList.of("-Xms2G -Xmx5G"));
+    ScalaMainClassesItem withoutArgsBinaryMainClasses =
+        new ScalaMainClassesItem(
             new BuildTargetIdentifier("//target_without_args:binary"),
-            new BuildTargetIdentifier("//target_without_jvm_flags:binary")));
+            ImmutableList.of(withoutArgsBinaryMainClass));
 
-    ScalaMainClass exampleExampleMainClass = new ScalaMainClass(
-        "example.Example",
-        ImmutableList.of("arg1", "arg2"),
-        ImmutableList.of("-Xms2G -Xmx5G"));
-    ScalaMainClassesItem exampleExampleMainClasses = new ScalaMainClassesItem(
-        new BuildTargetIdentifier("//example:example"),
-        ImmutableList.of(exampleExampleMainClass));
-
-    ScalaMainClass withoutArgsBinaryMainClass = new ScalaMainClass(
-        "example.Example",
-        ImmutableList.of(),
-        ImmutableList.of("-Xms2G -Xmx5G"));
-    ScalaMainClassesItem withoutArgsBinaryMainClasses = new ScalaMainClassesItem(
-        new BuildTargetIdentifier("//target_without_args:binary"),
-        ImmutableList.of(withoutArgsBinaryMainClass));
-
-    ScalaMainClass withoutJvmFlagsBinaryMainClass = new ScalaMainClass(
-        "example.Example",
-        ImmutableList.of("arg1", "arg2"),
-        ImmutableList.of());
-    ScalaMainClassesItem withoutJvmFlagsBinaryMainClasses = new ScalaMainClassesItem(
-        new BuildTargetIdentifier("//target_without_jvm_flags:binary"),
-        ImmutableList.of(withoutJvmFlagsBinaryMainClass));
-
+    ScalaMainClass withoutJvmFlagsBinaryMainClass =
+        new ScalaMainClass("example.Example", ImmutableList.of("arg1", "arg2"), ImmutableList.of());
+    ScalaMainClassesItem withoutJvmFlagsBinaryMainClasses =
+        new ScalaMainClassesItem(
+            new BuildTargetIdentifier("//target_without_jvm_flags:binary"),
+            ImmutableList.of(withoutJvmFlagsBinaryMainClass));
 
     ScalaMainClassesResult expectedScalaMainClassesResult =
-        new ScalaMainClassesResult(ImmutableList.of(
-            exampleExampleMainClasses,
-            withoutArgsBinaryMainClasses,
-            withoutJvmFlagsBinaryMainClasses));
+        new ScalaMainClassesResult(
+            ImmutableList.of(
+                exampleExampleMainClasses,
+                withoutArgsBinaryMainClasses,
+                withoutJvmFlagsBinaryMainClasses));
 
     return new BazelBspTestScenarioStep(
         "Scala main classes",
-        () -> testClient.testScalaMainClasses(scalaMainClassesParams, expectedScalaMainClassesResult));
+        () ->
+            testClient.testScalaMainClasses(
+                scalaMainClassesParams, expectedScalaMainClassesResult));
   }
 
   private BazelBspTestScenarioStep scalaTestClasses() {
-    ScalaTestClassesParams scalaTestClassesParams = new ScalaTestClassesParams(ImmutableList.of(
-        new BuildTargetIdentifier("//example:example"),
-        new BuildTargetIdentifier("//example:example-test")));
+    ScalaTestClassesParams scalaTestClassesParams =
+        new ScalaTestClassesParams(
+            ImmutableList.of(
+                new BuildTargetIdentifier("//example:example"),
+                new BuildTargetIdentifier("//example:example-test")));
 
-    ScalaTestClassesItem exampleExampleTestTestClasses = new ScalaTestClassesItem(
-        new BuildTargetIdentifier("//example:example-test"),
-        ImmutableList.of("example.ExampleTest"));
+    ScalaTestClassesItem exampleExampleTestTestClasses =
+        new ScalaTestClassesItem(
+            new BuildTargetIdentifier("//example:example-test"),
+            ImmutableList.of("example.ExampleTest"));
 
     ScalaTestClassesResult expectedScalaTestClassesResult =
         new ScalaTestClassesResult(ImmutableList.of(exampleExampleTestTestClasses));
 
     return new BazelBspTestScenarioStep(
         "Scala test classes",
-        () -> testClient.testScalaTestClasses(scalaTestClassesParams, expectedScalaTestClassesResult));
+        () ->
+            testClient.testScalaTestClasses(
+                scalaTestClassesParams, expectedScalaTestClassesResult));
   }
 
   private BazelBspTestScenarioStep dependencySourcesResults() {
@@ -235,11 +249,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new DependencySourcesItem(new BuildTargetIdentifier("//dep:dep"), dependencies);
 
     DependencySourcesResult expectedDependencies =
-        new DependencySourcesResult(ImmutableList.of(exampleExampleDependencies, depDepDependencies));
+        new DependencySourcesResult(
+            ImmutableList.of(exampleExampleDependencies, depDepDependencies));
 
     return new BazelBspTestScenarioStep(
         "dependency sources results",
-        () -> testClient.testDependencySourcesResults(expectedWorkspaceBuildTargetsResult, expectedDependencies));
+        () ->
+            testClient.testDependencySourcesResults(
+                expectedWorkspaceBuildTargetsResult, expectedDependencies));
   }
 
   private WorkspaceBuildTargetsResult getExpectedWorkspaceBuildTargetsResult() {
