@@ -22,8 +22,8 @@ public class BazelBspTestScenarioStep {
     LOGGER.info("Executing \"{}\"...", testName);
 
     return Try.run(testkitCall)
-        .onSuccess(e -> LOGGER.info("Step \"{}\" passed!", testName))
-        .onFailure(e -> LOGGER.error("Test \"{}\" failed! Exception: {}", testName, e))
+        .onSuccess(e -> LOGGER.info("Step \"{}\" executed correctly!", testName))
+        .onFailure(e -> LOGGER.error("Step \"{}\" execution failed! Exception: {}", testName, e))
         .map(i -> true)
         .getOrElse(false);
   }
