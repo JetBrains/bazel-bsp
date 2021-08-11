@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.base;
 
 import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
