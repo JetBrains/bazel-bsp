@@ -1,8 +1,6 @@
-/.bazelbsp/
-/.bsp/
-/.idea/
-/.ijwb/
-/bazel-*
+.bazelbsp/
+.bsp/
+.idea/
+.ijwb/
+bazel-*
 .DS_Store
-test-resources/.bazelbsp/
-test-resources/.bsp/

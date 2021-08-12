@@ -55,7 +55,7 @@ class BazelBspServerTestData {
   private static final String SAMPLE_REPO_EXAMPLE_PATH = SAMPLE_REPO_PATH + "/example";
   private static final String SAMPLE_REPO_DEP_PATH = SAMPLE_REPO_PATH + "/dep";
 
-  private static final String TEST_RESOURCES_PATH = "test-resources";
+  private static final String TEST_RESOURCES_PATH = "e2e/test-resources";
   private static final String WORKSPACE_DIR_PATH = REPO_PATH + "/" + TEST_RESOURCES_PATH;
 
   private static final BuildTargetIdentifier EXAMPLE_EXAMPLE_TARGET =
