@@ -28,7 +28,6 @@ public class BazelBspEntireRepositoryImportTest extends BazelBspTestBaseScenario
 
   private BazelBspTestScenarioStep importEntireRepository() {
     return new BazelBspTestScenarioStep(
-        "import entire Bazel BSP repository",
-        () -> testClient.testResolveProject(true, false));
+        "import entire Bazel BSP repository", () -> testClient.testResolveProject(true, false));
   }
 }

@@ -15,8 +15,14 @@ TEST_TARGET="$1"
 # second argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
 TEST_PROJECT_PATH="$2"
 
-echo -e "Running BSP test for '$TEST_PROJECT_PATH'..."
-echo -e "===================================\n"
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo -e "==================================="
+echo -e "==================================="
+echo -e "Running BSP test '$TEST_TARGET' in '$TEST_PROJECT_PATH'..."
+echo -e "-----------------------------------\n"
 
 echo "Building project..."
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
@@ -31,7 +37,19 @@ fi
 $bsp_path
 echo "Installing done."
 echo "Environment has been prepared!"
-echo -e "===================================\n"
+echo -e "-----------------------------------\n"
 
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
+
 bazel run "$TEST_TARGET"
+EXECUTION_CODE=$?
+
+if [ $EXECUTION_CODE -ne 0 ]; then
+  echo -e "${RED}'$TEST_TARGET' test failed :("
+  exit 1
+fi
+
+echo -e "\n-----------------------------------"
+echo -e "${GREEN}'$TEST_TARGET' passed!${NC}"
+echo -e "==================================="
+echo -e "===================================\n\n\n"

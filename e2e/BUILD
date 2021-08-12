@@ -62,3 +62,9 @@ sh_binary(
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspEntireRepositoryImportTest",
     ],
 )
+
+# simply a wrapper for the bash script to keep the convention
+sh_binary(
+    name = "all",
+    srcs = ["runAll.sh"],
+)
