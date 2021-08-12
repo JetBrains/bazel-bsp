@@ -47,6 +47,15 @@ sh_binary(
 )
 
 sh_binary(
+    name = "BazelBspCppProjectTest",
+    srcs = ["runTest.sh"],
+    args = [
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspCppProjectTest",
+        "e2e/test-resources/sample-repo",
+    ],
+)
+
+sh_binary(
     name = "BazelBspEntireRepositoryImportTest",
     srcs = ["runTest.sh"],
     args = [
