@@ -29,6 +29,15 @@ sh_binary(
 )
 
 sh_binary(
+    name = "BazelBspJava8ProjectTest",
+    srcs = ["runTest.sh"],
+    args = [
+        "e2e/test-resources/sample-repo",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspJava8ProjectTest",
+    ],
+)
+
+sh_binary(
     name = "BazelBspJava11ProjectTest",
     srcs = ["runTest.sh"],
     args = [

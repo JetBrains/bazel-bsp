@@ -14,19 +14,19 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import java.time.Duration;
 import java.util.List;
 
-public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
+public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
 
-  private static final String REPO_NAME = "java-11-project";
+  private static final String REPO_NAME = "java-8-project";
   private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(3);
 
-  public BazelBspJava11ProjectTest() {
+  public BazelBspJava8ProjectTest() {
     super(REPO_NAME, CLIENT_TIMEOUT);
   }
 
   // we cannot use `bazel test ...` because testrunner blocks bazel deamon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    BazelBspJava11ProjectTest test = new BazelBspJava11ProjectTest();
+    BazelBspJava8ProjectTest test = new BazelBspJava8ProjectTest();
     test.executeScenario();
   }
 
@@ -36,7 +36,7 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
   }
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
-    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "11");
+    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "8");
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
@@ -52,7 +52,7 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
         new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
 
     return new BazelBspTestScenarioStep(
-        "java-11-project workspace build targets",
+        "java-8-project workspace build targets",
         () -> testClient.testCompareWorkspaceTargetsResults(workspaceBuildTargetsResult));
   }
 }
