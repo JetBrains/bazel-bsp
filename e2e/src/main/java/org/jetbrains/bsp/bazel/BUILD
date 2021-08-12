@@ -36,3 +36,16 @@ java_binary(
         "@maven//:com_google_guava_guava",
     ],
 )
+
+java_binary(
+    name = "BazelBspJava11ProjectTest",
+    srcs = ["BazelBspJava11ProjectTest.java"],
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
+        "//src/main/java/org/jetbrains/bsp/bazel/commons",
+        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_google_guava_guava",
+    ],
+)

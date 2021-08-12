@@ -27,3 +27,12 @@ sh_binary(
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspActionGraphV2Test",
     ],
 )
+
+sh_binary(
+    name = "BazelBspJava11ProjectTest",
+    srcs = ["runTest.sh"],
+    args = [
+        "e2e/test-resources/sample-repo",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspJava11ProjectTest",
+    ],
+)
