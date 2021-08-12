@@ -7,12 +7,11 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
+import java.time.Duration;
+import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 import org.jetbrains.bsp.bazel.commons.Constants;
-
-import java.time.Duration;
-import java.util.List;
 
 public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 

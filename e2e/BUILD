@@ -5,8 +5,8 @@ sh_binary(
     name = "BazelBspSampleRepoTest",
     srcs = ["runTest.sh"],
     args = [
-        "e2e/test-resources/sample-repo",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspSampleRepoTest",
+        "e2e/test-resources/sample-repo",
     ],
 )
 
@@ -14,8 +14,8 @@ sh_binary(
     name = "BazelBspActionGraphV1Test",
     srcs = ["runTest.sh"],
     args = [
-        "e2e/test-resources/sample-repo",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspActionGraphV1Test",
+        "e2e/test-resources/sample-repo",
     ],
 )
 
@@ -23,8 +23,8 @@ sh_binary(
     name = "BazelBspActionGraphV2Test",
     srcs = ["runTest.sh"],
     args = [
-        "e2e/test-resources/sample-repo",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspActionGraphV2Test",
+        "e2e/test-resources/sample-repo",
     ],
 )
 
@@ -32,8 +32,8 @@ sh_binary(
     name = "BazelBspJava8ProjectTest",
     srcs = ["runTest.sh"],
     args = [
-        "e2e/test-resources/sample-repo",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspJava8ProjectTest",
+        "e2e/test-resources/sample-repo",
     ],
 )
 
@@ -41,7 +41,15 @@ sh_binary(
     name = "BazelBspJava11ProjectTest",
     srcs = ["runTest.sh"],
     args = [
-        "e2e/test-resources/sample-repo",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspJava11ProjectTest",
+        "e2e/test-resources/sample-repo",
+    ],
+)
+
+sh_binary(
+    name = "BazelBspEntireRepositoryImportTest",
+    srcs = ["runTest.sh"],
+    args = [
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspEntireRepositoryImportTest",
     ],
 )

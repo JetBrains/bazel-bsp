@@ -8,11 +8,10 @@ import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
-import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
-
 import java.time.Duration;
 import java.util.List;
+import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
+import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
 public class BazelBspActionGraphV1Test extends BazelBspTestBaseScenario {
 
