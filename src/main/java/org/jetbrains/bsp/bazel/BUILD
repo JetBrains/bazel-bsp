@@ -10,7 +10,7 @@ sonatype_java_export(
     resources = ["//src/main/resources:bsp-main-resources"],
     visibility = ["//visibility:public"],
     runtime_deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//commons",
         "//src/main/java/org/jetbrains/bsp/bazel/install",
         "//src/main/java/org/jetbrains/bsp/bazel/server",
     ],
@@ -23,7 +23,7 @@ java_binary(
     resources = ["//src/main/resources:bsp-main-resources"],
     visibility = ["//visibility:public"],
     runtime_deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//commons",
         "//src/main/java/org/jetbrains/bsp/bazel/install",
         "//src/main/java/org/jetbrains/bsp/bazel/server",
     ],

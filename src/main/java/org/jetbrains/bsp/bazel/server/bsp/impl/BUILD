@@ -5,7 +5,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//commons",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "@maven//:ch_epfl_scala_bsp4j",

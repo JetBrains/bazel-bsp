@@ -5,7 +5,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//projectview:__subpackages__"],
     deps = [
+        "//commons",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
-        "//src/main/java/org/jetbrains/bsp/bazel/commons",
     ],
 )

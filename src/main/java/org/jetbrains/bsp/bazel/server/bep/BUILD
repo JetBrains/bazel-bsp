@@ -6,7 +6,7 @@ java_library(
     resources = ["//src/main/resources:bsp-main-resources"],
     visibility = ["//visibility:public"],
     deps = [
-        "//src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//commons",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bep/parsers",
