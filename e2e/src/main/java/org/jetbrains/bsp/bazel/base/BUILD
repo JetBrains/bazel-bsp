@@ -4,7 +4,7 @@ java_library(
     name = "base",
     srcs = glob(["*.java"]),
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
-    visibility = ["//visibility:public"],
+    visibility = ["//e2e:__subpackages__"],
     deps = [
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:ch_epfl_scala_bsp_testkit_2_13",
