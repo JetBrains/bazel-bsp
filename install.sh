@@ -7,8 +7,8 @@ project_path=${1:-$PWD}
 
 echo -e "Building server..."
 echo -e "============================"
-bazel build //src/main/java/org/jetbrains/bsp/bazel:bsp-install
-bsp_path="$(bazel info bazel-bin)/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
+bazel build //server/src/main/java/org/jetbrains/bsp/bazel:bsp-install
+bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
 echo -e "============================"
 echo -e "Building done."
 

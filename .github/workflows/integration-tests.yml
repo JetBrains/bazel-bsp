@@ -23,7 +23,7 @@ jobs:
           path: ~/.cache/bazel
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.sha }}
       - name: Build installer
-        run: bazel build //src/main/java/org/jetbrains/bsp/bazel:bsp-install
+        run: bazel build //server/src/main/java/org/jetbrains/bsp/bazel:bsp-install
 
   sample-repo-test:
     runs-on: ubuntu-latest

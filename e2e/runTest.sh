@@ -26,8 +26,14 @@ echo -e "-----------------------------------\n"
 
 echo "Building project..."
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
-bazel build //src/main/java/org/jetbrains/bsp/bazel:bsp-install
-bsp_path="$(bazel info bazel-bin)/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
+bazel build //server/src/main/java/org/jetbrains/bsp/bazel:bsp-install
+EXECUTION_CODE=$?
+if [ $EXECUTION_CODE -ne 0 ]; then
+  echo -e "${RED}building failed :("
+  exit 1
+fi
+
+bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
 echo "Building done."
 
 echo "Installing BSP..."
