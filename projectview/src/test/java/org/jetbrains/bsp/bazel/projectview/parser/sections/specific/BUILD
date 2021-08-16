@@ -4,7 +4,6 @@ java_test(
     name = "DirectoriesSectionParserTest",
     size = "small",
     srcs = ["DirectoriesSectionParserTest.java"],
-    resources = ["//src/test/resources:bsp-test-resources"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],
@@ -19,7 +18,6 @@ java_test(
     name = "TargetsSectionParserTest",
     size = "small",
     srcs = ["TargetsSectionParserTest.java"],
-    resources = ["//src/test/resources:bsp-test-resources"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],

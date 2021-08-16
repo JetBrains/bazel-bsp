@@ -7,8 +7,8 @@ import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.Optional;
 import java.util.Set;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 
 public class BazelBspTargetManager {

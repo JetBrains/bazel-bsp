@@ -4,7 +4,6 @@ java_test(
     name = "ProjectViewSectionSplitterTest",
     size = "small",
     srcs = ["ProjectViewSectionSplitterTest.java"],
-    resources = ["//src/test/resources:bsp-test-resources"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],

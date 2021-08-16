@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 
 public class TargetRulesResolver<T> {
 

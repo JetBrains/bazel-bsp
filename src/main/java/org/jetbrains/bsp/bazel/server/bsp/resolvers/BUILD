@@ -5,12 +5,9 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//visibility:public"],
     deps = [
+        "//bazelrunner",
         "//commons",
         "//projectview:model",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/data",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/params",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/bazel/utils",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers/actiongraph",
         "//src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
         "@io_bazel//src/main/protobuf:analysis_java_proto",

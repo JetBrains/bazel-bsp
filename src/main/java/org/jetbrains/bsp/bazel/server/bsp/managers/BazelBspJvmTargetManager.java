@@ -6,11 +6,11 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.commons.Uri;
-import org.jetbrains.bsp.bazel.server.bazel.BazelProcess;
-import org.jetbrains.bsp.bazel.server.bazel.BazelRunner;
-import org.jetbrains.bsp.bazel.server.bazel.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 
 public class BazelBspJvmTargetManager extends Lazy<String> {
