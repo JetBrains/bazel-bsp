@@ -11,7 +11,7 @@ sonatype_java_export(
     visibility = ["//visibility:public"],
     runtime_deps = [
         "//commons",
-        "//src/main/java/org/jetbrains/bsp/bazel/install",
+        "//install",
         "//src/main/java/org/jetbrains/bsp/bazel/server",
     ],
 )
@@ -24,7 +24,7 @@ java_binary(
     visibility = ["//visibility:public"],
     runtime_deps = [
         "//commons",
-        "//src/main/java/org/jetbrains/bsp/bazel/install",
+        "//install",
         "//src/main/java/org/jetbrains/bsp/bazel/server",
     ],
 )
