@@ -10,7 +10,7 @@ java_library(
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/params",
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
-        "//src/main/java/org/jetbrains/bsp/bazel/server/loggers",
+        "//logger",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:ch_epfl_scala_bsp4j",

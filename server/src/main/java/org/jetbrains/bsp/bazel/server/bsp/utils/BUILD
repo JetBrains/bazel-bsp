@@ -1,13 +1,13 @@
 load("@rules_java//java:defs.bzl", "java_library")
 
 java_library(
-    name = "data",
+    name = "utils",
     srcs = glob(["*.java"]),
-    visibility = ["//bazelrunner:__subpackages__"],
+    visibility = ["//server:__subpackages__"],
     deps = [
-        "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
-        "//logger",
+        "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_google_guava_guava",
     ],
 )
