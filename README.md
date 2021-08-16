@@ -39,10 +39,10 @@ Might be useful during development
 #### Using coursier
 1. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
 2. Be inside this project
-3. Change project version - `maven_coordinates` attribute in the `src/main/java/org/jetbrains/bsp/bazel/BUILD` file
+3. Change project version - `maven_coordinates` attribute in the `server/src/main/java/org/jetbrains/bsp/bazel/BUILD` file
 4. Publish a new version: 
 ```
-bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //src/main/java/org/jetbrains/bsp/bazel:bsp.publish
+bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
 ```
 7. Enter directory where Bazel BSP should be installed
 8. Install your version:
