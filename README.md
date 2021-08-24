@@ -57,6 +57,16 @@ In order to work on huge monorepos you might want to specify directories and tar
 Simply create a `projectview.bazelproject` file, specify rules inside and run the server. If no such files will be found, by default entire project will be loaded. 
 
 
+## Tests
+### End-to-end tests
+`e2e` directory contains end-2-end tests that check various scenarios of server usage.
+- `bazel run //e2e:all` - to run all tests
+- `bazel run //e2e:<specific test>` - to run a specific test (to see all possible tests, check the `e2e/BUILD` file)
+
+### Unit tests
+Most modules also have unit tests that can be run using `bazel test //<module>/...` or just `bazel test //...` to run all tests in the project.
+
+
 ## Extending
 In order to extend BSP server to other languages, make sure it can be supported with the current state of the  [BSP Protocol](https://github.com/build-server-protocol/build-server-protocol/tree/master/docs). Also, make sure there's a [client](https://build-server-protocol.github.io/docs/implementations.html#build-clients), that will be able to support those changes.
 
