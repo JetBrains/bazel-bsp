@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class SemanticVersion implements Comparable<SemanticVersion> {
 
   private static final String SEMANTIC_VERSION_REGEX =
-      "^([0-9]+)\\.([0-9]+)\\.([0-9]+)[\\-a-zA-Z]*";
+      "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
   private static final int MAJOR_VERSION_GROUP_ID = 1;
   private static final int MINOR_VERSION_GROUP_ID = 2;
   private static final int PATCH_VERSION_GROUP_ID = 3;
