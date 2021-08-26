@@ -38,4 +38,13 @@ public class SemanticVersionTest {
     assertEquals(2, version.getMinorVersion());
     assertEquals(3, version.getPatchVersion());
   }
+
+  @Test
+  public void shouldParseRollingRelease() {
+    SemanticVersion version = new SemanticVersion("5.0.0-pre.20210817.2");
+
+    assertEquals(5, version.getMajorVersion());
+    assertEquals(0, version.getMinorVersion());
+    assertEquals(0, version.getPatchVersion());
+  }
 }
