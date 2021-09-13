@@ -14,7 +14,7 @@ public class BazelBspEntireRepositoryImportTest extends BazelBspTestBaseScenario
     super(CLIENT_TIMEOUT);
   }
 
-  // we cannot use `bazel test ...` because testrunner blocks bazel deamon,
+  // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
     BazelBspEntireRepositoryImportTest test = new BazelBspEntireRepositoryImportTest();
