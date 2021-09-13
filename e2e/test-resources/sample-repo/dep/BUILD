@@ -26,6 +26,6 @@ java_library(
     name = "deeper-export",
     visibility = ["//visibility:public"],
     exports = [
-        "//dep/deeper"
-    ]
+        "//dep/deeper",
+    ],
 )
