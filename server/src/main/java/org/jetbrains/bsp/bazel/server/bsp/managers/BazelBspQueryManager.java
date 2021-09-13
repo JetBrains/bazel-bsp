@@ -102,8 +102,7 @@ public class BazelBspQueryManager {
     LOGGER.info("Getting targets for rule: " + name);
 
     List<String> rawDeps =
-        BuildRuleAttributeExtractor.extractAttributeValues(
-            rule, ATTRIBUTES_NEEDED_IN_BSP_DEP_ATTRIBUTE);
+        BuildRuleAttributeExtractor.extract(rule, ATTRIBUTES_NEEDED_IN_BSP_DEP_ATTRIBUTE);
     List<BuildTargetIdentifier> deps =
         rawDeps.stream().map(BuildTargetIdentifier::new).collect(Collectors.toList());
     BuildTargetIdentifier label = new BuildTargetIdentifier(name);
@@ -218,7 +217,7 @@ public class BazelBspQueryManager {
   private List<String> getResourcesOutOfRule(List<Build.Target> rules) {
     return rules.stream()
         .map(Build.Target::getRule)
-        .map(rule -> BuildRuleAttributeExtractor.extractAttributeValues(rule, "srcs"))
+        .map(rule -> BuildRuleAttributeExtractor.extract(rule, "srcs"))
         .flatMap(Collection::stream)
         .map(src -> Uri.fromFileLabel(src, bazelData.getWorkspaceRoot()).toString())
         .collect(Collectors.toList());
@@ -232,7 +231,7 @@ public class BazelBspQueryManager {
   }
 
   private List<Uri> getSrcsPaths(Build.Rule rule, String srcType) {
-    List<String> rawSrc = BuildRuleAttributeExtractor.extractAttributeValues(rule, srcType);
+    List<String> rawSrc = BuildRuleAttributeExtractor.extract(rule, srcType);
 
     return rawSrc.stream()
         .flatMap(

@@ -63,8 +63,7 @@ public class BuildRuleAttributeExtractorTest {
     // when
     String notExistingAttributeName = "not-existing-attribute";
 
-    List<String> values =
-        BuildRuleAttributeExtractor.extractAttributeValues(rule, notExistingAttributeName);
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, notExistingAttributeName);
 
     // then
     assertThat(values).isEmpty();
@@ -78,8 +77,7 @@ public class BuildRuleAttributeExtractorTest {
     List<String> notExistingAttributes =
         ImmutableList.of(notExistingAttribute1Name, notExistingAttribute2Name);
 
-    List<String> values =
-        BuildRuleAttributeExtractor.extractAttributeValues(rule, notExistingAttributes);
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, notExistingAttributes);
 
     // then
     assertThat(values).isEmpty();
@@ -88,7 +86,7 @@ public class BuildRuleAttributeExtractorTest {
   @Test
   public void shouldReturnAttributeValues() {
     // when
-    List<String> values = BuildRuleAttributeExtractor.extractAttributeValues(rule, attribute1Name);
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, attribute1Name);
 
     // then
     assertThat(values).containsExactlyInAnyOrderElementsOf(attribute1Values);
@@ -97,7 +95,7 @@ public class BuildRuleAttributeExtractorTest {
   @Test
   public void shouldReturnNoValuesForAttributeWithoutValues() {
     // when
-    List<String> values = BuildRuleAttributeExtractor.extractAttributeValues(rule, attribute3Name);
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, attribute3Name);
 
     // then
     assertThat(values).isEqualTo(attribute3Values);
@@ -107,7 +105,7 @@ public class BuildRuleAttributeExtractorTest {
   public void shouldReturnAttributesValues() {
     // when
     List<String> attributes = ImmutableList.of(attribute1Name, attribute2Name, attribute3Name);
-    List<String> values = BuildRuleAttributeExtractor.extractAttributeValues(rule, attributes);
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, attributes);
 
     // then
     List<String> expectedValues = ListUtils.concat(attribute1Values, attribute2Values);

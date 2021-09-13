@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 
 public final class BuildRuleAttributeExtractor {
 
-  public static List<String> extractAttributeValues(Build.Rule rule, String expectedAttributeName) {
-    return extractAttributeValues(rule, ImmutableList.of(expectedAttributeName));
+  public static List<String> extract(Build.Rule rule, String expectedAttributeName) {
+    return extract(rule, ImmutableList.of(expectedAttributeName));
   }
 
-  public static List<String> extractAttributeValues(Build.Rule rule, List<String> expectedAttributesNames) {
+  public static List<String> extract(Build.Rule rule, List<String> expectedAttributesNames) {
     return rule.getAttributeList().stream()
         .filter(attribute -> doesAttributeHaveExpectedName(attribute, expectedAttributesNames))
         .map(Build.Attribute::getStringListValueList)
@@ -20,7 +20,8 @@ public final class BuildRuleAttributeExtractor {
         .collect(Collectors.toList());
   }
 
-  private static boolean doesAttributeHaveExpectedName(Build.Attribute attribute, List<String> attributesNames) {
+  private static boolean doesAttributeHaveExpectedName(
+      Build.Attribute attribute, List<String> attributesNames) {
     String attributeName = attribute.getName();
 
     return attributesNames.contains(attributeName);
