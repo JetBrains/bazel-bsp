@@ -14,13 +14,6 @@ public final class TargetsUtils {
     return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
   }
 
-  public static boolean isAttributeSpecifiedAndHasGivenName(
-      Build.Attribute attribute, String name) {
-    boolean hasGivenName = attribute.getName().equals(name);
-
-    return hasGivenName && attribute.hasExplicitlySpecified() && attribute.getExplicitlySpecified();
-  }
-
   public static String getTargetsUnion(List<BuildTargetIdentifier> targets) {
     return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.joining("+"));
   }

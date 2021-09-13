@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.actiongraph.ActionGraphParser;
+import org.jetbrains.bsp.bazel.server.bsp.utils.BuildRuleAttributeExtractor;
 
 public class TargetsLanguageOptionsResolver<T> {
 
@@ -83,14 +84,7 @@ public class TargetsLanguageOptionsResolver<T> {
   }
 
   private List<String> collectRules(Build.Rule rule) {
-    return rule.getAttributeList().stream()
-        .filter(this::isAttributeCompilerOptionsName)
-        .flatMap(attr -> attr.getStringListValueList().stream())
-        .collect(Collectors.toList());
-  }
-
-  private boolean isAttributeCompilerOptionsName(Build.Attribute attribute) {
-    return attribute.getName().equals(compilerOptionsName);
+    return BuildRuleAttributeExtractor.extract(rule, compilerOptionsName);
   }
 
   private Stream<T> getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
