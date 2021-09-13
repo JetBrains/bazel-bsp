@@ -21,5 +21,6 @@ java_library(
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
         "@maven//:org_eclipse_xtext_org_eclipse_xtext_xbase_lib",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
     ],
 )

@@ -32,9 +32,13 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
+import org.jetbrains.bsp.bazel.server.bsp.utils.BuildRuleAttributeExtractor;
 
 public class BazelBspQueryManager {
   private static final Logger LOGGER = LogManager.getLogger(BazelBspQueryManager.class);
+
+  private static final List<String> ATTRIBUTES_NEEDED_IN_BSP_DEP_ATTRIBUTE =
+      ImmutableList.of("deps", "exports");
 
   private final ProjectView projectView;
   private final BazelData bazelData;
@@ -97,12 +101,11 @@ public class BazelBspQueryManager {
     String name = rule.getName();
     LOGGER.info("Getting targets for rule: " + name);
 
+    List<String> rawDeps =
+        BuildRuleAttributeExtractor.extractAttributeValues(
+            rule, ATTRIBUTES_NEEDED_IN_BSP_DEP_ATTRIBUTE);
     List<BuildTargetIdentifier> deps =
-        rule.getAttributeList().stream()
-            .filter(attribute -> attribute.getName().equals("deps") || attribute.getName().equals("exports"))
-            .flatMap(srcDeps -> srcDeps.getStringListValueList().stream())
-            .map(BuildTargetIdentifier::new)
-            .collect(Collectors.toList());
+        rawDeps.stream().map(BuildTargetIdentifier::new).collect(Collectors.toList());
     BuildTargetIdentifier label = new BuildTargetIdentifier(name);
 
     List<SourceItem> sources = getSourceItems(rule, label);
@@ -214,9 +217,9 @@ public class BazelBspQueryManager {
 
   private List<String> getResourcesOutOfRule(List<Build.Target> rules) {
     return rules.stream()
-        .flatMap(resourceRule -> resourceRule.getRule().getAttributeList().stream())
-        .filter((srcAttribute) -> srcAttribute.getName().equals("srcs"))
-        .flatMap(resourceAttribute -> resourceAttribute.getStringListValueList().stream())
+        .map(Build.Target::getRule)
+        .map(rule -> BuildRuleAttributeExtractor.extractAttributeValues(rule, "srcs"))
+        .flatMap(Collection::stream)
         .map(src -> Uri.fromFileLabel(src, bazelData.getWorkspaceRoot()).toString())
         .collect(Collectors.toList());
   }
@@ -229,9 +232,9 @@ public class BazelBspQueryManager {
   }
 
   private List<Uri> getSrcsPaths(Build.Rule rule, String srcType) {
-    return rule.getAttributeList().stream()
-        .filter(attribute -> attribute.getName().equals(srcType))
-        .flatMap(srcsSrc -> srcsSrc.getStringListValueList().stream())
+    List<String> rawSrc = BuildRuleAttributeExtractor.extractAttributeValues(rule, srcType);
+
+    return rawSrc.stream()
         .flatMap(
             dep -> {
               if (isSourceFile(dep)) {
