@@ -21,3 +21,11 @@ java_binary(
     main_class = "dep.JavaTest",
     visibility = ["//visibility:public"],
 )
+
+java_library(
+    name = "deeper-export",
+    visibility = ["//visibility:public"],
+    exports = [
+        "//dep/deeper"
+    ]
+)

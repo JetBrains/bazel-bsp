@@ -65,12 +65,32 @@ public class BazelBspQueryManager {
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
   }
 
-  public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
-    List<SourceItem> srcs = getSrcs(rule, false);
-    srcs.addAll(getSrcs(rule, true));
-    // TODO (abrams27) fix updating
-    bepServer.getBuildTargetsSources().put(label, srcs);
-    return srcs;
+  private List<BuildTarget> getBuildTargetForProjectPath(String target) {
+    String targetWithExcludedTargets =
+        TargetsUtils.getTargetWithExcludedTargets(projectView, target);
+    List<BazelQueryKindParameters> kindParameters =
+        ImmutableList.of(
+            BazelQueryKindParameters.fromPatternAndInput("binary", targetWithExcludedTargets),
+            BazelQueryKindParameters.fromPatternAndInput("library", targetWithExcludedTargets),
+            BazelQueryKindParameters.fromPatternAndInput("test", targetWithExcludedTargets));
+
+    BazelProcess bazelProcess =
+        bazelRunner
+            .commandBuilder()
+            .query()
+            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
+            .withFlag(BazelRunnerFlag.NOHOST_DEPS)
+            .withFlag(BazelRunnerFlag.NOIMPLICIT_DEPS)
+            .withKinds(kindParameters)
+            .executeBazelBesCommand();
+
+    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcess);
+
+    return queryResult.getTargetList().stream()
+        .map(Build.Target::getRule)
+        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
+        .map(this::getBuildTargetForRule)
+        .collect(Collectors.toList());
   }
 
   private BuildTarget getBuildTargetForRule(Build.Rule rule) {
@@ -79,7 +99,7 @@ public class BazelBspQueryManager {
 
     List<BuildTargetIdentifier> deps =
         rule.getAttributeList().stream()
-            .filter(attribute -> attribute.getName().equals("deps"))
+            .filter(attribute -> attribute.getName().equals("deps") || attribute.getName().equals("exports"))
             .flatMap(srcDeps -> srcDeps.getStringListValueList().stream())
             .map(BuildTargetIdentifier::new)
             .collect(Collectors.toList());
@@ -122,32 +142,12 @@ public class BazelBspQueryManager {
     return target;
   }
 
-  private List<BuildTarget> getBuildTargetForProjectPath(String target) {
-    String targetWithExcludedTargets =
-        TargetsUtils.getTargetWithExcludedTargets(projectView, target);
-    List<BazelQueryKindParameters> kindParameters =
-        ImmutableList.of(
-            BazelQueryKindParameters.fromPatternAndInput("binary", targetWithExcludedTargets),
-            BazelQueryKindParameters.fromPatternAndInput("library", targetWithExcludedTargets),
-            BazelQueryKindParameters.fromPatternAndInput("test", targetWithExcludedTargets));
-
-    BazelProcess bazelProcess =
-        bazelRunner
-            .commandBuilder()
-            .query()
-            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withFlag(BazelRunnerFlag.NOHOST_DEPS)
-            .withFlag(BazelRunnerFlag.NOIMPLICIT_DEPS)
-            .withKinds(kindParameters)
-            .executeBazelBesCommand();
-
-    Build.QueryResult queryResult = QueryResolver.getQueryResultForProcess(bazelProcess);
-
-    return queryResult.getTargetList().stream()
-        .map(Build.Target::getRule)
-        .filter(rule -> !rule.getRuleClass().equals("filegroup"))
-        .map(this::getBuildTargetForRule)
-        .collect(Collectors.toList());
+  public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
+    List<SourceItem> srcs = getSrcs(rule, false);
+    srcs.addAll(getSrcs(rule, true));
+    // TODO (abrams27) fix updating
+    bepServer.getBuildTargetsSources().put(label, srcs);
+    return srcs;
   }
 
   public List<BuildTargetIdentifier> getTargetIdentifiersForDependencies(

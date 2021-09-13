@@ -289,6 +289,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     depDepTarget.setData(scalaTarget);
     depDepTarget.setDataKind(BuildTargetDataKind.SCALA);
 
-    return new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleTarget, depDepTarget));
+    BuildTarget depDeeperExportTarget =
+        new BuildTarget(
+            new BuildTargetIdentifier("//dep:deeper-export"),
+            ImmutableList.of(),
+            ImmutableList.of(),
+            ImmutableList.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
+            new BuildTargetCapabilities(true, false, false));
+
+    return new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
   }
 }
