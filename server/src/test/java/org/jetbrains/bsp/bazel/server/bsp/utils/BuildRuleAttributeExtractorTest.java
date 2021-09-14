@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
@@ -9,47 +7,49 @@ import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class BuildRuleAttributeExtractorTest {
 
-  private static String attribute1Name;
+  private static String attribute1WithListValuesName;
   private static List<String> attribute1Values;
 
-  private static String attribute2Name;
-  private static List<String> attribute2Values;
+  private static String attribute2WithSingleValueName;
+  private static String attribute2Value;
 
-  private static String attribute3Name;
-  private static List<String> attribute3Values;
+  private static String attribute3NotExplicitlySpecifiedName;
 
   private static Build.Rule rule;
 
   @BeforeClass
   public static void beforeAll() {
     // given
-    attribute1Name = "attribute1";
+    attribute1WithListValuesName = "attribute1";
     attribute1Values = ImmutableList.of("attribute1-val1", "attribute1-val2");
 
-    attribute2Name = "attribute2";
-    attribute2Values = ImmutableList.of("attribute2-val1");
+    attribute2WithSingleValueName = "attribute2";
+    attribute2Value = "attribute2-val1";
 
-    attribute3Name = "attribute3";
-    attribute3Values = ImmutableList.of();
+    attribute3NotExplicitlySpecifiedName = "attribute3";
 
     Build.Attribute attribute1 =
         Build.Attribute.newBuilder()
-            .setName(attribute1Name)
+            .setName(attribute1WithListValuesName)
             .addAllStringListValue(attribute1Values)
+            .setExplicitlySpecified(true)
             .buildPartial();
 
     Build.Attribute attribute2 =
         Build.Attribute.newBuilder()
-            .setName(attribute2Name)
-            .addAllStringListValue(attribute2Values)
+            .setName(attribute2WithSingleValueName)
+            .setStringValue(attribute2Value)
+            .setExplicitlySpecified(true)
             .buildPartial();
 
     Build.Attribute attribute3 =
         Build.Attribute.newBuilder()
-            .setName(attribute3Name)
-            .addAllStringListValue(attribute3Values)
+            .setName(attribute3NotExplicitlySpecifiedName)
+            .setStringValue("not-explicitly-specified-value")
             .buildPartial();
 
     rule =
@@ -84,31 +84,56 @@ public class BuildRuleAttributeExtractorTest {
   }
 
   @Test
-  public void shouldReturnAttributeValues() {
+  public void shouldReturnEmptyListForNotExplicitlySpecifiedAttribute() {
     // when
-    List<String> values = BuildRuleAttributeExtractor.extract(rule, attribute1Name);
+    List<String> values =
+        BuildRuleAttributeExtractor.extract(rule, attribute3NotExplicitlySpecifiedName);
+
+    // then
+    assertThat(values).isEmpty();
+  }
+
+  @Test
+  public void shouldReturnAttributeListValues() {
+    // when
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, attribute1WithListValuesName);
 
     // then
     assertThat(values).containsExactlyInAnyOrderElementsOf(attribute1Values);
   }
 
   @Test
-  public void shouldReturnNoValuesForAttributeWithoutValues() {
+  public void shouldReturnAttributeSingleValue() {
     // when
-    List<String> values = BuildRuleAttributeExtractor.extract(rule, attribute3Name);
+    List<String> values = BuildRuleAttributeExtractor.extract(rule, attribute2WithSingleValueName);
 
     // then
-    assertThat(values).isEqualTo(attribute3Values);
+    assertThat(values).containsExactlyInAnyOrder(attribute2Value);
   }
 
   @Test
-  public void shouldReturnAttributesValues() {
+  public void shouldReturnNoValuesForAttributeWithoutValues() {
     // when
-    List<String> attributes = ImmutableList.of(attribute1Name, attribute2Name, attribute3Name);
+    List<String> values =
+        BuildRuleAttributeExtractor.extract(rule, attribute3NotExplicitlySpecifiedName);
+
+    // then
+    assertThat(values).isEmpty();
+  }
+
+  @Test
+  public void shouldReturnAttributesValuesOnlyForExplicitlySpecifiedAttributes() {
+    // when
+    List<String> attributes =
+        ImmutableList.of(
+            attribute1WithListValuesName,
+            attribute2WithSingleValueName,
+            attribute3NotExplicitlySpecifiedName);
     List<String> values = BuildRuleAttributeExtractor.extract(rule, attributes);
 
     // then
-    List<String> expectedValues = ListUtils.concat(attribute1Values, attribute2Values);
+    List<String> expectedValues =
+        ListUtils.concat(attribute1Values, ImmutableList.of(attribute2Value));
     assertThat(values).containsExactlyInAnyOrderElementsOf(expectedValues);
   }
 }
