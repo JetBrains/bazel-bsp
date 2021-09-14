@@ -209,15 +209,22 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new ScalaTestClassesParams(
             ImmutableList.of(
                 new BuildTargetIdentifier("//example:example"),
-                new BuildTargetIdentifier("//example:example-test")));
+                new BuildTargetIdentifier("//example:example-test"),
+                new BuildTargetIdentifier("//example:example-spec2-test")));
 
     ScalaTestClassesItem exampleExampleTestTestClasses =
         new ScalaTestClassesItem(
             new BuildTargetIdentifier("//example:example-test"),
             ImmutableList.of("example.ExampleTest"));
 
+    ScalaTestClassesItem exampleExampleSpec2TestTestClasses =
+        new ScalaTestClassesItem(
+            new BuildTargetIdentifier("//example:example-spec2-test"),
+            ImmutableList.of("example.ExampleSpec2Test"));
+
     ScalaTestClassesResult expectedScalaTestClassesResult =
-        new ScalaTestClassesResult(ImmutableList.of(exampleExampleTestTestClasses));
+        new ScalaTestClassesResult(
+            ImmutableList.of(exampleExampleTestTestClasses, exampleExampleSpec2TestTestClasses));
 
     return new BazelBspTestScenarioStep(
         "Scala test classes",
