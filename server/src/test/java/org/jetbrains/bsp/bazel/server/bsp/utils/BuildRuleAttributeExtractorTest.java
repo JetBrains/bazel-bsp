@@ -1,13 +1,13 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class BuildRuleAttributeExtractorTest {
 
