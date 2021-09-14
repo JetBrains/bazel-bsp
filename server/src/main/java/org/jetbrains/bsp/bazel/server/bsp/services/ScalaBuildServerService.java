@@ -13,10 +13,8 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import com.google.devtools.build.lib.query2.proto.proto2api.Build.Attribute;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -28,7 +26,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspQueryManager;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
-import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
+import org.jetbrains.bsp.bazel.server.bsp.utils.BuildRuleAttributeExtractor;
 
 public class ScalaBuildServerService {
 
@@ -76,15 +74,10 @@ public class ScalaBuildServerService {
 
   private ScalaTestClassesItem mapRuleToTestClassesItem(Build.Rule rule) {
     BuildTargetIdentifier target = new BuildTargetIdentifier(rule.getName());
-    List<String> classes = getTestMainClasses(rule);
+    List<String> classes =
+        BuildRuleAttributeExtractor.extract(rule, Constants.SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME);
 
     return new ScalaTestClassesItem(target, classes);
-  }
-
-  private List<String> getTestMainClasses(Build.Rule rule) {
-    return getAttribute(rule, Constants.SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME)
-        .map(Attribute::getStringValue)
-        .collect(Collectors.toList());
   }
 
   public Either<ResponseError, ScalacOptionsResult> buildTargetScalacOptions(
@@ -141,29 +134,12 @@ public class ScalaBuildServerService {
 
   private List<ScalaMainClass> collectMainClasses(Build.Rule rule) {
     List<String> targetOptions =
-        collectAttributesFromStringListValues(rule, Constants.JVM_FLAGS_ATTR_NAME);
+        BuildRuleAttributeExtractor.extract(rule, Constants.JVM_FLAGS_ATTR_NAME);
     List<String> mainClassesNames =
-        collectAttributesFromStringValues(rule, Constants.MAIN_CLASS_ATTR_NAME);
-    List<String> arguments = collectAttributesFromStringListValues(rule, Constants.ARGS_ATTR_NAME);
+        BuildRuleAttributeExtractor.extract(rule, Constants.MAIN_CLASS_ATTR_NAME);
+    List<String> arguments = BuildRuleAttributeExtractor.extract(rule, Constants.ARGS_ATTR_NAME);
     return mainClassesNames.stream()
         .map(mainClassName -> new ScalaMainClass(mainClassName, arguments, targetOptions))
         .collect(Collectors.toList());
-  }
-
-  private List<String> collectAttributesFromStringListValues(Build.Rule rule, String attrName) {
-    return getAttribute(rule, attrName)
-        .flatMap(attr -> attr.getStringListValueList().stream())
-        .collect(Collectors.toList());
-  }
-
-  private List<String> collectAttributesFromStringValues(Build.Rule rule, String attrName) {
-    return getAttribute(rule, attrName)
-        .map(Build.Attribute::getStringValue)
-        .collect(Collectors.toList());
-  }
-
-  private Stream<Build.Attribute> getAttribute(Build.Rule rule, String name) {
-    return rule.getAttributeList().stream()
-        .filter(attr -> TargetsUtils.isAttributeSpecifiedAndHasGivenName(attr, name));
   }
 }

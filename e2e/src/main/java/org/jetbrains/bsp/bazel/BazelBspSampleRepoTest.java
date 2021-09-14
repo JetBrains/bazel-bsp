@@ -41,7 +41,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     super(REPO_NAME, CLIENT_TIMEOUT);
   }
 
-  // we cannot use `bazel test ...` because testrunner blocks bazel deamon,
+  // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
     BazelBspSampleRepoTest test = new BazelBspSampleRepoTest();
@@ -289,6 +289,15 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     depDepTarget.setData(scalaTarget);
     depDepTarget.setDataKind(BuildTargetDataKind.SCALA);
 
-    return new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleTarget, depDepTarget));
+    BuildTarget depDeeperExportTarget =
+        new BuildTarget(
+            new BuildTargetIdentifier("//dep:deeper-export"),
+            ImmutableList.of(),
+            ImmutableList.of(),
+            ImmutableList.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
+            new BuildTargetCapabilities(true, false, false));
+
+    return new WorkspaceBuildTargetsResult(
+        ImmutableList.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
   }
 }

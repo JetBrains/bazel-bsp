@@ -25,7 +25,7 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
     super(REPO_NAME, CLIENT_TIMEOUT);
   }
 
-  // we cannot use `bazel test ...` because testrunner blocks bazel deamon,
+  // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
     BazelBspCppProjectTest test = new BazelBspCppProjectTest();

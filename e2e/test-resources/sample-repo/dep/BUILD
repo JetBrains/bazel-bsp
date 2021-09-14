@@ -1,4 +1,4 @@
-load("@rules_java//java:defs.bzl", "java_binary")
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
@@ -20,4 +20,12 @@ java_binary(
     ],
     main_class = "dep.JavaTest",
     visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "deeper-export",
+    visibility = ["//visibility:public"],
+    exports = [
+        "//dep/deeper",
+    ],
 )

@@ -68,10 +68,7 @@ public class CppBuildServerService {
       List<String> linkopts =
           Arrays.stream(targetInfo.get(LINKOPTS_LOCATION).split(",")).collect(Collectors.toList());
 
-      boolean linkshared = false;
-      if (targetInfo.get(LINKSHARED_LOCATION).equals("True")) {
-        linkshared = true;
-      }
+      boolean linkshared = targetInfo.get(LINKSHARED_LOCATION).equals("True");
 
       CppOptionsItem cppOptionsItem =
           new CppOptionsItem(buildTargetIdentifier, copts, defines, linkopts);
