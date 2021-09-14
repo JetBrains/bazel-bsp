@@ -297,6 +297,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             ImmutableList.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
             new BuildTargetCapabilities(true, false, false));
 
-    return new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
+    return new WorkspaceBuildTargetsResult(
+        ImmutableList.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
   }
 }
