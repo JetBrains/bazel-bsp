@@ -1,4 +1,4 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_test", "scala_specs2_junit_test")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_specs2_junit_test", "scala_test")
 
 filegroup(
     name = "resources",
@@ -35,7 +35,7 @@ scala_test(
 scala_specs2_junit_test(
     name = "example-spec2-test",
     srcs = ["ExampleSpec2Test.scala"],
-    visibility = ["//visibility:public"],
     resources = [":resources"],
+    visibility = ["//visibility:public"],
     deps = ["//dep"],
 )
