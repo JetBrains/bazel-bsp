@@ -77,7 +77,7 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/2.8.zip",
 )
 
-load("@io_bazel_rules_scala//specs2:specs2_junit.bzl", "specs2_junit_dependencies", "specs2_junit_repositories")
+load("@io_bazel_rules_scala//specs2:specs2_junit.bzl", "specs2_junit_repositories")
 
 specs2_junit_repositories()
 

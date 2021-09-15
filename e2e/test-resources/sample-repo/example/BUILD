@@ -36,7 +36,7 @@ scala_specs2_junit_test(
     name = "example-spec2-test",
     srcs = ["ExampleSpec2Test.scala"],
     resources = [":resources"],
+    suffixes = ["Test"],
     visibility = ["//visibility:public"],
     deps = ["//dep"],
-    suffixes = ["Test"],
 )
