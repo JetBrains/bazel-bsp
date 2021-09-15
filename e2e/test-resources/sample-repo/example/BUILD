@@ -38,4 +38,5 @@ scala_specs2_junit_test(
     resources = [":resources"],
     visibility = ["//visibility:public"],
     deps = ["//dep"],
+    suffixes = ["Test"],
 )
