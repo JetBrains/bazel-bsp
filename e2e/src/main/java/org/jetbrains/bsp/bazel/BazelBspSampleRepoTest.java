@@ -224,8 +224,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     //        ImmutableList.of("example.ExampleSpec2Test"));
 
     ScalaTestClassesResult expectedScalaTestClassesResult =
-        new ScalaTestClassesResult(
-            ImmutableList.of(exampleExampleTestTestClasses));
+        new ScalaTestClassesResult(ImmutableList.of(exampleExampleTestTestClasses));
 
     return new BazelBspTestScenarioStep(
         "Scala test classes",
