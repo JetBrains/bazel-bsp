@@ -1,0 +1,12 @@
+directories: . -excluded_dir1
+
+workspace_type: not_parsed1
+
+targets:
+    //included_target1:test1
+
+build_flags:
+    --not_parsed_flag1
+
+test_sources:
+    *test/not/parsed1/*
