@@ -2,6 +2,8 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 ## [Unreleased]
+
+## [1.0.1] - 24.09.2021
 ### Added
 - [This](CHANGELOG.md) changelog. | [#97](https://github.com/JetBrains/bazel-bsp/pull/97)
 
@@ -26,5 +28,6 @@
 - Everything...
 
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/JetBrains/bazel-bsp/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/JetBrains/bazel-bsp/releases/tag/1.0.0
