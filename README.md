@@ -26,7 +26,7 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 1. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
 2. Run in the directory where Bazel BSP should be installed: 
 ```
-cs launch org.jetbrains.bsp:bazel-bsp:1.0.0 -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:1.0.1 -M org.jetbrains.bsp.bazel.install.Install
 ```
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
 
@@ -39,10 +39,10 @@ Might be useful during development
 #### Using coursier
 1. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
 2. Be inside this project
-3. Change project version - `maven_coordinates` attribute in the `src/main/java/org/jetbrains/bsp/bazel/BUILD` file
+3. Change project version - `maven_coordinates` attribute in the `server/src/main/java/org/jetbrains/bsp/bazel/BUILD` file
 4. Publish a new version: 
 ```
-bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //src/main/java/org/jetbrains/bsp/bazel:bsp.publish
+bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
 ```
 7. Enter directory where Bazel BSP should be installed
 8. Install your version:
@@ -55,6 +55,16 @@ cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:<your version> -M org.jetbrains
 In order to work on huge monorepos you might want to specify directories and targets to work on. To address this issue, Bazel BSP supports part of the [Project Views](https://ij.bazel.build/docs/project-views.html) introduced by Google. Currently you can use following rules: `directories`, `targets` and `import`. 
 
 Simply create a `projectview.bazelproject` file, specify rules inside and run the server. If no such files will be found, by default entire project will be loaded. 
+
+
+## Tests
+### End-to-end tests
+`e2e` directory contains end-2-end tests that check various scenarios of server usage.
+- `bazel run //e2e:all` - to run all tests
+- `bazel run //e2e:<specific test>` - to run a specific test (to see all possible tests, check the `e2e/BUILD` file)
+
+### Unit tests
+Most modules also have unit tests that can be run using `bazel test //<module>/...` or just `bazel test //...` to run all tests in the project.
 
 
 ## Extending

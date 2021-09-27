@@ -1,9 +1,0 @@
-* SemanticDB Generation (gives find references)
-* Use an aspect with output group to get more (all?) information for early queries
-* Parse out source roots
-* More progress notifications
-* Parameterise down from //... to a target spec
-* Parse labels properly
-* Parse out toolchain information rather than hard-coding
-* Don't hard-code ports
-* Index aquery proto response parsing
