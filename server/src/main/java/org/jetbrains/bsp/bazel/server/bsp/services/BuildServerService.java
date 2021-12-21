@@ -364,8 +364,6 @@ public class BuildServerService {
   public Either<ResponseError, CleanCacheResult> buildTargetCleanCache(
       CleanCacheParams cleanCacheParams) {
     LOGGER.info("buildTargetCleanCache call with param: {}", cleanCacheParams);
-
-    CleanCacheResult result;
     try {
       List<String> lines =
           bazelRunner
@@ -375,13 +373,14 @@ public class BuildServerService {
               .waitAndGetResult()
               .getStdout();
 
-      result = new CleanCacheResult(String.join("\n", lines), true);
+      CleanCacheResult result = new CleanCacheResult(String.join("\n", lines), true);
+      return Either.forRight(result);
     } catch (RuntimeException e) {
       // TODO does it make sense to return a successful response here?
       // If we caught an exception here, there was an internal server error...
-      result = new CleanCacheResult(e.getMessage(), false);
+      ResponseError fail = new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null);
+      return Either.forLeft(fail);
     }
-    return Either.forRight(result);
   }
 
   public Either<ResponseError, Object> workspaceReload() {
