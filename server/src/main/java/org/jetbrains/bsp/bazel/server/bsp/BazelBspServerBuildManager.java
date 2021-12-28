@@ -6,9 +6,7 @@ import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -18,11 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -37,7 +32,6 @@ public class BazelBspServerBuildManager {
   public static final String BAZEL_PRINT_ASPECT = "@//.bazelbsp:aspects.bzl%print_aspect";
 
   private final BazelBspServerRequestHelpers serverRequestHelpers;
-  private final BazelData bazelData;
   private final BazelBspQueryManager bazelBspQueryManager;
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelBspTargetManager bazelBspTargetManager;
@@ -48,15 +42,12 @@ public class BazelBspServerBuildManager {
 
   public BazelBspServerBuildManager(
       BazelBspServerRequestHelpers serverRequestHelpers,
-      BazelData bazelData,
-      BazelRunner bazelRunner,
       BazelBspCompilationManager bazelBspCompilationManager,
       BazelBspAspectsManager bazelBspAspectsManager,
       BazelBspTargetManager bazelBspTargetManager,
       BazelCppTargetManager bazelCppTargetManager,
       BazelBspQueryManager bazelBspQueryManager) {
     this.serverRequestHelpers = serverRequestHelpers;
-    this.bazelData = bazelData;
     this.bazelBspCompilationManager = bazelBspCompilationManager;
     this.bazelBspAspectsManager = bazelBspAspectsManager;
     this.bazelCppTargetManager = bazelCppTargetManager;
@@ -76,17 +67,17 @@ public class BazelBspServerBuildManager {
   public String getSourcesRoot(URI sourceUri) {
     Path sourcePath = Paths.get(sourceUri);
     FileSystem fs = FileSystems.getDefault();
-    PathMatcher sourceRootPattern = fs.getPathMatcher("glob:**/" +
-            "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/" +
-            "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
+    PathMatcher sourceRootPattern = fs.getPathMatcher(
+            "glob:**/"
+                    + "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/"
+                    + "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
     PathMatcher defaultTestRootPattern = fs.getPathMatcher("glob:**/{test,tests}");
     Path sourceRootGuess = null;
-    for(PathMatcher pattern : new PathMatcher[]{sourceRootPattern, defaultTestRootPattern}){
+    for (PathMatcher pattern : new PathMatcher[]{sourceRootPattern, defaultTestRootPattern}) {
       sourceRootGuess = approximateSourceRoot(sourcePath, pattern);
-      if(sourceRootGuess != null)
-        break;
+      if (sourceRootGuess != null) break;
     }
-    if(sourceRootGuess == null) {
+    if (sourceRootGuess == null) {
       return sourcePath.getParent().toString();
     }
     return sourceRootGuess.toAbsolutePath().toString();

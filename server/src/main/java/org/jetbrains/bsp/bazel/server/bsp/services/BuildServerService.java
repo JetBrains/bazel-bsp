@@ -166,7 +166,8 @@ public class BuildServerService {
     LOGGER.info("buildTargetSources call with param: {}", sourcesParams);
     try {
       TargetRulesResolver<SourcesItem> targetRulesResolver =
-              TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
+              TargetRulesResolver.withBazelRunnerAndMapper(
+                      bazelRunner, this::mapBuildRuleToSourcesItem);
 
       List<SourcesItem> sourceItems =
               targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
@@ -175,7 +176,9 @@ public class BuildServerService {
 
       return Either.forRight(sourcesResult);
     } catch (Exception e) {
-      return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), e.getStackTrace()));
+      ResponseError fail = new ResponseError(
+              ResponseErrorCode.InternalError, e.getMessage(), e.getStackTrace());
+      return Either.forLeft(fail);
     }
   }
 
