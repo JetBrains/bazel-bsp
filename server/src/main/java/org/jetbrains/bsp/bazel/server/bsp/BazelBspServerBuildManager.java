@@ -87,12 +87,13 @@ public class BazelBspServerBuildManager {
   }
 
   private Path approximateSourceRoot(Path dir, PathMatcher matcher) {
-    if (matcher.matches(dir)) {
-      return dir;
-    }
-    Path parent = dir.getParent();
-    if (parent != null) {
-      return approximateSourceRoot(parent, matcher);
+    Path guess = dir;
+    while (guess != null) {
+      if (matcher.matches(guess)) {
+        return guess;
+      } else {
+        guess = guess.getParent();
+      }
     }
     return null;
   }
