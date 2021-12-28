@@ -32,7 +32,6 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -166,18 +165,18 @@ public class BuildServerService {
     LOGGER.info("buildTargetSources call with param: {}", sourcesParams);
     try {
       TargetRulesResolver<SourcesItem> targetRulesResolver =
-              TargetRulesResolver.withBazelRunnerAndMapper(
-                      bazelRunner, this::mapBuildRuleToSourcesItem);
+          TargetRulesResolver.withBazelRunnerAndMapper(
+              bazelRunner, this::mapBuildRuleToSourcesItem);
 
       List<SourcesItem> sourceItems =
-              targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
+          targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
 
       SourcesResult sourcesResult = new SourcesResult(sourceItems);
 
       return Either.forRight(sourcesResult);
     } catch (Exception e) {
-      ResponseError fail = new ResponseError(
-              ResponseErrorCode.InternalError, e.getMessage(), e.getStackTrace());
+      ResponseError fail =
+          new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), e.getStackTrace());
       return Either.forLeft(fail);
     }
   }
@@ -191,16 +190,18 @@ public class BuildServerService {
   }
 
   private List<String> getRuleRoots(List<SourceItem> items) {
-    Set<String> sourceRootUris = items.stream()
+    Set<String> sourceRootUris =
+        items.stream()
             .map(item -> item.getUri())
-            .map(uri -> {
-              try {
-                URL url = new URL(uri);
-                return url.toURI();
-              } catch (Exception e) {
-                throw new RuntimeException(e);
-              }
-            })
+            .map(
+                uri -> {
+                  try {
+                    URL url = new URL(uri);
+                    return url.toURI();
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                })
             .map(serverBuildManager::getSourcesRoot)
             .map(Uri::fromAbsolutePath)
             .map(uri -> uri.toString())

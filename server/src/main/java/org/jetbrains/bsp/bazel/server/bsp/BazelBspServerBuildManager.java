@@ -67,15 +67,18 @@ public class BazelBspServerBuildManager {
   public String getSourcesRoot(URI sourceUri) {
     Path sourcePath = Paths.get(sourceUri);
     FileSystem fs = FileSystems.getDefault();
-    PathMatcher sourceRootPattern = fs.getPathMatcher(
+    PathMatcher sourceRootPattern =
+        fs.getPathMatcher(
             "glob:**/"
-                    + "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/"
-                    + "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
+                + "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/"
+                + "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
     PathMatcher defaultTestRootPattern = fs.getPathMatcher("glob:**/{test,tests}");
     Path sourceRootGuess = null;
-    for (PathMatcher pattern : new PathMatcher[]{sourceRootPattern, defaultTestRootPattern}) {
+    for (PathMatcher pattern : new PathMatcher[] {sourceRootPattern, defaultTestRootPattern}) {
       sourceRootGuess = approximateSourceRoot(sourcePath, pattern);
-      if (sourceRootGuess != null) break;
+      if (sourceRootGuess != null) {
+        break;
+      }
     }
     if (sourceRootGuess == null) {
       return sourcePath.getParent().toString();
@@ -84,7 +87,9 @@ public class BazelBspServerBuildManager {
   }
 
   private Path approximateSourceRoot(Path dir, PathMatcher matcher) {
-    if (matcher.matches(dir)) return dir;
+    if (matcher.matches(dir)) {
+      return dir;
+    }
     Path parent = dir.getParent();
     if (parent != null) {
       return approximateSourceRoot(parent, matcher);
