@@ -58,8 +58,6 @@ public class Constants {
   public static final String BAZELBSP_LOG_FILE_NAME = "bazelbsp.log";
   public static final String BAZELBSP_TRACE_JSON_FILE_NAME = "bazelbsp.trace.json";
 
-  public static final List<String> KNOWN_SOURCE_ROOTS =
-      ImmutableList.of("java", "scala", "kotlin", "javatests", "src", "test", "main", "testsrc");
   public static final String DIAGNOSTICS = "diagnostics";
   public static final String EXEC_ROOT_PREFIX = "exec-root://";
   public static final String SCALA_COMPILER_CLASSPATH_FILES = "scala_compiler_classpath_files";

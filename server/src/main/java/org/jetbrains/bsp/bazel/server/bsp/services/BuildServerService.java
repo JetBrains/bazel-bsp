@@ -32,8 +32,11 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -161,31 +164,46 @@ public class BuildServerService {
 
   public Either<ResponseError, SourcesResult> buildTargetSources(SourcesParams sourcesParams) {
     LOGGER.info("buildTargetSources call with param: {}", sourcesParams);
+    try {
+      TargetRulesResolver<SourcesItem> targetRulesResolver =
+              TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
 
-    TargetRulesResolver<SourcesItem> targetRulesResolver =
-        TargetRulesResolver.withBazelRunnerAndMapper(bazelRunner, this::mapBuildRuleToSourcesItem);
+      List<SourcesItem> sourceItems =
+              targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
 
-    List<SourcesItem> sourceItems =
-        targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
+      SourcesResult sourcesResult = new SourcesResult(sourceItems);
 
-    SourcesResult sourcesResult = new SourcesResult(sourceItems);
-
-    return Either.forRight(sourcesResult);
+      return Either.forRight(sourcesResult);
+    } catch (Exception e) {
+      return Either.forLeft(new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), e.getStackTrace()));
+    }
   }
 
   private SourcesItem mapBuildRuleToSourcesItem(Build.Rule rule) {
     BuildTargetIdentifier ruleLabel = new BuildTargetIdentifier(rule.getName());
     List<SourceItem> items = serverBuildManager.getSourceItems(rule, ruleLabel);
-    List<String> roots = getRuleRoots(rule);
+    List<String> roots = getRuleRoots(items);
 
     return createSourcesForLabelAndItemsAndRoots(ruleLabel, items, roots);
   }
 
-  private List<String> getRuleRoots(Build.Rule rule) {
-    String sourcesRootUriString = serverBuildManager.getSourcesRoot(rule.getName());
-    Uri uri = Uri.fromAbsolutePath(sourcesRootUriString);
+  private List<String> getRuleRoots(List<SourceItem> items) {
+    Set<String> sourceRootUris = items.stream()
+            .map(item -> item.getUri())
+            .map(uri -> {
+              try {
+                URL url = new URL(uri);
+                return url.toURI();
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
+            })
+            .map(serverBuildManager::getSourcesRoot)
+            .map(Uri::fromAbsolutePath)
+            .map(uri -> uri.toString())
+            .collect(Collectors.toSet());
 
-    return ImmutableList.of(uri.toString());
+    return ImmutableList.copyOf(sourceRootUris);
   }
 
   private SourcesItem createSourcesForLabelAndItemsAndRoots(
@@ -376,8 +394,6 @@ public class BuildServerService {
       CleanCacheResult result = new CleanCacheResult(String.join("\n", lines), true);
       return Either.forRight(result);
     } catch (RuntimeException e) {
-      // TODO does it make sense to return a successful response here?
-      // If we caught an exception here, there was an internal server error...
       ResponseError fail = new ResponseError(ResponseErrorCode.InternalError, e.getMessage(), null);
       return Either.forLeft(fail);
     }

@@ -6,10 +6,19 @@ import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
@@ -64,13 +73,32 @@ public class BazelBspServerBuildManager {
     return bazelBspQueryManager.getSourceItems(rule, label);
   }
 
-  public String getSourcesRoot(String uri) {
-    List<String> root =
-        Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
-    return bazelData.getWorkspaceRoot()
-        + (root.size() == 0
-            ? ""
-            : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
+  public String getSourcesRoot(URI sourceUri) {
+    Path sourcePath = Paths.get(sourceUri);
+    FileSystem fs = FileSystems.getDefault();
+    PathMatcher sourceRootPattern = fs.getPathMatcher("glob:**/" +
+            "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/" +
+            "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
+    PathMatcher defaultTestRootPattern = fs.getPathMatcher("glob:**/{test,tests}");
+    Path sourceRootGuess = null;
+    for(PathMatcher pattern : new PathMatcher[]{sourceRootPattern, defaultTestRootPattern}){
+      sourceRootGuess = approximateSourceRoot(sourcePath, pattern);
+      if(sourceRootGuess != null)
+        break;
+    }
+    if(sourceRootGuess == null) {
+      return sourcePath.getParent().toString();
+    }
+    return sourceRootGuess.toAbsolutePath().toString();
+  }
+
+  private Path approximateSourceRoot(Path dir, PathMatcher matcher) {
+    if (matcher.matches(dir)) return dir;
+    Path parent = dir.getParent();
+    if (parent != null) {
+      return approximateSourceRoot(parent, matcher);
+    }
+    return null;
   }
 
   public List<String> lookUpTransitiveSourceJars(String target) {
