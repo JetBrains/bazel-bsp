@@ -6,12 +6,6 @@ import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -62,40 +56,6 @@ public class BazelBspServerBuildManager {
 
   public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
     return bazelBspQueryManager.getSourceItems(rule, label);
-  }
-
-  public String getSourcesRoot(URI sourceUri) {
-    Path sourcePath = Paths.get(sourceUri);
-    FileSystem fs = FileSystems.getDefault();
-    PathMatcher sourceRootPattern =
-        fs.getPathMatcher(
-            "glob:**/"
-                + "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/"
-                + "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
-    PathMatcher defaultTestRootPattern = fs.getPathMatcher("glob:**/{test,tests}");
-    Path sourceRootGuess = null;
-    for (PathMatcher pattern : new PathMatcher[] {sourceRootPattern, defaultTestRootPattern}) {
-      sourceRootGuess = approximateSourceRoot(sourcePath, pattern);
-      if (sourceRootGuess != null) {
-        break;
-      }
-    }
-    if (sourceRootGuess == null) {
-      return sourcePath.getParent().toString();
-    }
-    return sourceRootGuess.toAbsolutePath().toString();
-  }
-
-  private Path approximateSourceRoot(Path dir, PathMatcher matcher) {
-    Path guess = dir;
-    while (guess != null) {
-      if (matcher.matches(guess)) {
-        return guess;
-      } else {
-        guess = guess.getParent();
-      }
-    }
-    return null;
   }
 
   public List<String> lookUpTransitiveSourceJars(String target) {

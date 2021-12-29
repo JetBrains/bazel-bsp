@@ -60,6 +60,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerRequestHelpers;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
+import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
 
 public class BuildServerService {
 
@@ -202,7 +203,7 @@ public class BuildServerService {
                     throw new RuntimeException(e);
                   }
                 })
-            .map(serverBuildManager::getSourcesRoot)
+            .map(SourceRootGuesser::getSourcesRoot)
             .map(Uri::fromAbsolutePath)
             .map(uri -> uri.toString())
             .collect(Collectors.toSet());
