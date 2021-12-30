@@ -29,13 +29,11 @@ import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestProvider;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -191,24 +189,22 @@ public class BuildServerService {
   }
 
   private List<String> getRuleRoots(List<SourceItem> items) {
-    Set<String> sourceRootUris =
-        items.stream()
-            .map(SourceItem::getUri)
-            .map(
-                uri -> {
-                  try {
-                    URL url = new URL(uri);
-                    return url.toURI();
-                  } catch (Exception e) {
-                    throw new RuntimeException(e);
-                  }
-                })
-            .map(SourceRootGuesser::getSourcesRoot)
-            .map(Uri::fromAbsolutePath)
-            .map(Uri::toString)
-            .collect(Collectors.toSet());
-
-    return ImmutableList.copyOf(sourceRootUris);
+    return items.stream()
+        .map(SourceItem::getUri)
+        .map(
+            uri -> {
+              try {
+                URL url = new URL(uri);
+                return url.toURI();
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
+            })
+        .map(SourceRootGuesser::getSourcesRoot)
+        .map(Uri::fromAbsolutePath)
+        .map(Uri::toString)
+        .distinct()
+        .collect(Collectors.toList());
   }
 
   private SourcesItem createSourcesForLabelAndItemsAndRoots(
