@@ -43,7 +43,8 @@ public class SourceRootGuesserTest {
           {
             "file:///WORKSPACE_ROOT/src/main/java/org/test/java",
             "/WORKSPACE_ROOT/src/main/java/org/test/java"
-          }
+          },
+          {"file:///WORKSPACE_ROOT/foo/bar", "/WORKSPACE_ROOT/foo"}
         });
   }
 }

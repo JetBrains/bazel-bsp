@@ -193,7 +193,7 @@ public class BuildServerService {
   private List<String> getRuleRoots(List<SourceItem> items) {
     Set<String> sourceRootUris =
         items.stream()
-            .map(item -> item.getUri())
+            .map(SourceItem::getUri)
             .map(
                 uri -> {
                   try {
@@ -205,7 +205,7 @@ public class BuildServerService {
                 })
             .map(SourceRootGuesser::getSourcesRoot)
             .map(Uri::fromAbsolutePath)
-            .map(uri -> uri.toString())
+            .map(Uri::toString)
             .collect(Collectors.toSet());
 
     return ImmutableList.copyOf(sourceRootUris);

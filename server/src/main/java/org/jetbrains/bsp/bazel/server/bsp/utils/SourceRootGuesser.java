@@ -1,11 +1,14 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SourceRootGuesser {
 
@@ -18,17 +21,14 @@ public class SourceRootGuesser {
                 + "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/"
                 + "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
     PathMatcher defaultTestRootPattern = fs.getPathMatcher("glob:**/{test,tests}");
-    Path sourceRootGuess = null;
-    for (PathMatcher pattern : new PathMatcher[] {sourceRootPattern, defaultTestRootPattern}) {
-      sourceRootGuess = approximateSourceRoot(sourcePath, pattern);
-      if (sourceRootGuess != null) {
-        break;
-      }
-    }
-    if (sourceRootGuess == null) {
-      return sourcePath.getParent().toString();
-    }
-    return sourceRootGuess.toAbsolutePath().toString();
+
+    Optional<Path> sourceRootGuess =
+        ImmutableList.of(sourceRootPattern, defaultTestRootPattern).stream()
+            .map(pattern -> approximateSourceRoot(sourcePath, pattern))
+            .filter(Objects::nonNull)
+            .findFirst();
+
+    return sourceRootGuess.orElse(sourcePath.getParent()).toAbsolutePath().toString();
   }
 
   private static Path approximateSourceRoot(Path dir, PathMatcher matcher) {
