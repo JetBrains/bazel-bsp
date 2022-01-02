@@ -67,8 +67,6 @@ public class BazelBspServer {
     this.serverBuildManager =
         new BazelBspServerBuildManager(
             serverRequestHelpers,
-            bazelData,
-            bazelRunner,
             bazelBspCompilationManager,
             bazelBspAspectsManager,
             bazelBspTargetManager,

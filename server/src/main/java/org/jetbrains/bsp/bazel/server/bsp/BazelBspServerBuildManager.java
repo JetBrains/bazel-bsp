@@ -12,8 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -28,7 +26,6 @@ public class BazelBspServerBuildManager {
   public static final String BAZEL_PRINT_ASPECT = "@//.bazelbsp:aspects.bzl%print_aspect";
 
   private final BazelBspServerRequestHelpers serverRequestHelpers;
-  private final BazelData bazelData;
   private final BazelBspQueryManager bazelBspQueryManager;
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelBspTargetManager bazelBspTargetManager;
@@ -39,15 +36,12 @@ public class BazelBspServerBuildManager {
 
   public BazelBspServerBuildManager(
       BazelBspServerRequestHelpers serverRequestHelpers,
-      BazelData bazelData,
-      BazelRunner bazelRunner,
       BazelBspCompilationManager bazelBspCompilationManager,
       BazelBspAspectsManager bazelBspAspectsManager,
       BazelBspTargetManager bazelBspTargetManager,
       BazelCppTargetManager bazelCppTargetManager,
       BazelBspQueryManager bazelBspQueryManager) {
     this.serverRequestHelpers = serverRequestHelpers;
-    this.bazelData = bazelData;
     this.bazelBspCompilationManager = bazelBspCompilationManager;
     this.bazelBspAspectsManager = bazelBspAspectsManager;
     this.bazelCppTargetManager = bazelCppTargetManager;
@@ -62,15 +56,6 @@ public class BazelBspServerBuildManager {
 
   public List<SourceItem> getSourceItems(Build.Rule rule, BuildTargetIdentifier label) {
     return bazelBspQueryManager.getSourceItems(rule, label);
-  }
-
-  public String getSourcesRoot(String uri) {
-    List<String> root =
-        Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
-    return bazelData.getWorkspaceRoot()
-        + (root.size() == 0
-            ? ""
-            : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
   }
 
   public List<String> lookUpTransitiveSourceJars(String target) {

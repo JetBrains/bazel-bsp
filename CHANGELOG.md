@@ -2,6 +2,8 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 ## [Unreleased]
+### Changed
+- Improved heuristics for guessing source roots. It looks directory structures such as `src/java` or `main/java`. | [#126](https://github.com/JetBrains/bazel-bsp/pull/126)
 
 ## [1.0.1] - 24.09.2021
 ### Added
