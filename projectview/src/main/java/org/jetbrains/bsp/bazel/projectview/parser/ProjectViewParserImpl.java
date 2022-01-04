@@ -1,14 +1,16 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
-import java.util.List;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.DirectoriesSectionParser;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.TargetsSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
+
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
+// TODO
 
 /**
  * Our default implementation of ProjectViewParser
@@ -18,7 +20,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
  * <p>1. extracting blocks: <section header>: <included section value 1> <included section value 2>
  * -<excluded section value 1> -<excluded section value 2>
  *
- * <p>or: <section header>: <section value>
+ * <p>or: <section header>: <section value> `
  *
  * <p>2. looping through extracted and checking which block could be parsed by the given section
  * parser
@@ -27,43 +29,41 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
  *
  * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
  * @see org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
- * @see org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser
  */
 class ProjectViewParserImpl implements ProjectViewParser {
 
-  private static final ProjectViewRawSectionParser<DirectoriesSection> DIRECTORY_PARSER =
-      ProjectViewRawSectionParser.forParser(new DirectoriesSectionParser());
+  private static final String IMPORT_STATEMENT = "import";
 
-  private static final ProjectViewRawSectionParser<TargetsSection> TARGETS_PARSER =
-      ProjectViewRawSectionParser.forParser(new TargetsSectionParser());
+  private static final ProjectViewTargetsSectionParser TARGETS_PARSER =
+      new ProjectViewTargetsSectionParser();
 
-  private final ProjectViewImportParser projectViewImportParser;
+  @Override
+  public ProjectView parse(String projectViewFileContent, String defaultProjectViewFileContent) {
+    ProjectView defaultProjectView = parse(defaultProjectViewFileContent);
+    ProjectViewRawSections rawSections = ProjectViewSectionSplitter.split(projectViewFileContent);
 
-  public ProjectViewParserImpl() {
-    this.projectViewImportParser = new ProjectViewImportParser(this);
+    return ProjectView.builder()
+        .imports(findImportedProjectViews(rawSections))
+        .targets(TARGETS_PARSER.parseOrDefault(rawSections, defaultProjectView.getTargets()))
+        .build();
   }
 
   @Override
   public ProjectView parse(String projectViewFileContent) {
-    List<ProjectViewRawSection> rawSections =
-        ProjectViewSectionSplitter.split(projectViewFileContent);
+    ProjectViewRawSections rawSections = ProjectViewSectionSplitter.split(projectViewFileContent);
 
-    ProjectView projectView = buildFile(rawSections);
-    Optional<ProjectView> importedProjectView =
-        projectViewImportParser.parseRawSections(rawSections);
-
-    return mergeProjectViewIfNeeded(projectView, importedProjectView);
-  }
-
-  private ProjectView buildFile(List<ProjectViewRawSection> rawSections) {
     return ProjectView.builder()
-        .directories(DIRECTORY_PARSER.parseRawSections(rawSections))
-        .targets(TARGETS_PARSER.parseRawSections(rawSections))
+        .imports(findImportedProjectViews(rawSections))
+        .targets(TARGETS_PARSER.parse(rawSections))
         .build();
   }
 
-  private ProjectView mergeProjectViewIfNeeded(
-      ProjectView projectView, Optional<ProjectView> importedProjectView) {
-    return importedProjectView.map(imported -> imported.merge(projectView)).orElse(projectView);
+  private List<ProjectView> findImportedProjectViews(ProjectViewRawSections rawSections) {
+    return rawSections.getAllWithName(IMPORT_STATEMENT).stream()
+        .map(ProjectViewRawSection::getSectionBody)
+        .map(String::trim)
+        .map(Paths::get)
+        .map(this::parse)
+        .collect(Collectors.toList());
   }
 }

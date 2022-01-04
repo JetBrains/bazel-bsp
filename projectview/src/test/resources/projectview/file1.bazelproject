@@ -1,0 +1,10 @@
+not_parsed_section1:
+    not_parsed1.1
+    not_parsed2.2
+
+targets:
+    //included_target1.1
+    //included_target1.2
+    -//excluded_target1.1
+
+not_parsed_section2: not_parsed2.1

@@ -1,0 +1,3 @@
+targets:
+	//included_target2.1
+	-//excluded_target2.1

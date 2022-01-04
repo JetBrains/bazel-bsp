@@ -1,67 +1,217 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ProjectViewSectionSplitterTest {
 
   @Test
   public void shouldParseEmptyFile() {
+    // given
     String emptyContent = "";
 
-    List<ProjectViewRawSection> result = ProjectViewSectionSplitter.split(emptyContent);
-    List<ProjectViewRawSection> expectedResult = ImmutableList.of();
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(emptyContent);
 
-    assertEquals(expectedResult, result);
+    // then
+    ProjectViewRawSections expectedSections = new ProjectViewRawSections(ImmutableList.of());
+
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
+  public void shouldParseSectionWithoutColon() {
+    // given
+    String fileContent = "import path/to/file.bazelproject\n";
+
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
+
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
+  public void shouldParseSectionWithOnlyNewLineBefore() {
+    // given
+    String fileContent = "\nimport path/to/file.bazelproject\n";
+
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
+
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
+  public void shouldParseSectionsWithSpacesBetween() {
+    // given
+    String fileContent =
+        "section: "
+            + "section_included_element1 "
+            + "-section_excluded_element1 "
+            + "-section_excluded_element2 "
+            + "-section_excluded_element3 "
+            + "\n";
+
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(
+                new ProjectViewRawSection(
+                    "section",
+                    " "
+                        + "section_included_element1 "
+                        + "-section_excluded_element1 "
+                        + "-section_excluded_element2 "
+                        + "-section_excluded_element3 "
+                        + "\n")));
+
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
+  public void shouldParseSectionsWithSpacesBetweenWithOnlyNewLineBefore() {
+    // given
+    String fileContent =
+        "\n\nsection: "
+            + "section_included_element1 "
+            + "-section_excluded_element1 "
+            + "-section_excluded_element2 "
+            + "-section_excluded_element3 "
+            + "\n";
+
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(
+                new ProjectViewRawSection(
+                    "section",
+                    " "
+                        + "section_included_element1 "
+                        + "-section_excluded_element1 "
+                        + "-section_excluded_element2 "
+                        + "-section_excluded_element3 "
+                        + "\n")));
+
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
+  public void shouldParseSectionsWithTabsBetween() {
+    // given
+    String fileContent =
+        "section:\n"
+            + "\tsection_included_element1\n"
+            + "-section_excluded_element1\n"
+            + "\tsection_included_element2\n"
+            + "\n";
+
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(
+                new ProjectViewRawSection(
+                    "section",
+                    "\n"
+                        + "\tsection_included_element1\n"
+                        + "-section_excluded_element1\n"
+                        + "\tsection_included_element2\n"
+                        + "\n")));
+
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
+  public void shouldParseSectionsWithOneElement() {
+    // given
+    String fileContent = "section: section_element\n";
+
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(new ProjectViewRawSection("section", " section_element\n")));
+
+    assertEquals(expectedSections, sections);
   }
 
   @Test
   public void shouldParseRegularFile() {
+    // given
     String fileContent =
         "import path/to/file.bazelproject"
             + "\n"
-            + "directories: "
-            + ". "
-            + "-excluded_dir1 "
-            + "-excluded_dir2 "
-            + "-excluded_dir3"
+            + "section1: "
+            + "section1_included_element1 "
+            + "-section1_excluded_element1 "
+            + "-section1_excluded_element2 "
+            + "-section1_excluded_element3 "
             + "\n"
-            + "targets:\n"
-            + "  //included_target1:test1\n"
-            + "  -//excluded_target1:test1\n"
-            + "  //included_target1:test2\n"
+            + "section2:\n"
+            + "  section2_included_element1\n"
+            + " -section2_excluded_element1\n"
+            + "\tsection2_included_element2\n"
             + "\n"
-            + "workspace_type: not_parsed\n"
+            + "section3: section3_element\n"
+            + "\n\n\n"
+            + "sectionA:\n"
+            + "  --sectionA_element_flag\n"
             + "\n"
-            + "build_flags:\n"
-            + "  --not_parsed_flag\n"
-            + "\n"
-            + "test_sources:\n"
-            + "  *test/not/parsed1/*\n"
-            + "  *test/not/parsed2/*\n"
+            + "sectionb:"
+            + "*sectionb_element1\n"
+            + "*sectionb_element2\n"
             + "\n";
 
-    List<ProjectViewRawSection> result = ProjectViewSectionSplitter.split(fileContent);
-    List<ProjectViewRawSection> expectedResult =
-        ImmutableList.of(
-            new ProjectViewRawSection("import", " path/to/file.bazelproject\n"),
-            new ProjectViewRawSection(
-                "directories", " . -excluded_dir1 -excluded_dir2 -excluded_dir3\n"),
-            new ProjectViewRawSection(
-                "targets",
-                "\n"
-                    + "  //included_target1:test1\n"
-                    + "  -//excluded_target1:test1\n"
-                    + "  //included_target1:test2\n"
-                    + "\n"),
-            new ProjectViewRawSection("workspace_type", " not_parsed\n\n"),
-            new ProjectViewRawSection("build_flags", "\n  --not_parsed_flag\n\n"),
-            new ProjectViewRawSection(
-                "test_sources", "\n  *test/not/parsed1/*\n  *test/not/parsed2/*\n\n"));
+    // when
+    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
 
-    assertEquals(expectedResult, result);
+    // then
+    ProjectViewRawSections expectedSections =
+        new ProjectViewRawSections(
+            ImmutableList.of(
+                new ProjectViewRawSection("import", "path/to/file.bazelproject\n"),
+                new ProjectViewRawSection(
+                    "section1",
+                    " "
+                        + "section1_included_element1 "
+                        + "-section1_excluded_element1 "
+                        + "-section1_excluded_element2 "
+                        + "-section1_excluded_element3 "
+                        + "\n"),
+                new ProjectViewRawSection(
+                    "section2",
+                    "\n"
+                        + "  section2_included_element1\n"
+                        + " -section2_excluded_element1\n"
+                        + "\tsection2_included_element2\n"
+                        + "\n"),
+                new ProjectViewRawSection("section3", " section3_element\n\n\n\n"),
+                new ProjectViewRawSection("sectionA", "\n  --sectionA_element_flag\n\n"),
+                new ProjectViewRawSection(
+                    "sectionb", "*sectionb_element1\n*sectionb_element2\n\n")));
+
+    assertEquals(expectedSections, sections);
   }
 }

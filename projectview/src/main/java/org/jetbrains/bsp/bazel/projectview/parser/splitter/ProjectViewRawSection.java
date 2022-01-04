@@ -4,16 +4,20 @@ import java.util.Objects;
 
 public class ProjectViewRawSection {
 
-  private final String sectionHeader;
+  private final String sectionName;
   private final String sectionBody;
 
-  public ProjectViewRawSection(String sectionHeader, String sectionBody) {
-    this.sectionHeader = sectionHeader;
+  public ProjectViewRawSection(String sectionName, String sectionBody) {
+    this.sectionName = sectionName;
     this.sectionBody = sectionBody;
   }
 
-  public String getSectionHeader() {
-    return sectionHeader;
+  public boolean compareByName(String thatSectionName) {
+    return sectionName.equals(thatSectionName);
+  }
+
+  public String getSectionName() {
+    return sectionName;
   }
 
   public String getSectionBody() {
@@ -22,31 +26,22 @@ public class ProjectViewRawSection {
 
   @Override
   public String toString() {
-    return "ProjectViewRawSection{"
-        + "sectionHeader='"
-        + sectionHeader
-        + '\''
-        + ", sectionBody='"
-        + sectionBody
-        + '\''
-        + '}';
+    return "ProjectViewRawSection{" +
+        "sectionName='" + sectionName + '\'' +
+        ", sectionBody='" + sectionBody + '\'' +
+        '}';
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (this == o) return true;
+    if (!(o instanceof ProjectViewRawSection)) return false;
     ProjectViewRawSection that = (ProjectViewRawSection) o;
-    return Objects.equals(sectionHeader, that.sectionHeader)
-        && Objects.equals(sectionBody, that.sectionBody);
+    return sectionName.equals(that.sectionName) && sectionBody.equals(that.sectionBody);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sectionHeader, sectionBody);
+    return Objects.hash(sectionName, sectionBody);
   }
 }

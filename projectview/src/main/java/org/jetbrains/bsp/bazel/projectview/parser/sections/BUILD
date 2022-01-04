@@ -5,7 +5,9 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//projectview:__subpackages__"],
     deps = [
+        "//commons",
         "//projectview:model",
+        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
         "@maven//:com_google_guava_guava",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",

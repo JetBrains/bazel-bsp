@@ -1,57 +1,83 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSectionHeader;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import org.jetbrains.bsp.bazel.commons.ListUtils;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
-public abstract class ProjectViewListSectionParser<T extends ProjectViewSection>
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+public abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     extends ProjectViewSectionParser<T> {
 
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
+  private static final Pattern WHITESPACE_CHAR_REGEX = Pattern.compile("[ \n\t]+");
 
-  private final boolean exclusionary;
-
-  protected ProjectViewListSectionParser(
-      ProjectViewSectionHeader sectionHeader, boolean exclusionary) {
-    super(sectionHeader);
-    this.exclusionary = exclusionary;
+  protected ProjectViewListSectionParser(String sectionName) {
+    super(sectionName);
   }
 
-  protected List<String> parseIncludedEntries(String sectionBody) {
-    List<String> entries = splitSectionEntries(sectionBody);
-    List<String> includedEntries = getIncludedEntries(entries);
-
-    return getValueIfExclusionaryOrElse(includedEntries, entries);
+  @Override
+  public T parse(ProjectViewRawSections rawSections) {
+    return parseAllSectionsAndMerge(rawSections)
+        .orElse(instanceOf(ImmutableList.of(), ImmutableList.of()));
   }
 
-  private List<String> getIncludedEntries(List<String> entries) {
+  @Override
+  public T parseOrDefault(ProjectViewRawSections rawSections, T defaultValue) {
+    return parseAllSectionsAndMerge(rawSections).orElse(defaultValue);
+  }
+
+  private Optional<T> parseAllSectionsAndMerge(ProjectViewRawSections rawSections) {
+    return rawSections.getAllWithName(sectionName).stream()
+        .map(this::parse)
+        .reduce(this::concatSectionsItems);
+  }
+
+  private T concatSectionsItems(T section1, T section2) {
+    List<String> includedItems =
+        ListUtils.concat(section1.getIncludedValues(), section2.getIncludedValues());
+    List<String> excludedItems =
+        ListUtils.concat(section1.getExcludedValues(), section2.getExcludedValues());
+
+    return instanceOf(includedItems, excludedItems);
+  }
+
+  @Override
+  protected T parse(String sectionBody) {
+    List<String> allEntries = splitSectionEntries(sectionBody);
+    List<String> includedEntries = filterIncludedEntries(allEntries);
+    List<String> excludedEntries = filterExcludedEntries(allEntries);
+
+    return instanceOf(includedEntries, excludedEntries);
+  }
+
+  private List<String> splitSectionEntries(String sectionBody) {
+    return Splitter.on(WHITESPACE_CHAR_REGEX).omitEmptyStrings().splitToList(sectionBody);
+  }
+
+  private List<String> filterIncludedEntries(List<String> entries) {
     return entries.stream().filter(entry -> !isExcluded(entry)).collect(Collectors.toList());
   }
 
-  protected List<String> parseExcludedEntries(String sectionBody) {
-    List<String> entries = splitSectionEntries(sectionBody);
-    List<String> excludedEntries = getExcludedEntries(entries);
-
-    return getValueIfExclusionaryOrElse(excludedEntries, entries);
-  }
-
-  private List<String> getExcludedEntries(List<String> entries) {
+  private List<String> filterExcludedEntries(List<String> entries) {
     return entries.stream()
         .filter(this::isExcluded)
-        .map(entry -> entry.substring(1))
+        .map(this::removeExcludedEntryPrefix)
         .collect(Collectors.toList());
   }
 
-  private List<String> getValueIfExclusionaryOrElse(List<String> value, List<String> elseValue) {
-    if (exclusionary) {
-      return value;
-    } else {
-      return elseValue;
-    }
+  private String removeExcludedEntryPrefix(String excludedEntry) {
+    return excludedEntry.substring(1);
   }
 
   private boolean isExcluded(String entry) {
     return entry.startsWith(EXCLUDED_ENTRY_PREFIX);
   }
+
+  protected abstract T instanceOf(List<String> includedValues, List<String> excludedValues);
 }

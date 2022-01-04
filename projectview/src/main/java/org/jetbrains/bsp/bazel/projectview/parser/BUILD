@@ -8,7 +8,6 @@ java_library(
         "//commons",
         "//projectview:model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections/specific",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",

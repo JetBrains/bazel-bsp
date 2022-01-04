@@ -1,12 +1,14 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-public abstract class ProjectViewSection<T extends ProjectViewSection<T>> {
+public abstract class ProjectViewSection {
 
-  protected final ProjectViewSectionHeader header;
+  private final String sectionName;
 
-  protected ProjectViewSection(ProjectViewSectionHeader header) {
-    this.header = header;
+  protected ProjectViewSection(String sectionName) {
+    this.sectionName = sectionName;
   }
 
-  public abstract T merge(T otherSection);
+  public String getSectionName() {
+    return sectionName;
+  }
 }

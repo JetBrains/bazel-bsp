@@ -1,0 +1,7 @@
+import /projectview/file1.bazelproject
+import /projectview/file2.bazelproject
+import /projectview/file3.bazelproject
+
+targets:
+    -//excluded_target5.1
+    -//excluded_target5.2

@@ -1,18 +1,28 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 java_test(
     name = "ProjectViewParserImplTest",
     size = "small",
-    srcs = [
-        "ProjectViewParserImplTest.java",
-        "ProjectViewParserMockTestImpl.java",
-    ],
-    resources = ["//projectview/src/test/resources/projectview"],
+    srcs = ["ProjectViewParserImplTest.java"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],
+    resources = ["//projectview/src/test/resources:projectview"],
     deps = [
         "//projectview:model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
+        "//projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser:parserMockTestImpl",
+    ],
+)
+
+java_library(
+    name = "parserMockTestImpl",
+    srcs = ["ProjectViewParserMockTestImpl.java"],
+    visibility = ["//projectview:__subpackages__"],
+    deps = [
+        "//projectview:model",
+        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
+        "@maven//:com_google_guava_guava",
+        "@maven//:io_vavr_vavr",
     ],
 )

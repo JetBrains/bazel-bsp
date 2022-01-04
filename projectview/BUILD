@@ -6,7 +6,6 @@ java_library(
     exports = [
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
-        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections/specific",
     ],
 )
 

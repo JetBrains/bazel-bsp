@@ -1,91 +1,46 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
+import com.google.common.collect.Streams;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class ProjectViewSectionSplitter {
 
-  private static final String SECTION_HEADER_REGEX = "(^[a-z_]+[:]?)";
-  private static final String POSSIBLE_HEADER_ENDING_CHARACTER = ":";
+  private static final Pattern SECTION_HEADER_REGEX =
+      Pattern.compile("((^[^:\\s]+)([: ]))", Pattern.MULTILINE);
+  private static final int SECTION_HEADER_NAME_GROUP_ID = 2;
 
-  public static List<ProjectViewRawSection> split(String fileContent) {
-    List<ProjectViewSectionHeaderPosition> sectionsHeadersPositions =
-        splitIntoSectionsHeadersPositions(fileContent);
+  public static ProjectViewRawSections split(String fileContent) {
+    List<ProjectViewRawSection> rawSections = findRawSections(fileContent);
 
-    return parseRawSections(fileContent, sectionsHeadersPositions);
+    return new ProjectViewRawSections(rawSections);
   }
 
-  private static List<ProjectViewSectionHeaderPosition> splitIntoSectionsHeadersPositions(
-      String fileContent) {
-    Pattern pattern = Pattern.compile(SECTION_HEADER_REGEX, Pattern.MULTILINE);
-    Matcher matcher = pattern.matcher(fileContent);
+  private static List<ProjectViewRawSection> findRawSections(String fileContent) {
+    List<String> sectionHeadersNames = findSectionsHeadersNames(fileContent);
+    Stream<String> sectionBodies = findSectionsBodiesAndSkipFirstEmptyEntry(fileContent);
 
-    return getStartingAndEndingIndexes(matcher);
+    return Streams.zip(sectionHeadersNames.stream(), sectionBodies, ProjectViewRawSection::new)
+        .collect(Collectors.toList());
   }
 
-  private static List<ProjectViewSectionHeaderPosition> getStartingAndEndingIndexes(
-      Matcher matcher) {
-    ArrayList<ProjectViewSectionHeaderPosition> result = new ArrayList<>();
+  private static List<String> findSectionsHeadersNames(String fileContent) {
+    Matcher matcher = SECTION_HEADER_REGEX.matcher(fileContent);
+    ArrayList<String> result = new ArrayList<>();
 
     while (matcher.find()) {
-      ProjectViewSectionHeaderPosition position =
-          new ProjectViewSectionHeaderPosition(matcher.start(), matcher.end(), matcher.group());
-
-      result.add(position);
+      result.add(matcher.group(SECTION_HEADER_NAME_GROUP_ID));
     }
 
     return result;
   }
 
-  private static List<ProjectViewRawSection> parseRawSections(
-      String fileContent, List<ProjectViewSectionHeaderPosition> sectionsHeadersPositions) {
-    ListIterator<ProjectViewSectionHeaderPosition> iterator =
-        sectionsHeadersPositions.listIterator();
-    List<ProjectViewRawSection> result = new ArrayList<>();
-
-    while (iterator.hasNext()) {
-      ProjectViewSectionHeaderPosition currentPosition = iterator.next();
-      Optional<ProjectViewSectionHeaderPosition> nextPosition = getNextPosition(iterator);
-
-      ProjectViewRawSection rawSection =
-          parseProjectViewRawSection(currentPosition, nextPosition, fileContent);
-      result.add(rawSection);
-    }
-
-    return result;
-  }
-
-  private static Optional<ProjectViewSectionHeaderPosition> getNextPosition(
-      ListIterator<ProjectViewSectionHeaderPosition> iterator) {
-    if (iterator.hasNext()) {
-      ProjectViewSectionHeaderPosition nextPosition = iterator.next();
-      iterator.previous();
-      return Optional.of(nextPosition);
-    }
-
-    return Optional.empty();
-  }
-
-  private static ProjectViewRawSection parseProjectViewRawSection(
-      ProjectViewSectionHeaderPosition currentPosition,
-      Optional<ProjectViewSectionHeaderPosition> nextPosition,
-      String fileContent) {
-
-    String sectionBody =
-        nextPosition
-            .map(ProjectViewSectionHeaderPosition::getStartIndex)
-            .map(startIndex -> fileContent.substring(currentPosition.getEndIndex(), startIndex))
-            .orElse(fileContent.substring(currentPosition.getEndIndex()));
-    String sectionHeader = removeEndingHeaderColonAndSpaces(currentPosition.getHeader());
-
-    return new ProjectViewRawSection(sectionHeader, sectionBody);
-  }
-
-  private static String removeEndingHeaderColonAndSpaces(String header) {
-    return header.replace(POSSIBLE_HEADER_ENDING_CHARACTER, "").trim();
+  private static Stream<String> findSectionsBodiesAndSkipFirstEmptyEntry(String fileContent) {
+    return SECTION_HEADER_REGEX.splitAsStream(fileContent).skip(1);
   }
 }
