@@ -31,20 +31,21 @@ public class SourceRootGuesserTest {
   @Parameters
   public static Collection<Object> data() {
     return Arrays.asList(
-        new Object[][] {
-          {
-            "file:///WORKSPACE_ROOT/java_hello/src/main/java/com/hello/Hello.java",
-            "/WORKSPACE_ROOT/java_hello/src/main/java"
-          },
-          {
-            "file:///WORKSPACE_ROOT/server/src/test/java/org/jetbrains/bsp/bazel/server/bsp/utils/SourceRootGuesserTest.java",
-            "/WORKSPACE_ROOT/server/src/test/java"
-          },
-          {
-            "file:///WORKSPACE_ROOT/src/main/java/org/test/java",
-            "/WORKSPACE_ROOT/src/main/java/org/test/java"
-          },
-          {"file:///WORKSPACE_ROOT/foo/bar", "/WORKSPACE_ROOT/foo"}
-        });
+        (Object[])
+            new Object[][] {
+              {
+                "file:///WORKSPACE_ROOT/java_hello/src/main/java/com/hello/Hello.java",
+                "/WORKSPACE_ROOT/java_hello/src/main/java"
+              },
+              {
+                "file:///WORKSPACE_ROOT/server/src/test/java/org/jetbrains/bsp/bazel/server/bsp/utils/SourceRootGuesserTest.java",
+                "/WORKSPACE_ROOT/server/src/test/java"
+              },
+              {
+                "file:///WORKSPACE_ROOT/src/main/java/org/test/java",
+                "/WORKSPACE_ROOT/src/main/java/org/test/java"
+              },
+              {"file:///WORKSPACE_ROOT/foo/bar", "/WORKSPACE_ROOT/foo"}
+            });
   }
 }
