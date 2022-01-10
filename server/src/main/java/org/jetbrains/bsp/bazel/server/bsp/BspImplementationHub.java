@@ -19,6 +19,11 @@ import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
+import ch.epfl.scala.bsp4j.JvmBuildServer;
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
@@ -38,19 +43,22 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 
 public class BspImplementationHub
-    implements BuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
+    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
 
   private final BuildServer buildServer;
+  private final JvmBuildServer jvmBuildServer;
   private final ScalaBuildServer scalaBuildServer;
   private final JavaBuildServer javaBuildServer;
   private final CppBuildServer cppBuildServer;
 
   public BspImplementationHub(
       BuildServer buildServer,
+      JvmBuildServer jvmBuildServer,
       ScalaBuildServer scalaBuildServer,
       JavaBuildServer javaBuildServer,
       CppBuildServer cppBuildServer) {
     this.buildServer = buildServer;
+    this.jvmBuildServer = jvmBuildServer;
     this.scalaBuildServer = scalaBuildServer;
     this.javaBuildServer = javaBuildServer;
     this.cppBuildServer = cppBuildServer;
@@ -161,5 +169,17 @@ public class BspImplementationHub
   public CompletableFuture<CppOptionsResult> buildTargetCppOptions(
       CppOptionsParams cppOptionsParams) {
     return cppBuildServer.buildTargetCppOptions(cppOptionsParams);
+  }
+
+  @Override
+  public CompletableFuture<JvmRunEnvironmentResult> jvmRunEnvironment(
+      JvmRunEnvironmentParams jvmRunEnvironmentParams) {
+    return jvmBuildServer.jvmRunEnvironment(jvmRunEnvironmentParams);
+  }
+
+  @Override
+  public CompletableFuture<JvmTestEnvironmentResult> jvmTestEnvironment(
+      JvmTestEnvironmentParams jvmTestEnvironmentParams) {
+    return jvmBuildServer.jvmTestEnvironment(jvmTestEnvironmentParams);
   }
 }

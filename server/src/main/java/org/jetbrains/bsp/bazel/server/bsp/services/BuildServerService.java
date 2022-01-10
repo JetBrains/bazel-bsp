@@ -114,6 +114,8 @@ public class BuildServerService {
     capabilities.setDependencySourcesProvider(true);
     capabilities.setInverseSourcesProvider(true);
     capabilities.setResourcesProvider(true);
+    capabilities.setJvmRunEnvironmentProvider(true);
+    capabilities.setJvmTestEnvironmentProvider(true);
     return Either.forRight(
         new InitializeBuildResult(
             Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities));
