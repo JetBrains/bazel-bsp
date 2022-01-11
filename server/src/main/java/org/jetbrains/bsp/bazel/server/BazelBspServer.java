@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.CppBuildServer;
 import ch.epfl.scala.bsp4j.JavaBuildServer;
+import ch.epfl.scala.bsp4j.JvmBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
@@ -20,6 +21,7 @@ import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.impl.BuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.CppBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.JavaBuildServerImpl;
+import org.jetbrains.bsp.bazel.server.bsp.impl.JvmBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.impl.ScalaBuildServerImpl;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
@@ -29,6 +31,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelCppTargetManager;
 import org.jetbrains.bsp.bazel.server.bsp.services.BuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
+import org.jetbrains.bsp.bazel.server.bsp.services.JvmBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
@@ -82,6 +85,7 @@ public class BazelBspServer {
             bazelRunner,
             bazelBspServerConfig.getProjectView());
 
+    JvmBuildServerService jvmBuildServerService = new JvmBuildServerService(bazelData, bazelRunner);
     ScalaBuildServerService scalaBuildServerService =
         new ScalaBuildServerService(
             bazelData, bazelRunner, bazelBspCompilationManager, bazelBspQueryManager);
@@ -90,6 +94,8 @@ public class BazelBspServer {
             bazelBspCompilationManager, bazelBspQueryManager, bazelData, bazelRunner);
     CppBuildServerService cppBuildServerService = new CppBuildServerService(bazelRunner);
 
+    JvmBuildServer jvmBuildServer =
+        new JvmBuildServerImpl(jvmBuildServerService, serverRequestHelpers);
     ScalaBuildServer scalaBuildServer =
         new ScalaBuildServerImpl(scalaBuildServerService, serverRequestHelpers);
     JavaBuildServer javaBuildServer =
@@ -99,7 +105,8 @@ public class BazelBspServer {
     BuildServer buildServer = new BuildServerImpl(buildServerService, serverRequestHelpers);
 
     this.bspImplementationHub =
-        new BspImplementationHub(buildServer, scalaBuildServer, javaBuildServer, cppBuildServer);
+        new BspImplementationHub(
+            buildServer, jvmBuildServer, scalaBuildServer, javaBuildServer, cppBuildServer);
 
     integrateBsp(bspIntegrationData);
   }
