@@ -6,11 +6,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
+import org.jetbrains.bsp.bazel.server.bsp.workspace.WorkspaceRootModule;
 
 public final class TargetsUtils {
 
   public static List<String> getTargetsUris(List<BuildTargetIdentifier> targets) {
-    return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
+    return targets.stream()
+        .map(BuildTargetIdentifier::getUri)
+        .filter(WorkspaceRootModule.IGNORE_WORKSPACE_ROOT)
+        .collect(Collectors.toList());
   }
 
   public static String getTargetsUnion(List<BuildTargetIdentifier> targets) {

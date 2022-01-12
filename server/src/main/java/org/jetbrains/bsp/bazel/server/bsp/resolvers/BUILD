@@ -10,6 +10,7 @@ java_library(
         "//projectview:model",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers/actiongraph",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/workspace",
         "@io_bazel//src/main/protobuf:analysis_java_proto",
         "@io_bazel//src/main/protobuf:analysis_v2_java_proto",
         "@io_bazel//src/main/protobuf:build_java_proto",

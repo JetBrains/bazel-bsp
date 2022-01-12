@@ -59,6 +59,7 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
+import org.jetbrains.bsp.bazel.server.bsp.workspace.WorkspaceRootModule;
 
 public class BuildServerService {
 
@@ -171,7 +172,6 @@ public class BuildServerService {
 
       List<SourcesItem> sourceItems =
           targetRulesResolver.getItemsForTargets(sourcesParams.getTargets());
-
       SourcesResult sourcesResult = new SourcesResult(sourceItems);
 
       return Either.forRight(sourcesResult);
@@ -317,6 +317,9 @@ public class BuildServerService {
                             new BuildTargetIdentifier(rule.getName()),
                             serverBuildManager.getResources(rule, query)))
                 .collect(Collectors.toList()));
+
+    WorkspaceRootModule.addToBuildTargetResources(
+        resourcesParams.getTargets(), bazelData, resourcesResult);
 
     return Either.forRight(resourcesResult);
   }

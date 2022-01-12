@@ -18,6 +18,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
+import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 
 public class BazelBspCompilationManager {
@@ -34,8 +35,7 @@ public class BazelBspCompilationManager {
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
       List<BuildTargetIdentifier> targets, List<String> extraFlags) {
-    List<String> bazelTargets =
-        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
+    List<String> bazelTargets = TargetsUtils.getTargetsUris(targets);
 
     final Map<String, String> diagnosticsProtosLocations =
         bepServer.getDiagnosticsProtosLocations();

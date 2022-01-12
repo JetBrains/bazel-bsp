@@ -70,7 +70,7 @@ public class ServerInitializer {
   private static BazelBspServerConfig getBazelBspServerConfig(Path bspProjectRoot, String[] args) {
     var pathToBazel = args[0];
     var projectView = getProjectView(bspProjectRoot, args);
-    return new BazelBspServerConfig(pathToBazel, projectView);
+    return new BazelBspServerConfig(bspProjectRoot, pathToBazel, projectView);
   }
 
   private static ProjectView getProjectView(Path bspProjectRoot, String[] args) {

@@ -13,6 +13,7 @@ java_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/workspace",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
         "@maven//:ch_epfl_scala_bsp4j",

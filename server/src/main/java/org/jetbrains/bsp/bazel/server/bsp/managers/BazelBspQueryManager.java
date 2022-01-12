@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,9 +31,11 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
+import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildRuleAttributeExtractor;
+import org.jetbrains.bsp.bazel.server.bsp.workspace.WorkspaceRootModule;
 
 public class BazelBspQueryManager {
   private static final Logger LOGGER = LogManager.getLogger(BazelBspQueryManager.class);
@@ -44,14 +47,16 @@ public class BazelBspQueryManager {
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
   private final BazelBspTargetManager bazelBspTargetManager;
+  private final Path bspProjectRoot;
   private BepServer bepServer;
 
   public BazelBspQueryManager(
-      ProjectView projectView,
+      BazelBspServerConfig config,
       BazelData bazelData,
       BazelRunner bazelRunner,
       BazelBspTargetManager bazelBspTargetManager) {
-    this.projectView = projectView;
+    this.projectView = config.getProjectView();
+    this.bspProjectRoot = config.getBspProjectRoot();
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
     this.bazelBspTargetManager = bazelBspTargetManager;
@@ -65,6 +70,8 @@ public class BazelBspQueryManager {
             .map(this::getBuildTargetForProjectPath)
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
+
+    WorkspaceRootModule.addToBuildTargets(bazelData, bspProjectRoot, targets);
 
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
   }
