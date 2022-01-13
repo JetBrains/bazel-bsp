@@ -13,3 +13,17 @@ java_test(
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],
 )
+
+java_test(
+    name = "ProjectViewBazelPathSectionParserTest",
+    size = "small",
+    srcs = ["ProjectViewBazelPathSectionParserTest.java"],
+    runtime_deps = [
+        "@maven//:junit_junit",
+    ],
+    deps = [
+        "//projectview:model",
+        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
+        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
+    ],
+)

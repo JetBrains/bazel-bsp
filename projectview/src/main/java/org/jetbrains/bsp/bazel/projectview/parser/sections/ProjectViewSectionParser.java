@@ -4,7 +4,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
-public abstract class ProjectViewSectionParser<T extends ProjectViewSection> {
+public abstract class ProjectViewSectionParser<T> {
 
   protected final String sectionName;
 

@@ -8,8 +8,8 @@ import java.util.Objects;
 
 public abstract class ProjectViewListSection extends ProjectViewSection {
 
-  private final List<String> includedValues;
-  private final List<String> excludedValues;
+  protected final List<String> includedValues;
+  protected final List<String> excludedValues;
 
   protected ProjectViewListSection(String sectionName) {
     super(sectionName);

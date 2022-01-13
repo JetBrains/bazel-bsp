@@ -1,20 +1,18 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.CharSource;
-import com.google.common.io.Files;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ProjectViewParserImplTest {
 
@@ -26,7 +24,7 @@ public class ProjectViewParserImplTest {
     this.parser = new ProjectViewParserMockTestImpl();
   }
 
-  // ProjectView parse(Path projectViewFilePath)
+  // ProjectView parse(projectViewFilePath)
 
   @Test(expected = IllegalStateException.class)
   public void shouldThrowExceptionForFileWithoutTargetsSection() {
@@ -38,6 +36,18 @@ public class ProjectViewParserImplTest {
 
     // then
     // throw an IllegalStateException
+  }
+
+  @Test
+  public void shouldReturnEmptyBazelPathForFileWithoutBazelPathSection() {
+    // given
+    Path projectViewFilePath = Paths.get("/projectview/without/bazelpath.bazelproject");
+
+    // when
+    ProjectView projectView = parser.parse(projectViewFilePath);
+
+    // then
+    assertFalse(projectView.getBazelPath().isPresent());
   }
 
   @Test
@@ -55,13 +65,13 @@ public class ProjectViewParserImplTest {
                 new ProjectViewTargetsSection(
                     ImmutableList.of("//included_target1.1", "//included_target1.2"),
                     ImmutableList.of("//excluded_target1.1")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
-
     assertEquals(expectedProjectView, projectView);
   }
 
   @Test
-  public void shouldParseFileWithSingleImportedFile() {
+  public void shouldParseFileWithSingleImportedFileWitoutSingletonValues() {
     // given
     Path projectViewFilePath = Paths.get("/projectview/file4ImportsFile1.bazelproject");
 
@@ -77,8 +87,31 @@ public class ProjectViewParserImplTest {
                         "//included_target1.1", "//included_target1.2", "//included_target4.1"),
                     ImmutableList.of(
                         "//excluded_target1.1", "//excluded_target4.1", "//excluded_target4.2")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
 
+    assertEquals(expectedProjectView, projectView);
+  }
+
+  @Test
+  public void shouldParseFileWithSingleImportedFileWithSingletonValues() {
+    // given
+    Path projectViewFilePath = Paths.get("/projectview/file7ImportsFile1.bazelproject");
+
+    // when
+    ProjectView projectView = parser.parse(projectViewFilePath);
+
+    // then
+    ProjectView expectedProjectView =
+        ProjectView.builder()
+            .targets(
+                new ProjectViewTargetsSection(
+                    ImmutableList.of(
+                        "//included_target1.1", "//included_target1.2", "//included_target7.1"),
+                    ImmutableList.of(
+                        "//excluded_target1.1", "//excluded_target7.1", "//excluded_target7.2")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path7/to/bazel")))
+            .build();
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -105,8 +138,8 @@ public class ProjectViewParserImplTest {
                         "//excluded_target2.1",
                         "//excluded_target5.1",
                         "//excluded_target5.2")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path3/to/bazel")))
             .build();
-
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -134,12 +167,13 @@ public class ProjectViewParserImplTest {
                         "//excluded_target2.1",
                         "//excluded_target4.1",
                         "//excluded_target4.2")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
 
     assertEquals(expectedProjectView, projectView);
   }
 
-  // ProjectView parse(String projectViewFileContent, String defaultProjectViewFileContent)
+  // ProjectView parse(projectViewFileContent, defaultProjectViewFileContent)
 
   @Test(expected = IllegalStateException.class)
   public void shouldThrowExceptionForDefaultFileWithoutTargetsSection() {
@@ -152,6 +186,19 @@ public class ProjectViewParserImplTest {
 
     // then
     // throw an IllegalStateException
+  }
+
+  @Test
+  public void shouldReturnEmptyForDefaultFileWithoutBazelPathSection() {
+    // given
+    Path projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
+    Path defaultProjectViewFilePath = Paths.get("/projectview/without/bazelpath.bazelproject");
+
+    // when
+    ProjectView projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+    // then
+    assertFalse(projectView.getBazelPath().isPresent());
   }
 
   @Test
@@ -168,11 +215,9 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1",
-                        "//included_target1.2"),
-                    ImmutableList.of(
-                        "//excluded_target1.1")))
+                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
+                    ImmutableList.of("//excluded_target1.1")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
 
     assertEquals(expectedProjectView, projectView);
@@ -182,7 +227,7 @@ public class ProjectViewParserImplTest {
   public void shouldParseDefaultsForNotExistingFile() {
     // given
     Path projectViewFilePath = Paths.get("/doesnt/exist.bazelproject");
-    Path defaultProjectViewFilePath = Paths.get("/projectview/file2.bazelproject");
+    Path defaultProjectViewFilePath = Paths.get("/projectview/file1.bazelproject");
 
     // when
     ProjectView projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
@@ -192,10 +237,9 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target2.1"),
-                    ImmutableList.of(
-                        "//excluded_target2.1")))
+                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
+                    ImmutableList.of("//excluded_target1.1")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
 
     assertEquals(expectedProjectView, projectView);
@@ -205,7 +249,7 @@ public class ProjectViewParserImplTest {
   public void shouldParseFileAndUseDefaults() {
     // given
     Path projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
-    Path defaultProjectViewFilePath = Paths.get("/projectview/file2.bazelproject");
+    Path defaultProjectViewFilePath = Paths.get("/projectview/file1.bazelproject");
 
     // when
     ProjectView projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
@@ -215,10 +259,9 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target2.1"),
-                    ImmutableList.of(
-                        "//excluded_target2.1")))
+                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
+                    ImmutableList.of("//excluded_target1.1")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
 
     assertEquals(expectedProjectView, projectView);

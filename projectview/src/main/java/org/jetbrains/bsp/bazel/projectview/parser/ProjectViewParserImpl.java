@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -34,8 +35,11 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
   private static final String IMPORT_STATEMENT = "import";
 
-  private static final ProjectViewTargetsSectionParser TARGETS_PARSER =
+  private static final ProjectViewTargetsSectionParser targetsParser =
       new ProjectViewTargetsSectionParser();
+
+  private static final ProjectViewBazelPathSectionParser bazelPathParser =
+      new ProjectViewBazelPathSectionParser();
 
   @Override
   public ProjectView parse(String projectViewFileContent, String defaultProjectViewFileContent) {
@@ -44,7 +48,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
     return ProjectView.builder()
         .imports(findImportedProjectViews(rawSections))
-        .targets(TARGETS_PARSER.parseOrDefault(rawSections, defaultProjectView.getTargets()))
+        .targets(targetsParser.parseOrDefault(rawSections, defaultProjectView.getTargets()))
+        .bazelPath(bazelPathParser.parseOrDefault(rawSections, defaultProjectView.getBazelPath()))
         .build();
   }
 
@@ -54,7 +59,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
     return ProjectView.builder()
         .imports(findImportedProjectViews(rawSections))
-        .targets(TARGETS_PARSER.parse(rawSections))
+        .targets(targetsParser.parse(rawSections))
+        .bazelPath(bazelPathParser.parse(rawSections))
         .build();
   }
 

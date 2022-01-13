@@ -16,8 +16,11 @@ public class ProjectViewTargetsSection extends ProjectViewListSection {
 
   @Override
   public String toString() {
-    return String.format(
-        "ProjectViewTargetsSection{includedValues=%s, excludedValues=%s}",
-        getIncludedValues(), getExcludedValues());
+    return "ProjectViewTargetsSection{"
+        + "includedValues="
+        + includedValues
+        + ", excludedValues="
+        + excludedValues
+        + "} ";
   }
 }

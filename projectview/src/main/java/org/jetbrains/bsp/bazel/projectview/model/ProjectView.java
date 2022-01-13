@@ -2,11 +2,14 @@ package org.jetbrains.bsp.bazel.projectview.model;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -18,8 +21,12 @@ public class ProjectView {
 
   private final ProjectViewTargetsSection targets;
 
-  private ProjectView(ProjectViewTargetsSection targets) {
+  private final Optional<ProjectViewBazelPathSection> bazelPath;
+
+  private ProjectView(
+      ProjectViewTargetsSection targets, Optional<ProjectViewBazelPathSection> bazelPath) {
     this.targets = targets;
+    this.bazelPath = bazelPath;
   }
 
   public static ProjectView.Builder builder() {
@@ -30,22 +37,26 @@ public class ProjectView {
     return targets;
   }
 
+  public Optional<ProjectViewBazelPathSection> getBazelPath() {
+    return bazelPath;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof ProjectView)) return false;
     ProjectView that = (ProjectView) o;
-    return targets.equals(that.targets);
+    return targets.equals(that.targets) && bazelPath.equals(that.bazelPath);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(targets);
+    return Objects.hash(targets, bazelPath);
   }
 
   @Override
   public String toString() {
-    return "ProjectView{" + "targets=" + targets.toString() + '}';
+    return "ProjectView{" + "targets=" + targets + ", bazelPath=" + bazelPath + '}';
   }
 
   public static class Builder {
@@ -53,6 +64,8 @@ public class ProjectView {
     private List<ProjectView> importedProjectViews = ImmutableList.of();
 
     private ProjectViewTargetsSection targets = new ProjectViewTargetsSection();
+
+    private Optional<ProjectViewBazelPathSection> bazelPath = Optional.empty();
 
     private Builder() {}
 
@@ -66,11 +79,18 @@ public class ProjectView {
       return this;
     }
 
+    public Builder bazelPath(Optional<ProjectViewBazelPathSection> bazelPath) {
+      this.bazelPath = bazelPath;
+      return this;
+    }
+
     public ProjectView build() {
       ProjectViewTargetsSection targets = combineTargetsSection();
       throwIfListSectionIsEmpty(targets);
 
-      return new ProjectView(targets);
+      Optional<ProjectViewBazelPathSection> bazelPath = combineBazelPathSection();
+
+      return new ProjectView(targets, bazelPath);
     }
 
     private ProjectViewTargetsSection combineTargetsSection() {
@@ -94,12 +114,31 @@ public class ProjectView {
           .reduce(valuesGetter.apply(section), ListUtils::concat);
     }
 
-    private void throwIfListSectionIsEmpty(ProjectViewListSection listSection) {
-      if (listSection.getIncludedValues().isEmpty()) {
+    private Optional<ProjectViewBazelPathSection> combineBazelPathSection() {
+      Optional<ProjectViewBazelPathSection> defaultBazelPathSection =
+          getLastImportedSingletonValue(ProjectView::getBazelPath);
+
+      return bazelPath.map(Optional::of).orElse(defaultBazelPathSection);
+    }
+
+    private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(
+        Function<ProjectView, Optional<T>> sectionGetter) {
+      return importedProjectViews.stream()
+          .map(sectionGetter)
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .reduce((first, second) -> second);
+    }
+
+    private void throwIfListSectionIsEmpty(ProjectViewListSection section) {
+      if (isListSectionIsEmpty(section)) {
         throw new IllegalStateException(
-            String.format(
-                "`%s` section cannot have an empty included list!", listSection.getSectionName()));
+            section.getSectionName() + " section cannot have an empty included list!");
       }
+    }
+
+    private boolean isListSectionIsEmpty(ProjectViewListSection section) {
+      return section.getIncludedValues().isEmpty();
     }
   }
 }

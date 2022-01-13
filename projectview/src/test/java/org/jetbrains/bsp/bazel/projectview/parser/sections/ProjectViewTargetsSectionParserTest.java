@@ -19,6 +19,8 @@ public class ProjectViewTargetsSectionParserTest {
     this.parser = new ProjectViewTargetsSectionParser();
   }
 
+  // ProjectViewTargetsSection parse(rawSection)
+
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowIllegalArgumentExceptionForWrongSectionName() {
     // given
@@ -42,7 +44,6 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     ProjectViewTargetsSection expectedSection =
         new ProjectViewTargetsSection(ImmutableList.of(), ImmutableList.of());
-
     assertEquals(expectedSection, section);
   }
 
@@ -62,7 +63,6 @@ public class ProjectViewTargetsSectionParserTest {
             ImmutableList.of(
                 "//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1"),
             ImmutableList.of());
-
     assertEquals(expectedSection, section);
   }
 
@@ -82,7 +82,6 @@ public class ProjectViewTargetsSectionParserTest {
             ImmutableList.of(),
             ImmutableList.of(
                 "//test_excluded1:test1", "//test_excluded1:test2", "//test_excluded2:test1"));
-
     assertEquals(expectedSection, section);
   }
 
@@ -101,9 +100,10 @@ public class ProjectViewTargetsSectionParserTest {
         new ProjectViewTargetsSection(
             ImmutableList.of("//test_included1:test1"),
             ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
-
     assertEquals(expectedSection, section);
   }
+
+  // ProjectViewTargetsSection parse(rawSections)
 
   @Test
   public void shouldReturnEmptySectionIfThereIsNoSectionForParseWithoutDefault() {
@@ -123,7 +123,8 @@ public class ProjectViewTargetsSectionParserTest {
     ProjectViewTargetsSection section = parser.parse(rawSections);
 
     // then
-    assertEquals(new ProjectViewTargetsSection(), section);
+    ProjectViewTargetsSection expectedSection = new ProjectViewTargetsSection();
+    assertEquals(expectedSection, section);
   }
 
   @Test
@@ -150,9 +151,10 @@ public class ProjectViewTargetsSectionParserTest {
         new ProjectViewTargetsSection(
             ImmutableList.of("//test_included1:test1"),
             ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
-
     assertEquals(expectedSection, section);
   }
+
+  // ProjectViewTargetsSection parseOrDefault(rawSections, defaultValue)
 
   @Test
   public void shouldParseAllTargetsSectionFromList() {
@@ -183,7 +185,6 @@ public class ProjectViewTargetsSectionParserTest {
         new ProjectViewTargetsSection(
             ImmutableList.of("//test_included1:test1"),
             ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
-
     assertEquals(expectedSection, section);
   }
 
@@ -211,7 +212,6 @@ public class ProjectViewTargetsSectionParserTest {
         new ProjectViewTargetsSection(
             ImmutableList.of("//default_test_included1:test1"),
             ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
-
     assertEquals(expectedSection, section);
   }
 }
