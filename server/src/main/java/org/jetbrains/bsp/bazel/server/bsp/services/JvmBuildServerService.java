@@ -24,6 +24,8 @@ public class JvmBuildServerService {
   private static final Logger LOGGER = LogManager.getLogger(JvmBuildServerService.class);
   private static final ImmutableList<String> JVM_LANGUAGES_IDS =
       ImmutableList.of(Constants.JAVAC, Constants.KOTLINC, Constants.SCALAC);
+  private static final ImmutableList<String> NON_RUNTIME_SUFFIXES =
+      ImmutableList.of("-hjar.jar", "-sources.jar", "-src.jar", "-ijar.jar");
 
   private final TargetsLanguageOptionsResolver<JvmEnvironmentItem> targetsLanguageOptionsResolver;
 
@@ -39,8 +41,18 @@ public class JvmBuildServerService {
             .resultItemsCollector(
                 (target, options, classpath, classDirectory) ->
                     new JvmEnvironmentItem(
-                        target, classpath, options, workspaceRoot, environmentVariables))
+                        target,
+                        filterClasspath(classpath),
+                        options,
+                        workspaceRoot,
+                        environmentVariables))
             .build();
+  }
+
+  private List<String> filterClasspath(List<String> classpath) {
+    return classpath.stream()
+        .filter(path -> NON_RUNTIME_SUFFIXES.stream().noneMatch(path::endsWith))
+        .collect(Collectors.toList());
   }
 
   public Either<ResponseError, JvmRunEnvironmentResult> jvmRunEnvironment(
