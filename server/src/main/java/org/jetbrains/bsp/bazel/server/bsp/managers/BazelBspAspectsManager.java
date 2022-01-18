@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 
@@ -35,7 +34,7 @@ public class BazelBspAspectsManager {
         targets, ImmutableList.of(aspectFlag, outputGroupFlag));
     return bepServer
         .getOutputGroupPaths()
-        .getOrDefault(Constants.SCALA_COMPILER_CLASSPATH_FILES, Collections.emptySet())
+        .getOrDefault(outputGroup, Collections.emptySet())
         .stream()
         .map(Uri::toString)
         .collect(Collectors.toList());

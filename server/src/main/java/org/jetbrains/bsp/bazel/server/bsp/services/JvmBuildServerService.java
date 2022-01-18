@@ -7,6 +7,7 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import com.google.common.collect.ImmutableList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsLanguageOptionsResolver;
 
 public class JvmBuildServerService {
@@ -24,12 +26,14 @@ public class JvmBuildServerService {
   private static final Logger LOGGER = LogManager.getLogger(JvmBuildServerService.class);
   private static final ImmutableList<String> JVM_LANGUAGES_IDS =
       ImmutableList.of(Constants.JAVAC, Constants.KOTLINC, Constants.SCALAC);
-  private static final ImmutableList<String> NON_RUNTIME_SUFFIXES =
-      ImmutableList.of("-hjar.jar", "-sources.jar", "-src.jar", "-ijar.jar");
+  public static final String JAVA_RUNTIME_CLASSPATH_ASPECT =
+      "@//.bazelbsp:aspects.bzl%java_runtime_classpath_aspect";
 
   private final TargetsLanguageOptionsResolver<JvmEnvironmentItem> targetsLanguageOptionsResolver;
+  private final BazelBspAspectsManager bazelBspAspectsManager;
 
-  public JvmBuildServerService(BazelData bazelData, BazelRunner bazelRunner) {
+  public JvmBuildServerService(
+      BazelData bazelData, BazelRunner bazelRunner, BazelBspAspectsManager bazelBspAspectsManager) {
     Map<String, String> environmentVariables = System.getenv();
     String workspaceRoot = bazelData.getWorkspaceRoot();
     this.targetsLanguageOptionsResolver =
@@ -42,17 +46,12 @@ public class JvmBuildServerService {
                 (target, options, classpath, classDirectory) ->
                     new JvmEnvironmentItem(
                         target,
-                        filterClasspath(classpath),
+                        Collections.emptyList(),
                         options,
                         workspaceRoot,
                         environmentVariables))
             .build();
-  }
-
-  private List<String> filterClasspath(List<String> classpath) {
-    return classpath.stream()
-        .filter(path -> NON_RUNTIME_SUFFIXES.stream().noneMatch(path::endsWith))
-        .collect(Collectors.toList());
+    this.bazelBspAspectsManager = bazelBspAspectsManager;
   }
 
   public Either<ResponseError, JvmRunEnvironmentResult> jvmRunEnvironment(
@@ -70,8 +69,18 @@ public class JvmBuildServerService {
   }
 
   private List<JvmEnvironmentItem> getJvmEnvironmentItems(List<BuildTargetIdentifier> targets) {
-    return targetsLanguageOptionsResolver.getResultItemsForTargets(targets).stream()
-        .distinct()
-        .collect(Collectors.toList());
+    var items =
+        targetsLanguageOptionsResolver.getResultItemsForTargets(targets).stream()
+            .distinct()
+            .collect(Collectors.toList());
+    items.forEach(item -> item.setClasspath(fetchClasspath(item.getTarget())));
+    return items;
+  }
+
+  private List<String> fetchClasspath(BuildTargetIdentifier target) {
+    return bazelBspAspectsManager.fetchPathsFromOutputGroup(
+        List.of(target),
+        JAVA_RUNTIME_CLASSPATH_ASPECT,
+        Constants.JAVA_RUNTIME_CLASSPATH_ASPECT_OUTPUT_GROUP);
   }
 }

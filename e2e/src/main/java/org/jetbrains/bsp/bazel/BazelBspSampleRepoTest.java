@@ -320,7 +320,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     System.getenv())));
 
     return new BazelBspTestScenarioStep(
-        "jvm run environment results",
+        "jvm test environment results",
         () -> testClient.testJvmTestEnvironment(params, expectedResult));
   }
 
