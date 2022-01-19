@@ -27,3 +27,16 @@ java_test(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
     ],
 )
+
+java_test(
+    name = "InternalAspectsResolverTest",
+    size = "small",
+    srcs = ["InternalAspectsResolverTest.java"],
+    runtime_deps = [
+        "@maven//:junit_junit",
+    ],
+    deps = [
+        "//commons",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
+    ],
+)

@@ -21,8 +21,7 @@ public class BazelBspScalaTargetManager extends Lazy<ScalaBuildTarget> {
       "@io_bazel_rules_scala_scala_reflect//:io_bazel_rules_scala_scala_reflect";
   public static final String SCALA_COMPILER =
       "@io_bazel_rules_scala_scala_compiler//:io_bazel_rules_scala_scala_compiler";
-  public static final String SCALA_COMPILER_ASPECT =
-      "@//.bazelbsp:aspects.bzl%scala_compiler_classpath_aspect";
+  public static final String SCALA_COMPILER_ASPECT = "scala_compiler_classpath_aspect";
   public static final String SCALA_COMPILER_OUTPUT_GROUP = "scala_compiler_classpath_files";
   private final BazelBspAspectsManager bazelBspAspectsManager;
 
