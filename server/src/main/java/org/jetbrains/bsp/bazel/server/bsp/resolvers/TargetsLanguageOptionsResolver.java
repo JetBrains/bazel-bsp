@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -97,6 +98,8 @@ public class TargetsLanguageOptionsResolver<T> {
     List<String> inputs = actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot());
 
     return actionGraphParser.getOutputs(target, ACTION_GRAPH_SUFFIXES).stream()
+        .max(Comparator.naturalOrder())
+        .stream()
         .map(this::mapActionGraphOutputsToClassDirectory)
         .map(
             classDirectory ->
