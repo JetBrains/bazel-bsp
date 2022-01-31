@@ -49,7 +49,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    var test = new BazelBspSampleRepoTest();
+    BazelBspSampleRepoTest test = new BazelBspSampleRepoTest();
     test.executeScenario();
   }
 

@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
+import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -24,6 +25,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -66,7 +68,25 @@ public class BazelBspQueryManager {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
+    buildProject(targets);
+
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
+  }
+
+  private void buildProject(List<BuildTarget> buildTargets) {
+    List<String> targets = buildTargets.stream().map(t -> t.getId().getUri()).collect(Collectors.toList());
+
+    BazelProcessResult bazelProcessResult = bazelRunner
+            .commandBuilder()
+            .build()
+            .withFlag(BazelRunnerFlag.OUTPUT_GROUPS, "+_source_jars")
+            .withTargets(targets)
+            .executeBazelBesCommand()
+            .waitAndGetResult();
+
+    if (bazelProcessResult.getStatusCode() != StatusCode.OK) {
+      throw new RuntimeException("Failed to build the project");
+    }
   }
 
   private List<BuildTarget> getBuildTargetForProjectPath(String target) {

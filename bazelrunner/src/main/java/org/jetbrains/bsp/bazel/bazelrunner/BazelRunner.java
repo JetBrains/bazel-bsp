@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelRunner {
@@ -31,10 +32,10 @@ public class BazelRunner {
   }
 
   private File resolveWorkspaceRoot() {
-    var builder = new ProcessBuilder(bazel, "info", "workspace");
+    ProcessBuilder builder = new ProcessBuilder(bazel, "info", "workspace");
     try {
-      var process = new BazelProcess(builder.start(), Optional.empty());
-      var result = process.waitAndGetResult();
+      BazelProcess process = new BazelProcess(builder.start(), Optional.empty());
+      BazelProcessResult result = process.waitAndGetResult();
       if (result.getStatusCode() != StatusCode.OK) {
         throw new RuntimeException(
             "Failed to run bazel info workspace. Make sure that the project is created inside a"

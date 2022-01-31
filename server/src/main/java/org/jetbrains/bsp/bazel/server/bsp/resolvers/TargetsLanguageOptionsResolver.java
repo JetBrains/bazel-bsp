@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,7 @@ public class TargetsLanguageOptionsResolver<T> {
     BuildTargetIdentifier targetIdentifier = new BuildTargetIdentifier(target);
     List<String> options = targetsOptions.getOrDefault(target, ImmutableList.of());
     List<String> inputs = actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot());
+    addSourceJars(inputs);
 
     return actionGraphParser.getOutputs(target, ACTION_GRAPH_SUFFIXES).stream()
         .max(Comparator.naturalOrder())
@@ -104,6 +106,23 @@ public class TargetsLanguageOptionsResolver<T> {
         .map(
             classDirectory ->
                 resultItemsCollector.apply(targetIdentifier, options, inputs, classDirectory));
+  }
+
+  private void addSourceJars(List<String> inputs) {
+    List<String> newInputs = new ArrayList<>();
+    inputs.forEach(path -> {
+      if (path.endsWith("-hjar.jar")) {
+        newInputs.add(path.replace("-hjar.jar", "-src.jar"));
+        newInputs.add(path.replace("-hjar.jar", ".jar"));
+      } else if (path.contains("maven/v1/https/repo.maven.apache.org/maven2")) {
+        newInputs.add(path);
+        newInputs.add(path.replace(".jar", "-sources.jar"));
+      } else {
+        newInputs.add(path);
+      }
+    });
+    inputs.clear();
+    inputs.addAll(newInputs);
   }
 
   private String mapActionGraphOutputsToClassDirectory(String output) {

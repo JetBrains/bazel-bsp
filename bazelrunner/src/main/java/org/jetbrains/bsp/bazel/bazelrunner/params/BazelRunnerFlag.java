@@ -6,7 +6,8 @@ public enum BazelRunnerFlag {
   NOHOST_DEPS("--nohost_deps"),
   NOIMPLICIT_DEPS("--noimplicit_deps"),
   KEEP_GOING("--keep_going"),
-  NOBUILD("--nobuild");
+  NOBUILD("--nobuild"),
+  OUTPUT_GROUPS("--output_groups");
 
   private final String name;
 

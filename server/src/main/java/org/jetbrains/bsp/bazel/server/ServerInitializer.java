@@ -33,17 +33,17 @@ public class ServerInitializer {
     ExecutorService executor = Executors.newCachedThreadPool();
 
     try {
-      var bspProjectRoot = Paths.get("").toAbsolutePath();
-      var rootDir = bspProjectRoot.resolve(Constants.BAZELBSP_DIR_NAME);
+      Path bspProjectRoot = Paths.get("").toAbsolutePath();
+      Path rootDir = bspProjectRoot.resolve(Constants.BAZELBSP_DIR_NAME);
       Files.createDirectories(rootDir);
 
-      var traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
+      Path traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
       PrintWriter traceWriter =
           new PrintWriter(
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      var bazelBspServerConfig = getBazelBspServerConfig(bspProjectRoot, args);
+      BazelBspServerConfig bazelBspServerConfig = getBazelBspServerConfig(bspProjectRoot, args);
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
@@ -68,8 +68,8 @@ public class ServerInitializer {
   }
 
   private static BazelBspServerConfig getBazelBspServerConfig(Path bspProjectRoot, String[] args) {
-    var pathToBazel = args[0];
-    var projectView = getProjectView(bspProjectRoot, args);
+    String pathToBazel = args[0];
+    ProjectView projectView = getProjectView(bspProjectRoot, args);
     return new BazelBspServerConfig(pathToBazel, projectView);
   }
 
