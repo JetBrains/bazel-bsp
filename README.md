@@ -1,5 +1,5 @@
 [![JetBrains team project](http://jb.gg/badges/team.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![Integration tests](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-test.yml/badge.svg)](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-tests.yml)
+[![Integration tests](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-tests.yml)
 
 # Bazel BSP
 An implementation of the [Build Server Protocol](https://github.com/build-server-protocol/build-server-protocol) for Bazel.
