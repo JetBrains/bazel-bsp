@@ -1,16 +1,15 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Representation of the project view file

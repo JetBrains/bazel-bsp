@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.collections4.CollectionUtils;
 
 public abstract class ProjectViewListSection extends ProjectViewSection {
 

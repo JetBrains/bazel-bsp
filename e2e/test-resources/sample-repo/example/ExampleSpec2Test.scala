@@ -1,7 +1,6 @@
 package example
 
 import dep.Dep
-import org.specs2.mutable._
 
 class ExampleSpec2Test extends SpecificationWithJUnit {
   "Test" should {

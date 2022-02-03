@@ -2,11 +2,10 @@ package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.base.Joiner;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 public final class TargetsUtils {
 

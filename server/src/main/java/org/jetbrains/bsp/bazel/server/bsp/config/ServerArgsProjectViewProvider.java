@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
-
-import java.util.Arrays;
 
 public class ServerArgsProjectViewProvider implements ProjectViewProvider {
 
@@ -20,8 +19,6 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
     ProjectViewTargetsSection targetsSection =
         new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of());
 
-    return ProjectView.builder()
-        .targets(targetsSection)
-        .build();
+    return ProjectView.builder().targets(targetsSection).build();
   }
 }

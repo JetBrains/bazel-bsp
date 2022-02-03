@@ -17,9 +17,7 @@ public abstract class ProjectViewSingletonSection extends ProjectViewSection {
 
   @Override
   public String toString() {
-    return "ProjectViewSingletonSection{" +
-        "value='" + value + '\'' +
-        "} " + super.toString();
+    return "ProjectViewSingletonSection{" + "value='" + value + '\'' + "} " + super.toString();
   }
 
   @Override
