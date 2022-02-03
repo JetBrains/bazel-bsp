@@ -85,19 +85,19 @@ public class ProjectView {
     }
 
     public ProjectView build() {
-      ProjectViewTargetsSection targets = combineTargetsSection();
+      var targets = combineTargetsSection();
       throwIfListSectionIsEmpty(targets);
 
-      Optional<ProjectViewBazelPathSection> bazelPath = combineBazelPathSection();
+      var bazelPath = combineBazelPathSection();
 
       return new ProjectView(targets, bazelPath);
     }
 
     private ProjectViewTargetsSection combineTargetsSection() {
-      List<String> includedTargets =
+      var includedTargets =
           combineListValuesWithImported(
               targets, ProjectView::getTargets, ProjectViewListSection::getIncludedValues);
-      List<String> excludedTargets =
+      var excludedTargets =
           combineListValuesWithImported(
               targets, ProjectView::getTargets, ProjectViewListSection::getExcludedValues);
 
@@ -115,10 +115,9 @@ public class ProjectView {
     }
 
     private Optional<ProjectViewBazelPathSection> combineBazelPathSection() {
-      Optional<ProjectViewBazelPathSection> defaultBazelPathSection =
-          getLastImportedSingletonValue(ProjectView::getBazelPath);
+      var defaultBazelPathSection = getLastImportedSingletonValue(ProjectView::getBazelPath);
 
-      return bazelPath.map(Optional::of).orElse(defaultBazelPathSection);
+      return bazelPath.or(() -> defaultBazelPathSection);
     }
 
     private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(

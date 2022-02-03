@@ -1,9 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-
-import java.util.Optional;
 
 public abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonSection>
     extends ProjectViewSectionParser<Optional<T>> {
@@ -24,9 +23,7 @@ public abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSin
 
   @Override
   protected Optional<T> parse(String sectionBody) {
-    return Optional.of(sectionBody.trim())
-        .filter(body -> !body.isEmpty())
-        .map(this::instanceOf);
+    return Optional.of(sectionBody.trim()).filter(body -> !body.isEmpty()).map(this::instanceOf);
   }
 
   protected abstract T instanceOf(String value);

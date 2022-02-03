@@ -1,14 +1,12 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
-import org.junit.Test;
-
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import org.junit.Test;
 
 public class ProjectViewTest {
 
@@ -46,7 +44,7 @@ public class ProjectViewTest {
   @Test
   public void shouldNotThrowExceptionForBuilderWithoutTargetsButWithImportedTargets() {
     // given
-    ProjectView importedProjectView =
+    var importedProjectView =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -58,14 +56,14 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView))
             .bazelPath(dummyBazelPathSection)
             .build();
 
     // then
-    ProjectViewTargetsSection expectedProjectViewTargetsSection =
+    var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of(
                 "//included_target1.1", "//included_target1.2", "//included_target1.3"),
@@ -76,7 +74,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEqualTargetsForBuilderWithoutImports() {
     // given & when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .bazelPath(dummyBazelPathSection)
             .targets(
@@ -87,7 +85,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewTargetsSection expectedProjectViewTargetsSection =
+    var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//included_target1", "//included_target2", "//included_target3"),
             ImmutableList.of("//excluded_target1", "//excluded_target2"));
@@ -97,7 +95,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEqualTargetsForBuilderWithEmptyImports() {
     // given & when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -109,7 +107,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewTargetsSection expectedProjectViewTargetsSection =
+    var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//included_target1", "//included_target2", "//included_target3"),
             ImmutableList.of("//excluded_target1", "//excluded_target2"));
@@ -119,7 +117,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnCombinedTargetsForOneImportedProjectView() {
     // given
-    ProjectView importedProjectView =
+    var importedProjectView =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -131,7 +129,7 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView))
             .bazelPath(dummyBazelPathSection)
@@ -143,7 +141,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewTargetsSection expectedProjectViewTargetsSection =
+    var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of(
                 "//included_target1.1",
@@ -163,7 +161,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnCombinedTargetsForThreeImportedProjectView() {
     // given
-    ProjectView importedProjectView1 =
+    var importedProjectView1 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -174,7 +172,7 @@ public class ProjectViewTest {
                     ImmutableList.of("//excluded_target1.1", "//excluded_target1.2")))
             .build();
 
-    ProjectView importedProjectView2 =
+    var importedProjectView2 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -184,7 +182,7 @@ public class ProjectViewTest {
                     ImmutableList.of("//excluded_target2.1")))
             .build();
 
-    ProjectView importedProjectView3 =
+    var importedProjectView3 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -195,7 +193,7 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(
                 ImmutableList.of(importedProjectView1, importedProjectView2, importedProjectView3))
@@ -208,7 +206,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewTargetsSection expectedProjectViewTargetsSection =
+    var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of(
                 "//included_target1.1",
@@ -232,7 +230,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnCombinedTargetsForNestedImportedProjectView() {
     // given
-    ProjectView importedProjectView1 =
+    var importedProjectView1 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -243,7 +241,7 @@ public class ProjectViewTest {
                     ImmutableList.of("//excluded_target1.1", "//excluded_target1.2")))
             .build();
 
-    ProjectView importedProjectView2 =
+    var importedProjectView2 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .bazelPath(dummyBazelPathSection)
@@ -253,7 +251,7 @@ public class ProjectViewTest {
                     ImmutableList.of("//excluded_target2.1")))
             .build();
 
-    ProjectView importedProjectView3 =
+    var importedProjectView3 =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView1, importedProjectView2))
             .bazelPath(dummyBazelPathSection)
@@ -264,7 +262,7 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView3))
             .bazelPath(dummyBazelPathSection)
@@ -276,7 +274,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewTargetsSection expectedProjectViewTargetsSection =
+    var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of(
                 "//included_target1.1",
@@ -302,7 +300,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEmptyBazelPathForBuilderWithoutBazelPath() {
     // given & when
-    ProjectView projectView = ProjectView.builder().targets(dummyTargetsSection).build();
+    var projectView = ProjectView.builder().targets(dummyTargetsSection).build();
 
     // then
     assertFalse(projectView.getBazelPath().isPresent());
@@ -311,7 +309,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEmptyBazelPathForBuilderWithEmptyBazelPath() {
     // given & when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder().targets(dummyTargetsSection).bazelPath(Optional.empty()).build();
 
     // then
@@ -321,22 +319,21 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEqualBazelPathForBuilderWithoutImports() {
     // given & when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }
 
   @Test
   public void shouldReturnEqualBazelPathForBuilderWithEmptyImports() {
     // given & when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
@@ -344,38 +341,35 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }
 
   @Test
   public void shouldReturnImportedBazelPathForBuilderWithoutBazelPath() {
     // given
-    ProjectView importedProjectView =
+    var importedProjectView =
         ProjectView.builder()
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView))
             .targets(dummyTargetsSection)
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }
-
 
   @Test
   public void shouldReturnImportedBazelPathForBuilderWithEmptyBazelPath() {
     // given
-    ProjectView importedProjectView =
+    var importedProjectView =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
@@ -383,7 +377,7 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView))
             .targets(dummyTargetsSection)
@@ -391,7 +385,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
+    var expectedProjectViewBazelPathSection =
         new ProjectViewBazelPathSection("imported/path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }
@@ -399,7 +393,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnCurrentBazelPathForOneImportedProjectView() {
     // given
-    ProjectView importedProjectView =
+    var importedProjectView =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
@@ -407,7 +401,7 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView))
             .targets(dummyTargetsSection)
@@ -415,29 +409,29 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }
 
   @Test
-  public void shouldReturnCurrentBazelPathForThreeImportedProjectViewForNotEmptyCurrentProjectView() {
+  public void
+      shouldReturnCurrentBazelPathForThreeImportedProjectViewForNotEmptyCurrentProjectView() {
     // given
-    ProjectView importedProjectView1 =
+    var importedProjectView1 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported1/path/to/bazel")))
             .build();
 
-    ProjectView importedProjectView2 =
+    var importedProjectView2 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported2/path/to/bazel")))
             .build();
 
-    ProjectView importedProjectView3 =
+    var importedProjectView3 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
@@ -445,37 +439,37 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView1, importedProjectView2, importedProjectView3))
+            .imports(
+                ImmutableList.of(importedProjectView1, importedProjectView2, importedProjectView3))
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }
 
   @Test
   public void shouldReturnLastBazelPathFromNestedImportedProjectViewForEmptyCurrentProjectView() {
     // given
-    ProjectView importedProjectView1 =
+    var importedProjectView1 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported1/path/to/bazel")))
             .build();
 
-    ProjectView importedProjectView2 =
+    var importedProjectView2 =
         ProjectView.builder()
             .imports(ImmutableList.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.empty())
             .build();
 
-    ProjectView importedProjectView3 =
+    var importedProjectView3 =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView1, importedProjectView2))
             .targets(dummyTargetsSection)
@@ -483,7 +477,7 @@ public class ProjectViewTest {
             .build();
 
     // when
-    ProjectView projectView =
+    var projectView =
         ProjectView.builder()
             .imports(ImmutableList.of(importedProjectView3))
             .targets(dummyTargetsSection)
@@ -491,7 +485,7 @@ public class ProjectViewTest {
             .build();
 
     // then
-    ProjectViewBazelPathSection expectedProjectViewBazelPathSection =
+    var expectedProjectViewBazelPathSection =
         new ProjectViewBazelPathSection("imported3/path/to/bazel");
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
   }

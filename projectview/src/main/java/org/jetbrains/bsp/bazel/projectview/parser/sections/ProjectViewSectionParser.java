@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
@@ -24,7 +23,7 @@ public abstract class ProjectViewSectionParser<T> {
 
   private void assertSectionName(ProjectViewRawSection rawSection) throws IllegalArgumentException {
     if (!rawSection.compareByName(sectionName)) {
-      String exceptionMessage =
+      var exceptionMessage =
           String.format(
               "Project view parsing failed! Expected '%s' section name, got '%s'!",
               sectionName, rawSection.getSectionName());

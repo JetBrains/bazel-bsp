@@ -1,19 +1,18 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class ProjectViewRawSectionTest {
 
   @Test
   public void shouldReturnFalseForComparisonWithAnotherName() {
     // given
-    ProjectViewRawSection section = new ProjectViewRawSection("name", "body");
+    var section = new ProjectViewRawSection("name", "body");
 
     // when
-    boolean result = section.compareByName("anothername");
+    var result = section.compareByName("anothername");
 
     // then
     assertFalse(result);
@@ -21,12 +20,11 @@ public class ProjectViewRawSectionTest {
 
   @Test
   public void shouldReturnTrueForComparisonWithTheSameName() {
-
     // given
-    ProjectViewRawSection section = new ProjectViewRawSection("name", "body");
+    var section = new ProjectViewRawSection("name", "body");
 
     // when
-    boolean result = section.compareByName("name");
+    var result = section.compareByName("name");
 
     // then
     assertTrue(result);

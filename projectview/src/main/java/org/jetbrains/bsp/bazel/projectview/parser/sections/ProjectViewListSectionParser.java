@@ -2,14 +2,13 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.bsp.bazel.commons.ListUtils;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
-import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.commons.ListUtils;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
 public abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     extends ProjectViewSectionParser<T> {
@@ -39,9 +38,9 @@ public abstract class ProjectViewListSectionParser<T extends ProjectViewListSect
   }
 
   private T concatSectionsItems(T section1, T section2) {
-    List<String> includedItems =
+    var includedItems =
         ListUtils.concat(section1.getIncludedValues(), section2.getIncludedValues());
-    List<String> excludedItems =
+    var excludedItems =
         ListUtils.concat(section1.getExcludedValues(), section2.getExcludedValues());
 
     return instanceOf(includedItems, excludedItems);
@@ -49,9 +48,9 @@ public abstract class ProjectViewListSectionParser<T extends ProjectViewListSect
 
   @Override
   protected T parse(String sectionBody) {
-    List<String> allEntries = splitSectionEntries(sectionBody);
-    List<String> includedEntries = filterIncludedEntries(allEntries);
-    List<String> excludedEntries = filterExcludedEntries(allEntries);
+    var allEntries = splitSectionEntries(sectionBody);
+    var includedEntries = filterIncludedEntries(allEntries);
+    var excludedEntries = filterExcludedEntries(allEntries);
 
     return instanceOf(includedEntries, excludedEntries);
   }

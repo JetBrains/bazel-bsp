@@ -4,10 +4,6 @@ public class ProjectViewBazelPathSection extends ProjectViewSingletonSection {
 
   public static final String SECTION_NAME = "bazel_path";
 
-  public ProjectViewBazelPathSection() {
-    super(SECTION_NAME, "");
-  }
-
   public ProjectViewBazelPathSection(String value) {
     super(SECTION_NAME, value);
   }

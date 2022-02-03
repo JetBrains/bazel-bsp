@@ -4,10 +4,9 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class ProjectViewTargetsSectionParserTest {
 
@@ -24,7 +23,7 @@ public class ProjectViewTargetsSectionParserTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowIllegalArgumentExceptionForWrongSectionName() {
     // given
-    ProjectViewRawSection rawSection = new ProjectViewRawSection("wrongsection", "-bodyelement");
+    var rawSection = new ProjectViewRawSection("wrongsection", "-bodyelement");
 
     // when
     parser.parse(rawSection);
@@ -36,29 +35,28 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldParseEmptySectionBody() {
     // given
-    ProjectViewRawSection rawSection = new ProjectViewRawSection("targets", "");
+    var rawSection = new ProjectViewRawSection("targets", "");
 
     // when
-    ProjectViewTargetsSection section = parser.parse(rawSection);
+    var section = parser.parse(rawSection);
 
     // then
-    ProjectViewTargetsSection expectedSection =
-        new ProjectViewTargetsSection(ImmutableList.of(), ImmutableList.of());
+    var expectedSection = new ProjectViewTargetsSection(ImmutableList.of(), ImmutableList.of());
     assertEquals(expectedSection, section);
   }
 
   @Test
   public void shouldParseIncludedTargets() {
     // given
-    String sectionBody =
+    var sectionBody =
         "  //test_included1:test1\n\t//:test_included1:test2\n//:test_included2:test1\n\n";
-    ProjectViewRawSection rawSection = new ProjectViewRawSection("targets", sectionBody);
+    var rawSection = new ProjectViewRawSection("targets", sectionBody);
 
     // when
-    ProjectViewTargetsSection section = parser.parse(rawSection);
+    var section = parser.parse(rawSection);
 
     // then
-    ProjectViewTargetsSection expectedSection =
+    var expectedSection =
         new ProjectViewTargetsSection(
             ImmutableList.of(
                 "//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1"),
@@ -69,15 +67,15 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldParseExcludedTargets() {
     // given
-    String sectionBody =
+    var sectionBody =
         "  -//test_excluded1:test1\n\t-//test_excluded1:test2\n-//test_excluded2:test1\n\n";
-    ProjectViewRawSection rawSection = new ProjectViewRawSection("targets", sectionBody);
+    var rawSection = new ProjectViewRawSection("targets", sectionBody);
 
     // when
-    ProjectViewTargetsSection section = parser.parse(rawSection);
+    var section = parser.parse(rawSection);
 
     // then
-    ProjectViewTargetsSection expectedSection =
+    var expectedSection =
         new ProjectViewTargetsSection(
             ImmutableList.of(),
             ImmutableList.of(
@@ -88,15 +86,15 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldParseIncludedAndExcludedTargets() {
     // given
-    String sectionBody =
+    var sectionBody =
         "  -//test_excluded1:test1\n\t//test_included1:test1\n-//test_excluded1:test2\n\n";
-    ProjectViewRawSection rawSection = new ProjectViewRawSection("targets", sectionBody);
+    var rawSection = new ProjectViewRawSection("targets", sectionBody);
 
     // when
-    ProjectViewTargetsSection section = parser.parse(rawSection);
+    var section = parser.parse(rawSection);
 
     // then
-    ProjectViewTargetsSection expectedSection =
+    var expectedSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//test_included1:test1"),
             ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
@@ -108,46 +106,41 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldReturnEmptySectionIfThereIsNoSectionForParseWithoutDefault() {
     // given
-    String sectionBody =
+    var sectionBody =
         "  -//test_excluded1:test1\n\t//test_included1:test1\n-//test_excluded1:test2\n\n";
-    ProjectViewRawSection rawSection1 = new ProjectViewRawSection("anotersection1", sectionBody);
-    ProjectViewRawSection rawSection2 =
-        new ProjectViewRawSection("anotersection2", "-bodyelement2");
-    ProjectViewRawSection rawSection3 =
-        new ProjectViewRawSection("anotersection3", "-bodyelement3");
+    var rawSection1 = new ProjectViewRawSection("anotersection1", sectionBody);
+    var rawSection2 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection3 = new ProjectViewRawSection("anotersection3", "-bodyelement3");
 
-    ProjectViewRawSections rawSections =
+    var rawSections =
         new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2, rawSection3));
 
     // when
-    ProjectViewTargetsSection section = parser.parse(rawSections);
+    var section = parser.parse(rawSections);
 
     // then
-    ProjectViewTargetsSection expectedSection = new ProjectViewTargetsSection();
+    var expectedSection = new ProjectViewTargetsSection();
     assertEquals(expectedSection, section);
   }
 
   @Test
   public void shouldParseAllTargetsSectionFromListWithoutDefault() {
     // given
-    ProjectViewRawSection rawSection1 =
-        new ProjectViewRawSection("anotersection1", "-bodyelement1");
-    ProjectViewRawSection rawSection2 =
+    var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
+    var rawSection2 =
         new ProjectViewRawSection("targets", "  -//test_excluded1:test1\n-//test_excluded1:test2");
-    ProjectViewRawSection rawSection3 =
-        new ProjectViewRawSection("anotersection2", "-bodyelement2");
-    ProjectViewRawSection rawSection4 =
-        new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
+    var rawSection3 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
-    ProjectViewRawSections rawSections =
+    var rawSections =
         new ProjectViewRawSections(
             ImmutableList.of(rawSection1, rawSection2, rawSection3, rawSection4));
 
     // when
-    ProjectViewTargetsSection section = parser.parse(rawSections);
+    var section = parser.parse(rawSections);
 
     // then
-    ProjectViewTargetsSection expectedSection =
+    var expectedSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//test_included1:test1"),
             ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
@@ -159,29 +152,26 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldParseAllTargetsSectionFromList() {
     // given
-    ProjectViewRawSection rawSection1 =
-        new ProjectViewRawSection("anotersection1", "-bodyelement1");
-    ProjectViewRawSection rawSection2 =
+    var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
+    var rawSection2 =
         new ProjectViewRawSection("targets", "  -//test_excluded1:test1\n-//test_excluded1:test2");
-    ProjectViewRawSection rawSection3 =
-        new ProjectViewRawSection("anotersection2", "-bodyelement2");
-    ProjectViewRawSection rawSection4 =
-        new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
+    var rawSection3 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
-    ProjectViewRawSections rawSections =
+    var rawSections =
         new ProjectViewRawSections(
             ImmutableList.of(rawSection1, rawSection2, rawSection3, rawSection4));
 
-    ProjectViewTargetsSection defaultTargetsSection =
+    var defaultTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//default_test_included1:test1"),
             ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
 
     // when
-    ProjectViewTargetsSection section = parser.parseOrDefault(rawSections, defaultTargetsSection);
+    var section = parser.parseOrDefault(rawSections, defaultTargetsSection);
 
     // then
-    ProjectViewTargetsSection expectedSection =
+    var expectedSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//test_included1:test1"),
             ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
@@ -191,24 +181,21 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldReturnDefaultForNoTargetsSectionInList() {
     // given
-    ProjectViewRawSection rawSection1 =
-        new ProjectViewRawSection("anotersection1", "-bodyelement1");
-    ProjectViewRawSection rawSection2 =
-        new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
+    var rawSection2 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
 
-    ProjectViewRawSections rawSections =
-        new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2));
+    var rawSections = new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2));
 
-    ProjectViewTargetsSection defaultTargetsSection =
+    var defaultTargetsSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//default_test_included1:test1"),
             ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
 
     // when
-    ProjectViewTargetsSection section = parser.parseOrDefault(rawSections, defaultTargetsSection);
+    var section = parser.parseOrDefault(rawSections, defaultTargetsSection);
 
     // then
-    ProjectViewTargetsSection expectedSection =
+    var expectedSection =
         new ProjectViewTargetsSection(
             ImmutableList.of("//default_test_included1:test1"),
             ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));

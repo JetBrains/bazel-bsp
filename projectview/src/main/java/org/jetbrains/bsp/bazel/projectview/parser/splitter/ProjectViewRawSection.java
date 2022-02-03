@@ -26,10 +26,14 @@ public class ProjectViewRawSection {
 
   @Override
   public String toString() {
-    return "ProjectViewRawSection{" +
-        "sectionName='" + sectionName + '\'' +
-        ", sectionBody='" + sectionBody + '\'' +
-        '}';
+    return "ProjectViewRawSection{"
+        + "sectionName='"
+        + sectionName
+        + '\''
+        + ", sectionBody='"
+        + sectionBody
+        + '\''
+        + '}';
   }
 
   @Override

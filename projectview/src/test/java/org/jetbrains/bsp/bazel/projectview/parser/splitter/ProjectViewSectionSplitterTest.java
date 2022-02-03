@@ -1,22 +1,21 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class ProjectViewSectionSplitterTest {
 
   @Test
   public void shouldParseEmptyFile() {
     // given
-    String emptyContent = "";
+    var emptyContent = "";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(emptyContent);
+    var sections = ProjectViewSectionSplitter.split(emptyContent);
 
     // then
-    ProjectViewRawSections expectedSections = new ProjectViewRawSections(ImmutableList.of());
+    var expectedSections = new ProjectViewRawSections(ImmutableList.of());
 
     assertEquals(expectedSections, sections);
   }
@@ -24,13 +23,13 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseSectionWithoutColon() {
     // given
-    String fileContent = "import path/to/file.bazelproject\n";
+    var fileContent = "import path/to/file.bazelproject\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
 
@@ -40,13 +39,13 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseSectionWithOnlyNewLineBefore() {
     // given
-    String fileContent = "\nimport path/to/file.bazelproject\n";
+    var fileContent = "\nimport path/to/file.bazelproject\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
 
@@ -56,7 +55,7 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseSectionsWithSpacesBetween() {
     // given
-    String fileContent =
+    var fileContent =
         "section: "
             + "section_included_element1 "
             + "-section_excluded_element1 "
@@ -65,10 +64,10 @@ public class ProjectViewSectionSplitterTest {
             + "\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(
                 new ProjectViewRawSection(
@@ -86,7 +85,7 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseSectionsWithSpacesBetweenWithOnlyNewLineBefore() {
     // given
-    String fileContent =
+    var fileContent =
         "\n\nsection: "
             + "section_included_element1 "
             + "-section_excluded_element1 "
@@ -95,10 +94,10 @@ public class ProjectViewSectionSplitterTest {
             + "\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(
                 new ProjectViewRawSection(
@@ -116,7 +115,7 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseSectionsWithTabsBetween() {
     // given
-    String fileContent =
+    var fileContent =
         "section:\n"
             + "\tsection_included_element1\n"
             + "-section_excluded_element1\n"
@@ -124,10 +123,10 @@ public class ProjectViewSectionSplitterTest {
             + "\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(
                 new ProjectViewRawSection(
@@ -144,13 +143,13 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseSectionsWithOneElement() {
     // given
-    String fileContent = "section: section_element\n";
+    var fileContent = "section: section_element\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(new ProjectViewRawSection("section", " section_element\n")));
 
@@ -160,7 +159,7 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldParseRegularFile() {
     // given
-    String fileContent =
+    var fileContent =
         "import path/to/file.bazelproject"
             + "\n"
             + "section1: "
@@ -185,10 +184,10 @@ public class ProjectViewSectionSplitterTest {
             + "\n";
 
     // when
-    ProjectViewRawSections sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.split(fileContent);
 
     // then
-    ProjectViewRawSections expectedSections =
+    var expectedSections =
         new ProjectViewRawSections(
             ImmutableList.of(
                 new ProjectViewRawSection("import", "path/to/file.bazelproject\n"),

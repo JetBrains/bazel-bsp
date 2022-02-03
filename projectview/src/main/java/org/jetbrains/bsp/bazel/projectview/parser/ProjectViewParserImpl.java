@@ -1,15 +1,14 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
-
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 // TODO
 
