@@ -1,11 +1,12 @@
 package org.jetbrains.bsp.bazel.commons;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class FileUtilsTest {

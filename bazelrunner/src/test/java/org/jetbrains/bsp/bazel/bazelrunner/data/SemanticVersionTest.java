@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.bazelrunner.data;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class SemanticVersionTest {

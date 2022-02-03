@@ -1,9 +1,10 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import com.google.common.collect.ImmutableList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 public class ProjectViewRawSectionsTest {

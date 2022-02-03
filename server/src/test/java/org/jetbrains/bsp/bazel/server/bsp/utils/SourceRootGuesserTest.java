@@ -1,10 +1,11 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

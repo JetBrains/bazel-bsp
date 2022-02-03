@@ -1,10 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class ProjectViewRawSectionTest {
