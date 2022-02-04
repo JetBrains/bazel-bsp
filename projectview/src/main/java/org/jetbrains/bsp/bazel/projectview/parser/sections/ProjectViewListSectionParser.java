@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -22,8 +21,7 @@ public abstract class ProjectViewListSectionParser<T extends ProjectViewListSect
 
   @Override
   public T parse(ProjectViewRawSections rawSections) {
-    return parseAllSectionsAndMerge(rawSections)
-        .orElse(instanceOf(ImmutableList.of(), ImmutableList.of()));
+    return parseAllSectionsAndMerge(rawSections).orElse(instanceOf(List.of(), List.of()));
   }
 
   @Override

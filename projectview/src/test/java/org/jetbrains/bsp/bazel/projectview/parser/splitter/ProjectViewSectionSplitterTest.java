@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.Test;
 
 public class ProjectViewSectionSplitterTest {
@@ -16,7 +16,7 @@ public class ProjectViewSectionSplitterTest {
     var sections = ProjectViewSectionSplitter.split(emptyContent);
 
     // then
-    var expectedSections = new ProjectViewRawSections(ImmutableList.of());
+    var expectedSections = new ProjectViewRawSections(List.of());
 
     assertEquals(expectedSections, sections);
   }
@@ -32,7 +32,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
+            List.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
 
     assertEquals(expectedSections, sections);
   }
@@ -48,7 +48,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
+            List.of(new ProjectViewRawSection("import", "path/to/file.bazelproject\n")));
 
     assertEquals(expectedSections, sections);
   }
@@ -70,7 +70,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(
+            List.of(
                 new ProjectViewRawSection(
                     "section",
                     " "
@@ -100,7 +100,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(
+            List.of(
                 new ProjectViewRawSection(
                     "section",
                     " "
@@ -129,7 +129,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(
+            List.of(
                 new ProjectViewRawSection(
                     "section",
                     "\n"
@@ -152,7 +152,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(new ProjectViewRawSection("section", " section_element\n")));
+            List.of(new ProjectViewRawSection("section", " section_element\n")));
 
     assertEquals(expectedSections, sections);
   }
@@ -190,7 +190,7 @@ public class ProjectViewSectionSplitterTest {
     // then
     var expectedSections =
         new ProjectViewRawSections(
-            ImmutableList.of(
+            List.of(
                 new ProjectViewRawSection("import", "path/to/file.bazelproject\n"),
                 new ProjectViewRawSection(
                     "section1",

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -67,16 +66,19 @@ public class ProjectView {
 
   @Override
   public String toString() {
-    return "ProjectView{" +
-            "targets=" + targets +
-            ", bazelPath=" + bazelPath +
-            ", debuggerAddress=" + debuggerAddress +
-            '}';
+    return "ProjectView{"
+        + "targets="
+        + targets
+        + ", bazelPath="
+        + bazelPath
+        + ", debuggerAddress="
+        + debuggerAddress
+        + '}';
   }
 
   public static class Builder {
 
-    private List<ProjectView> importedProjectViews = ImmutableList.of();
+    private List<ProjectView> importedProjectViews = List.of();
 
     private ProjectViewTargetsSection targets = new ProjectViewTargetsSection();
 

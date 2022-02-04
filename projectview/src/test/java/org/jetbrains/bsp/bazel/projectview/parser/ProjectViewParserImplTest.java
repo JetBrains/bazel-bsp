@@ -3,8 +3,8 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import com.google.common.collect.ImmutableList;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -61,8 +61,8 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
-                    ImmutableList.of("//excluded_target1.1")))
+                    List.of("//included_target1.1", "//included_target1.2"),
+                    List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
     assertEquals(expectedProjectView, projectView);
@@ -81,9 +81,8 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1", "//included_target1.2", "//included_target4.1"),
-                    ImmutableList.of(
+                    List.of("//included_target1.1", "//included_target1.2", "//included_target4.1"),
+                    List.of(
                         "//excluded_target1.1", "//excluded_target4.1", "//excluded_target4.2")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
@@ -104,9 +103,8 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1", "//included_target1.2", "//included_target7.1"),
-                    ImmutableList.of(
+                    List.of("//included_target1.1", "//included_target1.2", "//included_target7.1"),
+                    List.of(
                         "//excluded_target1.1", "//excluded_target7.1", "//excluded_target7.2")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path7/to/bazel")))
             .build();
@@ -126,12 +124,12 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
+                    List.of(
                         "//included_target1.1",
                         "//included_target1.2",
                         "//included_target2.1",
                         "//included_target3.1"),
-                    ImmutableList.of(
+                    List.of(
                         "//excluded_target1.1",
                         "//excluded_target2.1",
                         "//excluded_target5.1",
@@ -154,13 +152,13 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
+                    List.of(
                         "//included_target1.1",
                         "//included_target1.2",
                         "//included_target2.1",
                         "//included_target3.1",
                         "//included_target4.1"),
-                    ImmutableList.of(
+                    List.of(
                         "//excluded_target1.1",
                         "//excluded_target2.1",
                         "//excluded_target4.1",
@@ -212,8 +210,8 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
-                    ImmutableList.of("//excluded_target1.1")))
+                    List.of("//included_target1.1", "//included_target1.2"),
+                    List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
     assertEquals(expectedProjectView, projectView);
@@ -233,8 +231,8 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
-                    ImmutableList.of("//excluded_target1.1")))
+                    List.of("//included_target1.1", "//included_target1.2"),
+                    List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
     assertEquals(expectedProjectView, projectView);
@@ -254,8 +252,8 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target1.1", "//included_target1.2"),
-                    ImmutableList.of("//excluded_target1.1")))
+                    List.of("//included_target1.1", "//included_target1.2"),
+                    List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .build();
     assertEquals(expectedProjectView, projectView);

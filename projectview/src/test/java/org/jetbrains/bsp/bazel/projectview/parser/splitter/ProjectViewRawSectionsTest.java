@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.Test;
 
 public class ProjectViewRawSectionsTest {
@@ -12,7 +12,7 @@ public class ProjectViewRawSectionsTest {
   @Test
   public void shouldReturnEmptyForEmptySections() {
     // given
-    var sections = ImmutableList.<ProjectViewRawSection>of();
+    var sections = List.<ProjectViewRawSection>of();
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
@@ -26,7 +26,7 @@ public class ProjectViewRawSectionsTest {
   public void shouldReturnEmptyIfSectionDoesntExist() {
     // given
     var sections =
-        ImmutableList.of(
+        List.of(
             new ProjectViewRawSection("name1", "body1"),
             new ProjectViewRawSection("name2", "body2"),
             new ProjectViewRawSection("name3", "body3"));
@@ -43,7 +43,7 @@ public class ProjectViewRawSectionsTest {
   public void shouldReturnOnlySectionWithName() {
     // given
     var sections =
-        ImmutableList.of(
+        List.of(
             new ProjectViewRawSection("name1", "body1"),
             new ProjectViewRawSection("name2", "body2"),
             new ProjectViewRawSection("name3", "body3"));
@@ -61,7 +61,7 @@ public class ProjectViewRawSectionsTest {
   public void shouldReturnLastSectionWithName() {
     // given
     var sections =
-        ImmutableList.of(
+        List.of(
             new ProjectViewRawSection("name1", "body1.1"),
             new ProjectViewRawSection("name2", "body2"),
             new ProjectViewRawSection("name1", "body1.2"),
@@ -80,7 +80,7 @@ public class ProjectViewRawSectionsTest {
   @Test
   public void shouldReturnEmptyListForEmptySections() {
     // given
-    var sections = ImmutableList.<ProjectViewRawSection>of();
+    var sections = List.<ProjectViewRawSection>of();
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
@@ -94,7 +94,7 @@ public class ProjectViewRawSectionsTest {
   public void shouldReturnEmptyListIfSectionDoesntExist() {
     // given
     var sections =
-        ImmutableList.of(
+        List.of(
             new ProjectViewRawSection("name1", "body1"),
             new ProjectViewRawSection("name2", "body2"),
             new ProjectViewRawSection("name3", "body3"));
@@ -111,7 +111,7 @@ public class ProjectViewRawSectionsTest {
   public void shouldReturnAllSectionsWithName() {
     // given
     var sections =
-        ImmutableList.of(
+        List.of(
             new ProjectViewRawSection("name1", "body1.1"),
             new ProjectViewRawSection("name2", "body2"),
             new ProjectViewRawSection("name1", "body1.2"),
@@ -124,7 +124,7 @@ public class ProjectViewRawSectionsTest {
 
     // then
     var expectedSections =
-        ImmutableList.of(
+        List.of(
             new ProjectViewRawSection("name1", "body1.1"),
             new ProjectViewRawSection("name1", "body1.2"),
             new ProjectViewRawSection("name1", "body1.3"));

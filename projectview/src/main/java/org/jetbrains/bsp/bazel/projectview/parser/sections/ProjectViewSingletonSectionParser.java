@@ -23,7 +23,7 @@ public abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSin
 
   @Override
   protected Optional<T> parse(String sectionBody) {
-    return Optional.of(sectionBody.trim()).filter(body -> !body.isEmpty()).map(this::instanceOf);
+    return Optional.of(sectionBody.strip()).filter(body -> !body.isEmpty()).map(this::instanceOf);
   }
 
   protected abstract T instanceOf(String value);

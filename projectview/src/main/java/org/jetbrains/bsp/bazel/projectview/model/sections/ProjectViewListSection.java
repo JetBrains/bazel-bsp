@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,8 +11,8 @@ public abstract class ProjectViewListSection extends ProjectViewSection {
 
   protected ProjectViewListSection(String sectionName) {
     super(sectionName);
-    this.includedValues = ImmutableList.of();
-    this.excludedValues = ImmutableList.of();
+    this.includedValues = List.of();
+    this.excludedValues = List.of();
   }
 
   protected ProjectViewListSection(

@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -42,7 +42,7 @@ public class ProjectViewTargetsSectionParserTest {
     var section = parser.parse(rawSection);
 
     // then
-    var expectedSection = new ProjectViewTargetsSection(ImmutableList.of(), ImmutableList.of());
+    var expectedSection = new ProjectViewTargetsSection(List.of(), List.of());
     assertEquals(expectedSection, section);
   }
 
@@ -59,9 +59,8 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     var expectedSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of(
-                "//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1"),
-            ImmutableList.of());
+            List.of("//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1"),
+            List.of());
     assertEquals(expectedSection, section);
   }
 
@@ -78,9 +77,8 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     var expectedSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of(),
-            ImmutableList.of(
-                "//test_excluded1:test1", "//test_excluded1:test2", "//test_excluded2:test1"));
+            List.of(),
+            List.of("//test_excluded1:test1", "//test_excluded1:test2", "//test_excluded2:test1"));
     assertEquals(expectedSection, section);
   }
 
@@ -97,8 +95,8 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     var expectedSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//test_included1:test1"),
-            ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
+            List.of("//test_included1:test1"),
+            List.of("//test_excluded1:test1", "//test_excluded1:test2"));
     assertEquals(expectedSection, section);
   }
 
@@ -113,8 +111,7 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection2 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
     var rawSection3 = new ProjectViewRawSection("anotersection3", "-bodyelement3");
 
-    var rawSections =
-        new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2, rawSection3));
+    var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
     // when
     var section = parser.parse(rawSections);
@@ -134,8 +131,7 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
     var rawSections =
-        new ProjectViewRawSections(
-            ImmutableList.of(rawSection1, rawSection2, rawSection3, rawSection4));
+        new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3, rawSection4));
 
     // when
     var section = parser.parse(rawSections);
@@ -143,8 +139,8 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     var expectedSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//test_included1:test1"),
-            ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
+            List.of("//test_included1:test1"),
+            List.of("//test_excluded1:test1", "//test_excluded1:test2"));
     assertEquals(expectedSection, section);
   }
 
@@ -160,13 +156,12 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
     var rawSections =
-        new ProjectViewRawSections(
-            ImmutableList.of(rawSection1, rawSection2, rawSection3, rawSection4));
+        new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3, rawSection4));
 
     var defaultTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//default_test_included1:test1"),
-            ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
+            List.of("//default_test_included1:test1"),
+            List.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
 
     // when
     var section = parser.parseOrDefault(rawSections, defaultTargetsSection);
@@ -174,8 +169,8 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     var expectedSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//test_included1:test1"),
-            ImmutableList.of("//test_excluded1:test1", "//test_excluded1:test2"));
+            List.of("//test_included1:test1"),
+            List.of("//test_excluded1:test1", "//test_excluded1:test2"));
     assertEquals(expectedSection, section);
   }
 
@@ -185,12 +180,12 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
     var rawSection2 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
 
-    var rawSections = new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2));
+    var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2));
 
     var defaultTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//default_test_included1:test1"),
-            ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
+            List.of("//default_test_included1:test1"),
+            List.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
 
     // when
     var section = parser.parseOrDefault(rawSections, defaultTargetsSection);
@@ -198,8 +193,8 @@ public class ProjectViewTargetsSectionParserTest {
     // then
     var expectedSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//default_test_included1:test1"),
-            ImmutableList.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
+            List.of("//default_test_included1:test1"),
+            List.of("//default_excluded_test:test1", "//default_excluded_test:test1"));
     assertEquals(expectedSection, section);
   }
 }

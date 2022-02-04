@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -12,8 +12,7 @@ import org.junit.Test;
 public class ProjectViewTest {
 
   private static final ProjectViewTargetsSection dummyTargetsSection =
-      new ProjectViewTargetsSection(
-          ImmutableList.of("//dummy_included_target"), ImmutableList.of());
+      new ProjectViewTargetsSection(List.of("//dummy_included_target"), List.of());
 
   private final Optional<ProjectViewBazelPathSection> dummyBazelPathSection = Optional.empty();
 
@@ -33,9 +32,7 @@ public class ProjectViewTest {
     // given & when
     ProjectView.builder()
         .bazelPath(dummyBazelPathSection)
-        .targets(
-            new ProjectViewTargetsSection(
-                ImmutableList.of(), ImmutableList.of("//excluded_target")))
+        .targets(new ProjectViewTargetsSection(List.of(), List.of("//excluded_target")))
         .build();
 
     // then
@@ -47,28 +44,26 @@ public class ProjectViewTest {
     // given
     var importedProjectView =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1", "//included_target1.2", "//included_target1.3"),
-                    ImmutableList.of("//excluded_target1.1", "//excluded_target1.2")))
+                    List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
+                    List.of("//excluded_target1.1", "//excluded_target1.2")))
             .build();
 
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView))
+            .imports(List.of(importedProjectView))
             .bazelPath(dummyBazelPathSection)
             .build();
 
     // then
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of(
-                "//included_target1.1", "//included_target1.2", "//included_target1.3"),
-            ImmutableList.of("//excluded_target1.1", "//excluded_target1.2"));
+            List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
+            List.of("//excluded_target1.1", "//excluded_target1.2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
   }
 
@@ -80,16 +75,15 @@ public class ProjectViewTest {
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1", "//included_target2", "//included_target3"),
-                    ImmutableList.of("//excluded_target1", "//excluded_target2")))
+                    List.of("//included_target1", "//included_target2", "//included_target3"),
+                    List.of("//excluded_target1", "//excluded_target2")))
             .build();
 
     // then
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//included_target1", "//included_target2", "//included_target3"),
-            ImmutableList.of("//excluded_target1", "//excluded_target2"));
+            List.of("//included_target1", "//included_target2", "//included_target3"),
+            List.of("//excluded_target1", "//excluded_target2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
   }
 
@@ -98,20 +92,19 @@ public class ProjectViewTest {
     // given & when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1", "//included_target2", "//included_target3"),
-                    ImmutableList.of("//excluded_target1", "//excluded_target2")))
+                    List.of("//included_target1", "//included_target2", "//included_target3"),
+                    List.of("//excluded_target1", "//excluded_target2")))
             .build();
 
     // then
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of("//included_target1", "//included_target2", "//included_target3"),
-            ImmutableList.of("//excluded_target1", "//excluded_target2"));
+            List.of("//included_target1", "//included_target2", "//included_target3"),
+            List.of("//excluded_target1", "//excluded_target2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
   }
 
@@ -120,38 +113,36 @@ public class ProjectViewTest {
     // given
     var importedProjectView =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1", "//included_target1.2", "//included_target1.3"),
-                    ImmutableList.of("//excluded_target1.1", "//excluded_target1.2")))
+                    List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
+                    List.of("//excluded_target1.1", "//excluded_target1.2")))
             .build();
 
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView))
+            .imports(List.of(importedProjectView))
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target2.1", "//included_target2.2", "//included_target2.3"),
-                    ImmutableList.of("//excluded_target2.1", "//excluded_target2.2")))
+                    List.of("//included_target2.1", "//included_target2.2", "//included_target2.3"),
+                    List.of("//excluded_target2.1", "//excluded_target2.2")))
             .build();
 
     // then
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of(
+            List.of(
                 "//included_target1.1",
                 "//included_target1.2",
                 "//included_target1.3",
                 "//included_target2.1",
                 "//included_target2.2",
                 "//included_target2.3"),
-            ImmutableList.of(
+            List.of(
                 "//excluded_target1.1",
                 "//excluded_target1.2",
                 "//excluded_target2.1",
@@ -164,52 +155,47 @@ public class ProjectViewTest {
     // given
     var importedProjectView1 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1", "//included_target1.2", "//included_target1.3"),
-                    ImmutableList.of("//excluded_target1.1", "//excluded_target1.2")))
+                    List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
+                    List.of("//excluded_target1.1", "//excluded_target1.2")))
             .build();
 
     var importedProjectView2 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target2.1"),
-                    ImmutableList.of("//excluded_target2.1")))
+                    List.of("//included_target2.1"), List.of("//excluded_target2.1")))
             .build();
 
     var importedProjectView3 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target3.1", "//included_target3.2"),
-                    ImmutableList.of()))
+                    List.of("//included_target3.1", "//included_target3.2"), List.of()))
             .build();
 
     // when
     var projectView =
         ProjectView.builder()
-            .imports(
-                ImmutableList.of(importedProjectView1, importedProjectView2, importedProjectView3))
+            .imports(List.of(importedProjectView1, importedProjectView2, importedProjectView3))
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target4.1", "//included_target4.2", "//included_target4.3"),
-                    ImmutableList.of("//excluded_target4.1", "//excluded_target4.2")))
+                    List.of("//included_target4.1", "//included_target4.2", "//included_target4.3"),
+                    List.of("//excluded_target4.1", "//excluded_target4.2")))
             .build();
 
     // then
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of(
+            List.of(
                 "//included_target1.1",
                 "//included_target1.2",
                 "//included_target1.3",
@@ -219,7 +205,7 @@ public class ProjectViewTest {
                 "//included_target4.1",
                 "//included_target4.2",
                 "//included_target4.3"),
-            ImmutableList.of(
+            List.of(
                 "//excluded_target1.1",
                 "//excluded_target1.2",
                 "//excluded_target2.1",
@@ -233,51 +219,47 @@ public class ProjectViewTest {
     // given
     var importedProjectView1 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target1.1", "//included_target1.2", "//included_target1.3"),
-                    ImmutableList.of("//excluded_target1.1", "//excluded_target1.2")))
+                    List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
+                    List.of("//excluded_target1.1", "//excluded_target1.2")))
             .build();
 
     var importedProjectView2 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target2.1"),
-                    ImmutableList.of("//excluded_target2.1")))
+                    List.of("//included_target2.1"), List.of("//excluded_target2.1")))
             .build();
 
     var importedProjectView3 =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView1, importedProjectView2))
+            .imports(List.of(importedProjectView1, importedProjectView2))
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of("//included_target3.1", "//included_target3.2"),
-                    ImmutableList.of()))
+                    List.of("//included_target3.1", "//included_target3.2"), List.of()))
             .build();
 
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView3))
+            .imports(List.of(importedProjectView3))
             .bazelPath(dummyBazelPathSection)
             .targets(
                 new ProjectViewTargetsSection(
-                    ImmutableList.of(
-                        "//included_target4.1", "//included_target4.2", "//included_target4.3"),
-                    ImmutableList.of("//excluded_target4.1", "//excluded_target4.2")))
+                    List.of("//included_target4.1", "//included_target4.2", "//included_target4.3"),
+                    List.of("//excluded_target4.1", "//excluded_target4.2")))
             .build();
 
     // then
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
-            ImmutableList.of(
+            List.of(
                 "//included_target1.1",
                 "//included_target1.2",
                 "//included_target1.3",
@@ -287,7 +269,7 @@ public class ProjectViewTest {
                 "//included_target4.1",
                 "//included_target4.2",
                 "//included_target4.3"),
-            ImmutableList.of(
+            List.of(
                 "//excluded_target1.1",
                 "//excluded_target1.2",
                 "//excluded_target2.1",
@@ -336,7 +318,7 @@ public class ProjectViewTest {
     // given & when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
             .build();
@@ -358,7 +340,7 @@ public class ProjectViewTest {
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView))
+            .imports(List.of(importedProjectView))
             .targets(dummyTargetsSection)
             .build();
 
@@ -372,7 +354,7 @@ public class ProjectViewTest {
     // given
     var importedProjectView =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported/path/to/bazel")))
             .build();
@@ -380,7 +362,7 @@ public class ProjectViewTest {
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView))
+            .imports(List.of(importedProjectView))
             .targets(dummyTargetsSection)
             .bazelPath(Optional.empty())
             .build();
@@ -396,7 +378,7 @@ public class ProjectViewTest {
     // given
     var importedProjectView =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported/path/to/bazel")))
             .build();
@@ -404,7 +386,7 @@ public class ProjectViewTest {
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView))
+            .imports(List.of(importedProjectView))
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
             .build();
@@ -420,21 +402,21 @@ public class ProjectViewTest {
     // given
     var importedProjectView1 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported1/path/to/bazel")))
             .build();
 
     var importedProjectView2 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported2/path/to/bazel")))
             .build();
 
     var importedProjectView3 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported3/path/to/bazel")))
             .build();
@@ -442,8 +424,7 @@ public class ProjectViewTest {
     // when
     var projectView =
         ProjectView.builder()
-            .imports(
-                ImmutableList.of(importedProjectView1, importedProjectView2, importedProjectView3))
+            .imports(List.of(importedProjectView1, importedProjectView2, importedProjectView3))
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
             .build();
@@ -458,21 +439,21 @@ public class ProjectViewTest {
     // given
     var importedProjectView1 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported1/path/to/bazel")))
             .build();
 
     var importedProjectView2 =
         ProjectView.builder()
-            .imports(ImmutableList.of())
+            .imports(List.of())
             .targets(dummyTargetsSection)
             .bazelPath(Optional.empty())
             .build();
 
     var importedProjectView3 =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView1, importedProjectView2))
+            .imports(List.of(importedProjectView1, importedProjectView2))
             .targets(dummyTargetsSection)
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported3/path/to/bazel")))
             .build();
@@ -480,7 +461,7 @@ public class ProjectViewTest {
     // when
     var projectView =
         ProjectView.builder()
-            .imports(ImmutableList.of(importedProjectView3))
+            .imports(List.of(importedProjectView3))
             .targets(dummyTargetsSection)
             .bazelPath(Optional.empty())
             .build();
