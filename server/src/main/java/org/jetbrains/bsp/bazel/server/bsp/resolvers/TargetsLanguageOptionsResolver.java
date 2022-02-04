@@ -3,10 +3,11 @@ package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
@@ -52,11 +53,11 @@ public class TargetsLanguageOptionsResolver<T> {
         actionGraphResolver.getActionGraphParser(targets, languagesIds);
 
     return targets.stream()
-        .flatMap(target -> getResultItems(target, targets, actionGraphParser))
+        .flatMap(target -> getResultItems(target, targets, actionGraphParser).stream())
         .collect(Collectors.toList());
   }
 
-  private Stream<T> getResultItems(
+  private Optional<T> getResultItems(
       String target, List<String> allTargets, ActionGraphParser actionGraphParser) {
     Map<String, List<String>> targetsOptions = getTargetsOptions(allTargets);
 
@@ -87,7 +88,7 @@ public class TargetsLanguageOptionsResolver<T> {
     return BuildRuleAttributeExtractor.extract(rule, compilerOptionsName);
   }
 
-  private Stream<T> getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
+  private Optional<T> getResultItemForActionGraphParserOptionsTargetsOptionsAndTarget(
       ActionGraphParser actionGraphParser,
       Map<String, List<String>> targetsOptions,
       String target) {
@@ -97,6 +98,7 @@ public class TargetsLanguageOptionsResolver<T> {
     List<String> inputs = actionGraphParser.getInputsAsUri(target, bazelData.getExecRoot());
 
     return actionGraphParser.getOutputs(target, ACTION_GRAPH_SUFFIXES).stream()
+        .max(Comparator.naturalOrder())
         .map(this::mapActionGraphOutputsToClassDirectory)
         .map(
             classDirectory ->
