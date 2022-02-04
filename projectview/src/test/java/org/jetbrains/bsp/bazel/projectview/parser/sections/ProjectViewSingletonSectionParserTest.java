@@ -3,25 +3,51 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-public class ProjectViewBazelPathSectionParserTest {
+@RunWith(value = Parameterized.class)
+public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingletonSection> {
 
-  private ProjectViewBazelPathSectionParser parser;
+  private final ProjectViewSingletonSectionParser<T> parser;
+  private final Function<String, T> sectionConstructor;
+  private final String sectionName;
 
-  @Before
-  public void before() {
-    // given
-    this.parser = new ProjectViewBazelPathSectionParser();
+  public ProjectViewSingletonSectionParserTest(
+      ProjectViewSingletonSectionParser<T> parser, Function<String, T> sectionConstructor) {
+    this.parser = parser;
+    this.sectionConstructor = sectionConstructor;
+
+    this.sectionName = parser.sectionName;
   }
 
-  // ProjectViewBazelPathSection parse(rawSection)
+  @Parameters(name = "{index}: ProjectViewSingletonSectionParserTest for {0}")
+  public static Collection<Object[]> data() {
+    return List.of(
+        new Object[][] {
+          {
+            new ProjectViewBazelPathSectionParser(),
+            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new
+          },
+          {
+            new ProjectViewDebuggerAddressSectionParser(),
+            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new
+          }
+        });
+  }
+
+  // T parse(rawSection)
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldThrowIllegalArgumentExceptionForWrongSectionName() {
@@ -38,7 +64,7 @@ public class ProjectViewBazelPathSectionParserTest {
   @Test
   public void shouldReturnEmptyForEmptySectionBody() {
     // given
-    var rawSection = new ProjectViewRawSection("bazel_path", "");
+    var rawSection = new ProjectViewRawSection(sectionName, "");
 
     // when
     var section = parser.parse(rawSection);
@@ -50,49 +76,49 @@ public class ProjectViewBazelPathSectionParserTest {
   @Test
   public void shouldReturnSectionWithTrimmedValue() {
     // given
-    var rawSection = new ProjectViewRawSection("bazel_path", "  value");
+    var rawSection = new ProjectViewRawSection(sectionName, "  value");
 
     // when
     var section = parser.parse(rawSection);
 
     // then
-    var expectedSection = new ProjectViewBazelPathSection("value");
+    var expectedSection = sectionConstructor.apply("value");
     assertEquals(expectedSection, section.get());
   }
 
   @Test
   public void shouldReturnSectionWithTrimmedValueWithSpaces() {
     // given
-    var rawSection = new ProjectViewRawSection("bazel_path", "  value with space 123 \t\n");
+    var rawSection = new ProjectViewRawSection(sectionName, "  value with space 123 \t\n");
 
     // when
     var section = parser.parse(rawSection);
 
     // then
-    var expectedSection = new ProjectViewBazelPathSection("value with space 123");
+    var expectedSection = sectionConstructor.apply("value with space 123");
     assertEquals(expectedSection, section.get());
   }
 
-  // ProjectViewBazelPathSection parse(rawSections)
+  // T parse(rawSections)
 
   @Test
   public void shouldReturnLastSectionWithoutExplicitDefault() {
     // given
     var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
-    var rawSection2 = new ProjectViewRawSection("bazel_path", "  path1/to/bin/bazel\n");
-    var rawSection3 = new ProjectViewRawSection("anotersection2", "\tvalue2\n");
-    var rawSection4 = new ProjectViewRawSection("bazel_path", "    path2/to/bin/bazel\n  ");
-    var rawSection5 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
+    var rawSection2 = new ProjectViewRawSection(sectionName, "  value2\n");
+    var rawSection3 = new ProjectViewRawSection("anotersection2", "\tvalue3\n");
+    var rawSection4 = new ProjectViewRawSection(sectionName, "    value4\n  ");
+    var rawSection5 = new ProjectViewRawSection("anotersection3", "\tvalue5\n");
 
     var rawSections =
         new ProjectViewRawSections(
-            ImmutableList.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
+            List.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
 
     // when
     var section = parser.parse(rawSections);
 
     // then
-    var expectedSection = new ProjectViewBazelPathSection("path2/to/bin/bazel");
+    var expectedSection = sectionConstructor.apply("value4");
     assertEquals(expectedSection, section.get());
   }
 
@@ -103,8 +129,7 @@ public class ProjectViewBazelPathSectionParserTest {
     var rawSection2 = new ProjectViewRawSection("anotersection2", "  value2");
     var rawSection3 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
 
-    var rawSections =
-        new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2, rawSection3));
+    var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
     // when
     var section = parser.parse(rawSections);
@@ -113,28 +138,28 @@ public class ProjectViewBazelPathSectionParserTest {
     assertFalse(section.isPresent());
   }
 
-  // ProjectViewBazelPathSection parseOrDefault(rawSections, defaultValue)
+  // T parseOrDefault(rawSections, defaultValue)
 
   @Test
   public void shouldReturnLastSection() {
     // given
     var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
-    var rawSection2 = new ProjectViewRawSection("bazel_path", "  path1/to/bin/bazel\n");
-    var rawSection3 = new ProjectViewRawSection("anotersection2", "\tvalue2\n");
-    var rawSection4 = new ProjectViewRawSection("bazel_path", "    path2/to/bin/bazel\n  \t");
-    var rawSection5 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
+    var rawSection2 = new ProjectViewRawSection(sectionName, "  value2\n");
+    var rawSection3 = new ProjectViewRawSection("anotersection2", "\tvalue3\n");
+    var rawSection4 = new ProjectViewRawSection(sectionName, "    value4\n  \t");
+    var rawSection5 = new ProjectViewRawSection("anotersection3", "\tvalue5\n");
 
     var rawSections =
         new ProjectViewRawSections(
-            ImmutableList.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
+            List.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
 
-    var defaultBazelPathSection = new ProjectViewBazelPathSection("default_value");
+    var defaultBazelPathSection = sectionConstructor.apply("default_value");
 
     // when
     var section = parser.parseOrDefault(rawSections, Optional.of(defaultBazelPathSection));
 
     // then
-    var expectedSection = new ProjectViewBazelPathSection("path2/to/bin/bazel");
+    var expectedSection = sectionConstructor.apply("value4");
     assertEquals(expectedSection, section.get());
   }
 
@@ -145,16 +170,15 @@ public class ProjectViewBazelPathSectionParserTest {
     var rawSection2 = new ProjectViewRawSection("anotersection2", "  value2");
     var rawSection3 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
 
-    var rawSections =
-        new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2, rawSection3));
+    var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
-    var defaultBazelPathSection = new ProjectViewBazelPathSection("default_value");
+    var defaultBazelPathSection = sectionConstructor.apply("default_value");
 
     // when
     var section = parser.parseOrDefault(rawSections, Optional.of(defaultBazelPathSection));
 
     // then
-    var expectedBazelPathSection = new ProjectViewBazelPathSection("default_value");
+    var expectedBazelPathSection = sectionConstructor.apply("default_value");
     assertEquals(expectedBazelPathSection, section.get());
   }
 
@@ -165,8 +189,7 @@ public class ProjectViewBazelPathSectionParserTest {
     var rawSection2 = new ProjectViewRawSection("anotersection2", "  value2");
     var rawSection3 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
 
-    var rawSections =
-        new ProjectViewRawSections(ImmutableList.of(rawSection1, rawSection2, rawSection3));
+    var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
     // when
     var section = parser.parseOrDefault(rawSections, Optional.empty());

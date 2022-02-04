@@ -13,7 +13,7 @@ public abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSin
 
   @Override
   public Optional<T> parseOrDefault(ProjectViewRawSections rawSections, Optional<T> defaultValue) {
-    return parse(rawSections).map(Optional::of).orElse(defaultValue);
+    return parse(rawSections).or(() -> defaultValue);
   }
 
   @Override

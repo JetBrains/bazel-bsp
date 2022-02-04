@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -22,10 +23,15 @@ public class ProjectView {
 
   private final Optional<ProjectViewBazelPathSection> bazelPath;
 
+  private final Optional<ProjectViewDebuggerAddressSection> debuggerAddress;
+
   private ProjectView(
-      ProjectViewTargetsSection targets, Optional<ProjectViewBazelPathSection> bazelPath) {
+      ProjectViewTargetsSection targets,
+      Optional<ProjectViewBazelPathSection> bazelPath,
+      Optional<ProjectViewDebuggerAddressSection> debuggerAddress) {
     this.targets = targets;
     this.bazelPath = bazelPath;
+    this.debuggerAddress = debuggerAddress;
   }
 
   public static ProjectView.Builder builder() {
@@ -40,22 +46,32 @@ public class ProjectView {
     return bazelPath;
   }
 
+  public Optional<ProjectViewDebuggerAddressSection> getDebuggerAddress() {
+    return debuggerAddress;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof ProjectView)) return false;
     ProjectView that = (ProjectView) o;
-    return targets.equals(that.targets) && bazelPath.equals(that.bazelPath);
+    return targets.equals(that.targets)
+        && bazelPath.equals(that.bazelPath)
+        && debuggerAddress.equals(that.debuggerAddress);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(targets, bazelPath);
+    return Objects.hash(targets, bazelPath, debuggerAddress);
   }
 
   @Override
   public String toString() {
-    return "ProjectView{" + "targets=" + targets + ", bazelPath=" + bazelPath + '}';
+    return "ProjectView{" +
+            "targets=" + targets +
+            ", bazelPath=" + bazelPath +
+            ", debuggerAddress=" + debuggerAddress +
+            '}';
   }
 
   public static class Builder {
@@ -65,6 +81,8 @@ public class ProjectView {
     private ProjectViewTargetsSection targets = new ProjectViewTargetsSection();
 
     private Optional<ProjectViewBazelPathSection> bazelPath = Optional.empty();
+
+    private Optional<ProjectViewDebuggerAddressSection> debuggerAddress = Optional.empty();
 
     private Builder() {}
 
@@ -89,7 +107,7 @@ public class ProjectView {
 
       var bazelPath = combineBazelPathSection();
 
-      return new ProjectView(targets, bazelPath);
+      return new ProjectView(targets, bazelPath, debuggerAddress);
     }
 
     private ProjectViewTargetsSection combineTargetsSection() {

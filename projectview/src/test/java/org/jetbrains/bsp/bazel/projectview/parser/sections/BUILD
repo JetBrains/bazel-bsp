@@ -15,9 +15,9 @@ java_test(
 )
 
 java_test(
-    name = "ProjectViewBazelPathSectionParserTest",
+    name = "ProjectViewSingletonSectionParserTest",
     size = "small",
-    srcs = ["ProjectViewBazelPathSectionParserTest.java"],
+    srcs = ["ProjectViewSingletonSectionParserTest.java"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],
