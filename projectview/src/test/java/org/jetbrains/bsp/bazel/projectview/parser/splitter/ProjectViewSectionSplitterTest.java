@@ -169,7 +169,7 @@ public class ProjectViewSectionSplitterTest {
   }
 
   @Test
-  public void shouldParseEmptyFile() {
+  public void shouldSplitContent() {
     // when
     var sections = ProjectViewSectionSplitter.split(fileContent);
 
