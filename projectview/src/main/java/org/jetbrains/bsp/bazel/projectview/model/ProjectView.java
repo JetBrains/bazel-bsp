@@ -103,11 +103,17 @@ public class ProjectView {
       return this;
     }
 
+    public Builder debuggerAddress(Optional<ProjectViewDebuggerAddressSection> debuggerAddress) {
+      this.debuggerAddress = debuggerAddress;
+      return this;
+    }
+
     public ProjectView build() {
       var targets = combineTargetsSection();
       throwIfListSectionIsEmpty(targets);
 
       var bazelPath = combineBazelPathSection();
+      var debuggerAddress = combineDebuggerAddressSection();
 
       return new ProjectView(targets, bazelPath, debuggerAddress);
     }
@@ -137,6 +143,13 @@ public class ProjectView {
       var defaultBazelPathSection = getLastImportedSingletonValue(ProjectView::getBazelPath);
 
       return bazelPath.or(() -> defaultBazelPathSection);
+    }
+
+    private Optional<ProjectViewDebuggerAddressSection> combineDebuggerAddressSection() {
+      var defaultDebuggerAddressSection =
+          getLastImportedSingletonValue(ProjectView::getDebuggerAddress);
+
+      return debuggerAddress.or(() -> defaultDebuggerAddressSection);
     }
 
     private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(

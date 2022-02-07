@@ -6,3 +6,5 @@ targets:
     -//excluded_target7.2
 
 bazel_path: path7/to/bazel
+
+debugger_address: 0.0.0.7:8000

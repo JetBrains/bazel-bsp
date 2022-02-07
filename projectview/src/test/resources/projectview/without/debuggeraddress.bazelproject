@@ -9,6 +9,4 @@ targets:
 
 not_parsed_section2: not_parsed2.1
 
-bazel_path: path1/to/bazel
-
-debugger_address: 0.0.0.1:8000
+bazel_path: path/to/bazel

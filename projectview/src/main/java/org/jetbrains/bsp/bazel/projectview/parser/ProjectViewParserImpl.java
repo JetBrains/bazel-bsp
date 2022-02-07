@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -40,6 +41,9 @@ class ProjectViewParserImpl implements ProjectViewParser {
   private static final ProjectViewBazelPathSectionParser bazelPathParser =
       new ProjectViewBazelPathSectionParser();
 
+  private static final ProjectViewDebuggerAddressSectionParser debuggerAddressParser =
+      new ProjectViewDebuggerAddressSectionParser();
+
   @Override
   public ProjectView parse(String projectViewFileContent, String defaultProjectViewFileContent) {
     ProjectView defaultProjectView = parse(defaultProjectViewFileContent);
@@ -49,6 +53,9 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .imports(findImportedProjectViews(rawSections))
         .targets(targetsParser.parseOrDefault(rawSections, defaultProjectView.getTargets()))
         .bazelPath(bazelPathParser.parseOrDefault(rawSections, defaultProjectView.getBazelPath()))
+        .debuggerAddress(
+            debuggerAddressParser.parseOrDefault(
+                rawSections, defaultProjectView.getDebuggerAddress()))
         .build();
   }
 
@@ -60,6 +67,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .imports(findImportedProjectViews(rawSections))
         .targets(targetsParser.parse(rawSections))
         .bazelPath(bazelPathParser.parse(rawSections))
+        .debuggerAddress(debuggerAddressParser.parse(rawSections))
         .build();
   }
 

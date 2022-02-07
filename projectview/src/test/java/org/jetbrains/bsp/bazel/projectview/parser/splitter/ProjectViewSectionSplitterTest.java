@@ -158,6 +158,21 @@ public class ProjectViewSectionSplitterTest {
   }
 
   @Test
+  public void shouldParseSectionsWithColonAndDots() {
+    // given
+    var fileContent = "section: 1.2.3.4:8080\n";
+
+    // when
+    var sections = ProjectViewSectionSplitter.split(fileContent);
+
+    // then
+    var expectedSections =
+            new ProjectViewRawSections(
+                    List.of(new ProjectViewRawSection("section", " 1.2.3.4:8080\n")));
+    assertEquals(expectedSections, sections);
+  }
+
+  @Test
   public void shouldParseRegularFile() {
     // given
     var fileContent =

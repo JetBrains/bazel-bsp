@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +50,18 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
+  public void shouldReturnEmptyDebuggerAddressForFileWithoutDebuggerAddressSection() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/without/debuggeraddress.bazelproject");
+
+    // when
+    var projectView = parser.parse(projectViewFilePath);
+
+    // then
+    assertFalse(projectView.getDebuggerAddress().isPresent());
+  }
+
+  @Test
   public void shouldParseFileWithAllSections() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
@@ -64,6 +77,7 @@ public class ProjectViewParserImplTest {
                     List.of("//included_target1.1", "//included_target1.2"),
                     List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
@@ -85,6 +99,7 @@ public class ProjectViewParserImplTest {
                     List.of(
                         "//excluded_target1.1", "//excluded_target4.1", "//excluded_target4.2")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .build();
 
     assertEquals(expectedProjectView, projectView);
@@ -107,6 +122,7 @@ public class ProjectViewParserImplTest {
                     List.of(
                         "//excluded_target1.1", "//excluded_target7.1", "//excluded_target7.2")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path7/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.7:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
@@ -135,6 +151,7 @@ public class ProjectViewParserImplTest {
                         "//excluded_target5.1",
                         "//excluded_target5.2")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path3/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.3:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
@@ -164,6 +181,7 @@ public class ProjectViewParserImplTest {
                         "//excluded_target4.1",
                         "//excluded_target4.2")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
@@ -197,6 +215,19 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
+  public void shouldReturnEmptyForDefaultFileWithoutDebuggerAddressSection() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
+    var defaultProjectViewFilePath = Paths.get("/projectview/without/debuggeraddress.bazelproject");
+
+    // when
+    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+    // then
+    assertFalse(projectView.getDebuggerAddress().isPresent());
+  }
+
+  @Test
   public void shouldParseFileAndSkipDefaults() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
@@ -213,6 +244,7 @@ public class ProjectViewParserImplTest {
                     List.of("//included_target1.1", "//included_target1.2"),
                     List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
@@ -234,6 +266,7 @@ public class ProjectViewParserImplTest {
                     List.of("//included_target1.1", "//included_target1.2"),
                     List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
@@ -255,6 +288,7 @@ public class ProjectViewParserImplTest {
                     List.of("//included_target1.1", "//included_target1.2"),
                     List.of("//excluded_target1.1")))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .build();
     assertEquals(expectedProjectView, projectView);
   }
