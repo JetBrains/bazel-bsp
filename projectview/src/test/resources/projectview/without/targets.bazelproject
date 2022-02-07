@@ -4,6 +4,9 @@ not_parsed_section1:
 
 not_parsed_section2: not_parsed2.1
 
+
 bazel_path: path/to/bazel
 
 debugger_address: 127.0.0.1:8000
+
+java_path: path/to/java

@@ -7,6 +7,7 @@ import java.util.function.Function;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -24,13 +25,17 @@ public class ProjectView {
 
   private final Optional<ProjectViewDebuggerAddressSection> debuggerAddress;
 
+  private final Optional<ProjectViewJavaPathSection> javaPath;
+
   private ProjectView(
       ProjectViewTargetsSection targets,
       Optional<ProjectViewBazelPathSection> bazelPath,
-      Optional<ProjectViewDebuggerAddressSection> debuggerAddress) {
+      Optional<ProjectViewDebuggerAddressSection> debuggerAddress,
+      Optional<ProjectViewJavaPathSection> javaPath) {
     this.targets = targets;
     this.bazelPath = bazelPath;
     this.debuggerAddress = debuggerAddress;
+    this.javaPath = javaPath;
   }
 
   public static ProjectView.Builder builder() {
@@ -49,6 +54,10 @@ public class ProjectView {
     return debuggerAddress;
   }
 
+  public Optional<ProjectViewJavaPathSection> getJavaPath() {
+    return javaPath;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -56,12 +65,13 @@ public class ProjectView {
     ProjectView that = (ProjectView) o;
     return targets.equals(that.targets)
         && bazelPath.equals(that.bazelPath)
-        && debuggerAddress.equals(that.debuggerAddress);
+        && debuggerAddress.equals(that.debuggerAddress)
+        && javaPath.equals(that.javaPath);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(targets, bazelPath, debuggerAddress);
+    return Objects.hash(targets, bazelPath, debuggerAddress, javaPath);
   }
 
   @Override
@@ -73,6 +83,8 @@ public class ProjectView {
         + bazelPath
         + ", debuggerAddress="
         + debuggerAddress
+        + ", javaPath="
+        + javaPath
         + '}';
   }
 
@@ -85,6 +97,8 @@ public class ProjectView {
     private Optional<ProjectViewBazelPathSection> bazelPath = Optional.empty();
 
     private Optional<ProjectViewDebuggerAddressSection> debuggerAddress = Optional.empty();
+
+    private Optional<ProjectViewJavaPathSection> javaPath = Optional.empty();
 
     private Builder() {}
 
@@ -108,14 +122,20 @@ public class ProjectView {
       return this;
     }
 
+    public Builder javaPath(Optional<ProjectViewJavaPathSection> javaPath) {
+      this.javaPath = javaPath;
+      return this;
+    }
+
     public ProjectView build() {
       var targets = combineTargetsSection();
       throwIfListSectionIsEmpty(targets);
 
       var bazelPath = combineBazelPathSection();
       var debuggerAddress = combineDebuggerAddressSection();
+      var javaPath = combineJavaPathSection();
 
-      return new ProjectView(targets, bazelPath, debuggerAddress);
+      return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
     }
 
     private ProjectViewTargetsSection combineTargetsSection() {
@@ -150,6 +170,12 @@ public class ProjectView {
           getLastImportedSingletonValue(ProjectView::getDebuggerAddress);
 
       return debuggerAddress.or(() -> defaultDebuggerAddressSection);
+    }
+
+    private Optional<ProjectViewJavaPathSection> combineJavaPathSection() {
+      var defaultJavaPathSection = getLastImportedSingletonValue(ProjectView::getJavaPath);
+
+      return javaPath.or(() -> defaultJavaPathSection);
     }
 
     private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(

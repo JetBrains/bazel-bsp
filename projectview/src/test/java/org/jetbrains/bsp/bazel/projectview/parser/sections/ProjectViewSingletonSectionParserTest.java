@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -43,6 +44,10 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
           {
             new ProjectViewDebuggerAddressSectionParser(),
             (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new
+          },
+          {
+            new ProjectViewJavaPathSectionParser(),
+            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new
           }
         });
   }
