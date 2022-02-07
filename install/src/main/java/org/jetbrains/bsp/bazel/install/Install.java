@@ -24,6 +24,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 
 public class Install {
 
@@ -53,15 +55,19 @@ public class Install {
       if (cmd.hasOption(HELP_SHORT_OPT)) {
         formatter.printHelp(INSTALLER_BINARY_NAME, cliOptions);
       } else {
-        addJavaBinary(cmd, argv);
+        Path rootDir = getRootDir(cmd);
+
+        var projectViewProvider = new ProjectViewDefaultParserProvider(rootDir);
+        var projectView = projectViewProvider.create();
+
+        addJavaBinary(cmd, argv, projectView);
         addJavaClasspath(argv);
-        addDebuggerConnection(cmd, argv);
+        addDebuggerConnection(cmd, argv, projectView);
         argv.add(SERVER_CLASS_NAME);
         addBazelBinary(cmd, argv);
         addBazelTargets(cmd, argv);
 
         BspConnectionDetails details = createBspConnectionDetails(argv);
-        Path rootDir = getRootDir(cmd);
         writeConfigurationFiles(rootDir, details);
 
         System.out.println("Bazel BSP server installed in '" + rootDir.toAbsolutePath() + "'.");
@@ -105,9 +111,11 @@ public class Install {
     }
   }
 
-  private static void addJavaBinary(CommandLine cmd, List<String> argv) {
+  private static void addJavaBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(JAVA_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(JAVA_SHORT_OPT));
+    } else if (projectView.getJavaPath().isPresent()) {
+      argv.add(projectView.getJavaPath().get().getValue());
     } else {
       String javaHome = readSystemProperty("java.home");
       argv.add(Paths.get(javaHome).resolve("bin").resolve("java").toString());
@@ -125,9 +133,13 @@ public class Install {
     argv.add(classpath);
   }
 
-  private static void addDebuggerConnection(CommandLine cmd, List<String> argv) {
+  private static void addDebuggerConnection(
+      CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(DEBUGGER_SHORT_OPT)) {
-      String debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
+      var debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
+      argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
+    } else if (projectView.getDebuggerAddress().isPresent()) {
+      var debuggerAddress = projectView.getDebuggerAddress().get().getValue();
       argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
     }
   }

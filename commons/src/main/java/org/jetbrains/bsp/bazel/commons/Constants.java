@@ -64,5 +64,6 @@ public class Constants {
 
   public static final String SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME = "main_class";
 
-  public static final String DEFAULT_PROJECT_VIEW_FILE = "projectview.bazelproject";
+  public static final String PROJECT_VIEW_FILE_PATH = "projectview.bazelproject";
+  public static final String DEFAULT_PROJECT_VIEW_FILE_PATH = ".bazelbsp/default_projectview.bazelproject";
 }
