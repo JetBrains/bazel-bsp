@@ -10,13 +10,21 @@ import java.util.stream.Stream;
 public final class ProjectViewSectionSplitter {
 
   private static final Pattern SECTION_HEADER_REGEX =
-      Pattern.compile("((^[^:\\s]+)([: ]))", Pattern.MULTILINE);
+      Pattern.compile("((^[^:\\-/*\\s]+)([: ]))", Pattern.MULTILINE);
   private static final int SECTION_HEADER_NAME_GROUP_ID = 2;
 
+  private static final String COMMENT_LINE_REGEX = "#(.)*(\\n|\\z)";
+  private static final String COMMENT_LINE_REPLACEMENT = "\n";
+
   public static ProjectViewRawSections split(String fileContent) {
-    var rawSections = findRawSections(fileContent);
+    var fileContentWithoutComments = removeLinesWithComments(fileContent);
+    var rawSections = findRawSections(fileContentWithoutComments);
 
     return new ProjectViewRawSections(rawSections);
+  }
+
+  private static String removeLinesWithComments(String fileContent) {
+    return fileContent.replaceAll(COMMENT_LINE_REGEX, COMMENT_LINE_REPLACEMENT);
   }
 
   private static List<ProjectViewRawSection> findRawSections(String fileContent) {

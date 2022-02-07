@@ -86,7 +86,7 @@ public class ProjectViewSectionSplitterTest {
                             + "\n")))
           },
           {
-            // given - multiple elements with whitespaces in front
+            // given - multiple elements with whitespaces in front and new lines
             "section:\n"
                 + "\tsection_included_element1\n"
                 + "-section_excluded_element1\n"
@@ -111,16 +111,70 @@ public class ProjectViewSectionSplitterTest {
                 List.of(new ProjectViewRawSection("section", " section_element\n")))
           },
           {
-            // given - emelent with dots and colon
+            // given - element with dots and colon
             "section: 1.2.3.4:8080\n",
             // then
             new ProjectViewRawSections(
                 List.of(new ProjectViewRawSection("section", " 1.2.3.4:8080\n")))
           },
           {
+            // given - comment
+            "  # comment",
+            // then
+            new ProjectViewRawSections(List.of())
+          },
+          {
+            // given - commented out section
+            "#section: value\n",
+            // then
+            new ProjectViewRawSections(List.of())
+          },
+          {
+            // given - multiple elements with  new lines and comments
+            " # comment 1\n\n"
+                + "section:\n"
+                + "\tsection_included_element1\n"
+                + "#comment2\n"
+                + "-section_excluded_element1 # comment 3 \n"
+                + "\tsection_included_element2\n"
+                + "\t #comment 4\n\n"
+                + "\n",
+            // then
+            new ProjectViewRawSections(
+                List.of(
+                    new ProjectViewRawSection(
+                        "section",
+                        "\n"
+                            + "\tsection_included_element1\n"
+                            + "\n"
+                            + "-section_excluded_element1 \n"
+                            + "\tsection_included_element2\n"
+                            + "\t \n\n"
+                            + "\n")))
+          },
+          {
+            // given - multiple elements with whitespaces in front and new lines
+            "section:\n"
+                + "\tsection_included_element1\n\n\n"
+                + "-section_excluded_element1\n"
+                + "\tsection_included_element2\n"
+                + "\n",
+            // then
+            new ProjectViewRawSections(
+                List.of(
+                    new ProjectViewRawSection(
+                        "section",
+                        "\n"
+                            + "\tsection_included_element1\n\n\n"
+                            + "-section_excluded_element1\n"
+                            + "\tsection_included_element2\n"
+                            + "\n")))
+          },
+          {
             // given - full file
             "import path/to/file.bazelproject"
                 + "\n"
+                + "# some comment\n"
                 + "section1: "
                 + "section1_included_element1 "
                 + "-section1_excluded_element1 "
@@ -130,12 +184,14 @@ public class ProjectViewSectionSplitterTest {
                 + "section2:\n"
                 + "  section2_included_element1\n"
                 + " -section2_excluded_element1\n"
+                + " # commented_out_target\n"
                 + "\tsection2_included_element2\n"
                 + "\n"
                 + "section3: section3_element\n"
                 + "\n\n\n"
                 + "sectionA:\n"
                 + "  --sectionA_element_flag\n"
+                + "# commented_out_section: comment\n\n"
                 + "\n"
                 + "sectionb:"
                 + "*sectionb_element1\n"
@@ -144,7 +200,7 @@ public class ProjectViewSectionSplitterTest {
             // then
             new ProjectViewRawSections(
                 List.of(
-                    new ProjectViewRawSection("import", "path/to/file.bazelproject\n"),
+                    new ProjectViewRawSection("import", "path/to/file.bazelproject\n\n"),
                     new ProjectViewRawSection(
                         "section1",
                         " "
@@ -158,10 +214,11 @@ public class ProjectViewSectionSplitterTest {
                         "\n"
                             + "  section2_included_element1\n"
                             + " -section2_excluded_element1\n"
+                            + " \n"
                             + "\tsection2_included_element2\n"
                             + "\n"),
                     new ProjectViewRawSection("section3", " section3_element\n\n\n\n"),
-                    new ProjectViewRawSection("sectionA", "\n  --sectionA_element_flag\n\n"),
+                    new ProjectViewRawSection("sectionA", "\n  --sectionA_element_flag\n\n\n\n"),
                     new ProjectViewRawSection(
                         "sectionb", "*sectionb_element1\n*sectionb_element2\n\n")))
           }
