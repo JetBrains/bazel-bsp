@@ -1,33 +1,55 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
+import java.util.Collection;
+import java.util.List;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(value = Parameterized.class)
 public class ProjectViewRawSectionTest {
 
-  @Test
-  public void shouldReturnFalseForComparisonWithAnotherName() {
-    // given
-    var section = new ProjectViewRawSection("name", "body");
+  private final ProjectViewRawSection section;
+  private final String nameToCompare;
+  private final boolean expectedComparisonResult;
 
-    // when
-    var result = section.compareByName("anothername");
+  public ProjectViewRawSectionTest(
+      ProjectViewRawSection section, String nameToCompare, boolean expectedComparisonResult) {
+    this.section = section;
+    this.nameToCompare = nameToCompare;
+    this.expectedComparisonResult = expectedComparisonResult;
+  }
 
-    // then
-    assertFalse(result);
+  @Parameters(name = "{index}: {0}.shouldCompareByName({1}) should equals {2}")
+  public static Collection<Object[]> data() {
+    return List.of(
+        new Object[][] {
+          {
+            // given
+            new ProjectViewRawSection("name", "body"),
+            "anothername",
+            // then
+            false
+          },
+          {
+            // given
+            new ProjectViewRawSection("name", "body"),
+            "name",
+            // then
+            true
+          }
+        });
   }
 
   @Test
-  public void shouldReturnTrueForComparisonWithTheSameName() {
-    // given
-    var section = new ProjectViewRawSection("name", "body");
-
+  public void shouldCompareByName() {
     // when
-    var result = section.compareByName("name");
+    var result = section.compareByName(nameToCompare);
 
     // then
-    assertTrue(result);
+    assertEquals(expectedComparisonResult, result);
   }
 }
