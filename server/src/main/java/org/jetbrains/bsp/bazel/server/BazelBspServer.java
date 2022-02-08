@@ -85,7 +85,8 @@ public class BazelBspServer {
             bazelRunner,
             bazelBspServerConfig.getProjectView());
 
-    JvmBuildServerService jvmBuildServerService = new JvmBuildServerService(bazelData, bazelRunner);
+    JvmBuildServerService jvmBuildServerService =
+        new JvmBuildServerService(bazelData, bazelRunner, bazelBspAspectsManager);
     ScalaBuildServerService scalaBuildServerService =
         new ScalaBuildServerService(
             bazelData, bazelRunner, bazelBspCompilationManager, bazelBspQueryManager);

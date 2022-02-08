@@ -60,7 +60,11 @@ public abstract class BazelBspTestBaseScenario {
   }
 
   private boolean executeScenarioSteps() {
-    return getScenarioSteps().stream().allMatch(BazelBspTestScenarioStep::executeAndReturnResult);
+    return getScenarioSteps().stream()
+        .map(BazelBspTestScenarioStep::executeAndReturnResult)
+        .collect(java.util.stream.Collectors.toList())
+        .stream()
+        .allMatch(x -> x);
   }
 
   protected abstract List<BazelBspTestScenarioStep> getScenarioSteps();

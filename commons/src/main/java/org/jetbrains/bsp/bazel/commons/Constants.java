@@ -61,6 +61,8 @@ public class Constants {
   public static final String DIAGNOSTICS = "diagnostics";
   public static final String EXEC_ROOT_PREFIX = "exec-root://";
   public static final String SCALA_COMPILER_CLASSPATH_FILES = "scala_compiler_classpath_files";
+  public static final String JAVA_RUNTIME_CLASSPATH_ASPECT_OUTPUT_GROUP =
+      "java_runtime_classpath_files";
 
   public static final String SCALA_TEST_MAIN_CLASSES_ATTRIBUTE_NAME = "main_class";
 

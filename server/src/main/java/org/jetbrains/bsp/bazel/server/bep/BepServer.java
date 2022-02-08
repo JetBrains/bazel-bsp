@@ -47,6 +47,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       ImmutableList.of("Loading: 0 packages loaded");
 
   private static final int URI_PREFIX_LENGTH = 7;
+  public static final Set<String> EXPECTED_OUTPUT_GROUPS =
+      Set.of(
+          Constants.SCALA_COMPILER_CLASSPATH_FILES,
+          Constants.JAVA_RUNTIME_CLASSPATH_ASPECT_OUTPUT_GROUP);
 
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
@@ -168,13 +172,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     LOGGER.info("Consuming target completed event " + targetComplete);
     if (outputGroups.size() == 1) {
       OutputGroup outputGroup = outputGroups.get(0);
-      if (outputGroup.getName().equals(Constants.SCALA_COMPILER_CLASSPATH_FILES)) {
-        fetchScalaJars(outputGroup);
+      if (EXPECTED_OUTPUT_GROUPS.contains(outputGroup.getName())) {
+        fetchOutputGroup(outputGroup);
       }
     }
   }
 
-  private void fetchScalaJars(OutputGroup outputGroup) {
+  private void fetchOutputGroup(OutputGroup outputGroup) {
     outputGroup.getFileSetsList().stream()
         .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
         .map(file -> URI.create(file.getUri()))
