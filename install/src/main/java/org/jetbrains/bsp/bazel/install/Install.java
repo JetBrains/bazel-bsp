@@ -56,6 +56,16 @@ public class Install {
         formatter.printHelp(INSTALLER_BINARY_NAME, cliOptions);
       } else {
         Path rootDir = getRootDir(cmd);
+        Path bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
+
+        Path defaultProjectViewFilePath = bazelbspDir.resolve("default-projectview.bazelproject");
+        Files.copy(
+            Install.class.getResourceAsStream("default-projectview.bazelproject"),
+            defaultProjectViewFilePath,
+            StandardCopyOption.REPLACE_EXISTING);
+
+        copyAspects(bazelbspDir);
+        createEmptyBuildFile(bazelbspDir);
 
         var projectViewProvider = new ProjectViewDefaultParserProvider(rootDir);
         var projectView = projectViewProvider.create();
@@ -76,7 +86,7 @@ public class Install {
       writer.println(e.getMessage());
       formatter.printUsage(writer, 120, INSTALLER_BINARY_NAME, cliOptions);
       hasError = true;
-    } catch (NoSuchElementException e) {
+    } catch (NoSuchElementException | IllegalStateException e) {
       writer.println(e.getMessage());
       hasError = true;
     } finally {
@@ -184,12 +194,7 @@ public class Install {
             .getBytes(StandardCharsets.UTF_8));
   }
 
-  private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails)
-      throws IOException {
-    Path bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
-    copyAspects(bazelbspDir);
-    createEmptyBuildFile(bazelbspDir);
-
+  private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails) throws IOException {
     Path bspDir = createDir(rootDir, Constants.BSP_DIR_NAME);
     writeBazelbspJson(bspDir, discoveryDetails);
   }
@@ -202,7 +207,9 @@ public class Install {
             .longOpt("java")
             .hasArg()
             .argName("path")
-            .desc("Use provided Java executable to run the BSP server")
+            .desc(
+                "Deprecated! Use project view file instead. "
+                    + "(Use provided Java executable to run the BSP server)")
             .build();
 
     cliOptions.addOption(java);
@@ -212,7 +219,9 @@ public class Install {
             .longOpt("bazel")
             .hasArg()
             .argName("path")
-            .desc("Make the BSP server use this Bazel executable")
+            .desc(
+                "Deprecated! Use project view file instead. "
+                    + "(Make the BSP server use this Bazel executable)")
             .build();
 
     cliOptions.addOption(bazel);
@@ -222,7 +231,7 @@ public class Install {
             .longOpt("debugger")
             .hasArg()
             .argName("address (e.g. '127.0.0.1:8000'")
-            .desc("Allow BSP server debugging")
+            .desc("Deprecated! Use project view file instead. (Allow BSP server debugging)")
             .build();
 
     cliOptions.addOption(debug);
@@ -233,8 +242,9 @@ public class Install {
             .hasArg()
             .argName("path")
             .desc(
-                "Path to directory where bazelbsp server should be setup. "
-                    + "Current directory will be used by default")
+                "Deprecated! Use project view file instead. "
+                    + "(Path to directory where bazelbsp server should be setup. "
+                    + "Current directory will be used by default)")
             .build();
 
     cliOptions.addOption(directory);
@@ -245,8 +255,9 @@ public class Install {
             .hasArg()
             .argName("targets")
             .desc(
-                "Name of the bazel's targets that the server should import. Targets can be"
-                    + "separated by a comma. The default is to import all targets (//...)")
+                "Deprecated! Use project view file instead. "
+                    + "(Name of the bazel's targets that the server should import. "
+                    + "Targets can be separated by a comma. The default is to import all targets (//...))")
             .build();
 
     cliOptions.addOption(targets);
@@ -275,9 +286,5 @@ public class Install {
       throw new NoSuchElementException("Could not read " + name + " system property");
     }
     return property;
-  }
-
-  private static String getCurrentDirectory() {
-    return System.getProperty("user.dir");
   }
 }
