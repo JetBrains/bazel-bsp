@@ -20,7 +20,9 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel, String targets) {
     this.pathToBazel = new ProjectViewBazelPathSection(pathToBazel);
-    this.targets = Optional.of(new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of()));
+    this.targets =
+        Optional.of(
+            new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of()));
     this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
   }
 

@@ -194,7 +194,8 @@ public class Install {
             .getBytes(StandardCharsets.UTF_8));
   }
 
-  private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails) throws IOException {
+  private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails)
+      throws IOException {
     Path bspDir = createDir(rootDir, Constants.BSP_DIR_NAME);
     writeBazelbspJson(bspDir, discoveryDetails);
   }
@@ -255,9 +256,9 @@ public class Install {
             .hasArg()
             .argName("targets")
             .desc(
-                "Deprecated! Use project view file instead. "
-                    + "(Name of the bazel's targets that the server should import. "
-                    + "Targets can be separated by a comma. The default is to import all targets (//...))")
+                "Deprecated! Use project view file instead. (Name of the bazel's targets that the"
+                    + " server should import. Targets can be separated by a comma. The default is"
+                    + " to import all targets (//...))")
             .build();
 
     cliOptions.addOption(targets);
