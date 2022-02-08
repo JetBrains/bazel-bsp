@@ -46,7 +46,7 @@ rm -rf bazel-*/
 echo "Cleaning project directory done!"
 
 echo "Installing BSP..."
-$bsp_path
+$bsp_path || exit
 echo "Installing done."
 echo "Environment has been prepared!"
 echo -e "-----------------------------------\n"
