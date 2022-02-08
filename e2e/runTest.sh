@@ -42,7 +42,6 @@ if [ "$#" -eq 2 ]; then
 fi
 rm -r .bsp/ > /dev/null 2>&1
 rm -r .bazelbsp/ > /dev/null 2>&1
-rm -rf bazel-*/
 echo "Cleaning project directory done!"
 
 echo "Installing BSP..."
