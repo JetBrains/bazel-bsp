@@ -52,7 +52,7 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     return patchVersion;
   }
 
-  static SemanticVersion fromReleaseData(String version) {
+  public static SemanticVersion fromReleaseData(String version) {
     return new SemanticVersion(version.split(" ")[1]);
   }
 

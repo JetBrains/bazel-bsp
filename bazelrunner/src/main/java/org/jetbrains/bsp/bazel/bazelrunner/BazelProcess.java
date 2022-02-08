@@ -42,12 +42,12 @@ public class BazelProcess {
   }
 
   private void logBazelMessage(BazelProcessResult bazelProcessResult) {
-    String message = bazelProcessResult.getJoinedStderr();
+    String message = bazelProcessResult.getStderr();
     buildClientLogger.ifPresent(logger -> logger.logMessage(message));
   }
 
   private void logBazelError(BazelProcessResult bazelProcessResult) {
-    String error = bazelProcessResult.getJoinedStderr();
+    String error = bazelProcessResult.getStderr();
     buildClientLogger.ifPresent(logger -> logger.logError(error));
   }
 

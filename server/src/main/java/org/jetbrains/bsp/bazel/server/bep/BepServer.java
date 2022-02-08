@@ -4,7 +4,6 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams;
-import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
@@ -12,7 +11,6 @@ import ch.epfl.scala.bsp4j.TaskStartParams;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
-import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup;
 import com.google.devtools.build.v1.BuildEvent;
 import com.google.devtools.build.v1.PublishBuildEventGrpc;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamRequest;
@@ -25,10 +23,8 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +32,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.commons.Uri;
-import org.jetbrains.bsp.bazel.server.bep.parsers.ClasspathParser;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.FileDiagnostic;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.StderrDiagnosticsParser;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
@@ -49,26 +44,18 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       ImmutableList.of("Loading: 0 packages loaded");
 
   private static final int URI_PREFIX_LENGTH = 7;
-  public static final Set<String> EXPECTED_OUTPUT_GROUPS =
-      Set.of(
-          Constants.SCALA_COMPILER_CLASSPATH_FILES,
-          Constants.JAVA_RUNTIME_CLASSPATH_ASPECT_OUTPUT_GROUP);
 
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
 
-  private final BazelData bazelData;
   private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
   private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
-  private final Map<String, Set<Uri>> outputGroupPaths = new HashMap<>();
-  private final Map<String, BuildEventStreamProtos.NamedSetOfFiles> namedSetsOfFiles =
-      new HashMap<>();
+  private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
   public BepServer(
       BazelData bazelData, BuildClient bspClient, BuildClientLogger buildClientLogger) {
-    this.bazelData = bazelData;
     this.bspClient = bspClient;
     this.buildClientLogger = buildClientLogger;
     this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelData, bspClient);
@@ -77,7 +64,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   @Override
   public void publishLifecycleEvent(
       PublishLifecycleEventRequest request, StreamObserver<Empty> responseObserver) {
-    namedSetsOfFiles.clear();
     responseObserver.onNext(Empty.getDefaultInstance());
     responseObserver.onCompleted();
   }
@@ -119,7 +105,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void fetchNamedSet(BuildEventStreamProtos.BuildEvent event) {
     if (event.getId().hasNamedSet()) {
-      namedSetsOfFiles.put(event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
+      bepOutputBuilder.storeNamedSet(
+          event.getId().getNamedSet().getId(), event.getNamedSetOfFiles());
     }
   }
 
@@ -131,6 +118,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
+    bepOutputBuilder = new BepOutputBuilder();
     TaskId taskId = new TaskId(buildStarted.getUuid());
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
@@ -165,34 +153,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasCompleted()) {
-      consumeCompletedEvent(event.getCompleted());
+      consumeCompletedEvent(event);
     }
   }
 
-  private void consumeCompletedEvent(BuildEventStreamProtos.TargetComplete targetComplete) {
-    List<OutputGroup> outputGroups = targetComplete.getOutputGroupList();
+  private void consumeCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
+    var label = event.getId().getTargetCompleted().getLabel();
+    var targetComplete = event.getCompleted();
+    var outputGroups = targetComplete.getOutputGroupList();
     LOGGER.info("Consuming target completed event " + targetComplete);
-    if (outputGroups.size() == 1) {
-      OutputGroup outputGroup = outputGroups.get(0);
-      if (EXPECTED_OUTPUT_GROUPS.contains(outputGroup.getName())) {
-        fetchOutputGroup(outputGroup);
-      }
-    }
-  }
-
-  private void fetchOutputGroup(OutputGroup outputGroup) {
-    outputGroup.getFileSetsList().stream()
-        .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
-        .map(file -> URI.create(file.getUri()))
-        .flatMap(pathProtoUri -> ClasspathParser.fromAspect(pathProtoUri).stream())
-        .peek(path -> LOGGER.info("Found path " + path))
-        .forEach(
-            path ->
-                outputGroupPaths
-                    .computeIfAbsent(outputGroup.getName(), key -> new HashSet<>())
-                    .add(
-                        Uri.fromExecPath(
-                            Constants.EXEC_ROOT_PREFIX + path, bazelData.getExecRoot())));
+    bepOutputBuilder.storeTargetOutputGroups(label, outputGroups);
   }
 
   private void processActionEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -302,15 +272,15 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     return EXCLUDED_PROGRESS_MESSAGES.stream().noneMatch(message::startsWith);
   }
 
-  public Map<String, Set<Uri>> getOutputGroupPaths() {
-    return outputGroupPaths;
+  public BepOutput getBepOutput() {
+    return bepOutputBuilder.build();
   }
 
   public Map<String, String> getDiagnosticsProtosLocations() {
     return diagnosticsProtosLocations;
   }
 
-  public Map<BuildTargetIdentifier, List<SourceItem>> getBuildTargetsSources() {
+  public Map<BuildTargetIdentifier, List<URI>> getBuildTargetsSources() {
     return diagnosticsDispatcher.getBuildTargetsSources();
   }
 }

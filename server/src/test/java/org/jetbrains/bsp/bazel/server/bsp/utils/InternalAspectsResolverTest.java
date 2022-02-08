@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.data.SemanticVersion;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,8 +31,37 @@ public class InternalAspectsResolverTest {
 
   @Test
   public void shouldResolveLabels() {
-    String actual = new InternalAspectsResolver(bspRoot, workspaceRoot).resolveLabel(aspectName);
+    String actual = new InternalAspectsResolver(createBazelData()).resolveLabel(aspectName);
     assertEquals(expectedAspectLabel, actual);
+  }
+
+  private BazelData createBazelData() {
+    return new BazelData() {
+      @Override
+      public String getExecRoot() {
+        return null;
+      }
+
+      @Override
+      public String getWorkspaceRoot() {
+        return workspaceRoot.toString();
+      }
+
+      @Override
+      public String getBinRoot() {
+        return null;
+      }
+
+      @Override
+      public SemanticVersion getVersion() {
+        return null;
+      }
+
+      @Override
+      public Path getBspProjectRoot() {
+        return bspRoot;
+      }
+    };
   }
 
   @Parameters

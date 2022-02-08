@@ -1,19 +1,16 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
-import com.google.common.collect.Iterables;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import io.vavr.Lazy;
+import io.vavr.Tuple2;
+import io.vavr.collection.List;
+import io.vavr.collection.Map;
+import io.vavr.control.Option;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 
 public class BazelDataResolver {
-
-  private static final String EXECUTION_ROOT_PARAMETER = "execution_root";
-  private static final String WORKPLACE_ROOT_PARAMETER = "workspace";
-  private static final String BAZEL_BIN_ROOT_PARAMETER = "bazel-bin";
-  private static final String BAZEL_VERSION_PARAMETER = "release";
-
+  private static final Pattern INFO_LINE_PATTERN = Pattern.compile("([\\w-]+): (.*)");
   private final BazelRunner bazelRunner;
 
   public BazelDataResolver(BazelRunner bazelRunner) {
@@ -21,26 +18,23 @@ public class BazelDataResolver {
   }
 
   public BazelData resolveBazelData() {
-    String execRoot = readOnlyBazelLine(EXECUTION_ROOT_PARAMETER);
-    String workspaceRoot = readOnlyBazelLine(WORKPLACE_ROOT_PARAMETER);
-    String binRoot = readOnlyBazelLine(BAZEL_BIN_ROOT_PARAMETER);
-    String version = readOnlyBazelLine(BAZEL_VERSION_PARAMETER);
-    Path workspacePath = Paths.get(execRoot);
-    String workspaceLabel = workspacePath.toFile().getName();
-    Path bspProjectRoot = Paths.get("").toAbsolutePath().normalize();
-    return new BazelData(execRoot, workspaceRoot, binRoot, workspaceLabel, version, bspProjectRoot);
+    return new LazyBazelData(Lazy.of(this::readBazelInfoMap));
   }
 
-  private String readOnlyBazelLine(String argument) {
-    BazelProcessResult bazelProcessResult =
-        bazelRunner
-            .commandBuilder()
-            .info()
-            .withArgument(argument)
-            .executeBazelCommand()
-            .waitAndGetResult();
-    List<String> output = bazelProcessResult.getStdout();
+  private Map<String, String> readBazelInfoMap() {
+    var bazelProcessResult =
+        bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult();
 
-    return Iterables.getOnlyElement(output);
+    return List.ofAll(bazelProcessResult.getStdoutLines())
+        .flatMap(
+            line -> {
+              var matcher = INFO_LINE_PATTERN.matcher(line);
+              if (matcher.matches()) {
+                return Option.some(new Tuple2<>(matcher.group(1), matcher.group(2)));
+              } else {
+                return Option.none();
+              }
+            })
+        .toMap(Function.identity());
   }
 }

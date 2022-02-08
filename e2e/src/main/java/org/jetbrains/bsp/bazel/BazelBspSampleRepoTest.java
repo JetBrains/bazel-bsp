@@ -30,7 +30,6 @@ import ch.epfl.scala.bsp4j.SourcesItem;
 import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
@@ -55,7 +54,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
   @Override
   protected List<BazelBspTestScenarioStep> getScenarioSteps() {
-    return ImmutableList.of(
+    return List.of(
         resolveProject(),
         compareWorkspaceTargetsResults(),
         sourcesResults(),
@@ -103,7 +102,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     SourcesItem exampleExampleSources =
         new SourcesItem(
-            new BuildTargetIdentifier("//example:example"), ImmutableList.of(exampleScalaSource));
+            new BuildTargetIdentifier("//example:example"), List.of(exampleScalaSource));
 
     String testScalaUri = String.format("%s/dep/Test.scala", REPO_NAME);
     SourceItem testScalaSource = new SourceItem(testScalaUri, SourceItemKind.FILE, false);
@@ -117,10 +116,10 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     SourcesItem depDepSources =
         new SourcesItem(
             new BuildTargetIdentifier("//dep:dep"),
-            ImmutableList.of(testScalaSource, javaTestJavaSource, depScalaSource));
+            List.of(testScalaSource, javaTestJavaSource, depScalaSource));
 
     SourcesResult expectedSourcesResult =
-        new SourcesResult(ImmutableList.of(exampleExampleSources, depDepSources));
+        new SourcesResult(List.of(exampleExampleSources, depDepSources));
 
     return new BazelBspTestScenarioStep(
         "sources results",
@@ -138,11 +137,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     ResourcesItem exampleExampleResource =
         new ResourcesItem(
-            new BuildTargetIdentifier("//example:example"),
-            ImmutableList.of(fileTxtUri, file2TxtUri));
+            new BuildTargetIdentifier("//example:example"), List.of(fileTxtUri, file2TxtUri));
 
-    ResourcesResult expectedResourcesResult =
-        new ResourcesResult(ImmutableList.of(exampleExampleResource));
+    ResourcesResult expectedResourcesResult = new ResourcesResult(List.of(exampleExampleResource));
 
     return new BazelBspTestScenarioStep(
         "resources results",
@@ -156,7 +153,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     TextDocumentIdentifier inverseSourcesDocument = new TextDocumentIdentifier(depScalaUri);
 
     InverseSourcesResult expectedInverseSourcesResult =
-        new InverseSourcesResult(ImmutableList.of(new BuildTargetIdentifier("//dep:dep")));
+        new InverseSourcesResult(List.of(new BuildTargetIdentifier("//dep:dep")));
 
     return new BazelBspTestScenarioStep(
         "inverse sources results",
@@ -168,38 +165,35 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
   private BazelBspTestScenarioStep scalaMainClasses() {
     ScalaMainClassesParams scalaMainClassesParams =
         new ScalaMainClassesParams(
-            ImmutableList.of(
+            List.of(
                 new BuildTargetIdentifier("//example:example"),
                 new BuildTargetIdentifier("//target_without_main_class:library"),
                 new BuildTargetIdentifier("//target_without_args:binary"),
                 new BuildTargetIdentifier("//target_without_jvm_flags:binary")));
 
     ScalaMainClass exampleExampleMainClass =
-        new ScalaMainClass(
-            "example.Example", ImmutableList.of("arg1", "arg2"), ImmutableList.of("-Xms2G -Xmx5G"));
+        new ScalaMainClass("example.Example", List.of("arg1", "arg2"), List.of("-Xms2G -Xmx5G"));
     ScalaMainClassesItem exampleExampleMainClasses =
         new ScalaMainClassesItem(
-            new BuildTargetIdentifier("//example:example"),
-            ImmutableList.of(exampleExampleMainClass));
+            new BuildTargetIdentifier("//example:example"), List.of(exampleExampleMainClass));
 
     ScalaMainClass withoutArgsBinaryMainClass =
-        new ScalaMainClass(
-            "example.Example", ImmutableList.of(), ImmutableList.of("-Xms2G -Xmx5G"));
+        new ScalaMainClass("example.Example", List.of(), List.of("-Xms2G -Xmx5G"));
     ScalaMainClassesItem withoutArgsBinaryMainClasses =
         new ScalaMainClassesItem(
             new BuildTargetIdentifier("//target_without_args:binary"),
-            ImmutableList.of(withoutArgsBinaryMainClass));
+            List.of(withoutArgsBinaryMainClass));
 
     ScalaMainClass withoutJvmFlagsBinaryMainClass =
-        new ScalaMainClass("example.Example", ImmutableList.of("arg1", "arg2"), ImmutableList.of());
+        new ScalaMainClass("example.Example", List.of("arg1", "arg2"), List.of());
     ScalaMainClassesItem withoutJvmFlagsBinaryMainClasses =
         new ScalaMainClassesItem(
             new BuildTargetIdentifier("//target_without_jvm_flags:binary"),
-            ImmutableList.of(withoutJvmFlagsBinaryMainClass));
+            List.of(withoutJvmFlagsBinaryMainClass));
 
     ScalaMainClassesResult expectedScalaMainClassesResult =
         new ScalaMainClassesResult(
-            ImmutableList.of(
+            List.of(
                 exampleExampleMainClasses,
                 withoutArgsBinaryMainClasses,
                 withoutJvmFlagsBinaryMainClasses));
@@ -214,24 +208,23 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
   private BazelBspTestScenarioStep scalaTestClasses() {
     ScalaTestClassesParams scalaTestClassesParams =
         new ScalaTestClassesParams(
-            ImmutableList.of(
+            List.of(
                 new BuildTargetIdentifier("//example:example"),
                 new BuildTargetIdentifier("//example:example-test"),
                 new BuildTargetIdentifier("//example:example-spec2-test")));
 
     ScalaTestClassesItem exampleExampleTestTestClasses =
         new ScalaTestClassesItem(
-            new BuildTargetIdentifier("//example:example-test"),
-            ImmutableList.of("example.ExampleTest"));
+            new BuildTargetIdentifier("//example:example-test"), List.of("example.ExampleTest"));
 
     // TODO (https://github.com/JetBrains/bazel-bsp/issues/96)
     ScalaTestClassesItem exampleExampleSpec2TestTestClasses =
         new ScalaTestClassesItem(
-            new BuildTargetIdentifier("//example:example-spec2-test"), ImmutableList.of());
+            new BuildTargetIdentifier("//example:example-spec2-test"), List.of());
 
     ScalaTestClassesResult expectedScalaTestClassesResult =
         new ScalaTestClassesResult(
-            ImmutableList.of(exampleExampleTestTestClasses, exampleExampleSpec2TestTestClasses));
+            List.of(exampleExampleTestTestClasses, exampleExampleSpec2TestTestClasses));
 
     return new BazelBspTestScenarioStep(
         "Scala test classes",
@@ -245,7 +238,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         getExpectedWorkspaceBuildTargetsResult();
 
     List<String> dependencies =
-        ImmutableList.of(
+        List.of(
             "https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3-sources.jar",
             "https/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2-sources.jar",
             "https/repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1-sources.jar",
@@ -255,14 +248,17 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             "https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre-sources.jar");
 
     DependencySourcesItem exampleExampleDependencies =
-        new DependencySourcesItem(new BuildTargetIdentifier("//example:example"), dependencies);
+        new DependencySourcesItem(new BuildTargetIdentifier("//example:example"), List.of());
 
     DependencySourcesItem depDepDependencies =
-        new DependencySourcesItem(new BuildTargetIdentifier("//dep:dep"), dependencies);
+        new DependencySourcesItem(new BuildTargetIdentifier("//dep:dep"), List.of());
+
+    DependencySourcesItem depDeeperDeeperDependencies =
+        new DependencySourcesItem(new BuildTargetIdentifier("//dep/deeper:deeper"), List.of());
 
     DependencySourcesResult expectedDependencies =
         new DependencySourcesResult(
-            ImmutableList.of(exampleExampleDependencies, depDepDependencies));
+            List.of(exampleExampleDependencies, depDepDependencies, depDeeperDeeperDependencies));
 
     return new BazelBspTestScenarioStep(
         "dependency sources results",
@@ -273,22 +269,21 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep jvmRunEnvironment() {
     JvmRunEnvironmentParams params =
-        new JvmRunEnvironmentParams(
-            ImmutableList.of(new BuildTargetIdentifier("//example:example")));
+        new JvmRunEnvironmentParams(List.of(new BuildTargetIdentifier("//example:example")));
 
     JvmRunEnvironmentResult expectedResult =
         new JvmRunEnvironmentResult(
-            ImmutableList.of(
+            List.of(
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//example:example"),
-                    ImmutableList.of(
+                    List.of(
                         "/dep/dep.jar",
                         "/dep/dep_java.jar",
                         "/dep/deeper/deeper.jar",
                         "/example/example.jar",
                         "/scala-library-2.12.8.jar",
                         "/https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre.jar"),
-                    ImmutableList.of("-Xms2G -Xmx5G"),
+                    List.of("-Xms2G -Xmx5G"),
                     "/e2e/test-resources/sample-repo",
                     System.getenv())));
 
@@ -299,15 +294,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep jvmTestEnvironment() {
     JvmTestEnvironmentParams params =
-        new JvmTestEnvironmentParams(
-            ImmutableList.of(new BuildTargetIdentifier("//example:example-test")));
+        new JvmTestEnvironmentParams(List.of(new BuildTargetIdentifier("//example:example-test")));
 
     JvmTestEnvironmentResult expectedResult =
         new JvmTestEnvironmentResult(
-            ImmutableList.of(
+            List.of(
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//example:example-test"),
-                    ImmutableList.of(
+                    List.of(
                         "/scala-library-2.12.8.jar",
                         "/scalatest_2.12-3.0.5.jar",
                         "/example/example-test.jar",
@@ -315,7 +309,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                         "/dep/dep_java.jar",
                         "/dep/deeper/deeper.jar",
                         "/https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre.jar"),
-                    ImmutableList.of(),
+                    List.of(),
                     "/e2e/test-resources/sample-repo",
                     System.getenv())));
 
@@ -326,7 +320,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
   private WorkspaceBuildTargetsResult getExpectedWorkspaceBuildTargetsResult() {
     List<String> scalaTargetsJars =
-        ImmutableList.of(
+        List.of(
             "__main__/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.8.jar",
             "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
             "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar");
@@ -334,14 +328,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     ScalaBuildTarget scalaTarget =
         new ScalaBuildTarget(
             "org.scala-lang", "2.12.8", "2.12", ScalaPlatform.JVM, scalaTargetsJars);
-    scalaTarget.setJvmBuildTarget(new JvmBuildTarget(null, "8"));
+    scalaTarget.setJvmBuildTarget(new JvmBuildTarget("external/local_jdk/", "8"));
 
     BuildTarget exampleExampleTarget =
         new BuildTarget(
             new BuildTargetIdentifier("//example:example"),
-            ImmutableList.of(),
-            ImmutableList.of(Constants.SCALA),
-            ImmutableList.of(new BuildTargetIdentifier("//dep:dep")),
+            List.of(),
+            List.of(Constants.SCALA),
+            List.of(new BuildTargetIdentifier("//dep:dep")),
             new BuildTargetCapabilities(true, false, true));
     exampleExampleTarget.setData(scalaTarget);
     exampleExampleTarget.setDataKind(BuildTargetDataKind.SCALA);
@@ -349,9 +343,11 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     BuildTarget depDepTarget =
         new BuildTarget(
             new BuildTargetIdentifier("//dep:dep"),
-            ImmutableList.of(),
-            ImmutableList.of(Constants.JAVA, Constants.SCALA),
-            ImmutableList.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
+            List.of(),
+            List.of(Constants.JAVA, Constants.SCALA),
+            List.of(
+                new BuildTargetIdentifier("//dep:deeper-export"),
+                new BuildTargetIdentifier("//dep/deeper:deeper")),
             new BuildTargetCapabilities(true, false, false));
     depDepTarget.setData(scalaTarget);
     depDepTarget.setDataKind(BuildTargetDataKind.SCALA);
@@ -359,12 +355,12 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     BuildTarget depDeeperExportTarget =
         new BuildTarget(
             new BuildTargetIdentifier("//dep:deeper-export"),
-            ImmutableList.of(),
-            ImmutableList.of(),
-            ImmutableList.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
+            List.of(),
+            List.of(),
+            List.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
             new BuildTargetCapabilities(true, false, false));
 
     return new WorkspaceBuildTargetsResult(
-        ImmutableList.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
+        List.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
   }
 }

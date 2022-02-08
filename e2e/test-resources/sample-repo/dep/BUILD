@@ -8,7 +8,7 @@ scala_library(
         "*.scala",
     ]),
     visibility = ["//visibility:public"],
-    deps = ["//dep/deeper"],
+    deps = ["//dep:deeper-export"],
 )
 
 java_binary(

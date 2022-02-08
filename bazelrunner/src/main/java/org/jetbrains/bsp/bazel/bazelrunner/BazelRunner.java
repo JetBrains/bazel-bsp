@@ -1,15 +1,13 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
-import ch.epfl.scala.bsp4j.StatusCode;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelRunner {
@@ -23,27 +21,21 @@ public class BazelRunner {
 
   private Optional<Integer> besBackendPort = Optional.empty();
   private Optional<BuildClientLogger> buildClientLogger = Optional.empty();
-  private final Supplier<File> workspaceRoot;
+  private final BazelData bazelData;
 
-  public BazelRunner(String bazelBinaryPath) {
-    this.bazel = bazelBinaryPath;
-    this.workspaceRoot = Suppliers.memoize(this::resolveWorkspaceRoot);
+  // This is runner without workspace path. It is used to determine workspace
+  // path and create a fully functional runner.
+  public static BazelRunner inCwd(String bazelBinaryPath) {
+    return new BazelRunner(bazelBinaryPath, null);
   }
 
-  private File resolveWorkspaceRoot() {
-    var builder = new ProcessBuilder(bazel, "info", "workspace");
-    try {
-      var process = new BazelProcess(builder.start(), Optional.empty());
-      var result = process.waitAndGetResult();
-      if (result.getStatusCode() != StatusCode.OK) {
-        throw new RuntimeException(
-            "Failed to run bazel info workspace. Make sure that the project is created inside a"
-                + " bazel workspace");
-      }
-      return new File(result.getStdout().get(0));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  public static BazelRunner of(String bazelBinaryPath, BazelData bazelData) {
+    return new BazelRunner(bazelBinaryPath, bazelData);
+  }
+
+  private BazelRunner(String bazelBinaryPath, BazelData bazelData) {
+    this.bazel = bazelBinaryPath;
+    this.bazelData = bazelData;
   }
 
   public BazelRunnerCommandBuilder commandBuilder() {
@@ -83,10 +75,12 @@ public class BazelRunner {
   private synchronized BazelProcess runBazelProcess(
       String command, List<String> flags, List<String> arguments) throws IOException {
     List<String> processArgs = getProcessArgs(command, flags, arguments);
-    LOGGER.info("Running: {}", processArgs);
+    LOGGER.info("Running: {}", String.join(" ", processArgs));
 
     ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
-    processBuilder.directory(workspaceRoot.get());
+    if (bazelData != null) {
+      processBuilder.directory(new File(bazelData.getWorkspaceRoot()));
+    }
     Process process = processBuilder.start();
 
     return new BazelProcess(process, buildClientLogger);

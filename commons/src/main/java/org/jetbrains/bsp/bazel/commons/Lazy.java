@@ -9,7 +9,7 @@ public abstract class Lazy<T> {
   protected abstract Supplier<Optional<T>> calculateValue();
 
   public Optional<T> getValue() {
-    if (!value.isPresent()) {
+    if (value.isEmpty()) {
       value = Optional.of(calculateValue().get());
     }
 

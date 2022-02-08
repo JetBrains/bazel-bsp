@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.bazelrunner.data;
 
 import ch.epfl.scala.bsp4j.StatusCode;
-import com.google.common.base.Suppliers;
+import io.vavr.Lazy;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Supplier;
@@ -22,20 +22,28 @@ public class BazelProcessResult {
     this.exitCode = exitCode;
   }
 
+  public boolean isNotSuccess() {
+    return getStatusCode() != StatusCode.OK;
+  }
+
   public StatusCode getStatusCode() {
     return ExitCodeMapper.mapExitCode(exitCode);
   }
 
-  public List<String> getStdout() {
+  public List<String> getStdoutLines() {
     return stdout.get();
   }
 
-  public String getJoinedStderr() {
+  public String getStdout() {
+    return String.join(LINES_DELIMITER, getStdoutLines());
+  }
+
+  public String getStderr() {
     List<String> lines = stderr.get();
     return String.join(LINES_DELIMITER, lines);
   }
 
-  private Supplier<List<String>> memoized(InputStream input) {
-    return Suppliers.memoize(() -> BazelStreamReader.drainStream(input));
+  private Lazy<List<String>> memoized(InputStream input) {
+    return Lazy.of(() -> BazelStreamReader.drainStream(input));
   }
 }
