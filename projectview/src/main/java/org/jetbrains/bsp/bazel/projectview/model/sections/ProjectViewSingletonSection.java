@@ -16,20 +16,15 @@ public abstract class ProjectViewSingletonSection extends ProjectViewSection {
   }
 
   @Override
-  public String toString() {
-    return "ProjectViewSingletonSection{" + "value='" + value + '\'' + "} " + super.toString();
-  }
-
-  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof ProjectViewSingletonSection)) return false;
     ProjectViewSingletonSection that = (ProjectViewSingletonSection) o;
-    return value.equals(that.value);
+    return value.equals(that.value) && sectionName.equals(that.sectionName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(value);
+    return Objects.hash(value, sectionName);
   }
 }

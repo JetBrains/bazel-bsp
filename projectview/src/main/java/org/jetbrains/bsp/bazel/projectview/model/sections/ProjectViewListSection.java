@@ -31,28 +31,17 @@ public abstract class ProjectViewListSection extends ProjectViewSection {
   }
 
   @Override
-  public String toString() {
-    return "ProjectViewListSection{"
-        + "includedValues="
-        + includedValues
-        + ", excludedValues="
-        + excludedValues
-        + "} "
-        + super.toString();
-  }
-
-  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof ProjectViewListSection)) return false;
     ProjectViewListSection that = (ProjectViewListSection) o;
-    return CollectionUtils.isEqualCollection(getIncludedValues(), that.getIncludedValues())
-        && CollectionUtils.isEqualCollection(getExcludedValues(), that.getExcludedValues())
-        && getSectionName().equals(that.getSectionName());
+    return CollectionUtils.isEqualCollection(includedValues, that.includedValues)
+        && CollectionUtils.isEqualCollection(excludedValues, that.excludedValues)
+        && sectionName.equals(that.sectionName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getIncludedValues(), getExcludedValues(), getSectionName());
+    return Objects.hash(includedValues, excludedValues, sectionName);
   }
 }
