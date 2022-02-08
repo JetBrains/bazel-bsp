@@ -1,7 +1,6 @@
 package example
 
 import dep.Dep
-
 import java.util.ArrayList
 
 object Example {
