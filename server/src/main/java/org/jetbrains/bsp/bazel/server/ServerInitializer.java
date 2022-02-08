@@ -80,6 +80,9 @@ public class ServerInitializer {
   }
 
   private static ProjectViewProvider getProjectViewProvider(Path bspProjectRoot, String[] args) {
+    if (args.length == 1) {
+      return new ServerArgsProjectViewProvider(bspProjectRoot, args[0]);
+    }
     if (args.length == 2) {
       return new ServerArgsProjectViewProvider(bspProjectRoot, args[0], args[1]);
     }

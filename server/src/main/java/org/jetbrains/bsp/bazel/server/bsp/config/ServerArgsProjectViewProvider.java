@@ -10,30 +10,33 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 
+@Deprecated
 public class ServerArgsProjectViewProvider implements ProjectViewProvider {
 
-  private final String pathToBazel;
-  private final String targets;
+  private final ProjectViewBazelPathSection pathToBazel;
+  private final Optional<ProjectViewTargetsSection> targets;
 
   private final ProjectViewDefaultParserProvider defaultParserProvider;
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel, String targets) {
-    this.pathToBazel = pathToBazel;
-    this.targets = targets;
+    this.pathToBazel = new ProjectViewBazelPathSection(pathToBazel);
+    this.targets = Optional.of(new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of()));
+    this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
+  }
+
+  public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel) {
+    this.pathToBazel = new ProjectViewBazelPathSection(pathToBazel);
+    this.targets = Optional.empty();
     this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
   }
 
   @Override
   public ProjectView create() {
-    var targetsSection =
-        new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of());
-    var bazelPathSection = new ProjectViewBazelPathSection(pathToBazel);
-
     ProjectView parsedProjectView = defaultParserProvider.create();
 
     return ProjectView.builder()
-        .targets(targetsSection)
-        .bazelPath(Optional.of(bazelPathSection))
+        .targets(targets.orElse(parsedProjectView.getTargets()))
+        .bazelPath(Optional.of(pathToBazel))
         .debuggerAddress(parsedProjectView.getDebuggerAddress())
         .javaPath(parsedProjectView.getJavaPath())
         .build();

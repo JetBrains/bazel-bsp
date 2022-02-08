@@ -5,6 +5,7 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 
+@Deprecated
 public class ProjectViewDefaultParserProvider implements ProjectViewProvider {
 
   private static final ProjectViewParser PARSER = new ProjectViewParserImpl();
