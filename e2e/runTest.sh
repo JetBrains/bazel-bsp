@@ -40,8 +40,8 @@ echo "Cleaning project directory..."
 if [ "$#" -eq 2 ]; then
   cd "$TEST_PROJECT_PATH" || exit
 fi
-rm -r .bsp/
-rm -r .bazelbsp/
+rm -r .bsp/ > /dev/null 2>&1
+rm -r .bazelbsp/ > /dev/null 2>&1
 rm -rf bazel-*/
 echo "Cleaning project directory done!"
 

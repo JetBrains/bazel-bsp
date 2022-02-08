@@ -206,6 +206,19 @@ public class ProjectViewParserImplTest {
   //  // ProjectView parse(projectViewFileContent, defaultProjectViewFileContent)
 
   @Test(expected = IllegalStateException.class)
+  public void shouldThrowExceptionForEmptyDefaultFile() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
+    var defaultProjectViewFilePath = Paths.get("/projectview/empty.bazelproject");
+
+    // when
+    parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+    // then
+    // throw an IllegalStateException
+  }
+
+  @Test(expected = IllegalStateException.class)
   public void shouldThrowExceptionForDefaultFileWithoutTargetsSection() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
