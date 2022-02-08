@@ -1,7 +1,7 @@
 # Toolchain Registration for Scala
 
 In order to fully use Bazel BSP for Scala projects make sure to use at least version
-``d8bce245a96ca9ab721324bc8daa984aa13fa0f7`` of `rules_scala`:
+`d8bce245a96ca9ab721324bc8daa984aa13fa0f7` of `rules_scala`:
 
 ```
 http_archive(
