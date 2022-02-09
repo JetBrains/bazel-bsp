@@ -5,7 +5,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = [
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview:__subpackages__",
-        # "//projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model/sections:__pkg__",
+        "//projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model/sections:__pkg__",
     ],
     deps = [
         "@maven//:com_google_guava_guava",
