@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import io.vavr.control.Try;
 import java.nio.file.Path;
-import org.jetbrains.bsp.bazel.commons.FileUtils;
+import org.jetbrains.bsp.bazel.commons.BetterFiles;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 /**
@@ -11,21 +12,27 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
  */
 public interface ProjectViewParser {
 
-  default ProjectView parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
-    String projectViewFileContent = FileUtils.readFileContentOrEmpty(projectViewFilePath);
-    String defaultProjectViewFileContent =
-        FileUtils.readFileContentOrEmpty(defaultProjectViewFilePath);
-
-    return parse(projectViewFileContent, defaultProjectViewFileContent);
+  default Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
+    return BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
+        .flatMap(
+            defaultProjectViewFileContent ->
+                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent));
   }
 
-  ProjectView parse(String projectViewFileContent, String defaultProjectViewFileContent);
-
-  default ProjectView parse(Path projectViewFilePath) {
-    String projectViewFileContent = FileUtils.readFileContentOrEmpty(projectViewFilePath);
-
-    return parse(projectViewFileContent);
+  private Try<ProjectView> parseWithDefault(
+      Path projectViewFilePath, String defaultProjectViewFileContent) {
+    return BetterFiles.tryReadFileContent(projectViewFilePath)
+        .flatMap(
+            projectViewFilePathContent ->
+                parse(projectViewFilePathContent, defaultProjectViewFileContent))
+        .orElse(parse(defaultProjectViewFileContent));
   }
 
-  ProjectView parse(String projectViewFileContent);
+  Try<ProjectView> parse(String projectViewFileContent, String defaultProjectViewFileContent);
+
+  default Try<ProjectView> parse(Path projectViewFilePath) {
+    return BetterFiles.tryReadFileContent(projectViewFilePath).flatMap(this::parse);
+  }
+
+  Try<ProjectView> parse(String projectViewFileContent);
 }

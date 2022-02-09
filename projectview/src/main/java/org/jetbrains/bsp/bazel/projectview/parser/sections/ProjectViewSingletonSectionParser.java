@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import io.vavr.control.Try;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -18,7 +19,7 @@ public abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSin
 
   @Override
   public Optional<T> parse(ProjectViewRawSections rawSections) {
-    return rawSections.getLastSectionWithName(sectionName).flatMap(this::parse);
+    return rawSections.getLastSectionWithName(sectionName).map(this::parse).flatMap(Try::get);
   }
 
   @Override

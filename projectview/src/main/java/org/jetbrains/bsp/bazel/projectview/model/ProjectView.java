@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
+import io.vavr.collection.Seq;
+import io.vavr.control.Try;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -90,7 +92,7 @@ public class ProjectView {
 
   public static class Builder {
 
-    private List<ProjectView> importedProjectViews = List.of();
+    private List<Try<ProjectView>> importedProjectViews = List.of();
 
     private ProjectViewTargetsSection targets = new ProjectViewTargetsSection();
 
@@ -102,7 +104,7 @@ public class ProjectView {
 
     private Builder() {}
 
-    public Builder imports(List<ProjectView> importedProjectViews) {
+    public Builder imports(List<Try<ProjectView>> importedProjectViews) {
       this.importedProjectViews = importedProjectViews;
       return this;
     }
@@ -127,29 +129,47 @@ public class ProjectView {
       return this;
     }
 
-    public ProjectView build() {
-      var targets = combineTargetsSection();
-      throwIfListSectionIsEmpty(targets);
+    public Try<ProjectView> build() {
+      return Try.sequence(importedProjectViews)
+          .map(Seq::toJavaList)
+          .flatMap(this::buildWithImports);
+    }
 
-      var bazelPath = combineBazelPathSection();
-      var debuggerAddress = combineDebuggerAddressSection();
-      var javaPath = combineJavaPathSection();
+    private Try<ProjectView> buildWithImports(List<ProjectView> importedProjectViews) {
+      return combineTargetsSection(importedProjectViews)
+          .map(targets -> buildWithImportsAndRequiredFields(importedProjectViews, targets));
+    }
+
+    private ProjectView buildWithImportsAndRequiredFields(
+        List<ProjectView> importedProjectViews, ProjectViewTargetsSection targets) {
+      var bazelPath = combineBazelPathSection(importedProjectViews);
+      var debuggerAddress = combineDebuggerAddressSection(importedProjectViews);
+      var javaPath = combineJavaPathSection(importedProjectViews);
 
       return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
     }
 
-    private ProjectViewTargetsSection combineTargetsSection() {
+    private Try<ProjectViewTargetsSection> combineTargetsSection(
+        List<ProjectView> importedProjectViews) {
       var includedTargets =
           combineListValuesWithImported(
-              targets, ProjectView::getTargets, ProjectViewListSection::getIncludedValues);
+              importedProjectViews,
+              targets,
+              ProjectView::getTargets,
+              ProjectViewListSection::getIncludedValues);
       var excludedTargets =
           combineListValuesWithImported(
-              targets, ProjectView::getTargets, ProjectViewListSection::getExcludedValues);
+              importedProjectViews,
+              targets,
+              ProjectView::getTargets,
+              ProjectViewListSection::getExcludedValues);
+      var rawSection = new ProjectViewTargetsSection(includedTargets, excludedTargets);
 
-      return new ProjectViewTargetsSection(includedTargets, excludedTargets);
+      return getListSectionOrFailureIfIsEmpty(rawSection);
     }
 
     private <T extends ProjectViewListSection> List<String> combineListValuesWithImported(
+        List<ProjectView> importedProjectViews,
         T section,
         Function<ProjectView, T> sectionGetter,
         Function<ProjectViewListSection, List<String>> valuesGetter) {
@@ -159,27 +179,32 @@ public class ProjectView {
           .reduce(valuesGetter.apply(section), ListUtils::concat);
     }
 
-    private Optional<ProjectViewBazelPathSection> combineBazelPathSection() {
-      var defaultBazelPathSection = getLastImportedSingletonValue(ProjectView::getBazelPath);
+    private Optional<ProjectViewBazelPathSection> combineBazelPathSection(
+        List<ProjectView> importedProjectViews) {
+      var defaultBazelPathSection =
+          getLastImportedSingletonValue(importedProjectViews, ProjectView::getBazelPath);
 
       return bazelPath.or(() -> defaultBazelPathSection);
     }
 
-    private Optional<ProjectViewDebuggerAddressSection> combineDebuggerAddressSection() {
+    private Optional<ProjectViewDebuggerAddressSection> combineDebuggerAddressSection(
+        List<ProjectView> importedProjectViews) {
       var defaultDebuggerAddressSection =
-          getLastImportedSingletonValue(ProjectView::getDebuggerAddress);
+          getLastImportedSingletonValue(importedProjectViews, ProjectView::getDebuggerAddress);
 
       return debuggerAddress.or(() -> defaultDebuggerAddressSection);
     }
 
-    private Optional<ProjectViewJavaPathSection> combineJavaPathSection() {
-      var defaultJavaPathSection = getLastImportedSingletonValue(ProjectView::getJavaPath);
+    private Optional<ProjectViewJavaPathSection> combineJavaPathSection(
+        List<ProjectView> importedProjectViews) {
+      var defaultJavaPathSection =
+          getLastImportedSingletonValue(importedProjectViews, ProjectView::getJavaPath);
 
       return javaPath.or(() -> defaultJavaPathSection);
     }
 
     private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(
-        Function<ProjectView, Optional<T>> sectionGetter) {
+        List<ProjectView> importedProjectViews, Function<ProjectView, Optional<T>> sectionGetter) {
       return importedProjectViews.stream()
           .map(sectionGetter)
           .filter(Optional::isPresent)
@@ -187,11 +212,13 @@ public class ProjectView {
           .reduce((first, second) -> second);
     }
 
-    private void throwIfListSectionIsEmpty(ProjectViewListSection section) {
+    private <T extends ProjectViewListSection> Try<T> getListSectionOrFailureIfIsEmpty(T section) {
       if (isListSectionIsEmpty(section)) {
-        throw new IllegalStateException(
-            section.getSectionName() + " section cannot have an empty included list!");
+        return Try.failure(
+            new IllegalStateException(
+                section.getSectionName() + " section cannot have an empty included list!"));
       }
+      return Try.success(section);
     }
 
     private boolean isListSectionIsEmpty(ProjectViewListSection section) {

@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -21,16 +22,20 @@ public class ProjectViewTargetsSectionParserTest {
 
   // ProjectViewTargetsSection parse(rawSection)
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowIllegalArgumentExceptionForWrongSectionName() {
     // given
     var rawSection = new ProjectViewRawSection("wrongsection", "-bodyelement");
 
     // when
-    parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
-    // throw an exception
+    assertTrue(sectionTry.isFailure());
+
+    assertEquals(
+        "Project view parsing failed! Expected 'targets' section name, got 'wrongsection'!",
+        sectionTry.getCause().getMessage());
   }
 
   @Test
@@ -39,9 +44,12 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection = new ProjectViewRawSection("targets", "");
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     var expectedSection = new ProjectViewTargetsSection(List.of(), List.of());
     assertEquals(expectedSection, section);
   }
@@ -54,9 +62,12 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection = new ProjectViewRawSection("targets", sectionBody);
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     var expectedSection =
         new ProjectViewTargetsSection(
             List.of("//test_included1:test1", "//:test_included1:test2", "//:test_included2:test1"),
@@ -72,9 +83,12 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection = new ProjectViewRawSection("targets", sectionBody);
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     var expectedSection =
         new ProjectViewTargetsSection(
             List.of(),
@@ -90,9 +104,12 @@ public class ProjectViewTargetsSectionParserTest {
     var rawSection = new ProjectViewRawSection("targets", sectionBody);
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     var expectedSection =
         new ProjectViewTargetsSection(
             List.of("//test_included1:test1"),
@@ -126,7 +143,7 @@ public class ProjectViewTargetsSectionParserTest {
     // given
     var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
     var rawSection2 =
-        new ProjectViewRawSection("targets", "  -//test_excluded1:test1\n-//test_excluded1:test2");
+        new ProjectViewRawSection("targets", " -//test_excluded1:test1\n-//test_excluded1:test2");
     var rawSection3 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
     var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
@@ -151,7 +168,7 @@ public class ProjectViewTargetsSectionParserTest {
     // given
     var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
     var rawSection2 =
-        new ProjectViewRawSection("targets", "  -//test_excluded1:test1\n-//test_excluded1:test2");
+        new ProjectViewRawSection("targets", " -//test_excluded1:test1\n-//test_excluded1:test2");
     var rawSection3 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
     var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 

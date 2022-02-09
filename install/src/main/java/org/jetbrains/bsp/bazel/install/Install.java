@@ -68,7 +68,8 @@ public class Install {
         createEmptyBuildFile(bazelbspDir);
 
         var projectViewProvider = new ProjectViewDefaultParserProvider(rootDir);
-        var projectView = projectViewProvider.create();
+        // will be handled properly
+        var projectView = projectViewProvider.create().get();
 
         addJavaBinary(cmd, argv, projectView);
         addJavaClasspath(argv);

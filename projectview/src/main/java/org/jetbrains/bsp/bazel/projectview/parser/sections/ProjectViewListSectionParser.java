@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import com.google.common.base.Splitter;
+import io.vavr.control.Try;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -32,6 +33,7 @@ public abstract class ProjectViewListSectionParser<T extends ProjectViewListSect
   private Optional<T> parseAllSectionsAndMerge(ProjectViewRawSections rawSections) {
     return rawSections.getAllWithName(sectionName).stream()
         .map(this::parse)
+        .map(Try::get)
         .reduce(this::concatSectionsItems);
   }
 

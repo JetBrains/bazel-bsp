@@ -6,13 +6,12 @@ import io.vavr.control.Try;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-public final class FileUtils {
+public final class BetterFiles {
 
-  public static String readFileContentOrEmpty(Path filePath) {
+  public static Try<String> tryReadFileContent(Path filePath) {
     return Try.success(filePath)
         .map(Path::toFile)
         .map(file -> Files.asCharSource(file, Charset.defaultCharset()))
-        .mapTry(CharSource::read)
-        .getOrElse("");
+        .mapTry(CharSource::read);
   }
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import io.vavr.control.Try;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
@@ -15,20 +16,22 @@ public abstract class ProjectViewSectionParser<T> {
 
   public abstract T parseOrDefault(ProjectViewRawSections rawSections, T defaultValue);
 
-  public T parse(ProjectViewRawSection rawSection) throws IllegalArgumentException {
-    assertSectionName(rawSection);
-
-    return parse(rawSection.getSectionBody());
+  public Try<T> parse(ProjectViewRawSection rawSection) {
+    return getSectionBodyOrFailureIfNameIsWrong(rawSection).map(this::parse);
   }
 
-  private void assertSectionName(ProjectViewRawSection rawSection) throws IllegalArgumentException {
+  private Try<String> getSectionBodyOrFailureIfNameIsWrong(ProjectViewRawSection rawSection) {
     if (!rawSection.compareByName(sectionName)) {
       var exceptionMessage =
-          String.format(
-              "Project view parsing failed! Expected '%s' section name, got '%s'!",
-              sectionName, rawSection.getSectionName());
-      throw new IllegalArgumentException(exceptionMessage);
+          "Project view parsing failed! Expected '"
+              + sectionName
+              + "' section name, got '"
+              + rawSection.getSectionName()
+              + "'!";
+      return Try.failure(new IllegalArgumentException(exceptionMessage));
     }
+
+    return Try.success(rawSection.getSectionBody());
   }
 
   protected abstract T parse(String sectionBody);

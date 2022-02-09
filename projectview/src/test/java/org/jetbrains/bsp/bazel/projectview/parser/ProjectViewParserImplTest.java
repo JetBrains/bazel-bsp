@@ -26,16 +26,35 @@ public class ProjectViewParserImplTest {
 
   // ProjectView parse(projectViewFilePath)
 
-  @Test(expected = IllegalStateException.class)
+  @Test
+  public void shouldReturnFailureForNotExistingFile() {
+    // given
+    var projectViewFilePath = Paths.get("/does/not/exist.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isFailure());
+
+    assertEquals(
+        "/does/not/exist.bazelproject file does not exist!",
+        projectViewTry.getCause().getMessage());
+  }
+
+  @Test
   public void shouldThrowExceptionForFileWithoutTargetsSection() {
     // given
     var projectViewFilePath = Paths.get("/projectview/without/targets.bazelproject");
 
     // when
-    parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
-    // throw an IllegalStateException
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "targets section cannot have an empty included list!",
+        projectViewTry.getCause().getMessage());
   }
 
   @Test
@@ -44,9 +63,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/without/bazelpath.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getBazelPath().isEmpty());
   }
 
@@ -56,9 +78,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/without/debuggeraddress.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getDebuggerAddress().isEmpty());
   }
 
@@ -68,9 +93,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/without/javapath.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getJavaPath().isEmpty());
   }
 
@@ -80,9 +108,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -92,19 +123,23 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
   @Test
-  public void shouldParseFileWithSingleImportedFileWitoutSingletonValues() {
+  public void shouldParseFileWithSingleImportedFileWithoutSingletonValues() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file4ImportsFile1.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -115,7 +150,8 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -125,9 +161,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/file7ImportsFile1.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -138,7 +177,8 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path7/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.7:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path7/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -148,9 +188,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/file5ImportsFile1File2File3.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -168,7 +211,8 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path3/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.3:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path3/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -178,9 +222,12 @@ public class ProjectViewParserImplTest {
     var projectViewFilePath = Paths.get("/projectview/file6ImportsFile2File3File4.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -199,36 +246,75 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
-  //  // ProjectView parse(projectViewFileContent, defaultProjectViewFileContent)
+  // ProjectView parse(projectViewFileContent, defaultProjectViewFileContent)
 
-  @Test(expected = IllegalStateException.class)
-  public void shouldThrowExceptionForEmptyDefaultFile() {
+  @Test
+  public void shouldReturnFailureForNotExistingDefaultFile() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
+    var defaultProjectViewFilePath = Paths.get("/does/not/exist.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "/does/not/exist.bazelproject file does not exist!",
+        projectViewTry.getCause().getMessage());
+  }
+
+  @Test
+  public void shouldReturnFailureForNotExistingDefaultFileAndNotExistingFile() {
+    // given
+    var projectViewFilePath = Paths.get("/does/not/exist.bazelproject");
+    var defaultProjectViewFilePath = Paths.get("/does/not/exist.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "/does/not/exist.bazelproject file does not exist!",
+        projectViewTry.getCause().getMessage());
+  }
+
+  @Test
+  public void shouldReturnFailureForEmptyDefaultFile() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
     var defaultProjectViewFilePath = Paths.get("/projectview/empty.bazelproject");
 
     // when
-    parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
-    // throw an IllegalStateException
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "targets section cannot have an empty included list!",
+        projectViewTry.getCause().getMessage());
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void shouldThrowExceptionForDefaultFileWithoutTargetsSection() {
+  @Test
+  public void shouldReturnFailureForDefaultFileWithoutTargetsSection() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
     var defaultProjectViewFilePath = Paths.get("/projectview/without/targets.bazelproject");
 
     // when
-    parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
-    // throw an IllegalStateException
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "targets section cannot have an empty included list!",
+        projectViewTry.getCause().getMessage());
   }
 
   @Test
@@ -238,9 +324,12 @@ public class ProjectViewParserImplTest {
     var defaultProjectViewFilePath = Paths.get("/projectview/without/bazelpath.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getBazelPath().isEmpty());
   }
 
@@ -251,9 +340,12 @@ public class ProjectViewParserImplTest {
     var defaultProjectViewFilePath = Paths.get("/projectview/without/debuggeraddress.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getDebuggerAddress().isEmpty());
   }
 
@@ -264,9 +356,12 @@ public class ProjectViewParserImplTest {
     var defaultProjectViewFilePath = Paths.get("/projectview/without/javapath.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getJavaPath().isEmpty());
   }
 
@@ -277,9 +372,12 @@ public class ProjectViewParserImplTest {
     var defaultProjectViewFilePath = Paths.get("/projectview/file2.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -289,7 +387,8 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -300,9 +399,12 @@ public class ProjectViewParserImplTest {
     var defaultProjectViewFilePath = Paths.get("/projectview/file1.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -312,7 +414,8 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 
@@ -323,9 +426,12 @@ public class ProjectViewParserImplTest {
     var defaultProjectViewFilePath = Paths.get("/projectview/file1.bazelproject");
 
     // when
-    var projectView = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectView =
         ProjectView.builder()
             .targets(
@@ -335,7 +441,8 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
-            .build();
+            .build()
+            .get();
     assertEquals(expectedProjectView, projectView);
   }
 }

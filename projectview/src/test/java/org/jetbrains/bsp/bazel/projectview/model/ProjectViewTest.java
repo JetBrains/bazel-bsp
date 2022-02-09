@@ -3,6 +3,8 @@ package org.jetbrains.bsp.bazel.projectview.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import io.vavr.control.Try;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -19,33 +21,93 @@ public class ProjectViewTest {
   private final Optional<ProjectViewDebuggerAddressSection> dummyDebuggerAddress = Optional.empty();
   private final Optional<ProjectViewJavaPathSection> dummyJavaPath = Optional.empty();
 
-  // targets specific tests
+  // imports specific tests
 
-  @Test(expected = IllegalStateException.class)
-  public void shouldThrowExceptionForBuilderWithoutTargets() {
-    // given & when
-    ProjectView.builder()
-        .bazelPath(dummyBazelPathSection)
-        .debuggerAddress(dummyDebuggerAddress)
-        .javaPath(dummyJavaPath)
-        .build();
+  @Test
+  public void shouldReturnFailureWithFirstCauseForBuilderWithFailureImports() {
+    // given
+    var importedProjectViewTry1 =
+        ProjectView.builder()
+            .targets(dummyTargetsSection)
+            .bazelPath(dummyBazelPathSection)
+            .debuggerAddress(dummyDebuggerAddress)
+            .javaPath(dummyJavaPath)
+            .build();
+
+    var importedProjectViewTry2 =
+        Try.<ProjectView>failure(
+            new IOException("doesnt/exist/projectview2.bazelproject file does not exist!"));
+
+    var importedProjectViewTry3 =
+        ProjectView.builder()
+            .imports(List.of())
+            .targets(dummyTargetsSection)
+            .bazelPath(dummyBazelPathSection)
+            .debuggerAddress(dummyDebuggerAddress)
+            .javaPath(dummyJavaPath)
+            .build();
+
+    var importedProjectViewTry4 =
+        Try.<ProjectView>failure(
+            new IOException("doesnt/exist/projectview4.bazelproject file does not exist!"));
+
+    // when
+    var projectViewTry =
+        ProjectView.builder()
+            .imports(
+                List.of(
+                    importedProjectViewTry1,
+                    importedProjectViewTry2,
+                    importedProjectViewTry3,
+                    importedProjectViewTry4))
+            .targets(dummyTargetsSection)
+            .bazelPath(dummyBazelPathSection)
+            .debuggerAddress(dummyDebuggerAddress)
+            .javaPath(dummyJavaPath)
+            .build();
 
     // then
-    // throw an exception
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "doesnt/exist/projectview2.bazelproject file does not exist!",
+        projectViewTry.getCause().getMessage());
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void shouldThrowExceptionForBuilderWithoutIncludedTargets() {
+  // targets specific tests
+
+  @Test
+  public void shouldReturnFailureForBuilderWithoutTargets() {
     // given & when
-    ProjectView.builder()
-        .targets(new ProjectViewTargetsSection(List.of(), List.of("//excluded_target")))
-        .bazelPath(dummyBazelPathSection)
-        .debuggerAddress(dummyDebuggerAddress)
-        .javaPath(dummyJavaPath)
-        .build();
+    var projectViewTry =
+        ProjectView.builder()
+            .bazelPath(dummyBazelPathSection)
+            .debuggerAddress(dummyDebuggerAddress)
+            .javaPath(dummyJavaPath)
+            .build();
 
     // then
-    // throw an exception
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "targets section cannot have an empty included list!",
+        projectViewTry.getCause().getMessage());
+  }
+
+  @Test
+  public void shouldReturnFailureForBuilderWithoutIncludedTargets() {
+    // given & when
+    var projectViewTry =
+        ProjectView.builder()
+            .targets(new ProjectViewTargetsSection(List.of(), List.of("//excluded_target")))
+            .bazelPath(dummyBazelPathSection)
+            .debuggerAddress(dummyDebuggerAddress)
+            .javaPath(dummyJavaPath)
+            .build();
+
+    // then
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "targets section cannot have an empty included list!",
+        projectViewTry.getCause().getMessage());
   }
 
   // singleton values specific tests
@@ -53,9 +115,12 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEmptySingletonValuesForEmptyBuilder() {
     // given & when
-    var projectView = ProjectView.builder().targets(dummyTargetsSection).build();
+    var projectViewTry = ProjectView.builder().targets(dummyTargetsSection).build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getBazelPath().isEmpty());
     assertTrue(projectView.getDebuggerAddress().isEmpty());
     assertTrue(projectView.getJavaPath().isEmpty());
@@ -64,7 +129,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnEmptySingletonValuesForBuilderWithEmptyValues() {
     // given & when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
             .targets(dummyTargetsSection)
             .bazelPath(Optional.empty())
@@ -73,6 +138,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     assertTrue(projectView.getBazelPath().isEmpty());
     assertTrue(projectView.getDebuggerAddress().isEmpty());
     assertTrue(projectView.getJavaPath().isEmpty());
@@ -83,7 +151,7 @@ public class ProjectViewTest {
   @Test
   public void shouldBuildProjectViewWithoutImports() {
     // given & when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
@@ -95,6 +163,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             List.of("//included_target1", "//included_target2", "//included_target3"),
@@ -114,7 +185,7 @@ public class ProjectViewTest {
   @Test
   public void shouldBuildProjectViewWithEmptyImports() {
     // given & when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
             .imports(List.of())
             .targets(
@@ -127,6 +198,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             List.of("//included_target1", "//included_target2", "//included_target3"),
@@ -146,7 +220,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnImportedSingletonValuesAndListValues() {
     // given
-    var importedProjectView =
+    var importedProjectViewTry =
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
@@ -158,9 +232,9 @@ public class ProjectViewTest {
             .build();
 
     // when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
-            .imports(List.of(importedProjectView))
+            .imports(List.of(importedProjectViewTry))
             .targets(new ProjectViewTargetsSection())
             .bazelPath(Optional.empty())
             .debuggerAddress(Optional.empty())
@@ -168,6 +242,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
@@ -187,7 +264,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnCurrentSingletonValuesAndCombinedListValues() {
     // given
-    var importedProjectView =
+    var importedProjectViewTry =
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
@@ -199,9 +276,9 @@ public class ProjectViewTest {
             .build();
 
     // when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
-            .imports(List.of(importedProjectView))
+            .imports(List.of(importedProjectViewTry))
             .targets(
                 new ProjectViewTargetsSection(
                     List.of("//included_target2.1", "//included_target2.2", "//included_target2.3"),
@@ -212,6 +289,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             List.of(
@@ -241,7 +321,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnLastSingletonValuesAndCombinedListValuesForThreeImports() {
     // given
-    var importedProjectView1 =
+    var importedProjectViewTry1 =
         ProjectView.builder()
             .imports(List.of())
             .targets(
@@ -253,7 +333,7 @@ public class ProjectViewTest {
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported1/path/to/java")))
             .build();
 
-    var importedProjectView2 =
+    var importedProjectViewTry2 =
         ProjectView.builder()
             .imports(List.of())
             .targets(
@@ -264,7 +344,7 @@ public class ProjectViewTest {
             .javaPath(Optional.empty())
             .build();
 
-    var importedProjectView3 =
+    var importedProjectViewTry3 =
         ProjectView.builder()
             .imports(List.of())
             .targets(
@@ -276,9 +356,10 @@ public class ProjectViewTest {
             .build();
 
     // when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
-            .imports(List.of(importedProjectView1, importedProjectView2, importedProjectView3))
+            .imports(
+                List.of(importedProjectViewTry1, importedProjectViewTry2, importedProjectViewTry3))
             .targets(
                 new ProjectViewTargetsSection(
                     List.of("//included_target4.1", "//included_target4.2", "//included_target4.3"),
@@ -289,6 +370,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             List.of(
@@ -323,7 +407,7 @@ public class ProjectViewTest {
   @Test
   public void shouldReturnLastSingletonValuesAndCombinedListValuesForNestedImports() {
     // given
-    var importedProjectView1 =
+    var importedProjectViewTry1 =
         ProjectView.builder()
             .imports(List.of())
             .targets(
@@ -335,7 +419,7 @@ public class ProjectViewTest {
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported1/path/to/java")))
             .build();
 
-    var importedProjectView2 =
+    var importedProjectViewTry2 =
         ProjectView.builder()
             .imports(List.of())
             .targets(
@@ -346,9 +430,9 @@ public class ProjectViewTest {
             .javaPath(Optional.empty())
             .build();
 
-    var importedProjectView3 =
+    var importedProjectViewTry3 =
         ProjectView.builder()
-            .imports(List.of(importedProjectView1, importedProjectView2))
+            .imports(List.of(importedProjectViewTry1, importedProjectViewTry2))
             .targets(
                 new ProjectViewTargetsSection(
                     List.of("//included_target3.1", "//included_target3.2"), List.of()))
@@ -358,9 +442,9 @@ public class ProjectViewTest {
             .build();
 
     // when
-    var projectView =
+    var projectViewTry =
         ProjectView.builder()
-            .imports(List.of(importedProjectView3))
+            .imports(List.of(importedProjectViewTry3))
             .targets(
                 new ProjectViewTargetsSection(
                     List.of("//included_target4.1", "//included_target4.2", "//included_target4.3"),
@@ -371,6 +455,9 @@ public class ProjectViewTest {
             .build();
 
     // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
     var expectedProjectViewTargetsSection =
         new ProjectViewTargetsSection(
             List.of(

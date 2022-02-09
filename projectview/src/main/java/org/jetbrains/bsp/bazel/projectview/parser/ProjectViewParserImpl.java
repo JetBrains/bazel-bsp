@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import io.vavr.control.Try;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,8 +50,15 @@ class ProjectViewParserImpl implements ProjectViewParser {
       new ProjectViewJavaPathSectionParser();
 
   @Override
-  public ProjectView parse(String projectViewFileContent, String defaultProjectViewFileContent) {
-    ProjectView defaultProjectView = parse(defaultProjectViewFileContent);
+  public Try<ProjectView> parse(
+      String projectViewFileContent, String defaultProjectViewFileContent) {
+    return parse(defaultProjectViewFileContent)
+        .flatMap(
+            defaultProjectView -> parseWithDefault(projectViewFileContent, defaultProjectView));
+  }
+
+  private Try<ProjectView> parseWithDefault(
+      String projectViewFileContent, ProjectView defaultProjectView) {
     ProjectViewRawSections rawSections = ProjectViewSectionSplitter.split(projectViewFileContent);
 
     return ProjectView.builder()
@@ -65,7 +73,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
   }
 
   @Override
-  public ProjectView parse(String projectViewFileContent) {
+  public Try<ProjectView> parse(String projectViewFileContent) {
     ProjectViewRawSections rawSections = ProjectViewSectionSplitter.split(projectViewFileContent);
 
     return ProjectView.builder()
@@ -77,7 +85,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .build();
   }
 
-  private List<ProjectView> findImportedProjectViews(ProjectViewRawSections rawSections) {
+  private List<Try<ProjectView>> findImportedProjectViews(ProjectViewRawSections rawSections) {
     return rawSections.getAllWithName(IMPORT_STATEMENT).stream()
         .map(ProjectViewRawSection::getSectionBody)
         .map(String::trim)

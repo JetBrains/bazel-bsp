@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -54,16 +55,22 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
 
   // T parse(rawSection)
 
-  @Test(expected = IllegalArgumentException.class)
-  public void shouldThrowIllegalArgumentExceptionForWrongSectionName() {
+  @Test
+  public void shouldReturnFailureForWrongSectionName() {
     // given
     var rawSection = new ProjectViewRawSection("wrongsection", "value");
 
     // when
-    parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
-    // throw an exception
+    assertTrue(sectionTry.isFailure());
+
+    assertEquals(
+        "Project view parsing failed! Expected '"
+            + sectionName
+            + "' section name, got 'wrongsection'!",
+        sectionTry.getCause().getMessage());
   }
 
   @Test
@@ -72,9 +79,12 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     var rawSection = new ProjectViewRawSection(sectionName, "");
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     assertFalse(section.isPresent());
   }
 
@@ -84,9 +94,12 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     var rawSection = new ProjectViewRawSection(sectionName, "  value");
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     var expectedSection = sectionConstructor.apply("value");
     assertEquals(expectedSection, section.get());
   }
@@ -97,9 +110,12 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     var rawSection = new ProjectViewRawSection(sectionName, "  value with space 123 \t\n");
 
     // when
-    var section = parser.parse(rawSection);
+    var sectionTry = parser.parse(rawSection);
 
     // then
+    assertTrue(sectionTry.isSuccess());
+    var section = sectionTry.get();
+
     var expectedSection = sectionConstructor.apply("value with space 123");
     assertEquals(expectedSection, section.get());
   }

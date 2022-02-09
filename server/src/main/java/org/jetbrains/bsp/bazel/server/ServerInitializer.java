@@ -76,7 +76,7 @@ public class ServerInitializer {
   private static ProjectView getProjectView(Path bspProjectRoot, String[] args) {
     ProjectViewProvider provider = getProjectViewProvider(bspProjectRoot, args);
 
-    return provider.create();
+    return provider.create().get();
   }
 
   private static ProjectViewProvider getProjectViewProvider(Path bspProjectRoot, String[] args) {

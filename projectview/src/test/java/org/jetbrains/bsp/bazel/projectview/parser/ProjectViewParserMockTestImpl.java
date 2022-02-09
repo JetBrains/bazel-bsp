@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import io.vavr.control.Try;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -12,30 +13,37 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
 
   @Override
-  public ProjectView parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
-    var projectViewFileContent = readFileContent(projectViewFilePath);
-    var defaultProjectViewFileContent = readFileContent(defaultProjectViewFilePath);
+  public Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
+    return readFileContent(defaultProjectViewFilePath)
+        .flatMap(
+            defaultProjectViewFileContent ->
+                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent));
+  }
 
-    return parse(projectViewFileContent, defaultProjectViewFileContent);
+  private Try<ProjectView> parseWithDefault(
+      Path projectViewFilePath, String defaultProjectViewFileContent) {
+    return readFileContent(projectViewFilePath)
+        .flatMap(
+            projectViewFileContent -> parse(projectViewFileContent, defaultProjectViewFileContent))
+        .orElse(parse(defaultProjectViewFileContent));
   }
 
   @Override
-  public ProjectView parse(Path projectViewFilePath) {
-    var projectViewFileContent = readFileContent(projectViewFilePath);
-
-    return parse(projectViewFileContent);
+  public Try<ProjectView> parse(Path projectViewFilePath) {
+    return readFileContent(projectViewFilePath).flatMap(this::parse);
   }
 
-  private String readFileContent(Path filePath) {
+  private Try<String> readFileContent(Path filePath) {
     // we read file content instead of passing plain file due to bazel resources packaging
     var inputStream = ProjectViewParserMockTestImpl.class.getResourceAsStream(filePath.toString());
 
-    return Optional.ofNullable(inputStream).map(this::readInputStream).orElse("");
+    return Optional.ofNullable(inputStream)
+        .map(this::readInputStream)
+        .orElse(Try.failure(new IOException(filePath + " file does not exist!")));
   }
 
-  private String readInputStream(InputStream inputStream) {
+  private Try<String> readInputStream(InputStream inputStream) {
     return Try.success(new InputStreamReader(inputStream, Charsets.UTF_8))
-        .mapTry(CharStreams::toString)
-        .get();
+        .mapTry(CharStreams::toString);
   }
 }

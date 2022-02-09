@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
 import com.google.common.collect.ImmutableList;
+import io.vavr.control.Try;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
@@ -33,8 +34,8 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
   }
 
   @Override
-  public ProjectView create() {
-    ProjectView parsedProjectView = defaultParserProvider.create();
+  public Try<ProjectView> create() {
+    var parsedProjectView = defaultParserProvider.create().get();
 
     return ProjectView.builder()
         .targets(targets.orElse(parsedProjectView.getTargets()))
