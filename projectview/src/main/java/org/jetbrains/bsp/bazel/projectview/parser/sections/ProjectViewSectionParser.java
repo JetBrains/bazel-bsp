@@ -4,7 +4,7 @@ import io.vavr.control.Try;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
-public abstract class ProjectViewSectionParser<T> {
+abstract class ProjectViewSectionParser<T> {
 
   protected final String sectionName;
 
