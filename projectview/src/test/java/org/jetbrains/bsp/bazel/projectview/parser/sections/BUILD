@@ -8,9 +8,7 @@ java_test(
         "@maven//:junit_junit",
     ],
     deps = [
-        "//projectview:model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],
 )
 
@@ -22,8 +20,6 @@ java_test(
         "@maven//:junit_junit",
     ],
     deps = [
-        "//projectview:model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],
 )

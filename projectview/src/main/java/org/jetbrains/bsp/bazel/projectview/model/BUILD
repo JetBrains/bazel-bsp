@@ -4,6 +4,9 @@ java_library(
     name = "model",
     srcs = glob(["*.java"]),
     visibility = ["//projectview:__subpackages__"],
+    exports = [
+        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
+    ],
     deps = [
         "//commons",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",

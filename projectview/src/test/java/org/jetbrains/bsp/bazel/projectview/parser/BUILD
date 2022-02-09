@@ -9,18 +9,16 @@ java_test(
         "@maven//:junit_junit",
     ],
     deps = [
-        "//projectview:model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
-        "//projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser:parserMockTestImpl",
+        "//projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser:parser_mock_test_impl",
     ],
 )
 
 java_library(
-    name = "parserMockTestImpl",
+    name = "parser_mock_test_impl",
+    testonly = 1,
     srcs = ["ProjectViewParserMockTestImpl.java"],
-    visibility = ["//projectview:__subpackages__"],
     deps = [
-        "//projectview:model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",

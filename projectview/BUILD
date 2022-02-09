@@ -5,7 +5,6 @@ java_library(
     visibility = ["//visibility:public"],
     exports = [
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
-        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
     ],
 )
 
@@ -13,6 +12,7 @@ java_library(
     name = "parser",
     visibility = ["//visibility:public"],
     exports = [
+        "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
     ],
 )
