@@ -228,7 +228,7 @@ public class ProjectViewSectionSplitterTest {
   @Test
   public void shouldSplitContent() {
     // when
-    var sections = ProjectViewSectionSplitter.split(fileContent);
+    var sections = ProjectViewSectionSplitter.getRawSectionsForFileContent(fileContent);
 
     // then
     assertEquals(expectedSections, sections);

@@ -42,7 +42,7 @@ public final class ProjectViewSectionSplitter {
   private static final String COMMENT_LINE_REGEX = "#(.)*(\\n|\\z)";
   private static final String COMMENT_LINE_REPLACEMENT = "\n";
 
-  public static ProjectViewRawSections split(String fileContent) {
+  public static ProjectViewRawSections getRawSectionsForFileContent(String fileContent) {
     var fileContentWithoutComments = removeLinesWithComments(fileContent);
     var rawSections = findRawSections(fileContentWithoutComments);
 
