@@ -124,9 +124,9 @@ public class ProjectViewTargetsSectionParserTest {
     // given
     var sectionBody =
         "  -//test_excluded1:test1\n\t//test_included1:test1\n-//test_excluded1:test2\n\n";
-    var rawSection1 = new ProjectViewRawSection("anotersection1", sectionBody);
-    var rawSection2 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
-    var rawSection3 = new ProjectViewRawSection("anotersection3", "-bodyelement3");
+    var rawSection1 = new ProjectViewRawSection("another_section1", sectionBody);
+    var rawSection2 = new ProjectViewRawSection("another_section2", "-bodyelement2");
+    var rawSection3 = new ProjectViewRawSection("another_section3", "-bodyelement3");
 
     var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
@@ -141,10 +141,10 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldParseAllTargetsSectionFromListWithoutDefault() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "-bodyelement1");
     var rawSection2 =
         new ProjectViewRawSection("targets", " -//test_excluded1:test1\n-//test_excluded1:test2");
-    var rawSection3 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection3 = new ProjectViewRawSection("another_section2", "-bodyelement2");
     var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
     var rawSections =
@@ -166,10 +166,10 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldParseAllTargetsSectionFromList() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "-bodyelement1");
     var rawSection2 =
         new ProjectViewRawSection("targets", " -//test_excluded1:test1\n-//test_excluded1:test2");
-    var rawSection3 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection3 = new ProjectViewRawSection("another_section2", "-bodyelement2");
     var rawSection4 = new ProjectViewRawSection("targets", "\n\t//test_included1:test1\n\n\n");
 
     var rawSections =
@@ -194,8 +194,8 @@ public class ProjectViewTargetsSectionParserTest {
   @Test
   public void shouldReturnDefaultForNoTargetsSectionInList() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "-bodyelement1");
-    var rawSection2 = new ProjectViewRawSection("anotersection2", "-bodyelement2");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "-bodyelement1");
+    var rawSection2 = new ProjectViewRawSection("another_section2", "-bodyelement2");
 
     var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2));
 

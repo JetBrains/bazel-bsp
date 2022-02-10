@@ -125,11 +125,11 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
   @Test
   public void shouldReturnLastSectionWithoutExplicitDefault() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
     var rawSection2 = new ProjectViewRawSection(sectionName, "  value2\n");
-    var rawSection3 = new ProjectViewRawSection("anotersection2", "\tvalue3\n");
+    var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
     var rawSection4 = new ProjectViewRawSection(sectionName, "    value4\n  ");
-    var rawSection5 = new ProjectViewRawSection("anotersection3", "\tvalue5\n");
+    var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
 
     var rawSections =
         new ProjectViewRawSections(
@@ -146,9 +146,9 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
   @Test
   public void shouldReturnEmptyIfSectionDoesntExist() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
-    var rawSection2 = new ProjectViewRawSection("anotersection2", "  value2");
-    var rawSection3 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
+    var rawSection2 = new ProjectViewRawSection("another_section2", "  value2");
+    var rawSection3 = new ProjectViewRawSection("another_section3", "\tvalue3\n");
 
     var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
@@ -164,11 +164,11 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
   @Test
   public void shouldReturnLastSection() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
     var rawSection2 = new ProjectViewRawSection(sectionName, "  value2\n");
-    var rawSection3 = new ProjectViewRawSection("anotersection2", "\tvalue3\n");
+    var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
     var rawSection4 = new ProjectViewRawSection(sectionName, "    value4\n  \t");
-    var rawSection5 = new ProjectViewRawSection("anotersection3", "\tvalue5\n");
+    var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
 
     var rawSections =
         new ProjectViewRawSections(
@@ -187,9 +187,9 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
   @Test
   public void shouldReturnDefaultValueIfSectionDoesntExist() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
-    var rawSection2 = new ProjectViewRawSection("anotersection2", "  value2");
-    var rawSection3 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
+    var rawSection2 = new ProjectViewRawSection("another_section2", "  value2");
+    var rawSection3 = new ProjectViewRawSection("another_section3", "\tvalue3\n");
 
     var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
@@ -206,9 +206,9 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
   @Test
   public void shouldReturnEmptyDefaultValueIfSectionDoesntExist() {
     // given
-    var rawSection1 = new ProjectViewRawSection("anotersection1", "value1");
-    var rawSection2 = new ProjectViewRawSection("anotersection2", "  value2");
-    var rawSection3 = new ProjectViewRawSection("anotersection3", "\tvalue3\n");
+    var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
+    var rawSection2 = new ProjectViewRawSection("another_section2", "  value2");
+    var rawSection3 = new ProjectViewRawSection("another_section3", "\tvalue3\n");
 
     var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
