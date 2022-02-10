@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class ProjectViewRawSections {
@@ -20,7 +21,7 @@ public class ProjectViewRawSections {
 
   public List<ProjectViewRawSection> getAllWithName(String sectionName) {
     return sections.stream()
-        .filter(section -> section.compareByName(sectionName))
+        .filter(section -> section.hasName(sectionName))
         .collect(Collectors.toList());
   }
 

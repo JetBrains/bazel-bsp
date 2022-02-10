@@ -47,7 +47,7 @@ public class ProjectViewRawSectionTest {
   @Test
   public void shouldCompareByName() {
     // when
-    var result = section.compareByName(nameToCompare);
+    var result = section.hasName(nameToCompare);
 
     // then
     assertEquals(expectedComparisonResult, result);

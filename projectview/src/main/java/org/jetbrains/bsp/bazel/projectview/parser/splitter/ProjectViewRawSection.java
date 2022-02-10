@@ -12,8 +12,8 @@ public class ProjectViewRawSection {
     this.sectionBody = sectionBody;
   }
 
-  public boolean compareByName(String thatSectionName) {
-    return sectionName.equals(thatSectionName);
+  public boolean hasName(String thatName) {
+    return sectionName.equals(thatName);
   }
 
   public String getSectionName() {

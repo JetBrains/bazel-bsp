@@ -21,7 +21,7 @@ abstract class ProjectViewSectionParser<T> {
   }
 
   private Try<String> getSectionBodyOrFailureIfNameIsWrong(ProjectViewRawSection rawSection) {
-    if (!rawSection.compareByName(sectionName)) {
+    if (!rawSection.hasName(sectionName)) {
       var exceptionMessage =
           "Project view parsing failed! Expected '"
               + sectionName
