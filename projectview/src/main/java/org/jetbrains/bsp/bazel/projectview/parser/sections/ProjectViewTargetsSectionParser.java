@@ -11,7 +11,7 @@ public class ProjectViewTargetsSectionParser
   }
 
   @Override
-  protected ProjectViewTargetsSection instanceOf(
+  protected ProjectViewTargetsSection getInstance(
       List<String> includedValues, List<String> excludedValues) {
     return new ProjectViewTargetsSection(includedValues, excludedValues);
   }

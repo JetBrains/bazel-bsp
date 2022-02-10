@@ -10,7 +10,7 @@ public class ProjectViewBazelPathSectionParser
   }
 
   @Override
-  protected ProjectViewBazelPathSection instanceOf(String value) {
+  protected ProjectViewBazelPathSection getInstance(String value) {
     return new ProjectViewBazelPathSection(value);
   }
 }

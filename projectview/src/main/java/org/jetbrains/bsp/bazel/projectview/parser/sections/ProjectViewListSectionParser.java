@@ -30,7 +30,7 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
 
   @Override
   public T parse(ProjectViewRawSections rawSections) {
-    return parseAllSectionsAndMerge(rawSections).orElse(instanceOf(List.of(), List.of()));
+    return parseAllSectionsAndMerge(rawSections).orElse(getInstance(List.of(), List.of()));
   }
 
   @Override
@@ -51,7 +51,7 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     var excludedItems =
         ListUtils.concat(section1.getExcludedValues(), section2.getExcludedValues());
 
-    return instanceOf(includedItems, excludedItems);
+    return getInstance(includedItems, excludedItems);
   }
 
   @Override
@@ -60,7 +60,7 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     var includedEntries = filterIncludedEntries(allEntries);
     var excludedEntries = filterExcludedEntries(allEntries);
 
-    return instanceOf(includedEntries, excludedEntries);
+    return getInstance(includedEntries, excludedEntries);
   }
 
   private List<String> splitSectionEntries(String sectionBody) {
@@ -86,5 +86,5 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     return entry.startsWith(EXCLUDED_ENTRY_PREFIX);
   }
 
-  protected abstract T instanceOf(List<String> includedValues, List<String> excludedValues);
+  protected abstract T getInstance(List<String> includedValues, List<String> excludedValues);
 }

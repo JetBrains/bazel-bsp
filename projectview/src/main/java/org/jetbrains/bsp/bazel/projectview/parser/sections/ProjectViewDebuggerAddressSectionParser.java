@@ -10,7 +10,7 @@ public class ProjectViewDebuggerAddressSectionParser
   }
 
   @Override
-  protected ProjectViewDebuggerAddressSection instanceOf(String value) {
+  protected ProjectViewDebuggerAddressSection getInstance(String value) {
     return new ProjectViewDebuggerAddressSection(value);
   }
 }

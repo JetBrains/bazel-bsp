@@ -31,8 +31,8 @@ abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonS
 
   @Override
   protected Optional<T> parse(String sectionBody) {
-    return Optional.of(sectionBody.strip()).filter(body -> !body.isEmpty()).map(this::instanceOf);
+    return Optional.of(sectionBody.strip()).filter(body -> !body.isEmpty()).map(this::getInstance);
   }
 
-  protected abstract T instanceOf(String value);
+  protected abstract T getInstance(String value);
 }
