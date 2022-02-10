@@ -15,18 +15,22 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 /**
- * Representation of the project view file
+ * Representation of the project view file.
  *
  * @link https://ij.bazel.build/docs/project-views.html
  */
 public class ProjectView {
 
+  /** targets included and excluded from the project */
   private final ProjectViewTargetsSection targets;
 
+  /** bazel path used to invoke bazel from the code */
   private final Optional<ProjectViewBazelPathSection> bazelPath;
 
+  /** debugger address which can be added to the server run command (as a flag to java) */
   private final Optional<ProjectViewDebuggerAddressSection> debuggerAddress;
 
+  /** path to java to run a server */
   private final Optional<ProjectViewJavaPathSection> javaPath;
 
   private ProjectView(

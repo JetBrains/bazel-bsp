@@ -5,6 +5,13 @@ import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
+/**
+ * Implementation of single value section parser.
+ *
+ * <p>It takes a raw section and trims the content.
+ *
+ * @param <T> type of parsed single value section
+ */
 abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonSection>
     extends ProjectViewSectionParser<Optional<T>> {
 

@@ -13,22 +13,8 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
 
-// TODO
-
 /**
- * Our default implementation of ProjectViewParser
- *
- * <p>Logic schema:
- *
- * <p>1. extracting blocks: <section header>: <included section value 1> <included section value 2>
- * -<excluded section value 1> -<excluded section value 2>
- *
- * <p>or: <section header>: <section value> `
- *
- * <p>2. looping through extracted and checking which block could be parsed by the given section
- * parser
- *
- * <p>3. applying section specific parser to the chosen section
+ * Default implementation of ProjectViewParser.
  *
  * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
  * @see org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter

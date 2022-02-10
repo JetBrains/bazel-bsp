@@ -10,6 +10,14 @@ import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
+/**
+ * Implementation of list section parser.
+ *
+ * <p>It takes a raw section and search for entries - they are split by whitespaces, if entry starts
+ * with '-' -- this entry is excluded, otherwise included.
+ *
+ * @param <T> type of parsed list section
+ */
 abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     extends ProjectViewSectionParser<T> {
 
