@@ -75,7 +75,7 @@ public class Install {
         addJavaClasspath(argv);
         addDebuggerConnection(cmd, argv, projectView);
         argv.add(SERVER_CLASS_NAME);
-        addBazelBinary(cmd, argv);
+        addBazelBinary(cmd, argv, projectView);
         addBazelTargets(cmd, argv);
 
         BspConnectionDetails details = createBspConnectionDetails(argv);
@@ -114,9 +114,11 @@ public class Install {
         Constants.SUPPORTED_LANGUAGES);
   }
 
-  private static void addBazelBinary(CommandLine cmd, List<String> argv) {
+  private static void addBazelBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(BAZEL_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(BAZEL_SHORT_OPT));
+    } else if (projectView.getBazelPath().isPresent()) {
+      argv.add(projectView.getBazelPath().get().getValue());
     } else {
       argv.add(findOnPath("bazel"));
     }
