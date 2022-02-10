@@ -51,13 +51,13 @@ public class ProjectViewListSectionTest<T extends ProjectViewListSection> {
   public void shouldReturnFalseForTheSameSectionsWithDifferentIncludedValues() {
     // given & when
     var section1 =
-            sectionConstructor.apply(
-                    List.of("included_value1", "included_value3"),
-                    List.of("excluded_value1", "excluded_value3", "excluded_value2"));
+        sectionConstructor.apply(
+            List.of("included_value1", "included_value3"),
+            List.of("excluded_value1", "excluded_value3", "excluded_value2"));
     var section2 =
-            sectionConstructor.apply(
-                    List.of("included_value2", "included_value1"),
-                    List.of("excluded_value3", "excluded_value2", "excluded_value1"));
+        sectionConstructor.apply(
+            List.of("included_value2", "included_value1"),
+            List.of("excluded_value3", "excluded_value2", "excluded_value1"));
 
     // then
     assertNotEquals(section1, section2);
@@ -67,13 +67,13 @@ public class ProjectViewListSectionTest<T extends ProjectViewListSection> {
   public void shouldReturnFalseForTheSameSectionsWithDifferentExcludedValues() {
     // given & when
     var section1 =
-            sectionConstructor.apply(
-                    List.of("included_value1", "included_value2"),
-                    List.of("excluded_value1", "excluded_value3", "excluded_value2"));
+        sectionConstructor.apply(
+            List.of("included_value1", "included_value2"),
+            List.of("excluded_value1", "excluded_value3", "excluded_value2"));
     var section2 =
-            sectionConstructor.apply(
-                    List.of("included_value2", "included_value1"),
-                    List.of("excluded_value3", "excluded_value5", "excluded_value1"));
+        sectionConstructor.apply(
+            List.of("included_value2", "included_value1"),
+            List.of("excluded_value3", "excluded_value5", "excluded_value1"));
 
     // then
     assertNotEquals(section1, section2);
