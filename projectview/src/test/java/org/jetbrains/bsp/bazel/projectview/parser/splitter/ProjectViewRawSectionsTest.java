@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 
 public class ProjectViewRawSectionsTest {
@@ -84,7 +86,8 @@ public class ProjectViewRawSectionsTest {
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
-    var sectionsWithName = projectViewRawSections.getAllWithName("doesntexist");
+    var sectionsWithName =
+        projectViewRawSections.getAllWithName("doesntexist").collect(Collectors.toList());
 
     // then
     assertTrue(sectionsWithName.isEmpty());
@@ -101,7 +104,8 @@ public class ProjectViewRawSectionsTest {
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
-    var sectionsWithName = projectViewRawSections.getAllWithName("doesntexist");
+    var sectionsWithName =
+        projectViewRawSections.getAllWithName("doesntexist").collect(Collectors.toList());
 
     // then
     assertTrue(sectionsWithName.isEmpty());
@@ -120,14 +124,15 @@ public class ProjectViewRawSectionsTest {
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
-    var sectionsWithName = projectViewRawSections.getAllWithName("name1");
+    var sectionsWithName =
+        projectViewRawSections.getAllWithName("name1").collect(Collectors.toList());
 
     // then
     var expectedSections =
         List.of(
             new ProjectViewRawSection("name1", "body1.1"),
-            new ProjectViewRawSection("name1", "body1.2"),
-            new ProjectViewRawSection("name1", "body1.3"));
-    assertEquals(expectedSections, sectionsWithName);
+            new ProjectViewRawSection("name1", "body1.3"),
+            new ProjectViewRawSection("name1", "body1.2"));
+    assertTrue(CollectionUtils.isEqualCollection(expectedSections, sectionsWithName));
   }
 }

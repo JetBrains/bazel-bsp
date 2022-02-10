@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -16,13 +15,11 @@ public class ProjectViewRawSections {
   }
 
   public Optional<ProjectViewRawSection> getLastSectionWithName(String sectionName) {
-    return getAllWithName(sectionName).stream().reduce((first, second) -> second);
+    return getAllWithName(sectionName).reduce((first, second) -> second);
   }
 
-  public List<ProjectViewRawSection> getAllWithName(String sectionName) {
-    return sections.stream()
-        .filter(section -> section.hasName(sectionName))
-        .collect(Collectors.toList());
+  public Stream<ProjectViewRawSection> getAllWithName(String sectionName) {
+    return sections.stream().filter(section -> section.hasName(sectionName));
   }
 
   @Override

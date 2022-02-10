@@ -45,7 +45,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
   private Try<ProjectView> parseWithDefault(
       String projectViewFileContent, ProjectView defaultProjectView) {
-    ProjectViewRawSections rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
+    ProjectViewRawSections rawSections =
+        ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
 
     return ProjectView.builder()
         .imports(findImportedProjectViews(rawSections))
@@ -60,7 +61,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
   @Override
   public Try<ProjectView> parse(String projectViewFileContent) {
-    ProjectViewRawSections rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
+    ProjectViewRawSections rawSections =
+        ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
 
     return ProjectView.builder()
         .imports(findImportedProjectViews(rawSections))
@@ -72,7 +74,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
   }
 
   private List<Try<ProjectView>> findImportedProjectViews(ProjectViewRawSections rawSections) {
-    return rawSections.getAllWithName(IMPORT_STATEMENT).stream()
+    return rawSections
+        .getAllWithName(IMPORT_STATEMENT)
         .map(ProjectViewRawSection::getSectionBody)
         .map(String::trim)
         .map(Paths::get)

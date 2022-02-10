@@ -9,6 +9,7 @@ java_test(
     ],
     deps = [
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
+        "@maven//:org_apache_commons_commons_collections4",
     ],
 )
 

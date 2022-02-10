@@ -39,7 +39,8 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
   }
 
   private Optional<T> parseAllSectionsAndMerge(ProjectViewRawSections rawSections) {
-    return rawSections.getAllWithName(sectionName).stream()
+    return rawSections
+        .getAllWithName(sectionName)
         .map(this::parse)
         .map(Try::get)
         .reduce(this::concatSectionsItems);
