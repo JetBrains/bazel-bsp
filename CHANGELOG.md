@@ -3,7 +3,7 @@
 
 ## [Unreleased]
 ### Features 🎉
-- New, better project view! Now you can configure installer as well! | https://github.com/JetBrains/bazel-bsp/pull/143
+- New, better project view! Now you can configure installer as well! | [#143](https://github.com/JetBrains/bazel-bsp/pull/143)
 
 ### Changes 🔄
 - Improved heuristics for guessing source roots. It looks directory structures such as `src/java` or `main/java`. | [#126](https://github.com/JetBrains/bazel-bsp/pull/126)
