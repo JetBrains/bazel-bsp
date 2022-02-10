@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
-public abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonSection>
+abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonSection>
     extends ProjectViewSectionParser<Optional<T>> {
 
   protected ProjectViewSingletonSectionParser(String sectionName) {

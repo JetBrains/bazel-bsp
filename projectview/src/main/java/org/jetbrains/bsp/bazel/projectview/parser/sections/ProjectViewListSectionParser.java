@@ -10,7 +10,7 @@ import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
-public abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
+abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     extends ProjectViewSectionParser<T> {
 
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
