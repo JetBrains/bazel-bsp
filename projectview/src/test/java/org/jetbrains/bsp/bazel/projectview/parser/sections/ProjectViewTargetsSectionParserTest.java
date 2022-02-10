@@ -23,7 +23,7 @@ public class ProjectViewTargetsSectionParserTest {
   // ProjectViewTargetsSection parse(rawSection)
 
   @Test
-  public void shouldThrowIllegalArgumentExceptionForWrongSectionName() {
+  public void shouldReturnFailureForWrongSectionName() {
     // given
     var rawSection = new ProjectViewRawSection("wrongsection", "-bodyelement");
 

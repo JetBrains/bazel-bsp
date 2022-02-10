@@ -43,7 +43,7 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
-  public void shouldThrowExceptionForFileWithoutTargetsSection() {
+  public void shouldReturnEmptyTargetsSectionForFileWithoutTargetsSection() {
     // given
     var projectViewFilePath = Paths.get("/projectview/without/targets.bazelproject");
 
@@ -51,10 +51,11 @@ public class ProjectViewParserImplTest {
     var projectViewTry = parser.parse(projectViewFilePath);
 
     // then
-    assertTrue(projectViewTry.isFailure());
-    assertEquals(
-        "targets section cannot have an empty included list!",
-        projectViewTry.getCause().getMessage());
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedTargetsSection = new ProjectViewTargetsSection();
+    assertEquals(expectedTargetsSection, projectView.getTargets());
   }
 
   @Test
@@ -88,7 +89,7 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
-  public void shouldReturnEmptyDebuggerAddressForFileWithoutJavaPathSection() {
+  public void shouldReturnEmptyJavaPathSectionForFileWithoutJavaPathSection() {
     // given
     var projectViewFilePath = Paths.get("/projectview/without/javapath.bazelproject");
 
@@ -100,6 +101,29 @@ public class ProjectViewParserImplTest {
     var projectView = projectViewTry.get();
 
     assertTrue(projectView.getJavaPath().isEmpty());
+  }
+
+  @Test
+  public void shouldParseEmptyFile() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedProjectView =
+        ProjectView.builder()
+            .targets(new ProjectViewTargetsSection())
+            .bazelPath(Optional.empty())
+            .debuggerAddress(Optional.empty())
+            .javaPath(Optional.empty())
+            .build()
+            .get();
+    assertEquals(expectedProjectView, projectView);
   }
 
   @Test
@@ -183,6 +207,32 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
+  public void shouldParseFileWithEmptyImportedFile() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/file8ImportsEmpty.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedProjectView =
+        ProjectView.builder()
+            .targets(
+                new ProjectViewTargetsSection(
+                    List.of("//included_target8.1"),
+                    List.of("//excluded_target8.1", "//excluded_target8.2")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path8/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.8:8000")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection("path8/to/java")))
+            .build()
+            .get();
+    assertEquals(expectedProjectView, projectView);
+  }
+
+  @Test
   public void shouldParseFileWithThreeImportedFiles() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file5ImportsFile1File2File3.bazelproject");
@@ -251,7 +301,7 @@ public class ProjectViewParserImplTest {
     assertEquals(expectedProjectView, projectView);
   }
 
-  // ProjectView parse(projectViewFileContent, defaultProjectViewFileContent)
+  // ProjectView parse(projectViewFilePath, defaultProjectViewFilePath)
 
   @Test
   public void shouldReturnFailureForNotExistingDefaultFile() {
@@ -286,7 +336,7 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
-  public void shouldReturnFailureForEmptyDefaultFile() {
+  public void shouldReturnFile1ForEmptyDefaultFile() {
     // given
     var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
     var defaultProjectViewFilePath = Paths.get("/projectview/empty.bazelproject");
@@ -295,26 +345,38 @@ public class ProjectViewParserImplTest {
     var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
-    assertTrue(projectViewTry.isFailure());
-    assertEquals(
-        "targets section cannot have an empty included list!",
-        projectViewTry.getCause().getMessage());
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedProjectView =
+        ProjectView.builder()
+            .targets(
+                new ProjectViewTargetsSection(
+                    List.of("//included_target1.1", "//included_target1.2"),
+                    List.of("//excluded_target1.1")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
+            .build()
+            .get();
+    assertEquals(expectedProjectView, projectView);
   }
 
   @Test
-  public void shouldReturnFailureForDefaultFileWithoutTargetsSection() {
+  public void shouldReturnEmptyTargetsForDefaultFileWithoutTargetsSection() {
     // given
-    var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
+    var projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
     var defaultProjectViewFilePath = Paths.get("/projectview/without/targets.bazelproject");
 
     // when
     var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
 
     // then
-    assertTrue(projectViewTry.isFailure());
-    assertEquals(
-        "targets section cannot have an empty included list!",
-        projectViewTry.getCause().getMessage());
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedTargetsSection = new ProjectViewTargetsSection();
+    assertEquals(expectedTargetsSection, projectView.getTargets());
   }
 
   @Test

@@ -76,7 +76,7 @@ public class ProjectViewTest {
   // targets specific tests
 
   @Test
-  public void shouldReturnFailureForBuilderWithoutTargets() {
+  public void shouldReturnEmptyTargetsSectionForBuilderWithoutTargets() {
     // given & when
     var projectViewTry =
         ProjectView.builder()
@@ -86,28 +86,11 @@ public class ProjectViewTest {
             .build();
 
     // then
-    assertTrue(projectViewTry.isFailure());
-    assertEquals(
-        "targets section cannot have an empty included list!",
-        projectViewTry.getCause().getMessage());
-  }
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
 
-  @Test
-  public void shouldReturnFailureForBuilderWithoutIncludedTargets() {
-    // given & when
-    var projectViewTry =
-        ProjectView.builder()
-            .targets(new ProjectViewTargetsSection(List.of(), List.of("//excluded_target")))
-            .bazelPath(dummyBazelPathSection)
-            .debuggerAddress(dummyDebuggerAddress)
-            .javaPath(dummyJavaPath)
-            .build();
-
-    // then
-    assertTrue(projectViewTry.isFailure());
-    assertEquals(
-        "targets section cannot have an empty included list!",
-        projectViewTry.getCause().getMessage());
+    var expectedTargetsSection = new ProjectViewTargetsSection(List.of(), List.of());
+    assertEquals(expectedTargetsSection, projectView.getTargets());
   }
 
   // singleton values specific tests
@@ -249,6 +232,44 @@ public class ProjectViewTest {
         new ProjectViewTargetsSection(
             List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
             List.of("//excluded_target1.1", "//excluded_target1.2"));
+    assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
+
+    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
+    assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
+
+    var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("0.0.0.1:8000");
+    assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
+
+    var expectedJavaPathSection = new ProjectViewJavaPathSection("path/to/java");
+    assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+  }
+
+  @Test
+  public void shouldReturnSingletonValuesAndListValuesForEmptyImport() {
+    // given
+    var importedProjectViewTry =
+        ProjectView.builder()
+            .targets(new ProjectViewTargetsSection())
+            .bazelPath(Optional.empty())
+            .debuggerAddress(Optional.empty())
+            .javaPath(Optional.empty())
+            .build();
+
+    // when
+    var projectViewTry =
+        ProjectView.builder()
+            .imports(List.of())
+            .targets(new ProjectViewTargetsSection(List.of(), List.of()))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
+            .build();
+
+    // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedProjectViewTargetsSection = new ProjectViewTargetsSection(List.of(), List.of());
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
     var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");

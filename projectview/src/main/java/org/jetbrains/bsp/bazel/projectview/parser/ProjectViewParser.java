@@ -23,7 +23,8 @@ public interface ProjectViewParser {
    *     <p><code>Try.success</code> with <code>ProjectView</code> if parsing has finished with
    *     success, it means:
    *     <p>1) files under <code>projectViewFilePath</code> and <code>defaultProjectViewFilePath
-   *     </code> together provide all values (some might be <code>Optional.empty</code>). <br>
+   *     </code> were successfully parsed (not all values have to be provided -- some fields in
+   *     <code>ProjectView</code> might be <code>Optional.empty</code>). <br>
    *     File under <code>projectViewFilePath</code> can contain all values, then <code>
    *     defaultProjectViewFilePath</code> won't be used, or file under <code>projectViewFilePath
    *     </code> can be empty, then all values from file under <code>defaultProjectViewFilePath
@@ -33,9 +34,7 @@ public interface ProjectViewParser {
    *     <br>
    *     <p><code>Try.failure</code> with if:
    *     <p>1) file under <code>defaultProjectViewFilePath</code> doesn't exist
-   *     <p>2) file under <code>defaultProjectViewFilePath</code> doesn't provide all required
-   *     fields
-   *     <p>3) any other fail happen
+   *     <p>2) any other fail happen
    */
   default Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
     return BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
@@ -63,15 +62,15 @@ public interface ProjectViewParser {
    *     <p><code>Try.success</code> with <code>ProjectView</code> if parsing has finished with
    *     success, it means:
    *     <p>1) <code>projectViewFileContent</code> and <code>defaultProjectViewFileContent
-   *     </code> together provide all values (some might be <code>Optional.empty</code>). <br>
+   *     </code> were successfully parsed (not all values have to be provided -- some fields in
+   *     <code>ProjectView</code> might be <code>Optional.empty</code>). <br>
    *     <code>projectViewFileContent</code> can contain all values, then <code>
    *     defaultProjectViewFileContent</code> won't be used, <code>projectViewFileContent
    *     </code> can be empty, then all values from <code>defaultProjectViewFileContent</code> will
    *     be used, any other configuration is possible as well.<br>
    *     <br>
    *     <p><code>Try.failure</code> with if:
-   *     <p>1) <code>defaultProjectViewFilePath</code> doesn't provide all required fields
-   *     <p>2) any other fail happen
+   *     <p>1) any fail happen
    */
   Try<ProjectView> parse(String projectViewFileContent, String defaultProjectViewFileContent);
 
@@ -82,12 +81,11 @@ public interface ProjectViewParser {
    * @return
    *     <p><code>Try.success</code> with <code>ProjectView</code> if parsing has finished with
    *     success, it means:
-   *     <p>1) file under <code>projectViewFilePath</code> provide all values (some might be <code>
-   *     Optional.empty</code>).<br>
-   *     <br>
+   *     <p>1) file under <code>projectViewFilePath</code> was successfully parsed (not all values
+   *     have to be provided -- some fields in <code>ProjectView</code> might be <code>
+   *     Optional.empty</code>). <br>
    *     <p><code>Try.failure</code> with if:
    *     <p>1) file under <code>projectViewFilePath</code> doesn't exist
-   *     <p>1) file under <code>projectViewFilePath</code> doesn't provide all required fields
    *     <p>2) any other fail happen
    */
   default Try<ProjectView> parse(Path projectViewFilePath) {
@@ -101,12 +99,11 @@ public interface ProjectViewParser {
    * @return
    *     <p><code>Try.success</code> with <code>ProjectView</code> if parsing has finished with
    *     success, it means:
-   *     <p>1) <code>projectViewFileContent</code> provide all values (some might be <code>
-   *     Optional.empty</code>).<br>
-   *     <br>
+   *     <p>1) <code>projectViewFileContent</code> was successfully parsed (not all values have to
+   *     be provided -- some fields in <code>ProjectView</code> might be <code>Optional.empty
+   *     </code>). <br>
    *     <p><code>Try.failure</code> with if:
-   *     <p>1) <code>projectViewFileContent</code> doesn't provide all required fields
-   *     <p>2) any other fail happen
+   *     <p>1) any fail happen
    */
   Try<ProjectView> parse(String projectViewFileContent);
 }

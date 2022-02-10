@@ -134,18 +134,11 @@ public class ProjectView {
     }
 
     public Try<ProjectView> build() {
-      return Try.sequence(importedProjectViews)
-          .map(Seq::toJavaList)
-          .flatMap(this::buildWithImports);
+      return Try.sequence(importedProjectViews).map(Seq::toJavaList).map(this::buildWithImports);
     }
 
-    private Try<ProjectView> buildWithImports(List<ProjectView> importedProjectViews) {
-      return combineTargetsSection(importedProjectViews)
-          .map(targets -> buildWithImportsAndRequiredFields(importedProjectViews, targets));
-    }
-
-    private ProjectView buildWithImportsAndRequiredFields(
-        List<ProjectView> importedProjectViews, ProjectViewTargetsSection targets) {
+    private ProjectView buildWithImports(List<ProjectView> importedProjectViews) {
+      var targets = combineTargetsSection(importedProjectViews);
       var bazelPath = combineBazelPathSection(importedProjectViews);
       var debuggerAddress = combineDebuggerAddressSection(importedProjectViews);
       var javaPath = combineJavaPathSection(importedProjectViews);
@@ -153,7 +146,7 @@ public class ProjectView {
       return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
     }
 
-    private Try<ProjectViewTargetsSection> combineTargetsSection(
+    private ProjectViewTargetsSection combineTargetsSection(
         List<ProjectView> importedProjectViews) {
       var includedTargets =
           combineListValuesWithImported(
@@ -167,9 +160,8 @@ public class ProjectView {
               targets,
               ProjectView::getTargets,
               ProjectViewListSection::getExcludedValues);
-      var rawSection = new ProjectViewTargetsSection(includedTargets, excludedTargets);
 
-      return getListSectionOrFailureIfIsEmpty(rawSection);
+      return new ProjectViewTargetsSection(includedTargets, excludedTargets);
     }
 
     private <T extends ProjectViewListSection> List<String> combineListValuesWithImported(
@@ -214,19 +206,6 @@ public class ProjectView {
           .filter(Optional::isPresent)
           .map(Optional::get)
           .reduce((first, second) -> second);
-    }
-
-    private <T extends ProjectViewListSection> Try<T> getListSectionOrFailureIfIsEmpty(T section) {
-      if (isListSectionIsEmpty(section)) {
-        return Try.failure(
-            new IllegalStateException(
-                section.getSectionName() + " section cannot have an empty included list!"));
-      }
-      return Try.success(section);
-    }
-
-    private boolean isListSectionIsEmpty(ProjectViewListSection section) {
-      return section.getIncludedValues().isEmpty();
     }
   }
 }

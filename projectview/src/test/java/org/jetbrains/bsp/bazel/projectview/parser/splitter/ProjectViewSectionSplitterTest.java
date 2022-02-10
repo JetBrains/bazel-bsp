@@ -32,6 +32,12 @@ public class ProjectViewSectionSplitterTest {
             new ProjectViewRawSections(List.of())
           },
           {
+            // given - empty section
+            "section:   ",
+            // then
+            new ProjectViewRawSections(List.of(new ProjectViewRawSection("section", "   ")))
+          },
+          {
             // given - no colon
             "import path/to/file.bazelproject\n",
             // then
