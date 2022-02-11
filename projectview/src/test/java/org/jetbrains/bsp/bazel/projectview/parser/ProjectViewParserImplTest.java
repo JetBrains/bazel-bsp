@@ -36,9 +36,24 @@ public class ProjectViewParserImplTest {
 
     // then
     assertTrue(projectViewTry.isFailure());
-
     assertEquals(
         "/does/not/exist.bazelproject file does not exist!",
+        projectViewTry.getCause().getMessage());
+  }
+
+  @Test
+  public void shouldReturnFailureForNotExistingImportedFile() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/file9ImportsNotExisting.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath);
+
+    System.out.println(projectViewTry);
+    // then
+    assertTrue(projectViewTry.isFailure());
+    assertEquals(
+        "/projectview/does/not/exist.bazelproject file does not exist!",
         projectViewTry.getCause().getMessage());
   }
 
@@ -503,6 +518,33 @@ public class ProjectViewParserImplTest {
             .bazelPath(Optional.of(new ProjectViewBazelPathSection("path1/to/bazel")))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path1/to/java")))
+            .build()
+            .get();
+    assertEquals(expectedProjectView, projectView);
+  }
+
+  @Test
+  public void shouldParseFileAndUseDefaultsWithEmptyImportedFile() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
+    var defaultProjectViewFilePath = Paths.get("/projectview/file8ImportsEmpty.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    var expectedProjectView =
+        ProjectView.builder()
+            .targets(
+                new ProjectViewTargetsSection(
+                    List.of("//included_target8.1"),
+                    List.of("//excluded_target8.1", "//excluded_target8.2")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path8/to/bazel")))
+            .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.8:8000")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection("path8/to/java")))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);

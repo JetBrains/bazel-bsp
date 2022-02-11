@@ -1,4 +1,4 @@
-imports /projectview/empty.bazelproject
+import /projectview/empty.bazelproject
 
 
 targets:
