@@ -1,69 +1,85 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import io.vavr.control.Try;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.DirectoriesSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.DirectoriesSectionParser;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.specific.TargetsSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewJavaPathSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
 
 /**
- * Our default implementation of ProjectViewParser
- *
- * <p>Logic schema:
- *
- * <p>1. extracting blocks: <section header>: <included section value 1> <included section value 2>
- * -<excluded section value 1> -<excluded section value 2>
- *
- * <p>or: <section header>: <section value>
- *
- * <p>2. looping through extracted and checking which block could be parsed by the given section
- * parser
- *
- * <p>3. applying section specific parser to the chosen section
+ * Default implementation of ProjectViewParser.
  *
  * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
  * @see org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
- * @see org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSectionParser
  */
 class ProjectViewParserImpl implements ProjectViewParser {
 
-  private static final ProjectViewRawSectionParser<DirectoriesSection> DIRECTORY_PARSER =
-      ProjectViewRawSectionParser.forParser(new DirectoriesSectionParser());
+  private static final String IMPORT_STATEMENT = "import";
 
-  private static final ProjectViewRawSectionParser<TargetsSection> TARGETS_PARSER =
-      ProjectViewRawSectionParser.forParser(new TargetsSectionParser());
+  private static final ProjectViewTargetsSectionParser targetsParser =
+      new ProjectViewTargetsSectionParser();
 
-  private final ProjectViewImportParser projectViewImportParser;
+  private static final ProjectViewBazelPathSectionParser bazelPathParser =
+      new ProjectViewBazelPathSectionParser();
 
-  public ProjectViewParserImpl() {
-    this.projectViewImportParser = new ProjectViewImportParser(this);
-  }
+  private static final ProjectViewDebuggerAddressSectionParser debuggerAddressParser =
+      new ProjectViewDebuggerAddressSectionParser();
+
+  private static final ProjectViewJavaPathSectionParser javaPathParser =
+      new ProjectViewJavaPathSectionParser();
 
   @Override
-  public ProjectView parse(String projectViewFileContent) {
-    List<ProjectViewRawSection> rawSections =
-        ProjectViewSectionSplitter.split(projectViewFileContent);
-
-    ProjectView projectView = buildFile(rawSections);
-    Optional<ProjectView> importedProjectView =
-        projectViewImportParser.parseRawSections(rawSections);
-
-    return mergeProjectViewIfNeeded(projectView, importedProjectView);
+  public Try<ProjectView> parse(
+      String projectViewFileContent, String defaultProjectViewFileContent) {
+    return parse(defaultProjectViewFileContent)
+        .flatMap(
+            defaultProjectView -> parseWithDefault(projectViewFileContent, defaultProjectView));
   }
 
-  private ProjectView buildFile(List<ProjectViewRawSection> rawSections) {
+  private Try<ProjectView> parseWithDefault(
+      String projectViewFileContent, ProjectView defaultProjectView) {
+    ProjectViewRawSections rawSections =
+        ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
+
     return ProjectView.builder()
-        .directories(DIRECTORY_PARSER.parseRawSections(rawSections))
-        .targets(TARGETS_PARSER.parseRawSections(rawSections))
+        .imports(findImportedProjectViews(rawSections))
+        .targets(targetsParser.parseOrDefault(rawSections, defaultProjectView.getTargets()))
+        .bazelPath(bazelPathParser.parseOrDefault(rawSections, defaultProjectView.getBazelPath()))
+        .debuggerAddress(
+            debuggerAddressParser.parseOrDefault(
+                rawSections, defaultProjectView.getDebuggerAddress()))
+        .javaPath(javaPathParser.parseOrDefault(rawSections, defaultProjectView.getJavaPath()))
         .build();
   }
 
-  private ProjectView mergeProjectViewIfNeeded(
-      ProjectView projectView, Optional<ProjectView> importedProjectView) {
-    return importedProjectView.map(imported -> imported.merge(projectView)).orElse(projectView);
+  @Override
+  public Try<ProjectView> parse(String projectViewFileContent) {
+    ProjectViewRawSections rawSections =
+        ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
+
+    return ProjectView.builder()
+        .imports(findImportedProjectViews(rawSections))
+        .targets(targetsParser.parse(rawSections))
+        .bazelPath(bazelPathParser.parse(rawSections))
+        .debuggerAddress(debuggerAddressParser.parse(rawSections))
+        .javaPath(javaPathParser.parse(rawSections))
+        .build();
+  }
+
+  private List<Try<ProjectView>> findImportedProjectViews(ProjectViewRawSections rawSections) {
+    return rawSections
+        .getAllWithName(IMPORT_STATEMENT)
+        .map(ProjectViewRawSection::getSectionBody)
+        .map(String::trim)
+        .map(Paths::get)
+        .map(this::parse)
+        .collect(Collectors.toList());
   }
 }

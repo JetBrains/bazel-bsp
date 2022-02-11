@@ -68,20 +68,23 @@ public class ServerInitializer {
   }
 
   private static BazelBspServerConfig getBazelBspServerConfig(Path bspProjectRoot, String[] args) {
-    var pathToBazel = args[0];
     var projectView = getProjectView(bspProjectRoot, args);
+    var pathToBazel = projectView.getBazelPath().get().getValue();
     return new BazelBspServerConfig(pathToBazel, projectView);
   }
 
   private static ProjectView getProjectView(Path bspProjectRoot, String[] args) {
     ProjectViewProvider provider = getProjectViewProvider(bspProjectRoot, args);
 
-    return provider.create();
+    return provider.create().get();
   }
 
   private static ProjectViewProvider getProjectViewProvider(Path bspProjectRoot, String[] args) {
+    if (args.length == 1) {
+      return new ServerArgsProjectViewProvider(bspProjectRoot, args[0]);
+    }
     if (args.length == 2) {
-      return new ServerArgsProjectViewProvider(args[1]);
+      return new ServerArgsProjectViewProvider(bspProjectRoot, args[0], args[1]);
     }
 
     return new ProjectViewDefaultParserProvider(bspProjectRoot);

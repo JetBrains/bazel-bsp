@@ -5,7 +5,7 @@ import com.google.common.base.Joiner;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.specific.TargetsSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 public final class TargetsUtils {
 
@@ -25,16 +25,16 @@ public final class TargetsUtils {
   }
 
   public static String getAllProjectTargetsWithExcludedTargets(ProjectView projectView) {
-    TargetsSection targetsSection = projectView.getTargets();
-    String excludedTargets = getExcludedTargets(targetsSection.getExcludedTargets());
-    String includedTargets = Joiner.on(" ").join(targetsSection.getIncludedTargets());
+    ProjectViewTargetsSection targetsSection = projectView.getTargets();
+    String excludedTargets = getExcludedTargets(targetsSection.getExcludedValues());
+    String includedTargets = Joiner.on(" ").join(targetsSection.getIncludedValues());
 
     return String.format("%s %s", includedTargets, excludedTargets);
   }
 
   public static String getTargetWithExcludedTargets(ProjectView projectView, String target) {
-    TargetsSection targetsSection = projectView.getTargets();
-    String excludedTargets = getExcludedTargets(targetsSection.getExcludedTargets());
+    ProjectViewTargetsSection targetsSection = projectView.getTargets();
+    String excludedTargets = getExcludedTargets(targetsSection.getExcludedValues());
 
     return String.format("%s %s", target, excludedTargets);
   }

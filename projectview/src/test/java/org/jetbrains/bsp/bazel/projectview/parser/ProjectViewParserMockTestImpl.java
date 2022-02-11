@@ -2,21 +2,48 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
+import io.vavr.control.Try;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
 
   @Override
-  public ProjectView parse(Path projectViewPath) throws IOException {
-    InputStream inputStream =
-        ProjectViewParserMockTestImpl.class.getResourceAsStream(projectViewPath.toString());
-    // we read file content instead of passing plain file due to bazel resources packaging
-    String fileContent = CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
+  public Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
+    return readFileContent(defaultProjectViewFilePath)
+        .flatMap(
+            defaultProjectViewFileContent ->
+                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent));
+  }
 
-    return parse(fileContent);
+  private Try<ProjectView> parseWithDefault(
+      Path projectViewFilePath, String defaultProjectViewFileContent) {
+    return readFileContent(projectViewFilePath)
+        .flatMap(
+            projectViewFileContent -> parse(projectViewFileContent, defaultProjectViewFileContent))
+        .orElse(parse(defaultProjectViewFileContent));
+  }
+
+  @Override
+  public Try<ProjectView> parse(Path projectViewFilePath) {
+    return readFileContent(projectViewFilePath).flatMap(this::parse);
+  }
+
+  private Try<String> readFileContent(Path filePath) {
+    // we read file content instead of passing plain file due to bazel resources packaging
+    var inputStream = ProjectViewParserMockTestImpl.class.getResourceAsStream(filePath.toString());
+
+    return Optional.ofNullable(inputStream)
+        .map(this::readInputStream)
+        .orElse(Try.failure(new IOException(filePath + " file does not exist!")));
+  }
+
+  private Try<String> readInputStream(InputStream inputStream) {
+    return Try.success(new InputStreamReader(inputStream, Charsets.UTF_8))
+        .mapTry(CharStreams::toString);
   }
 }

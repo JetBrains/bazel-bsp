@@ -1,0 +1,3 @@
+import /projectview/file2.bazelproject
+import /projectview/file3.bazelproject
+import /projectview/file4ImportsFile1.bazelproject

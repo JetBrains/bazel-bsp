@@ -36,11 +36,16 @@ fi
 bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
 echo "Building done."
 
-echo "Installing BSP..."
+echo "Cleaning project directory..."
 if [ "$#" -eq 2 ]; then
   cd "$TEST_PROJECT_PATH" || exit
 fi
-$bsp_path
+rm -r .bsp/ > /dev/null 2>&1
+rm -r .bazelbsp/ > /dev/null 2>&1
+echo "Cleaning project directory done!"
+
+echo "Installing BSP..."
+$bsp_path || exit
 echo "Installing done."
 echo "Environment has been prepared!"
 echo -e "-----------------------------------\n"

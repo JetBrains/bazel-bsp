@@ -1,0 +1,6 @@
+import /projectview/file1.bazelproject
+
+targets:
+    //included_target4.1
+    -//excluded_target4.1
+    -//excluded_target4.2
