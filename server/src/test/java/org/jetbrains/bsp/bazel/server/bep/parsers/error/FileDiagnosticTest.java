@@ -189,7 +189,7 @@ public class FileDiagnosticTest {
   @Test
   public void shouldReturnDiagnosticForBUILDFileAndSources() {
     // when
-    var diagnostics = FileDiagnostic.fromError2(error).collect(Collectors.toList());
+    var diagnostics = FileDiagnostic.fromError(error).collect(Collectors.toList());
 
     // then
     assertEquals(expectedDiagnostics, diagnostics);

@@ -314,7 +314,7 @@ public class StderrDiagnosticsParserTest {
   @Test
   public void shouldParseEntireEventStderr() {
     // when
-    var diagnostics = StderrDiagnosticsParser.parse2(error);
+    var diagnostics = StderrDiagnosticsParser.parse(error);
 
     // then
     assertEquals(expectedDiagnostics, diagnostics);

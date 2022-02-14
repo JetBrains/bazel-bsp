@@ -26,17 +26,7 @@ public class FileDiagnostic {
     this.target = target;
   }
 
-  public static FileDiagnostic fromError(String error) {
-    LOGGER.info("Error: {}", error);
-
-    String erroredFile = ErrorFileParser.getFileWithError(error);
-    String fileInfo = ErrorFileParser.extractFileInfo(error);
-    String fileLocation = getFileLocation(erroredFile, fileInfo);
-
-    return createFileDiagnostic(error, fileLocation, new BuildTargetIdentifier(""));
-  }
-
-  public static Stream<FileDiagnostic> fromError2(String error) {
+  public static Stream<FileDiagnostic> fromError(String error) {
     LOGGER.info("Error: {}", error);
 
     var targetId = findTargetId(error);
