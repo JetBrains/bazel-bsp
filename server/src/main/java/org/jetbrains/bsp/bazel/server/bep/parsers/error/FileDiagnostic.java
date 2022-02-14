@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class FileDiagnostic {
+public class FileDiagnostic {
 
   private static final Logger LOGGER = LogManager.getLogger(FileDiagnostic.class);
 
