@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+...
+
+## [1.1.1] - 15.02.2022
+
 ### Features 🎉
 
 - New, better project view! Now you can configure installer as well!
@@ -80,7 +84,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/1.1.1...HEAD
+
+[1.1.1]: https://github.com/JetBrains/bazel-bsp/compare/1.0.1...1.1.1
 
 [1.0.1]: https://github.com/JetBrains/bazel-bsp/compare/1.0.0...1.0.1
 
