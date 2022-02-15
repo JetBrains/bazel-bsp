@@ -1,30 +1,25 @@
 package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
-import ch.epfl.scala.bsp4j.Diagnostic;
 import com.google.common.base.Splitter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class StderrDiagnosticsParser {
 
   private static final String ERROR = "ERROR";
 
-  private static final String STDERR_DELIMITER = "\n";
-
-  public static Map<String, List<Diagnostic>> parse(String stderr) {
-    return splitStderr(stderr).stream()
+  public static Map<String, List<FileDiagnostic>> parse(String stderr) {
+    return splitStderr(stderr)
         .filter(StderrDiagnosticsParser::isError)
         .filter(StderrDiagnosticsParser::isBazelError)
-        .map(FileDiagnostic::fromError)
-        .collect(
-            Collectors.groupingBy(
-                FileDiagnostic::getFileLocation,
-                Collectors.mapping(FileDiagnostic::getDiagnostic, Collectors.toList())));
+        .flatMap(FileDiagnostic::fromError)
+        .collect(Collectors.groupingBy(FileDiagnostic::getFileLocation, Collectors.toList()));
   }
 
-  private static List<String> splitStderr(String stderr) {
-    return Splitter.on(STDERR_DELIMITER).splitToList(stderr);
+  private static Stream<String> splitStderr(String stderr) {
+    return Splitter.onPattern("(?=(ERROR:))").splitToList(stderr).stream();
   }
 
   private static boolean isError(String stderrPart) {

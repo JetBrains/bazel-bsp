@@ -9,7 +9,8 @@
 - Improved heuristics for guessing source roots. It looks directory structures such as `src/java` or `main/java`. | [#126](https://github.com/JetBrains/bazel-bsp/pull/126)
 
 ### Fixes 🛠️
-- Now the project is built using bazel version `3.7.2`, as the rules currently used are no longer supported by bazel. | [141](https://github.com/JetBrains/bazel-bsp/pull/141)
+- Error diagnostics are now also sent for source files, including targets. | [#146](https://github.com/JetBrains/bazel-bsp/pull/146)
+- Now the project is built using bazel version `3.7.2`, as the rules currently used are no longer supported by bazel. | [#141](https://github.com/JetBrains/bazel-bsp/pull/141)
 
 
 ## [1.0.1] - 24.09.2021
