@@ -33,16 +33,17 @@ public class ServerInitializer {
     ExecutorService executor = Executors.newCachedThreadPool();
 
     try {
-      Path rootDir = Paths.get(Constants.BAZELBSP_DIR_NAME).toAbsolutePath();
+      var bspProjectRoot = Paths.get("").toAbsolutePath();
+      var rootDir = bspProjectRoot.resolve(Constants.BAZELBSP_DIR_NAME);
       Files.createDirectories(rootDir);
 
-      Path traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
+      var traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
       PrintWriter traceWriter =
           new PrintWriter(
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      BazelBspServerConfig bazelBspServerConfig = getBazelBspServerConfig(args);
+      var bazelBspServerConfig = getBazelBspServerConfig(bspProjectRoot, args);
 
       BspIntegrationData bspIntegrationData =
           new BspIntegrationData(stdout, stdin, executor, traceWriter);
@@ -66,23 +67,26 @@ public class ServerInitializer {
     }
   }
 
-  private static BazelBspServerConfig getBazelBspServerConfig(String[] args) {
-    String pathToBazel = args[0];
-    ProjectView projectView = getProjectView(args);
+  private static BazelBspServerConfig getBazelBspServerConfig(Path bspProjectRoot, String[] args) {
+    var projectView = getProjectView(bspProjectRoot, args);
+    var pathToBazel = projectView.getBazelPath().get().getValue();
     return new BazelBspServerConfig(pathToBazel, projectView);
   }
 
-  private static ProjectView getProjectView(String[] args) {
-    ProjectViewProvider provider = getProjectViewProvider(args);
+  private static ProjectView getProjectView(Path bspProjectRoot, String[] args) {
+    ProjectViewProvider provider = getProjectViewProvider(bspProjectRoot, args);
 
-    return provider.create();
+    return provider.create().get();
   }
 
-  private static ProjectViewProvider getProjectViewProvider(String[] args) {
+  private static ProjectViewProvider getProjectViewProvider(Path bspProjectRoot, String[] args) {
+    if (args.length == 1) {
+      return new ServerArgsProjectViewProvider(bspProjectRoot, args[0]);
+    }
     if (args.length == 2) {
-      return new ServerArgsProjectViewProvider(args[1]);
+      return new ServerArgsProjectViewProvider(bspProjectRoot, args[0], args[1]);
     }
 
-    return new ProjectViewDefaultParserProvider();
+    return new ProjectViewDefaultParserProvider(bspProjectRoot);
   }
 }

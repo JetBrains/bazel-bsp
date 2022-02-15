@@ -1,0 +1,5 @@
+# this is default project configuration
+
+# all targets in the project are included
+targets:
+    //...

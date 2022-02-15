@@ -1,6 +1,8 @@
 # Toolchain Registration for Scala
+
 In order to fully use Bazel BSP for Scala projects make sure to use at least version
- ``d8bce245a96ca9ab721324bc8daa984aa13fa0f7`` of `rules_scala`:
+`d8bce245a96ca9ab721324bc8daa984aa13fa0f7` of `rules_scala`:
+
 ```
 http_archive(
     name = "io_bazel_rules_scala",
@@ -13,7 +15,9 @@ bazel_version(name = "bazel_version")
 ```
 
 Make sure that your registered toolchain has Compilation Diagnostics enabled:
+
 - At a BUILD file:
+
 ```
 load("@io_bazel_rules_scala//scala:scala_toolchain.bzl", "scala_toolchain")
 
@@ -30,7 +34,9 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 ```
+
 - At the WORKSPACE file:
+
 ```
 register_toolchains(
     "<label_to_build_file>:diagnostics_reporter_toolchain"

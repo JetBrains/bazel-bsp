@@ -9,50 +9,67 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
+import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 
 public class BazelBspAspectsManager {
 
   public static final String DEBUG_MESSAGE = "DEBUG:";
-  public static final String ASPECT_LOCATION = ".bazelbsp/aspects.bzl";
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelRunner bazelRunner;
+  private final InternalAspectsResolver aspectsResolver;
   private BepServer bepServer;
 
   public BazelBspAspectsManager(
-      BazelBspCompilationManager bazelBspCompilationManager, BazelRunner bazelRunner) {
+      BazelBspCompilationManager bazelBspCompilationManager,
+      BazelRunner bazelRunner,
+      InternalAspectsResolver aspectResolver) {
     this.bazelBspCompilationManager = bazelBspCompilationManager;
     this.bazelRunner = bazelRunner;
+    this.aspectsResolver = aspectResolver;
   }
 
   public List<String> fetchPathsFromOutputGroup(
       List<BuildTargetIdentifier> targets, String aspect, String outputGroup) {
-    String aspectFlag = String.format("--aspects=%s", aspect);
+    String aspectFlag = String.format("--aspects=%s", aspectsResolver.resolveLabel(aspect));
     String outputGroupFlag = String.format("--output_groups=%s", outputGroup);
     bazelBspCompilationManager.buildTargetsWithBep(
         targets, ImmutableList.of(aspectFlag, outputGroupFlag));
     return bepServer
         .getOutputGroupPaths()
-        .getOrDefault(Constants.SCALA_COMPILER_CLASSPATH_FILES, Collections.emptySet())
+        .getOrDefault(outputGroup, Collections.emptySet())
         .stream()
         .map(Uri::toString)
         .collect(Collectors.toList());
   }
 
-  public Stream<List<String>> fetchLinesFromAspect(String target, String aspect) {
-    List<String> lines =
+  public Stream<String> fetchLinesFromAspect(String target, String aspect) {
+    return fetchLinesFromAspect(target, aspect, false);
+  }
+
+  public Stream<String> fetchLinesFromAspect(String target, String aspect, boolean build) {
+    var builder =
         bazelRunner
             .commandBuilder()
             .build()
-            .withFlag(BazelRunnerFlag.NOBUILD)
-            .withFlag(BazelRunnerFlag.ASPECTS, aspect)
-            .withArgument(target)
-            .executeBazelCommand()
-            .getStderr();
+            .withFlag(BazelRunnerFlag.ASPECTS, aspectsResolver.resolveLabel(aspect))
+            .withArgument(target);
 
-    return lines.stream().map(line -> Splitter.on(" ").splitToList(line));
+    if (!build) {
+      builder.withFlag(BazelRunnerFlag.NOBUILD);
+    }
+
+    List<String> lines = builder.executeBazelCommand().getStderr();
+
+    return lines.stream()
+        .map(line -> Splitter.on(" ").splitToList(line))
+        .filter(
+            parts ->
+                parts.size() == 3
+                    && parts.get(0).equals(DEBUG_MESSAGE)
+                    && parts.get(1).contains(aspectsResolver.getAspectOutputIndicator()))
+        .map(parts -> parts.get(2));
   }
 
   public void setBepServer(BepServer bepServer) {

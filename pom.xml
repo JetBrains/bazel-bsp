@@ -10,7 +10,8 @@
 
     <name>Bazel BSP</name>
     <description>
-        An implementation of the Build Server Protocol for Bazel. Allows clients such as IntelliJ to obtain build specific
+        An implementation of the Build Server Protocol for Bazel. Allows clients such as IntelliJ to obtain build
+        specific
         information in order to improve the experience of users in the IDE.
     </description>
     <url>https://www.jetbrains.com/</url>

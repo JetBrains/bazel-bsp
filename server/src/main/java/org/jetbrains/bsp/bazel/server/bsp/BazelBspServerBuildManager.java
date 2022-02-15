@@ -12,8 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.Lazy;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -25,10 +23,9 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelCppTargetManager;
 
 public class BazelBspServerBuildManager {
 
-  public static final String BAZEL_PRINT_ASPECT = "@//.bazelbsp:aspects.bzl%print_aspect";
+  public static final String BAZEL_PRINT_ASPECT = "print_aspect";
 
   private final BazelBspServerRequestHelpers serverRequestHelpers;
-  private final BazelData bazelData;
   private final BazelBspQueryManager bazelBspQueryManager;
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelBspTargetManager bazelBspTargetManager;
@@ -39,15 +36,12 @@ public class BazelBspServerBuildManager {
 
   public BazelBspServerBuildManager(
       BazelBspServerRequestHelpers serverRequestHelpers,
-      BazelData bazelData,
-      BazelRunner bazelRunner,
       BazelBspCompilationManager bazelBspCompilationManager,
       BazelBspAspectsManager bazelBspAspectsManager,
       BazelBspTargetManager bazelBspTargetManager,
       BazelCppTargetManager bazelCppTargetManager,
       BazelBspQueryManager bazelBspQueryManager) {
     this.serverRequestHelpers = serverRequestHelpers;
-    this.bazelData = bazelData;
     this.bazelBspCompilationManager = bazelBspCompilationManager;
     this.bazelBspAspectsManager = bazelBspAspectsManager;
     this.bazelCppTargetManager = bazelCppTargetManager;
@@ -64,27 +58,13 @@ public class BazelBspServerBuildManager {
     return bazelBspQueryManager.getSourceItems(rule, label);
   }
 
-  public String getSourcesRoot(String uri) {
-    List<String> root =
-        Constants.KNOWN_SOURCE_ROOTS.stream().filter(uri::contains).collect(Collectors.toList());
-    return bazelData.getWorkspaceRoot()
-        + (root.size() == 0
-            ? ""
-            : uri.substring(1, uri.indexOf(root.get(0)) + root.get(0).length()));
-  }
-
   public List<String> lookUpTransitiveSourceJars(String target) {
     // TODO(illicitonion): Use an aspect output group, rather than parsing stderr
     // logging
     return bazelBspAspectsManager
         .fetchLinesFromAspect(target, BAZEL_PRINT_ASPECT)
-        .filter(
-            parts ->
-                parts.size() == 3
-                    && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
-                    && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION)
-                    && parts.get(2).endsWith(".jar"))
-        .map(parts -> Constants.EXEC_ROOT_PREFIX + parts.get(2))
+        .filter(path -> path.endsWith(".jar"))
+        .map(path -> Constants.EXEC_ROOT_PREFIX + path)
         .collect(Collectors.toList());
   }
 

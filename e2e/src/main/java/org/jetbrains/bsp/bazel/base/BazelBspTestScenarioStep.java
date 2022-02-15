@@ -22,7 +22,7 @@ public class BazelBspTestScenarioStep {
 
     return Try.run(testkitCall)
         .onSuccess(e -> LOGGER.info("Step \"{}\" executed correctly!", testName))
-        .onFailure(e -> LOGGER.error("Step \"{}\" execution failed! Exception: {}", testName, e))
+        .onFailure(e -> LOGGER.error("Step \"{}\" execution failed!", testName, e))
         .map(i -> true)
         .getOrElse(false);
   }

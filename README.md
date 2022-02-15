@@ -1,5 +1,7 @@
 [![JetBrains team project](http://jb.gg/badges/team.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![Integration test](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-test.yml/badge.svg)](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-test.yml)
+[![Format](https://github.com/JetBrains/bazel-bsp/actions/workflows/format.yml/badge.svg)](https://github.com/JetBrains/bazel-bsp/actions/workflows/format.yml)
+[![Integration tests](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/JetBrains/bazel-bsp/actions/workflows/integration-tests.yml)
+[![Unit tests](https://github.com/JetBrains/bazel-bsp/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/JetBrains/bazel-bsp/actions/workflows/unit-tests.yml)
 
 # Bazel BSP
 An implementation of the [Build Server Protocol](https://github.com/build-server-protocol/build-server-protocol) for Bazel.
@@ -52,9 +54,9 @@ cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:<your version> -M org.jetbrains
 
 
 ## Project Views
-In order to work on huge monorepos you might want to specify directories and targets to work on. To address this issue, Bazel BSP supports part of the [Project Views](https://ij.bazel.build/docs/project-views.html) introduced by Google. Currently you can use following rules: `directories`, `targets` and `import`. 
+In order to work on huge monorepos you might want to specify directories and targets to work on. To address this issue, Bazel BSP supports (partly) the [Project Views](https://ij.bazel.build/docs/project-views.html) introduced by Google.
 
-Simply create a `projectview.bazelproject` file, specify rules inside and run the server. If no such files will be found, by default entire project will be loaded. 
+Check [project view readme](projectview/README.md) for more info.
 
 
 ## Tests

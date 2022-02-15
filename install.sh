@@ -14,6 +14,10 @@ echo -e "Building done."
 
 echo -e "\nInstalling server at '$project_path' ..."
 cd "$project_path" || { echo "cd $project_path failed! EXITING"; exit 155; }
+
+rm -r .bsp/
+rm -r .bazelbsp/
+
 $bsp_path
 
 echo -e "\nDone! Enjoy Bazel BSP!"

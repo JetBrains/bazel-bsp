@@ -8,6 +8,11 @@ import ch.epfl.scala.bsp4j.DependencySourcesItem;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
+import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
@@ -44,7 +49,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    BazelBspSampleRepoTest test = new BazelBspSampleRepoTest();
+    var test = new BazelBspSampleRepoTest();
     test.executeScenario();
   }
 
@@ -58,7 +63,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         inverseSourcesResults(),
         dependencySourcesResults(),
         scalaMainClasses(),
-        scalaTestClasses()
+        scalaTestClasses(),
+        jvmRunEnvironment(),
+        jvmTestEnvironment()
         // TODO
         //  new BazelBspServerSingleTest(
         //      "targets run unsuccessfully",
@@ -262,6 +269,59 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         () ->
             testClient.testDependencySourcesResults(
                 expectedWorkspaceBuildTargetsResult, expectedDependencies));
+  }
+
+  private BazelBspTestScenarioStep jvmRunEnvironment() {
+    JvmRunEnvironmentParams params =
+        new JvmRunEnvironmentParams(
+            ImmutableList.of(new BuildTargetIdentifier("//example:example")));
+
+    JvmRunEnvironmentResult expectedResult =
+        new JvmRunEnvironmentResult(
+            ImmutableList.of(
+                new JvmEnvironmentItem(
+                    new BuildTargetIdentifier("//example:example"),
+                    ImmutableList.of(
+                        "/dep/dep.jar",
+                        "/dep/dep_java.jar",
+                        "/dep/deeper/deeper.jar",
+                        "/example/example.jar",
+                        "/scala-library-2.12.8.jar",
+                        "/https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre.jar"),
+                    ImmutableList.of("-Xms2G -Xmx5G"),
+                    "/e2e/test-resources/sample-repo",
+                    System.getenv())));
+
+    return new BazelBspTestScenarioStep(
+        "jvm run environment results",
+        () -> testClient.testJvmRunEnvironment(params, expectedResult));
+  }
+
+  private BazelBspTestScenarioStep jvmTestEnvironment() {
+    JvmTestEnvironmentParams params =
+        new JvmTestEnvironmentParams(
+            ImmutableList.of(new BuildTargetIdentifier("//example:example-test")));
+
+    JvmTestEnvironmentResult expectedResult =
+        new JvmTestEnvironmentResult(
+            ImmutableList.of(
+                new JvmEnvironmentItem(
+                    new BuildTargetIdentifier("//example:example-test"),
+                    ImmutableList.of(
+                        "/scala-library-2.12.8.jar",
+                        "/scalatest_2.12-3.0.5.jar",
+                        "/example/example-test.jar",
+                        "/dep/dep.jar",
+                        "/dep/dep_java.jar",
+                        "/dep/deeper/deeper.jar",
+                        "/https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre.jar"),
+                    ImmutableList.of(),
+                    "/e2e/test-resources/sample-repo",
+                    System.getenv())));
+
+    return new BazelBspTestScenarioStep(
+        "jvm test environment results",
+        () -> testClient.testJvmTestEnvironment(params, expectedResult));
   }
 
   private WorkspaceBuildTargetsResult getExpectedWorkspaceBuildTargetsResult() {

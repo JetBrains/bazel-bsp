@@ -1,91 +1,78 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
+import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+/**
+ * Splitter is responsible for splitting file content into "raw" sections - section name and entire
+ * section body. Also, it removes comments (starting with '#') from section content
+ *
+ * <p>e.g.: <br>
+ * file content:
+ *
+ * <pre><code>
+ * ---
+ *    import path/to/another/file.bazelproject
+ *
+ *    section1: value1 # comment
+ *
+ *    section2:
+ *      included_value1
+ *      included_value2
+ *      -excluded_value3
+ * ---
+ * </code></pre>
+ *
+ * <p>will be split into raw sections:<br>
+ * 1) <code>'import'</code> -- <code>'path/to/another/file.bazelproject\n\n'</code><br>
+ * 2) <code>'section1'</code> -- <code>'value1 \n\n'</code><br>
+ * 3) <code>'section2'</code> -- <code>
+ * '\n  included_value1\n  included_value2\n  -excluded_value3\n'</code><br>
+ */
 public final class ProjectViewSectionSplitter {
 
-  private static final String SECTION_HEADER_REGEX = "(^[a-z_]+[:]?)";
-  private static final String POSSIBLE_HEADER_ENDING_CHARACTER = ":";
+  private static final Pattern SECTION_HEADER_REGEX =
+      Pattern.compile("((^[^:\\-/*\\s]+)([: ]))", Pattern.MULTILINE);
+  private static final int SECTION_HEADER_NAME_GROUP_ID = 2;
 
-  public static List<ProjectViewRawSection> split(String fileContent) {
-    List<ProjectViewSectionHeaderPosition> sectionsHeadersPositions =
-        splitIntoSectionsHeadersPositions(fileContent);
+  private static final String COMMENT_LINE_REGEX = "#(.)*(\\n|\\z)";
+  private static final String COMMENT_LINE_REPLACEMENT = "\n";
 
-    return parseRawSections(fileContent, sectionsHeadersPositions);
+  public static ProjectViewRawSections getRawSectionsForFileContent(String fileContent) {
+    var fileContentWithoutComments = removeLinesWithComments(fileContent);
+    var rawSections = findRawSections(fileContentWithoutComments);
+
+    return new ProjectViewRawSections(rawSections);
   }
 
-  private static List<ProjectViewSectionHeaderPosition> splitIntoSectionsHeadersPositions(
-      String fileContent) {
-    Pattern pattern = Pattern.compile(SECTION_HEADER_REGEX, Pattern.MULTILINE);
-    Matcher matcher = pattern.matcher(fileContent);
-
-    return getStartingAndEndingIndexes(matcher);
+  private static String removeLinesWithComments(String fileContent) {
+    return fileContent.replaceAll(COMMENT_LINE_REGEX, COMMENT_LINE_REPLACEMENT);
   }
 
-  private static List<ProjectViewSectionHeaderPosition> getStartingAndEndingIndexes(
-      Matcher matcher) {
-    ArrayList<ProjectViewSectionHeaderPosition> result = new ArrayList<>();
+  private static List<ProjectViewRawSection> findRawSections(String fileContent) {
+    var sectionHeadersNames = findSectionsHeadersNames(fileContent);
+    var sectionBodies = findSectionsBodiesAndSkipFirstEmptyEntry(fileContent);
+
+    return Streams.zip(sectionHeadersNames.stream(), sectionBodies, ProjectViewRawSection::new)
+        .collect(Collectors.toList());
+  }
+
+  private static List<String> findSectionsHeadersNames(String fileContent) {
+    var matcher = SECTION_HEADER_REGEX.matcher(fileContent);
+    var result = new ArrayList<String>();
 
     while (matcher.find()) {
-      ProjectViewSectionHeaderPosition position =
-          new ProjectViewSectionHeaderPosition(matcher.start(), matcher.end(), matcher.group());
-
-      result.add(position);
+      result.add(matcher.group(SECTION_HEADER_NAME_GROUP_ID));
     }
 
     return result;
   }
 
-  private static List<ProjectViewRawSection> parseRawSections(
-      String fileContent, List<ProjectViewSectionHeaderPosition> sectionsHeadersPositions) {
-    ListIterator<ProjectViewSectionHeaderPosition> iterator =
-        sectionsHeadersPositions.listIterator();
-    List<ProjectViewRawSection> result = new ArrayList<>();
-
-    while (iterator.hasNext()) {
-      ProjectViewSectionHeaderPosition currentPosition = iterator.next();
-      Optional<ProjectViewSectionHeaderPosition> nextPosition = getNextPosition(iterator);
-
-      ProjectViewRawSection rawSection =
-          parseProjectViewRawSection(currentPosition, nextPosition, fileContent);
-      result.add(rawSection);
-    }
-
-    return result;
-  }
-
-  private static Optional<ProjectViewSectionHeaderPosition> getNextPosition(
-      ListIterator<ProjectViewSectionHeaderPosition> iterator) {
-    if (iterator.hasNext()) {
-      ProjectViewSectionHeaderPosition nextPosition = iterator.next();
-      iterator.previous();
-      return Optional.of(nextPosition);
-    }
-
-    return Optional.empty();
-  }
-
-  private static ProjectViewRawSection parseProjectViewRawSection(
-      ProjectViewSectionHeaderPosition currentPosition,
-      Optional<ProjectViewSectionHeaderPosition> nextPosition,
-      String fileContent) {
-
-    String sectionBody =
-        nextPosition
-            .map(ProjectViewSectionHeaderPosition::getStartIndex)
-            .map(startIndex -> fileContent.substring(currentPosition.getEndIndex(), startIndex))
-            .orElse(fileContent.substring(currentPosition.getEndIndex()));
-    String sectionHeader = removeEndingHeaderColonAndSpaces(currentPosition.getHeader());
-
-    return new ProjectViewRawSection(sectionHeader, sectionBody);
-  }
-
-  private static String removeEndingHeaderColonAndSpaces(String header) {
-    return header.replace(POSSIBLE_HEADER_ENDING_CHARACTER, "").trim();
+  private static Stream<String> findSectionsBodiesAndSkipFirstEmptyEntry(String fileContent) {
+    return SECTION_HEADER_REGEX.splitAsStream(fileContent).skip(1);
   }
 }

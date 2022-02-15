@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
@@ -36,6 +37,7 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bep.parsers.ClasspathParser;
+import org.jetbrains.bsp.bazel.server.bep.parsers.error.FileDiagnostic;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.StderrDiagnosticsParser;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
@@ -47,6 +49,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       ImmutableList.of("Loading: 0 packages loaded");
 
   private static final int URI_PREFIX_LENGTH = 7;
+  public static final Set<String> EXPECTED_OUTPUT_GROUPS =
+      Set.of(
+          Constants.SCALA_COMPILER_CLASSPATH_FILES,
+          Constants.JAVA_RUNTIME_CLASSPATH_ASPECT_OUTPUT_GROUP);
 
   private final BuildClient bspClient;
   private final BuildClientLogger buildClientLogger;
@@ -168,13 +174,13 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     LOGGER.info("Consuming target completed event " + targetComplete);
     if (outputGroups.size() == 1) {
       OutputGroup outputGroup = outputGroups.get(0);
-      if (outputGroup.getName().equals(Constants.SCALA_COMPILER_CLASSPATH_FILES)) {
-        fetchScalaJars(outputGroup);
+      if (EXPECTED_OUTPUT_GROUPS.contains(outputGroup.getName())) {
+        fetchOutputGroup(outputGroup);
       }
     }
   }
 
-  private void fetchScalaJars(OutputGroup outputGroup) {
+  private void fetchOutputGroup(OutputGroup outputGroup) {
     outputGroup.getFileSetsList().stream()
         .flatMap(fileSetId -> namedSetsOfFiles.get(fileSetId.getId()).getFilesList().stream())
         .map(file -> URI.create(file.getUri()))
@@ -254,10 +260,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void consumeProgressEvent(BuildEventStreamProtos.Progress progress) {
-    Map<String, List<Diagnostic>> fileDiagnostics =
-        StderrDiagnosticsParser.parse(progress.getStderr());
-
-    fileDiagnostics.entrySet().stream()
+    StderrDiagnosticsParser.parse(progress.getStderr()).entrySet().stream()
         .map(this::createParamsFromEntry)
         .forEach(bspClient::onBuildPublishDiagnostics);
 
@@ -265,15 +268,26 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private PublishDiagnosticsParams createParamsFromEntry(
-      Map.Entry<String, List<Diagnostic>> entry) {
-    String fileLocation = entry.getKey();
-    List<Diagnostic> diagnostics = entry.getValue();
+      Map.Entry<String, List<FileDiagnostic>> entry) {
+    var rawFileLocation = entry.getKey();
+    var fileLocation = new TextDocumentIdentifier(Uri.fromAbsolutePath(rawFileLocation).toString());
 
-    return new PublishDiagnosticsParams(
-        new TextDocumentIdentifier(Uri.fromAbsolutePath(fileLocation).toString()),
-        new BuildTargetIdentifier(""),
-        diagnostics,
-        false);
+    var fileDiagnostics = entry.getValue();
+    var targetId = getTargetIdFromDiagnostics(fileDiagnostics);
+    var diagnostics = getDiagnosticsFromFileDiagnostics(fileDiagnostics);
+
+    return new PublishDiagnosticsParams(fileLocation, targetId, diagnostics, false);
+  }
+
+  private BuildTargetIdentifier getTargetIdFromDiagnostics(List<FileDiagnostic> diagnostics) {
+    return diagnostics.stream()
+        .findFirst()
+        .map(FileDiagnostic::getTarget)
+        .orElse(new BuildTargetIdentifier(""));
+  }
+
+  private List<Diagnostic> getDiagnosticsFromFileDiagnostics(List<FileDiagnostic> diagnostics) {
+    return diagnostics.stream().map(FileDiagnostic::getDiagnostic).collect(Collectors.toList());
   }
 
   private void logProgress(BuildEventStreamProtos.Progress progress) {

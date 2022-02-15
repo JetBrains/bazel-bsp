@@ -29,6 +29,23 @@ scala_compiler_classpath_aspect = aspect(
     implementation = _scala_compiler_classpath_impl,
 )
 
+def _java_runtime_classpath_impl(target, ctx):
+    files = depset()
+    if JavaInfo in target:
+        java_info = target[JavaInfo]
+        files = java_info.compilation_info.runtime_classpath if java_info.compilation_info else java_info.transitive_runtime_jars
+
+    output_file = ctx.actions.declare_file("%s-runtime_classpath.textproto" % target.label.name)
+    ctx.actions.write(output_file, struct(files = [file.path for file in files.to_list()]).to_proto())
+
+    return [
+        OutputGroupInfo(java_runtime_classpath_files = [output_file]),
+    ]
+
+java_runtime_classpath_aspect = aspect(
+    implementation = _java_runtime_classpath_impl,
+)
+
 def _fetch_cpp_compiler(target, ctx):
     if cc_common.CcToolchainInfo in target:
         toolchain_info = target[cc_common.CcToolchainInfo]

@@ -24,6 +24,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 
 public class Install {
 
@@ -53,25 +55,40 @@ public class Install {
       if (cmd.hasOption(HELP_SHORT_OPT)) {
         formatter.printHelp(INSTALLER_BINARY_NAME, cliOptions);
       } else {
-        addJavaBinary(cmd, argv);
+        Path rootDir = getRootDir(cmd);
+        Path bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
+
+        Path defaultProjectViewFilePath = bazelbspDir.resolve("default-projectview.bazelproject");
+        Files.copy(
+            Install.class.getResourceAsStream("default-projectview.bazelproject"),
+            defaultProjectViewFilePath,
+            StandardCopyOption.REPLACE_EXISTING);
+
+        copyAspects(bazelbspDir);
+        createEmptyBuildFile(bazelbspDir);
+
+        var projectViewProvider = new ProjectViewDefaultParserProvider(rootDir);
+        // will be handled properly
+        var projectView = projectViewProvider.create().get();
+
+        addJavaBinary(cmd, argv, projectView);
         addJavaClasspath(argv);
-        addDebuggerConnection(cmd, argv);
+        addDebuggerConnection(cmd, argv, projectView);
         argv.add(SERVER_CLASS_NAME);
-        addBazelBinary(cmd, argv);
+        addBazelBinary(cmd, argv, projectView);
         addBazelTargets(cmd, argv);
 
         BspConnectionDetails details = createBspConnectionDetails(argv);
-        Path rootDir = getRootDir(cmd);
         writeConfigurationFiles(rootDir, details);
 
-        String currentDirectory = getCurrentDirectory();
-        System.out.println("Bazel BSP server installed in '" + currentDirectory + "'.");
+        System.out.println(
+            "Bazel BSP server installed in '" + rootDir.toAbsolutePath().normalize() + "'.");
       }
     } catch (ParseException e) {
       writer.println(e.getMessage());
       formatter.printUsage(writer, 120, INSTALLER_BINARY_NAME, cliOptions);
       hasError = true;
-    } catch (NoSuchElementException e) {
+    } catch (NoSuchElementException | IllegalStateException e) {
       writer.println(e.getMessage());
       hasError = true;
     } finally {
@@ -98,17 +115,21 @@ public class Install {
         Constants.SUPPORTED_LANGUAGES);
   }
 
-  private static void addBazelBinary(CommandLine cmd, List<String> argv) {
+  private static void addBazelBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(BAZEL_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(BAZEL_SHORT_OPT));
+    } else if (projectView.getBazelPath().isPresent()) {
+      argv.add(projectView.getBazelPath().get().getValue());
     } else {
       argv.add(findOnPath("bazel"));
     }
   }
 
-  private static void addJavaBinary(CommandLine cmd, List<String> argv) {
+  private static void addJavaBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(JAVA_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(JAVA_SHORT_OPT));
+    } else if (projectView.getJavaPath().isPresent()) {
+      argv.add(projectView.getJavaPath().get().getValue());
     } else {
       String javaHome = readSystemProperty("java.home");
       argv.add(Paths.get(javaHome).resolve("bin").resolve("java").toString());
@@ -126,9 +147,13 @@ public class Install {
     argv.add(classpath);
   }
 
-  private static void addDebuggerConnection(CommandLine cmd, List<String> argv) {
+  private static void addDebuggerConnection(
+      CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(DEBUGGER_SHORT_OPT)) {
-      String debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
+      var debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
+      argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
+    } else if (projectView.getDebuggerAddress().isPresent()) {
+      var debuggerAddress = projectView.getDebuggerAddress().get().getValue();
       argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
     }
   }
@@ -175,10 +200,6 @@ public class Install {
 
   private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails)
       throws IOException {
-    Path bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
-    copyAspects(bazelbspDir);
-    createEmptyBuildFile(bazelbspDir);
-
     Path bspDir = createDir(rootDir, Constants.BSP_DIR_NAME);
     writeBazelbspJson(bspDir, discoveryDetails);
   }
@@ -191,7 +212,9 @@ public class Install {
             .longOpt("java")
             .hasArg()
             .argName("path")
-            .desc("Use provided Java executable to run the BSP server")
+            .desc(
+                "Deprecated! Use project view file instead. "
+                    + "(Use provided Java executable to run the BSP server)")
             .build();
 
     cliOptions.addOption(java);
@@ -201,7 +224,9 @@ public class Install {
             .longOpt("bazel")
             .hasArg()
             .argName("path")
-            .desc("Make the BSP server use this Bazel executable")
+            .desc(
+                "Deprecated! Use project view file instead. "
+                    + "(Make the BSP server use this Bazel executable)")
             .build();
 
     cliOptions.addOption(bazel);
@@ -211,7 +236,7 @@ public class Install {
             .longOpt("debugger")
             .hasArg()
             .argName("address (e.g. '127.0.0.1:8000'")
-            .desc("Allow BSP server debugging")
+            .desc("Deprecated! Use project view file instead. (Allow BSP server debugging)")
             .build();
 
     cliOptions.addOption(debug);
@@ -222,8 +247,9 @@ public class Install {
             .hasArg()
             .argName("path")
             .desc(
-                "Path to directory where bazelbsp server should be setup. "
-                    + "Current directory will be used by default")
+                "Deprecated! Use project view file instead. "
+                    + "(Path to directory where bazelbsp server should be setup. "
+                    + "Current directory will be used by default)")
             .build();
 
     cliOptions.addOption(directory);
@@ -234,8 +260,9 @@ public class Install {
             .hasArg()
             .argName("targets")
             .desc(
-                "Name of the bazel's targets that the server should import. Targets can be"
-                    + "separated by a comma. The default is to import all targets (//...)")
+                "Deprecated! Use project view file instead. (Name of the bazel's targets that the"
+                    + " server should import. Targets can be separated by a comma. The default is"
+                    + " to import all targets (//...))")
             .build();
 
     cliOptions.addOption(targets);
@@ -264,9 +291,5 @@ public class Install {
       throw new NoSuchElementException("Could not read " + name + " system property");
     }
     return property;
-  }
-
-  private static String getCurrentDirectory() {
-    return System.getProperty("user.dir");
   }
 }

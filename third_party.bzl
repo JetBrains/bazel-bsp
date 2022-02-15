@@ -27,6 +27,7 @@ _deps = [
     _dependency("org.apache.logging.log4j:log4j-core:2.6.1"),
     _dependency("junit:junit:4.12"),
     _dependency("org.assertj:assertj-core:3.16.1"),
+    _dependency("org.apache.commons:commons-collections4:jar:4.4"),
 ]
 
 def dependencies():

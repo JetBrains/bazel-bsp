@@ -4,7 +4,6 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.CppOptionsItem;
 import ch.epfl.scala.bsp4j.CppOptionsParams;
 import ch.epfl.scala.bsp4j.CppOptionsResult;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 
 public class CppBuildServerService {
@@ -21,11 +19,13 @@ public class CppBuildServerService {
   public static final int LINKOPTS_LOCATION = 2;
   public static final int LINKSHARED_LOCATION = 3;
   private final BazelRunner bazelRunner;
-  private static final String FETCH_CPP_TARGET_ASPECT =
-      "@//.bazelbsp:aspects.bzl%get_cpp_target_info";
+  private static final String FETCH_CPP_TARGET_ASPECT = "get_cpp_target_info";
+  private BazelBspAspectsManager bazelBspAspectsManager;
 
-  public CppBuildServerService(BazelRunner bazelRunner) {
+  public CppBuildServerService(
+      BazelRunner bazelRunner, BazelBspAspectsManager bazelBspAspectsManager) {
     this.bazelRunner = bazelRunner;
+    this.bazelBspAspectsManager = bazelBspAspectsManager;
   }
 
   public Either<ResponseError, CppOptionsResult> buildTargetCppOptions(
@@ -37,24 +37,9 @@ public class CppBuildServerService {
   }
 
   private CppOptionsItem getOptions(BuildTargetIdentifier buildTargetIdentifier) {
-    List<String> lines =
-        bazelRunner
-            .commandBuilder()
-            .build()
-            .withFlag(BazelRunnerFlag.ASPECTS, FETCH_CPP_TARGET_ASPECT)
-            .withArgument(buildTargetIdentifier.getUri())
-            .executeBazelBesCommand()
-            .getStderr();
-
     List<String> targetInfo =
-        lines.stream()
-            .map(line -> Splitter.on(" ").splitToList(line))
-            .filter(
-                parts ->
-                    parts.size() == 3
-                        && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
-                        && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION))
-            .map(parts -> parts.get(2))
+        bazelBspAspectsManager
+            .fetchLinesFromAspect(buildTargetIdentifier.getUri(), FETCH_CPP_TARGET_ASPECT, true)
             .collect(Collectors.toList());
 
     if (targetInfo.size() != 4) {

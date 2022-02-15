@@ -5,7 +5,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//server:__subpackages__"],
     deps = [
-        "//projectview:model",
+        "//projectview",
         "@maven//:com_google_guava_guava",
     ],
 )

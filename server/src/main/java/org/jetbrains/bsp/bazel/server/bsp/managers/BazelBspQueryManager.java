@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
+import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -58,7 +59,7 @@ public class BazelBspQueryManager {
   }
 
   public Either<ResponseError, WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
-    List<String> projectInitTargets = projectView.getTargets().getIncludedTargets();
+    List<String> projectInitTargets = projectView.getTargets().getIncludedValues();
 
     List<BuildTarget> targets =
         projectInitTargets.stream()
@@ -66,7 +67,25 @@ public class BazelBspQueryManager {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
+    buildProject(targets);
+
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
+  }
+
+  private void buildProject(List<BuildTarget> buildTargets) {
+    var targets = buildTargets.stream().map(t -> t.getId().getUri()).collect(Collectors.toList());
+
+    var bazelProcessResult =
+        bazelRunner
+            .commandBuilder()
+            .build()
+            .withArguments(targets)
+            .executeBazelBesCommand()
+            .waitAndGetResult();
+
+    if (bazelProcessResult.getStatusCode() != StatusCode.OK) {
+      throw new RuntimeException("Failed to build the project");
+    }
   }
 
   private List<BuildTarget> getBuildTargetForProjectPath(String target) {

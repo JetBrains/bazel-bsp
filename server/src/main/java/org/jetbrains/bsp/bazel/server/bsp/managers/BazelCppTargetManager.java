@@ -9,7 +9,7 @@ import org.jetbrains.bsp.bazel.commons.Lazy;
 
 public class BazelCppTargetManager extends Lazy<CppBuildTarget> {
   private static final String BAZEL_CPP_TOOLCHAIN = "@bazel_tools//tools/cpp:toolchain";
-  private static final String FETCH_CPP_ASPECT = "@//.bazelbsp:aspects.bzl%fetch_cpp_compiler";
+  private static final String FETCH_CPP_ASPECT = "fetch_cpp_compiler";
   private final BazelBspAspectsManager bazelBspAspectsManager;
 
   public BazelCppTargetManager(BazelBspAspectsManager bazelBspAspectsManager) {
@@ -20,12 +20,6 @@ public class BazelCppTargetManager extends Lazy<CppBuildTarget> {
     List<String> cppInfo =
         bazelBspAspectsManager
             .fetchLinesFromAspect(BAZEL_CPP_TOOLCHAIN, FETCH_CPP_ASPECT)
-            .filter(
-                parts ->
-                    parts.size() == 3
-                        && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
-                        && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION))
-            .map(parts -> parts.get(2))
             .limit(2)
             .collect(Collectors.toList());
 

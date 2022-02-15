@@ -14,8 +14,7 @@ import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 
 public class BazelBspJvmTargetManager extends Lazy<String> {
-  public static final String FETCH_JAVA_VERSION_ASPECT =
-      "@//.bazelbsp:aspects.bzl%fetch_java_target_version";
+  public static final String FETCH_JAVA_VERSION_ASPECT = "fetch_java_target_version";
   public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
       "@bazel_tools//tools/jdk:current_java_toolchain";
   private final BazelRunner bazelRunner;
@@ -82,13 +81,7 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
   private Optional<String> getJavaVersion() {
     return bazelBspAspectsManager
         .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN, FETCH_JAVA_VERSION_ASPECT)
-        .filter(
-            parts ->
-                parts.size() == 3
-                    && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
-                    && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION)
-                    && parts.get(2).chars().allMatch(Character::isDigit))
-        .map(parts -> parts.get(2))
+        .filter(line -> line.chars().allMatch(Character::isDigit))
         .findFirst();
   }
 
