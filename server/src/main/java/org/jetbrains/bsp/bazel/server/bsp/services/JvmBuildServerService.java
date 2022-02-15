@@ -26,8 +26,7 @@ public class JvmBuildServerService {
   private static final Logger LOGGER = LogManager.getLogger(JvmBuildServerService.class);
   private static final ImmutableList<String> JVM_LANGUAGES_IDS =
       ImmutableList.of(Constants.JAVAC, Constants.KOTLINC, Constants.SCALAC);
-  public static final String JAVA_RUNTIME_CLASSPATH_ASPECT =
-      "@//.bazelbsp:aspects.bzl%java_runtime_classpath_aspect";
+  public static final String JAVA_RUNTIME_CLASSPATH_ASPECT = "java_runtime_classpath_aspect";
 
   private final TargetsLanguageOptionsResolver<JvmEnvironmentItem> targetsLanguageOptionsResolver;
   private final BazelBspAspectsManager bazelBspAspectsManager;

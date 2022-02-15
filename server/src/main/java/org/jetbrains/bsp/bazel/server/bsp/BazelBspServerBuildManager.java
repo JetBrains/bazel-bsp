@@ -23,7 +23,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelCppTargetManager;
 
 public class BazelBspServerBuildManager {
 
-  public static final String BAZEL_PRINT_ASPECT = "@//.bazelbsp:aspects.bzl%print_aspect";
+  public static final String BAZEL_PRINT_ASPECT = "print_aspect";
 
   private final BazelBspServerRequestHelpers serverRequestHelpers;
   private final BazelBspQueryManager bazelBspQueryManager;
@@ -63,13 +63,8 @@ public class BazelBspServerBuildManager {
     // logging
     return bazelBspAspectsManager
         .fetchLinesFromAspect(target, BAZEL_PRINT_ASPECT)
-        .filter(
-            parts ->
-                parts.size() == 3
-                    && parts.get(0).equals(BazelBspAspectsManager.DEBUG_MESSAGE)
-                    && parts.get(1).contains(BazelBspAspectsManager.ASPECT_LOCATION)
-                    && parts.get(2).endsWith(".jar"))
-        .map(parts -> Constants.EXEC_ROOT_PREFIX + parts.get(2))
+        .filter(path -> path.endsWith(".jar"))
+        .map(path -> Constants.EXEC_ROOT_PREFIX + path)
         .collect(Collectors.toList());
   }
 

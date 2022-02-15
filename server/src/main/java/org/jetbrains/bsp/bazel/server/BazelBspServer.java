@@ -7,6 +7,7 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JvmBuildServer;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import io.grpc.ServerBuilder;
+import java.nio.file.Paths;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
@@ -33,6 +34,7 @@ import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JavaBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.JvmBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.services.ScalaBuildServerService;
+import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelBspServer {
@@ -58,8 +60,12 @@ public class BazelBspServer {
 
     BazelBspCompilationManager bazelBspCompilationManager =
         new BazelBspCompilationManager(bazelRunner, bazelData);
+    InternalAspectsResolver internalAspectsResolver =
+        new InternalAspectsResolver(
+            bazelData.getBspProjectRoot(), Paths.get(bazelData.getWorkspaceRoot()));
     BazelBspAspectsManager bazelBspAspectsManager =
-        new BazelBspAspectsManager(bazelBspCompilationManager, bazelRunner);
+        new BazelBspAspectsManager(
+            bazelBspCompilationManager, bazelRunner, internalAspectsResolver);
     BazelCppTargetManager bazelCppTargetManager = new BazelCppTargetManager(bazelBspAspectsManager);
     BazelBspTargetManager bazelBspTargetManager =
         new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager, bazelCppTargetManager);
@@ -93,7 +99,8 @@ public class BazelBspServer {
     JavaBuildServerService javaBuildServerService =
         new JavaBuildServerService(
             bazelBspCompilationManager, bazelBspQueryManager, bazelData, bazelRunner);
-    CppBuildServerService cppBuildServerService = new CppBuildServerService(bazelRunner);
+    CppBuildServerService cppBuildServerService =
+        new CppBuildServerService(bazelRunner, bazelBspAspectsManager);
 
     JvmBuildServer jvmBuildServer =
         new JvmBuildServerImpl(jvmBuildServerService, serverRequestHelpers);
