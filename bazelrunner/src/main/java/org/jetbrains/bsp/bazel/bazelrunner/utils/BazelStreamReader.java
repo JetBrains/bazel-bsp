@@ -15,7 +15,7 @@ public final class BazelStreamReader {
       List<String> list = new ArrayList<>();
       String line;
       while ((line = reader.readLine()) != null) {
-        list.add(line.trim());
+        list.add(line);
       }
       return list;
     } catch (IOException e) {
