@@ -4,9 +4,12 @@
 
 ## [Unreleased]
 
-...
+### Fixes 🛠️
 
-## [1.1.1] - 15.02.2022
+- Memoize BazelProcess output so that it doesn't get lost.
+  | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
+
+## [1.1.1] - 16.02.2022
 
 ### Features 🎉
 
