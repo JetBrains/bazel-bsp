@@ -1,8 +1,10 @@
 package org.jetbrains.bsp.bazel.bazelrunner.data;
 
 import ch.epfl.scala.bsp4j.StatusCode;
+import com.google.common.base.Suppliers;
 import java.io.InputStream;
 import java.util.List;
+import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelStreamReader;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 
@@ -10,13 +12,13 @@ public class BazelProcessResult {
 
   private static final String LINES_DELIMITER = "\n";
 
-  private final InputStream stdout;
-  private final InputStream stderr;
+  private final Supplier<List<String>> stdout;
+  private final Supplier<List<String>> stderr;
   private final int exitCode;
 
   public BazelProcessResult(InputStream stdout, InputStream stderr, int exitCode) {
-    this.stdout = stdout;
-    this.stderr = stderr;
+    this.stdout = memoized(stdout);
+    this.stderr = memoized(stderr);
     this.exitCode = exitCode;
   }
 
@@ -25,11 +27,15 @@ public class BazelProcessResult {
   }
 
   public List<String> getStdout() {
-    return BazelStreamReader.drainStream(stdout);
+    return stdout.get();
   }
 
   public String getJoinedStderr() {
-    List<String> lines = BazelStreamReader.drainStream(stderr);
+    List<String> lines = stderr.get();
     return String.join(LINES_DELIMITER, lines);
+  }
+
+  private Supplier<List<String>> memoized(InputStream input) {
+    return Suppliers.memoize(() -> BazelStreamReader.drainStream(input));
   }
 }
