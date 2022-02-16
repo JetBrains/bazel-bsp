@@ -6,6 +6,8 @@
 
 ### Fixes 🛠️
 
+- Log messages are no longer trimmed.
+  | [#157](https://github.com/JetBrains/bazel-bsp/pull/157)
 - Memoize BazelProcess output so that it doesn't get lost.
   | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
 
