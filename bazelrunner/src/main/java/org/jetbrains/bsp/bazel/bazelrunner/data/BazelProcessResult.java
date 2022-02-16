@@ -59,5 +59,4 @@ public class BazelProcessResult {
       // Do nothing. The original input stream is probably drained at this point.
     }
   }
-
 }
