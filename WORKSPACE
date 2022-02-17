@@ -99,8 +99,8 @@ IO_BAZEL_SHA = "ce1b391335bd417b5f7ec99e9049aee751b24f4a0e61a6dad3535f0e108bc182
 http_archive(
     name = "io_bazel",
     sha256 = IO_BAZEL_SHA,
-    strip_prefix = "bazel-%s" % IO_BAZEL_TAG,
-    url = "https://github.com/bazelbuild/bazel/archive/%s.zip" % IO_BAZEL_TAG,
+    strip_prefix = "bazel-{}".format(IO_BAZEL_TAG),
+    url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(IO_BAZEL_TAG),
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -108,28 +108,42 @@ http_archive(
 
 GOOGLEAPIS_TAG = "5.0.0"
 
-GOOGLEAPIS_SHA = "4e5d2467df2994b13b2caaa0422985bedff804c3ae640fba23e63903172345ff"
+GOOGLEAPIS_SHA = "ce1b391335bd417b5f7ec99e9049aee751b24f4a0e61a6dad3535f0e108bc182"
 
 http_archive(
     name = "googleapis",
-    # sha256 = GOOGLEAPIS_SHA,
+    sha256 = GOOGLEAPIS_SHA,
     strip_prefix = "bazel-{}/third_party/googleapis".format(GOOGLEAPIS_TAG),
     url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(GOOGLEAPIS_TAG),
 )
 
-# tags
+# ----------------------------------------------------------------------------------------------------------------------
+# com_google_protobuf
 
-BAZEL_SONATYPE_TAG = "8c4bfd2a4c03c212446da134e0be3ab1ac605289"
+COM_GOOGLE_PROTOBUF_TAG = "3.19.4"
 
-COM_GOOGLE_PROTOBUF_TAG = "31ebe2ac71400344a5db91ffc13c4ddfb7589f92"
+COM_GOOGLE_PROTOBUF_SHA = "3bd7828aa5af4b13b99c191e8b1e884ebfa9ad371b0ce264605d347f135d2568"
 
-# sha256
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = COM_GOOGLE_PROTOBUF_SHA,
+    strip_prefix = "protobuf-{}".format(COM_GOOGLE_PROTOBUF_TAG),
+    url = "https://github.com/protocolbuffers/protobuf/archive/v{}.tar.gz".format(COM_GOOGLE_PROTOBUF_TAG),
+)
 
-BAZEL_SONATYPE_SHA = "58b616d7ef1d28bc627c1b945c704cb2fe4cf49deb87fc0ce074a452c457ec2b"
+# ----------------------------------------------------------------------------------------------------------------------
+# bazel_sonatype
 
-COM_GOOGLE_PROTOBUF_SHA = "0e8e32d44c9d4572975f43591b51cd3c77392661e4ded17fdfab81e8460344e8"
+BAZEL_SONATYPE_TAG = "d14a12150204c6a2645d6b065076a9ba30a391fc"
 
-# ------------------------------
+BAZEL_SONATYPE_SHA = "c1dca68543662588c1d35dae5840f7381895e0fe341bf38d612586cef024dc82"
+
+http_archive(
+    name = "bazel_sonatype",
+    sha256 = BAZEL_SONATYPE_SHA,
+    strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
+)
 
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
@@ -167,20 +181,6 @@ scala_repositories((
         "scala_reflect": "5f9e156aeba45ef2c4d24b303405db259082739015190b3b334811843bd90d6a",
     },
 ))
-
-http_archive(
-    name = "com_google_protobuf",
-    sha256 = COM_GOOGLE_PROTOBUF_SHA,
-    strip_prefix = "protobuf-%s" % COM_GOOGLE_PROTOBUF_TAG,
-    url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % COM_GOOGLE_PROTOBUF_TAG,
-)
-
-http_archive(
-    name = "bazel_sonatype",
-    sha256 = BAZEL_SONATYPE_SHA,
-    strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
-    url = "https://github.com/JetBrains/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
-)
 
 load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
 
