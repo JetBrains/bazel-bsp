@@ -62,20 +62,6 @@ http_archive(
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
-# rules_java
-
-RULES_JAVA_TAG = "5.0.0"
-
-RULES_JAVA_SHA = "bf21724043eb21b19aa9b2253f8fb7d25c66896bc63037319d1d6cc2100d71f1"
-
-http_archive(
-    name = "rules_java",
-    sha256 = RULES_JAVA_SHA,
-    strip_prefix = "rules_java-{}".format(RULES_JAVA_TAG),
-    url = "https://github.com/bazelbuild/rules_java/archive/{}.zip".format(RULES_JAVA_TAG),
-)
-
-# ----------------------------------------------------------------------------------------------------------------------
 # io_bazel
 
 IO_BAZEL_TAG = "5.0.0"
