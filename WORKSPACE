@@ -48,20 +48,6 @@ http_archive(
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
-# rules_proto
-
-RULES_PROTO_TAG = "4.0.0"
-
-RULES_PROTO_SHA = "66bfdf8782796239d3875d37e7de19b1d94301e8972b3cbd2446b332429b4df1"
-
-http_archive(
-    name = "rules_proto",
-    # sha256 = RULES_PROTO_SHA,
-    strip_prefix = "rules_proto-{}".format(RULES_PROTO_TAG),
-    url = "https://github.com/bazelbuild/rules_proto/archive/{}.tar.gz".format(RULES_PROTO_TAG),
-)
-
-# ----------------------------------------------------------------------------------------------------------------------
 # io_bazel
 
 IO_BAZEL_TAG = "5.0.0"
