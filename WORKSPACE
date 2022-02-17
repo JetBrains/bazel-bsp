@@ -146,13 +146,6 @@ load("@bazel_bsp//:third_party.bzl", "dependencies")
 dependencies()
 
 # ----------------------------------------------------------------------------------------------------------------------
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-
-rules_proto_dependencies()
-
-rules_proto_toolchains()
-
-# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
