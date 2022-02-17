@@ -76,20 +76,6 @@ http_archive(
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
-# io_grpc_grpc_java
-
-IO_GRPC_GRPC_JAVA_TAG = "1.44.0"
-
-IO_GRPC_GRPC_JAVA_SHA = "16cf4556c08b580efede083a9a972eb45060bfbf324cdafc4f9be098ac9e0f01"
-
-http_archive(
-    name = "io_grpc_grpc_java",
-    sha256 = IO_GRPC_GRPC_JAVA_SHA,
-    strip_prefix = "grpc-java-{}".format(IO_GRPC_GRPC_JAVA_TAG),
-    url = "https://github.com/grpc/grpc-java/archive/v{}.zip".format(IO_GRPC_GRPC_JAVA_TAG),
-)
-
-# ----------------------------------------------------------------------------------------------------------------------
 # io_bazel
 
 IO_BAZEL_TAG = "5.0.0"
@@ -149,28 +135,29 @@ http_archive(
 # ----------------------------------------------------------------------------------------------------------------------
 # ======================================================================================================================
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
 
 bazel_version(name = "bazel_version")
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@bazel_bsp//:third_party.bzl", "dependencies")
 
 dependencies()
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
 rules_proto_dependencies()
 
 rules_proto_toolchains()
 
-load("@io_grpc_grpc_java//:repositories.bzl", "grpc_java_repositories")
-
-grpc_java_repositories()
-
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 
 scala_repositories((
@@ -182,6 +169,7 @@ scala_repositories((
     },
 ))
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
 
 sonatype_dependencies()
