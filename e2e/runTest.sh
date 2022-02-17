@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 
 # this script installs required environment (building server + installing it in the given directory)
-# and then runs test itself
+# and then runs test itself with a given bazel version
 
-if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
-    echo "Illegal number of parameters!"
-    echo "Usage: ./runTest.sh <test target> [path to the project]"
-    exit 1
+if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
+  echo "Illegal number of parameters!"
+  echo "Usage: ./runTest.sh <test target> <bazel version> [path to the project]"
+  exit 1
 fi
 
-# first argument of the script should be a bazel test target for provided test project
+# the first argument of the script should be a bazel test target for provided test project
 TEST_TARGET="$1"
 
-# second argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
-TEST_PROJECT_PATH="$2"
+# the second argument of the script should be a bazel version which will be used in the current test execution
+BAZEL_VERSION="$2"
+
+# the third argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
+TEST_PROJECT_PATH="$3"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -21,7 +24,7 @@ NC='\033[0m'
 
 echo -e "==================================="
 echo -e "==================================="
-echo -e "Running BSP test '$TEST_TARGET' in '$TEST_PROJECT_PATH'..."
+echo -e "Running BSP test '$TEST_TARGET' with '$BAZEL_VERSION' bazel version in '$TEST_PROJECT_PATH'..."
 echo -e "-----------------------------------\n"
 
 echo "Building project..."
@@ -37,11 +40,15 @@ bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/b
 echo "Building done."
 
 echo "Cleaning project directory..."
-if [ "$#" -eq 2 ]; then
+if [ "$#" -eq 3 ]; then
   cd "$TEST_PROJECT_PATH" || exit
+  bazel clean
 fi
-rm -r .bsp/ > /dev/null 2>&1
-rm -r .bazelbsp/ > /dev/null 2>&1
+
+echo "$BAZEL_VERSION" >.bazelversion
+
+rm -r .bsp/ >/dev/null 2>&1
+rm -r .bazelbsp/ >/dev/null 2>&1
 echo "Cleaning project directory done!"
 
 echo "Installing BSP..."
@@ -56,11 +63,11 @@ bazel run "$TEST_TARGET"
 EXECUTION_CODE=$?
 
 if [ $EXECUTION_CODE -ne 0 ]; then
-  echo -e "${RED}'$TEST_TARGET' test failed :("
+  echo -e "${RED}'$TEST_TARGET' with '$BAZEL_VERSION' bazel version test failed :("
   exit 1
 fi
 
 echo -e "\n-----------------------------------"
-echo -e "${GREEN}'$TEST_TARGET' passed!${NC}"
+echo -e "${GREEN}'$TEST_TARGET' with '$BAZEL_VERSION' bazel version passed!${NC}"
 echo -e "==================================="
 echo -e "===================================\n\n\n"
