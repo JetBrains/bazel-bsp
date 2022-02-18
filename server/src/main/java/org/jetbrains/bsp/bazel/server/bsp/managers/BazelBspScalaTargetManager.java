@@ -45,6 +45,7 @@ public class BazelBspScalaTargetManager {
     List<String> classpath =
         runfilePaths.stream()
             .map(line -> line.replaceFirst("^.*\\[file_path\\]", ""))
+            .filter(x -> x.matches(".*scala-(?:library|compiler|reflect).*"))
             .map(path -> Uri.fromWorkspacePath(path, bazelData.getWorkspaceRoot()))
             .map(Uri::toString)
             .collect(Collectors.toList());
