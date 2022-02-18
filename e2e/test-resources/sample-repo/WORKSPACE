@@ -18,21 +18,31 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(BAZEL_SKYLIB_TAG, BAZEL_SKYLIB_TAG),
 )
 
-# For rules_scala
+# ======================================================================================================================
+# rules_scala
+
+IO_BAZEL_RULES_SCALA_TAG = "d6186617cfe64cef2074b23ca58daac75fe40d42"
+
+IO_BAZEL_RULES_SCALA_SHA = "1a19bdedae7c62e9541315476c506c8e7a92c3ce0e7cbbfb57f12a429849f19d"
+
 http_archive(
     name = "io_bazel_rules_scala",
-    strip_prefix = "rules_scala-d6186617cfe64cef2074b23ca58daac75fe40d42",
-    url = "https://github.com/andrefmrocha/rules_scala/archive/d6186617cfe64cef2074b23ca58daac75fe40d42.tar.gz",
+    sha256 = IO_BAZEL_RULES_SCALA_SHA,
+    strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/andrefmrocha/rules_scala/archive/{}.tar.gz".format(IO_BAZEL_RULES_SCALA_TAG),
 )
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
 
 bazel_version(name = "bazel_version")
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 
 scala_repositories((
@@ -44,21 +54,10 @@ scala_repositories((
     },
 ))
 
-protobuf_version = "31ebe2ac71400344a5db91ffc13c4ddfb7589f92"
-
-protobuf_version_sha256 = "0e8e32d44c9d4572975f43591b51cd3c77392661e4ded17fdfab81e8460344e8"
-
-http_archive(
-    name = "com_google_protobuf",
-    sha256 = protobuf_version_sha256,
-    strip_prefix = "protobuf-%s" % protobuf_version,
-    url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % protobuf_version,
-)
-
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:scala_maven_import_external.bzl", "scala_maven_import_external")
 load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls", "default_scala_major_version", "scala_mvn_artifact")
 
-# Exp
 scala_maven_import_external(
     name = "com_illicitonion_scalac_composite_reporter",
     artifact = scala_mvn_artifact(
@@ -70,18 +69,26 @@ scala_maven_import_external(
     server_urls = default_maven_server_urls(),
 )
 
-# For guava
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = "79c9850690d7614ecdb72d68394f994fef7534b292c4867ce5e7dec0aa7bdfad",
-    strip_prefix = "rules_jvm_external-2.8",
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/2.8.zip",
-)
-
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//specs2:specs2_junit.bzl", "specs2_junit_repositories")
 
 specs2_junit_repositories()
 
+# ======================================================================================================================
+# rules_jvm_external
+
+RULES_JVM_EXTERNAL_TAG = "4.2"
+
+RULES_JVM_EXTERNAL_SHA = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca"
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-{}".format(RULES_JVM_EXTERNAL_TAG),
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/{}.zip".format(RULES_JVM_EXTERNAL_TAG),
+)
+
+# ----------------------------------------------------------------------------------------------------------------------
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
