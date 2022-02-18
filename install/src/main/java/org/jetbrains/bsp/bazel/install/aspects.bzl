@@ -46,6 +46,19 @@ java_runtime_classpath_aspect = aspect(
     implementation = _java_runtime_classpath_impl,
 )
 
+def _print_runfiles(target, ctx):
+    print("Runtime files for %s %s" % (ctx.rule.kind, str(target.label)))
+    runfiles = target.default_runfiles.files.to_list()
+    for runfile in runfiles:
+        if not runfile.owner == target.label:
+            print("[file_owner]%s" % runfile.owner)
+            print("[file_path]%s" % runfile.path)
+    return []
+
+print_runfiles = aspect(
+    implementation = _print_runfiles,
+)
+
 def _fetch_cpp_compiler(target, ctx):
     if cc_common.CcToolchainInfo in target:
         toolchain_info = target[cc_common.CcToolchainInfo]

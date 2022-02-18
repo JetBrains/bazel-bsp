@@ -88,8 +88,6 @@ public class BazelBspServerBuildManager {
   }
 
   public List<Lazy<?>> getLazyVals() {
-    return ImmutableList.of(
-        bazelBspTargetManager.getBazelBspJvmTargetManager(),
-        bazelBspTargetManager.getBazelBspScalaTargetManager());
+    return ImmutableList.of(bazelBspTargetManager.getBazelBspJvmTargetManager());
   }
 }

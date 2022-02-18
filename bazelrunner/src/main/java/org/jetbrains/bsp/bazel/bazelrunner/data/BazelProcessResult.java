@@ -30,6 +30,10 @@ public class BazelProcessResult {
     return stdout.get();
   }
 
+  public List<String> getStderr() {
+    return stderr.get();
+  }
+
   public String getJoinedStderr() {
     List<String> lines = stderr.get();
     return String.join(LINES_DELIMITER, lines);

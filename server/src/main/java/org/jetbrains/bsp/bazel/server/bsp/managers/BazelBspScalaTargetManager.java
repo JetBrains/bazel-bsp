@@ -1,53 +1,53 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
 import ch.epfl.scala.bsp4j.ScalaPlatform;
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.commons.Lazy;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.commons.Uri;
 
-public class BazelBspScalaTargetManager extends Lazy<ScalaBuildTarget> {
+public class BazelBspScalaTargetManager {
   private static final Logger LOGGER = LogManager.getLogger(BazelBspScalaTargetManager.class);
 
-  public static final String SCALA_LIBRARY =
-      "@io_bazel_rules_scala_scala_library//:io_bazel_rules_scala_scala_library";
-  public static final String SCALA_REFLECT =
-      "@io_bazel_rules_scala_scala_reflect//:io_bazel_rules_scala_scala_reflect";
-  public static final String SCALA_COMPILER =
-      "@io_bazel_rules_scala_scala_compiler//:io_bazel_rules_scala_scala_compiler";
-  public static final String SCALA_COMPILER_ASPECT = "scala_compiler_classpath_aspect";
-  public static final String SCALA_COMPILER_OUTPUT_GROUP = "scala_compiler_classpath_files";
   private final BazelBspAspectsManager bazelBspAspectsManager;
+  private final BazelData bazelData;
 
-  public BazelBspScalaTargetManager(BazelBspAspectsManager bazelBspAspectsManager) {
+  public BazelBspScalaTargetManager(
+      BazelBspAspectsManager bazelBspAspectsManager, BazelData bazelData) {
     this.bazelBspAspectsManager = bazelBspAspectsManager;
+    this.bazelData = bazelData;
   }
 
-  protected Optional<ScalaBuildTarget> getScalaBuildTarget() {
-    List<BuildTargetIdentifier> targets =
-        ImmutableList.of(
-            new BuildTargetIdentifier(SCALA_LIBRARY),
-            new BuildTargetIdentifier(SCALA_REFLECT),
-            new BuildTargetIdentifier(SCALA_COMPILER));
-    List<String> classpath =
-        bazelBspAspectsManager.fetchPathsFromOutputGroup(
-            targets, SCALA_COMPILER_ASPECT, SCALA_COMPILER_OUTPUT_GROUP);
+  public Optional<ScalaBuildTarget> getScalaBuildTarget(String target) {
+
+    BazelProcessResult aspectResult =
+        bazelBspAspectsManager.fetchResultFromAspect(target, "print_runfiles");
+    List<String> runfilePaths =
+        aspectResult.getStderr().stream()
+            .filter(line -> line.contains("[file_path]"))
+            .collect(Collectors.toList());
 
     List<String> scalaVersions =
-        classpath.stream()
-            .filter(uri -> uri.contains("scala-library"))
+        runfilePaths.stream()
+            .filter(line -> line.contains("scala-library"))
             .collect(Collectors.toList());
 
     if (scalaVersions.size() != 1) {
       LOGGER.error("Scala versions size different than one: " + scalaVersions.size());
       return Optional.empty();
     }
+
+    List<String> classpath =
+        runfilePaths.stream()
+            .map(line -> line.replaceFirst("^.*\\[file_path\\]", ""))
+            .map(path -> Uri.fromWorkspacePath(path, bazelData.getWorkspaceRoot()))
+            .map(Uri::toString)
+            .collect(Collectors.toList());
 
     String scalaVersion =
         scalaVersions
@@ -64,10 +64,5 @@ public class BazelBspScalaTargetManager extends Lazy<ScalaBuildTarget> {
             classpath);
 
     return Optional.of(scalaBuildTarget);
-  }
-
-  @Override
-  protected Supplier<Optional<ScalaBuildTarget>> calculateValue() {
-    return this::getScalaBuildTarget;
   }
 }

@@ -22,20 +22,21 @@ public class BazelBspTargetManager {
       BazelData bazelData,
       BazelBspAspectsManager bazelBspAspectsManager,
       BazelCppTargetManager bazelCppTargetManager) {
-    this.bazelBspScalaTargetManager = new BazelBspScalaTargetManager(bazelBspAspectsManager);
+    this.bazelBspScalaTargetManager =
+        new BazelBspScalaTargetManager(bazelBspAspectsManager, bazelData);
     this.bazelCppTargetManager = bazelCppTargetManager;
     this.bazelBspJvmTargetManager =
         new BazelBspJvmTargetManager(bazelRunner, bazelData, bazelBspAspectsManager);
   }
 
   private Optional<ScalaBuildTarget> getScalaBuildTarget(Build.Rule rule) {
-    return bazelBspScalaTargetManager
-        .getValue()
-        .map(
-            target -> {
-              target.setJvmBuildTarget(bazelBspJvmTargetManager.getJVMBuildTarget(rule));
-              return target;
-            });
+    Optional<ScalaBuildTarget> result =
+        bazelBspScalaTargetManager.getScalaBuildTarget(rule.getName());
+    return result.map(
+        target -> {
+          target.setJvmBuildTarget(bazelBspJvmTargetManager.getJVMBuildTarget(rule));
+          return target;
+        });
   }
 
   public void fillTargetData(
@@ -62,10 +63,6 @@ public class BazelBspTargetManager {
                 target.setData(buildTarget);
               });
     }
-  }
-
-  public BazelBspScalaTargetManager getBazelBspScalaTargetManager() {
-    return bazelBspScalaTargetManager;
   }
 
   public BazelBspJvmTargetManager getBazelBspJvmTargetManager() {

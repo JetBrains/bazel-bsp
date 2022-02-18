@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -42,6 +43,20 @@ public class BazelBspAspectsManager {
         .stream()
         .map(Uri::toString)
         .collect(Collectors.toList());
+  }
+
+  public BazelProcessResult fetchResultFromAspect(String target, String aspect) {
+    BazelProcessResult result =
+        bazelRunner
+            .commandBuilder()
+            .build()
+            .withFlag(BazelRunnerFlag.NOBUILD)
+            .withFlag(BazelRunnerFlag.ASPECTS, aspectsResolver.resolveLabel(aspect))
+            .withArgument(target)
+            .executeBazelCommand()
+            .waitAndGetResult();
+
+    return result;
   }
 
   public Stream<String> fetchLinesFromAspect(String target, String aspect) {
