@@ -18,13 +18,6 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(BAZEL_SKYLIB_TAG, BAZEL_SKYLIB_TAG),
 )
 
-# For bazel_bsp aspect
-http_archive(
-    name = "bazel_bsp",
-    strip_prefix = "bazel-bsp-09ef0c343c474bcad33a6a302dfd6a07cf37ea14",
-    url = "https://github.com/andrefmrocha/bazel-bsp/archive/09ef0c343c474bcad33a6a302dfd6a07cf37ea14.tar.gz",
-)
-
 # For rules_scala
 http_archive(
     name = "io_bazel_rules_scala",
