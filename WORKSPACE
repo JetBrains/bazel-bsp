@@ -5,7 +5,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
 # ======================================================================================================================
-# rules_jvm_external
+# rules_jvm_external - for maven dependencies
 
 RULES_JVM_EXTERNAL_TAG = "4.2"
 
@@ -19,7 +19,7 @@ http_archive(
 )
 
 # ======================================================================================================================
-# bazel_skylib
+# bazel_skylib - starlark functions
 
 BAZEL_SKYLIB_TAG = "1.2.0"
 
@@ -28,27 +28,24 @@ BAZEL_SKYLIB_SHA = "af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a9
 http_archive(
     name = "bazel_skylib",
     sha256 = BAZEL_SKYLIB_SHA,
-    type = "tar.gz",
     url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(BAZEL_SKYLIB_TAG, BAZEL_SKYLIB_TAG),
 )
 
 # ======================================================================================================================
-# io_bazel_rules_scala
+# io_bazel_rules_scala - required by bazel_sonatype
 
 IO_BAZEL_RULES_SCALA_TAG = "20220201"
-# IO_BAZEL_RULES_SCALA_TAG = "d6186617cfe64cef2074b23ca58daac75fe40d42"
 
 IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
-# IO_BAZEL_RULES_SCALA_SHA = "1a19bdedae7c62e9541315476c506c8e7a92c3ce0e7cbbfb57f12a429849f19d"
 
 http_archive(
     name = "io_bazel_rules_scala",
-    sha256 = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2",
-    strip_prefix = "rules_scala-20220201",
-    type = "zip",
-    url = "https://github.com/bazelbuild/rules_scala/releases/download/20220201/rules_scala-20220201.zip",
+    sha256 = IO_BAZEL_RULES_SCALA_SHA,
+    strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/bazelbuild/rules_scala/releases/download/{}/rules_scala-{}.zip".format(IO_BAZEL_RULES_SCALA_TAG, IO_BAZEL_RULES_SCALA_TAG),
 )
 
+# ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
 scala_config()
@@ -64,7 +61,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 scala_repositories()
 
 # ======================================================================================================================
-# io_bazel
+# io_bazel - for protobuf
 
 IO_BAZEL_TAG = "5.0.0"
 
@@ -78,7 +75,7 @@ http_archive(
 )
 
 # ======================================================================================================================
-# googleapis
+# googleapis - for build protos
 
 GOOGLEAPIS_TAG = "5.0.0"
 
@@ -91,26 +88,37 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(GOOGLEAPIS_TAG),
 )
 
+# ======================================================================================================================
+# rules_python - required by com_google_protobuf
+
+RULES_PYTHON_TAG = "0.6.0"
+
+RULES_PYTHON_SHA = "a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502"
+
 http_archive(
     name = "rules_python",
-    sha256 = "a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502",
-    strip_prefix = "rules_python-0.6.0",
-    url = "https://github.com/bazelbuild/rules_python/archive/0.6.0.tar.gz",
+    sha256 = RULES_PYTHON_SHA,
+    strip_prefix = "rules_python-{}".format(RULES_PYTHON_TAG),
+    url = "https://github.com/bazelbuild/rules_python/archive/{}.tar.gz".format(RULES_PYTHON_TAG),
 )
+
+# ======================================================================================================================
+# zlib - required by com_google_protobuf
+
+ZLIB_TAG = "1.2.11"
+
+ZLIB_SHA = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1"
 
 http_archive(
     name = "zlib",
     build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
-    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
-    strip_prefix = "zlib-1.2.11",
-    urls = [
-        "https://mirror.bazel.build/zlib.net/zlib-1.2.11.tar.gz",
-        "https://zlib.net/zlib-1.2.11.tar.gz",
-    ],
+    sha256 = ZLIB_SHA,
+    strip_prefix = "zlib-{}".format(ZLIB_TAG),
+    url = "https://zlib.net/zlib-{}.tar.gz".format(ZLIB_TAG),
 )
 
 # ======================================================================================================================
-# com_google_protobuf
+# com_google_protobuf - for :protobuf_java
 
 COM_GOOGLE_PROTOBUF_TAG = "3.19.4"
 
@@ -124,7 +132,7 @@ http_archive(
 )
 
 # ======================================================================================================================
-# bazel_sonatype
+# bazel_sonatype - for publish
 
 BAZEL_SONATYPE_TAG = "544b27e5ef7493ae2f961df0930f4a96d3cb6b24"
 
