@@ -13,7 +13,7 @@
 
 ### Changes 🔄
 
-- Now the project is using the latest bazel version (the rolling version).
+- Now the project is using the latest bazel version - `5.0.0`.
   Installer skips bazelisk cache binaries during bazel binary discovery mechanizm.
   | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)
 
