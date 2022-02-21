@@ -134,15 +134,15 @@ http_archive(
 # ======================================================================================================================
 # bazel_sonatype - for publish
 
-BAZEL_SONATYPE_TAG = "544b27e5ef7493ae2f961df0930f4a96d3cb6b24"
+BAZEL_SONATYPE_TAG = "0.0.1"
 
-BAZEL_SONATYPE_SHA = "4af12a3f62411c83db1694971fd7713f3317c73de59aac760d151285b2ede430"
+BAZEL_SONATYPE_SHA = "f7889b745694478a2d6a3618315a3e5f9bf1843aabfd7aa4429c4503ff39f397"
 
 http_archive(
     name = "bazel_sonatype",
-    #sha256 = BAZEL_SONATYPE_SHA,
-    strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
-    url = "https://github.com/abrams27/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
+    sha256 = BAZEL_SONATYPE_SHA,
+    strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/{}.zip".format(BAZEL_SONATYPE_TAG),
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
