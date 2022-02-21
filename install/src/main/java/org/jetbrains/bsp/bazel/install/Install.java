@@ -275,14 +275,19 @@ public class Install {
   }
 
   private static String findOnPath(String bin) {
-    List<String> pathElements = Splitter.on(File.pathSeparator).splitToList(System.getenv("PATH"));
-    for (String pathElement : pathElements) {
-      File maybePath = new File(pathElement, bin);
-      if (maybePath.canExecute()) {
-        return maybePath.toString();
-      }
-    }
-    throw new NoSuchElementException("Could not find " + bin + " on your PATH");
+    var pathElements = Splitter.on(File.pathSeparator).splitToList(System.getenv("PATH"));
+
+    return pathElements.stream()
+        .filter(Install::isItNotBazeliskPath)
+        .map(element -> new File(element, bin))
+        .filter(File::canExecute)
+        .findFirst()
+        .map(File::toString)
+        .orElseThrow(() -> new NoSuchElementException("Could not find " + bin + " on your PATH"));
+  }
+
+  private static boolean isItNotBazeliskPath(String path) {
+    return !path.contains("bazelisk/");
   }
 
   private static String readSystemProperty(String name) {
