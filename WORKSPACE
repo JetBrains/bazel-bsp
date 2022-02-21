@@ -35,23 +35,23 @@ http_archive(
 # ======================================================================================================================
 # io_bazel_rules_scala
 
-# IO_BAZEL_RULES_SCALA_TAG = "20220201"
-IO_BAZEL_RULES_SCALA_TAG = "d6186617cfe64cef2074b23ca58daac75fe40d42"
+IO_BAZEL_RULES_SCALA_TAG = "20220201"
+# IO_BAZEL_RULES_SCALA_TAG = "d6186617cfe64cef2074b23ca58daac75fe40d42"
 
-# IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
-IO_BAZEL_RULES_SCALA_SHA = "1a19bdedae7c62e9541315476c506c8e7a92c3ce0e7cbbfb57f12a429849f19d"
+IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
+# IO_BAZEL_RULES_SCALA_SHA = "1a19bdedae7c62e9541315476c506c8e7a92c3ce0e7cbbfb57f12a429849f19d"
 
 http_archive(
     name = "io_bazel_rules_scala",
-    sha256 = IO_BAZEL_RULES_SCALA_SHA,
-    strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
-    url = "https://github.com/andrefmrocha/rules_scala/archive/{}.tar.gz".format(IO_BAZEL_RULES_SCALA_TAG),
+    sha256 = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2",
+    strip_prefix = "rules_scala-20220201",
+    type = "zip",
+    url = "https://github.com/bazelbuild/rules_scala/releases/download/20220201/rules_scala-20220201.zip",
 )
 
-# ----------------------------------------------------------------------------------------------------------------------
-load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
+load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-bazel_version(name = "bazel_version")
+scala_config()
 
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
@@ -61,14 +61,7 @@ scala_register_toolchains()
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 
-scala_repositories((
-    "2.12.11",
-    {
-        "scala_compiler": "e901937dbeeae1715b231a7cfcd547a10d5bbf0dfb9d52d2886eae18b4d62ab6",
-        "scala_library": "dbfe77a3fc7a16c0c7cb6cb2b91fecec5438f2803112a744cb1b187926a138be",
-        "scala_reflect": "5f9e156aeba45ef2c4d24b303405db259082739015190b3b334811843bd90d6a",
-    },
-))
+scala_repositories()
 
 # ======================================================================================================================
 # io_bazel
@@ -98,6 +91,24 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(GOOGLEAPIS_TAG),
 )
 
+http_archive(
+    name = "rules_python",
+    sha256 = "a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502",
+    strip_prefix = "rules_python-0.6.0",
+    url = "https://github.com/bazelbuild/rules_python/archive/0.6.0.tar.gz",
+)
+
+http_archive(
+    name = "zlib",
+    build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
+    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+    strip_prefix = "zlib-1.2.11",
+    urls = [
+        "https://mirror.bazel.build/zlib.net/zlib-1.2.11.tar.gz",
+        "https://zlib.net/zlib-1.2.11.tar.gz",
+    ],
+)
+
 # ======================================================================================================================
 # com_google_protobuf
 
@@ -115,15 +126,15 @@ http_archive(
 # ======================================================================================================================
 # bazel_sonatype
 
-BAZEL_SONATYPE_TAG = "d14a12150204c6a2645d6b065076a9ba30a391fc"
+BAZEL_SONATYPE_TAG = "544b27e5ef7493ae2f961df0930f4a96d3cb6b24"
 
 BAZEL_SONATYPE_SHA = "c1dca68543662588c1d35dae5840f7381895e0fe341bf38d612586cef024dc82"
 
 http_archive(
     name = "bazel_sonatype",
-    sha256 = BAZEL_SONATYPE_SHA,
+    #sha256 = BAZEL_SONATYPE_SHA,
     strip_prefix = "bazel-sonatype-%s" % BAZEL_SONATYPE_TAG,
-    url = "https://github.com/JetBrains/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
+    url = "https://github.com/abrams27/bazel-sonatype/archive/%s.zip" % BAZEL_SONATYPE_TAG,
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
