@@ -11,8 +11,6 @@ java_library(
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
         "//logger",
-        "@io_bazel//src/main/protobuf:analysis_java_proto",
-        "@io_bazel//src/main/protobuf:build_java_proto",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_guava_guava",
         "@maven//:org_apache_logging_log4j_log4j_api",

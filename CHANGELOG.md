@@ -11,6 +11,12 @@
 - Memoize BazelProcess output so that it doesn't get lost.
   | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
 
+### Changes 🔄
+
+- Now the project is using the latest bazel version - `5.0.0`.
+  Installer skips bazelisk cache binaries during bazel binary discovery mechanizm.
+  | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)
+
 ## [1.1.1] - 16.02.2022
 
 ### Features 🎉
