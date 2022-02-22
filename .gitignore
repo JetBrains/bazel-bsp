@@ -1,6 +1,15 @@
+# .idea
+.idea/
+
+# mac OS
+.DS_Store
+
+# bsp
 .bazelbsp/
 .bsp/
-.idea/
-.ijwb/
+
+# bazel
 bazel-*
-.DS_Store
+
+# e2e tests
+e2e/test-resources/**/.bazelversion
