@@ -28,7 +28,7 @@ runTest "1.x"
 runTest "2.x"
 runTest "3.x"
 runTest "4.x"
-runTest "5.x"
+#runTest "5.x"
 
 echo -e "\n==================================="
 echo -e "${GREEN}'$TEST_TARGET' for all bazel versions passed!${NC}"
