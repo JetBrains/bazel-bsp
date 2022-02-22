@@ -5,18 +5,18 @@
 
 if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
   echo "Illegal number of parameters!"
-  echo "Usage: ./runTest.sh <test target> <bazel version> [path to the project]"
+  echo "Usage: ./runTest.sh <test target> <path to the project> <bazel version>"
   exit 1
 fi
 
 # the first argument of the script should be a bazel test target for provided test project
 TEST_TARGET="$1"
 
-# the second argument of the script should be a bazel version which will be used in the current test execution
-BAZEL_VERSION="$2"
+# the second argument of the script should be a path to the directory with tested project (relative to the project root)
+TEST_PROJECT_PATH="$2"
 
-# the third argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
-TEST_PROJECT_PATH="$3"
+# the third argument of the script should be a bazel version which will be used in the current test execution
+BAZEL_VERSION="$3"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -29,6 +29,7 @@ echo -e "-----------------------------------\n"
 
 echo "Building project..."
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
+
 bazel build //server/src/main/java/org/jetbrains/bsp/bazel:bsp-install
 EXECUTION_CODE=$?
 if [ $EXECUTION_CODE -ne 0 ]; then
@@ -40,7 +41,7 @@ bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/b
 echo "Building done."
 
 echo "Cleaning project directory..."
-if [ "$#" -eq 3 ]; then
+if [ "$TEST_PROJECT_PATH" != "." ]; then
   cd "$TEST_PROJECT_PATH" || exit
   bazel clean
 fi
