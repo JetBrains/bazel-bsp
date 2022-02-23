@@ -68,7 +68,8 @@ public class BazelBspServer {
             bazelBspCompilationManager, bazelRunner, internalAspectsResolver);
     BazelCppTargetManager bazelCppTargetManager = new BazelCppTargetManager(bazelBspAspectsManager);
     BazelBspTargetManager bazelBspTargetManager =
-        new BazelBspTargetManager(bazelRunner, bazelBspAspectsManager, bazelCppTargetManager);
+        new BazelBspTargetManager(
+            bazelRunner, bazelData, bazelBspAspectsManager, bazelCppTargetManager);
     BazelBspQueryManager bazelBspQueryManager =
         new BazelBspQueryManager(
             bazelBspServerConfig.getProjectView(), bazelData, bazelRunner, bazelBspTargetManager);

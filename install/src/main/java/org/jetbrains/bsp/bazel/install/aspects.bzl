@@ -61,12 +61,20 @@ fetch_cpp_compiler = aspect(
 )
 
 def _fetch_java_target_version(target, ctx):
-    if hasattr(ctx.rule.attr, "target_version"):
-        print(ctx.rule.attr.target_version)
+    print(target[java_common.JavaToolchainInfo].target_version)
     return []
 
 fetch_java_target_version = aspect(
     implementation = _fetch_java_target_version,
+    attr_aspects = ["_java_toolchain"],
+)
+
+def _fetch_java_target_home(target, ctx):
+    print(target[java_common.JavaRuntimeInfo].java_home)
+    return []
+
+fetch_java_target_home = aspect(
+    implementation = _fetch_java_target_home,
     attr_aspects = ["_java_toolchain"],
 )
 

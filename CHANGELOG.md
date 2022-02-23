@@ -6,6 +6,8 @@
 
 ### Fixes 🛠️
 
+- Fixed extraction of java version and java home for bazel `5.0.0`.
+  | [#165](https://github.com/JetBrains/bazel-bsp/pull/165)
 - Log messages are no longer trimmed.
   | [#157](https://github.com/JetBrains/bazel-bsp/pull/157)
 - Memoize BazelProcess output so that it doesn't get lost.
