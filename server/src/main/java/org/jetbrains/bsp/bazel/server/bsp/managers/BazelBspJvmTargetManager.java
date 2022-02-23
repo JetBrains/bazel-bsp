@@ -19,6 +19,8 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
   public static final String FETCH_JAVA_HOME_ASPECT = "fetch_java_target_home";
   public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
       "@bazel_tools//tools/jdk:current_java_toolchain";
+  public static final String BAZEL_JDK_CURRENT_JAVA_RUNTIME =
+          "@bazel_tools//tools/jdk:current_java_runtime";
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
   private final BazelBspAspectsManager bazelBspAspectsManager;
@@ -55,8 +57,9 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
 
   private Optional<String> getJavaPathForBazel5() {
     return bazelBspAspectsManager
-            .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN, FETCH_JAVA_HOME_ASPECT)
-            .findFirst();
+            .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_RUNTIME, FETCH_JAVA_HOME_ASPECT)
+            .findFirst()
+            .map(path -> Uri.fromExecPath("exec-root://" + path, bazelData.getExecRoot()).toString());
   }
 
   private Optional<Build.Rule> traverseDependency(

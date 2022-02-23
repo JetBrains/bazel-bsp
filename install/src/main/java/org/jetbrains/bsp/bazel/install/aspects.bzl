@@ -70,7 +70,7 @@ fetch_java_target_version = aspect(
 )
 
 def _fetch_java_target_home(target, ctx):
-    print(target[java_common.JavaToolchainInfo].java_runtime.java_home)
+    print(target[java_common.JavaRuntimeInfo].java_home)
     return []
 
 fetch_java_target_home = aspect(
