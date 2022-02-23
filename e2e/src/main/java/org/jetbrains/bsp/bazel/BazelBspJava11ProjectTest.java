@@ -16,7 +16,7 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "java-11-project";
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(3);
+  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(4);
 
   public BazelBspJava11ProjectTest() {
     super(REPO_NAME, CLIENT_TIMEOUT);
