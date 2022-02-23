@@ -20,13 +20,13 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
   public static final String BAZEL_JDK_CURRENT_JAVA_TOOLCHAIN =
       "@bazel_tools//tools/jdk:current_java_toolchain";
   public static final String BAZEL_JDK_CURRENT_JAVA_RUNTIME =
-          "@bazel_tools//tools/jdk:current_java_runtime";
+      "@bazel_tools//tools/jdk:current_java_runtime";
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
   private final BazelBspAspectsManager bazelBspAspectsManager;
 
   public BazelBspJvmTargetManager(
-          BazelRunner bazelRunner, BazelData bazelData, BazelBspAspectsManager bazelBspAspectsManager) {
+      BazelRunner bazelRunner, BazelData bazelData, BazelBspAspectsManager bazelBspAspectsManager) {
     this.bazelRunner = bazelRunner;
     this.bazelData = bazelData;
     this.bazelBspAspectsManager = bazelBspAspectsManager;
@@ -57,9 +57,9 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
 
   private Optional<String> getJavaPathForBazel5() {
     return bazelBspAspectsManager
-            .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_RUNTIME, FETCH_JAVA_HOME_ASPECT)
-            .findFirst()
-            .map(path -> Uri.fromExecPath("exec-root://" + path, bazelData.getExecRoot()).toString());
+        .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_RUNTIME, FETCH_JAVA_HOME_ASPECT)
+        .findFirst()
+        .map(path -> Uri.fromExecPath("exec-root://" + path, bazelData.getExecRoot()).toString());
   }
 
   private Optional<Build.Rule> traverseDependency(
