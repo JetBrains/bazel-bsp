@@ -8,6 +8,7 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.Optional;
 import java.util.Set;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
 
@@ -18,12 +19,13 @@ public class BazelBspTargetManager {
 
   public BazelBspTargetManager(
       BazelRunner bazelRunner,
+      BazelData bazelData,
       BazelBspAspectsManager bazelBspAspectsManager,
       BazelCppTargetManager bazelCppTargetManager) {
     this.bazelBspScalaTargetManager = new BazelBspScalaTargetManager(bazelBspAspectsManager);
     this.bazelCppTargetManager = bazelCppTargetManager;
     this.bazelBspJvmTargetManager =
-        new BazelBspJvmTargetManager(bazelRunner, bazelBspAspectsManager);
+        new BazelBspJvmTargetManager(bazelRunner, bazelData, bazelBspAspectsManager);
   }
 
   private Optional<ScalaBuildTarget> getScalaBuildTarget(Build.Rule rule) {

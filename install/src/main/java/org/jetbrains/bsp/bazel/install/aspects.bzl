@@ -69,6 +69,15 @@ fetch_java_target_version = aspect(
     attr_aspects = ["_java_toolchain"],
 )
 
+def _fetch_java_target_home(target, ctx):
+    print(target[java_common.JavaToolchainInfo].java_runtime.java_home)
+    return []
+
+fetch_java_target_home = aspect(
+    implementation = _fetch_java_target_home,
+    attr_aspects = ["_java_toolchain"],
+)
+
 def _get_target_info(ctx, field_name):
     fields = getattr(ctx.rule.attr, field_name, [])
     fields = [ctx.expand_location(field) for field in fields]
