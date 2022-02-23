@@ -7,7 +7,6 @@ sh_binary(
     args = [
         "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspSampleRepoTest",
         "e2e/test-resources/sample-repo",
-        "1.x",
         "2.x",
         "3.x",
         "4.x",

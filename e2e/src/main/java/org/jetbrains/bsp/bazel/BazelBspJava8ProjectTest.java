@@ -35,7 +35,7 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
   }
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
-    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "8");
+    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk", "8");
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
