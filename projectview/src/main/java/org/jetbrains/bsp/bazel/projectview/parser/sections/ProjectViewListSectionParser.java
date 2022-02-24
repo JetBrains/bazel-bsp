@@ -18,7 +18,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
  *
  * @param <T> type of parsed list section
  */
-abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
+abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<V>>
     extends ProjectViewSectionParser<T> {
 
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
@@ -58,8 +58,11 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
   @Override
   protected T parse(String sectionBody) {
     var allEntries = splitSectionEntries(sectionBody);
-    var includedEntries = filterIncludedEntries(allEntries);
-    var excludedEntries = filterExcludedEntries(allEntries);
+    var rawIncludedEntries = filterIncludedEntries(allEntries);
+    var rawExcludedEntries = filterExcludedEntries(allEntries);
+
+    var includedEntries = mapRawValues(rawIncludedEntries);
+    var excludedEntries = mapRawValues(rawExcludedEntries);
 
     return createInstance(includedEntries, excludedEntries);
   }
@@ -87,5 +90,11 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     return entry.startsWith(EXCLUDED_ENTRY_PREFIX);
   }
 
-  protected abstract T createInstance(List<String> includedValues, List<String> excludedValues);
+  private List<V> mapRawValues(List<String> rawValues) {
+    return rawValues.stream().map(this::mapRawValues).collect(Collectors.toList());
+  }
+
+  protected abstract V mapRawValues(String rawValue);
+
+  protected abstract T createInstance(List<V> includedValues, List<V> excludedValues);
 }

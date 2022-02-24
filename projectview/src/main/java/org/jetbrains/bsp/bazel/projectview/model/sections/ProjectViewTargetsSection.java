@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.model.sections;
 
 import java.util.List;
 
-public class ProjectViewTargetsSection extends ProjectViewListSection {
+public class ProjectViewTargetsSection extends ProjectViewListSection<String> {
 
   public static final String SECTION_NAME = "targets";
 
