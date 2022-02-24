@@ -1,5 +1,2 @@
 build --java_toolchain=@bazel_tools//tools/jdk:toolchain_java8
 build --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_java8
-
-build --java_language_version=8
-build --tool_java_language_version=8

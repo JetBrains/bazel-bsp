@@ -59,7 +59,7 @@ public class BazelBspJvmTargetManager extends Lazy<String> {
     return bazelBspAspectsManager
         .fetchLinesFromAspect(BAZEL_JDK_CURRENT_JAVA_RUNTIME, FETCH_JAVA_HOME_ASPECT)
         .findFirst()
-        .map(path -> Uri.fromExecPath("exec-root://" + path, bazelData.getExecRoot()).toString());
+        .map(path -> Uri.fromExecPath("exec-root://" + path + "/", bazelData.getExecRoot()).toString());
   }
 
   private Optional<Build.Rule> traverseDependency(

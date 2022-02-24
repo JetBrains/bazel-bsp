@@ -13,3 +13,4 @@ bazel-*
 
 # e2e tests
 e2e/test-resources/**/.bazelversion
+e2e/test-resources/**/.bazelrc

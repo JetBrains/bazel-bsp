@@ -3,9 +3,9 @@
 # this script installs required environment (building server + installing it in the given directory)
 # and then runs test itself with a given bazel version
 
-if [ "$#" -ne 2 ] && [ "$#" -ne 3 ]; then
+if [ "$#" -lt 4 ]; then
   echo "Illegal number of parameters!"
-  echo "Usage: ./runTest.sh <test target> <path to the project> <bazel version>"
+  echo "Usage: ./runTest.sh <test target> <path to the project> <path to .bazelrc file> <bazel version>"
   exit 1
 fi
 
@@ -16,7 +16,10 @@ TEST_TARGET="$1"
 TEST_PROJECT_PATH="$2"
 
 # the third argument of the script should be a bazel version which will be used in the current test execution
-BAZEL_VERSION="$3"
+BAZELRC_FILE_PATH="$3"
+
+# the fourth argument of the script should be a bazel version which will be used in the current test execution
+BAZEL_VERSION="$4"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -47,6 +50,8 @@ if [ "$TEST_PROJECT_PATH" != "." ]; then
 fi
 
 echo "$BAZEL_VERSION" >.bazelversion
+
+cp "$BAZELRC_FILE_PATH" .bazelrc
 
 rm -r .bsp/ >/dev/null 2>&1
 rm -r .bazelbsp/ >/dev/null 2>&1
