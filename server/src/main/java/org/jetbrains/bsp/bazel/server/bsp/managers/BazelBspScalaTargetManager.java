@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
 import ch.epfl.scala.bsp4j.ScalaPlatform;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,13 +43,25 @@ public class BazelBspScalaTargetManager {
       return Optional.empty();
     }
 
-    List<String> classpath =
+    List<String> scalaRunfiles =
         runfilePaths.stream()
             .map(line -> line.replaceFirst("^.*\\[file_path\\]", ""))
             .filter(x -> x.matches(".*scala-(?:library|compiler|reflect).*"))
             .map(path -> Uri.fromWorkspacePath(path, bazelData.getWorkspaceRoot()))
             .map(Uri::toString)
             .collect(Collectors.toList());
+
+    Optional<String> scalaCompilerHack =
+        scalaRunfiles.stream()
+            .filter(x -> x.contains("scala-reflect"))
+            .map(
+                x ->
+                    x.replace("scala-reflect", "scala-compiler")
+                        .replace("scala_reflect", "scala_compiler"))
+            .findFirst();
+
+    ImmutableList.Builder<String> classpath = ImmutableList.<String>builder().addAll(scalaRunfiles);
+    scalaCompilerHack.ifPresent(classpath::add);
 
     String scalaVersion =
         scalaVersions
@@ -62,7 +75,7 @@ public class BazelBspScalaTargetManager {
             scalaVersion,
             scalaVersion.substring(0, scalaVersion.lastIndexOf(".")),
             ScalaPlatform.JVM,
-            classpath);
+            classpath.build());
 
     return Optional.of(scalaBuildTarget);
   }

@@ -50,9 +50,10 @@ def _print_runfiles(target, ctx):
     print("Runtime files for %s %s" % (ctx.rule.kind, str(target.label)))
     runfiles = target.default_runfiles.files.to_list()
     for runfile in runfiles:
-        if not runfile.owner == target.label:
-            print("[file_owner]%s" % runfile.owner)
-            print("[file_path]%s" % runfile.path)
+        if "scala" in runfile.path:
+            if not runfile.owner == target.label:
+                print("[file_owner]%s" % runfile.owner)
+                print("[file_path]%s" % runfile.path)
     return []
 
 print_runfiles = aspect(
