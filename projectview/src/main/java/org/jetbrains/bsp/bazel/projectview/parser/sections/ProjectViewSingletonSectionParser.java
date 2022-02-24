@@ -12,7 +12,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
  *
  * @param <T> type of parsed single value section
  */
-abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonSection>
+abstract class ProjectViewSingletonSectionParser<V, T extends ProjectViewSingletonSection<V>>
     extends ProjectViewSectionParser<Optional<T>> {
 
   protected ProjectViewSingletonSectionParser(String sectionName) {
@@ -33,8 +33,11 @@ abstract class ProjectViewSingletonSectionParser<T extends ProjectViewSingletonS
   protected Optional<T> parse(String sectionBody) {
     return Optional.of(sectionBody.strip())
         .filter(body -> !body.isEmpty())
+        .map(this::mapRawValue)
         .map(this::createInstance);
   }
 
-  protected abstract T createInstance(String value);
+  protected abstract V mapRawValue(String rawValue);
+
+  protected abstract T createInstance(V value);
 }

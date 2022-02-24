@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-public class ProjectViewDebuggerAddressSection extends ProjectViewSingletonSection {
+public class ProjectViewDebuggerAddressSection extends ProjectViewSingletonSection<String> {
 
   public static final String SECTION_NAME = "debugger_address";
 

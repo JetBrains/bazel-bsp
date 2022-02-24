@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-public class ProjectViewBazelPathSection extends ProjectViewSingletonSection {
+public class ProjectViewBazelPathSection extends ProjectViewSingletonSection<String> {
 
   public static final String SECTION_NAME = "bazel_path";
 

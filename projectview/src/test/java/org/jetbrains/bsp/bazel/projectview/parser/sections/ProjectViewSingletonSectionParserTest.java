@@ -20,14 +20,14 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingletonSection> {
+public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingletonSection<V>> {
 
-  private final ProjectViewSingletonSectionParser<T> parser;
+  private final ProjectViewSingletonSectionParser<V, T> parser;
   private final Function<String, T> sectionConstructor;
   private final String sectionName;
 
   public ProjectViewSingletonSectionParserTest(
-      ProjectViewSingletonSectionParser<T> parser, Function<String, T> sectionConstructor) {
+      ProjectViewSingletonSectionParser<V, T> parser, Function<String, T> sectionConstructor) {
     this.parser = parser;
     this.sectionConstructor = sectionConstructor;
 
@@ -40,15 +40,15 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
         new Object[][] {
           {
             new ProjectViewBazelPathSectionParser(),
-            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new
+            (Function<String, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new
           },
           {
             new ProjectViewDebuggerAddressSectionParser(),
-            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new
+            (Function<String, ProjectViewDebuggerAddressSection>) ProjectViewDebuggerAddressSection::new
           },
           {
             new ProjectViewJavaPathSectionParser(),
-            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new
+            (Function<String, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new
           }
         });
   }
