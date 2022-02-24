@@ -289,7 +289,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                         "/scala-library-2.12.8.jar",
                         "/https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre.jar"),
                     ImmutableList.of("-Xms2G -Xmx5G"),
-                    "/e2e/test-resources/sample-repo",
+                    "/e2e/test-projects/sample-repo",
                     System.getenv())));
 
     return new BazelBspTestScenarioStep(
@@ -316,7 +316,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                         "/dep/deeper/deeper.jar",
                         "/https/repo1.maven.org/maven2/com/google/guava/guava/28.0-jre/guava-28.0-jre.jar"),
                     ImmutableList.of(),
-                    "/e2e/test-resources/sample-repo",
+                    "/e2e/test-projects/sample-repo",
                     System.getenv())));
 
     return new BazelBspTestScenarioStep(

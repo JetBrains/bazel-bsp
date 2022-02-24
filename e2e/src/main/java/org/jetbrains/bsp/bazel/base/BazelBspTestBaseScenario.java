@@ -15,7 +15,7 @@ public abstract class BazelBspTestBaseScenario {
   private static final Integer SUCCESS_EXIT_CODE = 0;
   private static final Integer FAIL_EXIT_CODE = 1;
 
-  private static final String TEST_RESOURCES_DIR = "e2e/test-resources";
+  private static final String TEST_RESOURCES_DIR = "e2e/test-projects";
   private static final String WORKSPACE_DIR = System.getenv("BUILD_WORKSPACE_DIRECTORY");
 
   protected final TestClient testClient;

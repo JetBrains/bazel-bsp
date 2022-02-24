@@ -17,18 +17,18 @@ TEST_PROJECT_PATH="$2"
 
 runTest() {
   BAZEL_VERSION="$*"
-  BAZELRC_FILE_PATH="../.emptyrc"
+  BAZELRC_FILE_PATH="../../src/main/resources/bazelrc/.emptyrc"
 
-  if [ "$BAZEL_VERSION" == "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-resources/java-8-project" ]; then
-    BAZELRC_FILE_PATH="../.java8bazel5rc"
-  elif [ "$BAZEL_VERSION" != "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-resources/java-8-project" ]; then
-    BAZELRC_FILE_PATH="../.java8bazel1234rc"
+  if [ "$BAZEL_VERSION" == "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-projects/java-8-project" ]; then
+    BAZELRC_FILE_PATH="../../src/main/resources/bazelrc/.java8bazel5rc"
+  elif [ "$BAZEL_VERSION" != "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-projects/java-8-project" ]; then
+    BAZELRC_FILE_PATH="../../src/main/resources/bazelrc/.java8bazel1234rc"
   fi
 
-  if [ "$BAZEL_VERSION" == "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-resources/java-11-project" ]; then
-    BAZELRC_FILE_PATH="../.java11bazel5rc"
-  elif [ "$BAZEL_VERSION" != "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-resources/java-11-project" ]; then
-    BAZELRC_FILE_PATH="../.java11bazel1234rc"
+  if [ "$BAZEL_VERSION" == "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-projects/java-11-project" ]; then
+    BAZELRC_FILE_PATH="../../src/main/resources/bazelrc/.java11bazel5rc"
+  elif [ "$BAZEL_VERSION" != "5.x" ] && [ "$TEST_PROJECT_PATH" == "e2e/test-projects/java-11-project" ]; then
+    BAZELRC_FILE_PATH="../../src/main/resources/bazelrc/.java11bazel1234rc"
   fi
 
   ./runTest.sh "$TEST_TARGET" "$TEST_PROJECT_PATH" "$BAZELRC_FILE_PATH" "$*"
@@ -39,7 +39,7 @@ runTest() {
   fi
 }
 
-cd e2e || exit
+cd e2e/src/main/bash/ || exit
 
 for i in "${@:3}"; do
   runTest "$i"
