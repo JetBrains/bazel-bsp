@@ -67,7 +67,7 @@ sh_binary(
         "4.x",
         "5.x",
     ],
-    data = ["runTest.sh"],
+    data = ["src/main/bash/runTest.sh"],
 )
 
 sh_binary(
