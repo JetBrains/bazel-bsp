@@ -52,7 +52,8 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
           },
           {
             new ProjectViewJavaPathSectionParser(),
-            (Function<String, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new
+            (Function<String, ProjectViewJavaPathSection>)
+                (value) -> new ProjectViewJavaPathSection(Paths.get(value))
           }
         });
   }

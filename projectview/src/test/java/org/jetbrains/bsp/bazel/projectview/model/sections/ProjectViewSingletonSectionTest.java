@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
 import com.google.common.net.HostAndPort;
+import java.nio.file.Path;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -39,10 +40,12 @@ public class ProjectViewSingletonSectionTest<T extends ProjectViewSingletonSecti
           {
             (Function<String, ProjectViewDebuggerAddressSection>)
                 (value) -> new ProjectViewDebuggerAddressSection(HostAndPort.fromString(value)),
-            (Function<String, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new
+            (Function<String, ProjectViewJavaPathSection>)
+                (value) -> new ProjectViewJavaPathSection(Paths.get(value))
           },
           {
-            (Function<String, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new,
+            (Function<String, ProjectViewJavaPathSection>)
+                (value) -> new ProjectViewJavaPathSection(Paths.get(value)),
             (Function<String, ProjectViewBazelPathSection>)
                 (value) -> new ProjectViewBazelPathSection(Paths.get(value))
           }

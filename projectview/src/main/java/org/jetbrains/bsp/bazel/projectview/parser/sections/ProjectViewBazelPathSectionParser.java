@@ -1,9 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 
 public class ProjectViewBazelPathSectionParser
     extends ProjectViewSingletonSectionParser<Path, ProjectViewBazelPathSection> {

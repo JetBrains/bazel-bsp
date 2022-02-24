@@ -129,7 +129,7 @@ public class Install {
     if (cmd.hasOption(JAVA_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(JAVA_SHORT_OPT));
     } else if (projectView.getJavaPath().isPresent()) {
-      argv.add(projectView.getJavaPath().get().getValue());
+      argv.add(projectView.getJavaPath().get().getValue().toString());
     } else {
       String javaHome = readSystemProperty("java.home");
       argv.add(Paths.get(javaHome).resolve("bin").resolve("java").toString());

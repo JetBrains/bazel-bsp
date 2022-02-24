@@ -1,9 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
 import com.google.common.net.HostAndPort;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import io.vavr.control.Try;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -13,6 +10,8 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class ProjectViewTest {
@@ -147,7 +146,7 @@ public class ProjectViewTest {
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(
                         HostAndPort.fromString("127.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
             .build();
 
     // then
@@ -167,7 +166,7 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("127.0.0.1:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("path/to/java");
+    var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 
@@ -186,7 +185,7 @@ public class ProjectViewTest {
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(
                         HostAndPort.fromString("127.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
             .build();
 
     // then
@@ -207,7 +206,7 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("127.0.0.1:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("path/to/java");
+    var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 
@@ -224,7 +223,7 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
             .build();
 
     // when
@@ -255,7 +254,7 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("path/to/java");
+    var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 
@@ -279,7 +278,7 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
             .build();
 
     // then
@@ -297,7 +296,7 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("path/to/java");
+    var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 
@@ -315,7 +314,8 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("imported/path/to/java")))
+            .javaPath(
+                Optional.of(new ProjectViewJavaPathSection(Paths.get("imported/path/to/java"))))
             .build();
 
     // when
@@ -331,7 +331,7 @@ public class ProjectViewTest {
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(
                         HostAndPort.fromString("127.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
+            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
             .build();
 
     // then
@@ -362,7 +362,7 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("127.0.0.1:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("path/to/java");
+    var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 
@@ -381,7 +381,8 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("imported1/path/to/java")))
+            .javaPath(
+                Optional.of(new ProjectViewJavaPathSection(Paths.get("imported1/path/to/java"))))
             .build();
 
     var importedProjectViewTry2 =
@@ -406,7 +407,8 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("imported3/path/to/java")))
+            .javaPath(
+                Optional.of(new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"))))
             .build();
 
     // when
@@ -455,7 +457,8 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("imported3/path/to/java");
+    var expectedJavaPathSection =
+        new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 
@@ -474,7 +477,8 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("imported1/path/to/java")))
+            .javaPath(
+                Optional.of(new ProjectViewJavaPathSection(Paths.get("imported1/path/to/java"))))
             .build();
 
     var importedProjectViewTry2 =
@@ -499,7 +503,8 @@ public class ProjectViewTest {
             .debuggerAddress(
                 Optional.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"))))
-            .javaPath(Optional.of(new ProjectViewJavaPathSection("imported3/path/to/java")))
+            .javaPath(
+                Optional.of(new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"))))
             .build();
 
     // when
@@ -547,7 +552,8 @@ public class ProjectViewTest {
         new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"));
     assertEquals(expectedDebuggerAddressSection, projectView.getDebuggerAddress().get());
 
-    var expectedJavaPathSection = new ProjectViewJavaPathSection("imported3/path/to/java");
+    var expectedJavaPathSection =
+        new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
   }
 }
