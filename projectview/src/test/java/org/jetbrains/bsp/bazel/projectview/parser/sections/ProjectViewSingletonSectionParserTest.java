@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import com.google.common.net.HostAndPort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -47,7 +48,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
           {
             new ProjectViewDebuggerAddressSectionParser(),
             (Function<String, ProjectViewDebuggerAddressSection>)
-                ProjectViewDebuggerAddressSection::new
+                (value) -> new ProjectViewDebuggerAddressSection(HostAndPort.fromString(value))
           },
           {
             new ProjectViewJavaPathSectionParser(),
