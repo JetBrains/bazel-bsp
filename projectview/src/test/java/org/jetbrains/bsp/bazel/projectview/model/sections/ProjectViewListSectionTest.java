@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewListSectionTest<T extends ProjectViewListSection> {
+public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> {
 
   private final BiFunction<List<String>, List<String>, T> sectionConstructor;
 
@@ -25,7 +25,7 @@ public class ProjectViewListSectionTest<T extends ProjectViewListSection> {
     return List.of(
         new Object[][] {
           {
-            (BiFunction<List<String>, List<String>, ProjectViewListSection>)
+            (BiFunction<List<String>, List<String>, ProjectViewTargetsSection>)
                 ProjectViewTargetsSection::new
           }
         });

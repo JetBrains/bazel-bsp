@@ -1,10 +1,10 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import com.google.common.net.HostAndPort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.net.HostAndPort;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;

@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-import com.google.common.net.HostAndPort;
-import java.nio.file.Path;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import com.google.common.net.HostAndPort;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewSingletonSectionTest<T extends ProjectViewSingletonSection> {
+public class ProjectViewSingletonSectionTest<V, T extends ProjectViewSingletonSection<V>> {
 
   private final Function<String, T> sectionConstructor;
   private final Function<String, T> anotherTypeSectionConstructor;
