@@ -119,7 +119,7 @@ public class Install {
     if (cmd.hasOption(BAZEL_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(BAZEL_SHORT_OPT));
     } else if (projectView.getBazelPath().isPresent()) {
-      argv.add(projectView.getBazelPath().get().getValue());
+      argv.add(projectView.getBazelPath().get().getValue().toString());
     } else {
       argv.add(findOnPath("bazel"));
     }

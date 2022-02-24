@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.model.sections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -29,16 +30,20 @@ public class ProjectViewSingletonSectionTest<T extends ProjectViewSingletonSecti
     return List.of(
         new Object[][] {
           {
-            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new,
-            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new
+            (Function<String, ProjectViewBazelPathSection>)
+                (value) -> new ProjectViewBazelPathSection(Paths.get(value)),
+            (Function<String, ProjectViewDebuggerAddressSection>)
+                ProjectViewDebuggerAddressSection::new
           },
           {
-            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new,
-            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new
+            (Function<String, ProjectViewDebuggerAddressSection>)
+                ProjectViewDebuggerAddressSection::new,
+            (Function<String, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new
           },
           {
-            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new,
-            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new
+            (Function<String, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new,
+            (Function<String, ProjectViewBazelPathSection>)
+                (value) -> new ProjectViewBazelPathSection(Paths.get(value))
           }
         });
   }

@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.bsp.config;
 import com.google.common.collect.ImmutableList;
 import io.vavr.control.Try;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -20,7 +21,7 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
   private final ProjectViewDefaultParserProvider defaultParserProvider;
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel, String targets) {
-    this.pathToBazel = new ProjectViewBazelPathSection(pathToBazel);
+    this.pathToBazel = new ProjectViewBazelPathSection(Paths.get(pathToBazel));
     this.targets =
         Optional.of(
             new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of()));
@@ -28,7 +29,7 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
   }
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel) {
-    this.pathToBazel = new ProjectViewBazelPathSection(pathToBazel);
+    this.pathToBazel = new ProjectViewBazelPathSection(Paths.get(pathToBazel));
     this.targets = Optional.empty();
     this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
   }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import io.vavr.control.Try;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -140,7 +141,7 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target1", "//included_target2", "//included_target3"),
                     List.of("//excluded_target1", "//excluded_target2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("127.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
             .build();
@@ -155,7 +156,7 @@ public class ProjectViewTest {
             List.of("//excluded_target1", "//excluded_target2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
-    var expectedBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedBazelPathSection = new ProjectViewBazelPathSection(Paths.get("path/to/bazel"));
     assertEquals(expectedBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("127.0.0.1:8000");
@@ -175,7 +176,7 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target1", "//included_target2", "//included_target3"),
                     List.of("//excluded_target1", "//excluded_target2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("127.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
             .build();
@@ -190,7 +191,8 @@ public class ProjectViewTest {
             List.of("//excluded_target1", "//excluded_target2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
-    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection =
+        new ProjectViewBazelPathSection(Paths.get("path/to/bazel"));
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("127.0.0.1:8000");
@@ -209,7 +211,7 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
                     List.of("//excluded_target1.1", "//excluded_target1.2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
             .build();
@@ -234,7 +236,8 @@ public class ProjectViewTest {
             List.of("//excluded_target1.1", "//excluded_target1.2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
-    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection =
+        new ProjectViewBazelPathSection(Paths.get("path/to/bazel"));
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("0.0.0.1:8000");
@@ -260,7 +263,7 @@ public class ProjectViewTest {
         ProjectView.builder()
             .imports(List.of())
             .targets(new ProjectViewTargetsSection(List.of(), List.of()))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
             .build();
@@ -272,7 +275,8 @@ public class ProjectViewTest {
     var expectedProjectViewTargetsSection = new ProjectViewTargetsSection(List.of(), List.of());
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
-    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection =
+        new ProjectViewBazelPathSection(Paths.get("path/to/bazel"));
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("0.0.0.1:8000");
@@ -291,7 +295,8 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
                     List.of("//excluded_target1.1", "//excluded_target1.2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported/path/to/bazel")))
+            .bazelPath(
+                Optional.of(new ProjectViewBazelPathSection(Paths.get("imported/path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported/path/to/java")))
             .build();
@@ -304,7 +309,7 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target2.1", "//included_target2.2", "//included_target2.3"),
                     List.of("//excluded_target2.1", "//excluded_target2.2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("path/to/bazel")))
+            .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("127.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("path/to/java")))
             .build();
@@ -329,7 +334,8 @@ public class ProjectViewTest {
                 "//excluded_target2.2"));
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
-    var expectedProjectViewBazelPathSection = new ProjectViewBazelPathSection("path/to/bazel");
+    var expectedProjectViewBazelPathSection =
+        new ProjectViewBazelPathSection(Paths.get("path/to/bazel"));
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("127.0.0.1:8000");
@@ -349,7 +355,8 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
                     List.of("//excluded_target1.1", "//excluded_target1.2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported1/path/to/bazel")))
+            .bazelPath(
+                Optional.of(new ProjectViewBazelPathSection(Paths.get("imported1/path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported1/path/to/java")))
             .build();
@@ -371,7 +378,8 @@ public class ProjectViewTest {
             .targets(
                 new ProjectViewTargetsSection(
                     List.of("//included_target3.1", "//included_target3.2"), List.of()))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported3/path/to/bazel")))
+            .bazelPath(
+                Optional.of(new ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.3:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported3/path/to/java")))
             .build();
@@ -415,7 +423,7 @@ public class ProjectViewTest {
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
     var expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("imported3/path/to/bazel");
+        new ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel"));
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("0.0.0.3:8000");
@@ -435,7 +443,8 @@ public class ProjectViewTest {
                 new ProjectViewTargetsSection(
                     List.of("//included_target1.1", "//included_target1.2", "//included_target1.3"),
                     List.of("//excluded_target1.1", "//excluded_target1.2")))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported1/path/to/bazel")))
+            .bazelPath(
+                Optional.of(new ProjectViewBazelPathSection(Paths.get("imported1/path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.1:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported1/path/to/java")))
             .build();
@@ -457,7 +466,8 @@ public class ProjectViewTest {
             .targets(
                 new ProjectViewTargetsSection(
                     List.of("//included_target3.1", "//included_target3.2"), List.of()))
-            .bazelPath(Optional.of(new ProjectViewBazelPathSection("imported3/path/to/bazel")))
+            .bazelPath(
+                Optional.of(new ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel"))))
             .debuggerAddress(Optional.of(new ProjectViewDebuggerAddressSection("0.0.0.3:8000")))
             .javaPath(Optional.of(new ProjectViewJavaPathSection("imported3/path/to/java")))
             .build();
@@ -500,7 +510,7 @@ public class ProjectViewTest {
     assertEquals(expectedProjectViewTargetsSection, projectView.getTargets());
 
     var expectedProjectViewBazelPathSection =
-        new ProjectViewBazelPathSection("imported3/path/to/bazel");
+        new ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel"));
     assertEquals(expectedProjectViewBazelPathSection, projectView.getBazelPath().get());
 
     var expectedDebuggerAddressSection = new ProjectViewDebuggerAddressSection("0.0.0.3:8000");

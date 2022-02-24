@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -40,11 +41,13 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
         new Object[][] {
           {
             new ProjectViewBazelPathSectionParser(),
-            (Function<String, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new
+            (Function<String, ProjectViewBazelPathSection>)
+                (value) -> new ProjectViewBazelPathSection(Paths.get(value))
           },
           {
             new ProjectViewDebuggerAddressSectionParser(),
-            (Function<String, ProjectViewDebuggerAddressSection>) ProjectViewDebuggerAddressSection::new
+            (Function<String, ProjectViewDebuggerAddressSection>)
+                ProjectViewDebuggerAddressSection::new
           },
           {
             new ProjectViewJavaPathSectionParser(),
