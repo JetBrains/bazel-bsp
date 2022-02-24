@@ -8,7 +8,7 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
 public class BazelBspEntireRepositoryImportTest extends BazelBspTestBaseScenario {
 
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(8);
+  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(10);
 
   public BazelBspEntireRepositoryImportTest() {
     super(CLIENT_TIMEOUT);

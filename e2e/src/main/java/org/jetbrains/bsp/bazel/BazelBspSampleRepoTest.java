@@ -327,9 +327,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
   private WorkspaceBuildTargetsResult getExpectedWorkspaceBuildTargetsResult() {
     List<String> scalaTargetsJars =
         ImmutableList.of(
-            "__main__/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.8.jar",
-            "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
-            "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar");
+            "external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.8.jar",
+            "external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
+            "external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar");
 
     ScalaBuildTarget scalaTarget =
         new ScalaBuildTarget(
