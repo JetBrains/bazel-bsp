@@ -1,11 +1,13 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
-import com.google.common.collect.ImmutableList;
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.control.Try;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -24,8 +26,15 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
     this.pathToBazel = new ProjectViewBazelPathSection(Paths.get(pathToBazel));
     this.targets =
         Optional.of(
-            new ProjectViewTargetsSection(Arrays.asList(targets.split(",")), ImmutableList.of()));
+            new ProjectViewTargetsSection(
+                calculateIncludedTargets(targets), List.<BuildTargetIdentifier>of()));
     this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
+  }
+
+  private List<BuildTargetIdentifier> calculateIncludedTargets(String targets) {
+    return Arrays.stream(targets.split(","))
+        .map(BuildTargetIdentifier::new)
+        .collect(Collectors.toList());
   }
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel) {

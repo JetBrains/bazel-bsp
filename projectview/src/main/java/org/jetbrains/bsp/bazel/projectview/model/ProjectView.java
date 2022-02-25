@@ -164,11 +164,11 @@ public class ProjectView {
       return new ProjectViewTargetsSection(includedTargets, excludedTargets);
     }
 
-    private <T extends ProjectViewListSection> List<String> combineListValuesWithImported(
+    private <V, T extends ProjectViewListSection<V>> List<V> combineListValuesWithImported(
         List<ProjectView> importedProjectViews,
         T section,
         Function<ProjectView, T> sectionGetter,
-        Function<ProjectViewListSection, List<String>> valuesGetter) {
+        Function<T, List<V>> valuesGetter) {
       return importedProjectViews.stream()
           .map(sectionGetter)
           .map(valuesGetter)
@@ -199,7 +199,7 @@ public class ProjectView {
       return javaPath.or(() -> defaultJavaPathSection);
     }
 
-    private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(
+    private <V, T extends ProjectViewSingletonSection<V>> Optional<T> getLastImportedSingletonValue(
         List<ProjectView> importedProjectViews, Function<ProjectView, Optional<T>> sectionGetter) {
       return importedProjectViews.stream()
           .map(sectionGetter)

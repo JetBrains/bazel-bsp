@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.net.HostAndPort;
 import java.nio.file.Paths;
 import java.util.List;
@@ -158,8 +159,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2"),
-                    List.of("//excluded_target1.1")))
+                    List.of(
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2")),
+                    List.of(new BuildTargetIdentifier("//excluded_target1.1"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -186,9 +189,14 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2", "//included_target4.1"),
                     List.of(
-                        "//excluded_target1.1", "//excluded_target4.1", "//excluded_target4.2")))
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2"),
+                        new BuildTargetIdentifier("//included_target4.1")),
+                    List.of(
+                        new BuildTargetIdentifier("//excluded_target1.1"),
+                        new BuildTargetIdentifier("//excluded_target4.1"),
+                        new BuildTargetIdentifier("//excluded_target4.2"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -215,9 +223,14 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2", "//included_target7.1"),
                     List.of(
-                        "//excluded_target1.1", "//excluded_target7.1", "//excluded_target7.2")))
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2"),
+                        new BuildTargetIdentifier("//included_target7.1")),
+                    List.of(
+                        new BuildTargetIdentifier("//excluded_target1.1"),
+                        new BuildTargetIdentifier("//excluded_target7.1"),
+                        new BuildTargetIdentifier("//excluded_target7.2"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path7/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -244,8 +257,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target8.1"),
-                    List.of("//excluded_target8.1", "//excluded_target8.2")))
+                    List.of(new BuildTargetIdentifier("//included_target8.1")),
+                    List.of(
+                        new BuildTargetIdentifier("//excluded_target8.1"),
+                        new BuildTargetIdentifier("//excluded_target8.2"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path8/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -273,15 +288,15 @@ public class ProjectViewParserImplTest {
             .targets(
                 new ProjectViewTargetsSection(
                     List.of(
-                        "//included_target1.1",
-                        "//included_target1.2",
-                        "//included_target2.1",
-                        "//included_target3.1"),
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2"),
+                        new BuildTargetIdentifier("//included_target2.1"),
+                        new BuildTargetIdentifier("//included_target3.1")),
                     List.of(
-                        "//excluded_target1.1",
-                        "//excluded_target2.1",
-                        "//excluded_target5.1",
-                        "//excluded_target5.2")))
+                        new BuildTargetIdentifier("//excluded_target1.1"),
+                        new BuildTargetIdentifier("//excluded_target2.1"),
+                        new BuildTargetIdentifier("//excluded_target5.1"),
+                        new BuildTargetIdentifier("//excluded_target5.2"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path3/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -309,16 +324,16 @@ public class ProjectViewParserImplTest {
             .targets(
                 new ProjectViewTargetsSection(
                     List.of(
-                        "//included_target1.1",
-                        "//included_target1.2",
-                        "//included_target2.1",
-                        "//included_target3.1",
-                        "//included_target4.1"),
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2"),
+                        new BuildTargetIdentifier("//included_target2.1"),
+                        new BuildTargetIdentifier("//included_target3.1"),
+                        new BuildTargetIdentifier("//included_target4.1")),
                     List.of(
-                        "//excluded_target1.1",
-                        "//excluded_target2.1",
-                        "//excluded_target4.1",
-                        "//excluded_target4.2")))
+                        new BuildTargetIdentifier("//excluded_target1.1"),
+                        new BuildTargetIdentifier("//excluded_target2.1"),
+                        new BuildTargetIdentifier("//excluded_target4.1"),
+                        new BuildTargetIdentifier("//excluded_target4.2"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -380,8 +395,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2"),
-                    List.of("//excluded_target1.1")))
+                    List.of(
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2")),
+                    List.of(new BuildTargetIdentifier("//excluded_target1.1"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -474,8 +491,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2"),
-                    List.of("//excluded_target1.1")))
+                    List.of(
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2")),
+                    List.of(new BuildTargetIdentifier("//excluded_target1.1"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -503,8 +522,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2"),
-                    List.of("//excluded_target1.1")))
+                    List.of(
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2")),
+                    List.of(new BuildTargetIdentifier("//excluded_target1.1"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -532,8 +553,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target1.1", "//included_target1.2"),
-                    List.of("//excluded_target1.1")))
+                    List.of(
+                        new BuildTargetIdentifier("//included_target1.1"),
+                        new BuildTargetIdentifier("//included_target1.2")),
+                    List.of(new BuildTargetIdentifier("//excluded_target1.1"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
             .debuggerAddress(
                 Optional.of(
@@ -561,8 +584,10 @@ public class ProjectViewParserImplTest {
         ProjectView.builder()
             .targets(
                 new ProjectViewTargetsSection(
-                    List.of("//included_target8.1"),
-                    List.of("//excluded_target8.1", "//excluded_target8.2")))
+                    List.of(new BuildTargetIdentifier("//included_target8.1")),
+                    List.of(
+                        new BuildTargetIdentifier("//excluded_target8.1"),
+                        new BuildTargetIdentifier("//excluded_target8.2"))))
             .bazelPath(Optional.of(new ProjectViewBazelPathSection(Paths.get("path8/to/bazel"))))
             .debuggerAddress(
                 Optional.of(

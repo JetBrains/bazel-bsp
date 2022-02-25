@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -72,9 +73,12 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
           {
             new ProjectViewTargetsSectionParser(),
             (Function<String, String>) (seed) -> "//target:" + seed,
-            (BiFunction<List<String>, List<String>, ProjectViewTargetsSection>)
+            (BiFunction<
+                    List<BuildTargetIdentifier>,
+                    List<BuildTargetIdentifier>,
+                    ProjectViewTargetsSection>)
                 ProjectViewTargetsSection::new,
-            (Function<String, String>) (rawElement) -> rawElement,
+            (Function<String, BuildTargetIdentifier>) BuildTargetIdentifier::new,
           },
         });
   }

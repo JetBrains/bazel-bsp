@@ -39,8 +39,9 @@ public final class TargetsUtils {
     return String.format("%s %s", target, excludedTargets);
   }
 
-  private static String getExcludedTargets(List<String> excludedTargets) {
+  private static String getExcludedTargets(List<BuildTargetIdentifier> excludedTargets) {
     return excludedTargets.stream()
+        .map(BuildTargetIdentifier::getUri)
         .map(TargetsUtils::addExceptStatement)
         .collect(Collectors.joining(" "));
   }

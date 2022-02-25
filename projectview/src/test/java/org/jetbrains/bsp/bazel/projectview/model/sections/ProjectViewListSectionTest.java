@@ -3,9 +3,12 @@ package org.jetbrains.bsp.bazel.projectview.model.sections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -16,8 +19,22 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
 
   private final BiFunction<List<String>, List<String>, T> sectionConstructor;
 
-  public ProjectViewListSectionTest(BiFunction<List<String>, List<String>, T> sectionConstructor) {
-    this.sectionConstructor = sectionConstructor;
+  public ProjectViewListSectionTest(
+      BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
+    this.sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
+  }
+
+  private BiFunction<List<String>, List<String>, T> createSectionConstructor(
+      BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
+
+    return (includedElements, excludedElements) ->
+        sectionMapper.apply(
+            mapElements(elementMapper, includedElements),
+            mapElements(elementMapper, excludedElements));
+  }
+
+  private List<V> mapElements(Function<String, V> elementMapper, List<String> rawElements) {
+    return rawElements.stream().map(elementMapper).collect(Collectors.toList());
   }
 
   @Parameters(name = "{index}: .equals() on a list section for {0}")
@@ -25,8 +42,13 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
     return List.of(
         new Object[][] {
           {
-            (BiFunction<List<String>, List<String>, ProjectViewTargetsSection>)
-                ProjectViewTargetsSection::new
+            (BiFunction<
+                    List<BuildTargetIdentifier>,
+                    List<BuildTargetIdentifier>,
+                    ProjectViewTargetsSection>)
+                ProjectViewTargetsSection::new,
+            (Function<String, BuildTargetIdentifier>)
+                (rawElement) -> new BuildTargetIdentifier("//:" + rawElement),
           }
         });
   }
