@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 
 import io.vavr.control.Try;
 import java.nio.file.Path;
-import org.jetbrains.bsp.bazel.commons.BetterFiles;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 /**
@@ -36,21 +35,7 @@ public interface ProjectViewParser {
    *     <p>1) file under <code>defaultProjectViewFilePath</code> doesn't exist
    *     <p>2) any other fail happen
    */
-  default Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
-    return BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
-        .flatMap(
-            defaultProjectViewFileContent ->
-                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent));
-  }
-
-  private Try<ProjectView> parseWithDefault(
-      Path projectViewFilePath, String defaultProjectViewFileContent) {
-    return BetterFiles.tryReadFileContent(projectViewFilePath)
-        .flatMap(
-            projectViewFilePathContent ->
-                parse(projectViewFilePathContent, defaultProjectViewFileContent))
-        .orElse(parse(defaultProjectViewFileContent));
-  }
+  Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath);
 
   /**
    * Parses <code>projectViewFileContent</code> using <code>defaultProjectViewFileContent</code> as
@@ -88,9 +73,7 @@ public interface ProjectViewParser {
    *     <p>1) file under <code>projectViewFilePath</code> doesn't exist
    *     <p>2) any other fail happen
    */
-  default Try<ProjectView> parse(Path projectViewFilePath) {
-    return BetterFiles.tryReadFileContent(projectViewFilePath).flatMap(this::parse);
-  }
+  Try<ProjectView> parse(Path projectViewFilePath);
 
   /**
    * Parses <code>projectViewFileContent</code>.
