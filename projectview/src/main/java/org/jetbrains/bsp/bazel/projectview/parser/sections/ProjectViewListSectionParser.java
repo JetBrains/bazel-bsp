@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -21,6 +23,8 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<V>>
     extends ProjectViewSectionParser<T> {
 
+  private static final Logger log = LogManager.getLogger(ProjectViewListSectionParser.class);
+
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
   private static final Pattern WHITESPACE_CHAR_REGEX = Pattern.compile("[ \n\t]+");
 
@@ -29,13 +33,33 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   @Override
-  public T parse(ProjectViewRawSections rawSections) {
-    return parseAllSectionsAndMerge(rawSections).orElse(createInstance(List.of(), List.of()));
+  public T parseOrDefault(ProjectViewRawSections rawSections, T defaultValue) {
+    var section = parseAllSectionsAndMerge(rawSections);
+
+    logParseOrDefault(section, defaultValue);
+
+    return section.orElse(defaultValue);
+  }
+
+  private void logParseOrDefault(Optional<T> section, T defaultValue) {
+    if (section.isPresent()) {
+      log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
+    } else {
+      log.debug("Returning default for '{}' section. Result:\n{}", sectionName, defaultValue);
+    }
   }
 
   @Override
-  public T parseOrDefault(ProjectViewRawSections rawSections, T defaultValue) {
-    return parseAllSectionsAndMerge(rawSections).orElse(defaultValue);
+  public T parse(ProjectViewRawSections rawSections) {
+    var section = parseAllSectionsAndMerge(rawSections);
+
+    logParse(section);
+
+    return section.orElse(createInstance(List.of(), List.of()));
+  }
+
+  private void logParse(Optional<T> section) {
+    log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
   }
 
   private Optional<T> parseAllSectionsAndMerge(ProjectViewRawSections rawSections) {
