@@ -23,7 +23,7 @@ _deps = [
     _dependency("org.apache.logging.log4j:log4j-api:2.17.2"),
     _dependency("org.apache.logging.log4j:log4j-core:2.17.2"),
     _dependency("junit:junit:4.13.2"),
-    _dependency("org.assertj:assertj-core:3.16.1"),
+    _dependency("org.assertj:assertj-core:3.22.0"),
     _dependency("org.apache.commons:commons-collections4:jar:4.4"),
 ]
 
