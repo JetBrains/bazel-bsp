@@ -176,8 +176,7 @@ public class ProjectView {
 
       return importedProjectViews.stream()
           .map(sectionGetter)
-          .filter(Optional::isPresent)
-          .map(Optional::get)
+          .flatMap(Optional::stream)
           .map(valuesGetter)
           .reduce(sectionValues, ListUtils::concat);
     }
@@ -220,8 +219,7 @@ public class ProjectView {
         List<ProjectView> importedProjectViews, Function<ProjectView, Optional<T>> sectionGetter) {
       return importedProjectViews.stream()
           .map(sectionGetter)
-          .filter(Optional::isPresent)
-          .map(Optional::get)
+          .flatMap(Optional::stream)
           .reduce((first, second) -> second);
     }
   }

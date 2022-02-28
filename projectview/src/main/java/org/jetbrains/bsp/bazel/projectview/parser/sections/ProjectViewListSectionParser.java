@@ -67,8 +67,7 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
         .getAllWithName(sectionName)
         .map(this::parse)
         .map(Try::get)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
+        .flatMap(Optional::stream)
         .reduce(this::concatSectionsItems);
   }
 
