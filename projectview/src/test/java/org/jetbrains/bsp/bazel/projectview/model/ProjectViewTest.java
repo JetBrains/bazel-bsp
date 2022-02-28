@@ -16,7 +16,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSec
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.junit.Test;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class ProjectViewTest {
 
   private static final Optional<ProjectViewTargetsSection> dummyTargetsSection = Optional.empty();

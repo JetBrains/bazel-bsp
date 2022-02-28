@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-abstract class ProjectViewSection {
+public abstract class ProjectViewSection {
 
   protected final String sectionName;
 
