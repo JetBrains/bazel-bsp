@@ -3,6 +3,9 @@ package org.jetbrains.bsp.bazel.projectview.model.sections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import com.google.common.net.HostAndPort;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -12,15 +15,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewSingletonSectionTest<T extends ProjectViewSingletonSection> {
+public class ProjectViewSingletonSectionTest<V, T extends ProjectViewSingletonSection<V>> {
 
   private final Function<String, T> sectionConstructor;
-  private final Function<String, T> anotherTypeSectionConstructor;
 
   public ProjectViewSingletonSectionTest(
-      Function<String, T> sectionConstructor, Function<String, T> anotherTypeSectionConstructor) {
-    this.sectionConstructor = sectionConstructor;
-    this.anotherTypeSectionConstructor = anotherTypeSectionConstructor;
+      Function<V, T> sectionMapper, Function<String, V> elementMapper) {
+    this.sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
+  }
+
+  private Function<String, T> createSectionConstructor(
+      Function<V, T> sectionMapper, Function<String, V> elementMapper) {
+
+    return (rawValue) -> sectionMapper.apply(elementMapper.apply(rawValue));
   }
 
   @Parameters(
@@ -29,16 +36,17 @@ public class ProjectViewSingletonSectionTest<T extends ProjectViewSingletonSecti
     return List.of(
         new Object[][] {
           {
-            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new,
-            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new
+            (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new,
+            (Function<String, Path>) Paths::get
           },
           {
-            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new,
-            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new
+            (Function<HostAndPort, ProjectViewDebuggerAddressSection>)
+                ProjectViewDebuggerAddressSection::new,
+            (Function<String, HostAndPort>) HostAndPort::fromString
           },
           {
-            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new,
-            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new
+            (Function<Path, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new,
+            (Function<String, Path>) Paths::get
           }
         });
   }
@@ -58,16 +66,6 @@ public class ProjectViewSingletonSectionTest<T extends ProjectViewSingletonSecti
     // given & when
     var section1 = sectionConstructor.apply("value");
     var section2 = sectionConstructor.apply("another_value");
-
-    // then
-    assertNotEquals(section1, section2);
-  }
-
-  @Test
-  public void shouldReturnFalseForDifferentTypes() {
-    // given & when
-    var section1 = sectionConstructor.apply("value");
-    var section2 = anotherTypeSectionConstructor.apply("value");
 
     // then
     assertNotEquals(section1, section2);

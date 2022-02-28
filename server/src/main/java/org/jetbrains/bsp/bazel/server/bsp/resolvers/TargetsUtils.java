@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.resolvers;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import com.google.common.base.Joiner;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -25,23 +24,30 @@ public final class TargetsUtils {
   }
 
   public static String getAllProjectTargetsWithExcludedTargets(ProjectView projectView) {
-    ProjectViewTargetsSection targetsSection = projectView.getTargets();
+    ProjectViewTargetsSection targetsSection = projectView.getTargets().get();
     String excludedTargets = getExcludedTargets(targetsSection.getExcludedValues());
-    String includedTargets = Joiner.on(" ").join(targetsSection.getIncludedValues());
+    String includedTargets = getIncludedTargets(targetsSection.getIncludedValues());
 
     return String.format("%s %s", includedTargets, excludedTargets);
   }
 
   public static String getTargetWithExcludedTargets(ProjectView projectView, String target) {
-    ProjectViewTargetsSection targetsSection = projectView.getTargets();
+    ProjectViewTargetsSection targetsSection = projectView.getTargets().get();
     String excludedTargets = getExcludedTargets(targetsSection.getExcludedValues());
 
     return String.format("%s %s", target, excludedTargets);
   }
 
-  private static String getExcludedTargets(List<String> excludedTargets) {
+  private static String getExcludedTargets(List<BuildTargetIdentifier> excludedTargets) {
     return excludedTargets.stream()
+        .map(BuildTargetIdentifier::getUri)
         .map(TargetsUtils::addExceptStatement)
+        .collect(Collectors.joining(" "));
+  }
+
+  private static String getIncludedTargets(List<BuildTargetIdentifier> excludedTargets) {
+    return excludedTargets.stream()
+        .map(BuildTargetIdentifier::getUri)
         .collect(Collectors.joining(" "));
   }
 

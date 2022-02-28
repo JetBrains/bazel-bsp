@@ -1,18 +1,24 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 public class ProjectViewTargetsSectionParser
-    extends ProjectViewListSectionParser<ProjectViewTargetsSection> {
+    extends ProjectViewListSectionParser<BuildTargetIdentifier, ProjectViewTargetsSection> {
 
   public ProjectViewTargetsSectionParser() {
     super(ProjectViewTargetsSection.SECTION_NAME);
   }
 
   @Override
+  protected BuildTargetIdentifier mapRawValues(String rawValue) {
+    return new BuildTargetIdentifier(rawValue);
+  }
+
+  @Override
   protected ProjectViewTargetsSection createInstance(
-      List<String> includedValues, List<String> excludedValues) {
+      List<BuildTargetIdentifier> includedValues, List<BuildTargetIdentifier> excludedValues) {
     return new ProjectViewTargetsSection(includedValues, excludedValues);
   }
 }

@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 
-public abstract class ProjectViewListSection extends ProjectViewSection {
+public abstract class ProjectViewListSection<T> extends ProjectViewSection {
 
-  protected final List<String> includedValues;
-  protected final List<String> excludedValues;
+  protected final List<T> includedValues;
+  protected final List<T> excludedValues;
 
   protected ProjectViewListSection(String sectionName) {
     super(sectionName);
@@ -16,17 +16,17 @@ public abstract class ProjectViewListSection extends ProjectViewSection {
   }
 
   protected ProjectViewListSection(
-      String sectionName, List<String> includedValues, List<String> excludedValues) {
+      String sectionName, List<T> includedValues, List<T> excludedValues) {
     super(sectionName);
     this.includedValues = includedValues;
     this.excludedValues = excludedValues;
   }
 
-  public List<String> getIncludedValues() {
+  public List<T> getIncludedValues() {
     return includedValues;
   }
 
-  public List<String> getExcludedValues() {
+  public List<T> getExcludedValues() {
     return excludedValues;
   }
 
@@ -34,7 +34,7 @@ public abstract class ProjectViewListSection extends ProjectViewSection {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof ProjectViewListSection)) return false;
-    ProjectViewListSection that = (ProjectViewListSection) o;
+    ProjectViewListSection<?> that = (ProjectViewListSection<?>) o;
     return CollectionUtils.isEqualCollection(includedValues, that.includedValues)
         && CollectionUtils.isEqualCollection(excludedValues, that.excludedValues)
         && sectionName.equals(that.sectionName);

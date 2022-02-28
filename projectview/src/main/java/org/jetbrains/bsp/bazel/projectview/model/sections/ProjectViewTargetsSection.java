@@ -1,8 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.List;
 
-public class ProjectViewTargetsSection extends ProjectViewListSection {
+public class ProjectViewTargetsSection extends ProjectViewListSection<BuildTargetIdentifier> {
 
   public static final String SECTION_NAME = "targets";
 
@@ -10,7 +11,8 @@ public class ProjectViewTargetsSection extends ProjectViewListSection {
     super(SECTION_NAME);
   }
 
-  public ProjectViewTargetsSection(List<String> includedValues, List<String> excludedValues) {
+  public ProjectViewTargetsSection(
+      List<BuildTargetIdentifier> includedValues, List<BuildTargetIdentifier> excludedValues) {
     super(SECTION_NAME, includedValues, excludedValues);
   }
 

@@ -1,9 +1,13 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
 import io.vavr.control.Try;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.commons.BetterFiles;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser;
@@ -21,6 +25,8 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
  */
 class ProjectViewParserImpl implements ProjectViewParser {
 
+  private static final Logger log = LogManager.getLogger(ProjectViewParserImpl.class);
+
   private static final String IMPORT_STATEMENT = "import";
 
   private static final ProjectViewTargetsSectionParser targetsParser =
@@ -36,17 +42,81 @@ class ProjectViewParserImpl implements ProjectViewParser {
       new ProjectViewJavaPathSectionParser();
 
   @Override
+  public Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
+    log.info(
+        "Parsing project view from {} with default from {}.",
+        projectViewFilePath,
+        defaultProjectViewFilePath);
+
+    return BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
+        .onFailure(
+            exception ->
+                log.error(
+                    "Failed to read default file {}. Parsing failed!",
+                    defaultProjectViewFilePath,
+                    exception))
+        .flatMap(
+            defaultProjectViewFileContent ->
+                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent))
+        .onSuccess(
+            projectView ->
+                log.info(
+                    "Project view from {} with default from {} parsed!\n{}",
+                    projectViewFilePath,
+                    defaultProjectViewFilePath,
+                    projectView))
+        .onFailure(
+            exception ->
+                log.error(
+                    "Failed to parse default file {}. Parsing failed!",
+                    defaultProjectViewFilePath,
+                    exception));
+  }
+
+  private Try<ProjectView> parseWithDefault(
+      Path projectViewFilePath, String defaultProjectViewFileContent) {
+    return BetterFiles.tryReadFileContent(projectViewFilePath)
+        .onFailure(
+            exception ->
+                log.info(
+                    "Failed to read file {}. Parsing default file.",
+                    projectViewFilePath,
+                    exception))
+        .flatMap(
+            projectViewFilePathContent ->
+                parse(projectViewFilePathContent, defaultProjectViewFileContent))
+        .onFailure(
+            exception ->
+                log.info(
+                    "Failed to parse file {}. Parsing default file.",
+                    projectViewFilePath,
+                    exception))
+        .orElse(parse(defaultProjectViewFileContent))
+        .onFailure(
+            exception -> log.error("Failed to parse default file. Parsing failed!", exception));
+  }
+
+  @Override
   public Try<ProjectView> parse(
       String projectViewFileContent, String defaultProjectViewFileContent) {
+    log.debug(
+        "Parsing project view for the content:\n'{}'\n\nand the default content:\n'{}'.",
+        projectViewFileContent,
+        defaultProjectViewFileContent);
+
     return parse(defaultProjectViewFileContent)
-        .flatMap(
-            defaultProjectView -> parseWithDefault(projectViewFileContent, defaultProjectView));
+        .onFailure(
+            exception -> log.error("Failed to parse default content. Parsing failed!", exception))
+        .flatMap(defaultProjectView -> parseWithDefault(projectViewFileContent, defaultProjectView))
+        .onFailure(exception -> log.error("Failed to parse content. Parsing failed!", exception));
   }
 
   private Try<ProjectView> parseWithDefault(
       String projectViewFileContent, ProjectView defaultProjectView) {
     ProjectViewRawSections rawSections =
         ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
+
+    log.debug("Parsing project view with default project view {}.", defaultProjectView);
 
     return ProjectView.builder()
         .imports(findImportedProjectViews(rawSections))
@@ -60,7 +130,28 @@ class ProjectViewParserImpl implements ProjectViewParser {
   }
 
   @Override
+  public Try<ProjectView> parse(Path projectViewFilePath) {
+    log.info("Parsing project view from {}.", projectViewFilePath);
+
+    return BetterFiles.tryReadFileContent(projectViewFilePath)
+        .onFailure(
+            exception ->
+                log.error(
+                    "Failed to read file {}. Parsing failed!", projectViewFilePath, exception))
+        .flatMap(this::parse)
+        .onSuccess(
+            projectView ->
+                log.info("Project view from {} parsed!\n{}", projectViewFilePath, projectView))
+        .onFailure(
+            exception ->
+                log.error(
+                    "Failed to parse file {}. Parsing failed!", projectViewFilePath, exception));
+  }
+
+  @Override
   public Try<ProjectView> parse(String projectViewFileContent) {
+    log.debug("Parsing project view for the content:\n'{}'.", projectViewFileContent);
+
     ProjectViewRawSections rawSections =
         ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent);
 
@@ -79,6 +170,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .map(ProjectViewRawSection::getSectionBody)
         .map(String::trim)
         .map(Paths::get)
+        .peek(path -> log.debug("Parsing imported file {}.", path))
         .map(this::parse)
         .collect(Collectors.toList());
   }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -18,8 +20,10 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
  *
  * @param <T> type of parsed list section
  */
-abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
+abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<V>>
     extends ProjectViewSectionParser<T> {
+
+  private static final Logger log = LogManager.getLogger(ProjectViewListSectionParser.class);
 
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
   private static final Pattern WHITESPACE_CHAR_REGEX = Pattern.compile("[ \n\t]+");
@@ -29,13 +33,33 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
   }
 
   @Override
-  public T parse(ProjectViewRawSections rawSections) {
-    return parseAllSectionsAndMerge(rawSections).orElse(createInstance(List.of(), List.of()));
+  public Optional<T> parseOrDefault(ProjectViewRawSections rawSections, Optional<T> defaultValue) {
+    var section = parseAllSectionsAndMerge(rawSections);
+
+    logParseOrDefault(section, defaultValue);
+
+    return section.or(() -> defaultValue);
+  }
+
+  private void logParseOrDefault(Optional<T> section, Optional<T> defaultValue) {
+    if (section.isPresent()) {
+      log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
+    } else {
+      log.debug("Returning default for '{}' section. Result:\n{}", sectionName, defaultValue);
+    }
   }
 
   @Override
-  public T parseOrDefault(ProjectViewRawSections rawSections, T defaultValue) {
-    return parseAllSectionsAndMerge(rawSections).orElse(defaultValue);
+  public Optional<T> parse(ProjectViewRawSections rawSections) {
+    var section = parseAllSectionsAndMerge(rawSections);
+
+    logParse(section);
+
+    return section;
+  }
+
+  private void logParse(Optional<T> section) {
+    log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
   }
 
   private Optional<T> parseAllSectionsAndMerge(ProjectViewRawSections rawSections) {
@@ -43,6 +67,7 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
         .getAllWithName(sectionName)
         .map(this::parse)
         .map(Try::get)
+        .flatMap(Optional::stream)
         .reduce(this::concatSectionsItems);
   }
 
@@ -56,12 +81,15 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
   }
 
   @Override
-  protected T parse(String sectionBody) {
+  protected Optional<T> parse(String sectionBody) {
     var allEntries = splitSectionEntries(sectionBody);
-    var includedEntries = filterIncludedEntries(allEntries);
-    var excludedEntries = filterExcludedEntries(allEntries);
+    var rawIncludedEntries = filterIncludedEntries(allEntries);
+    var rawExcludedEntries = filterExcludedEntries(allEntries);
 
-    return createInstance(includedEntries, excludedEntries);
+    var includedEntries = mapRawValues(rawIncludedEntries);
+    var excludedEntries = mapRawValues(rawExcludedEntries);
+
+    return createInstanceOrEmpty(includedEntries, excludedEntries);
   }
 
   private List<String> splitSectionEntries(String sectionBody) {
@@ -87,5 +115,19 @@ abstract class ProjectViewListSectionParser<T extends ProjectViewListSection>
     return entry.startsWith(EXCLUDED_ENTRY_PREFIX);
   }
 
-  protected abstract T createInstance(List<String> includedValues, List<String> excludedValues);
+  private List<V> mapRawValues(List<String> rawValues) {
+    return rawValues.stream().map(this::mapRawValues).collect(Collectors.toList());
+  }
+
+  protected abstract V mapRawValues(String rawValue);
+
+  private Optional<T> createInstanceOrEmpty(List<V> includedValues, List<V> excludedValues) {
+    if (includedValues.isEmpty() && excludedValues.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(createInstance(includedValues, excludedValues));
+  }
+
+  protected abstract T createInstance(List<V> includedValues, List<V> excludedValues);
 }

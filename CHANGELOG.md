@@ -19,7 +19,11 @@
   | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
 
 ### Changes 🔄
-
+- Project view parser has more logging, targets section is optional and 
+  sections are using specific types instead of raw strings.
+  | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
+- Improve the `install.sh` script. 
+  | [#167](https://github.com/JetBrains/bazel-bsp/pull/167)
 - Now the project is using the latest bazel version - `5.0.0`.
   Installer skips bazelisk cache binaries during bazel binary discovery mechanizm.
   | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)

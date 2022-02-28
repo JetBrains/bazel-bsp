@@ -7,7 +7,9 @@ java_library(
         "//projectview/src/main/java/org/jetbrains/bsp/bazel/projectview:__subpackages__",
         "//projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model/sections:__pkg__",
     ],
+    exports = ["@maven//:ch_epfl_scala_bsp4j"],
     deps = [
+        "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_guava_guava",
         "@maven//:org_apache_commons_commons_collections4",
     ],

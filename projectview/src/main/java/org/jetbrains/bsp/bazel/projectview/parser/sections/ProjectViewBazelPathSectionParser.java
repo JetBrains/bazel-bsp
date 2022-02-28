@@ -1,16 +1,23 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 
 public class ProjectViewBazelPathSectionParser
-    extends ProjectViewSingletonSectionParser<ProjectViewBazelPathSection> {
+    extends ProjectViewSingletonSectionParser<Path, ProjectViewBazelPathSection> {
 
   public ProjectViewBazelPathSectionParser() {
     super(ProjectViewBazelPathSection.SECTION_NAME);
   }
 
   @Override
-  protected ProjectViewBazelPathSection createInstance(String value) {
+  protected Path mapRawValue(String rawValue) {
+    return Paths.get(rawValue);
+  }
+
+  @Override
+  protected ProjectViewBazelPathSection createInstance(Path value) {
     return new ProjectViewBazelPathSection(value);
   }
 }

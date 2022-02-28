@@ -2,16 +2,16 @@ package org.jetbrains.bsp.bazel.projectview.model.sections;
 
 import java.util.Objects;
 
-public abstract class ProjectViewSingletonSection extends ProjectViewSection {
+public abstract class ProjectViewSingletonSection<T> extends ProjectViewSection {
 
-  protected final String value;
+  protected final T value;
 
-  protected ProjectViewSingletonSection(String sectionName, String value) {
+  protected ProjectViewSingletonSection(String sectionName, T value) {
     super(sectionName);
     this.value = value;
   }
 
-  public String getValue() {
+  public T getValue() {
     return value;
   }
 
@@ -19,7 +19,7 @@ public abstract class ProjectViewSingletonSection extends ProjectViewSection {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof ProjectViewSingletonSection)) return false;
-    ProjectViewSingletonSection that = (ProjectViewSingletonSection) o;
+    ProjectViewSingletonSection<?> that = (ProjectViewSingletonSection<?>) o;
     return value.equals(that.value) && sectionName.equals(that.sectionName);
   }
 

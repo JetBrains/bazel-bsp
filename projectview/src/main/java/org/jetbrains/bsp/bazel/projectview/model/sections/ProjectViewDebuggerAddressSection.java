@@ -1,10 +1,12 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-public class ProjectViewDebuggerAddressSection extends ProjectViewSingletonSection {
+import com.google.common.net.HostAndPort;
+
+public class ProjectViewDebuggerAddressSection extends ProjectViewSingletonSection<HostAndPort> {
 
   public static final String SECTION_NAME = "debugger_address";
 
-  public ProjectViewDebuggerAddressSection(String value) {
+  public ProjectViewDebuggerAddressSection(HostAndPort value) {
     super(SECTION_NAME, value);
   }
 

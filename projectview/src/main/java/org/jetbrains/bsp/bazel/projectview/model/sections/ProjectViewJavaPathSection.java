@@ -1,10 +1,12 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-public class ProjectViewJavaPathSection extends ProjectViewSingletonSection {
+import java.nio.file.Path;
+
+public class ProjectViewJavaPathSection extends ProjectViewSingletonSection<Path> {
 
   public static final String SECTION_NAME = "java_path";
 
-  public ProjectViewJavaPathSection(String value) {
+  public ProjectViewJavaPathSection(Path value) {
     super(SECTION_NAME, value);
   }
 

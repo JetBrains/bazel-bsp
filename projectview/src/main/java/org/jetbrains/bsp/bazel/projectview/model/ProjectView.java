@@ -5,6 +5,7 @@ import io.vavr.control.Try;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -22,7 +23,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSect
 public class ProjectView {
 
   /** targets included and excluded from the project */
-  private final ProjectViewTargetsSection targets;
+  private final Optional<ProjectViewTargetsSection> targets;
 
   /** bazel path used to invoke bazel from the code */
   private final Optional<ProjectViewBazelPathSection> bazelPath;
@@ -34,7 +35,7 @@ public class ProjectView {
   private final Optional<ProjectViewJavaPathSection> javaPath;
 
   private ProjectView(
-      ProjectViewTargetsSection targets,
+      Optional<ProjectViewTargetsSection> targets,
       Optional<ProjectViewBazelPathSection> bazelPath,
       Optional<ProjectViewDebuggerAddressSection> debuggerAddress,
       Optional<ProjectViewJavaPathSection> javaPath) {
@@ -48,7 +49,7 @@ public class ProjectView {
     return new Builder();
   }
 
-  public ProjectViewTargetsSection getTargets() {
+  public Optional<ProjectViewTargetsSection> getTargets() {
     return targets;
   }
 
@@ -98,7 +99,7 @@ public class ProjectView {
 
     private List<Try<ProjectView>> importedProjectViews = List.of();
 
-    private ProjectViewTargetsSection targets = new ProjectViewTargetsSection();
+    private Optional<ProjectViewTargetsSection> targets = Optional.empty();
 
     private Optional<ProjectViewBazelPathSection> bazelPath = Optional.empty();
 
@@ -113,7 +114,7 @@ public class ProjectView {
       return this;
     }
 
-    public Builder targets(ProjectViewTargetsSection target) {
+    public Builder targets(Optional<ProjectViewTargetsSection> target) {
       this.targets = target;
       return this;
     }
@@ -146,7 +147,7 @@ public class ProjectView {
       return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
     }
 
-    private ProjectViewTargetsSection combineTargetsSection(
+    private Optional<ProjectViewTargetsSection> combineTargetsSection(
         List<ProjectView> importedProjectViews) {
       var includedTargets =
           combineListValuesWithImported(
@@ -161,18 +162,33 @@ public class ProjectView {
               ProjectView::getTargets,
               ProjectViewListSection::getExcludedValues);
 
-      return new ProjectViewTargetsSection(includedTargets, excludedTargets);
+      return createInstanceOfListSectionOrEmpty(
+          includedTargets, excludedTargets, ProjectViewTargetsSection::new);
     }
 
-    private <T extends ProjectViewListSection> List<String> combineListValuesWithImported(
-        List<ProjectView> importedProjectViews,
-        T section,
-        Function<ProjectView, T> sectionGetter,
-        Function<ProjectViewListSection, List<String>> valuesGetter) {
+    private <V, S extends ProjectViewListSection<V>, T extends Optional<S>>
+        List<V> combineListValuesWithImported(
+            List<ProjectView> importedProjectViews,
+            T section,
+            Function<ProjectView, T> sectionGetter,
+            Function<S, List<V>> valuesGetter) {
+      var sectionValues = section.map(valuesGetter).orElse(List.of());
+
       return importedProjectViews.stream()
           .map(sectionGetter)
+          .flatMap(Optional::stream)
           .map(valuesGetter)
-          .reduce(valuesGetter.apply(section), ListUtils::concat);
+          .reduce(sectionValues, ListUtils::concat);
+    }
+
+    private <V, T extends ProjectViewListSection<V>> Optional<T> createInstanceOfListSectionOrEmpty(
+        List<V> includedElements,
+        List<V> excludedElements,
+        BiFunction<List<V>, List<V>, T> constructor) {
+      if (includedElements.isEmpty() && excludedElements.isEmpty()) {
+        return Optional.empty();
+      }
+      return Optional.of(constructor.apply(includedElements, excludedElements));
     }
 
     private Optional<ProjectViewBazelPathSection> combineBazelPathSection(
@@ -199,12 +215,11 @@ public class ProjectView {
       return javaPath.or(() -> defaultJavaPathSection);
     }
 
-    private <T extends ProjectViewSingletonSection> Optional<T> getLastImportedSingletonValue(
+    private <V, T extends ProjectViewSingletonSection<V>> Optional<T> getLastImportedSingletonValue(
         List<ProjectView> importedProjectViews, Function<ProjectView, Optional<T>> sectionGetter) {
       return importedProjectViews.stream()
           .map(sectionGetter)
-          .filter(Optional::isPresent)
-          .map(Optional::get)
+          .flatMap(Optional::stream)
           .reduce((first, second) -> second);
     }
   }

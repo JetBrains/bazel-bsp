@@ -1,16 +1,22 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import com.google.common.net.HostAndPort;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 
 public class ProjectViewDebuggerAddressSectionParser
-    extends ProjectViewSingletonSectionParser<ProjectViewDebuggerAddressSection> {
+    extends ProjectViewSingletonSectionParser<HostAndPort, ProjectViewDebuggerAddressSection> {
 
   public ProjectViewDebuggerAddressSectionParser() {
     super(ProjectViewDebuggerAddressSection.SECTION_NAME);
   }
 
   @Override
-  protected ProjectViewDebuggerAddressSection createInstance(String value) {
+  protected HostAndPort mapRawValue(String rawValue) {
+    return HostAndPort.fromString(rawValue);
+  }
+
+  @Override
+  protected ProjectViewDebuggerAddressSection createInstance(HostAndPort value) {
     return new ProjectViewDebuggerAddressSection(value);
   }
 }

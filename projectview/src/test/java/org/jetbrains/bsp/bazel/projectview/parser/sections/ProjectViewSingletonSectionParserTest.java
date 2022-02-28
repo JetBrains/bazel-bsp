@@ -1,9 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.net.HostAndPort;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -20,18 +22,36 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingletonSection> {
+public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingletonSection<V>> {
 
-  private final ProjectViewSingletonSectionParser<T> parser;
+  private final ProjectViewSingletonSectionParser<V, T> parser;
+
+  private final Function<String, String> rawValueConstructor;
+
   private final Function<String, T> sectionConstructor;
+
   private final String sectionName;
 
   public ProjectViewSingletonSectionParserTest(
-      ProjectViewSingletonSectionParser<T> parser, Function<String, T> sectionConstructor) {
+      ProjectViewSingletonSectionParser<V, T> parser,
+      Function<String, String> rawValueConstructor,
+      Function<V, T> sectionMapper,
+      Function<String, V> elementMapper) {
     this.parser = parser;
-    this.sectionConstructor = sectionConstructor;
+
+    this.rawValueConstructor = rawValueConstructor;
+    this.sectionConstructor =
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     this.sectionName = parser.sectionName;
+  }
+
+  private Function<String, T> createSectionConstructor(
+      Function<String, String> rawValueConstructor,
+      Function<V, T> sectionMapper,
+      Function<String, V> elementMapper) {
+
+    return (seed) -> sectionMapper.apply(elementMapper.apply(rawValueConstructor.apply(seed)));
   }
 
   @Parameters(name = "{index}: ProjectViewSingletonSectionParserTest for {0}")
@@ -40,15 +60,22 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
         new Object[][] {
           {
             new ProjectViewBazelPathSectionParser(),
-            (Function<String, ProjectViewSingletonSection>) ProjectViewBazelPathSection::new
+            (Function<String, String>) (seed) -> "/path/to/bazel/" + seed,
+            (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new,
+            (Function<String, Path>) Paths::get
           },
           {
             new ProjectViewDebuggerAddressSectionParser(),
-            (Function<String, ProjectViewSingletonSection>) ProjectViewDebuggerAddressSection::new
+            (Function<String, String>) (seed) -> "host_" + seed + ":8080",
+            (Function<HostAndPort, ProjectViewDebuggerAddressSection>)
+                ProjectViewDebuggerAddressSection::new,
+            (Function<String, HostAndPort>) HostAndPort::fromString
           },
           {
             new ProjectViewJavaPathSectionParser(),
-            (Function<String, ProjectViewSingletonSection>) ProjectViewJavaPathSection::new
+            (Function<String, String>) (seed) -> "/path/to/java/" + seed,
+            (Function<Path, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new,
+            (Function<String, Path>) Paths::get
           }
         });
   }
@@ -85,13 +112,14 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     assertTrue(sectionTry.isSuccess());
     var section = sectionTry.get();
 
-    assertFalse(section.isPresent());
+    assertTrue(section.isEmpty());
   }
 
   @Test
   public void shouldReturnSectionWithTrimmedValue() {
     // given
-    var rawSection = new ProjectViewRawSection(sectionName, "  value");
+    var rawSection =
+        new ProjectViewRawSection(sectionName, "  " + rawValueConstructor.apply("value") + "\t\n");
 
     // when
     var sectionTry = parser.parse(rawSection);
@@ -104,31 +132,18 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     assertEquals(expectedSection, section.get());
   }
 
-  @Test
-  public void shouldReturnSectionWithTrimmedValueWithSpaces() {
-    // given
-    var rawSection = new ProjectViewRawSection(sectionName, "  value with space 123 \t\n");
-
-    // when
-    var sectionTry = parser.parse(rawSection);
-
-    // then
-    assertTrue(sectionTry.isSuccess());
-    var section = sectionTry.get();
-
-    var expectedSection = sectionConstructor.apply("value with space 123");
-    assertEquals(expectedSection, section.get());
-  }
-
   // T parse(rawSections)
 
   @Test
   public void shouldReturnLastSectionWithoutExplicitDefault() {
     // given
     var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
-    var rawSection2 = new ProjectViewRawSection(sectionName, "  value2\n");
+    var rawSection2 =
+        new ProjectViewRawSection(sectionName, "  " + rawValueConstructor.apply("value2") + "\n");
     var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
-    var rawSection4 = new ProjectViewRawSection(sectionName, "    value4\n  ");
+    var rawSection4 =
+        new ProjectViewRawSection(
+            sectionName, "    " + rawValueConstructor.apply("value4") + "\n  ");
     var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
 
     var rawSections =
@@ -156,7 +171,7 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     var section = parser.parse(rawSections);
 
     // then
-    assertFalse(section.isPresent());
+    assertTrue(section.isEmpty());
   }
 
   // T parseOrDefault(rawSections, defaultValue)
@@ -165,9 +180,12 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
   public void shouldReturnLastSection() {
     // given
     var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
-    var rawSection2 = new ProjectViewRawSection(sectionName, "  value2\n");
+    var rawSection2 =
+        new ProjectViewRawSection(sectionName, "  " + rawValueConstructor.apply("value2") + "\n");
     var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
-    var rawSection4 = new ProjectViewRawSection(sectionName, "    value4\n  \t");
+    var rawSection4 =
+        new ProjectViewRawSection(
+            sectionName, "    " + rawValueConstructor.apply("value4") + "\n  \t");
     var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
 
     var rawSections =
@@ -216,6 +234,6 @@ public class ProjectViewSingletonSectionParserTest<T extends ProjectViewSingleto
     var section = parser.parseOrDefault(rawSections, Optional.empty());
 
     // then
-    assertFalse(section.isPresent());
+    assertTrue(section.isEmpty());
   }
 }
