@@ -1,22 +1,39 @@
 # Toolchain Registration for Scala
 
 In order to fully use Bazel BSP for Scala projects make sure to use at least version
-`d8bce245a96ca9ab721324bc8daa984aa13fa0f7` of `rules_scala`:
+`e7a948ad1948058a7a5ddfbd9d1629d6db839933` of `rules_scala`:
 
-```
+```python
+IO_BAZEL_RULES_SCALA_VERSION = "e7a948ad1948058a7a5ddfbd9d1629d6db839933"
+IO_BAZEL_RULES_SCALA_SHA = "76e1abb8a54f61ada974e6e9af689c59fd9f0518b49be6be7a631ce9fa45f236"
+
 http_archive(
     name = "io_bazel_rules_scala",
-    url = "https://github.com/andrefmrocha/rules_scala/archive/d6186617cfe64cef2074b23ca58daac75fe40d42.tar.gz",
-    strip_prefix = "rules_scala-d6186617cfe64cef2074b23ca58daac75fe40d42",
+    sha256 = IO_BAZEL_RULES_SCALA_SHA,
+    strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_VERSION),
+    url = "https://github.com/bazelbuild/rules_scala/archive/{}.zip".format(IO_BAZEL_RULES_SCALA_VERSION),
 )
-
-load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
-bazel_version(name = "bazel_version")
 ```
 
-Make sure that your registered toolchain has Compilation Diagnostics enabled:
+or at least `20220201` tag of `rules_scala`:
 
-- At a BUILD file:
+```python
+IO_BAZEL_RULES_SCALA_TAG = "20220201"
+IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
+
+http_archive(
+    name = "io_bazel_rules_scala",
+    sha256 = IO_BAZEL_RULES_SCALA_SHA,
+    strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/bazelbuild/rules_scala/releases/download/{}/rules_scala-{}.zip".format(IO_BAZEL_RULES_SCALA_TAG, IO_BAZEL_RULES_SCALA_TAG),
+)
+```
+
+--- 
+
+Make sure that your registered toolchain has **Compilation Diagnostics** enabled:
+
+- At a `BUILD` file:
 
 ```
 load("@io_bazel_rules_scala//scala:scala_toolchain.bzl", "scala_toolchain")
@@ -35,11 +52,10 @@ toolchain(
 )
 ```
 
-- At the WORKSPACE file:
+- At the `WORKSPACE` file:
 
 ```
 register_toolchains(
     "<label_to_build_file>:diagnostics_reporter_toolchain"
 )
 ```
-
