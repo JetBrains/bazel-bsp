@@ -18,7 +18,7 @@ _deps = [
     _dependency("com.google.guava:guava:31.0.1-jre"),
     _dependency("ch.epfl.scala:bsp4j:2.0.0"),
     _dependency("ch.epfl.scala:bsp-testkit_2.13:2.0.0"),
-    _dependency("commons-cli:commons-cli:jar:1.4"),
+    _dependency("commons-cli:commons-cli:jar:1.5.0"),
     _dependency("io.vavr:vavr:0.10.4"),
     _dependency("org.apache.logging.log4j:log4j-api:2.6.1"),
     _dependency("org.apache.logging.log4j:log4j-core:2.6.1"),
