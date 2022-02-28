@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Features 🎉
+
+- Scala diagnostics work without a fork (technically it worked already for a while).
+  | [#170](https://github.com/JetBrains/bazel-bsp/pull/170)
+
 ### Fixes 🛠️
 
 - Fixed extraction of java version and java home for bazel `5.0.0`.
