@@ -5,5 +5,5 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 public interface ProjectViewToExecutionContextEntityMapper<T> {
 
-    Try<T> map(ProjectView projectView);
+  Try<T> map(ProjectView projectView);
 }

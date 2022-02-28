@@ -17,7 +17,7 @@ public class ProjectViewSectionDummyVerboseValidatorTest {
   @Before
   public void beforeEach() {
     // given
-    this.validator = new ProjectViewSectionDummyVerboseValidator<>();
+    this.validator = new ProjectViewSectionDummyVerboseValidator<>("dummy_name") {};
   }
 
   @Test

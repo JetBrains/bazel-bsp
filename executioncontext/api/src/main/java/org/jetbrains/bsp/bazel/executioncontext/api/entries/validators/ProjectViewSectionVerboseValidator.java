@@ -3,7 +3,13 @@ package org.jetbrains.bsp.bazel.executioncontext.api.entries.validators;
 import io.vavr.control.Try;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 
-public interface ProjectViewSectionVerboseValidator<T extends ProjectViewSection> {
+public abstract class ProjectViewSectionVerboseValidator<T extends ProjectViewSection> {
 
-  Try<T> getValueOrFailureWithMessage(T section);
+  protected String sectionName;
+
+  protected ProjectViewSectionVerboseValidator(String sectionName) {
+    this.sectionName = sectionName;
+  }
+
+  public abstract Try<T> getValueOrFailureWithMessage(T section);
 }
