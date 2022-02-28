@@ -18,8 +18,6 @@ _deps = [
     _dependency("com.google.guava:guava:31.0.1-jre"),
     _dependency("ch.epfl.scala:bsp4j:2.0.0"),
     _dependency("ch.epfl.scala:bsp-testkit_2.13:2.0.0"),
-    _dependency("org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.12.0"),
-    _dependency("org.eclipse.xtext:org.eclipse.xtext.xbase.lib:2.19.0"),
     _dependency("commons-cli:commons-cli:jar:1.4"),
     _dependency("io.vavr:vavr:0.10.4"),
     _dependency("org.apache.logging.log4j:log4j-api:2.6.1"),
