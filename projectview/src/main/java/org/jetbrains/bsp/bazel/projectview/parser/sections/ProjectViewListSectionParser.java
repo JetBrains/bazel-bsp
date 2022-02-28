@@ -33,15 +33,15 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   @Override
-  public T parseOrDefault(ProjectViewRawSections rawSections, T defaultValue) {
+  public Optional<T> parseOrDefault(ProjectViewRawSections rawSections, Optional<T> defaultValue) {
     var section = parseAllSectionsAndMerge(rawSections);
 
     logParseOrDefault(section, defaultValue);
 
-    return section.orElse(defaultValue);
+    return section.or(() -> defaultValue);
   }
 
-  private void logParseOrDefault(Optional<T> section, T defaultValue) {
+  private void logParseOrDefault(Optional<T> section, Optional<T> defaultValue) {
     if (section.isPresent()) {
       log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
     } else {
@@ -50,12 +50,12 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   @Override
-  public T parse(ProjectViewRawSections rawSections) {
+  public Optional<T> parse(ProjectViewRawSections rawSections) {
     var section = parseAllSectionsAndMerge(rawSections);
 
     logParse(section);
 
-    return section.orElse(createInstance(List.of(), List.of()));
+    return section;
   }
 
   private void logParse(Optional<T> section) {
@@ -67,6 +67,8 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
         .getAllWithName(sectionName)
         .map(this::parse)
         .map(Try::get)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
         .reduce(this::concatSectionsItems);
   }
 
@@ -80,7 +82,7 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   @Override
-  protected T parse(String sectionBody) {
+  protected Optional<T> parse(String sectionBody) {
     var allEntries = splitSectionEntries(sectionBody);
     var rawIncludedEntries = filterIncludedEntries(allEntries);
     var rawExcludedEntries = filterExcludedEntries(allEntries);
@@ -88,7 +90,7 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
     var includedEntries = mapRawValues(rawIncludedEntries);
     var excludedEntries = mapRawValues(rawExcludedEntries);
 
-    return createInstance(includedEntries, excludedEntries);
+    return createInstanceOrEmpty(includedEntries, excludedEntries);
   }
 
   private List<String> splitSectionEntries(String sectionBody) {
@@ -119,6 +121,14 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   protected abstract V mapRawValues(String rawValue);
+
+  private Optional<T> createInstanceOrEmpty(List<V> includedValues, List<V> excludedValues) {
+    if (includedValues.isEmpty() && excludedValues.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(createInstance(includedValues, excludedValues));
+  }
 
   protected abstract T createInstance(List<V> includedValues, List<V> excludedValues);
 }

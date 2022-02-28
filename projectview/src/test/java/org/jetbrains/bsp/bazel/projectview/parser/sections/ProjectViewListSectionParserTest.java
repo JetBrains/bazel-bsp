@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(value = Parameterized.class)
 public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSection<V>> {
 
@@ -114,8 +116,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     assertTrue(sectionTry.isSuccess());
     var section = sectionTry.get();
 
-    var expectedSection = sectionConstructor.apply(List.of(), List.of());
-    assertEquals(expectedSection, section);
+    assertTrue(section.isEmpty());
   }
 
   @Test
@@ -141,7 +142,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
 
     var expectedSection =
         sectionConstructor.apply(List.of("included1", "included2", "included3"), List.of());
-    assertEquals(expectedSection, section);
+    assertEquals(expectedSection, section.get());
   }
 
   @Test
@@ -167,7 +168,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
 
     var expectedSection =
         sectionConstructor.apply(List.of(), List.of("excluded1", "excluded2", "excluded3"));
-    assertEquals(expectedSection, section);
+    assertEquals(expectedSection, section.get());
   }
 
   @Test
@@ -193,7 +194,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
 
     var expectedSection =
         sectionConstructor.apply(List.of("included1"), List.of("excluded1", "excluded2"));
-    assertEquals(expectedSection, section);
+    assertEquals(expectedSection, section.get());
   }
 
   // ProjectViewListSection parse(rawSections)
@@ -213,8 +214,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     var section = parser.parse(rawSections);
 
     // then
-    var expectedSection = sectionConstructor.apply(List.of(), List.of());
-    assertEquals(expectedSection, section);
+    assertTrue(section.isEmpty());
   }
 
   @Test
@@ -242,7 +242,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     // then
     var expectedSection =
         sectionConstructor.apply(List.of("included1"), List.of("excluded1", "excluded2"));
-    assertEquals(expectedSection, section);
+    assertEquals(expectedSection, section.get());
   }
 
   // ProjectViewListSection parseOrDefault(rawSections, defaultValue)
@@ -271,12 +271,12 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
             List.of("default_included1"), List.of("default_excluded1", "default_excluded2"));
 
     // when
-    var section = parser.parseOrDefault(rawSections, defaultListSection);
+    var section = parser.parseOrDefault(rawSections, Optional.of(defaultListSection));
 
     // then
     var expectedSection =
         sectionConstructor.apply(List.of("included1"), List.of("excluded1", "excluded2"));
-    assertEquals(expectedSection, section);
+    assertEquals(expectedSection, section.get());
   }
 
   @Test
@@ -292,12 +292,12 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
             List.of("default_included1"), List.of("default_excluded1", "default_excluded2"));
 
     // when
-    var section = parser.parseOrDefault(rawSections, defaultListSection);
+    var section = parser.parseOrDefault(rawSections, Optional.of(defaultListSection));
 
     // then
     var expectedSection =
         sectionConstructor.apply(
             List.of("default_included1"), List.of("default_excluded1", "default_excluded2"));
-    assertEquals(expectedSection, section);
+    assertEquals(expectedSection, section.get());
   }
 }

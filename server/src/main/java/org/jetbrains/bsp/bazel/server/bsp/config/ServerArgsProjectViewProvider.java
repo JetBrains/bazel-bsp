@@ -46,7 +46,7 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
     var parsedProjectView = defaultParserProvider.create().get();
 
     return ProjectView.builder()
-        .targets(targets.orElse(parsedProjectView.getTargets()))
+        .targets(targets.or(parsedProjectView::getTargets))
         .bazelPath(Optional.of(pathToBazel))
         .debuggerAddress(parsedProjectView.getDebuggerAddress())
         .javaPath(parsedProjectView.getJavaPath())

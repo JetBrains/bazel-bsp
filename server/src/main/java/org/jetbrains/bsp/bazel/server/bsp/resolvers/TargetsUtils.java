@@ -24,7 +24,7 @@ public final class TargetsUtils {
   }
 
   public static String getAllProjectTargetsWithExcludedTargets(ProjectView projectView) {
-    ProjectViewTargetsSection targetsSection = projectView.getTargets();
+    ProjectViewTargetsSection targetsSection = projectView.getTargets().get();
     String excludedTargets = getExcludedTargets(targetsSection.getExcludedValues());
     String includedTargets = getIncludedTargets(targetsSection.getIncludedValues());
 
@@ -32,7 +32,7 @@ public final class TargetsUtils {
   }
 
   public static String getTargetWithExcludedTargets(ProjectView projectView, String target) {
-    ProjectViewTargetsSection targetsSection = projectView.getTargets();
+    ProjectViewTargetsSection targetsSection = projectView.getTargets().get();
     String excludedTargets = getExcludedTargets(targetsSection.getExcludedValues());
 
     return String.format("%s %s", target, excludedTargets);

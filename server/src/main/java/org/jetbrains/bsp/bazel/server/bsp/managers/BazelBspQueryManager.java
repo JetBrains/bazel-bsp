@@ -59,7 +59,7 @@ public class BazelBspQueryManager {
   }
 
   public Either<ResponseError, WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
-    var projectInitTargets = projectView.getTargets().getIncludedValues();
+    var projectInitTargets = projectView.getTargets().get().getIncludedValues();
 
     List<BuildTarget> targets =
         projectInitTargets.stream()

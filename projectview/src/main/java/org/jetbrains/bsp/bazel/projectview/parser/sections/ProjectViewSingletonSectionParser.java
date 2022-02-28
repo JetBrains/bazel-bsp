@@ -15,7 +15,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
  * @param <T> type of parsed single value section
  */
 abstract class ProjectViewSingletonSectionParser<V, T extends ProjectViewSingletonSection<V>>
-    extends ProjectViewSectionParser<Optional<T>> {
+    extends ProjectViewSectionParser<T> {
 
   private static final Logger log = LogManager.getLogger(ProjectViewSingletonSectionParser.class);
 
