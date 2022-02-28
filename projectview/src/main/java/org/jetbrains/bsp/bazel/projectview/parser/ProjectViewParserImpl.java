@@ -58,6 +58,13 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .flatMap(
             defaultProjectViewFileContent ->
                 parseWithDefault(projectViewFilePath, defaultProjectViewFileContent))
+        .onSuccess(
+            projectView ->
+                log.info(
+                    "Project view from {} with default from {} parsed!\n{}",
+                    projectViewFilePath,
+                    defaultProjectViewFilePath,
+                    projectView))
         .onFailure(
             exception ->
                 log.error(
@@ -119,8 +126,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
             debuggerAddressParser.parseOrDefault(
                 rawSections, defaultProjectView.getDebuggerAddress()))
         .javaPath(javaPathParser.parseOrDefault(rawSections, defaultProjectView.getJavaPath()))
-        .build()
-        .onSuccess(projectView -> log.debug("Project view parsed!\n{}", projectView));
+        .build();
   }
 
   @Override
@@ -133,6 +139,9 @@ class ProjectViewParserImpl implements ProjectViewParser {
                 log.error(
                     "Failed to read file {}. Parsing failed!", projectViewFilePath, exception))
         .flatMap(this::parse)
+        .onSuccess(
+            projectView ->
+                log.info("Project view from {} parsed!\n{}", projectViewFilePath, projectView))
         .onFailure(
             exception ->
                 log.error(
@@ -152,8 +161,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .bazelPath(bazelPathParser.parse(rawSections))
         .debuggerAddress(debuggerAddressParser.parse(rawSections))
         .javaPath(javaPathParser.parse(rawSections))
-        .build()
-        .onSuccess(projectView -> log.debug("Project view parsed!\n{}", projectView));
+        .build();
   }
 
   private List<Try<ProjectView>> findImportedProjectViews(ProjectViewRawSections rawSections) {
