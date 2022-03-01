@@ -36,11 +36,11 @@ public class ActionGraphResolver {
 
       if (bazelData.getVersion().compareTo(ACTION_GRAPH_V2_VERSION) < 0) {
         AnalysisProtos.ActionGraphContainer actionGraphContainer =
-            AnalysisProtos.ActionGraphContainer.parseFrom(process.getInputStream());
+            AnalysisProtos.ActionGraphContainer.parseFrom(process.getStdoutStream());
         return new ActionGraphV1Parser(actionGraphContainer);
       } else {
         AnalysisProtosV2.ActionGraphContainer actionGraphContainer =
-            AnalysisProtosV2.ActionGraphContainer.parseFrom(process.getInputStream());
+            AnalysisProtosV2.ActionGraphContainer.parseFrom(process.getStdoutStream());
         return new ActionGraphV2Parser(actionGraphContainer);
       }
     } catch (IOException e) {

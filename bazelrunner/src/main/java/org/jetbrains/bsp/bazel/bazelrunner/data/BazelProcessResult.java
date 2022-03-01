@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelStreamReader;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
+import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelProcessResult {
-
-  private static final String LINES_DELIMITER = "\n";
-
   private final Supplier<List<String>> stdout;
   private final Supplier<List<String>> stderr;
   private final int exitCode;
@@ -30,9 +28,17 @@ public class BazelProcessResult {
     return stdout.get();
   }
 
-  public String getJoinedStderr() {
-    List<String> lines = stderr.get();
-    return String.join(LINES_DELIMITER, lines);
+  public List<String> getStderr() {
+    return stderr.get();
+  }
+
+  public void logToBuildClient(BuildClientLogger logger) {
+    String message = String.join("\n", getStderr());
+    if (getStatusCode().equals(StatusCode.OK)) {
+      logger.logMessage(message);
+    } else {
+      logger.logError(message);
+    }
   }
 
   private Supplier<List<String>> memoized(InputStream input) {

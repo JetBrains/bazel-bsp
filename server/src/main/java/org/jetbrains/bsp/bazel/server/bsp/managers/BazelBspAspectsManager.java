@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelStreamReader;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
@@ -60,7 +61,7 @@ public class BazelBspAspectsManager {
       builder.withFlag(BazelRunnerFlag.NOBUILD);
     }
 
-    List<String> lines = builder.executeBazelCommand().getStderr();
+    List<String> lines = BazelStreamReader.drainStream(builder.executeBazelCommand().getStderrStream());
 
     return lines.stream()
         .map(line -> Splitter.on(" ").splitToList(line))

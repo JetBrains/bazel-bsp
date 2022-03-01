@@ -33,7 +33,7 @@ public class BazelRunner {
   private File resolveWorkspaceRoot() {
     var builder = new ProcessBuilder(bazel, "info", "workspace");
     try {
-      var process = new BazelProcess(builder.start(), Optional.empty());
+      var process = new BazelProcess(builder.start());
       var result = process.waitAndGetResult();
       if (result.getStatusCode() != StatusCode.OK) {
         throw new RuntimeException(
@@ -50,8 +50,7 @@ public class BazelRunner {
     return new BazelRunnerCommandBuilder(this);
   }
 
-  BazelProcess runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
-
+  public BazelProcess runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
     List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
   }
@@ -69,8 +68,7 @@ public class BazelRunner {
     return BES_BACKEND + port;
   }
 
-  BazelProcess runBazelCommand(String command, List<String> flags, List<String> arguments) {
-
+  public BazelProcess runBazelCommand(String command, List<String> flags, List<String> arguments) {
     try {
       LOGGER.info(
           "Waiting for bazel - command: {}, flags: {}, arguments: {}", command, flags, arguments);
@@ -89,7 +87,7 @@ public class BazelRunner {
     processBuilder.directory(workspaceRoot.get());
     Process process = processBuilder.start();
 
-    return new BazelProcess(process, buildClientLogger);
+    return new BazelProcess(process);
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {

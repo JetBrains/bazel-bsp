@@ -8,7 +8,7 @@ public class QueryResolver {
 
   public static Build.QueryResult getQueryResultForProcess(BazelProcess process) {
     try {
-      return Build.QueryResult.parseFrom(process.getInputStream());
+      return Build.QueryResult.parseFrom(process.getStdoutStream());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
