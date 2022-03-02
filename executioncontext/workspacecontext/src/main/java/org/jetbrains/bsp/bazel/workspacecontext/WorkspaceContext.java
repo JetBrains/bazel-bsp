@@ -5,17 +5,17 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext;
-import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntry;
+import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
 
 public class WorkspaceContext extends ExecutionContext {
 
-  private final ExecutionContextTargetsEntry targets;
+  private final ExecutionContextTargetsEntity targets;
 
-  private WorkspaceContext(ExecutionContextTargetsEntry targets) {
+  private WorkspaceContext(ExecutionContextTargetsEntity targets) {
     this.targets = targets;
   }
 
-  public ExecutionContextTargetsEntry getTargets() {
+  public ExecutionContextTargetsEntity getTargets() {
     return targets;
   }
 
@@ -27,11 +27,11 @@ public class WorkspaceContext extends ExecutionContext {
 
     private static final Logger log = LogManager.getLogger(WorkspaceContext.Builder.class);
 
-    private Optional<ExecutionContextTargetsEntry> targets = Optional.empty();
+    private Optional<ExecutionContextTargetsEntity> targets = Optional.empty();
 
     private Builder() {}
 
-    public Builder targets(ExecutionContextTargetsEntry targets) {
+    public Builder targets(ExecutionContextTargetsEntity targets) {
       this.targets = Optional.ofNullable(targets);
 
       return this;

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.List;
-import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntry;
+import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
 import org.junit.Test;
 
 public class WorkspaceContextTest {
@@ -29,7 +29,7 @@ public class WorkspaceContextTest {
     var workspaceContextTry =
         WorkspaceContext.builder()
             .targets(
-                new ExecutionContextTargetsEntry(
+                new ExecutionContextTargetsEntity(
                     List.of(
                         new BuildTargetIdentifier("//included_target1"),
                         new BuildTargetIdentifier("//included_target2")),
@@ -41,7 +41,7 @@ public class WorkspaceContextTest {
     var workspaceContext = workspaceContextTry.get();
 
     var expectedTargets =
-        new ExecutionContextTargetsEntry(
+        new ExecutionContextTargetsEntity(
             List.of(
                 new BuildTargetIdentifier("//included_target1"),
                 new BuildTargetIdentifier("//included_target2")),

@@ -7,10 +7,12 @@ java_library(
         "//executioncontext/api:__pkg__",
     ],
     exports = [
+        "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries",
         "//projectview:model",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
+        "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries",
         "//projectview:model",
         "@maven//:io_vavr_vavr",
     ],

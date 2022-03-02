@@ -3,18 +3,19 @@ package org.jetbrains.bsp.bazel.workspacecontext.entries;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import java.util.List;
 import java.util.Objects;
-import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextListEntry;
+import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextListEntity;
 
-public class ExecutionContextTargetsEntry extends ExecutionContextListEntry<BuildTargetIdentifier> {
+public class ExecutionContextTargetsEntity
+    extends ExecutionContextListEntity<BuildTargetIdentifier> {
 
-  public ExecutionContextTargetsEntry(
+  public ExecutionContextTargetsEntity(
       List<BuildTargetIdentifier> includedValues, List<BuildTargetIdentifier> excludedValues) {
     super(includedValues, excludedValues);
   }
 
   @Override
   public String toString() {
-    return "ExecutionContextTargetsEntry{"
+    return "ExecutionContextTargetsEntity{"
         + "includedValues="
         + includedValues
         + ", excludedValues="
@@ -26,7 +27,7 @@ public class ExecutionContextTargetsEntry extends ExecutionContextListEntry<Buil
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    ExecutionContextTargetsEntry that = (ExecutionContextTargetsEntry) o;
+    ExecutionContextTargetsEntity that = (ExecutionContextTargetsEntity) o;
     return includedValues.equals(that.includedValues) && excludedValues.equals(that.excludedValues);
   }
 
