@@ -1,0 +1,51 @@
+package org.jetbrains.bsp.bazel.workspacecontext;
+
+import io.vavr.control.Try;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext;
+import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntry;
+
+public class WorkspaceContext extends ExecutionContext {
+
+  private final ExecutionContextTargetsEntry targets;
+
+  private WorkspaceContext(ExecutionContextTargetsEntry targets) {
+    this.targets = targets;
+  }
+
+  public ExecutionContextTargetsEntry getTargets() {
+    return targets;
+  }
+
+  public static WorkspaceContext.Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    private static final Logger log = LogManager.getLogger(WorkspaceContext.Builder.class);
+
+    private Optional<ExecutionContextTargetsEntry> targets = Optional.empty();
+
+    private Builder() {}
+
+    public Builder targets(ExecutionContextTargetsEntry targets) {
+      this.targets = Optional.ofNullable(targets);
+
+      return this;
+    }
+
+    public Try<WorkspaceContext> build() {
+      if (targets.isEmpty()) {
+        var exceptionMessage = "Workspace context creation failed! 'targets' has to be defined.";
+        log.error(exceptionMessage);
+
+        return Try.failure(new IllegalStateException(exceptionMessage));
+      }
+
+      return Try.success(new WorkspaceContext(targets.get()));
+    }
+  }
+}

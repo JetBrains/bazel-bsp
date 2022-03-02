@@ -5,6 +5,7 @@ java_library(
     visibility = ["//executioncontext:__subpackages__"],
     exports = [
         "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api",
+        "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries",
         "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries/mappers",
         "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries/validators",
         "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries/validators/predefined",
