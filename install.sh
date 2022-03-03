@@ -14,18 +14,20 @@ echo -e "============================"
 echo -e "Building done."
 
 echo -e "\nInstalling server in '$project_path' ..."
-cd "$project_path" || { echo "cd $project_path failed! EXITING"; exit 155; }
+cd "$project_path" || {
+  echo "cd $project_path failed! EXITING"
+  exit 155
+}
 
-rm -rf .bsp/
-rm -rf .bazelbsp/
+rm -r .bsp/ >/dev/null 2>&1
+rm -r .bazelbsp/ >/dev/null 2>&1
 
 $bsp_path
 exit_code=$?
 
 if [ $exit_code -eq 0 ]; then
-    echo -e "Done! Enjoy Bazel BSP!"
+  echo -e "Done! Enjoy Bazel BSP!"
 else
-    echo -e "Installation failed!"
-    exit $exit_code
+  echo -e "Installation failed!"
+  exit $exit_code
 fi
-
