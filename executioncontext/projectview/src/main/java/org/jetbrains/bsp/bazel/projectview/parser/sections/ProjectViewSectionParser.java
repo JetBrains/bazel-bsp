@@ -4,10 +4,11 @@ import io.vavr.control.Try;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
-abstract class ProjectViewSectionParser<T> {
+abstract class ProjectViewSectionParser<T extends ProjectViewSection> {
 
   private static final Logger log = LogManager.getLogger(ProjectViewSectionParser.class);
 
