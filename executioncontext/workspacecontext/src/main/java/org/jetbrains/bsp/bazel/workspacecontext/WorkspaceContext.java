@@ -7,8 +7,18 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
 
+/**
+ * Representation of <code>ExecutionContext</code> used during server lifetime.
+ *
+ * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
+ */
 public class WorkspaceContext extends ExecutionContext {
 
+  /**
+   * Targets (included and excluded) on which the user wants to work.
+   *
+   * <p>Obtained from <code>ProjectView</code> simply by mapping 'targets' section.
+   */
   private final ExecutionContextTargetsEntity targets;
 
   private WorkspaceContext(ExecutionContextTargetsEntity targets) {
@@ -40,6 +50,7 @@ public class WorkspaceContext extends ExecutionContext {
     public Try<WorkspaceContext> build() {
       if (targets.isEmpty()) {
         var exceptionMessage = "Workspace context creation failed! 'targets' has to be defined.";
+
         log.error(exceptionMessage);
 
         return Try.failure(new IllegalStateException(exceptionMessage));
