@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
@@ -21,6 +23,8 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSect
  * @link https://ij.bazel.build/docs/project-views.html
  */
 public class ProjectView {
+
+  private static final Logger log = LogManager.getLogger(ProjectView.class);
 
   /** targets included and excluded from the project */
   private final Optional<ProjectViewTargetsSection> targets;
@@ -135,6 +139,20 @@ public class ProjectView {
     }
 
     public Try<ProjectView> build() {
+      log.debug(
+          "Building project view with"
+              + " imported project views: {}"
+              + " and (before combining with imported project views)"
+              + " targets: {},"
+              + " bazel path: {},"
+              + " debugger address: {},"
+              + " java path: {}.",
+          importedProjectViews,
+          targets,
+          bazelPath,
+          debuggerAddress,
+          javaPath);
+
       return Try.sequence(importedProjectViews).map(Seq::toJavaList).map(this::buildWithImports);
     }
 
@@ -143,6 +161,17 @@ public class ProjectView {
       var bazelPath = combineBazelPathSection(importedProjectViews);
       var debuggerAddress = combineDebuggerAddressSection(importedProjectViews);
       var javaPath = combineJavaPathSection(importedProjectViews);
+
+      log.debug(
+          "Building project view with combined"
+              + " targets: {},"
+              + " bazel path: {},"
+              + " debugger address: {},"
+              + " java path: {}.",
+          targets,
+          bazelPath,
+          debuggerAddress,
+          javaPath);
 
       return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
     }
