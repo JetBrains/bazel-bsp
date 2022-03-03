@@ -19,6 +19,9 @@
   | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
 
 ### Changes 🔄
+
+- Introducing execution context and workspace context.
+  | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
 - Project view parser has more logging, targets section is optional and 
   sections are using specific types instead of raw strings.
   | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
