@@ -19,11 +19,11 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 - Test: Ability to test
 - Prerequisites: Any prerequisites needed to properly run the server to its full capabilities
 
-| Language | Import | Compilation | Run | Test | Diagnostics | Prerequisites | Notes | | - | - | - | - | - | - | - | - |
-| Scala | ✅ | ✅ | ✅ | ✅ | ✅ | [Toolchain Registration](docs/scala.md) | N/A | | Java | ✅ | ✅ | ✅ | ✅ | ❌ | N/A | N/A | |
-Kotlin | ✅ | ✅ | ✅ | ✅ | ✅ | Requires [this version](https://github.com/agluszak/rules_kotlin/tree/diagnostics-updated)
-of rules_kotlin | KotlinJS support is minimal and not advised without further setting changes. Java source files in a
-kotlin rule will not possess diagnostics. |
+| Language | Import | Compilation | Run | Test | Diagnostics | Prerequisites | Notes | 
+| - | - | - | - | - | - | - | - |
+| Scala | ✅ | ✅ | ✅ | ✅ | ✅ | [Toolchain Registration](docs/scala.md) | N/A | 
+| Java | ✅ | ✅ | ✅ | ✅ | ❌ | N/A | N/A | 
+| Kotlin | ✅ | ✅ | ✅ | ✅ | ✅ | Requires [this version](https://github.com/agluszak/rules_kotlin/tree/diagnostics-updated) of rules_kotlin | KotlinJS support is minimal and not advised without further setting changes. Java source files in a kotlin rule will not possess diagnostics. |
 
 ## Installation
 
