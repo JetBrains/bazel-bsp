@@ -1,8 +1,8 @@
 # BSP Kotlin
 
 In order to fully have the experience to use BSP over kotlin, make sure that you're using at least
-version `0da862aaa11db26f6a113dcec5f6828bfd186ac9` of `rules_kotlin`. This will ensure
-that compilation diagnostics are being delivered to you.
+version `0da862aaa11db26f6a113dcec5f6828bfd186ac9` of `rules_kotlin`. This will ensure that compilation diagnostics are
+being delivered to you.
 
 ```
 rules_kotlin_version = "0da862aaa11db26f6a113dcec5f6828bfd186ac9"
@@ -18,5 +18,5 @@ kotlin_repositories() # if you want the default
 kt_register_toolchains() # to use the default toolchain
 ```
 
-This changes have not been merged yet and progress can be
+These changes have not been merged yet and progress can be
 accompanied [here](https://github.com/bazelbuild/rules_kotlin/pull/359).
