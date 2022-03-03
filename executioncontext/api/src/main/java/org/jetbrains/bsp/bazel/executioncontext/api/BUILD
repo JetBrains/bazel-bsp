@@ -5,11 +5,11 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//executioncontext/api:__pkg__"],
     exports = [
-        "//projectview:model",
+        "//executioncontext/projectview:model",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
-        "//projectview:model",
+        "//executioncontext/projectview:model",
         "@maven//:io_vavr_vavr",
     ],
 )

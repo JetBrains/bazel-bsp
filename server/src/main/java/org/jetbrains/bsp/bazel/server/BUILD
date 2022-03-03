@@ -7,8 +7,8 @@ java_library(
     deps = [
         "//bazelrunner",
         "//commons",
+        "//executioncontext/projectview",
         "//logger",
-        "//projectview",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/config",

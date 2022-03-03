@@ -7,7 +7,7 @@ java_library(
     deps = [
         "//bazelrunner",
         "//commons",
-        "//projectview:model",
+        "//executioncontext/projectview:model",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/resolvers/actiongraph",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
         "@io_bazel//src/main/protobuf:analysis_java_proto",

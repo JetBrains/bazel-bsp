@@ -3,7 +3,10 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "workspacecontext",
     srcs = glob(["*.java"]),
-    visibility = ["//executioncontext/workspacecontext:__subpackages__"],
+    visibility = [
+        "//executioncontext/workspacecontext:__pkg__",
+        "//executioncontext/workspacecontext/src/test/java/org/jetbrains/bsp/bazel/workspacecontext:__pkg__",
+    ],
     exports = [
         "//executioncontext/api",
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext/entries",

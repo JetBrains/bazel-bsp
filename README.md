@@ -72,7 +72,7 @@ cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:<your version> -M org.jetbrains
 In order to work on huge monorepos you might want to specify directories and targets to work on. To address this issue,
 Bazel BSP supports (partly) the [Project Views](https://ij.bazel.build/docs/project-views.html) introduced by Google.
 
-Check [project view readme](projectview/README.md) for more info.
+Check [project view readme](executioncontext/projectview/README.md) for more info.
 
 ## Tests
 

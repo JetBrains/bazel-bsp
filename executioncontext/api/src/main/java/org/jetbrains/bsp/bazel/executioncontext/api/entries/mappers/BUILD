@@ -8,12 +8,12 @@ java_library(
     ],
     exports = [
         "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries",
-        "//projectview:model",
+        "//executioncontext/projectview:model",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//executioncontext/api/src/main/java/org/jetbrains/bsp/bazel/executioncontext/api/entries",
-        "//projectview:model",
+        "//executioncontext/projectview:model",
         "@maven//:io_vavr_vavr",
     ],
 )
