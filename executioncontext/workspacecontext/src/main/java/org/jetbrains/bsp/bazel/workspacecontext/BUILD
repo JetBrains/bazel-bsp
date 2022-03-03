@@ -12,6 +12,7 @@ java_library(
     deps = [
         "//executioncontext/api",
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext/entries",
+        "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext/entries/mappers",
         "@maven//:io_vavr_vavr",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",

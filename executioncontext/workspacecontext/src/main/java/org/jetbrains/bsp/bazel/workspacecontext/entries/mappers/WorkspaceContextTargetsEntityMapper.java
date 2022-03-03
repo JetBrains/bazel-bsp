@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import java.util.Optional;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapper;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -11,17 +12,21 @@ import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsE
 public class WorkspaceContextTargetsEntityMapper
     implements ProjectViewToExecutionContextEntityMapper<ExecutionContextTargetsEntity> {
 
+  private static final String NAME = "targets";
+
   @Override
   public Try<ExecutionContextTargetsEntity> map(ProjectView projectView) {
     var targetsSection = projectView.getTargets();
 
+    return toTry(targetsSection).flatMap(this::validate).map(this::map);
+  }
+
+  private Try<ProjectViewTargetsSection> toTry(Optional<ProjectViewTargetsSection> targetsSection) {
     return Option.ofOptional(targetsSection)
-        .map(this::map)
         .toTry(
             () ->
                 new ProjectViewToExecutionContextEntityMapperException(
-                    "targets", "'targets' section in project view is empty."))
-        .flatMap(this::validate);
+                    NAME, "'targets' section in project view is empty."));
   }
 
   private ExecutionContextTargetsEntity map(ProjectViewTargetsSection targetsSection) {
@@ -31,13 +36,13 @@ public class WorkspaceContextTargetsEntityMapper
     return new ExecutionContextTargetsEntity(includedValues, excludedValues);
   }
 
-  private Try<ExecutionContextTargetsEntity> validate(ExecutionContextTargetsEntity entity) {
-    if (entity.getIncludedValues().isEmpty()) {
+  private Try<ProjectViewTargetsSection> validate(ProjectViewTargetsSection targetsSection) {
+    if (targetsSection.getIncludedValues().isEmpty()) {
       return Try.failure(
           new ProjectViewToExecutionContextEntityMapperException(
-              "targets", "'targets' section has no included targets."));
+              NAME, "'targets' section has no included targets."));
     }
 
-    return Try.success(entity);
+    return Try.success(targetsSection);
   }
 }
