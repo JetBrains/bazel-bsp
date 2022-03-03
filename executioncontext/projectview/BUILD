@@ -16,12 +16,3 @@ java_library(
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
     ],
 )
-
-java_library(
-    name = "projectview",
-    visibility = ["//visibility:public"],
-    exports = [
-        "//executioncontext/projectview:model",
-        "//executioncontext/projectview:parser",
-    ],
-)
