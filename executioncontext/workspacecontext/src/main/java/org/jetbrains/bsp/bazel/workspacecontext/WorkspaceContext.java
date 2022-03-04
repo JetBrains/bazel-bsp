@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.workspacecontext;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext;
@@ -37,12 +37,12 @@ public class WorkspaceContext extends ExecutionContext {
 
     private static final Logger log = LogManager.getLogger(WorkspaceContext.Builder.class);
 
-    private Optional<ExecutionContextTargetsEntity> targets = Optional.empty();
+    private Option<ExecutionContextTargetsEntity> targets = Option.none();
 
     private Builder() {}
 
     public Builder targets(ExecutionContextTargetsEntity targets) {
-      this.targets = Optional.ofNullable(targets);
+      this.targets = Option.of(targets);
 
       return this;
     }

@@ -1,8 +1,9 @@
 package org.jetbrains.bsp.bazel.workspacecontext.entries;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import java.util.List;
+import io.vavr.collection.List;
 import java.util.Objects;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextListEntity;
 
 public class ExecutionContextTargetsEntity
@@ -28,7 +29,10 @@ public class ExecutionContextTargetsEntity
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     ExecutionContextTargetsEntity that = (ExecutionContextTargetsEntity) o;
-    return includedValues.equals(that.includedValues) && excludedValues.equals(that.excludedValues);
+    return CollectionUtils.isEqualCollection(
+            includedValues.toJavaList(), that.includedValues.toJavaList())
+        && CollectionUtils.isEqualCollection(
+            excludedValues.toJavaList(), that.excludedValues.toJavaList());
   }
 
   @Override

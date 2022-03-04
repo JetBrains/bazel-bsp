@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import java.util.List;
+import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
 import org.junit.Test;
 

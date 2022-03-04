@@ -12,5 +12,6 @@ java_library(
     ],
     deps = [
         "//executioncontext/api",
+        "@maven//:org_apache_commons_commons_collections4",
     ],
 )

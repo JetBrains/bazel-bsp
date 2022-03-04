@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers;
 
+import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class WorkspaceContextTargetsEntityMapper
   }
 
   private Try<ProjectViewTargetsSection> toTry(Optional<ProjectViewTargetsSection> targetsSection) {
+    // TODO will be changed after ProjectView transition into vavr
     return Option.ofOptional(targetsSection)
         .toTry(
             () ->
@@ -30,8 +32,8 @@ public class WorkspaceContextTargetsEntityMapper
   }
 
   private ExecutionContextTargetsEntity map(ProjectViewTargetsSection targetsSection) {
-    var includedValues = targetsSection.getIncludedValues();
-    var excludedValues = targetsSection.getExcludedValues();
+    var includedValues = List.ofAll(targetsSection.getIncludedValues());
+    var excludedValues = List.ofAll(targetsSection.getExcludedValues());
 
     return new ExecutionContextTargetsEntity(includedValues, excludedValues);
   }

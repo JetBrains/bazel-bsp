@@ -65,11 +65,11 @@ public class WorkspaceContextConstructorImplTest {
 
     var expectedTargets =
         new ExecutionContextTargetsEntity(
-            List.of(
+            io.vavr.collection.List.of(
                 new BuildTargetIdentifier("//included_target1"),
                 new BuildTargetIdentifier("//included_target2"),
                 new BuildTargetIdentifier("//included_target3")),
-            List.of(new BuildTargetIdentifier("//excluded_target1")));
+            io.vavr.collection.List.of(new BuildTargetIdentifier("//excluded_target1")));
     assertEquals(expectedTargets, workspaceContext.getTargets());
   }
 }

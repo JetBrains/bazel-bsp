@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.executioncontext.api.entries;
 
-import java.util.List;
+import io.vavr.collection.List;
 
 /**
  * Base list-based <code>ExecutionContext</code> entity class - you need to extend it if you want to

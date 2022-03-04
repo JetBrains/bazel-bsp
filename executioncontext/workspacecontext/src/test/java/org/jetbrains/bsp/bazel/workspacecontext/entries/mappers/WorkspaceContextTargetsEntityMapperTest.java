@@ -94,11 +94,11 @@ public class WorkspaceContextTargetsEntityMapperTest {
 
     var expectedTargets =
         new ExecutionContextTargetsEntity(
-            List.of(
+            io.vavr.collection.List.of(
                 new BuildTargetIdentifier("//included_target1"),
                 new BuildTargetIdentifier("//included_target2"),
                 new BuildTargetIdentifier("//included_target3")),
-            List.of(
+            io.vavr.collection.List.of(
                 new BuildTargetIdentifier("//excluded_target1"),
                 new BuildTargetIdentifier("//excluded_target2")));
     assertEquals(expectedTargets, targets);
