@@ -82,7 +82,7 @@
   | [#87](https://github.com/JetBrains/bazel-bsp/pull/87)
 - Github actions unit tests execution - each module has a separate job.
   | [#89](https://github.com/JetBrains/bazel-bsp/pull/89)
-- Created [document](docs/BUMPVERSION.md) with release tips.
+- Created [document](docs/dev/BUMPVERSION.md) with release tips.
   | [#91](https://github.com/JetBrains/bazel-bsp/pull/91)
 
 ### Removed ✂️
