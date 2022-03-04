@@ -119,5 +119,4 @@ that [here](https://github.com/bazelbuild/bazel/pull/11766).
 
 ## Contributing
 
-This project follows [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html). You can download a
-formatter plugin for Intellij [here](https://plugins.jetbrains.com/plugin/8527-google-java-format).
+Want to contribute? Great! Follow [these rules](docs/dev/CONTRIBUTING.md).
