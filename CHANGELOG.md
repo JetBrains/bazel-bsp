@@ -19,13 +19,16 @@
   | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
 
 ### Changes 🔄
+
+- Changed the structure of the [README](README.md) and other documents and added contribution guide.
+  | [#181](https://github.com/JetBrains/bazel-bsp/pull/181)
 - Project view parser has more logging, targets section is optional and 
   sections are using specific types instead of raw strings.
   | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
 - Improve the `install.sh` script. 
   | [#167](https://github.com/JetBrains/bazel-bsp/pull/167)
 - Now the project is using the latest bazel version - `5.0.0`.
-  Installer skips bazelisk cache binaries during bazel binary discovery mechanizm.
+  Installer skips bazelisk cache binaries during bazel binary discovery mechanism.
   | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)
 
 ## [1.1.1] - 16.02.2022
@@ -82,7 +85,7 @@
   | [#87](https://github.com/JetBrains/bazel-bsp/pull/87)
 - Github actions unit tests execution - each module has a separate job.
   | [#89](https://github.com/JetBrains/bazel-bsp/pull/89)
-- Created [document](docs/BUMPVERSION.md) with release tips.
+- Created [document](docs/dev/BUMPVERSION.md) with release tips.
   | [#91](https://github.com/JetBrains/bazel-bsp/pull/91)
 
 ### Removed ✂️

@@ -21,7 +21,7 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 
 | Language | Import | Compilation | Run | Test | Diagnostics | Prerequisites | Notes | 
 | - | - | - | - | - | - | - | - |
-| Scala | ✅ | ✅ | ✅ | ✅ | ✅ | [Toolchain Registration](docs/scala.md) | N/A | 
+| Scala | ✅ | ✅ | ✅ | ✅ | ✅ | [Toolchain Registration](docs/usage/scala.md) | N/A | 
 | Java | ✅ | ✅ | ✅ | ✅ | ❌ | N/A | N/A | 
 | Kotlin | ✅ | ✅ | ✅ | ✅ | ✅ | Requires [this version](https://github.com/agluszak/rules_kotlin/tree/diagnostics-updated) of rules_kotlin | KotlinJS support is minimal and not advised without further setting changes. Java source files in a kotlin rule will not possess diagnostics. |
 
@@ -88,36 +88,6 @@ Check [project view readme](projectview/README.md) for more info.
 Most modules also have unit tests that can be run using `bazel test //<module>/...` or just `bazel test //...` to run
 all tests in the project.
 
-## Extending
-
-In order to extend BSP server to other languages, make sure it can be supported with the current state of
-the  [BSP Protocol](https://github.com/build-server-protocol/build-server-protocol/tree/master/docs). Also, make sure
-there's a [client](https://build-server-protocol.github.io/docs/implementations.html#build-clients), that will be able
-to support those changes.
-
-For any JVM-language, the only needed changes would be for its specific Compiler Options Request (see, for example
-the [Scala Options Request](https://github.com/build-server-protocol/build-server-protocol/blob/master/docs/extensions/scala.md#scalac-options-request))
-. If that language does not have its own Options Request, it may be possible to mimic the behavior with current Java or
-Scala specific requests. Furthermore, make sure the `FILE_EXTENSIONS` constant holds all the relevant extensions for the
-given language, as well as the `KNOWN_SOURCE_ROOTS` holds all known patterns for the given language, and, finally,
-the `SUPPORTED_LANGUAGES` should hold the LSP compliant name of the language. Anything else, should just work out of the
-box.
-
-Any non-JVM language, will also need to look into the `buildTarget/dependencySources` request, since that request only
-searches for transitive dependencies in the form of jars.
-
-To support Compilation Diagnostics for the given language, they must be supported in the bazel side. Find the rules'
-implementation for the language [here](https://github.com/bazelbuild/). Let
-the [diagnostics proto definition](https://github.com/bazelbuild/rules_scala/blob/master/src/protobuf/io/bazel/rules_scala/diagnostics.proto)
-live inside its repository and make it so that the compiler writes the diagnostics to the given file. **Make sure the
-file is an output of the `ctx.actions.run()` for the compilation action**. The current state also dictates that the file
-must have the keyword `diagnostics` in the name. In `BepServer.java`, the mnemonic of the compilation action of the
-language must be added to the `SUPPORTED_ACTIONS` constant.
-
-Compilation Diagnostics should receive native support from bazel, accompany the state of
-that [here](https://github.com/bazelbuild/bazel/pull/11766).
-
 ## Contributing
 
-This project follows [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html). You can download a
-formatter plugin for Intellij [here](https://plugins.jetbrains.com/plugin/8527-google-java-format).
+Want to contribute? Great! Follow [these rules](docs/dev/CONTRIBUTING.md).
