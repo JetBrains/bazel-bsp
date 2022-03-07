@@ -61,7 +61,8 @@ public class BazelBspAspectsManager {
       builder.withFlag(BazelRunnerFlag.NOBUILD);
     }
 
-    List<String> lines = BazelStreamReader.drainStream(builder.executeBazelCommand().getStderrStream());
+    List<String> lines =
+        BazelStreamReader.drainStream(builder.executeBazelCommand().getStderrStream());
 
     return lines.stream()
         .map(line -> Splitter.on(" ").splitToList(line))

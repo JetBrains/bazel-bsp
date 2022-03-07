@@ -41,6 +41,4 @@ public class BuildClientLogger {
     LogMessageParams params = new LogMessageParams(messageType, message.trim());
     buildClient.onBuildLogMessage(params);
   }
-
-
 }
