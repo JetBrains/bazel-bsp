@@ -14,19 +14,16 @@ def _dependency(coordinates, exclusions = None):
     )
 
 _deps = [
-    _dependency("com.google.code.gson:gson:2.8.5"),
-    _dependency("com.google.guava:guava:28.1-jre"),
-    _dependency("ch.epfl.scala:bsp4j:2.0.0-M14"),
-    _dependency("ch.epfl.scala:bsp-testkit_2.13:2.0.0-M14"),
-    _dependency("org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.8.0"),
-    _dependency("org.eclipse.xtext:org.eclipse.xtext.xbase.lib:2.19.0"),
-    _dependency("commons-cli:commons-cli:jar:1.4"),
-    _dependency("org.jetbrains:annotations:jar:20.1.0"),
-    _dependency("io.vavr:vavr:0.9.0"),
-    _dependency("org.apache.logging.log4j:log4j-api:2.6.1"),
-    _dependency("org.apache.logging.log4j:log4j-core:2.6.1"),
-    _dependency("junit:junit:4.12"),
-    _dependency("org.assertj:assertj-core:3.16.1"),
+    _dependency("com.google.code.gson:gson:2.8.9"),
+    _dependency("com.google.guava:guava:31.0.1-jre"),
+    _dependency("ch.epfl.scala:bsp4j:2.0.0"),
+    _dependency("ch.epfl.scala:bsp-testkit_2.13:2.0.0"),
+    _dependency("commons-cli:commons-cli:jar:1.5.0"),
+    _dependency("io.vavr:vavr:0.10.4"),
+    _dependency("org.apache.logging.log4j:log4j-api:2.17.2"),
+    _dependency("org.apache.logging.log4j:log4j-core:2.17.2"),
+    _dependency("junit:junit:4.13.2"),
+    _dependency("org.assertj:assertj-core:3.22.0"),
     _dependency("org.apache.commons:commons-collections4:jar:4.4"),
 ]
 
