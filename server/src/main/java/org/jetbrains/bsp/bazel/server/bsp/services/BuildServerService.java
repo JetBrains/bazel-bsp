@@ -59,6 +59,7 @@ import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetRulesResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
+import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BuildServerService {
 
@@ -70,6 +71,7 @@ public class BuildServerService {
 
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
+  private final BuildClientLogger buildClientLogger;
   private final ProjectView projectView;
 
   public BuildServerService(
@@ -78,12 +80,14 @@ public class BuildServerService {
       BazelBspServerBuildManager serverBuildManager,
       BazelData bazelData,
       BazelRunner bazelRunner,
+      BuildClientLogger buildClientLogger,
       ProjectView projectView) {
     this.serverRequestHelpers = serverRequestHelpers;
     this.serverLifetime = serverLifetime;
     this.serverBuildManager = serverBuildManager;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
+    this.buildClientLogger = buildClientLogger;
     this.projectView = projectView;
   }
 
@@ -352,6 +356,8 @@ public class BuildServerService {
             .executeBazelBesCommand()
             .waitAndGetResult();
 
+    buildClientLogger.logBazelProcessResult(bazelProcessResult);
+
     return Either.forRight(new TestResult(bazelProcessResult.getStatusCode()));
   }
 
@@ -379,6 +385,8 @@ public class BuildServerService {
             .executeBazelBesCommand()
             .waitAndGetResult();
 
+    buildClientLogger.logBazelProcessResult(bazelProcessResult);
+
     return Either.forRight(new RunResult(bazelProcessResult.getStatusCode()));
   }
 
@@ -386,14 +394,12 @@ public class BuildServerService {
       CleanCacheParams cleanCacheParams) {
     LOGGER.info("buildTargetCleanCache call with param: {}", cleanCacheParams);
     try {
-      List<String> lines =
-          bazelRunner
-              .commandBuilder()
-              .clean()
-              .executeBazelBesCommand()
-              .waitAndGetResult()
-              .getStdout();
+      BazelProcessResult bazelProcessResult =
+          bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult();
 
+      buildClientLogger.logBazelProcessResult(bazelProcessResult);
+
+      List<String> lines = bazelProcessResult.getStdout();
       CleanCacheResult result = new CleanCacheResult(String.join("\n", lines), true);
       return Either.forRight(result);
     } catch (RuntimeException e) {
@@ -405,7 +411,10 @@ public class BuildServerService {
   public Either<ResponseError, Object> workspaceReload() {
     LOGGER.info("workspaceReload call");
 
-    bazelRunner.commandBuilder().fetch().executeBazelBesCommand().waitAndGetResult();
+    BazelProcessResult bazelProcessResult =
+        bazelRunner.commandBuilder().fetch().executeBazelBesCommand().waitAndGetResult();
+    buildClientLogger.logBazelProcessResult(bazelProcessResult);
+
     serverBuildManager.getLazyVals().forEach(Lazy::recalculateValue);
 
     return Either.forRight(new Object());

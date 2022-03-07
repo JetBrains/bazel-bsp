@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelRunner {
 
@@ -22,7 +21,6 @@ public class BazelRunner {
   private final String bazel;
 
   private Optional<Integer> besBackendPort = Optional.empty();
-  private Optional<BuildClientLogger> buildClientLogger = Optional.empty();
   private final Supplier<File> workspaceRoot;
 
   public BazelRunner(String bazelBinaryPath) {
@@ -50,7 +48,8 @@ public class BazelRunner {
     return new BazelRunnerCommandBuilder(this);
   }
 
-  public BazelProcess runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
+  public BazelProcess runBazelCommandBes(
+      String command, List<String> flags, List<String> arguments) {
     List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
   }
@@ -100,9 +99,5 @@ public class BazelRunner {
 
   public void setBesBackendPort(int port) {
     besBackendPort = Optional.of(port);
-  }
-
-  public void setLogger(BuildClientLogger buildClientLogger) {
-    this.buildClientLogger = Optional.ofNullable(buildClientLogger);
   }
 }

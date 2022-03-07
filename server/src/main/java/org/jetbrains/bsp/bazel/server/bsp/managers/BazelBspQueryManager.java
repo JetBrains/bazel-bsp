@@ -34,6 +34,7 @@ import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.TargetsUtils;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildRuleAttributeExtractor;
+import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelBspQueryManager {
   private static final Logger LOGGER = LogManager.getLogger(BazelBspQueryManager.class);
@@ -45,17 +46,20 @@ public class BazelBspQueryManager {
   private final BazelData bazelData;
   private final BazelRunner bazelRunner;
   private final BazelBspTargetManager bazelBspTargetManager;
+  private final BuildClientLogger buildClientLogger;
   private BepServer bepServer;
 
   public BazelBspQueryManager(
       ProjectView projectView,
       BazelData bazelData,
       BazelRunner bazelRunner,
-      BazelBspTargetManager bazelBspTargetManager) {
+      BazelBspTargetManager bazelBspTargetManager,
+      BuildClientLogger buildClientLogger) {
     this.projectView = projectView;
     this.bazelData = bazelData;
     this.bazelRunner = bazelRunner;
     this.bazelBspTargetManager = bazelBspTargetManager;
+    this.buildClientLogger = buildClientLogger;
   }
 
   public Either<ResponseError, WorkspaceBuildTargetsResult> getWorkspaceBuildTargets() {
@@ -68,6 +72,7 @@ public class BazelBspQueryManager {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
 
+    // TODO(agluszak): catch the exception and return Either.forLeft
     buildProject(targets);
 
     return Either.forRight(new WorkspaceBuildTargetsResult(targets));
@@ -83,6 +88,8 @@ public class BazelBspQueryManager {
             .withArguments(targets)
             .executeBazelBesCommand()
             .waitAndGetResult();
+
+    buildClientLogger.logBazelProcessResult(bazelProcessResult);
 
     if (bazelProcessResult.getStatusCode() != StatusCode.OK) {
       throw new RuntimeException("Failed to build the project");

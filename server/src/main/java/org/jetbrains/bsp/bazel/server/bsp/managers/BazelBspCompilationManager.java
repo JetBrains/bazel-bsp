@@ -7,29 +7,30 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.resolvers.QueryResolver;
 import org.jetbrains.bsp.bazel.server.bsp.utils.BuildManagerParsingUtils;
+import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BazelBspCompilationManager {
-  private static final Logger LOGGER = LogManager.getLogger(BazelBspCompilationManager.class);
-
   private BepServer bepServer;
   private final BazelRunner bazelRunner;
   private final BazelData bazelData;
+  private final BuildClientLogger buildClientLogger;
 
-  public BazelBspCompilationManager(BazelRunner bazelRunner, BazelData bazelData) {
+  public BazelBspCompilationManager(
+      BazelRunner bazelRunner, BazelData bazelData, BuildClientLogger buildClientLogger) {
     this.bazelRunner = bazelRunner;
     this.bazelData = bazelData;
+    this.buildClientLogger = buildClientLogger;
   }
 
   public Either<ResponseError, CompileResult> buildTargetsWithBep(
@@ -51,19 +52,20 @@ public class BazelBspCompilationManager {
 
     cacheProtoLocations(diagnosticsProtosLocations, queryResult);
 
-    StatusCode exitCode =
+    BazelProcessResult bazelProcessResult =
         bazelRunner
             .commandBuilder()
             .build()
             .withFlags(extraFlags)
             .withTargets(bazelTargets)
             .executeBazelBesCommand()
-            .waitAndGetResult()
-            .getStatusCode();
+            .waitAndGetResult();
 
+    buildClientLogger.logBazelProcessResult(bazelProcessResult);
     emitDiagnosticsFromCache(diagnosticsProtosLocations);
 
-    return Either.forRight(new CompileResult(exitCode));
+    StatusCode statusCode = bazelProcessResult.getStatusCode();
+    return Either.forRight(new CompileResult(statusCode));
   }
 
   private void emitDiagnosticsFromCache(Map<String, String> diagnosticsProtosLocations) {

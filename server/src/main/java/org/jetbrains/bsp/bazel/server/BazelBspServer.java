@@ -10,6 +10,7 @@ import io.grpc.ServerBuilder;
 import java.nio.file.Paths;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver.BazelDataResolverException;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -41,16 +42,14 @@ public class BazelBspServer {
 
   private final BazelBspServerConfig bazelBspServerConfig;
   private final BazelRunner bazelRunner;
-  private final BazelData bazelData;
 
+  private BazelData bazelData;
   private BspImplementationHub bspImplementationHub;
   private BazelBspServerBuildManager serverBuildManager;
 
   public BazelBspServer(BazelBspServerConfig bazelBspServerConfig) {
     this.bazelBspServerConfig = bazelBspServerConfig;
     this.bazelRunner = new BazelRunner(bazelBspServerConfig.getBazelPath());
-    BazelDataResolver bazelDataResolver = new BazelDataResolver(bazelRunner);
-    this.bazelData = bazelDataResolver.resolveBazelData();
   }
 
   public void startServer(BspIntegrationData bspIntegrationData) {
@@ -58,8 +57,14 @@ public class BazelBspServer {
     BazelBspServerRequestHelpers serverRequestHelpers =
         new BazelBspServerRequestHelpers(serverLifetime);
 
+    setupLauncher(bspIntegrationData);
+
+    BuildClientLogger buildClientLogger = bspIntegrationData.getBuildClientLogger();
+
+    resolveBazelData(buildClientLogger);
+
     BazelBspCompilationManager bazelBspCompilationManager =
-        new BazelBspCompilationManager(bazelRunner, bazelData);
+        new BazelBspCompilationManager(bazelRunner, bazelData, buildClientLogger);
     InternalAspectsResolver internalAspectsResolver =
         new InternalAspectsResolver(
             bazelData.getBspProjectRoot(), Paths.get(bazelData.getWorkspaceRoot()));
@@ -72,7 +77,11 @@ public class BazelBspServer {
             bazelRunner, bazelData, bazelBspAspectsManager, bazelCppTargetManager);
     BazelBspQueryManager bazelBspQueryManager =
         new BazelBspQueryManager(
-            bazelBspServerConfig.getProjectView(), bazelData, bazelRunner, bazelBspTargetManager);
+            bazelBspServerConfig.getProjectView(),
+            bazelData,
+            bazelRunner,
+            bazelBspTargetManager,
+            buildClientLogger);
 
     this.serverBuildManager =
         new BazelBspServerBuildManager(
@@ -90,6 +99,7 @@ public class BazelBspServer {
             serverBuildManager,
             bazelData,
             bazelRunner,
+            buildClientLogger,
             bazelBspServerConfig.getProjectView());
 
     JvmBuildServerService jvmBuildServerService =
@@ -120,7 +130,7 @@ public class BazelBspServer {
     integrateBsp(bspIntegrationData);
   }
 
-  private void integrateBsp(BspIntegrationData bspIntegrationData) {
+  private void setupLauncher(BspIntegrationData bspIntegrationData) {
     Launcher<BuildClient> launcher =
         new Launcher.Builder<BuildClient>()
             .traceMessages(bspIntegrationData.getTraceWriter())
@@ -130,13 +140,25 @@ public class BazelBspServer {
             .setRemoteInterface(BuildClient.class)
             .setExecutorService(bspIntegrationData.getExecutor())
             .create();
-
     bspIntegrationData.setLauncher(launcher);
     BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
+    bspIntegrationData.setBuildClientLogger(buildClientLogger);
+  }
 
-    BepServer bepServer = new BepServer(bazelData, launcher.getRemoteProxy(), buildClientLogger);
+  private void resolveBazelData(BuildClientLogger buildClientLogger) {
+    BazelDataResolver bazelDataResolver = new BazelDataResolver(bazelRunner);
+    try {
+      this.bazelData = bazelDataResolver.resolveBazelData();
+    } catch (BazelDataResolverException e) {
+      buildClientLogger.logError(e.getMessage());
+    }
+  }
+
+  private void integrateBsp(BspIntegrationData bspIntegrationData) {
+    BuildClient buildClient = bspIntegrationData.getLauncher().getRemoteProxy();
+    BuildClientLogger buildClientLogger = bspIntegrationData.getBuildClientLogger();
+    BepServer bepServer = new BepServer(bazelData, buildClient, buildClientLogger);
     serverBuildManager.setBepServer(bepServer);
-    bazelRunner.setLogger(buildClientLogger);
 
     bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }

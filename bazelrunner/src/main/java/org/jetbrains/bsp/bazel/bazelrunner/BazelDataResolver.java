@@ -5,9 +5,6 @@ import com.google.common.collect.Iterables;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 
@@ -24,7 +21,7 @@ public class BazelDataResolver {
     this.bazelRunner = bazelRunner;
   }
 
-  public BazelData resolveBazelData() throws BazelDataResolverException{
+  public BazelData resolveBazelData() throws BazelDataResolverException {
     String execRoot = readOnlyBazelLine(EXECUTION_ROOT_PARAMETER);
     String workspaceRoot = readOnlyBazelLine(WORKPLACE_ROOT_PARAMETER);
     String binRoot = readOnlyBazelLine(BAZEL_BIN_ROOT_PARAMETER);
@@ -46,11 +43,13 @@ public class BazelDataResolver {
     List<String> output = bazelProcessResult.getStdout();
 
     if (!bazelProcessResult.getStatusCode().equals(StatusCode.OK)) {
-      throw new BazelDataResolverException("Failed to read bazel info: " + argument, bazelProcessResult);
+      throw new BazelDataResolverException(
+          "Failed to read bazel info: " + argument, bazelProcessResult);
     }
 
     if (output.size() != 1) {
-      throw new BazelDataResolverException("Bazel info should return exactly one line: " + argument, bazelProcessResult);
+      throw new BazelDataResolverException(
+          "Bazel info should return exactly one line: " + argument, bazelProcessResult);
     }
 
     return Iterables.getOnlyElement(output);

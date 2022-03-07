@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.concurrent.ExecutorService;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
+import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BspIntegrationData {
 
@@ -17,6 +18,7 @@ public class BspIntegrationData {
 
   private Launcher<BuildClient> launcher;
   private Server server;
+  private BuildClientLogger buildClientLogger;
 
   public BspIntegrationData(
       PrintStream stdout, InputStream stdin, ExecutorService executor, PrintWriter traceWriter) {
@@ -56,5 +58,13 @@ public class BspIntegrationData {
 
   public void setServer(Server server) {
     this.server = server;
+  }
+
+  public BuildClientLogger getBuildClientLogger() {
+    return buildClientLogger;
+  }
+
+  public void setBuildClientLogger(BuildClientLogger buildClientLogger) {
+    this.buildClientLogger = buildClientLogger;
   }
 }
