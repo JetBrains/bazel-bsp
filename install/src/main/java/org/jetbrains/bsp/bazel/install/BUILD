@@ -10,7 +10,7 @@ java_library(
     visibility = ["//install:__subpackages__"],
     deps = [
         "//commons",
-        "//projectview:parser",
+        "//executioncontext/projectview:parser",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
         "@maven//:com_google_guava_guava",

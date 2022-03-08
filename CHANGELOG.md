@@ -20,6 +20,8 @@
 
 ### Changes 🔄
 
+- Introducing execution context and workspace context.
+  | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
 - Changed the structure of the [README](README.md) and other documents and added contribution guide.
   | [#181](https://github.com/JetBrains/bazel-bsp/pull/181)
 - Project view parser has more logging, targets section is optional and 
