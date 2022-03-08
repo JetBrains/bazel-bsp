@@ -1,9 +1,10 @@
-import jetbrains.buildServer.configs.kotlin.v10.BuildType
-import jetbrains.buildServer.configs.kotlin.v10.buildSteps.ScriptBuildStep
-import jetbrains.buildServer.configs.kotlin.v10.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.v10.project
-import jetbrains.buildServer.configs.kotlin.v10.vcs.GitVcsRoot
-import jetbrains.buildServer.configs.kotlin.v10.version
+import jetbrains.buildServer.configs.kotlin.v2018_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.v2018_2.project
+import jetbrains.buildServer.configs.kotlin.v2018_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2018_2.vcs.GitVcsRoot
+import jetbrains.buildServer.configs.kotlin.v2018_2.version
 
 /*
 The settings script is an entry point for defining a TeamCity

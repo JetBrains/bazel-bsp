@@ -6,3 +6,4 @@ bazel-*
 .DS_Store
 
 *.iml
+.teamcity/target/
