@@ -50,6 +50,10 @@ object BuildTheProject : BuildType({
         }
     }
 
+    vcs {
+        root(BazelBspVcs)
+    }
+
     triggers {
         vcs {
         }
