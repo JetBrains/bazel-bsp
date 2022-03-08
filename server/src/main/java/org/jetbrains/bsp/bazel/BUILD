@@ -6,7 +6,7 @@ sonatype_java_export(
     srcs = glob(["*.java"]),
     maven_coordinates = "org.jetbrains.bsp:bazel-bsp:1.1.1",
     maven_profile = "org.jetbrains",
-    pom_template = "//:pom.xml",
+    pom_template = "//:pom-template.xml",
     resources = ["//server/src/main/resources"],
     visibility = ["//visibility:public"],
     runtime_deps = [

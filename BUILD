@@ -1,3 +1,3 @@
 exports_files([
-    "pom.xml",
+    "pom-template.xml",
 ])
