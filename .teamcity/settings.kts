@@ -3,7 +3,6 @@ import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2018_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2018_2.project
 import jetbrains.buildServer.configs.kotlin.v2018_2.triggers.vcs
-import jetbrains.buildServer.configs.kotlin.v2018_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2018_2.version
 
 /*
@@ -31,7 +30,6 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 version = "2018.2"
 
 project {
-    vcsRoot(BazelBspVcs)
     buildType(Format)
 }
 
@@ -52,9 +50,4 @@ object Format : BuildType({
         vcs {
         }
     }
-})
-
-object BazelBspVcs : GitVcsRoot({
-    name = "bazel-bsp"
-    url = "https://github.com/JetBrains/bazel-bsp.git"
 })
