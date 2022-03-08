@@ -1,8 +1,9 @@
-import jetbrains.buildServer.configs.kotlin.*
-import jetbrains.buildServer.configs.kotlin.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.buildSteps.ScriptBuildStep
-import jetbrains.buildServer.configs.kotlin.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v10.BuildType
+import jetbrains.buildServer.configs.kotlin.v10.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v10.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.v10.project
+import jetbrains.buildServer.configs.kotlin.v10.vcs.GitVcsRoot
+import jetbrains.buildServer.configs.kotlin.v10.version
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -53,6 +54,6 @@ object Format : BuildType({
 })
 
 object BazelBspVcs : GitVcsRoot({
-    name = "bazel-bsp",
+    name = "bazel-bsp"
     url = "https://github.com/JetBrains/bazel-bsp.git"
 })
