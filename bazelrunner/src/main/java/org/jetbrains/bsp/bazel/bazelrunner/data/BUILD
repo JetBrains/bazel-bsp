@@ -7,7 +7,6 @@ java_library(
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
-        "//logger",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_guava_guava",
     ],

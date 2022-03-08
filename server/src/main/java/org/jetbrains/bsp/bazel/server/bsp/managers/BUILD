@@ -6,7 +6,9 @@ java_library(
     visibility = ["//server:__subpackages__"],
     deps = [
         "//bazelrunner",
+        "//bazelrunner:utils",
         "//commons",
+        "//logger",
         "//projectview:model",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/config",

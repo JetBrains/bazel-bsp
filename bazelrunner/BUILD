@@ -9,6 +9,14 @@ java_library(
 )
 
 java_library(
+    name = "utils",
+    visibility = ["//visibility:public"],
+    exports = [
+        "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
+    ],
+)
+
+java_library(
     name = "params",
     visibility = ["//visibility:public"],
     exports = [
