@@ -30,19 +30,20 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 version = "2018.2"
 
 project {
-    buildType(Format)
+    buildType(BuildTheProject)
+//    buildType(Format)
 }
 
-object Format : BuildType({
-    name = "format"
+object BuildTheProject : BuildType({
+    name = "build"
 
     steps {
         script {
-            name = "Google Java Format"
-            scriptContent = """google-java-format -i --set-exit-if-changed ${'$'}(find . -type f -name "*.java")"""
+            name = "build the project"
+            scriptContent = """bazel build //..."""
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
-            dockerImage = "vandmo/google-java-format"
+            dockerImage = "andrefmrocha/bazelisk"
         }
     }
 
@@ -51,3 +52,22 @@ object Format : BuildType({
         }
     }
 })
+
+//object Format : BuildType({
+//    name = "format"
+//
+//    steps {
+//        script {
+//            name = "Google Java Format"
+//            scriptContent = """google-java-format -i --set-exit-if-changed ${'$'}(find . -type f -name "*.java")"""
+//            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+//            dockerPull = true
+//            dockerImage = "vandmo/google-java-format"
+//        }
+//    }
+//
+//    triggers {
+//        vcs {
+//        }
+//    }
+//})
