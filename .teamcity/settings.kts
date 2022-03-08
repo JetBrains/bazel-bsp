@@ -79,7 +79,6 @@ object BuildTheProject : BuildType({
 //    }
 //})
 
-
 object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp"
     url = "https://github.com/JetBrains/bazel-bsp.git"
