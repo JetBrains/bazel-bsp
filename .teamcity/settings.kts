@@ -35,7 +35,7 @@ project {
     vcsRoot(BazelBspVcs)
 
     buildType(BuildTheProject)
-//    buildType(Format)
+    buildType(JavaFormat)
 }
 
 object BuildTheProject : BuildType({
@@ -72,24 +72,35 @@ object BuildTheProject : BuildType({
     }
 })
 
-//object Format : BuildType({
-//    name = "format"
-//
-//    steps {
-//        script {
-//            name = "Google Java Format"
-//            scriptContent = """google-java-format -i --set-exit-if-changed ${'$'}(find . -type f -name "*.java")"""
-//            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-//            dockerPull = true
-//            dockerImage = "vandmo/google-java-format"
-//        }
-//    }
-//
-//    triggers {
-//        vcs {
-//        }
-//    }
-//})
+object JavaFormat : BuildType({
+    name = "java-format"
+
+    steps {
+        script {
+            name = "formatting check with google java format"
+            scriptContent = """google-java-format -i --set-exit-if-changed ${'$'}(find . -type f -name "*.java")"""
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "vandmo/google-java-format"
+        }
+    }
+
+    triggers {
+        vcs {
+        }
+    }
+
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
+        }
+    }
+})
 
 object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp"
