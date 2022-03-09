@@ -4,16 +4,15 @@ java_library(
     name = "installationcontext",
     srcs = glob(["*.java"]),
     visibility = [
-        "//visibility:public"
+        "//visibility:public",
     ],
-
     exports = [
-    "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities",
-    "@maven//:io_vavr_vavr",
+        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities",
+        "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//executioncontext/api",
+        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities",
         "@maven//:io_vavr_vavr",
-        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities"
     ],
 )

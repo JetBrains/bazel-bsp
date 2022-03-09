@@ -8,9 +8,6 @@ java_test(
         "@maven//:junit_junit",
     ],
     deps = [
-        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext"
-
+        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
     ],
 )
-
-

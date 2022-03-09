@@ -11,8 +11,6 @@ public class InstallationContextJavaPathEntity extends ExecutionContextSingleton
 
   @Override
   public String toString() {
-    return "InstallationContextJavaPathEntity{" +
-            "value=" + value +
-            '}';
+    return "InstallationContextJavaPathEntity{" + "value=" + value + '}';
   }
 }
