@@ -7,6 +7,10 @@ java_library(
         "//visibility:public"
     ],
 
+    exports = [
+    "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities",
+    "@maven//:io_vavr_vavr",
+    ],
     deps = [
         "//executioncontext/api",
         "@maven//:io_vavr_vavr",

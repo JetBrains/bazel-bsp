@@ -6,6 +6,9 @@ java_library(
     visibility = [
        "//visibility:public"
     ],
+    exports = [
+    "@maven//:com_google_guava_guava"
+    ],
     deps = [
         "//executioncontext/api",
         "@maven//:com_google_guava_guava"

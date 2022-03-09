@@ -8,4 +8,11 @@ public class InstallationContextJavaPathEntity extends ExecutionContextSingleton
   public InstallationContextJavaPathEntity(Path value) {
     super(value);
   }
+
+  @Override
+  public String toString() {
+    return "InstallationContextJavaPathEntity{" +
+            "value=" + value +
+            '}';
+  }
 }

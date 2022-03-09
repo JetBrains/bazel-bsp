@@ -9,4 +9,11 @@ public class InstallationContextDebuggerAddressEntity
   public InstallationContextDebuggerAddressEntity(HostAndPort value) {
     super(value);
   }
+
+  @Override
+  public String toString() {
+    return "InstallationContextDebuggerAddressEntity{" + "value=" + value + '}';
+  }
+
+
 }
