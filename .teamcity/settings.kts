@@ -85,6 +85,10 @@ object JavaFormat : BuildType({
         }
     }
 
+    vcs {
+        root(BazelBspVcs)
+    }
+
     triggers {
         vcs {
         }
