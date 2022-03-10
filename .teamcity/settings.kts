@@ -46,7 +46,7 @@ project {
         parallel {
             buildType(BazelRunnerUnitTests)
             buildType(CommonsUnitTests)
-            buildType(ProjectViewUnitTests)
+            buildType(ExecutionContextUnitTests)
             buildType(ServerUnitTests)
         }
     }.buildTypes()
@@ -155,7 +155,7 @@ object BazelRunnerUnitTests : BuildType({
 
     steps {
         script {
-            name = "testing commons"
+            name = "testing //bazelrunner module"
             scriptContent = """bazel test //bazelrunner/..."""
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
@@ -184,7 +184,7 @@ object CommonsUnitTests : BuildType({
 
     steps {
         script {
-            name = "testing commons"
+            name = "testing //commons module"
             scriptContent = """bazel test //commons/..."""
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
@@ -208,13 +208,13 @@ object CommonsUnitTests : BuildType({
     }
 })
 
-object ProjectViewUnitTests : BuildType({
-    name = "[unit tests] project view tests"
+object ExecutionContextUnitTests : BuildType({
+    name = "[unit tests] execution context tests"
 
     steps {
         script {
-            name = "testing commons"
-            scriptContent = """bazel test //projectview/..."""
+            name = "testing //executioncontext module"
+            scriptContent = """bazel test //executioncontext/..."""
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
             dockerImage = "andrefmrocha/bazelisk"
@@ -242,7 +242,7 @@ object ServerUnitTests : BuildType({
 
     steps {
         script {
-            name = "testing commons"
+            name = "testing //server module"
             scriptContent = """bazel test //server/..."""
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
