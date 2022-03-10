@@ -3,6 +3,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPu
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.project
+import jetbrains.buildServer.configs.kotlin.v2019_2.sequential
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.version
@@ -34,8 +35,21 @@ version = "2021.2"
 project {
     vcsRoot(BazelBspVcs)
 
-    buildType(BuildTheProject)
-    buildType(JavaFormat)
+    val steps = sequential {
+        parallel {
+            buildType(JavaFormat)
+            buildType(BuildifierFormat)
+        }
+
+        buildType(BuildTheProject)
+    }.buildTypes()
+
+    steps.forEach { buildType(it) }
+
+    steps.last().triggers {
+        vcs { }
+    }
+
 }
 
 object BuildTheProject : BuildType({
@@ -55,11 +69,6 @@ object BuildTheProject : BuildType({
         root(BazelBspVcs)
     }
 
-    triggers {
-        vcs {
-        }
-    }
-
     features {
         commitStatusPublisher {
             publisher = github {
@@ -73,7 +82,7 @@ object BuildTheProject : BuildType({
 })
 
 object JavaFormat : BuildType({
-    name = "java-format"
+    name = "[format] google java format"
 
     steps {
         script {
@@ -89,9 +98,37 @@ object JavaFormat : BuildType({
         root(BazelBspVcs)
     }
 
-    triggers {
-        vcs {
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
         }
+    }
+})
+
+object BuildifierFormat : BuildType({
+    name = "[format] buildifier"
+
+    steps {
+        script {
+            name = "formatting check with buildifier"
+            scriptContent = """
+                buildifier -r .
+                buildifier --lint=fix -r .
+                git diff --exit-code
+            """.trimIndent()
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "andrefmrocha/buildifier"
+        }
+    }
+
+    vcs {
+        root(BazelBspVcs)
     }
 
     features {
