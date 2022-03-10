@@ -17,29 +17,29 @@ open class BazelBspE2ETestsBuildType(testLabel: String) : BaseConfiguration.Baze
 )
 
 object SampleRepoE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspSampleRepoTest"
+    testLabel = "//e2e:BazelBspSampleRepoTest",
 )
 
 object ActionGraphV1E2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspActionGraphV1Test"
+    testLabel = "//e2e:BazelBspActionGraphV1Test",
 )
 
 object ActionGraphV2E2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspActionGraphV2Test"
+    testLabel = "//e2e:BazelBspActionGraphV2Test",
 )
 
 object Java8ProjectE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspJava8ProjectTest"
+    testLabel = "//e2e:BazelBspJava8ProjectTest",
 )
 
 object Java11ProjectE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspJava11ProjectTest"
+    testLabel = "//e2e:BazelBspJava11ProjectTest",
 )
 
 object CppProjectE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspCppProjectTest"
+    testLabel = "//e2e:BazelBspCppProjectTest",
 )
 
 object BazelBspEntireRepositoryImportE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspEntireRepositoryImportTest"
+    testLabel = "//e2e:BazelBspEntireRepositoryImportTest",
 )
