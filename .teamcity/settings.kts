@@ -42,6 +42,13 @@ project {
         }
 
         buildType(BuildTheProject)
+
+        parallel {
+            buildType(BazelRunnerUnitTests)
+            buildType(CommonsUnitTests)
+            buildType(ProjectViewUnitTests)
+            buildType(ServerUnitTests)
+        }
     }.buildTypes()
 
     steps.forEach { buildType(it) }
@@ -51,35 +58,6 @@ project {
     }
 
 }
-
-object BuildTheProject : BuildType({
-    name = "build"
-
-    steps {
-        script {
-            name = "build the project"
-            scriptContent = """bazel build //..."""
-            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            dockerPull = true
-            dockerImage = "andrefmrocha/bazelisk"
-        }
-    }
-
-    vcs {
-        root(BazelBspVcs)
-    }
-
-    features {
-        commitStatusPublisher {
-            publisher = github {
-                githubUrl = "https://api.github.com"
-                authType = personalToken {
-                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
-                }
-            }
-        }
-    }
-})
 
 object JavaFormat : BuildType({
     name = "[format] google java format"
@@ -124,6 +102,151 @@ object BuildifierFormat : BuildType({
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
             dockerImage = "andrefmrocha/buildifier"
+        }
+    }
+
+    vcs {
+        root(BazelBspVcs)
+    }
+
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
+        }
+    }
+})
+
+object BuildTheProject : BuildType({
+    name = "[build] build the project"
+
+    steps {
+        script {
+            name = "building the project"
+            scriptContent = """bazel build //..."""
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "andrefmrocha/bazelisk"
+        }
+    }
+
+    vcs {
+        root(BazelBspVcs)
+    }
+
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
+        }
+    }
+})
+
+object BazelRunnerUnitTests : BuildType({
+    name = "[unit tests] bazel runner tests"
+
+    steps {
+        script {
+            name = "testing commons"
+            scriptContent = """bazel test //bazelrunner/..."""
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "andrefmrocha/bazelisk"
+        }
+    }
+
+    vcs {
+        root(BazelBspVcs)
+    }
+
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
+        }
+    }
+})
+
+object CommonsUnitTests : BuildType({
+    name = "[unit tests] commons tests"
+
+    steps {
+        script {
+            name = "testing commons"
+            scriptContent = """bazel test //commons/..."""
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "andrefmrocha/bazelisk"
+        }
+    }
+
+    vcs {
+        root(BazelBspVcs)
+    }
+
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
+        }
+    }
+})
+
+object ProjectViewUnitTests : BuildType({
+    name = "[unit tests] project view tests"
+
+    steps {
+        script {
+            name = "testing commons"
+            scriptContent = """bazel test //projectview/..."""
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "andrefmrocha/bazelisk"
+        }
+    }
+
+    vcs {
+        root(BazelBspVcs)
+    }
+
+    features {
+        commitStatusPublisher {
+            publisher = github {
+                githubUrl = "https://api.github.com"
+                authType = personalToken {
+                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                }
+            }
+        }
+    }
+})
+
+object ServerUnitTests : BuildType({
+    name = "[unit tests] server tests"
+
+    steps {
+        script {
+            name = "testing commons"
+            scriptContent = """bazel test //server/..."""
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "andrefmrocha/bazelisk"
         }
     }
 
