@@ -1,4 +1,5 @@
 import configurations.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.project
 import jetbrains.buildServer.configs.kotlin.v2019_2.sequential
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
@@ -15,16 +16,16 @@ project {
             buildType(Format.BuildifierFormat)
         }
 
-        buildType(Build.BuildTheProject)
+        buildType(Build.BuildTheProject, options = { onDependencyFailure = FailureAction.CANCEL })
 
-        parallel {
+        parallel(options = { onDependencyFailure = FailureAction.CANCEL }) {
             buildType(UnitTests.BazelRunnerUnitTests)
             buildType(UnitTests.CommonsUnitTests)
             buildType(UnitTests.ExecutionContextUnitTests)
             buildType(UnitTests.ServerUnitTests)
         }
 
-        parallel {
+        parallel(options = { onDependencyFailure = FailureAction.CANCEL }) {
             buildType(E2eTests.SampleRepoE2ETest)
 
             buildType(E2eTests.ActionGraphV1E2ETest)
