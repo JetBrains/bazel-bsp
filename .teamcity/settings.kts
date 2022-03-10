@@ -1,7 +1,4 @@
-import configurations.BaseConfiguration
-import configurations.Build
-import configurations.Format
-import configurations.UnitTests
+import configurations.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.project
 import jetbrains.buildServer.configs.kotlin.v2019_2.sequential
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
@@ -25,6 +22,20 @@ project {
             buildType(UnitTests.CommonsUnitTests)
             buildType(UnitTests.ExecutionContextUnitTests)
             buildType(UnitTests.ServerUnitTests)
+        }
+
+        parallel {
+            buildType(E2eTests.SampleRepoE2ETest)
+
+            buildType(E2eTests.ActionGraphV1E2ETest)
+            buildType(E2eTests.ActionGraphV2E2ETest)
+
+            buildType(E2eTests.Java8ProjectE2ETest)
+            buildType(E2eTests.Java11ProjectE2ETest)
+
+            buildType(E2eTests.CppProjectE2ETest)
+
+            buildType(E2eTests.BazelBspEntireRepositoryImportE2ETest)
         }
     }.buildTypes()
 
