@@ -21,58 +21,46 @@ http_archive(
 # ======================================================================================================================
 # rules_scala
 
-IO_BAZEL_RULES_SCALA_TAG = "d6186617cfe64cef2074b23ca58daac75fe40d42"
+IO_BAZEL_RULES_SCALA_TAG = "20220201"
 
-IO_BAZEL_RULES_SCALA_SHA = "1a19bdedae7c62e9541315476c506c8e7a92c3ce0e7cbbfb57f12a429849f19d"
+IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
 
 http_archive(
     name = "io_bazel_rules_scala",
     sha256 = IO_BAZEL_RULES_SCALA_SHA,
     strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
-    url = "https://github.com/andrefmrocha/rules_scala/archive/{}.tar.gz".format(IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/bazelbuild/rules_scala/releases/download/{}/rules_scala-{}.zip".format(IO_BAZEL_RULES_SCALA_TAG, IO_BAZEL_RULES_SCALA_TAG),
 )
 
-# ----------------------------------------------------------------------------------------------------------------------
-load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
+load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-bazel_version(name = "bazel_version")
+scala_config(scala_version = "2.13.6")
 
-# ----------------------------------------------------------------------------------------------------------------------
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+
+scala_repositories()
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
+
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
 
-# ----------------------------------------------------------------------------------------------------------------------
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+load("@io_bazel_rules_scala//testing:scalatest.bzl", "scalatest_repositories")
+load("@io_bazel_rules_scala//testing:junit.bzl", "junit_repositories")
+load("@io_bazel_rules_scala//testing:specs2_junit.bzl", "specs2_junit_repositories")
 
-scala_repositories((
-    "2.12.8",
-    {
-        "scala_compiler": "f34e9119f45abd41e85b9e121ba19dd9288b3b4af7f7047e86dc70236708d170",
-        "scala_library": "321fb55685635c931eba4bc0d7668349da3f2c09aee2de93a70566066ff25c28",
-        "scala_reflect": "4d6405395c4599ce04cea08ba082339e3e42135de9aae2923c9f5367e957315a",
-    },
-))
+scalatest_repositories()
 
-# ----------------------------------------------------------------------------------------------------------------------
-load("@io_bazel_rules_scala//scala:scala_maven_import_external.bzl", "scala_maven_import_external")
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls", "default_scala_major_version", "scala_mvn_artifact")
-
-scala_maven_import_external(
-    name = "com_illicitonion_scalac_composite_reporter",
-    artifact = scala_mvn_artifact(
-        "com.illicitonion:scalac-composite-reporter:0.0.1",
-        default_scala_major_version(),
-    ),
-    artifact_sha256 = "9e3655fa282adbc6686805d9a745131f18819a15402b20d08fb39253f3b5a5aa",
-    licenses = ["notice"],
-    server_urls = default_maven_server_urls(),
-)
-
-# ----------------------------------------------------------------------------------------------------------------------
-load("@io_bazel_rules_scala//specs2:specs2_junit.bzl", "specs2_junit_repositories")
+junit_repositories()
 
 specs2_junit_repositories()
+
+register_toolchains(":testing_toolchain")
 
 # ======================================================================================================================
 # rules_jvm_external
