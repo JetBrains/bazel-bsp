@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp;
 
 import ch.epfl.scala.bsp4j.BuildServer;
-import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
 import ch.epfl.scala.bsp4j.CompileParams;
 import ch.epfl.scala.bsp4j.CompileResult;
