@@ -16,16 +16,25 @@ project {
             buildType(Format.BuildifierFormat)
         }
 
-        buildType(Build.BuildTheProject, options = { onDependencyFailure = FailureAction.CANCEL })
+        buildType(Build.BuildTheProject, options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        })
 
-        parallel(options = { onDependencyFailure = FailureAction.CANCEL }) {
+        parallel(options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        }) {
             buildType(UnitTests.BazelRunnerUnitTests)
             buildType(UnitTests.CommonsUnitTests)
             buildType(UnitTests.ExecutionContextUnitTests)
             buildType(UnitTests.ServerUnitTests)
         }
 
-        parallel(options = { onDependencyFailure = FailureAction.CANCEL }) {
+        parallel(options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        }) {
             buildType(E2eTests.SampleRepoE2ETest)
 
             buildType(E2eTests.ActionGraphV1E2ETest)
