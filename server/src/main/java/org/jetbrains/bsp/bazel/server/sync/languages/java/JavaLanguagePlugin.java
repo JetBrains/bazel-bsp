@@ -13,7 +13,6 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
-import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -87,14 +86,8 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     if (!targetInfo.hasJavaTargetInfo()) {
       return HashSet.empty();
     }
-
-    var allSourceJars =
-        Stream.concat(
-                targetInfo.getJavaTargetInfo().getJarsList().stream(),
-                targetInfo.getJavaTargetInfo().getGeneratedJarsList().stream())
-            .flatMap(outputs -> outputs.getSourceJarsList().stream());
-
-    return HashSet.ofAll(allSourceJars).map(bazelPathsResolver::resolveUri);
+    var sourceJars = targetInfo.getJavaTargetInfo().getSourceClasspathList();
+    return HashSet.ofAll(sourceJars).map(bazelPathsResolver::resolveUri);
   }
 
   @Override
