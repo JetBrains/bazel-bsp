@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import io.vavr.control.Option;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(value = Parameterized.class)
 public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSection<V>> {
 
@@ -271,7 +270,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
             List.of("default_included1"), List.of("default_excluded1", "default_excluded2"));
 
     // when
-    var section = parser.parseOrDefault(rawSections, Optional.of(defaultListSection));
+    var section = parser.parseOrDefault(rawSections, Option.of(defaultListSection));
 
     // then
     var expectedSection =
@@ -292,7 +291,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
             List.of("default_included1"), List.of("default_excluded1", "default_excluded2"));
 
     // when
-    var section = parser.parseOrDefault(rawSections, Optional.of(defaultListSection));
+    var section = parser.parseOrDefault(rawSections, Option.of(defaultListSection));
 
     // then
     var expectedSection =

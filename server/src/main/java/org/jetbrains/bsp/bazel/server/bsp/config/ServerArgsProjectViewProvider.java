@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
@@ -18,14 +18,14 @@ import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvid
 public class ServerArgsProjectViewProvider implements ProjectViewProvider {
 
   private final ProjectViewBazelPathSection pathToBazel;
-  private final Optional<ProjectViewTargetsSection> targets;
+  private final Option<ProjectViewTargetsSection> targets;
 
   private final ProjectViewDefaultParserProvider defaultParserProvider;
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel, String targets) {
     this.pathToBazel = new ProjectViewBazelPathSection(Paths.get(pathToBazel));
     this.targets =
-        Optional.of(new ProjectViewTargetsSection(calculateIncludedTargets(targets), List.of()));
+        Option.of(new ProjectViewTargetsSection(calculateIncludedTargets(targets), List.of()));
     this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
   }
 
@@ -37,7 +37,7 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel) {
     this.pathToBazel = new ProjectViewBazelPathSection(Paths.get(pathToBazel));
-    this.targets = Optional.empty();
+    this.targets = Option.none();
     this.defaultParserProvider = new ProjectViewDefaultParserProvider(bspProjectRoot);
   }
 
@@ -46,8 +46,8 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
     var parsedProjectView = defaultParserProvider.create().get();
 
     return ProjectView.builder()
-        .targets(targets.or(parsedProjectView::getTargets))
-        .bazelPath(Optional.of(pathToBazel))
+        .targets(targets.orElse(parsedProjectView::getTargets))
+        .bazelPath(Option.of(pathToBazel))
         .debuggerAddress(parsedProjectView.getDebuggerAddress())
         .javaPath(parsedProjectView.getJavaPath())
         .build();

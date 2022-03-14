@@ -118,7 +118,7 @@ public class Install {
   private static void addBazelBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(BAZEL_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(BAZEL_SHORT_OPT));
-    } else if (projectView.getBazelPath().isPresent()) {
+    } else if (projectView.getBazelPath().isDefined()) {
       argv.add(projectView.getBazelPath().get().getValue().toString());
     } else {
       argv.add(findOnPath("bazel"));
@@ -128,7 +128,7 @@ public class Install {
   private static void addJavaBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
     if (cmd.hasOption(JAVA_SHORT_OPT)) {
       argv.add(cmd.getOptionValue(JAVA_SHORT_OPT));
-    } else if (projectView.getJavaPath().isPresent()) {
+    } else if (projectView.getJavaPath().isDefined()) {
       argv.add(projectView.getJavaPath().get().getValue().toString());
     } else {
       String javaHome = readSystemProperty("java.home");
@@ -152,7 +152,7 @@ public class Install {
     if (cmd.hasOption(DEBUGGER_SHORT_OPT)) {
       var debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
       argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
-    } else if (projectView.getDebuggerAddress().isPresent()) {
+    } else if (projectView.getDebuggerAddress().isDefined()) {
       var debuggerAddress = projectView.getDebuggerAddress().get().getValue();
       argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
     }
