@@ -32,6 +32,10 @@
 - Now the project is using the latest bazel version - `5.0.0`.
   Installer skips bazelisk cache binaries during bazel binary discovery mechanism.
   | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)
+- Rewrite of all endpoints to rely on single bazel aspect to extract all necessary data.
+  It improves performance and correctness as wel as extensibility of the server.
+  With this change also c++ support is temporarily dropped.
+  | [#147](https://github.com/JetBrains/bazel-bsp/pull/147)
 
 ## [1.1.1] - 16.02.2022
 

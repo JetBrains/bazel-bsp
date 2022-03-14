@@ -8,7 +8,6 @@ import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.function.Predicate;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -40,7 +39,7 @@ public class BazelProjectMapper {
       Map<String, TargetInfo> targets, Set<String> rootTargets, ProjectView projectView) {
     languagePluginsService.prepareSync(targets.values());
     var targetsToImport = selectTargetsToImport(rootTargets, targets);
-    var modulesFromBazel = createModules(targets, rootTargets, targetsToImport);
+    var modulesFromBazel = createModules(targetsToImport);
     var workspaceRoot = bazelPathsResolver.workspaceRoot();
     var syntheticModules = createSyntheticModules(modulesFromBazel, workspaceRoot, projectView);
     var allModules = modulesFromBazel.appendAll(syntheticModules);
@@ -55,15 +54,13 @@ public class BazelProjectMapper {
     return List.ofAll(rootTargets).flatMap(targets::get);
   }
 
-  private List<Module> createModules(
-      Map<String, TargetInfo> targets, Set<String> rootTargets, List<TargetInfo> targetsToImport) {
+  private List<Module> createModules(List<TargetInfo> targetsToImport) {
     return targetsToImport
-        .map(target -> createModule(target, rootTargets, targets))
+        .map(this::createModule)
         .filter(module -> !module.tags().contains(Tag.NO_IDE));
   }
 
-  private Module createModule(
-      TargetInfo target, Set<String> rootTargets, Map<String, TargetInfo> targets) {
+  private Module createModule(TargetInfo target) {
     var label = Label.from(target.getId());
     var directDependencies = resolveDirectDependencies(target);
     var languages = inferLanguages(target);
@@ -75,10 +72,7 @@ public class BazelProjectMapper {
     var languagePlugin = languagePluginsService.getPlugin(languages);
     var languageData = (Option<Object>) languagePlugin.resolveModule(target);
 
-    // do not return dependencies on imported modules, neither dependencies that will come
-    // transitively from other imported modules
-    var transitiveDependencies = getTransitiveDependencies(target, rootTargets, targets);
-    var sourceDependencies = transitiveDependencies.flatMap(languagePlugin::dependencySources);
+    var sourceDependencies = languagePlugin.dependencySources(target);
 
     return new Module(
         label,
@@ -114,21 +108,6 @@ public class BazelProjectMapper {
 
   private Set<URI> resolveResources(TargetInfo target) {
     return bazelPathsResolver.resolveUris(target.getResourcesList()).toSet();
-  }
-
-  private Set<TargetInfo> getTransitiveDependencies(
-      TargetInfo target, Set<String> rootTargets, Map<String, TargetInfo> targets) {
-    return getTransitiveDependencies(target, targets, dep -> !rootTargets.contains(dep.getId()));
-  }
-
-  public Set<TargetInfo> getTransitiveDependencies(
-      TargetInfo target, Map<String, TargetInfo> targets, Predicate<TargetInfo> filter) {
-    var directDeps =
-        HashSet.ofAll(target.getDependenciesList())
-            .map(dep -> targets.apply(dep.getId()))
-            .filter(filter);
-    var transitiveDeps = directDeps.flatMap(dep -> getTransitiveDependencies(dep, targets, filter));
-    return directDeps.addAll(transitiveDeps);
   }
 
   // TODO make this feature configurable with flag in project view file
