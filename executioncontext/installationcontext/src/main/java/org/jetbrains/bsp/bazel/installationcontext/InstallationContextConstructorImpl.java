@@ -6,7 +6,7 @@ import org.jetbrains.bsp.bazel.installationcontext.entities.mappers.Installation
 import org.jetbrains.bsp.bazel.installationcontext.entities.mappers.InstallationContextJavaPathEntityMapper;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
-public class InstallationContextConstructorImpl1
+public class InstallationContextConstructorImpl
     implements ExecutionContextConstructor<InstallationContext> {
 
   private static final InstallationContextJavaPathEntityMapper javaPathMapper =

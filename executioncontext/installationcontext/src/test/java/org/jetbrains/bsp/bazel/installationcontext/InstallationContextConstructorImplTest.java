@@ -20,12 +20,12 @@ import org.junit.Test;
 
 public class InstallationContextConstructorImplTest {
 
-  private InstallationContextConstructorImpl1 installationContextConstructor;
+  private InstallationContextConstructorImpl installationContextConstructor;
 
   @Before
   public void beforeEach() {
     // given
-    this.installationContextConstructor = new InstallationContextConstructorImpl1();
+    this.installationContextConstructor = new InstallationContextConstructorImpl();
   }
 
   // Try<WorkspaceContext> construct(Try<ProjectView> projectViewTry)
