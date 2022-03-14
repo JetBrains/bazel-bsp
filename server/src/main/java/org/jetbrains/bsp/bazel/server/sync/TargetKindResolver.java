@@ -20,6 +20,9 @@ public class TargetKindResolver {
             .map(Map.Entry::getValue)
             .findFirst()
             .orElse(Tag.NO_IDE);
+    if (targetInfo.getTagsList().contains("no-ide")) {
+      return HashSet.of(tag, Tag.NO_IDE);
+    }
     return HashSet.of(tag);
   }
 }
