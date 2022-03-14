@@ -3,14 +3,11 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
-import org.jetbrains.bsp.bazel.commons.Uri;
-import org.jetbrains.bsp.bazel.server.bep.BepServer;
+import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 
 public class BazelBspAspectsManager {
@@ -19,7 +16,6 @@ public class BazelBspAspectsManager {
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final BazelRunner bazelRunner;
   private final InternalAspectsResolver aspectsResolver;
-  private BepServer bepServer;
 
   public BazelBspAspectsManager(
       BazelBspCompilationManager bazelBspCompilationManager,
@@ -30,18 +26,14 @@ public class BazelBspAspectsManager {
     this.aspectsResolver = aspectResolver;
   }
 
-  public List<String> fetchPathsFromOutputGroup(
+  public BepOutput fetchFilesFromOutputGroup(
       List<BuildTargetIdentifier> targets, String aspect, String outputGroup) {
     String aspectFlag = String.format("--aspects=%s", aspectsResolver.resolveLabel(aspect));
     String outputGroupFlag = String.format("--output_groups=%s", outputGroup);
-    bazelBspCompilationManager.buildTargetsWithBep(
-        targets, ImmutableList.of(aspectFlag, outputGroupFlag));
-    return bepServer
-        .getOutputGroupPaths()
-        .getOrDefault(outputGroup, Collections.emptySet())
-        .stream()
-        .map(Uri::toString)
-        .collect(Collectors.toList());
+    var result =
+        bazelBspCompilationManager.buildTargetsWithBep(
+            targets, ImmutableList.of(aspectFlag, outputGroupFlag, "--keep_going"));
+    return result.bepOutput();
   }
 
   public Stream<String> fetchLinesFromAspect(String target, String aspect) {
@@ -70,9 +62,5 @@ public class BazelBspAspectsManager {
                     && parts.get(0).equals(DEBUG_MESSAGE)
                     && parts.get(1).contains(aspectsResolver.getAspectOutputIndicator()))
         .map(parts -> parts.get(2));
-  }
-
-  public void setBepServer(BepServer bepServer) {
-    this.bepServer = bepServer;
   }
 }

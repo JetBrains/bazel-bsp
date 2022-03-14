@@ -3,12 +3,12 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "data",
     srcs = glob(["*.java"]),
-    visibility = ["//bazelrunner:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
         "//logger",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
+        "@maven//:io_vavr_vavr",
     ],
 )

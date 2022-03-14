@@ -78,7 +78,6 @@ public class BazelBspActionGraphV1Test extends BazelBspTestBaseScenario {
             ImmutableList.of(
                 "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
                 "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar",
-                "/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
                 "/bin/dep/deeper/deeper.jar",
                 "/bin/dep/dep.jar"),
             "bin/example/");
@@ -90,7 +89,6 @@ public class BazelBspActionGraphV1Test extends BazelBspTestBaseScenario {
             ImmutableList.of(
                 "__main__/external/io_bazel_rules_scala_scala_library/scala-library-2.12.8.jar",
                 "__main__/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.8.jar",
-                "bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac.jar",
                 "bin/dep/deeper/deeper.jar"),
             "bin/dep/");
 
