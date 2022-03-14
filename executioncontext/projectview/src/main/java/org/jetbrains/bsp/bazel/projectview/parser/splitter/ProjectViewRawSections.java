@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
+import io.vavr.control.Option;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -14,8 +14,8 @@ public class ProjectViewRawSections {
     this.sections = sections;
   }
 
-  public Optional<ProjectViewRawSection> getLastSectionWithName(String sectionName) {
-    return getAllWithName(sectionName).reduce((first, second) -> second);
+  public Option<ProjectViewRawSection> getLastSectionWithName(String sectionName) {
+    return Option.ofOptional(getAllWithName(sectionName).reduce((first, second) -> second));
   }
 
   public Stream<ProjectViewRawSection> getAllWithName(String sectionName) {

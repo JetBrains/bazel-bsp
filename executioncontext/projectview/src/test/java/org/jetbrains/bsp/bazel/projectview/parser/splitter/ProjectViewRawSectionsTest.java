@@ -21,7 +21,7 @@ public class ProjectViewRawSectionsTest {
     var sectionWithName = projectViewRawSections.getLastSectionWithName("doesntexist");
 
     // then
-    assertFalse(sectionWithName.isPresent());
+    assertFalse(sectionWithName.isDefined());
   }
 
   @Test
@@ -38,7 +38,7 @@ public class ProjectViewRawSectionsTest {
     var sectionWithName = projectViewRawSections.getLastSectionWithName("doesntexist");
 
     // then
-    assertFalse(sectionWithName.isPresent());
+    assertFalse(sectionWithName.isDefined());
   }
 
   @Test

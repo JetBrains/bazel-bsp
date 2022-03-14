@@ -43,9 +43,7 @@ abstract class ProjectViewSingletonSectionParser<V, T extends ProjectViewSinglet
   @Override
   public Option<T> parse(ProjectViewRawSections rawSections) {
     var section =
-        Option.ofOptional(rawSections.getLastSectionWithName(sectionName))
-            .map(this::parse)
-            .flatMap(Try::get);
+        rawSections.getLastSectionWithName(sectionName).map(this::parse).flatMap(Try::get);
 
     logParse(section);
 
