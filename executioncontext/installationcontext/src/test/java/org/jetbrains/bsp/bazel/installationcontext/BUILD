@@ -11,3 +11,15 @@ java_test(
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
     ],
 )
+
+java_test(
+    name = "InstallationContextConstructorImplTest",
+    size = "small",
+    srcs = ["InstallationContextConstructorImplTest.java"],
+    runtime_deps = [
+        "@maven//:junit_junit",
+    ],
+    deps = [
+        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
+    ],
+)

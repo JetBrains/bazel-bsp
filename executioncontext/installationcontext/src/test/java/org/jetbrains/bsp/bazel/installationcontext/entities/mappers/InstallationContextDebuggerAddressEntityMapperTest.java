@@ -28,7 +28,7 @@ public class InstallationContextDebuggerAddressEntityMapperTest {
         ProjectView.builder()
             .debuggerAddress(
                 Optional.of(
-                    new ProjectViewDebuggerAddressSection(HostAndPort.fromString("host::8000"))))
+                    new ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))))
             .build()
             .get();
 
@@ -43,7 +43,7 @@ public class InstallationContextDebuggerAddressEntityMapperTest {
     var debuggerAddress = debuggerAddressOption.get();
 
     var expectedDebuggerAddress =
-        new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host::8000"));
+        new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"));
     assertThat(debuggerAddress).isEqualTo(expectedDebuggerAddress);
   }
 
