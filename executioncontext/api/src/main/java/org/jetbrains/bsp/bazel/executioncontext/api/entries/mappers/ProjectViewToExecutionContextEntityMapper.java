@@ -13,7 +13,7 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
  * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
  * @see org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextEntity
  */
-public interface ProjectViewToExecutionContextEntityMapper<T extends ExecutionContextEntity> {
+public interface ProjectViewToExecutionContextEntityMapper<T> {
 
   Try<T> map(ProjectView projectView);
 }

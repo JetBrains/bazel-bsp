@@ -8,8 +8,8 @@ import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJ
 
 public class InstallationContext extends ExecutionContext {
 
-  private InstallationContextJavaPathEntity javaPath;
-  private Option<InstallationContextDebuggerAddressEntity> debuggerAddress;
+  private final InstallationContextJavaPathEntity javaPath;
+  private final Option<InstallationContextDebuggerAddressEntity> debuggerAddress;
 
   private InstallationContext(
       InstallationContextJavaPathEntity javaPath,

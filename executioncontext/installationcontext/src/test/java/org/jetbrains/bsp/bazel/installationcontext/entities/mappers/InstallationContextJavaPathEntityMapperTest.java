@@ -21,20 +21,6 @@ public class InstallationContextJavaPathEntityMapperTest {
     this.mapper = new InstallationContextJavaPathEntityMapper();
   }
 
-  //  @Test
-  //  public void shouldReturnFailureIfJavaPathDoesNotExist() {
-  //    // given & when
-  //    var javaPathTry = InstallationContext.builder().debuggerAddress(Option.none()).build();
-  //
-  //    // then
-  //    assertTrue(javaPathTry.isFailure());
-  //    assertEquals(IllegalStateException.class, javaPathTry.getCause().getClass());
-  //    assertEquals("Failed, 'javaPath' should be defined.", javaPathTry.getCause().getMessage());
-  //
-
-  //  @Test
-  //  public void shouldReturnFailureIfJavaPathIsNotExecutable() {}
-
   @Test
   public void shouldReturnSuccessWithJavaPathFromProjectViewIfJavaPathIsSpecifiedInProjectView() {
     // given
