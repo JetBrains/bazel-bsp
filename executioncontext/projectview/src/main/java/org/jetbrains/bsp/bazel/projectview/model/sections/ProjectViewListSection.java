@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-import java.util.List;
+import io.vavr.collection.List;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -35,8 +35,10 @@ public abstract class ProjectViewListSection<T> extends ProjectViewSection {
     if (this == o) return true;
     if (!(o instanceof ProjectViewListSection)) return false;
     ProjectViewListSection<?> that = (ProjectViewListSection<?>) o;
-    return CollectionUtils.isEqualCollection(includedValues, that.includedValues)
-        && CollectionUtils.isEqualCollection(excludedValues, that.excludedValues)
+    return CollectionUtils.isEqualCollection(
+            includedValues.toJavaList(), that.includedValues.toJavaList())
+        && CollectionUtils.isEqualCollection(
+            excludedValues.toJavaList(), that.excludedValues.toJavaList())
         && sectionName.equals(that.sectionName);
   }
 

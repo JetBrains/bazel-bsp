@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
+import io.vavr.collection.List;
 import io.vavr.control.Try;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.BetterFiles;
@@ -78,19 +77,13 @@ class ProjectViewParserImpl implements ProjectViewParser {
     return BetterFiles.tryReadFileContent(projectViewFilePath)
         .onFailure(
             exception ->
-                log.info(
-                    "Failed to read file {}. Parsing default file.",
-                    projectViewFilePath,
-                    exception))
+                log.info("Failed to read file {}. Parsing default file.", projectViewFilePath))
         .flatMap(
             projectViewFilePathContent ->
                 parse(projectViewFilePathContent, defaultProjectViewFileContent))
         .onFailure(
             exception ->
-                log.info(
-                    "Failed to parse file {}. Parsing default file.",
-                    projectViewFilePath,
-                    exception))
+                log.info("Failed to parse file {}. Parsing default file.", projectViewFilePath))
         .orElse(parse(defaultProjectViewFileContent))
         .onFailure(
             exception -> log.error("Failed to parse default file. Parsing failed!", exception));
@@ -171,7 +164,6 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .map(String::trim)
         .map(Paths::get)
         .peek(path -> log.debug("Parsing imported file {}.", path))
-        .map(this::parse)
-        .collect(Collectors.toList());
+        .map(this::parse);
   }
 }

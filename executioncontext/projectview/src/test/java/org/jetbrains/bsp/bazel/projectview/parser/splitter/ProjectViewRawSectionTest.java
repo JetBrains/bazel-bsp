@@ -2,8 +2,8 @@ package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,7 +25,7 @@ public class ProjectViewRawSectionTest {
 
   @Parameters(name = "{index}: {0}.shouldCompareByName({1}) should equals {2}")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             // given

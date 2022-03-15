@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
@@ -61,15 +61,12 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
       Function<String, String> rawIncludedElementConstructor,
       Function<String, V> elementMapper,
       List<String> rawElements) {
-    return rawElements.stream()
-        .map(rawIncludedElementConstructor)
-        .map(elementMapper)
-        .collect(Collectors.toList());
+    return rawElements.map(rawIncludedElementConstructor).map(elementMapper);
   }
 
   @Parameterized.Parameters(name = "{index}: ProjectViewListSectionParserTest for {0}")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             new ProjectViewTargetsSectionParser(),

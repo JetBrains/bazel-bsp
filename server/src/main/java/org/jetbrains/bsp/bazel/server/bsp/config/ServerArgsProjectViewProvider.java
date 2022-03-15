@@ -1,13 +1,11 @@
 package org.jetbrains.bsp.bazel.server.bsp.config;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -30,9 +28,7 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
   }
 
   private List<BuildTargetIdentifier> calculateIncludedTargets(String targets) {
-    return Arrays.stream(targets.split(","))
-        .map(BuildTargetIdentifier::new)
-        .collect(Collectors.toList());
+    return List.of(targets.split(",")).map(BuildTargetIdentifier::new);
   }
 
   public ServerArgsProjectViewProvider(Path bspProjectRoot, String pathToBazel) {

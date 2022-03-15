@@ -2,8 +2,9 @@ package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
 import static org.junit.Assert.assertEquals;
 
+import io.vavr.collection.List;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,7 +24,7 @@ public class ProjectViewSectionSplitterTest {
 
   @Parameters(name = "{index}: ProjectViewSectionSplitter.split({0}) should equals {1}")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             // given - empty

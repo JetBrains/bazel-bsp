@@ -4,11 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.net.HostAndPort;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
@@ -56,7 +57,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
 
   @Parameters(name = "{index}: ProjectViewSingletonSectionParserTest for {0}")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             new ProjectViewBazelPathSectionParser(),

@@ -1,14 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import com.google.common.base.Splitter;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
-import io.vavr.control.Try;
-import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
@@ -63,19 +60,16 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   private Option<T> parseAllSectionsAndMerge(ProjectViewRawSections rawSections) {
-    return Option.ofOptional(rawSections
+    return rawSections
         .getAllWithName(sectionName)
-        .map(this::parse)
-        .map(Try::get)
-        .flatMap(Option::toJavaStream)
-        .reduce(this::concatSectionsItems));
+        .flatMap(this::parse)
+        .flatMap(Function.identity())
+        .reduceOption(this::concatSectionsItems);
   }
 
   private T concatSectionsItems(T section1, T section2) {
-    var includedItems =
-        ListUtils.concat(section1.getIncludedValues(), section2.getIncludedValues());
-    var excludedItems =
-        ListUtils.concat(section1.getExcludedValues(), section2.getExcludedValues());
+    var includedItems = section1.getIncludedValues().appendAll(section2.getIncludedValues());
+    var excludedItems = section1.getExcludedValues().appendAll(section2.getExcludedValues());
 
     return createInstance(includedItems, excludedItems);
   }
@@ -86,25 +80,24 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
     var rawIncludedEntries = filterIncludedEntries(allEntries);
     var rawExcludedEntries = filterExcludedEntries(allEntries);
 
-    var includedEntries = mapRawValues(rawIncludedEntries);
-    var excludedEntries = mapRawValues(rawExcludedEntries);
+    var includedEntries = rawIncludedEntries.map(this::mapRawValues);
+    var excludedEntries = rawExcludedEntries.map(this::mapRawValues);
 
     return createInstanceOrEmpty(includedEntries, excludedEntries);
   }
 
   private List<String> splitSectionEntries(String sectionBody) {
-    return Splitter.on(WHITESPACE_CHAR_REGEX).omitEmptyStrings().splitToList(sectionBody);
+    var elements = WHITESPACE_CHAR_REGEX.split(sectionBody);
+
+    return List.of(elements).filter(s -> !s.isBlank());
   }
 
   private List<String> filterIncludedEntries(List<String> entries) {
-    return entries.stream().filter(entry -> !isExcluded(entry)).collect(Collectors.toList());
+    return entries.filter(entry -> !isExcluded(entry));
   }
 
   private List<String> filterExcludedEntries(List<String> entries) {
-    return entries.stream()
-        .filter(this::isExcluded)
-        .map(this::removeExcludedEntryPrefix)
-        .collect(Collectors.toList());
+    return entries.filter(this::isExcluded).map(this::removeExcludedEntryPrefix);
   }
 
   private String removeExcludedEntryPrefix(String excludedEntry) {
@@ -115,18 +108,13 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
     return entry.startsWith(EXCLUDED_ENTRY_PREFIX);
   }
 
-  private List<V> mapRawValues(List<String> rawValues) {
-    return rawValues.stream().map(this::mapRawValues).collect(Collectors.toList());
-  }
-
   protected abstract V mapRawValues(String rawValue);
 
   private Option<T> createInstanceOrEmpty(List<V> includedValues, List<V> excludedValues) {
-    if (includedValues.isEmpty() && excludedValues.isEmpty()) {
-      return Option.none();
-    }
+    var areBothListsEmpty = includedValues.isEmpty() && excludedValues.isEmpty();
+    var isAnyValuePresent = !areBothListsEmpty;
 
-    return Option.of(createInstance(includedValues, excludedValues));
+    return Option.when(isAnyValuePresent, createInstance(includedValues, excludedValues));
   }
 
   protected abstract T createInstance(List<V> includedValues, List<V> excludedValues);

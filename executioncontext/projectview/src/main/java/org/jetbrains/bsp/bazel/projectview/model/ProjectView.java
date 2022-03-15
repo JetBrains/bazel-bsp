@@ -1,15 +1,14 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
+import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
@@ -153,7 +152,7 @@ public class ProjectView {
           debuggerAddress,
           javaPath);
 
-      return Try.sequence(importedProjectViews).map(Seq::toJavaList).map(this::buildWithImports);
+      return Try.sequence(importedProjectViews).map(Seq::toList).map(this::buildWithImports);
     }
 
     private ProjectView buildWithImports(List<ProjectView> importedProjectViews) {
@@ -203,11 +202,11 @@ public class ProjectView {
             Function<S, List<V>> valuesGetter) {
       var sectionValues = section.map(valuesGetter).getOrElse(List.of());
 
-      return importedProjectViews.stream()
+      return importedProjectViews
           .map(sectionGetter)
-          .flatMap(Option::toJavaStream)
+          .flatMap(Option::toList)
           .map(valuesGetter)
-          .reduce(sectionValues, ListUtils::concat);
+          .foldLeft(sectionValues, List::appendAll);
     }
 
     private <V, T extends ProjectViewListSection<V>> Option<T> createInstanceOfListSectionOrEmpty(
@@ -246,11 +245,10 @@ public class ProjectView {
 
     private <V, T extends ProjectViewSingletonSection<V>> Option<T> getLastImportedSingletonValue(
         List<ProjectView> importedProjectViews, Function<ProjectView, Option<T>> sectionGetter) {
-      return Option.ofOptional(
-          importedProjectViews.stream()
-              .map(sectionGetter)
-              .flatMap(Option::toJavaStream)
-              .reduce((first, second) -> second));
+      return importedProjectViews
+          .map(sectionGetter)
+          .findLast(Option::isDefined)
+          .flatMap(Function.identity());
     }
   }
 }
