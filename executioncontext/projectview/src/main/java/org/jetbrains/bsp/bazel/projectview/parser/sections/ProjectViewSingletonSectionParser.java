@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
@@ -24,16 +24,16 @@ abstract class ProjectViewSingletonSectionParser<V, T extends ProjectViewSinglet
   }
 
   @Override
-  public Optional<T> parseOrDefault(ProjectViewRawSections rawSections, Optional<T> defaultValue) {
+  public Option<T> parseOrDefault(ProjectViewRawSections rawSections, Option<T> defaultValue) {
     var section = parse(rawSections);
 
     logParseOrDefault(section, defaultValue);
 
-    return section.or(() -> defaultValue);
+    return section.orElse(defaultValue);
   }
 
-  private void logParseOrDefault(Optional<T> section, Optional<T> defaultValue) {
-    if (section.isPresent()) {
+  private void logParseOrDefault(Option<T> section, Option<T> defaultValue) {
+    if (section.isDefined()) {
       log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
     } else {
       log.debug("Returning default for '{}' section. Result:\n{}", sectionName, defaultValue);
@@ -41,7 +41,7 @@ abstract class ProjectViewSingletonSectionParser<V, T extends ProjectViewSinglet
   }
 
   @Override
-  public Optional<T> parse(ProjectViewRawSections rawSections) {
+  public Option<T> parse(ProjectViewRawSections rawSections) {
     var section =
         rawSections.getLastSectionWithName(sectionName).map(this::parse).flatMap(Try::get);
 
@@ -50,13 +50,13 @@ abstract class ProjectViewSingletonSectionParser<V, T extends ProjectViewSinglet
     return section;
   }
 
-  private void logParse(Optional<T> section) {
+  private void logParse(Option<T> section) {
     log.debug("Parsed '{}' section. Result:\n{}", sectionName, section);
   }
 
   @Override
-  protected Optional<T> parse(String sectionBody) {
-    return Optional.of(sectionBody.strip())
+  protected Option<T> parse(String sectionBody) {
+    return Option.of(sectionBody.strip())
         .filter(body -> !body.isEmpty())
         .map(this::mapRawValue)
         .map(this::createInstance);

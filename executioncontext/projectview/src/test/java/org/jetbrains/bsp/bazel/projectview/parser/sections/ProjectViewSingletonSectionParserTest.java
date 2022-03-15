@@ -4,11 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.net.HostAndPort;
+import io.vavr.collection.List;
+import io.vavr.control.Option;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
@@ -56,7 +57,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
 
   @Parameters(name = "{index}: ProjectViewSingletonSectionParserTest for {0}")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             new ProjectViewBazelPathSectionParser(),
@@ -195,7 +196,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     var defaultBazelPathSection = sectionConstructor.apply("default_value");
 
     // when
-    var section = parser.parseOrDefault(rawSections, Optional.of(defaultBazelPathSection));
+    var section = parser.parseOrDefault(rawSections, Option.of(defaultBazelPathSection));
 
     // then
     var expectedSection = sectionConstructor.apply("value4");
@@ -214,7 +215,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     var defaultBazelPathSection = sectionConstructor.apply("default_value");
 
     // when
-    var section = parser.parseOrDefault(rawSections, Optional.of(defaultBazelPathSection));
+    var section = parser.parseOrDefault(rawSections, Option.of(defaultBazelPathSection));
 
     // then
     var expectedBazelPathSection = sectionConstructor.apply("default_value");
@@ -231,7 +232,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
 
     // when
-    var section = parser.parseOrDefault(rawSections, Optional.empty());
+    var section = parser.parseOrDefault(rawSections, Option.none());
 
     // then
     assertTrue(section.isEmpty());

@@ -1,15 +1,14 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
+import io.vavr.collection.List;
 import io.vavr.collection.Seq;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.commons.ListUtils;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
@@ -27,22 +26,22 @@ public class ProjectView {
   private static final Logger log = LogManager.getLogger(ProjectView.class);
 
   /** targets included and excluded from the project */
-  private final Optional<ProjectViewTargetsSection> targets;
+  private final Option<ProjectViewTargetsSection> targets;
 
   /** bazel path used to invoke bazel from the code */
-  private final Optional<ProjectViewBazelPathSection> bazelPath;
+  private final Option<ProjectViewBazelPathSection> bazelPath;
 
   /** debugger address which can be added to the server run command (as a flag to java) */
-  private final Optional<ProjectViewDebuggerAddressSection> debuggerAddress;
+  private final Option<ProjectViewDebuggerAddressSection> debuggerAddress;
 
   /** path to java to run a server */
-  private final Optional<ProjectViewJavaPathSection> javaPath;
+  private final Option<ProjectViewJavaPathSection> javaPath;
 
   private ProjectView(
-      Optional<ProjectViewTargetsSection> targets,
-      Optional<ProjectViewBazelPathSection> bazelPath,
-      Optional<ProjectViewDebuggerAddressSection> debuggerAddress,
-      Optional<ProjectViewJavaPathSection> javaPath) {
+      Option<ProjectViewTargetsSection> targets,
+      Option<ProjectViewBazelPathSection> bazelPath,
+      Option<ProjectViewDebuggerAddressSection> debuggerAddress,
+      Option<ProjectViewJavaPathSection> javaPath) {
     this.targets = targets;
     this.bazelPath = bazelPath;
     this.debuggerAddress = debuggerAddress;
@@ -53,19 +52,19 @@ public class ProjectView {
     return new Builder();
   }
 
-  public Optional<ProjectViewTargetsSection> getTargets() {
+  public Option<ProjectViewTargetsSection> getTargets() {
     return targets;
   }
 
-  public Optional<ProjectViewBazelPathSection> getBazelPath() {
+  public Option<ProjectViewBazelPathSection> getBazelPath() {
     return bazelPath;
   }
 
-  public Optional<ProjectViewDebuggerAddressSection> getDebuggerAddress() {
+  public Option<ProjectViewDebuggerAddressSection> getDebuggerAddress() {
     return debuggerAddress;
   }
 
-  public Optional<ProjectViewJavaPathSection> getJavaPath() {
+  public Option<ProjectViewJavaPathSection> getJavaPath() {
     return javaPath;
   }
 
@@ -103,13 +102,13 @@ public class ProjectView {
 
     private List<Try<ProjectView>> importedProjectViews = List.of();
 
-    private Optional<ProjectViewTargetsSection> targets = Optional.empty();
+    private Option<ProjectViewTargetsSection> targets = Option.none();
 
-    private Optional<ProjectViewBazelPathSection> bazelPath = Optional.empty();
+    private Option<ProjectViewBazelPathSection> bazelPath = Option.none();
 
-    private Optional<ProjectViewDebuggerAddressSection> debuggerAddress = Optional.empty();
+    private Option<ProjectViewDebuggerAddressSection> debuggerAddress = Option.none();
 
-    private Optional<ProjectViewJavaPathSection> javaPath = Optional.empty();
+    private Option<ProjectViewJavaPathSection> javaPath = Option.none();
 
     private Builder() {}
 
@@ -118,22 +117,22 @@ public class ProjectView {
       return this;
     }
 
-    public Builder targets(Optional<ProjectViewTargetsSection> target) {
+    public Builder targets(Option<ProjectViewTargetsSection> target) {
       this.targets = target;
       return this;
     }
 
-    public Builder bazelPath(Optional<ProjectViewBazelPathSection> bazelPath) {
+    public Builder bazelPath(Option<ProjectViewBazelPathSection> bazelPath) {
       this.bazelPath = bazelPath;
       return this;
     }
 
-    public Builder debuggerAddress(Optional<ProjectViewDebuggerAddressSection> debuggerAddress) {
+    public Builder debuggerAddress(Option<ProjectViewDebuggerAddressSection> debuggerAddress) {
       this.debuggerAddress = debuggerAddress;
       return this;
     }
 
-    public Builder javaPath(Optional<ProjectViewJavaPathSection> javaPath) {
+    public Builder javaPath(Option<ProjectViewJavaPathSection> javaPath) {
       this.javaPath = javaPath;
       return this;
     }
@@ -153,7 +152,7 @@ public class ProjectView {
           debuggerAddress,
           javaPath);
 
-      return Try.sequence(importedProjectViews).map(Seq::toJavaList).map(this::buildWithImports);
+      return Try.sequence(importedProjectViews).map(Seq::toList).map(this::buildWithImports);
     }
 
     private ProjectView buildWithImports(List<ProjectView> importedProjectViews) {
@@ -176,7 +175,7 @@ public class ProjectView {
       return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
     }
 
-    private Optional<ProjectViewTargetsSection> combineTargetsSection(
+    private Option<ProjectViewTargetsSection> combineTargetsSection(
         List<ProjectView> importedProjectViews) {
       var includedTargets =
           combineListValuesWithImported(
@@ -195,61 +194,58 @@ public class ProjectView {
           includedTargets, excludedTargets, ProjectViewTargetsSection::new);
     }
 
-    private <V, S extends ProjectViewListSection<V>, T extends Optional<S>>
+    private <V, S extends ProjectViewListSection<V>, T extends Option<S>>
         List<V> combineListValuesWithImported(
             List<ProjectView> importedProjectViews,
             T section,
             Function<ProjectView, T> sectionGetter,
             Function<S, List<V>> valuesGetter) {
-      var sectionValues = section.map(valuesGetter).orElse(List.of());
+      var sectionValues = section.map(valuesGetter).getOrElse(List.of());
 
-      return importedProjectViews.stream()
+      return importedProjectViews
           .map(sectionGetter)
-          .flatMap(Optional::stream)
+          .flatMap(Option::toList)
           .map(valuesGetter)
-          .reduce(sectionValues, ListUtils::concat);
+          .foldLeft(sectionValues, List::appendAll);
     }
 
-    private <V, T extends ProjectViewListSection<V>> Optional<T> createInstanceOfListSectionOrEmpty(
+    private <V, T extends ProjectViewListSection<V>> Option<T> createInstanceOfListSectionOrEmpty(
         List<V> includedElements,
         List<V> excludedElements,
         BiFunction<List<V>, List<V>, T> constructor) {
       if (includedElements.isEmpty() && excludedElements.isEmpty()) {
-        return Optional.empty();
+        return Option.none();
       }
-      return Optional.of(constructor.apply(includedElements, excludedElements));
+      return Option.of(constructor.apply(includedElements, excludedElements));
     }
 
-    private Optional<ProjectViewBazelPathSection> combineBazelPathSection(
+    private Option<ProjectViewBazelPathSection> combineBazelPathSection(
         List<ProjectView> importedProjectViews) {
       var defaultBazelPathSection =
           getLastImportedSingletonValue(importedProjectViews, ProjectView::getBazelPath);
 
-      return bazelPath.or(() -> defaultBazelPathSection);
+      return bazelPath.orElse(defaultBazelPathSection);
     }
 
-    private Optional<ProjectViewDebuggerAddressSection> combineDebuggerAddressSection(
+    private Option<ProjectViewDebuggerAddressSection> combineDebuggerAddressSection(
         List<ProjectView> importedProjectViews) {
       var defaultDebuggerAddressSection =
           getLastImportedSingletonValue(importedProjectViews, ProjectView::getDebuggerAddress);
 
-      return debuggerAddress.or(() -> defaultDebuggerAddressSection);
+      return debuggerAddress.orElse(defaultDebuggerAddressSection);
     }
 
-    private Optional<ProjectViewJavaPathSection> combineJavaPathSection(
+    private Option<ProjectViewJavaPathSection> combineJavaPathSection(
         List<ProjectView> importedProjectViews) {
       var defaultJavaPathSection =
           getLastImportedSingletonValue(importedProjectViews, ProjectView::getJavaPath);
 
-      return javaPath.or(() -> defaultJavaPathSection);
+      return javaPath.orElse(defaultJavaPathSection);
     }
 
-    private <V, T extends ProjectViewSingletonSection<V>> Optional<T> getLastImportedSingletonValue(
-        List<ProjectView> importedProjectViews, Function<ProjectView, Optional<T>> sectionGetter) {
-      return importedProjectViews.stream()
-          .map(sectionGetter)
-          .flatMap(Optional::stream)
-          .reduce((first, second) -> second);
+    private <V, T extends ProjectViewSingletonSection<V>> Option<T> getLastImportedSingletonValue(
+        List<ProjectView> importedProjectViews, Function<ProjectView, Option<T>> sectionGetter) {
+      return importedProjectViews.map(sectionGetter).findLast(Option::isDefined).flatMap(x -> x);
     }
   }
 }

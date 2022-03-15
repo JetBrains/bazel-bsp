@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapper;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -22,13 +21,12 @@ public class WorkspaceContextTargetsEntityMapper
     return toTry(targetsSection).flatMap(this::validate).map(this::map);
   }
 
-  private Try<ProjectViewTargetsSection> toTry(Optional<ProjectViewTargetsSection> targetsSection) {
+  private Try<ProjectViewTargetsSection> toTry(Option<ProjectViewTargetsSection> targetsSection) {
     // TODO will be changed after ProjectView transition into vavr
-    return Option.ofOptional(targetsSection)
-        .toTry(
-            () ->
-                new ProjectViewToExecutionContextEntityMapperException(
-                    NAME, "'targets' section in project view is empty."));
+    return targetsSection.toTry(
+        () ->
+            new ProjectViewToExecutionContextEntityMapperException(
+                NAME, "'targets' section in project view is empty."));
   }
 
   private ExecutionContextTargetsEntity map(ProjectViewTargetsSection targetsSection) {

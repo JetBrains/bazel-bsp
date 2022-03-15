@@ -1,11 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import com.google.common.collect.Streams;
-import java.util.ArrayList;
-import java.util.List;
+import io.vavr.collection.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Splitter is responsible for splitting file content into "raw" sections - section name and entire
@@ -57,22 +53,18 @@ public final class ProjectViewSectionSplitter {
     var sectionHeadersNames = findSectionsHeadersNames(fileContent);
     var sectionBodies = findSectionsBodiesAndSkipFirstEmptyEntry(fileContent);
 
-    return Streams.zip(sectionHeadersNames.stream(), sectionBodies, ProjectViewRawSection::new)
-        .collect(Collectors.toList());
+    return sectionHeadersNames.zipWith(sectionBodies, ProjectViewRawSection::new);
   }
 
   private static List<String> findSectionsHeadersNames(String fileContent) {
-    var matcher = SECTION_HEADER_REGEX.matcher(fileContent);
-    var result = new ArrayList<String>();
+    var results = List.ofAll(SECTION_HEADER_REGEX.matcher(fileContent).results());
 
-    while (matcher.find()) {
-      result.add(matcher.group(SECTION_HEADER_NAME_GROUP_ID));
-    }
-
-    return result;
+    return results.map(match -> match.group(SECTION_HEADER_NAME_GROUP_ID));
   }
 
-  private static Stream<String> findSectionsBodiesAndSkipFirstEmptyEntry(String fileContent) {
-    return SECTION_HEADER_REGEX.splitAsStream(fileContent).skip(1);
+  private static List<String> findSectionsBodiesAndSkipFirstEmptyEntry(String fileContent) {
+    var sectionsBodies = SECTION_HEADER_REGEX.split(fileContent);
+
+    return List.of(sectionsBodies).drop(1);
   }
 }

@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNotEquals;
 import com.google.common.net.HostAndPort;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ public class ProjectViewSingletonSectionTest<V, T extends ProjectViewSingletonSe
   @Parameters(
       name = "{index}: .equals() on a singleton section for {0} and {1} as another type section")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new,

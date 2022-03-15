@@ -20,6 +20,8 @@
 
 ### Changes 🔄
 
+- Project uses (mostly) `io.vavr.Option` and `io.vavr.List`.
+  | [#192](https://github.com/JetBrains/bazel-bsp/pull/192)
 - Introducing execution context and workspace context.
   | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
 - Changed the structure of the [README](README.md) and other documents and added contribution guide.

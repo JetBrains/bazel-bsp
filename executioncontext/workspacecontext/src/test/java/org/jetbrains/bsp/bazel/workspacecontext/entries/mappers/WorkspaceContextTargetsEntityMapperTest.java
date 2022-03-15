@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import java.util.List;
-import java.util.Optional;
+import io.vavr.collection.List;
+import io.vavr.control.Option;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -26,7 +26,7 @@ public class WorkspaceContextTargetsEntityMapperTest {
   @Test
   public void shouldReturnFailIfTargetsAreEmpty() {
     // given
-    var projectView = ProjectView.builder().targets(Optional.empty()).build().get();
+    var projectView = ProjectView.builder().targets(Option.none()).build().get();
 
     // when
     var targetsTry = mapper.map(projectView);
@@ -46,7 +46,7 @@ public class WorkspaceContextTargetsEntityMapperTest {
     var projectView =
         ProjectView.builder()
             .targets(
-                Optional.of(
+                Option.of(
                     new ProjectViewTargetsSection(
                         List.of(),
                         List.of(
@@ -73,7 +73,7 @@ public class WorkspaceContextTargetsEntityMapperTest {
     var projectView =
         ProjectView.builder()
             .targets(
-                Optional.of(
+                Option.of(
                     new ProjectViewTargetsSection(
                         List.of(
                             new BuildTargetIdentifier("//included_target1"),

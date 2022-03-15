@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection;
@@ -18,12 +18,12 @@ abstract class ProjectViewSectionParser<T extends ProjectViewSection> {
     this.sectionName = sectionName;
   }
 
-  public abstract Optional<T> parseOrDefault(
-      ProjectViewRawSections rawSections, Optional<T> defaultValue);
+  public abstract Option<T> parseOrDefault(
+      ProjectViewRawSections rawSections, Option<T> defaultValue);
 
-  public abstract Optional<T> parse(ProjectViewRawSections rawSections);
+  public abstract Option<T> parse(ProjectViewRawSections rawSections);
 
-  public Try<Optional<T>> parse(ProjectViewRawSection rawSection) {
+  public Try<Option<T>> parse(ProjectViewRawSection rawSection) {
     return getSectionBodyOrFailureIfNameIsWrong(rawSection)
         .onFailure(
             exception ->
@@ -49,5 +49,5 @@ abstract class ProjectViewSectionParser<T extends ProjectViewSection> {
     return Try.success(rawSection.getSectionBody());
   }
 
-  protected abstract Optional<T> parse(String sectionBody);
+  protected abstract Option<T> parse(String sectionBody);
 }

@@ -4,11 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import io.vavr.collection.List;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,17 +29,12 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
 
     return (includedElements, excludedElements) ->
         sectionMapper.apply(
-            mapElements(elementMapper, includedElements),
-            mapElements(elementMapper, excludedElements));
-  }
-
-  private List<V> mapElements(Function<String, V> elementMapper, List<String> rawElements) {
-    return rawElements.stream().map(elementMapper).collect(Collectors.toList());
+            includedElements.map(elementMapper), excludedElements.map(elementMapper));
   }
 
   @Parameters(name = "{index}: .equals() on a list section for {0}")
   public static Collection<Object[]> data() {
-    return List.of(
+    return Arrays.asList(
         new Object[][] {
           {
             (BiFunction<

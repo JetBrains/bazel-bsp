@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
+import io.vavr.control.Option;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelStreamReader;
 import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
@@ -12,9 +12,9 @@ public class BazelProcess {
   private static final int OK_EXIT_CODE = 0;
 
   private final Process process;
-  private final Optional<BuildClientLogger> buildClientLogger;
+  private final Option<BuildClientLogger> buildClientLogger;
 
-  BazelProcess(Process process, Optional<BuildClientLogger> buildClientLogger) {
+  BazelProcess(Process process, Option<BuildClientLogger> buildClientLogger) {
     this.process = process;
     this.buildClientLogger = buildClientLogger;
   }
@@ -43,12 +43,12 @@ public class BazelProcess {
 
   private void logBazelMessage(BazelProcessResult bazelProcessResult) {
     String message = bazelProcessResult.getStderr();
-    buildClientLogger.ifPresent(logger -> logger.logMessage(message));
+    buildClientLogger.forEach(logger -> logger.logMessage(message));
   }
 
   private void logBazelError(BazelProcessResult bazelProcessResult) {
     String error = bazelProcessResult.getStderr();
-    buildClientLogger.ifPresent(logger -> logger.logError(error));
+    buildClientLogger.forEach(logger -> logger.logError(error));
   }
 
   public InputStream getInputStream() {

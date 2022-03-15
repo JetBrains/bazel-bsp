@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import java.util.List;
+import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 public class ProjectViewTargetsSectionParser
