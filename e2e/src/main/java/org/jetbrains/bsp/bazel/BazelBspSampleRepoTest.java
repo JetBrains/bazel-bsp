@@ -237,7 +237,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     WorkspaceBuildTargetsResult expectedWorkspaceBuildTargetsResult =
         getExpectedWorkspaceBuildTargetsResult();
 
-    List<String> dependencies =
+    var dependencies =
         List.of(
             "https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3-sources.jar",
             "https/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2-sources.jar",
@@ -254,7 +254,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new DependencySourcesItem(new BuildTargetIdentifier("//dep:dep"), List.of());
 
     DependencySourcesItem depDeeperDeeperDependencies =
-        new DependencySourcesItem(new BuildTargetIdentifier("//dep/deeper:deeper"), List.of());
+        new DependencySourcesItem(new BuildTargetIdentifier("//dep/deeper:deeper"), dependencies);
 
     DependencySourcesResult expectedDependencies =
         new DependencySourcesResult(
