@@ -6,28 +6,15 @@ import org.apache.commons.collections4.CollectionUtils;
 
 public abstract class ProjectViewListSection<T> extends ProjectViewSection {
 
-  protected final List<T> includedValues;
-  protected final List<T> excludedValues;
+  protected final List<T> values;
 
-  protected ProjectViewListSection(String sectionName) {
+  protected ProjectViewListSection(String sectionName, List<T> values) {
     super(sectionName);
-    this.includedValues = List.of();
-    this.excludedValues = List.of();
+    this.values = values;
   }
 
-  protected ProjectViewListSection(
-      String sectionName, List<T> includedValues, List<T> excludedValues) {
-    super(sectionName);
-    this.includedValues = includedValues;
-    this.excludedValues = excludedValues;
-  }
-
-  public List<T> getIncludedValues() {
-    return includedValues;
-  }
-
-  public List<T> getExcludedValues() {
-    return excludedValues;
+  public List<T> getValues() {
+    return values;
   }
 
   @Override
@@ -35,15 +22,12 @@ public abstract class ProjectViewListSection<T> extends ProjectViewSection {
     if (this == o) return true;
     if (!(o instanceof ProjectViewListSection)) return false;
     ProjectViewListSection<?> that = (ProjectViewListSection<?>) o;
-    return CollectionUtils.isEqualCollection(
-            includedValues.toJavaList(), that.includedValues.toJavaList())
-        && CollectionUtils.isEqualCollection(
-            excludedValues.toJavaList(), that.excludedValues.toJavaList())
+    return CollectionUtils.isEqualCollection(values.toJavaList(), that.values.toJavaList())
         && sectionName.equals(that.sectionName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(includedValues, excludedValues, sectionName);
+    return Objects.hash(values, sectionName);
   }
 }

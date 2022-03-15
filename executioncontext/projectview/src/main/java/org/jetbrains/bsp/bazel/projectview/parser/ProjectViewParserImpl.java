@@ -10,8 +10,8 @@ import org.jetbrains.bsp.bazel.commons.BetterFiles;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewExcludableTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewJavaPathSectionParser;
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter;
@@ -28,8 +28,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
   private static final String IMPORT_STATEMENT = "import";
 
-  private static final ProjectViewTargetsSectionParser targetsParser =
-      new ProjectViewTargetsSectionParser();
+  private static final ProjectViewExcludableTargetsSectionParser targetsParser =
+      new ProjectViewExcludableTargetsSectionParser();
 
   private static final ProjectViewBazelPathSectionParser bazelPathParser =
       new ProjectViewBazelPathSectionParser();

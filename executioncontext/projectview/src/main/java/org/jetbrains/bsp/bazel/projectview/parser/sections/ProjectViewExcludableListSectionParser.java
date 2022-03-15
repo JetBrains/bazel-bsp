@@ -5,7 +5,7 @@ import io.vavr.control.Option;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
 
 /**
@@ -16,15 +16,17 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
  *
  * @param <T> type of parsed list section
  */
-abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<V>>
+abstract class ProjectViewExcludableListSectionParser<
+        V, T extends ProjectViewExcludableListSection<V>>
     extends ProjectViewSectionParser<T> {
 
-  private static final Logger log = LogManager.getLogger(ProjectViewListSectionParser.class);
+  private static final Logger log =
+      LogManager.getLogger(ProjectViewExcludableListSectionParser.class);
 
   private static final String EXCLUDED_ENTRY_PREFIX = "-";
   private static final Pattern WHITESPACE_CHAR_REGEX = Pattern.compile("[ \n\t]+");
 
-  protected ProjectViewListSectionParser(String sectionName) {
+  protected ProjectViewExcludableListSectionParser(String sectionName) {
     super(sectionName);
   }
 
@@ -67,7 +69,7 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
   }
 
   private T concatSectionsItems(T section1, T section2) {
-    var includedItems = section1.getIncludedValues().appendAll(section2.getIncludedValues());
+    var includedItems = section1.getValues().appendAll(section2.getValues());
     var excludedItems = section1.getExcludedValues().appendAll(section2.getExcludedValues());
 
     return createInstance(includedItems, excludedItems);

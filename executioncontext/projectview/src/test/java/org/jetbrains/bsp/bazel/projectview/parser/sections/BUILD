@@ -1,9 +1,9 @@
 load("@rules_java//java:defs.bzl", "java_test")
 
 java_test(
-    name = "ProjectViewListSectionParserTest",
+    name = "ProjectViewExcludableListSectionParserTest",
     size = "small",
-    srcs = ["ProjectViewListSectionParserTest.java"],
+    srcs = ["ProjectViewExcludableListSectionParserTest.java"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],

@@ -15,11 +15,12 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> {
+public class ProjectViewExcludableListSectionTest<
+    V, T extends ProjectViewExcludableListSection<V>> {
 
   private final BiFunction<List<String>, List<String>, T> sectionConstructor;
 
-  public ProjectViewListSectionTest(
+  public ProjectViewExcludableListSectionTest(
       BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
     this.sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
   }

@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -19,9 +19,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(value = Parameterized.class)
-public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSection<V>> {
+public class ProjectViewExcludableListSectionParserTest<
+    V, T extends ProjectViewExcludableListSection<V>> {
 
-  private final ProjectViewListSectionParser<V, T> parser;
+  private final ProjectViewExcludableListSectionParser<V, T> parser;
 
   private final Function<String, String> rawIncludedElementConstructor;
   private final Function<String, String> rawExcludedElementConstructor;
@@ -30,8 +31,8 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
 
   private final String sectionName;
 
-  public ProjectViewListSectionParserTest(
-      ProjectViewListSectionParser<V, T> parser,
+  public ProjectViewExcludableListSectionParserTest(
+      ProjectViewExcludableListSectionParser<V, T> parser,
       Function<String, String> rawIncludedElementConstructor,
       BiFunction<List<V>, List<V>, T> sectionMapper,
       Function<String, V> elementMapper) {
@@ -69,7 +70,7 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     return Arrays.asList(
         new Object[][] {
           {
-            new ProjectViewTargetsSectionParser(),
+            new ProjectViewExcludableTargetsSectionParser(),
             (Function<String, String>) (seed) -> "//target:" + seed,
             (BiFunction<
                     List<BuildTargetIdentifier>,

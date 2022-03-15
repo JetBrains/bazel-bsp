@@ -13,9 +13,9 @@ java_test(
 )
 
 java_test(
-    name = "ProjectViewListSectionTest",
+    name = "ProjectViewExcludableListSectionTest",
     size = "small",
-    srcs = ["ProjectViewListSectionTest.java"],
+    srcs = ["ProjectViewExcludableListSectionTest.java"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],

@@ -11,8 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
@@ -188,19 +188,19 @@ public class ProjectView {
               importedProjectViews,
               targets,
               ProjectView::getTargets,
-              ProjectViewListSection::getIncludedValues);
+              ProjectViewExcludableListSection::getValues);
       var excludedTargets =
           combineListValuesWithImported(
               importedProjectViews,
               targets,
               ProjectView::getTargets,
-              ProjectViewListSection::getExcludedValues);
+              ProjectViewExcludableListSection::getExcludedValues);
 
       return createInstanceOfListSectionOrEmpty(
           includedTargets, excludedTargets, ProjectViewTargetsSection::new);
     }
 
-    private <V, S extends ProjectViewListSection<V>, T extends Option<S>>
+    private <V, S extends ProjectViewExcludableListSection<V>, T extends Option<S>>
         List<V> combineListValuesWithImported(
             List<ProjectView> importedProjectViews,
             T section,
@@ -215,10 +215,11 @@ public class ProjectView {
           .foldLeft(sectionValues, List::appendAll);
     }
 
-    private <V, T extends ProjectViewListSection<V>> Option<T> createInstanceOfListSectionOrEmpty(
-        List<V> includedElements,
-        List<V> excludedElements,
-        BiFunction<List<V>, List<V>, T> constructor) {
+    private <V, T extends ProjectViewExcludableListSection<V>>
+        Option<T> createInstanceOfListSectionOrEmpty(
+            List<V> includedElements,
+            List<V> excludedElements,
+            BiFunction<List<V>, List<V>, T> constructor) {
       if (includedElements.isEmpty() && excludedElements.isEmpty()) {
         return Option.none();
       }
