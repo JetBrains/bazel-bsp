@@ -220,10 +220,11 @@ public class ProjectView {
             List<V> includedElements,
             List<V> excludedElements,
             BiFunction<List<V>, List<V>, T> constructor) {
-      if (includedElements.isEmpty() && excludedElements.isEmpty()) {
-        return Option.none();
-      }
-      return Option.of(constructor.apply(includedElements, excludedElements));
+      var areListsEmpty = includedElements.isEmpty() && excludedElements.isEmpty();
+      var isAnyElementInLists = !areListsEmpty;
+
+      return Option.when(
+          isAnyElementInLists, constructor.apply(includedElements, excludedElements));
     }
 
     private Option<ProjectViewBazelPathSection> combineBazelPathSection(
