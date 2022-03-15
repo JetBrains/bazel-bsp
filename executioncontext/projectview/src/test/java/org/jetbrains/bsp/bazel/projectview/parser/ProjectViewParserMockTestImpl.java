@@ -2,12 +2,12 @@ package org.jetbrains.bsp.bazel.projectview.parser;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
@@ -37,9 +37,9 @@ public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
     // we read file content instead of passing plain file due to bazel resources packaging
     var inputStream = ProjectViewParserMockTestImpl.class.getResourceAsStream(filePath.toString());
 
-    return Optional.ofNullable(inputStream)
+    return Option.of(inputStream)
         .map(this::readInputStream)
-        .orElse(Try.failure(new IOException(filePath + " file does not exist!")));
+        .getOrElse(Try.failure(new IOException(filePath + " file does not exist!")));
   }
 
   private Try<String> readInputStream(InputStream inputStream) {

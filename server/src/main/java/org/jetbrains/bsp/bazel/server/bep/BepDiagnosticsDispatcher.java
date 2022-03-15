@@ -15,6 +15,7 @@ import io.bazel.rules_scala.diagnostics.Diagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.FileDiagnostics;
 import io.bazel.rules_scala.diagnostics.Diagnostics.Severity;
 import io.bazel.rules_scala.diagnostics.Diagnostics.TargetDiagnostics;
+import io.vavr.control.Option;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -23,7 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -116,8 +116,7 @@ public class BepDiagnosticsDispatcher {
   }
 
   private Diagnostic convertDiagnostic(Diagnostics.Diagnostic diagProto) {
-    Optional<DiagnosticSeverity> severity =
-        Optional.ofNullable(CONVERTED_SEVERITY.get(diagProto.getSeverity()));
+    var severity = Option.of(CONVERTED_SEVERITY.get(diagProto.getSeverity()));
 
     Position startPosition =
         new Position(
@@ -129,7 +128,7 @@ public class BepDiagnosticsDispatcher {
     Range range = new Range(startPosition, endPosition);
 
     Diagnostic diagnostic = new Diagnostic(range, diagProto.getMessage());
-    severity.ifPresent(diagnostic::setSeverity);
+    severity.forEach(diagnostic::setSeverity);
 
     return diagnostic;
   }

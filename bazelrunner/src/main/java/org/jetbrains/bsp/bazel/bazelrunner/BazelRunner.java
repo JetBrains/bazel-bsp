@@ -1,10 +1,10 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
 import com.google.common.collect.Lists;
+import io.vavr.control.Option;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
@@ -19,8 +19,8 @@ public class BazelRunner {
 
   private final String bazel;
 
-  private Optional<Integer> besBackendPort = Optional.empty();
-  private Optional<BuildClientLogger> buildClientLogger = Optional.empty();
+  private Option<Integer> besBackendPort = Option.none();
+  private Option<BuildClientLogger> buildClientLogger = Option.none();
   private final BazelData bazelData;
 
   // This is runner without workspace path. It is used to determine workspace
@@ -56,7 +56,7 @@ public class BazelRunner {
   }
 
   private String getBesBackendAddress() {
-    Integer port = besBackendPort.orElseThrow(() -> new IllegalStateException("BES port not set"));
+    Integer port = besBackendPort.getOrElseThrow(() -> new IllegalStateException("BES port not set"));
 
     return BES_BACKEND + port;
   }
@@ -95,10 +95,10 @@ public class BazelRunner {
   }
 
   public void setBesBackendPort(int port) {
-    besBackendPort = Optional.of(port);
+    besBackendPort = Option.of(port);
   }
 
   public void setLogger(BuildClientLogger buildClientLogger) {
-    this.buildClientLogger = Optional.ofNullable(buildClientLogger);
+    this.buildClientLogger = Option.of(buildClientLogger);
   }
 }

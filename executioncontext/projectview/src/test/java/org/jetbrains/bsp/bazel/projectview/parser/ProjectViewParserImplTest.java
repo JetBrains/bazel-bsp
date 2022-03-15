@@ -8,7 +8,6 @@ import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
