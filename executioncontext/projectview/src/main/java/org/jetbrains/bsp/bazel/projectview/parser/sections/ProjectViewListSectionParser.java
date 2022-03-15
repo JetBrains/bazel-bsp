@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

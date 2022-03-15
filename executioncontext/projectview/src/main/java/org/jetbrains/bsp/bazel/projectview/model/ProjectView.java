@@ -245,10 +245,7 @@ public class ProjectView {
 
     private <V, T extends ProjectViewSingletonSection<V>> Option<T> getLastImportedSingletonValue(
         List<ProjectView> importedProjectViews, Function<ProjectView, Option<T>> sectionGetter) {
-      return importedProjectViews
-          .map(sectionGetter)
-          .findLast(Option::isDefined)
-          .flatMap(x -> x);
+      return importedProjectViews.map(sectionGetter).findLast(Option::isDefined).flatMap(x -> x);
     }
   }
 }

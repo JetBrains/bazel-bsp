@@ -7,7 +7,6 @@ import io.vavr.API;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.Map;
 import io.vavr.collection.Set;
-import io.vavr.control.Option;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
