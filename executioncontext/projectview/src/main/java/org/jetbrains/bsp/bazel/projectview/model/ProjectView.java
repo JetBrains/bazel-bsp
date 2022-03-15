@@ -248,7 +248,7 @@ public class ProjectView {
       return importedProjectViews
           .map(sectionGetter)
           .findLast(Option::isDefined)
-          .flatMap(Function.identity());
+          .flatMap(x -> x);
     }
   }
 }

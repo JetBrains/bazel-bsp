@@ -43,20 +43,20 @@ public class BazelRunner {
   }
 
   BazelProcess runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
+    var newFlags = getBesFlags(flags);
 
-    List<String> newFlags = getBesFlags(flags);
     return runBazelCommand(command, newFlags, arguments);
   }
 
   private List<String> getBesFlags(List<String> flags) {
-    List<String> newFlags = Lists.newArrayList(getBesBackendAddress(), PUBLISH_ALL_ACTIONS);
+    var newFlags = Lists.newArrayList(getBesBackendAddress(), PUBLISH_ALL_ACTIONS);
     newFlags.addAll(flags);
 
     return newFlags;
   }
 
   private String getBesBackendAddress() {
-    Integer port = besBackendPort.getOrElseThrow(() -> new IllegalStateException("BES port not set"));
+    var port = besBackendPort.getOrElseThrow(() -> new IllegalStateException("BES port not set"));
 
     return BES_BACKEND + port;
   }
@@ -74,20 +74,20 @@ public class BazelRunner {
 
   private synchronized BazelProcess runBazelProcess(
       String command, List<String> flags, List<String> arguments) throws IOException {
-    List<String> processArgs = getProcessArgs(command, flags, arguments);
+    var processArgs = getProcessArgs(command, flags, arguments);
     LOGGER.info("Running: {}", String.join(" ", processArgs));
 
-    ProcessBuilder processBuilder = new ProcessBuilder(processArgs);
+    var processBuilder = new ProcessBuilder(processArgs);
     if (bazelData != null) {
       processBuilder.directory(new File(bazelData.getWorkspaceRoot()));
     }
-    Process process = processBuilder.start();
+    var process = processBuilder.start();
 
     return new BazelProcess(process, buildClientLogger);
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
-    List<String> processArgs = Lists.newArrayList(bazel, command);
+    var processArgs = Lists.newArrayList(bazel, command);
     processArgs.addAll(flags);
     processArgs.addAll(arguments);
 

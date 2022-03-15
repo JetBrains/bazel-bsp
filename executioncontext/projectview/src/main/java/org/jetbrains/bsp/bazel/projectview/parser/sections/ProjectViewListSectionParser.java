@@ -63,7 +63,7 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
     return rawSections
         .getAllWithName(sectionName)
         .flatMap(this::parse)
-        .flatMap(Function.identity())
+        .flatMap(x -> x)
         .reduceOption(this::concatSectionsItems);
   }
 
