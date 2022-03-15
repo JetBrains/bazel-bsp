@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.net.HostAndPort;
-import java.util.Optional;
+import io.vavr.control.Option;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
@@ -27,7 +27,7 @@ public class InstallationContextDebuggerAddressEntityMapperTest {
     var projectView =
         ProjectView.builder()
             .debuggerAddress(
-                Optional.of(
+                Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))))
             .build()
             .get();
@@ -51,7 +51,7 @@ public class InstallationContextDebuggerAddressEntityMapperTest {
   public void
       shouldReturnSuccessWithEmptyDebuggerAddressFromProjectViewIfDebuggerAddressIsNotSpecifiedInProjectView() {
     // given
-    var projectView = ProjectView.builder().debuggerAddress(Optional.empty()).build().get();
+    var projectView = ProjectView.builder().debuggerAddress(Option.none()).build().get();
 
     // when
     var debuggerAddressTry = mapper.map(projectView);

@@ -13,8 +13,7 @@ public class InstallationContextDebuggerAddressEntityMapper
 
   @Override
   public Try<Option<InstallationContextDebuggerAddressEntity>> map(ProjectView projectView) {
-    var debuggerAddressSection = Option.ofOptional(projectView.getDebuggerAddress());
-    var debuggerAddressEntity = debuggerAddressSection.map(this::map);
+    var debuggerAddressEntity = projectView.getDebuggerAddress().map(this::map);
 
     return Try.success(debuggerAddressEntity);
   }

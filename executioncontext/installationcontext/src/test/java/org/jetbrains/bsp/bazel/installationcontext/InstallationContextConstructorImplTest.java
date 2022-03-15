@@ -3,18 +3,15 @@ package org.jetbrains.bsp.bazel.installationcontext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.net.HostAndPort;
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,9 +48,9 @@ public class InstallationContextConstructorImplTest {
     // given
     var projectView =
         ProjectView.builder()
-            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("/path/to/java"))))
+            .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("/path/to/java"))))
             .debuggerAddress(
-                Optional.of(
+                Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))))
             .build();
     // when

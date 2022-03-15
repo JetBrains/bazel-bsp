@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Paths;
-import java.util.Optional;
+import io.vavr.control.Option;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -26,7 +26,7 @@ public class InstallationContextJavaPathEntityMapperTest {
     // given
     var projectView =
         ProjectView.builder()
-            .javaPath(Optional.of(new ProjectViewJavaPathSection(Paths.get("/path/to/java"))))
+            .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("/path/to/java"))))
             .build()
             .get();
 
@@ -45,7 +45,7 @@ public class InstallationContextJavaPathEntityMapperTest {
   public void
       shouldReturnSuccessWithJavaPathFromSystemPropertyIfJavaPathIsNotSpecifiedInProjectView() {
     // given
-    var projectView = ProjectView.builder().javaPath(Optional.empty()).build().get();
+    var projectView = ProjectView.builder().javaPath(Option.none()).build().get();
 
     System.setProperty("java.home", "/path/to/java");
 
@@ -64,7 +64,7 @@ public class InstallationContextJavaPathEntityMapperTest {
   public void
       shouldReturnFailureIfJavaPathIsNotSpecifiedInProjectViewAndItIsImpossibleToObtainItFromSystemPropererties() {
     // given
-    var projectView = ProjectView.builder().javaPath(Optional.empty()).build().get();
+    var projectView = ProjectView.builder().javaPath(Option.none()).build().get();
 
     System.clearProperty("java.home");
 
