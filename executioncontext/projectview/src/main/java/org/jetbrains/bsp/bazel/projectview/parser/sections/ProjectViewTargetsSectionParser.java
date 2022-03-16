@@ -4,11 +4,11 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
-public class ProjectViewExcludableTargetsSectionParser
+public class ProjectViewTargetsSectionParser
     extends ProjectViewExcludableListSectionParser<
         BuildTargetIdentifier, ProjectViewTargetsSection> {
 
-  public ProjectViewExcludableTargetsSectionParser() {
+  public ProjectViewTargetsSectionParser() {
     super(ProjectViewTargetsSection.SECTION_NAME);
   }
 

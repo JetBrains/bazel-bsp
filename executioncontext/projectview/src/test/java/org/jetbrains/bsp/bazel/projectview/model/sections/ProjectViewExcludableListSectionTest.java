@@ -33,7 +33,7 @@ public class ProjectViewExcludableListSectionTest<
             includedElements.map(elementMapper), excludedElements.map(elementMapper));
   }
 
-  @Parameters(name = "{index}: .equals() on a list section for {0}")
+  @Parameters(name = "{index}: .equals() on an excludable list section for {0}")
   public static Collection<Object[]> data() {
     return Arrays.asList(
         new Object[][] {

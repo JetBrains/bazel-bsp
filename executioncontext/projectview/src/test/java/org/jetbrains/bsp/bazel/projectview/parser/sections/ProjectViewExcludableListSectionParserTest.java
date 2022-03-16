@@ -65,12 +65,12 @@ public class ProjectViewExcludableListSectionParserTest<
     return rawElements.map(rawIncludedElementConstructor).map(elementMapper);
   }
 
-  @Parameterized.Parameters(name = "{index}: ProjectViewListSectionParserTest for {0}")
+  @Parameterized.Parameters(name = "{index}: ProjectViewExcludableListSectionParserTest for {0}")
   public static Collection<Object[]> data() {
     return Arrays.asList(
         new Object[][] {
           {
-            new ProjectViewExcludableTargetsSectionParser(),
+            new ProjectViewTargetsSectionParser(),
             (Function<String, String>) (seed) -> "//target:" + seed,
             (BiFunction<
                     List<BuildTargetIdentifier>,
@@ -81,7 +81,7 @@ public class ProjectViewExcludableListSectionParserTest<
           },
         });
   }
-  // ProjectViewListSection parse(rawSection)
+  // ProjectViewExcludableListSection parse(rawSection)
 
   @Test
   public void shouldReturnFailureForWrongSectionName() {
@@ -194,7 +194,7 @@ public class ProjectViewExcludableListSectionParserTest<
     assertEquals(expectedSection, section.get());
   }
 
-  // ProjectViewListSection parse(rawSections)
+  // ProjectViewExcludableListSection parse(rawSections)
 
   @Test
   public void shouldReturnEmptySectionIfThereIsNoSectionForParseWithoutDefault() {
@@ -242,7 +242,7 @@ public class ProjectViewExcludableListSectionParserTest<
     assertEquals(expectedSection, section.get());
   }
 
-  // ProjectViewListSection parseOrDefault(rawSections, defaultValue)
+  // ProjectViewExcludableListSection parseOrDefault(rawSections, defaultValue)
 
   @Test
   public void shouldParseAllSectionElementsFromListAndSkipDefault() {
