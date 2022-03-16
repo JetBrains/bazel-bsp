@@ -22,22 +22,25 @@ public class BazelRunner {
   private final BuildClientLogger buildClientLogger;
   private final BazelData bazelData;
 
+  private final List<String> defaultFlags;
+
   // This is runner without workspace path. It is used to determine workspace
   // path and create a fully functional runner.
-  public static BazelRunner inCwd(String bazelBinaryPath, BuildClientLogger buildClientLogger) {
-    return new BazelRunner(bazelBinaryPath, buildClientLogger, null);
+  public static BazelRunner inCwd(String bazelBinaryPath, BuildClientLogger buildClientLogger, List<String> defaultFlags) {
+    return new BazelRunner(bazelBinaryPath, buildClientLogger, null, defaultFlags);
   }
 
   public static BazelRunner of(
-      String bazelBinaryPath, BuildClientLogger buildClientLogger, BazelData bazelData) {
-    return new BazelRunner(bazelBinaryPath, buildClientLogger, bazelData);
+      String bazelBinaryPath, BuildClientLogger buildClientLogger, BazelData bazelData, List<String> defaultFlags) {
+    return new BazelRunner(bazelBinaryPath, buildClientLogger, bazelData, defaultFlags);
   }
 
   private BazelRunner(
-      String bazelBinaryPath, BuildClientLogger buildClientLogger, BazelData bazelData) {
+      String bazelBinaryPath, BuildClientLogger buildClientLogger, BazelData bazelData, List<String> defaultFlags) {
     this.bazel = bazelBinaryPath;
     this.buildClientLogger = buildClientLogger;
     this.bazelData = bazelData;
+    this.defaultFlags = defaultFlags;
   }
 
   public BazelRunnerCommandBuilder commandBuilder() {
@@ -45,12 +48,13 @@ public class BazelRunner {
   }
 
   BazelProcess runBazelCommandBes(String command, List<String> flags, List<String> arguments) {
-    List<String> newFlags = getBesFlags(flags);
+    var newFlags = getBesFlags(flags);
+
     return runBazelCommand(command, newFlags, arguments);
   }
 
   private List<String> getBesFlags(List<String> flags) {
-    List<String> newFlags = Lists.newArrayList(getBesBackendAddress(), PUBLISH_ALL_ACTIONS);
+    var newFlags = Lists.newArrayList(getBesBackendAddress(), PUBLISH_ALL_ACTIONS);
     newFlags.addAll(flags);
 
     return newFlags;
@@ -88,6 +92,7 @@ public class BazelRunner {
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
     var processArgs = Lists.newArrayList(bazel, command);
+    processArgs.addAll(defaultFlags);
     processArgs.addAll(flags);
     processArgs.addAll(arguments);
     return processArgs;

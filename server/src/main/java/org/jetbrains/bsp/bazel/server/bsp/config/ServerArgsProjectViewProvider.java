@@ -46,6 +46,7 @@ public class ServerArgsProjectViewProvider implements ProjectViewProvider {
         .bazelPath(Option.of(pathToBazel))
         .debuggerAddress(parsedProjectView.getDebuggerAddress())
         .javaPath(parsedProjectView.getJavaPath())
+        .buildFlags(parsedProjectView.getBuildFlags())
         .build();
   }
 }

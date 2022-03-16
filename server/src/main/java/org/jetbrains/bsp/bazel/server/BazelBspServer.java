@@ -2,10 +2,14 @@ package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
+import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
@@ -47,9 +51,18 @@ public class BazelBspServer {
     this.bazelBspServerConfig = bazelBspServerConfig;
     var bazelPath = bazelBspServerConfig.getBazelPath();
     this.buildClientLogger = new BuildClientLogger();
-    var bazelDataResolver = new BazelDataResolver(BazelRunner.inCwd(bazelPath, buildClientLogger));
+    var bazelDataResolver = new BazelDataResolver(BazelRunner.inCwd(bazelPath, buildClientLogger, getDefaultBazelFlags(bazelBspServerConfig.getProjectView())));
     this.bazelData = bazelDataResolver.resolveBazelData();
-    this.bazelRunner = BazelRunner.of(bazelPath, buildClientLogger, bazelData);
+    this.bazelRunner = BazelRunner.of(bazelPath, buildClientLogger, bazelData, getDefaultBazelFlags(bazelBspServerConfig.getProjectView()));
+  }
+
+  // this is only a temporary solution - will be changed later
+  private List<String> getDefaultBazelFlags(ProjectView projectView) {
+    return projectView
+            .getBuildFlags()
+            .map(ProjectViewBuildFlagsSection::getValues)
+            .map(io.vavr.collection.List::toJavaList)
+            .getOrElse(List.of());
   }
 
   public void startServer(BspIntegrationData bspIntegrationData) {
