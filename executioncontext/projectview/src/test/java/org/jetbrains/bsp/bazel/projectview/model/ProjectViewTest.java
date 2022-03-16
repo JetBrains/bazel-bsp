@@ -11,6 +11,7 @@ import io.vavr.control.Try;
 import java.io.IOException;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -66,6 +67,7 @@ public class ProjectViewTest {
     assertTrue(projectView.getBazelPath().isEmpty());
     assertTrue(projectView.getDebuggerAddress().isEmpty());
     assertTrue(projectView.getJavaPath().isEmpty());
+    assertTrue(projectView.getBuildFlags().isEmpty());
   }
 
   @Test
@@ -87,6 +89,7 @@ public class ProjectViewTest {
     assertTrue(projectView.getBazelPath().isEmpty());
     assertTrue(projectView.getDebuggerAddress().isEmpty());
     assertTrue(projectView.getJavaPath().isEmpty());
+    assertTrue(projectView.getBuildFlags().isEmpty());
   }
 
   // project view general tests
@@ -112,6 +115,10 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(
                         HostAndPort.fromString("127.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1=value1", "--build_flag2=value2"))))
             .build();
 
     // then
@@ -138,6 +145,10 @@ public class ProjectViewTest {
 
     var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagSection =
+        new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
+    assertEquals(expectedBuildFlagSection, projectView.getBuildFlags().get());
   }
 
   @Test
@@ -162,6 +173,10 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(
                         HostAndPort.fromString("127.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1=value1", "--build_flag2=value2"))))
             .build();
 
     // then
@@ -189,6 +204,10 @@ public class ProjectViewTest {
 
     var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagsSection =
+        new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
+    assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
   }
 
   @Test
@@ -211,6 +230,10 @@ public class ProjectViewTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1=value1", "--build_flag2=value2"))))
             .build();
 
     // when
@@ -241,6 +264,10 @@ public class ProjectViewTest {
 
     var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagsSection =
+        new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
+    assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
   }
 
   @Test
@@ -251,7 +278,7 @@ public class ProjectViewTest {
     // when
     var projectViewTry =
         ProjectView.builder()
-            .imports(List.of())
+            .imports(List.of(importedProjectViewTry))
             .targets(
                 Option.of(
                     new ProjectViewTargetsSection(
@@ -261,6 +288,10 @@ public class ProjectViewTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1=value1", "--build_flag2=value2"))))
             .build();
 
     // then
@@ -282,6 +313,10 @@ public class ProjectViewTest {
 
     var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagsSection =
+        new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
+    assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
   }
 
   @Test
@@ -305,6 +340,10 @@ public class ProjectViewTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("imported/path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build();
 
     // when
@@ -327,6 +366,10 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(
                         HostAndPort.fromString("127.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag2.1=value2.1", "--build_flag2.2=value2.2"))))
             .build();
 
     // then
@@ -359,6 +402,15 @@ public class ProjectViewTest {
 
     var expectedJavaPathSection = new ProjectViewJavaPathSection(Paths.get("path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagsSection =
+        new ProjectViewBuildFlagsSection(
+            List.of(
+                "--build_flag1.1=value1.1",
+                "--build_flag1.2=value1.2",
+                "--build_flag2.1=value2.1",
+                "--build_flag2.2=value2.2"));
+    assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
   }
 
   @Test
@@ -384,6 +436,10 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(
                 Option.of(new ProjectViewJavaPathSection(Paths.get("imported1/path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build();
 
     var importedProjectViewTry2 =
@@ -394,6 +450,8 @@ public class ProjectViewTest {
                     new ProjectViewTargetsSection(
                         List.of(new BuildTargetIdentifier("//included_target2.1")),
                         List.of(new BuildTargetIdentifier("//excluded_target2.1")))))
+            .buildFlags(
+                Option.of(new ProjectViewBuildFlagsSection(List.of("--build_flag2.1=value2.1"))))
             .build();
 
     var importedProjectViewTry3 =
@@ -413,6 +471,8 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"))))
             .javaPath(
                 Option.of(new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"))))
+            .buildFlags(
+                Option.of(new ProjectViewBuildFlagsSection(List.of("--build_flag3.1=value3.1"))))
             .build();
 
     // when
@@ -430,6 +490,10 @@ public class ProjectViewTest {
                         List.of(
                             new BuildTargetIdentifier("//excluded_target4.1"),
                             new BuildTargetIdentifier("//excluded_target4.2")))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag4.1=value4.1", "--build_flag4.2=value4.2"))))
             .build();
 
     // then
@@ -467,6 +531,17 @@ public class ProjectViewTest {
     var expectedJavaPathSection =
         new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagsSection =
+        new ProjectViewBuildFlagsSection(
+            List.of(
+                "--build_flag1.1=value1.1",
+                "--build_flag1.2=value1.2",
+                "--build_flag2.1=value2.1",
+                "--build_flag3.1=value3.1",
+                "--build_flag4.1=value4.1",
+                "--build_flag4.2=value4.2"));
+    assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
   }
 
   @Test
@@ -492,6 +567,10 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(
                 Option.of(new ProjectViewJavaPathSection(Paths.get("imported1/path/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build();
 
     var importedProjectViewTry2 =
@@ -502,6 +581,8 @@ public class ProjectViewTest {
                     new ProjectViewTargetsSection(
                         List.of(new BuildTargetIdentifier("//included_target2.1")),
                         List.of(new BuildTargetIdentifier("//excluded_target2.1")))))
+            .buildFlags(
+                Option.of(new ProjectViewBuildFlagsSection(List.of("--build_flag2.1=value2.1"))))
             .build();
 
     var importedProjectViewTry3 =
@@ -521,6 +602,8 @@ public class ProjectViewTest {
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"))))
             .javaPath(
                 Option.of(new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"))))
+            .buildFlags(
+                Option.of(new ProjectViewBuildFlagsSection(List.of("--build_flag3.1=value3.1"))))
             .build();
 
     var importedProjectViewTry4 = ProjectView.builder().build();
@@ -539,6 +622,10 @@ public class ProjectViewTest {
                         List.of(
                             new BuildTargetIdentifier("//excluded_target4.1"),
                             new BuildTargetIdentifier("//excluded_target4.2")))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag4.1=value4.1", "--build_flag4.2=value4.2"))))
             .build();
 
     // then
@@ -576,5 +663,16 @@ public class ProjectViewTest {
     var expectedJavaPathSection =
         new ProjectViewJavaPathSection(Paths.get("imported3/path/to/java"));
     assertEquals(expectedJavaPathSection, projectView.getJavaPath().get());
+
+    var expectedBuildFlagsSection =
+        new ProjectViewBuildFlagsSection(
+            List.of(
+                "--build_flag1.1=value1.1",
+                "--build_flag1.2=value1.2",
+                "--build_flag2.1=value2.1",
+                "--build_flag3.1=value3.1",
+                "--build_flag4.1=value4.1",
+                "--build_flag4.2=value4.2"));
+    assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
   }
 }
