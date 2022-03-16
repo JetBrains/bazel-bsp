@@ -5,3 +5,7 @@ import /projectview/file3.bazelproject
 targets:
     -//excluded_target5.1
     -//excluded_target5.2
+
+build_flags:
+    --build_flag5.1=value5.1
+    --build_flag5.2=value5.2

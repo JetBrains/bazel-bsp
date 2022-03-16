@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.BetterFiles;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewJavaPathSectionParser;
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser;
@@ -39,6 +40,9 @@ class ProjectViewParserImpl implements ProjectViewParser {
 
   private static final ProjectViewJavaPathSectionParser javaPathParser =
       new ProjectViewJavaPathSectionParser();
+
+  private static final ProjectViewBuildFlagsSectionParser buildFlagsParser =
+      new ProjectViewBuildFlagsSectionParser();
 
   @Override
   public Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
@@ -119,6 +123,8 @@ class ProjectViewParserImpl implements ProjectViewParser {
             debuggerAddressParser.parseOrDefault(
                 rawSections, defaultProjectView.getDebuggerAddress()))
         .javaPath(javaPathParser.parseOrDefault(rawSections, defaultProjectView.getJavaPath()))
+        .buildFlags(
+            buildFlagsParser.parseOrDefault(rawSections, defaultProjectView.getBuildFlags()))
         .build();
   }
 
@@ -154,6 +160,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .bazelPath(bazelPathParser.parse(rawSections))
         .debuggerAddress(debuggerAddressParser.parse(rawSections))
         .javaPath(javaPathParser.parse(rawSections))
+        .buildFlags(buildFlagsParser.parse(rawSections))
         .build();
   }
 

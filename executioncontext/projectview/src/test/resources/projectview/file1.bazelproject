@@ -18,3 +18,8 @@ debugger_address: 0.0.0.1:8000
 
 # java_path: old/path/to/java
 java_path: path1/to/java
+
+build_flags:
+    --build_flag1.1=value1.1
+    # --legacy_build_flag=old_value
+    --build_flag1.2=value1.2

@@ -9,7 +9,7 @@ java_test(
     ],
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-                "@maven//:org_assertj_assertj_core",
+        "@maven//:org_assertj_assertj_core",
     ],
 )
 

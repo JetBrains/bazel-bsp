@@ -10,6 +10,7 @@ import io.vavr.control.Option;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
@@ -119,6 +120,21 @@ public class ProjectViewParserImplTest {
   }
 
   @Test
+  public void shouldReturnEmptyBuildFlagsSectionForFileWithoutBuildFlagsSection() {
+    // given
+    var projectViewFilePath = Paths.get("/projectview/without/buildflags.bazelproject");
+
+    // when
+    var projectViewTry = parser.parse(projectViewFilePath);
+
+    // then
+    assertTrue(projectViewTry.isSuccess());
+    var projectView = projectViewTry.get();
+
+    assertTrue(projectView.getBuildFlags().isEmpty());
+  }
+
+  @Test
   public void shouldParseEmptyFile() {
     // given
     var projectViewFilePath = Paths.get("/projectview/empty.bazelproject");
@@ -136,6 +152,7 @@ public class ProjectViewParserImplTest {
             .bazelPath(Option.none())
             .debuggerAddress(Option.none())
             .javaPath(Option.none())
+            .buildFlags(Option.none())
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -167,6 +184,10 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -202,6 +223,15 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of(
+                            "--build_flag1.1=value1.1",
+                            "--build_flag1.2=value1.2",
+                            "--build_flag4.1=value4.1",
+                            "--build_flag4.2=value4.2",
+                            "--build_flag4.3=value4.3"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -237,6 +267,15 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.7:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path7/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of(
+                            "--build_flag1.1=value1.1",
+                            "--build_flag1.2=value1.2",
+                            "--build_flag7.1=value7.1",
+                            "--build_flag7.2=value7.2",
+                            "--build_flag7.3=value7.3"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -268,6 +307,13 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.8:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path8/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of(
+                            "--build_flag8.1=value8.1",
+                            "--build_flag8.2=value8.2",
+                            "--build_flag8.3=value8.3"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -305,6 +351,17 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path3/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of(
+                            "--build_flag1.1=value1.1",
+                            "--build_flag1.2=value1.2",
+                            "--build_flag2.1=value2.1",
+                            "--build_flag2.2=value2.2",
+                            "--build_flag3.1=value3.1",
+                            "--build_flag5.1=value5.1",
+                            "--build_flag5.2=value5.2"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -343,6 +400,18 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of(
+                            "--build_flag1.1=value1.1",
+                            "--build_flag1.2=value1.2",
+                            "--build_flag2.1=value2.1",
+                            "--build_flag2.2=value2.2",
+                            "--build_flag3.1=value3.1",
+                            "--build_flag4.1=value4.1",
+                            "--build_flag4.2=value4.2",
+                            "--build_flag4.3=value4.3"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -409,6 +478,10 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -505,6 +578,10 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -537,6 +614,10 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -569,6 +650,10 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
@@ -601,6 +686,13 @@ public class ProjectViewParserImplTest {
                 Option.of(
                     new ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.8:8000"))))
             .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path8/to/java"))))
+            .buildFlags(
+                Option.of(
+                    new ProjectViewBuildFlagsSection(
+                        List.of(
+                            "--build_flag8.1=value8.1",
+                            "--build_flag8.2=value8.2",
+                            "--build_flag8.3=value8.3"))))
             .build()
             .get();
     assertEquals(expectedProjectView, projectView);
