@@ -199,7 +199,18 @@ _We are working on it, you can expect support for this section in future release
 
 #### build_flags
 
-_We are working on it, you can expect support for this section in future releases._
+A set of bazel flags added to **all** bazel command invocations.
+
+##### example:
+
+```
+build_flags:
+  --define=ij_product=intellij-latest
+```
+
+##### default:
+
+No flags.
 
 ---
 

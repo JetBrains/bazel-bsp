@@ -39,7 +39,7 @@ public class ProjectView {
   /** path to java to run a server */
   private final Option<ProjectViewJavaPathSection> javaPath;
 
-  /** flags added to all bazel commands */
+  /** bazel flags added to all bazel command invocations */
   private final Option<ProjectViewBuildFlagsSection> buildFlags;
 
   private ProjectView(
