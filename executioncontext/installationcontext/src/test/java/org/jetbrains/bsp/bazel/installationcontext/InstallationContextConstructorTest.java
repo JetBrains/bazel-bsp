@@ -15,14 +15,14 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSec
 import org.junit.Before;
 import org.junit.Test;
 
-public class InstallationContextConstructorImplTest {
+public class InstallationContextConstructorTest {
 
-  private InstallationContextConstructorImpl installationContextConstructor;
+  private InstallationContextConstructor installationContextConstructor;
 
   @Before
   public void beforeEach() {
     // given
-    this.installationContextConstructor = new InstallationContextConstructorImpl();
+    this.installationContextConstructor = new InstallationContextConstructor();
   }
 
   // Try<WorkspaceContext> construct(Try<ProjectView> projectViewTry)

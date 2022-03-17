@@ -13,9 +13,9 @@ java_test(
 )
 
 java_test(
-    name = "InstallationContextConstructorImplTest",
+    name = "InstallationContextConstructorTest",
     size = "small",
-    srcs = ["InstallationContextConstructorImplTest.java"],
+    srcs = ["InstallationContextConstructorTest.java"],
     runtime_deps = [
         "@maven//:junit_junit",
     ],
