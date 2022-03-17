@@ -1,8 +1,6 @@
 package org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers;
 
-import io.vavr.control.Try;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextEntity;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 
 /**
  * Maps <code>ProjectView</code> into <code>ExecutionContextEntity</code>. It takes entire <code>
@@ -10,10 +8,10 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
  * you may want to use multiple <code>ProjectView</code> sections.
  *
  * @param <T> type of the mapped entity
- * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
+ * @see
+ *     org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityBaseMapper
  * @see org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextEntity
+ * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
  */
-public interface ProjectViewToExecutionContextEntityMapper<T extends ExecutionContextEntity> {
-
-  Try<T> map(ProjectView projectView);
-}
+public interface ProjectViewToExecutionContextEntityMapper<T extends ExecutionContextEntity>
+    extends ProjectViewToExecutionContextEntityBaseMapper<T> {}

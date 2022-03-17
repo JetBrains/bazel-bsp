@@ -20,6 +20,8 @@
 
 ### Changes 🔄
 
+- Introduction of installation context.
+  | [#184](https://github.com/JetBrains/bazel-bsp/pull/184)
 - Project uses (mostly) `io.vavr.Option` and `io.vavr.List`.
   | [#192](https://github.com/JetBrains/bazel-bsp/pull/192)
 - Introducing execution context and workspace context.
