@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,12 @@ public class BazelRunnerBuilder {
   public BazelRunnerBuilder withTargets(List<String> bazelTargets) {
     String joinedTargets = BazelArgumentsUtils.getJoinedBazelTargets(bazelTargets);
     arguments.add(joinedTargets);
+
+    return this;
+  }
+
+  public BazelRunnerBuilder withTargets(List<BuildTargetIdentifier> includedTargets, List<BuildTargetIdentifier> excludedTargets) {
+
 
     return this;
   }

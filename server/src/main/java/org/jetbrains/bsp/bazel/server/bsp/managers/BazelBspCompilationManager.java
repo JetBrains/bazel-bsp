@@ -25,9 +25,11 @@ public class BazelBspCompilationManager {
   }
 
   public BepBuildResult buildTargetsWithBep(
-      List<BuildTargetIdentifier> targets, List<String> extraFlags) {
+      List<BuildTargetIdentifier> includedTargets,
+      List<BuildTargetIdentifier> excludedTargets,
+      List<String> extraFlags) {
     List<String> bazelTargets =
-        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
+        includedTargets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
 
     final Map<String, String> diagnosticsProtosLocations =
         bepServer.getDiagnosticsProtosLocations();
@@ -48,7 +50,7 @@ public class BazelBspCompilationManager {
             .commandBuilder()
             .build()
             .withFlags(extraFlags)
-            .withTargets(bazelTargets)
+            .withTargets(includedTargets, excludedTargets)
             .executeBazelBesCommand()
             .waitAndGetResult();
 
