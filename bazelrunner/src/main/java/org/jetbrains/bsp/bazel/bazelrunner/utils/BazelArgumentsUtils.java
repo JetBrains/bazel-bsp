@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.bazelrunner.utils;
 
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.base.Joiner;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +15,37 @@ public final class BazelArgumentsUtils {
   private static final String KIND_COMMAND = "kind";
   private static final String EXCEPT_COMMAND = "except";
 
+  public static String joinBazelTargets(
+      List<BuildTargetIdentifier> includedTargets, List<BuildTargetIdentifier> excludedTargets) {
+    var rawIncludedTargets = toRawUris(includedTargets);
+    var rawExcludedTargets = toRawUris(excludedTargets);
+
+    if (rawExcludedTargets.isEmpty()) {
+      return getJoinedBazelTargets(rawIncludedTargets);
+    }
+
+    var joinedIncludedTargets = joinBazelTargets(rawIncludedTargets);
+    var joinedExcludedTargets = Joiner.on(" - ").join(rawExcludedTargets);
+
+    return String.format("(%s - %s)", joinedIncludedTargets, joinedExcludedTargets);
+  }
+
+  public static List<String> toRawUris(List<BuildTargetIdentifier> targets) {
+    return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
+  }
+
   public static String getJoinedBazelTargets(List<String> targets) {
     String joinedTargets = joinBazelTargets(targets);
 
     return String.format("(%s)", joinedTargets);
+  }
+
+  public static List<String> calculateExcludedTargetsWithExcludedPrefix(
+      List<BuildTargetIdentifier> targets) {
+    return targets.stream()
+        .map(BuildTargetIdentifier::getUri)
+        .map(target -> "-" + target)
+        .collect(Collectors.toList());
   }
 
   public static String getMnemonicWithJoinedTargets(

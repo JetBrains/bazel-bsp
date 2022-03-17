@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.bazelrunner;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.collect.Lists;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils;
 
 public class BazelRunnerBuildBuilder extends BazelRunnerBuilder {
 
@@ -22,21 +22,10 @@ public class BazelRunnerBuildBuilder extends BazelRunnerBuilder {
   public BazelRunnerBuilder withTargets(
       List<BuildTargetIdentifier> includedTargets, List<BuildTargetIdentifier> excludedTargets) {
     var arguments = Lists.newArrayList(EXCLUDABLE_TARGETS_LIST_PREFIX);
-    arguments.addAll(toRawUris(includedTargets));
-    arguments.addAll(calculateExcludedTargetsWithExcludedPrefix(excludedTargets));
+    arguments.addAll(BazelArgumentsUtils.toRawUris(includedTargets));
+    arguments.addAll(
+        BazelArgumentsUtils.calculateExcludedTargetsWithExcludedPrefix(excludedTargets));
 
     return withArguments(arguments);
-  }
-
-  private List<String> toRawUris(List<BuildTargetIdentifier> targets) {
-    return targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
-  }
-
-  private List<String> calculateExcludedTargetsWithExcludedPrefix(
-      List<BuildTargetIdentifier> targets) {
-    return targets.stream()
-        .map(BuildTargetIdentifier::getUri)
-        .map(target -> "-" + target)
-        .collect(Collectors.toList());
   }
 }

@@ -48,7 +48,6 @@ public class ProjectResolver {
   }
 
   private BepOutput buildProjectWithAspect(ProjectView projectView) {
-    // TODO handle excludes
     var includedTargetRoots =
         projectView.getTargets().toList().flatMap(ProjectViewListSection::getIncludedValues);
     var excludedTargetRoots =

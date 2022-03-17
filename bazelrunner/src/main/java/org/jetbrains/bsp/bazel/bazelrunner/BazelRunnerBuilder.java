@@ -61,8 +61,10 @@ public class BazelRunnerBuilder {
     return this;
   }
 
-  public BazelRunnerBuilder withTargets(List<BuildTargetIdentifier> includedTargets, List<BuildTargetIdentifier> excludedTargets) {
-
+  public BazelRunnerBuilder withTargets(
+      List<BuildTargetIdentifier> includedTargets, List<BuildTargetIdentifier> excludedTargets) {
+    var joinedTargets = BazelArgumentsUtils.joinBazelTargets(includedTargets, excludedTargets);
+    arguments.add(joinedTargets);
 
     return this;
   }
