@@ -2,8 +2,8 @@ package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.nio.file.Paths;
 import io.vavr.control.Option;
+import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -77,6 +77,7 @@ public class InstallationContextJavaPathEntityMapperTest {
         .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
     assertThat(javaPathTry.getCause().getMessage())
         .isEqualTo(
-            "Mapping project view into 'java path' failed! System property 'java.home' is not specified.");
+            "Mapping project view into 'java path' failed! System property 'java.home' is not"
+                + " specified.");
   }
 }

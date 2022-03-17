@@ -29,7 +29,7 @@ public class InstallationContextConstructorImpl
   }
 
   private Try<InstallationContext.Builder> withDebuggerAddress(
-          InstallationContext.Builder builder, ProjectView projectView) {
+      InstallationContext.Builder builder, ProjectView projectView) {
     return debuggerAddressMapper.map(projectView).map(builder::debuggerAddress);
   }
 }

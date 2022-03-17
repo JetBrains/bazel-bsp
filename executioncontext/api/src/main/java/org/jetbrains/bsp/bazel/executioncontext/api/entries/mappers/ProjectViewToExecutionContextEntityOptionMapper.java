@@ -11,7 +11,8 @@ import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextEnti
  * empty.
  *
  * @param <T> type of the mapped entity
- * @see org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityBaseMapper
+ * @see
+ *     org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityBaseMapper
  * @see org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextEntity
  * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
  */
