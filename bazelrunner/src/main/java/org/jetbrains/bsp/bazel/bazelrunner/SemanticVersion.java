@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.bazelrunner.data;
+package org.jetbrains.bsp.bazel.bazelrunner;
 
 import java.util.Comparator;
 import java.util.regex.Matcher;

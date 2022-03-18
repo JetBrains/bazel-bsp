@@ -14,12 +14,12 @@ import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import io.vavr.collection.Set;
 import java.util.Collections;
-import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.projectview.model.TargetSpecs;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
@@ -66,7 +66,7 @@ public class ExecuteService {
   }
 
   public RunResult run(RunParams params) {
-    var targets = selectTargets(List.of(params.getTarget()));
+    var targets = selectTargets(Collections.singletonList(params.getTarget()));
 
     if (targets.isEmpty()) {
       throw new ResponseErrorException(
@@ -100,13 +100,11 @@ public class ExecuteService {
     var bazelResult =
         bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult();
 
-    return new CleanCacheResult(bazelResult.getStdout(), true);
+    return new CleanCacheResult(bazelResult.stdout(), true);
   }
 
   private BazelProcessResult build(Set<BuildTargetIdentifier> bspIds) {
-    return compilationManager
-        .buildTargetsWithBep(bspIds.toJavaList(), List.of(), Collections.emptyList())
-        .processResult();
+    return compilationManager.buildTargetsWithBep(TargetSpecs.of(bspIds)).processResult();
   }
 
   private Set<BuildTargetIdentifier> selectTargets(java.util.List<BuildTargetIdentifier> targets) {

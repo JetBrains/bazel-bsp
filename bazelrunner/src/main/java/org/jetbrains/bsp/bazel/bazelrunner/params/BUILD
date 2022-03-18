@@ -6,5 +6,6 @@ java_library(
     visibility = ["//bazelrunner:__subpackages__"],
     deps = [
         "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:io_vavr_vavr",
     ],
 )

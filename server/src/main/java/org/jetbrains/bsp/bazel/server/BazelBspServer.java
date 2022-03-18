@@ -3,9 +3,10 @@ package org.jetbrains.bsp.bazel.server;
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.logger.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
@@ -16,7 +17,6 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
-import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper;
 import org.jetbrains.bsp.bazel.server.sync.BepServerProjectListener;
@@ -41,13 +41,15 @@ public class BazelBspServer {
   private BspServerApi bspServerApi;
   private BazelBspCompilationManager bazelBspCompilationManager;
   private ProjectProvider projectProvider;
+  private final BuildClientLogger buildClientLogger;
 
   public BazelBspServer(BazelBspServerConfig bazelBspServerConfig) {
     this.bazelBspServerConfig = bazelBspServerConfig;
     var bazelPath = bazelBspServerConfig.getBazelPath();
-    var bazelDataResolver = new BazelDataResolver(BazelRunner.inCwd(bazelPath));
+    this.buildClientLogger = new BuildClientLogger();
+    var bazelDataResolver = new BazelDataResolver(BazelRunner.inCwd(bazelPath, buildClientLogger));
     this.bazelData = bazelDataResolver.resolveBazelData();
-    this.bazelRunner = BazelRunner.of(bazelPath, bazelData);
+    this.bazelRunner = BazelRunner.of(bazelPath, buildClientLogger, bazelData);
   }
 
   public void startServer(BspIntegrationData bspIntegrationData) {
@@ -57,8 +59,7 @@ public class BazelBspServer {
     this.bazelBspCompilationManager = new BazelBspCompilationManager(bazelRunner, bazelData);
     var internalAspectsResolver = new InternalAspectsResolver(bazelData);
     var bazelBspAspectsManager =
-        new BazelBspAspectsManager(
-            bazelBspCompilationManager, bazelRunner, internalAspectsResolver);
+        new BazelBspAspectsManager(bazelBspCompilationManager, internalAspectsResolver);
     var bazelPathsResolver = new BazelPathsResolver(bazelData);
     var javaLanguagePlugin = new JavaLanguagePlugin(bazelPathsResolver, bazelData);
     var scalaLanguagePlugin = new ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver);
@@ -76,7 +77,7 @@ public class BazelBspServer {
     var projectSyncService = new ProjectSyncService(bspProjectMapper, projectProvider);
     var executeService =
         new ExecuteService(bazelBspCompilationManager, projectProvider, bazelRunner);
-    var cppBuildServerService = new CppBuildServerService(bazelBspAspectsManager);
+    var cppBuildServerService = new CppBuildServerService();
 
     this.bspServerApi =
         new BspServerApi(
@@ -90,7 +91,7 @@ public class BazelBspServer {
   }
 
   private void integrateBsp(BspIntegrationData bspIntegrationData) {
-    Launcher<BuildClient> launcher =
+    var launcher =
         new Launcher.Builder<BuildClient>()
             .traceMessages(bspIntegrationData.getTraceWriter())
             .setOutput(bspIntegrationData.getStdout())
@@ -101,13 +102,11 @@ public class BazelBspServer {
             .create();
 
     bspIntegrationData.setLauncher(launcher);
-    BuildClientLogger buildClientLogger = new BuildClientLogger(launcher.getRemoteProxy());
-
-    var bepServer = new BepServer(bazelData, launcher.getRemoteProxy(), buildClientLogger);
+    BuildClient client = launcher.getRemoteProxy();
+    this.buildClientLogger.setBuildClient(client);
+    var bepServer = new BepServer(bazelData, client);
     bazelBspCompilationManager.setBepServer(bepServer);
     projectProvider.addListener(new BepServerProjectListener(bepServer));
-    bazelRunner.setLogger(buildClientLogger);
-
     bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }
 

@@ -2,12 +2,11 @@ package org.jetbrains.bsp.bazel.bazelrunner;
 
 import io.vavr.Lazy;
 import io.vavr.Tuple2;
-import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 
 public class BazelDataResolver {
   private static final Pattern INFO_LINE_PATTERN = Pattern.compile("([\\w-]+): (.*)");
@@ -23,9 +22,15 @@ public class BazelDataResolver {
 
   private Map<String, String> readBazelInfoMap() {
     var bazelProcessResult =
-        bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult();
+        bazelRunner
+            .commandBuilder()
+            .info()
+            .withFlag(BazelFlag.color(true))
+            .executeBazelCommand()
+            .waitAndGetResult();
 
-    return List.ofAll(bazelProcessResult.getStdoutLines())
+    return bazelProcessResult
+        .stdoutLines()
         .flatMap(
             line -> {
               var matcher = INFO_LINE_PATTERN.matcher(line);

@@ -4,8 +4,6 @@ import io.vavr.Lazy;
 import io.vavr.collection.Map;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
-import org.jetbrains.bsp.bazel.bazelrunner.data.SemanticVersion;
 
 public class LazyBazelData implements BazelData {
   private final Lazy<Map<String, String>> bazelInfoOutput;

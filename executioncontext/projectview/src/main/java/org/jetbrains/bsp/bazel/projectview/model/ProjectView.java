@@ -56,6 +56,12 @@ public class ProjectView {
     return targets;
   }
 
+  public TargetSpecs targetSpecs() {
+    return targets
+        .map(s -> new TargetSpecs(s.getIncludedValues(), s.getExcludedValues()))
+        .getOrElse(TargetSpecs.empty());
+  }
+
   public Option<ProjectViewBazelPathSection> getBazelPath() {
     return bazelPath;
   }

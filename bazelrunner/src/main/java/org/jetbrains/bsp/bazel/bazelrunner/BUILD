@@ -6,7 +6,7 @@ java_library(
     resources = ["//bazelrunner/src/main/resources"],
     visibility = ["//bazelrunner:__subpackages__"],
     deps = [
-        "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/data",
+        "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/outputs",
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/params",
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",

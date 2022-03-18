@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters;
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils;
 
 public class BazelRunnerBuilder {
@@ -23,15 +22,8 @@ public class BazelRunnerBuilder {
     this.arguments = new ArrayList<>();
   }
 
-  public BazelRunnerBuilder withFlag(BazelRunnerFlag bazelFlag) {
-    flags.add(bazelFlag.toString());
-
-    return this;
-  }
-
-  public BazelRunnerBuilder withFlag(BazelRunnerFlag bazelFlag, String value) {
-    flags.add(bazelFlag.toString());
-    flags.add(value);
+  public BazelRunnerBuilder withFlag(String bazelFlag) {
+    flags.add(bazelFlag);
 
     return this;
   }

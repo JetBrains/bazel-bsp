@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.utils;
 
 import io.vavr.Lazy;
 import java.nio.file.Paths;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 
 public class InternalAspectsResolver {
 
