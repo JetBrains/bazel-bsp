@@ -105,7 +105,7 @@ public class ExecuteService {
 
   private BazelProcessResult build(Set<BuildTargetIdentifier> bspIds) {
     return compilationManager
-        .buildTargetsWithBep(bspIds.toJavaList(), Collections.emptyList())
+        .buildTargetsWithBep(bspIds.toJavaList(), List.of(), Collections.emptyList())
         .processResult();
   }
 

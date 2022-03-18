@@ -20,6 +20,8 @@
 
 ### Changes 🔄
 
+- Support for excluded targets in the sync mechanism.
+  | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
 - Introduction of installation context.
   | [#184](https://github.com/JetBrains/bazel-bsp/pull/184)
 - Project uses (mostly) `io.vavr.Option` and `io.vavr.List`.

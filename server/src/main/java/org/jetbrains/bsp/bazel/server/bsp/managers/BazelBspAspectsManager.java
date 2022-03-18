@@ -27,12 +27,17 @@ public class BazelBspAspectsManager {
   }
 
   public BepOutput fetchFilesFromOutputGroup(
-      List<BuildTargetIdentifier> targets, String aspect, String outputGroup) {
+      List<BuildTargetIdentifier> includedTargets,
+      List<BuildTargetIdentifier> excludedTargets,
+      String aspect,
+      String outputGroup) {
     String aspectFlag = String.format("--aspects=%s", aspectsResolver.resolveLabel(aspect));
     String outputGroupFlag = String.format("--output_groups=%s", outputGroup);
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
-            targets, ImmutableList.of(aspectFlag, outputGroupFlag, "--keep_going"));
+            includedTargets,
+            excludedTargets,
+            ImmutableList.of(aspectFlag, outputGroupFlag, "--keep_going"));
     return result.bepOutput();
   }
 

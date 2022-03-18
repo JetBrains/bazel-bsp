@@ -5,7 +5,6 @@ import com.google.devtools.build.lib.query2.proto.proto2api.Build;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
@@ -25,10 +24,9 @@ public class BazelBspCompilationManager {
   }
 
   public BepBuildResult buildTargetsWithBep(
-      List<BuildTargetIdentifier> targets, List<String> extraFlags) {
-    List<String> bazelTargets =
-        targets.stream().map(BuildTargetIdentifier::getUri).collect(Collectors.toList());
-
+      List<BuildTargetIdentifier> includedTargets,
+      List<BuildTargetIdentifier> excludedTargets,
+      List<String> extraFlags) {
     final Map<String, String> diagnosticsProtosLocations =
         bepServer.getDiagnosticsProtosLocations();
     BazelProcess bazelProcess =
@@ -36,7 +34,7 @@ public class BazelBspCompilationManager {
             .commandBuilder()
             .query()
             .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withTargets(bazelTargets)
+            .withTargets(includedTargets, excludedTargets)
             .executeBazelBesCommand();
 
     Build.QueryResult queryResult = getQueryResultForProcess(bazelProcess);
@@ -48,7 +46,7 @@ public class BazelBspCompilationManager {
             .commandBuilder()
             .build()
             .withFlags(extraFlags)
-            .withTargets(bazelTargets)
+            .withTargets(includedTargets, excludedTargets)
             .executeBazelBesCommand()
             .waitAndGetResult();
 

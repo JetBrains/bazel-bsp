@@ -48,11 +48,13 @@ public class ProjectResolver {
   }
 
   private BepOutput buildProjectWithAspect(ProjectView projectView) {
-    // TODO handle excludes
-    var projectTargetRoots =
+    var includedTargetRoots =
         projectView.getTargets().toList().flatMap(ProjectViewListSection::getIncludedValues);
+    var excludedTargetRoots =
+        projectView.getTargets().toList().flatMap(ProjectViewListSection::getExcludedValues);
     return bazelBspAspectsManager.fetchFilesFromOutputGroup(
-        projectTargetRoots.asJava(),
+        includedTargetRoots.asJava(),
+        excludedTargetRoots.asJava(),
         ASPECT_NAME,
         BSP_INFO_OUTPUT_GROUP + "," + ARTIFACTS_OUTPUT_GROUP);
   }
