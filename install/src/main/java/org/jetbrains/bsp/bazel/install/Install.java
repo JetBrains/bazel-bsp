@@ -38,6 +38,7 @@ public class Install {
   private static final String HELP_SHORT_OPT = "h";
   private static final String DIRECTORY_SHORT_OPT = "d";
   private static final String BAZEL_TARGETS_SHORT_OPT = "t";
+  private static final String PROJECT_VIEW_FILE_PATH_SHORT_OPT = "p";
 
   public static void main(String[] args) throws IOException {
     // This is the command line which will be used to start the BSP server. See:
@@ -205,70 +206,29 @@ public class Install {
   }
 
   private static Options getCliOptions() {
-    Options cliOptions = new Options();
+    var cliOptions = new Options();
 
-    Option java =
-        Option.builder(JAVA_SHORT_OPT)
-            .longOpt("java")
+    var projectViewFilePath =
+        Option.builder(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
+            .longOpt("project_view_file")
             .hasArg()
             .argName("path")
-            .desc(
-                "Deprecated! Use project view file instead. "
-                    + "(Use provided Java executable to run the BSP server)")
+            .desc("Path to project view file.")
             .build();
+    cliOptions.addOption(projectViewFilePath);
 
-    cliOptions.addOption(java);
-
-    Option bazel =
-        Option.builder(BAZEL_SHORT_OPT)
-            .longOpt("bazel")
-            .hasArg()
-            .argName("path")
-            .desc(
-                "Deprecated! Use project view file instead. "
-                    + "(Make the BSP server use this Bazel executable)")
-            .build();
-
-    cliOptions.addOption(bazel);
-
-    Option debug =
-        Option.builder(DEBUGGER_SHORT_OPT)
-            .longOpt("debugger")
-            .hasArg()
-            .argName("address (e.g. '127.0.0.1:8000'")
-            .desc("Deprecated! Use project view file instead. (Allow BSP server debugging)")
-            .build();
-
-    cliOptions.addOption(debug);
-
-    Option directory =
+    var directory =
         Option.builder(DIRECTORY_SHORT_OPT)
             .longOpt("directory")
             .hasArg()
             .argName("path")
             .desc(
-                "Deprecated! Use project view file instead. "
-                    + "(Path to directory where bazelbsp server should be setup. "
-                    + "Current directory will be used by default)")
+                "Path to directory where bazel bsp server should be setup. "
+                    + "Current directory will be used by default")
             .build();
-
     cliOptions.addOption(directory);
 
-    Option targets =
-        Option.builder(BAZEL_TARGETS_SHORT_OPT)
-            .longOpt("targets")
-            .hasArg()
-            .argName("targets")
-            .desc(
-                "Deprecated! Use project view file instead. (Name of the bazel's targets that the"
-                    + " server should import. Targets can be separated by a comma. The default is"
-                    + " to import all targets (//...))")
-            .build();
-
-    cliOptions.addOption(targets);
-
-    Option help = Option.builder(HELP_SHORT_OPT).longOpt("help").desc("Show help").build();
-
+    var help = Option.builder(HELP_SHORT_OPT).longOpt("help").desc("Show help").build();
     cliOptions.addOption(help);
 
     return cliOptions;
