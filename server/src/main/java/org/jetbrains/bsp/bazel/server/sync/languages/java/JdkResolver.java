@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java;
 
 import io.vavr.PartialFunction;
+import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import java.net.URI;
@@ -32,14 +33,16 @@ public class JdkResolver {
   }
 
   private Seq<JdkCandidate> candidatesWithLatestVersion(Seq<JdkCandidate> candidates) {
-    var version = findLatestVersion(candidates);
-    var byVersion = candidates.filter(candidate -> candidate.version.contains(version));
+    var latestVersion = findLatestVersion(candidates);
+    var byVersion =
+        latestVersion.map(
+            version -> candidates.filter(candidate -> candidate.version.contains(version)));
     // sorted for deterministic output
-    return byVersion.sortBy(c -> c.javaHome.toString());
+    return byVersion.getOrElse(List.empty()).sortBy(c -> c.javaHome.toString());
   }
 
-  private String findLatestVersion(Seq<JdkCandidate> candidates) {
-    return candidates.flatMap(c -> c.version).maxBy(s -> Integer.valueOf(s)).get();
+  private Option<String> findLatestVersion(Seq<JdkCandidate> candidates) {
+    return candidates.flatMap(c -> c.version).maxBy(s -> Integer.valueOf(s));
   }
 
   private Option<JdkCandidate> pickCandidateFromJvmRuntime(Seq<JdkCandidate> candidates) {
@@ -57,7 +60,7 @@ public class JdkResolver {
             .sortBy(c -> !c.isRuntime)
             .collect(PartialFunction.unlift(c -> c.javaHome))
             .headOption();
-    return javaHome.map(jh -> new JdkCandidate(true, javaHome, Option.some(version)));
+    return javaHome.map(jh -> new JdkCandidate(true, javaHome, version));
   }
 
   private Option<JdkCandidate> resolveJdk(TargetInfo targetInfo) {
