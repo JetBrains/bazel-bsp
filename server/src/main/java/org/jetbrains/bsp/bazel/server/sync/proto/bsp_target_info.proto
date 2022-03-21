@@ -57,6 +57,20 @@ message ScalaToolchainInfo {
   repeated FileLocation compiler_classpath = 1;
 }
 
+message CcTargetInfo {
+  repeated string copts = 1;
+  repeated string defines = 2;
+  repeated string linkopts = 3;
+  bool linkshared = 4;
+}
+
+message CcToolchainInfo {
+  string version = 1;
+  string compiler_type = 2;
+  FileLocation c_compiler = 3;
+  FileLocation cpp_compiler = 4;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -69,4 +83,6 @@ message TargetInfo {
   JavaRuntimeInfo java_runtime_info = 3000;
   ScalaTargetInfo scala_target_info = 4000;
   ScalaToolchainInfo scala_toolchain_info = 5000;
+  CcTargetInfo cc_target_info = 6000;
+  CcToolchainInfo cc_toolchain_info = 7000;
 }

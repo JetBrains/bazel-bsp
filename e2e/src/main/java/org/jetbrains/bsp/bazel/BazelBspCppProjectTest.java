@@ -68,7 +68,7 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
         new CppOptionsItem(
             new BuildTargetIdentifier("//example:example"),
             ImmutableList.of("-Iexternal/gtest/include"),
-            ImmutableList.of("BOOST_FALLTHROUGH"),
+            ImmutableList.of("BOOST_FALLTHROUGHsd"),
             ImmutableList.of("-pthread"));
 
     CppOptionsResult expectedCppOptionsResult =

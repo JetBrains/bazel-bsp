@@ -189,9 +189,7 @@ public class BspServerApi
   @Override
   public CompletableFuture<CppOptionsResult> buildTargetCppOptions(CppOptionsParams params) {
     return runner.handleRequest(
-        "buildTargetCppOptions",
-        cppOptionsParams -> cppBuildServerService.buildTargetCppOptions(),
-        params);
+        "buildTargetCppOptions", projectSyncService::buildTargetCppOptions, params);
   }
 
   @Override

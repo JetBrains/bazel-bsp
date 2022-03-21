@@ -11,6 +11,8 @@ import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.CompileProvider;
+import ch.epfl.scala.bsp4j.CppOptionsParams;
+import ch.epfl.scala.bsp4j.CppOptionsResult;
 import ch.epfl.scala.bsp4j.DependencySourcesItem;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
@@ -257,5 +259,12 @@ public class BspProjectMapper {
     var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
     var items = modules.flatMap(scalaLanguagePlugin::toScalaMainClassesItem);
     return new ScalaMainClassesResult(items.toJavaList());
+  }
+
+  public CppOptionsResult buildTargetCppOptions(Project project, CppOptionsParams params) {
+    var modules = getModules(project, params.getTargets());
+    var cppLanguagePlugin = languagePluginsService.cppPlugin();
+    var items = modules.flatMap(cppLanguagePlugin::toCppOptionsItem);
+    return new CppOptionsResult(items.toJavaList());
   }
 }

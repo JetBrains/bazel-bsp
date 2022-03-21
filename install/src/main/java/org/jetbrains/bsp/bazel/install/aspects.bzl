@@ -310,6 +310,47 @@ def extract_java_runtime(target, ctx, dep_targets):
     else:
         return None, dict()
 
+def extract_cc_info(target, ctx, output_groups):
+    copts = getattr(ctx.rule.attr, "copts", [])
+    defines = getattr(ctx.rule.attr, "defines", [])
+    linkopts = getattr(ctx.rule.attr, "linkopts", [])
+    linkshared = False
+    if hasattr(ctx.rule.attr, "linkshared"):
+        linkshared = ctx.rule.attr.linkshared
+
+    cc_info = struct(
+        copts = copts,
+        defines = defines,
+        linkopts = linkopts,
+        linkshared = linkshared,
+    )
+    return cc_info
+
+def extract_cc_toolchain_info(target, ctx, dep_targets):
+    toolchain = None
+
+    if hasattr(target, "cc_toolchain"):
+        toolchain = target.cc_toolchain
+    elif cc_common.CcToolchainInfo != platform_common.ToolchainInfo and \
+         cc_common.CcToolchainInfo in target:
+        toolchain = target[cc_common.CcToolchainInfo]
+
+    toolchain_info = None
+    if toolchain != None:
+        toolchain_info = create_struct(
+            version = "",  # TODO: obtain version or remove it from the protocol
+            compiler_type = toolchain.compiler,
+            c_compiler = toolchain.compiler_executable,  # TODO: bazel apparently uses the same name for both
+            cpp_compiler = toolchain.compiler_executable,
+        )
+    else:
+        for dep in dep_targets:
+            if hasattr(dep.bsp_info, "cc_toolchain_info"):
+                toolchain_info = dep.bsp_info.cc_toolchain_info
+                break
+
+    return toolchain_info
+
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
     aspect_ids = None
@@ -463,6 +504,8 @@ def _bsp_target_info_aspect_impl(target, ctx):
     scala_target_info = extract_scala_info(target, ctx, output_groups)
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
+    cc_target_info = extract_cc_info(target, ctx, output_groups)
+    cc_toolchain_info = extract_cc_toolchain_info(target, ctx, output_groups)
 
     result = dict(
         id = str(target.label),
@@ -476,6 +519,8 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_target_info = java_target_info,
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
+        cc_target_info = cc_target_info,
+        cc_toolchain_info = cc_toolchain_info,
     )
 
     file_name = target.label.name

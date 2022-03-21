@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
+import ch.epfl.scala.bsp4j.CppOptionsParams;
+import ch.epfl.scala.bsp4j.CppOptionsResult;
 import ch.epfl.scala.bsp4j.DependencyModulesParams;
 import ch.epfl.scala.bsp4j.DependencyModulesResult;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
@@ -103,6 +105,11 @@ public class ProjectSyncService {
   public ScalaMainClassesResult buildTargetScalaMainClasses(ScalaMainClassesParams params) {
     var project = projectProvider.get();
     return bspMapper.buildTargetScalaMainClasses(project, params);
+  }
+
+  public CppOptionsResult buildTargetCppOptions(CppOptionsParams params) {
+    var project = projectProvider.get();
+    return bspMapper.buildTargetCppOptions(project, params);
   }
 
   // TODO implement this endpoint to return libraries with maven coordinates that target depends on

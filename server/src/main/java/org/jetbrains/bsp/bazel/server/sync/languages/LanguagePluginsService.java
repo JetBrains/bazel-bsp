@@ -61,6 +61,10 @@ public class LanguagePluginsService {
     return scalaLanguagePlugin;
   }
 
+  public CppLanguagePlugin cppPlugin() {
+    return cppLanguagePlugin;
+  }
+
   public Option<JavaModule> extractJavaModule(Module module) {
     return module
         .languageData()
