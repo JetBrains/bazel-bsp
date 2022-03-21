@@ -3,10 +3,8 @@ package org.jetbrains.bsp.bazel.install;
 import ch.epfl.scala.bsp4j.BspConnectionDetails;
 import com.google.common.base.Splitter;
 import com.google.gson.GsonBuilder;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,14 +15,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextSingletonEntity;
+import org.jetbrains.bsp.bazel.installationcontext.InstallationContext;
+import org.jetbrains.bsp.bazel.installationcontext.InstallationContextConstructor;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 
 public class Install {
@@ -32,34 +31,30 @@ public class Install {
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
   public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.ServerInitializer";
 
-  private static final String DEBUGGER_SHORT_OPT = "x";
-  private static final String JAVA_SHORT_OPT = "j";
-  private static final String BAZEL_SHORT_OPT = "b";
   private static final String HELP_SHORT_OPT = "h";
   private static final String DIRECTORY_SHORT_OPT = "d";
-  private static final String BAZEL_TARGETS_SHORT_OPT = "t";
   private static final String PROJECT_VIEW_FILE_PATH_SHORT_OPT = "p";
 
   public static void main(String[] args) throws IOException {
     // This is the command line which will be used to start the BSP server. See:
     // https://build-server-protocol.github.io/docs/server-discovery.html#build-tool-commands-to-start-bsp-servers
-    List<String> argv = new ArrayList<>();
+    var argv = new ArrayList<String>();
 
-    Options cliOptions = getCliOptions();
-    CommandLineParser parser = new DefaultParser();
-    HelpFormatter formatter = new HelpFormatter();
+    var cliOptions = getCliOptions();
+    var parser = new DefaultParser();
+    var formatter = new HelpFormatter();
     formatter.setWidth(120);
-    boolean hasError = false;
-    PrintWriter writer = new PrintWriter(System.err);
+    var hasError = false;
+    var writer = new PrintWriter(System.err);
     try {
-      CommandLine cmd = parser.parse(cliOptions, args, false);
+      var cmd = parser.parse(cliOptions, args, false);
       if (cmd.hasOption(HELP_SHORT_OPT)) {
         formatter.printHelp(INSTALLER_BINARY_NAME, cliOptions);
       } else {
-        Path rootDir = getRootDir(cmd);
-        Path bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
+        var rootDir = getRootDir(cmd);
+        var bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
 
-        Path defaultProjectViewFilePath = bazelbspDir.resolve("default-projectview.bazelproject");
+        var defaultProjectViewFilePath = bazelbspDir.resolve("default-projectview.bazelproject");
         Files.copy(
             Install.class.getResourceAsStream("default-projectview.bazelproject"),
             defaultProjectViewFilePath,
@@ -68,16 +63,19 @@ public class Install {
         copyAspects(bazelbspDir);
         createEmptyBuildFile(bazelbspDir);
 
-        var projectViewProvider = new ProjectViewDefaultParserProvider(rootDir);
-        // will be handled properly
-        var projectView = projectViewProvider.create().get();
+        var pathToProjectViewFile = getProjectViewPath(cmd, defaultProjectViewFilePath);
+        var projectViewProvider =
+            new ProjectViewDefaultParserProvider(rootDir, pathToProjectViewFile);
+        var projectView = projectViewProvider.create();
 
-        addJavaBinary(cmd, argv, projectView);
+        var installationContextConstructor = new InstallationContextConstructor();
+        var installationContext = installationContextConstructor.construct(projectView).get();
+
+        addJavaBinary(argv, installationContext);
         addJavaClasspath(argv);
-        addDebuggerConnection(cmd, argv, projectView);
+        addDebuggerConnection(argv, installationContext);
         argv.add(SERVER_CLASS_NAME);
-        addBazelBinary(cmd, argv, projectView);
-        addBazelTargets(cmd, argv);
+        addProjectViewFilePath(argv, pathToProjectViewFile);
 
         BspConnectionDetails details = createBspConnectionDetails(argv);
         writeConfigurationFiles(rootDir, details);
@@ -107,6 +105,12 @@ public class Install {
         : Paths.get("");
   }
 
+  private static Path getProjectViewPath(CommandLine cmd, Path pathToDefaultProjectViewFile) {
+    return cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
+        ? Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT))
+        : pathToDefaultProjectViewFile;
+  }
+
   private static BspConnectionDetails createBspConnectionDetails(List<String> argv) {
     return new BspConnectionDetails(
         Constants.NAME,
@@ -116,25 +120,8 @@ public class Install {
         Constants.SUPPORTED_LANGUAGES);
   }
 
-  private static void addBazelBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
-    if (cmd.hasOption(BAZEL_SHORT_OPT)) {
-      argv.add(cmd.getOptionValue(BAZEL_SHORT_OPT));
-    } else if (projectView.getBazelPath().isDefined()) {
-      argv.add(projectView.getBazelPath().get().getValue().toString());
-    } else {
-      argv.add(findOnPath("bazel"));
-    }
-  }
-
-  private static void addJavaBinary(CommandLine cmd, List<String> argv, ProjectView projectView) {
-    if (cmd.hasOption(JAVA_SHORT_OPT)) {
-      argv.add(cmd.getOptionValue(JAVA_SHORT_OPT));
-    } else if (projectView.getJavaPath().isDefined()) {
-      argv.add(projectView.getJavaPath().get().getValue().toString());
-    } else {
-      String javaHome = readSystemProperty("java.home");
-      argv.add(Paths.get(javaHome).resolve("bin").resolve("java").toString());
-    }
+  private static void addJavaBinary(List<String> argv, InstallationContext installationContext) {
+    argv.add(installationContext.getJavaPath().getValue().toString());
   }
 
   private static void addJavaClasspath(List<String> argv) {
@@ -149,25 +136,23 @@ public class Install {
   }
 
   private static void addDebuggerConnection(
-      CommandLine cmd, List<String> argv, ProjectView projectView) {
-    if (cmd.hasOption(DEBUGGER_SHORT_OPT)) {
-      var debuggerAddress = cmd.getOptionValue(DEBUGGER_SHORT_OPT);
-      argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
-    } else if (projectView.getDebuggerAddress().isDefined()) {
-      var debuggerAddress = projectView.getDebuggerAddress().get().getValue();
-      argv.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=" + debuggerAddress);
-    }
+      List<String> argv, InstallationContext installationContext) {
+    installationContext
+        .getDebuggerAddress()
+        .map(ExecutionContextSingletonEntity::getValue)
+        .forEach(
+            debuggerAddress ->
+                argv.add(
+                    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address="
+                        + debuggerAddress.toString()));
   }
 
-  private static void addBazelTargets(CommandLine cmd, List<String> argv) {
-    if (cmd.hasOption(BAZEL_TARGETS_SHORT_OPT)) {
-      String targets = cmd.getOptionValue(BAZEL_TARGETS_SHORT_OPT);
-      argv.add(targets);
-    }
+  private static void addProjectViewFilePath(List<String> argv, Path projectViewFilePath) {
+    argv.add(projectViewFilePath.toString());
   }
 
   private static void copyAspects(Path bazelbspDir) throws IOException {
-    Path aspectsFile = bazelbspDir.resolve(Constants.ASPECTS_FILE_NAME);
+    var aspectsFile = bazelbspDir.resolve(Constants.ASPECTS_FILE_NAME);
     Files.copy(
         Install.class.getResourceAsStream(Constants.ASPECTS_FILE_NAME),
         aspectsFile,
@@ -183,20 +168,19 @@ public class Install {
   }
 
   private static Path createDir(Path rootDir, String name) throws IOException {
-    Path dir = rootDir.resolve(name);
+    var dir = rootDir.resolve(name);
     Files.createDirectories(dir);
     return dir;
   }
 
   /** Write bazelbsp.json file which allows bsp server discovery */
   private static void writeBazelbspJson(Path bspDir, Object discoveryDetails) throws IOException {
-    Files.write(
+    Files.writeString(
         bspDir.resolve(Constants.BAZELBSP_JSON_FILE_NAME),
-        new GsonBuilder()
-            .setPrettyPrinting()
-            .create()
-            .toJson(discoveryDetails)
-            .getBytes(StandardCharsets.UTF_8));
+            new GsonBuilder()
+                .setPrettyPrinting()
+                .create()
+                .toJson(discoveryDetails));
   }
 
   private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails)
@@ -232,22 +216,6 @@ public class Install {
     cliOptions.addOption(help);
 
     return cliOptions;
-  }
-
-  private static String findOnPath(String bin) {
-    var pathElements = Splitter.on(File.pathSeparator).splitToList(System.getenv("PATH"));
-
-    return pathElements.stream()
-        .filter(Install::isItNotBazeliskPath)
-        .map(element -> new File(element, bin))
-        .filter(File::canExecute)
-        .findFirst()
-        .map(File::toString)
-        .orElseThrow(() -> new NoSuchElementException("Could not find " + bin + " on your PATH"));
-  }
-
-  private static boolean isItNotBazeliskPath(String path) {
-    return !path.contains("bazelisk/");
   }
 
   private static String readSystemProperty(String name) {

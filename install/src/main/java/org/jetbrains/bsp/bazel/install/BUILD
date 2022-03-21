@@ -15,5 +15,6 @@ java_library(
         "@maven//:com_google_code_gson_gson",
         "@maven//:com_google_guava_guava",
         "@maven//:commons_cli_commons_cli",
+        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
     ],
 )
