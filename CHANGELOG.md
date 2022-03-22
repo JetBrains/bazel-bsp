@@ -7,6 +7,9 @@
 
 ### Features 🎉
 
+- Improved bazel runner. The BSP Client now receives invoked bazel command,
+  its output, duration and exit code.
+  | [#198](https://github.com/JetBrains/bazel-bsp/pull/198)
 - Scala diagnostics work without a fork (technically it worked already for a while).
   | [#170](https://github.com/JetBrains/bazel-bsp/pull/170)
 
@@ -21,9 +24,6 @@
 
 ### Changes 🔄
 
-- Improved bazel runner. The BSP Client now receives invoked bazel command,
-  its output, duration and exit code.
-  | [#198](https://github.com/JetBrains/bazel-bsp/pull/198)
 - Support for excluded targets in the sync mechanism.
   | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
 - Introduction of installation context.
