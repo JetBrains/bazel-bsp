@@ -1,3 +1,4 @@
+
 # Changelog
 
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
@@ -20,6 +21,9 @@
 
 ### Changes 🔄
 
+- Improved bazel runner. The BSP Client now receives invoked bazel command,
+  its output, duration and exit code.
+  | [#198](https://github.com/JetBrains/bazel-bsp/pull/198)
 - Support for excluded targets in the sync mechanism.
   | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
 - Introduction of installation context.

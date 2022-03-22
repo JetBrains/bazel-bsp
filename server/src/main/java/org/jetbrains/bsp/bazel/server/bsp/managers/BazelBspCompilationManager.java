@@ -95,7 +95,7 @@ public class BazelBspCompilationManager {
 
   private Build.QueryResult getQueryResultForProcess(BazelProcess process) {
     try {
-      return Build.QueryResult.parseFrom(process.getInputStream());
+      return Build.QueryResult.parseFrom(process.waitAndGetBinaryResult());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
