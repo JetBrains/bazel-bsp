@@ -3,11 +3,8 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "install",
     srcs = glob(["*.java"]),
-    resources = [
-        "aspects.bzl",
-        "default-projectview.bazelproject",
-    ],
     visibility = ["//install:__subpackages__"],
+    resources = [ "//install/src/main/resources",],
     deps = [
         "//commons",
         "//executioncontext/projectview:parser",

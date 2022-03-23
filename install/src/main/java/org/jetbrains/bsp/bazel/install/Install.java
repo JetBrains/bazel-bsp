@@ -56,10 +56,9 @@ public class Install {
 
         var defaultProjectViewFilePath = bazelbspDir.resolve("default-projectview.bazelproject");
         Files.copy(
-            Install.class.getResourceAsStream("default-projectview.bazelproject"),
+            Install.class.getResourceAsStream("/default-projectview.bazelproject"),
             defaultProjectViewFilePath,
             StandardCopyOption.REPLACE_EXISTING);
-
         copyAspects(bazelbspDir);
         createEmptyBuildFile(bazelbspDir);
 
@@ -154,7 +153,7 @@ public class Install {
   private static void copyAspects(Path bazelbspDir) throws IOException {
     var aspectsFile = bazelbspDir.resolve(Constants.ASPECTS_FILE_NAME);
     Files.copy(
-        Install.class.getResourceAsStream(Constants.ASPECTS_FILE_NAME),
+        Install.class.getResourceAsStream("/" + Constants.ASPECTS_FILE_NAME),
         aspectsFile,
         StandardCopyOption.REPLACE_EXISTING);
   }
