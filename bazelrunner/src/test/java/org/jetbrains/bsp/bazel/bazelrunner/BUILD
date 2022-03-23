@@ -8,6 +8,6 @@ java_test(
         "@maven//:junit_junit",
     ],
     deps = [
-        "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/data",
+        "//bazelrunner",
     ],
 )

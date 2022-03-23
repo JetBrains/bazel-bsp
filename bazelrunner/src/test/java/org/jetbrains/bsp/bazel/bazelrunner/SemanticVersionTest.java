@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.bazelrunner.data;
+package org.jetbrains.bsp.bazel.bazelrunner;
 
 import static org.junit.Assert.assertEquals;
 

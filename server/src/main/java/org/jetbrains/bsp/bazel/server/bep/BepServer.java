@@ -9,7 +9,6 @@ import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
-import com.google.common.collect.ImmutableList;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.v1.BuildEvent;
 import com.google.devtools.build.v1.PublishBuildEventGrpc;
@@ -28,25 +27,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.commons.Uri;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.FileDiagnostic;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.StderrDiagnosticsParser;
-import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
-
-  private static final List<String> EXCLUDED_PROGRESS_MESSAGES =
-      ImmutableList.of("Loading: 0 packages loaded");
-
   private static final int URI_PREFIX_LENGTH = 7;
 
   private final BuildClient bspClient;
-  private final BuildClientLogger buildClientLogger;
 
   private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
@@ -54,10 +47,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
-  public BepServer(
-      BazelData bazelData, BuildClient bspClient, BuildClientLogger buildClientLogger) {
+  public BepServer(BazelData bazelData, BuildClient bspClient) {
     this.bspClient = bspClient;
-    this.buildClientLogger = buildClientLogger;
     this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelData, bspClient);
   }
 
@@ -217,8 +208,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       String errorMessage =
           String.format(
               "Command aborted with reason %s: %s", aborted.getReason(), aborted.getDescription());
-      buildClientLogger.logError(errorMessage);
-
       throw new RuntimeException(errorMessage);
     }
   }
@@ -233,8 +222,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     StderrDiagnosticsParser.parse(progress.getStderr()).entrySet().stream()
         .map(this::createParamsFromEntry)
         .forEach(bspClient::onBuildPublishDiagnostics);
-
-    logProgress(progress);
   }
 
   private PublishDiagnosticsParams createParamsFromEntry(
@@ -258,18 +245,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private List<Diagnostic> getDiagnosticsFromFileDiagnostics(List<FileDiagnostic> diagnostics) {
     return diagnostics.stream().map(FileDiagnostic::getDiagnostic).collect(Collectors.toList());
-  }
-
-  private void logProgress(BuildEventStreamProtos.Progress progress) {
-    String progressMessage = progress.getStderr().trim();
-
-    if (shouldMessageBeLogged(progressMessage)) {
-      buildClientLogger.logMessage(progressMessage);
-    }
-  }
-
-  private boolean shouldMessageBeLogged(String message) {
-    return EXCLUDED_PROGRESS_MESSAGES.stream().noneMatch(message::startsWith);
   }
 
   public BepOutput getBepOutput() {

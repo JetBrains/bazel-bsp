@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.commons.Uri;
 
 public class BepDiagnosticsDispatcher {

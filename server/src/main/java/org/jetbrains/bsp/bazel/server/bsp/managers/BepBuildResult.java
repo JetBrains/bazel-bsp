@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 
 public class BepBuildResult {

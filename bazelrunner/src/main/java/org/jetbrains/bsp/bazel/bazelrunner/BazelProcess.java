@@ -1,61 +1,63 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
-import io.vavr.control.Option;
-import java.io.InputStream;
-import java.util.List;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelProcessResult;
-import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelStreamReader;
-import org.jetbrains.bsp.bazel.server.loggers.BuildClientLogger;
+import java.io.IOException;
+import java.time.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor;
+import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputCollector;
+import org.jetbrains.bsp.bazel.bazelrunner.utils.Format;
+import org.jetbrains.bsp.bazel.bazelrunner.utils.Stopwatch;
+import org.jetbrains.bsp.bazel.logger.BuildClientLogger;
 
 public class BazelProcess {
 
-  private static final int OK_EXIT_CODE = 0;
-
   private final Process process;
-  private final Option<BuildClientLogger> buildClientLogger;
+  private final BuildClientLogger logger;
 
-  BazelProcess(Process process, Option<BuildClientLogger> buildClientLogger) {
+  private static final Logger LOGGER = LogManager.getLogger(BazelProcess.class);
+
+  BazelProcess(Process process, BuildClientLogger logger) {
     this.process = process;
-    this.buildClientLogger = buildClientLogger;
+    this.logger = logger;
   }
 
   public BazelProcessResult waitAndGetResult() {
     try {
-      int exitCode = process.waitFor();
-      BazelProcessResult bazelProcessResult =
-          new BazelProcessResult(process.getInputStream(), process.getErrorStream(), exitCode);
-
-      logBazelMessage(bazelProcessResult, exitCode);
-
-      return bazelProcessResult;
+      var stdoutCollector = new OutputCollector();
+      var stderrCollector = new OutputCollector();
+      var outputProcessor = new AsyncOutputProcessor();
+      var stopwatch = Stopwatch.start();
+      outputProcessor.start(
+          process.getInputStream(), stdoutCollector, logger::logMessage, LOGGER::info);
+      outputProcessor.start(
+          process.getErrorStream(), stderrCollector, logger::logError, LOGGER::info);
+      var exitCode = process.waitFor();
+      outputProcessor.shutdown();
+      var duration = stopwatch.stop();
+      logCompletion(exitCode, duration);
+      return new BazelProcessResult(stdoutCollector, stderrCollector, exitCode);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private void logBazelMessage(BazelProcessResult bazelProcessResult, int exitCode) {
-    if (exitCode == OK_EXIT_CODE) {
-      logBazelMessage(bazelProcessResult);
-    } else {
-      logBazelError(bazelProcessResult);
+  public byte[] waitAndGetBinaryResult() {
+    try {
+      var stopwatch = Stopwatch.start();
+      byte[] bytes = process.getInputStream().readAllBytes();
+      var exitCode = process.waitFor();
+      var duration = stopwatch.stop();
+      logCompletion(exitCode, duration);
+      return bytes;
+    } catch (IOException | InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 
-  private void logBazelMessage(BazelProcessResult bazelProcessResult) {
-    String message = bazelProcessResult.getStderr();
-    buildClientLogger.forEach(logger -> logger.logMessage(message));
-  }
-
-  private void logBazelError(BazelProcessResult bazelProcessResult) {
-    String error = bazelProcessResult.getStderr();
-    buildClientLogger.forEach(logger -> logger.logError(error));
-  }
-
-  public InputStream getInputStream() {
-    return process.getInputStream();
-  }
-
-  public List<String> getStderr() {
-    return BazelStreamReader.drainStream(process.getErrorStream());
+  private void logCompletion(int exitCode, Duration duration) {
+    logger.logMessage(
+        String.format(
+            "Command completed with exit code %d in %s", exitCode, Format.duration(duration)));
   }
 }

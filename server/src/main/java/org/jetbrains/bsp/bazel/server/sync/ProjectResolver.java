@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.protobuf.TextFormat;
 import io.vavr.API;
 import io.vavr.collection.HashSet;
+import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.nio.file.Paths;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
@@ -48,15 +48,10 @@ public class ProjectResolver {
   }
 
   private BepOutput buildProjectWithAspect(ProjectView projectView) {
-    var includedTargetRoots =
-        projectView.getTargets().toList().flatMap(ProjectViewListSection::getIncludedValues);
-    var excludedTargetRoots =
-        projectView.getTargets().toList().flatMap(ProjectViewListSection::getExcludedValues);
-    return bazelBspAspectsManager.fetchFilesFromOutputGroup(
-        includedTargetRoots.asJava(),
-        excludedTargetRoots.asJava(),
+    return bazelBspAspectsManager.fetchFilesFromOutputGroups(
+        projectView.targetSpecs(),
         ASPECT_NAME,
-        BSP_INFO_OUTPUT_GROUP + "," + ARTIFACTS_OUTPUT_GROUP);
+        List.of(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP));
   }
 
   private Map<String, TargetInfo> readTargetMapFromAspectOutputs(Set<URI> files) {

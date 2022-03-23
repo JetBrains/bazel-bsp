@@ -1,71 +1,33 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import java.util.List;
-import java.util.stream.Stream;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
+import io.vavr.collection.List;
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
+import org.jetbrains.bsp.bazel.projectview.model.TargetSpecs;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 
 public class BazelBspAspectsManager {
 
-  public static final String DEBUG_MESSAGE = "DEBUG:";
   private final BazelBspCompilationManager bazelBspCompilationManager;
-  private final BazelRunner bazelRunner;
   private final InternalAspectsResolver aspectsResolver;
 
   public BazelBspAspectsManager(
       BazelBspCompilationManager bazelBspCompilationManager,
-      BazelRunner bazelRunner,
       InternalAspectsResolver aspectResolver) {
     this.bazelBspCompilationManager = bazelBspCompilationManager;
-    this.bazelRunner = bazelRunner;
     this.aspectsResolver = aspectResolver;
   }
 
-  public BepOutput fetchFilesFromOutputGroup(
-      List<BuildTargetIdentifier> includedTargets,
-      List<BuildTargetIdentifier> excludedTargets,
-      String aspect,
-      String outputGroup) {
-    String aspectFlag = String.format("--aspects=%s", aspectsResolver.resolveLabel(aspect));
-    String outputGroupFlag = String.format("--output_groups=%s", outputGroup);
+  public BepOutput fetchFilesFromOutputGroups(
+      TargetSpecs targetSpecs, String aspect, List<String> outputGroups) {
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
-            includedTargets,
-            excludedTargets,
-            ImmutableList.of(aspectFlag, outputGroupFlag, "--keep_going"));
+            targetSpecs,
+            List.of(
+                BazelFlag.aspect(aspectsResolver.resolveLabel(aspect)),
+                BazelFlag.outputGroups(outputGroups),
+                BazelFlag.keepGoing(),
+                BazelFlag.color(true)));
     return result.bepOutput();
-  }
-
-  public Stream<String> fetchLinesFromAspect(String target, String aspect) {
-    return fetchLinesFromAspect(target, aspect, false);
-  }
-
-  public Stream<String> fetchLinesFromAspect(String target, String aspect, boolean build) {
-    var builder =
-        bazelRunner
-            .commandBuilder()
-            .build()
-            .withFlag(BazelRunnerFlag.ASPECTS, aspectsResolver.resolveLabel(aspect))
-            .withArgument(target);
-
-    if (!build) {
-      builder.withFlag(BazelRunnerFlag.NOBUILD);
-    }
-
-    List<String> lines = builder.executeBazelCommand().getStderr();
-
-    return lines.stream()
-        .map(line -> Splitter.on(" ").splitToList(line))
-        .filter(
-            parts ->
-                parts.size() == 3
-                    && parts.get(0).equals(DEBUG_MESSAGE)
-                    && parts.get(1).contains(aspectsResolver.getAspectOutputIndicator()))
-        .map(parts -> parts.get(2));
   }
 }

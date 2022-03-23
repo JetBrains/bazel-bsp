@@ -2,14 +2,15 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.devtools.build.lib.query2.proto.proto2api.Build;
+import io.vavr.collection.List;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcess;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelRunnerFlag;
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
+import org.jetbrains.bsp.bazel.projectview.model.TargetSpecs;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 
 public class BazelBspCompilationManager {
@@ -23,21 +24,21 @@ public class BazelBspCompilationManager {
     this.bazelData = bazelData;
   }
 
-  public BepBuildResult buildTargetsWithBep(
-      List<BuildTargetIdentifier> includedTargets,
-      List<BuildTargetIdentifier> excludedTargets,
-      List<String> extraFlags) {
-    final Map<String, String> diagnosticsProtosLocations =
-        bepServer.getDiagnosticsProtosLocations();
-    BazelProcess bazelProcess =
+  public BepBuildResult buildTargetsWithBep(TargetSpecs targetSpecs) {
+    return buildTargetsWithBep(targetSpecs, List.empty());
+  }
+
+  public BepBuildResult buildTargetsWithBep(TargetSpecs targetSpecs, List<String> extraFlags) {
+    var diagnosticsProtosLocations = bepServer.getDiagnosticsProtosLocations();
+    var bazelProcess =
         bazelRunner
             .commandBuilder()
             .query()
-            .withFlag(BazelRunnerFlag.OUTPUT_PROTO)
-            .withTargets(includedTargets, excludedTargets)
+            .withFlag(BazelFlag.outputProto())
+            .withTargets(targetSpecs.included().asJava(), targetSpecs.excluded().asJava())
             .executeBazelBesCommand();
 
-    Build.QueryResult queryResult = getQueryResultForProcess(bazelProcess);
+    var queryResult = getQueryResultForProcess(bazelProcess);
 
     cacheProtoLocations(diagnosticsProtosLocations, queryResult);
 
@@ -45,8 +46,8 @@ public class BazelBspCompilationManager {
         bazelRunner
             .commandBuilder()
             .build()
-            .withFlags(extraFlags)
-            .withTargets(includedTargets, excludedTargets)
+            .withFlags(extraFlags.asJava())
+            .withTargets(targetSpecs.included().asJava(), targetSpecs.excluded().asJava())
             .executeBazelBesCommand()
             .waitAndGetResult();
 
@@ -94,7 +95,7 @@ public class BazelBspCompilationManager {
 
   private Build.QueryResult getQueryResultForProcess(BazelProcess process) {
     try {
-      return Build.QueryResult.parseFrom(process.getInputStream());
+      return Build.QueryResult.parseFrom(process.waitAndGetBinaryResult());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
