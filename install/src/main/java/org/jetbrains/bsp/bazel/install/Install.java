@@ -22,6 +22,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextSingletonEntity;
+import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider;
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext;
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContextConstructor;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
@@ -31,27 +32,21 @@ public class Install {
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
   public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.ServerInitializer";
 
-  private static final String HELP_SHORT_OPT = "h";
-  private static final String DIRECTORY_SHORT_OPT = "d";
-  private static final String PROJECT_VIEW_FILE_PATH_SHORT_OPT = "p";
-
   public static void main(String[] args) throws IOException {
     // This is the command line which will be used to start the BSP server. See:
     // https://build-server-protocol.github.io/docs/server-discovery.html#build-tool-commands-to-start-bsp-servers
     var argv = new ArrayList<String>();
-
-    var cliOptions = getCliOptions();
-    var parser = new DefaultParser();
-    var formatter = new HelpFormatter();
-    formatter.setWidth(120);
     var hasError = false;
     var writer = new PrintWriter(System.err);
     try {
-      var cmd = parser.parse(cliOptions, args, false);
-      if (cmd.hasOption(HELP_SHORT_OPT)) {
-        formatter.printHelp(INSTALLER_BINARY_NAME, cliOptions);
+      var cliOptionsProvider = new CliOptionsProvider(args);
+
+      if (cliOptionsProvider.isHelpOptionUsed()) {
+        cliOptionsProvider.printHelp();
       } else {
-        var rootDir = getRootDir(cmd);
+
+        var cliOptions = cliOptionsProvider.getOptions();
+        var rootDir = cliOptions.getWorkspaceRootDir();
         var bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
 
         var defaultProjectViewFilePath = bazelbspDir.resolve("default-projectview.bazelproject");
@@ -62,7 +57,7 @@ public class Install {
         copyAspects(bazelbspDir);
         createEmptyBuildFile(bazelbspDir);
 
-        var pathToProjectViewFile = getProjectViewPath(cmd, defaultProjectViewFilePath);
+        var pathToProjectViewFile = cliOptions.getProjectViewFilePath();
         var projectViewProvider =
             new ProjectViewDefaultParserProvider(rootDir, pathToProjectViewFile);
         var projectView = projectViewProvider.create();
@@ -84,7 +79,6 @@ public class Install {
       }
     } catch (ParseException e) {
       writer.println(e.getMessage());
-      formatter.printUsage(writer, 120, INSTALLER_BINARY_NAME, cliOptions);
       hasError = true;
     } catch (NoSuchElementException | IllegalStateException e) {
       writer.println(e.getMessage());
@@ -96,18 +90,6 @@ public class Install {
     if (hasError) {
       System.exit(1);
     }
-  }
-
-  private static Path getRootDir(CommandLine cmd) {
-    return cmd.hasOption(DIRECTORY_SHORT_OPT)
-        ? Paths.get(cmd.getOptionValue(DIRECTORY_SHORT_OPT))
-        : Paths.get("");
-  }
-
-  private static Path getProjectViewPath(CommandLine cmd, Path pathToDefaultProjectViewFile) {
-    return cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
-        ? Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT))
-        : pathToDefaultProjectViewFile;
   }
 
   private static BspConnectionDetails createBspConnectionDetails(List<String> argv) {
@@ -176,45 +158,13 @@ public class Install {
   private static void writeBazelbspJson(Path bspDir, Object discoveryDetails) throws IOException {
     Files.writeString(
         bspDir.resolve(Constants.BAZELBSP_JSON_FILE_NAME),
-            new GsonBuilder()
-                .setPrettyPrinting()
-                .create()
-                .toJson(discoveryDetails));
+        new GsonBuilder().setPrettyPrinting().create().toJson(discoveryDetails));
   }
 
   private static void writeConfigurationFiles(Path rootDir, Object discoveryDetails)
       throws IOException {
     Path bspDir = createDir(rootDir, Constants.BSP_DIR_NAME);
     writeBazelbspJson(bspDir, discoveryDetails);
-  }
-
-  private static Options getCliOptions() {
-    var cliOptions = new Options();
-
-    var projectViewFilePath =
-        Option.builder(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
-            .longOpt("project_view_file")
-            .hasArg()
-            .argName("path")
-            .desc("Path to project view file.")
-            .build();
-    cliOptions.addOption(projectViewFilePath);
-
-    var directory =
-        Option.builder(DIRECTORY_SHORT_OPT)
-            .longOpt("directory")
-            .hasArg()
-            .argName("path")
-            .desc(
-                "Path to directory where bazel bsp server should be setup. "
-                    + "Current directory will be used by default")
-            .build();
-    cliOptions.addOption(directory);
-
-    var help = Option.builder(HELP_SHORT_OPT).longOpt("help").desc("Show help").build();
-    cliOptions.addOption(help);
-
-    return cliOptions;
   }
 
   private static String readSystemProperty(String name) {
