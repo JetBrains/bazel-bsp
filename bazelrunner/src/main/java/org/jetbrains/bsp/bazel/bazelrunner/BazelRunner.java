@@ -26,17 +26,24 @@ public class BazelRunner {
 
   // This is runner without workspace path. It is used to determine workspace
   // path and create a fully functional runner.
-  public static BazelRunner inCwd(String bazelBinaryPath, BuildClientLogger buildClientLogger, List<String> defaultFlags) {
+  public static BazelRunner inCwd(
+      String bazelBinaryPath, BuildClientLogger buildClientLogger, List<String> defaultFlags) {
     return new BazelRunner(bazelBinaryPath, buildClientLogger, null, defaultFlags);
   }
 
   public static BazelRunner of(
-      String bazelBinaryPath, BuildClientLogger buildClientLogger, BazelData bazelData, List<String> defaultFlags) {
+      String bazelBinaryPath,
+      BuildClientLogger buildClientLogger,
+      BazelData bazelData,
+      List<String> defaultFlags) {
     return new BazelRunner(bazelBinaryPath, buildClientLogger, bazelData, defaultFlags);
   }
 
   private BazelRunner(
-      String bazelBinaryPath, BuildClientLogger buildClientLogger, BazelData bazelData, List<String> defaultFlags) {
+      String bazelBinaryPath,
+      BuildClientLogger buildClientLogger,
+      BazelData bazelData,
+      List<String> defaultFlags) {
     this.bazel = bazelBinaryPath;
     this.buildClientLogger = buildClientLogger;
     this.bazelData = bazelData;
