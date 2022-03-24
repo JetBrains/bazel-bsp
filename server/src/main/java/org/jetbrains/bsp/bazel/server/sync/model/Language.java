@@ -9,7 +9,7 @@ public enum Language {
   JAVA("java", HashSet.of(".java")),
   KOTLIN("kotlin", HashSet.of(".kt"), HashSet.of(Language.JAVA.name)),
   CPP("cpp", HashSet.of(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
-  THRIFT( "thrift", HashSet.of(".thrift"));
+  THRIFT("thrift", HashSet.of(".thrift"));
 
   private final String name;
   private final Set<String> extensions;

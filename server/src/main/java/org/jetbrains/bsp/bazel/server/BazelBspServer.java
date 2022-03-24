@@ -67,7 +67,8 @@ public class BazelBspServer {
     var cppLanguagePlugin = new CppLanguagePlugin();
     var thriftLanguagePlugin = new ThriftLanguagePlugin(bazelPathsResolver);
     var languagePluginsService =
-        new LanguagePluginsService(scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin);
+        new LanguagePluginsService(
+            scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin);
     var targetKindResolver = new TargetKindResolver();
     var bazelProjectMapper =
         new BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver);
