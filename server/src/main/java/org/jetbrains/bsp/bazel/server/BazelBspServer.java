@@ -7,7 +7,6 @@ import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.bazelrunner.data.BazelData;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.logger.BuildClientLogger;

@@ -65,7 +65,7 @@ public class ProjectView {
 
   public TargetSpecs targetSpecs() {
     return targets
-        .map(s -> new TargetSpecs(s.getIncludedValues(), s.getExcludedValues()))
+        .map(s -> new TargetSpecs(s.getValues(), s.getExcludedValues()))
         .getOrElse(TargetSpecs.empty());
   }
 
