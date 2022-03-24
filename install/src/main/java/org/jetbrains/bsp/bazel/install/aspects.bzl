@@ -35,6 +35,15 @@ java_runtime_classpath_aspect = aspect(
 def filter(f, xs):
     return [x for x in xs if f(x)]
 
+def flatmap(f, xs):
+    result = []
+
+    for x in xs:
+        mapped_x = f(x)
+        result.extend(mapped_x)
+
+    return result
+
 def map(f, xs):
     return [f(x) for x in xs]
 
@@ -310,6 +319,20 @@ def extract_java_runtime(target, ctx, dep_targets):
     else:
         return None, dict()
 
+def extract_thrift_info(target, ctx):
+    if not ctx.rule.kind == "thrift_library":
+        return None
+
+    deps = getattr(ctx.rule.attr, "deps", [])
+    dependency_sources = flatmap(get_sources, deps)
+
+    return create_struct(
+        dependency_sources = dependency_sources,
+    )
+
+def get_sources(target):
+    return target.bsp_info.sources
+
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
     aspect_ids = None
@@ -463,6 +486,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     scala_target_info = extract_scala_info(target, ctx, output_groups)
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
+    thrift_target_info = extract_thrift_info(target, ctx)
 
     result = dict(
         id = str(target.label),
@@ -476,6 +500,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_target_info = java_target_info,
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
+        thrift_target_info = thrift_target_info,
     )
 
     file_name = target.label.name
@@ -491,6 +516,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     exported_properties = dict(
         id = target.label,
         kind = ctx.rule.kind,
+        sources = sources,
         export_deps = export_deps,
         output_groups = output_groups,
     )
