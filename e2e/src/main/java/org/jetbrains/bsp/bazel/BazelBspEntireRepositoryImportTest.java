@@ -8,10 +8,8 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
 public class BazelBspEntireRepositoryImportTest extends BazelBspTestBaseScenario {
 
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(8);
-
   public BazelBspEntireRepositoryImportTest() {
-    super(CLIENT_TIMEOUT);
+    super();
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
@@ -28,6 +26,7 @@ public class BazelBspEntireRepositoryImportTest extends BazelBspTestBaseScenario
 
   private BazelBspTestScenarioStep importEntireRepository() {
     return new BazelBspTestScenarioStep(
-        "import entire Bazel BSP repository", () -> testClient.testResolveProject(true, false));
+        "import entire Bazel BSP repository",
+        () -> testClient.testResolveProject(Duration.ofMinutes(5)));
   }
 }

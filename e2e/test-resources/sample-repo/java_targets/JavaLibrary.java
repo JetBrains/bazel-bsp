@@ -1,5 +1,5 @@
-package dep;
+package java_targets;
 
-public class JavaTest {
+public class JavaLibrary {
   public static final String value = "value";
 }

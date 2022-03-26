@@ -1,14 +1,16 @@
 package org.jetbrains.bsp.bazel.base;
 
-import ch.epfl.scala.bsp.testkit.client.TestClient;
-import ch.epfl.scala.bsp.testkit.client.TestClient$;
-import com.google.common.collect.ImmutableMap;
-import java.time.Duration;
+import ch.epfl.scala.bsp4j.BuildClientCapabilities;
+import ch.epfl.scala.bsp4j.InitializeBuildParams;
+import java.nio.file.Path;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.testkit.client.TestClient;
 
 public abstract class BazelBspTestBaseScenario {
+
+  private static final String BSP_VERSION = "2.0.0";
 
   private static final Logger LOGGER = LogManager.getLogger(BazelBspTestBaseScenario.class);
 
@@ -20,26 +22,33 @@ public abstract class BazelBspTestBaseScenario {
 
   protected final TestClient testClient;
 
-  public BazelBspTestBaseScenario(Duration clientTimeout) {
-    this.testClient = createClient(WORKSPACE_DIR, clientTimeout);
+  /** Used for importing *this* workspace */
+  public BazelBspTestBaseScenario() {
+    var workspacePath = Path.of(WORKSPACE_DIR);
+
+    this.testClient = createClient(workspacePath);
   }
 
-  public BazelBspTestBaseScenario(String repoName, Duration clientTimeout) {
-    String workspacePath = getTestingRepoPath(repoName);
+  public BazelBspTestBaseScenario(String repoName) {
+    var workspacePath = getTestingRepoPath(repoName);
 
-    this.testClient = createClient(workspacePath, clientTimeout);
+    this.testClient = createClient(workspacePath);
   }
 
-  protected String getTestingRepoPath(String repoName) {
-    return String.format("%s/%s/%s", WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName);
+  protected Path getTestingRepoPath(String repoName) {
+    return Path.of(WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName);
   }
 
-  private TestClient createClient(String workspacePath, Duration clientTimeout) {
+  private TestClient createClient(Path workspacePath) {
     LOGGER.info("Workspace path: {}", workspacePath);
 
     LOGGER.info("Creating TestClient...");
-    TestClient client =
-        TestClient$.MODULE$.testInitialStructure(workspacePath, ImmutableMap.of(), clientTimeout);
+    // TODO: capabilities should be configurable
+    var capabilities = new BuildClientCapabilities(List.of("java", "scala", "kotlin", "cpp"));
+    var initializeBuildParams =
+        new InitializeBuildParams(
+            "BspTestClient", "1.0.0", BSP_VERSION, workspacePath.toString(), capabilities);
+    var client = new TestClient(workspacePath, initializeBuildParams);
     LOGGER.info("Created TestClient.");
 
     return client;
