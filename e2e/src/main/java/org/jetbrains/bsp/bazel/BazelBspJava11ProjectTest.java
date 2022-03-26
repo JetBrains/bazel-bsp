@@ -16,10 +16,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "java-11-project";
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(3);
 
   public BazelBspJava11ProjectTest() {
-    super(REPO_NAME, CLIENT_TIMEOUT);
+    super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
@@ -52,6 +51,6 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "java-11-project workspace build targets",
-        () -> testClient.testCompareWorkspaceTargetsResults(workspaceBuildTargetsResult));
+        () -> testClient.testWorkspaceTargets(Duration.ofSeconds(30), workspaceBuildTargetsResult));
   }
 }

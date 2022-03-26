@@ -16,10 +16,9 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 public class BazelBspActionGraphV1Test extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "sample-repo";
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(5);
 
   public BazelBspActionGraphV1Test() {
-    super(REPO_NAME, CLIENT_TIMEOUT);
+    super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
@@ -61,7 +60,9 @@ public class BazelBspActionGraphV1Test extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "action-graph-v1 javac options",
-        () -> testClient.testJavacOptions(javacOptionsParams, expectedJavacOptionsResult));
+        () ->
+            testClient.testJavacOptions(
+                Duration.ofSeconds(20), javacOptionsParams, expectedJavacOptionsResult));
   }
 
   private BazelBspTestScenarioStep actionGraphV1ScalacOptions() {
@@ -97,6 +98,8 @@ public class BazelBspActionGraphV1Test extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "action-graph-v1 scalac options",
-        () -> testClient.testScalacOptions(scalacOptionsParams, expectedScalacOptionsResult));
+        () ->
+            testClient.testScalacOptions(
+                Duration.ofSeconds(20), scalacOptionsParams, expectedScalacOptionsResult));
   }
 }

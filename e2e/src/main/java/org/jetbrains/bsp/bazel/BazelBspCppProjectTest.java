@@ -19,10 +19,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "cpp-project";
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(5);
 
   public BazelBspCppProjectTest() {
-    super(REPO_NAME, CLIENT_TIMEOUT);
+    super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
@@ -56,7 +55,9 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "cpp project",
-        () -> testClient.testCompareWorkspaceTargetsResults(expectedWorkspaceBuildTargetsResult));
+        () ->
+            testClient.testWorkspaceTargets(
+                Duration.ofSeconds(20), expectedWorkspaceBuildTargetsResult));
   }
 
   private BazelBspTestScenarioStep cppOptions() {
@@ -74,6 +75,9 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
         new CppOptionsResult(ImmutableList.of(exampleExampleCppOptionsItem));
 
     return new BazelBspTestScenarioStep(
-        "cpp options", () -> testClient.testCppOptions(cppOptionsParams, expectedCppOptionsResult));
+        "cpp options",
+        () ->
+            testClient.testCppOptions(
+                Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult));
   }
 }
