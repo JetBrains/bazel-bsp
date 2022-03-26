@@ -13,5 +13,6 @@ java_library(
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@maven//:org_scala_lang_scala_library",
+        "@testkit//:testkit-client",
     ],
 )

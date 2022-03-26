@@ -1,6 +1,7 @@
 workspace(name = "bazel_bsp")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ http_archive(
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config()
+scala_config(scala_version = "2.13.6")
 
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
@@ -168,6 +169,17 @@ junit_jupiter_java_repositories(
 
 junit_platform_java_repositories(
     version = JUNIT_PLATFORM_VERSION,
+)
+
+# ======================================================================================================================
+# the new testkit
+# todo: merge into the bsp repo?
+
+git_repository(
+    name = "testkit",
+    commit = "2b5d71849abf47728953f62a6b50c9e927a69187",
+    remote = "https://github.com/agluszak/bsp-testkit2.git",
+    shallow_since = "1648576682 +0200",
 )
 
 # ======================================================================================================================

@@ -5,7 +5,9 @@ import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.DependencySourcesItem;
+import ch.epfl.scala.bsp4j.DependencySourcesParams;
 import ch.epfl.scala.bsp4j.DependencySourcesResult;
+import ch.epfl.scala.bsp4j.InverseSourcesParams;
 import ch.epfl.scala.bsp4j.InverseSourcesResult;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
@@ -14,6 +16,7 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.ResourcesItem;
+import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
 import ch.epfl.scala.bsp4j.ScalaMainClass;
@@ -27,11 +30,13 @@ import ch.epfl.scala.bsp4j.ScalaTestClassesResult;
 import ch.epfl.scala.bsp4j.SourceItem;
 import ch.epfl.scala.bsp4j.SourceItemKind;
 import ch.epfl.scala.bsp4j.SourcesItem;
+import ch.epfl.scala.bsp4j.SourcesParams;
 import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -39,10 +44,9 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "sample-repo";
-  private static final Duration CLIENT_TIMEOUT = Duration.ofMinutes(8);
 
   public BazelBspSampleRepoTest() {
-    super(REPO_NAME, CLIENT_TIMEOUT);
+    super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
@@ -80,7 +84,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep resolveProject() {
     return new BazelBspTestScenarioStep(
-        "resolve project", () -> testClient.testResolveProject(false, false));
+        "resolve project", () -> testClient.testResolveProject(Duration.ofMinutes(2)));
   }
 
   private BazelBspTestScenarioStep compareWorkspaceTargetsResults() {
@@ -89,13 +93,12 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "compare workspace targets results",
-        () -> testClient.testCompareWorkspaceTargetsResults(expectedWorkspaceBuildTargetsResult));
+        () ->
+            testClient.testWorkspaceTargets(
+                Duration.ofSeconds(30), expectedWorkspaceBuildTargetsResult));
   }
 
   private BazelBspTestScenarioStep sourcesResults() {
-    WorkspaceBuildTargetsResult expectedWorkspaceBuildTargetsResult =
-        getExpectedWorkspaceBuildTargetsResult();
-
     String exampleScalaSourceUri = String.format("%s/example/Example.scala", REPO_NAME);
     SourceItem exampleScalaSource =
         new SourceItem(exampleScalaSourceUri, SourceItemKind.FILE, false);
@@ -121,17 +124,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     SourcesResult expectedSourcesResult =
         new SourcesResult(List.of(exampleExampleSources, depDepSources));
 
+    SourcesParams sourcesParams = new SourcesParams(getExpectedTargetIdentifiers());
+
     return new BazelBspTestScenarioStep(
         "sources results",
-        () ->
-            testClient.testSourcesResults(
-                expectedWorkspaceBuildTargetsResult, expectedSourcesResult));
+        () -> testClient.testSources(Duration.ofSeconds(30), sourcesParams, expectedSourcesResult));
   }
 
   private BazelBspTestScenarioStep resourcesResults() {
-    WorkspaceBuildTargetsResult expectedWorkspaceBuildTargetsResult =
-        getExpectedWorkspaceBuildTargetsResult();
-
     String fileTxtUri = String.format("%s/example/file.txt", REPO_NAME);
     String file2TxtUri = String.format("%s/example/file2.txt", REPO_NAME);
 
@@ -141,11 +141,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     ResourcesResult expectedResourcesResult = new ResourcesResult(List.of(exampleExampleResource));
 
+    ResourcesParams resourcesParams = new ResourcesParams(getExpectedTargetIdentifiers());
+
     return new BazelBspTestScenarioStep(
         "resources results",
         () ->
-            testClient.testResourcesResults(
-                expectedWorkspaceBuildTargetsResult, expectedResourcesResult));
+            testClient.testResources(
+                Duration.ofSeconds(30), resourcesParams, expectedResourcesResult));
   }
 
   private BazelBspTestScenarioStep inverseSourcesResults() {
@@ -155,11 +157,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     InverseSourcesResult expectedInverseSourcesResult =
         new InverseSourcesResult(List.of(new BuildTargetIdentifier("//dep:dep")));
 
+    InverseSourcesParams inverseSourcesParams = new InverseSourcesParams(inverseSourcesDocument);
+
     return new BazelBspTestScenarioStep(
         "inverse sources results",
         () ->
-            testClient.testInverseSourcesResults(
-                inverseSourcesDocument, expectedInverseSourcesResult));
+            testClient.testInverseSources(
+                Duration.ofSeconds(30), inverseSourcesParams, expectedInverseSourcesResult));
   }
 
   private BazelBspTestScenarioStep scalaMainClasses() {
@@ -202,7 +206,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         "Scala main classes",
         () ->
             testClient.testScalaMainClasses(
-                scalaMainClassesParams, expectedScalaMainClassesResult));
+                Duration.ofSeconds(30), scalaMainClassesParams, expectedScalaMainClassesResult));
   }
 
   private BazelBspTestScenarioStep scalaTestClasses() {
@@ -230,13 +234,10 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         "Scala test classes",
         () ->
             testClient.testScalaTestClasses(
-                scalaTestClassesParams, expectedScalaTestClassesResult));
+                Duration.ofSeconds(30), scalaTestClassesParams, expectedScalaTestClassesResult));
   }
 
   private BazelBspTestScenarioStep dependencySourcesResults() {
-    WorkspaceBuildTargetsResult expectedWorkspaceBuildTargetsResult =
-        getExpectedWorkspaceBuildTargetsResult();
-
     var dependencies =
         List.of(
             "https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3-sources.jar",
@@ -260,11 +261,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new DependencySourcesResult(
             List.of(exampleExampleDependencies, depDepDependencies, depDeeperDeeperDependencies));
 
+    DependencySourcesParams dependencySourcesParams =
+        new DependencySourcesParams(getExpectedTargetIdentifiers());
+
     return new BazelBspTestScenarioStep(
         "dependency sources results",
         () ->
-            testClient.testDependencySourcesResults(
-                expectedWorkspaceBuildTargetsResult, expectedDependencies));
+            testClient.testDependencySources(
+                Duration.ofSeconds(30), dependencySourcesParams, expectedDependencies));
   }
 
   private BazelBspTestScenarioStep jvmRunEnvironment() {
@@ -289,7 +293,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "jvm run environment results",
-        () -> testClient.testJvmRunEnvironment(params, expectedResult));
+        () -> testClient.testJvmRunEnvironment(Duration.ofSeconds(30), params, expectedResult));
   }
 
   private BazelBspTestScenarioStep jvmTestEnvironment() {
@@ -315,7 +319,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "jvm test environment results",
-        () -> testClient.testJvmTestEnvironment(params, expectedResult));
+        () -> testClient.testJvmTestEnvironment(Duration.ofSeconds(30), params, expectedResult));
+  }
+
+  private List<BuildTargetIdentifier> getExpectedTargetIdentifiers() {
+    return getExpectedWorkspaceBuildTargetsResult().getTargets().stream()
+        .map(BuildTarget::getId)
+        .collect(Collectors.toList());
   }
 
   private WorkspaceBuildTargetsResult getExpectedWorkspaceBuildTargetsResult() {
