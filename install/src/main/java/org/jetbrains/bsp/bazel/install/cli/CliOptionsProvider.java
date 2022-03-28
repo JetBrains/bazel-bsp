@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.install.cli;
 
+import io.vavr.control.Try;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.commons.cli.CommandLine;
@@ -12,6 +13,9 @@ import org.apache.commons.cli.ParseException;
 public class CliOptionsProvider {
 
   private static final String HELP_SHORT_OPT = "h";
+  private static final Option helpOption =
+      Option.builder(HELP_SHORT_OPT).longOpt("help").desc("Show help").build();
+
   private static final String DIRECTORY_SHORT_OPT = "d";
   private static final Option directoryOption =
       Option.builder(DIRECTORY_SHORT_OPT)
@@ -34,14 +38,13 @@ public class CliOptionsProvider {
 
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
 
-  private final CommandLine cmd;
+  private final String[] args;
   private final Options cliParserOptions;
 
   public CliOptionsProvider(String[] args) throws ParseException {
-    this.cliParserOptions = getCliParserOptions();
+    this.args = args;
 
-    var parser = new DefaultParser();
-    this.cmd = parser.parse(cliParserOptions, args, false);
+    this.cliParserOptions = getCliParserOptions();
   }
 
   public Try<CliOptions> getOptions() {
@@ -60,7 +63,7 @@ public class CliOptionsProvider {
     return cliOptions;
   }
 
-  private static CliOptions createCliOptions(CommandLine cmd) {
+  private CliOptions createCliOptions(CommandLine cmd) {
     var workspaceRootDir = getWorkspaceRootDir(cmd);
     var defaultProjectViewFilePath = workspaceRootDir.resolve("default-projectview.bazelproject");
 
@@ -71,13 +74,23 @@ public class CliOptionsProvider {
         getProjectViewPath(cmd, defaultProjectViewFilePath));
   }
 
-  private static Path getWorkspaceRootDir(CommandLine cmd) {
+  private boolean isHelpOptionUsed(CommandLine cmd) {
+    return cmd.hasOption(HELP_SHORT_OPT);
+  }
+
+  private void printHelp() {
+    var formatter = new HelpFormatter();
+    formatter.setWidth(120);
+    formatter.printHelp(INSTALLER_BINARY_NAME, cliParserOptions);
+  }
+
+  private Path getWorkspaceRootDir(CommandLine cmd) {
     return cmd.hasOption(DIRECTORY_SHORT_OPT)
         ? Paths.get(cmd.getOptionValue(DIRECTORY_SHORT_OPT))
         : Paths.get("");
   }
 
-  private static Path getProjectViewPath(CommandLine cmd, Path pathToDefaultProjectViewFile) {
+  private Path getProjectViewPath(CommandLine cmd, Path pathToDefaultProjectViewFile) {
     return cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
         ? Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT))
         : pathToDefaultProjectViewFile;

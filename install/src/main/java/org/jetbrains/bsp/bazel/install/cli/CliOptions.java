@@ -3,6 +3,8 @@ package org.jetbrains.bsp.bazel.install.cli;
 import java.nio.file.Path;
 
 public class CliOptions {
+  private final boolean isHelpOptionUsed;
+  private final Runnable printHelp;
 
   private final Path workspaceRootDir;
   private final Path projectViewFilePath;
