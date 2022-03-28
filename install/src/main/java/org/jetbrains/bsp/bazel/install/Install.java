@@ -19,24 +19,15 @@ import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvid
 
 public class Install {
 
-  public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
-  //  public static final String SERVER_CLASS_NAME =
-  // "org.jetbrains.bsp.bazel.server.ServerInitializer";
-
   public static void main(String[] args) throws IOException {
-    // This is the command line which will be used to start the BSP server. See:
-    // https://build-server-protocol.github.io/docs/server-discovery.html#build-tool-commands-to-start-bsp-servers
-    var argv = new ArrayList<String>();
     var hasError = false;
     var writer = new PrintWriter(System.err);
     try {
       var cliOptionsProvider = new CliOptionsProvider(args);
-
-      if (cliOptionsProvider.isHelpOptionUsed()) {
-        cliOptionsProvider.printHelp();
+      var cliOptions = cliOptionsProvider.getOptions().get();
+      if (cliOptions.isHelpOptionUsed()) {
+        cliOptions.printHelp();
       } else {
-
-        var cliOptions = cliOptionsProvider.getOptions();
         var rootDir = cliOptions.getWorkspaceRootDir();
         var bazelbspDir = createDir(rootDir, Constants.BAZELBSP_DIR_NAME);
 

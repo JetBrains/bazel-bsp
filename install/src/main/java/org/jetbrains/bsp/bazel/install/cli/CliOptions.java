@@ -7,9 +7,23 @@ public class CliOptions {
   private final Path workspaceRootDir;
   private final Path projectViewFilePath;
 
-  public CliOptions(Path workspaceRootDir, Path projectViewFilePath) {
+  CliOptions(
+      boolean isHelpOptionUsed,
+      Runnable printHelp,
+      Path workspaceRootDir,
+      Path projectViewFilePath) {
+    this.isHelpOptionUsed = isHelpOptionUsed;
+    this.printHelp = printHelp;
     this.workspaceRootDir = workspaceRootDir;
     this.projectViewFilePath = projectViewFilePath;
+  }
+
+  public void printHelp() {
+    printHelp.run();
+  }
+
+  public boolean isHelpOptionUsed() {
+    return isHelpOptionUsed;
   }
 
   public Path getWorkspaceRootDir() {
