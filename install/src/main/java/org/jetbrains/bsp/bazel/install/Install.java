@@ -1,36 +1,27 @@
 package org.jetbrains.bsp.bazel.install;
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails;
-import com.google.common.base.Splitter;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextSingletonEntity;
 import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider;
-import org.jetbrains.bsp.bazel.installationcontext.InstallationContext;
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContextConstructor;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 
 public class Install {
 
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
-  public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.ServerInitializer";
+  //  public static final String SERVER_CLASS_NAME =
+  // "org.jetbrains.bsp.bazel.server.ServerInitializer";
 
   public static void main(String[] args) throws IOException {
     // This is the command line which will be used to start the BSP server. See:
@@ -57,30 +48,24 @@ public class Install {
         copyAspects(bazelbspDir);
         createEmptyBuildFile(bazelbspDir);
 
-        var pathToProjectViewFile = cliOptions.getProjectViewFilePath();
+        var projectViewFilePath = cliOptions.getProjectViewFilePath();
         var projectViewProvider =
-            new ProjectViewDefaultParserProvider(rootDir, pathToProjectViewFile);
+            new ProjectViewDefaultParserProvider(rootDir, projectViewFilePath);
         var projectView = projectViewProvider.create();
 
         var installationContextConstructor = new InstallationContextConstructor();
         var installationContext = installationContextConstructor.construct(projectView).get();
 
-        addJavaBinary(argv, installationContext);
-        addJavaClasspath(argv);
-        addDebuggerConnection(argv, installationContext);
-        argv.add(SERVER_CLASS_NAME);
-        addProjectViewFilePath(argv, pathToProjectViewFile);
+        var bspConnectionDetailsCreator =
+            new BspConnectionDetailsCreator(installationContext, projectViewFilePath);
+        var bspConnectionDetails = bspConnectionDetailsCreator.create().get();
 
-        BspConnectionDetails details = createBspConnectionDetails(argv);
-        writeConfigurationFiles(rootDir, details);
+        writeConfigurationFiles(rootDir, bspConnectionDetails);
 
         System.out.println(
             "Bazel BSP server installed in '" + rootDir.toAbsolutePath().normalize() + "'.");
       }
-    } catch (ParseException e) {
-      writer.println(e.getMessage());
-      hasError = true;
-    } catch (NoSuchElementException | IllegalStateException e) {
+    } catch (ParseException | NoSuchElementException | IllegalStateException e) {
       writer.println(e.getMessage());
       hasError = true;
     } finally {
@@ -99,37 +84,6 @@ public class Install {
         Constants.VERSION,
         Constants.BSP_VERSION,
         Constants.SUPPORTED_LANGUAGES);
-  }
-
-  private static void addJavaBinary(List<String> argv, InstallationContext installationContext) {
-    argv.add(installationContext.getJavaPath().getValue().toString());
-  }
-
-  private static void addJavaClasspath(List<String> argv) {
-    argv.add("-classpath");
-    String javaClassPath = readSystemProperty("java.class.path");
-    String classpath =
-        Splitter.on(":").splitToList(javaClassPath).stream()
-            .map(elem -> Paths.get(elem).toAbsolutePath().toString())
-            .collect(Collectors.joining(":"));
-
-    argv.add(classpath);
-  }
-
-  private static void addDebuggerConnection(
-      List<String> argv, InstallationContext installationContext) {
-    installationContext
-        .getDebuggerAddress()
-        .map(ExecutionContextSingletonEntity::getValue)
-        .forEach(
-            debuggerAddress ->
-                argv.add(
-                    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address="
-                        + debuggerAddress.toString()));
-  }
-
-  private static void addProjectViewFilePath(List<String> argv, Path projectViewFilePath) {
-    argv.add(projectViewFilePath.toString());
   }
 
   private static void copyAspects(Path bazelbspDir) throws IOException {
@@ -165,13 +119,5 @@ public class Install {
       throws IOException {
     Path bspDir = createDir(rootDir, Constants.BSP_DIR_NAME);
     writeBazelbspJson(bspDir, discoveryDetails);
-  }
-
-  private static String readSystemProperty(String name) {
-    String property = System.getProperty(name);
-    if (property == null) {
-      throw new NoSuchElementException("Could not read " + name + " system property");
-    }
-    return property;
   }
 }
