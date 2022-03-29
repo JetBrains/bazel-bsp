@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
@@ -10,14 +8,17 @@ import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewT
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WorkspaceContextTargetsEntityMapperTest {
 
   private WorkspaceContextTargetsEntityMapper mapper;
 
-  @Before
+  @BeforeEach
   public void beforeEach() {
     // given
     this.mapper = new WorkspaceContextTargetsEntityMapper();

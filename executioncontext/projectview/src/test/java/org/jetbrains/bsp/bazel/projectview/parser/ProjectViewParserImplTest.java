@@ -1,8 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.net.HostAndPort;
 import io.vavr.collection.List;
@@ -13,14 +10,17 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProjectViewParserImplTest {
 
   private ProjectViewParser parser;
 
-  @Before
+  @BeforeEach
   public void before() {
     // given
     this.parser = new ProjectViewParserMockTestImpl();

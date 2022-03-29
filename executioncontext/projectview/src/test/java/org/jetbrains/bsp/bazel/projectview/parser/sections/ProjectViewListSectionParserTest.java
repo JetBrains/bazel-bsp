@@ -1,50 +1,23 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(value = Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSection<V>> {
-
-  private final ProjectViewListSectionParser<V, T> parser;
-
-  private final Function<String, String> rawIncludedElementConstructor;
-  private final Function<String, String> rawExcludedElementConstructor;
-
-  private final BiFunction<List<String>, List<String>, T> sectionConstructor;
-
-  private final String sectionName;
-
-  public ProjectViewListSectionParserTest(
-      ProjectViewListSectionParser<V, T> parser,
-      Function<String, String> rawIncludedElementConstructor,
-      BiFunction<List<V>, List<V>, T> sectionMapper,
-      Function<String, V> elementMapper) {
-    this.parser = parser;
-
-    this.rawIncludedElementConstructor = rawIncludedElementConstructor;
-    this.rawExcludedElementConstructor = (seed) -> "-" + rawIncludedElementConstructor.apply(seed);
-
-    this.sectionConstructor =
-        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
-
-    this.sectionName = parser.sectionName;
-  }
 
   private BiFunction<List<String>, List<String>, T> createSectionConstructor(
       BiFunction<List<V>, List<V>, T> sectionMapper,
@@ -64,11 +37,9 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     return rawElements.map(rawIncludedElementConstructor).map(elementMapper);
   }
 
-  @Parameterized.Parameters(name = "{index}: ProjectViewListSectionParserTest for {0}")
-  public static Collection<Object[]> data() {
-    return Arrays.asList(
-        new Object[][] {
-          {
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        Arguments.of(
             new ProjectViewTargetsSectionParser(),
             (Function<String, String>) (seed) -> "//target:" + seed,
             (BiFunction<
@@ -76,14 +47,23 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
                     List<BuildTargetIdentifier>,
                     ProjectViewTargetsSection>)
                 ProjectViewTargetsSection::new,
-            (Function<String, BuildTargetIdentifier>) BuildTargetIdentifier::new,
-          },
-        });
+            (Function<String, BuildTargetIdentifier>) BuildTargetIdentifier::new));
   }
   // ProjectViewListSection parse(rawSection)
 
-  @Test
-  public void shouldReturnFailureForWrongSectionName() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldReturnFailureForWrongSectionName(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection = new ProjectViewRawSection("wrongsection", "-bodyelement");
 
@@ -100,8 +80,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
         sectionTry.getCause().getMessage());
   }
 
-  @Test
-  public void shouldParseEmptySectionBody() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldParseEmptySectionBody(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection = new ProjectViewRawSection(sectionName, "");
 
@@ -115,8 +106,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     assertTrue(section.isEmpty());
   }
 
-  @Test
-  public void shouldParseIncludedElements() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldParseIncludedElements(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection =
         new ProjectViewRawSection(
@@ -141,8 +143,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     assertEquals(expectedSection, section.get());
   }
 
-  @Test
-  public void shouldParseExcludedElements() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldParseExcludedElements(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection =
         new ProjectViewRawSection(
@@ -167,8 +180,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     assertEquals(expectedSection, section.get());
   }
 
-  @Test
-  public void shouldParseIncludedAndExcludedElements() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldParseIncludedAndExcludedElements(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection =
         new ProjectViewRawSection(
@@ -195,8 +219,13 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
 
   // ProjectViewListSection parse(rawSections)
 
-  @Test
-  public void shouldReturnEmptySectionIfThereIsNoSectionForParseWithoutDefault() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldReturnEmptySectionIfThereIsNoSectionForParseWithoutDefault(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
     // given
     var rawSection1 =
         new ProjectViewRawSection(
@@ -213,8 +242,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     assertTrue(section.isEmpty());
   }
 
-  @Test
-  public void shouldParseAllSectionElementsFromListWithoutDefault() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldParseAllSectionElementsFromListWithoutDefault(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection1 = new ProjectViewRawSection("another_section1", "-bodyelement1");
     var rawSection2 =
@@ -243,8 +283,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
 
   // ProjectViewListSection parseOrDefault(rawSections, defaultValue)
 
-  @Test
-  public void shouldParseAllSectionElementsFromListAndSkipDefault() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldParseAllSectionElementsFromListAndSkipDefault(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection1 = new ProjectViewRawSection("another_section1", "-bodyelement1");
     var rawSection2 =
@@ -275,8 +326,19 @@ public class ProjectViewListSectionParserTest<V, T extends ProjectViewListSectio
     assertEquals(expectedSection, section.get());
   }
 
-  @Test
-  public void shouldReturnDefaultForNoElementsSectionInList() {
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldReturnDefaultForNoElementsSectionInList(
+      ProjectViewListSectionParser<V, T> parser,
+      Function<String, String> rawIncludedElementConstructor,
+      BiFunction<List<V>, List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    Function<String, String> rawExcludedElementConstructor =
+        (String seed) -> "-" + rawIncludedElementConstructor.apply(seed);
+    var sectionConstructor =
+        createSectionConstructor(sectionMapper, rawIncludedElementConstructor, elementMapper);
+    var sectionName = parser.sectionName;
+
     // given
     var rawSection1 = new ProjectViewRawSection("another_section1", "-bodyelement1");
     var rawSection2 = new ProjectViewRawSection("another_section2", "-bodyelement2");

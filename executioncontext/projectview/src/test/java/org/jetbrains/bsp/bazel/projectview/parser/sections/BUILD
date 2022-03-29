@@ -1,25 +1,23 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:third_party.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "ProjectViewListSectionParserTest",
     size = "small",
     srcs = ["ProjectViewListSectionParserTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
+        "@maven//:com_google_guava_guava",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "ProjectViewSingletonSectionParserTest",
     size = "small",
     srcs = ["ProjectViewSingletonSectionParserTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
+        "@maven//:com_google_guava_guava",
     ],
 )

@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.installationcontext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
@@ -12,14 +12,14 @@ import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJ
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 public class InstallationContextConstructorTest {
 
   private InstallationContextConstructor installationContextConstructor;
 
-  @Before
+  @BeforeEach
   public void beforeEach() {
     // given
     this.installationContextConstructor = new InstallationContextConstructor();

@@ -1,41 +1,28 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
-import static org.junit.Assert.assertEquals;
-
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
 import org.jetbrains.bsp.bazel.bazelrunner.SemanticVersion;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(value = Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class InternalAspectsResolverTest {
 
-  private Path workspaceRoot;
-  private Path bspRoot;
-  private String aspectName;
-  private String expectedAspectLabel;
-
-  public InternalAspectsResolverTest(
+  @MethodSource("data")
+  @ParameterizedTest
+  public void shouldResolveLabels(
       String workspaceRoot, String bspRoot, String aspectName, String expectedAspectLabel) {
-    this.workspaceRoot = Paths.get(workspaceRoot);
-    this.bspRoot = Paths.get(bspRoot);
-    this.aspectName = aspectName;
-    this.expectedAspectLabel = expectedAspectLabel;
-  }
-
-  @Test
-  public void shouldResolveLabels() {
-    String actual = new InternalAspectsResolver(createBazelData()).resolveLabel(aspectName);
+    var bazelData = createBazelData(workspaceRoot, bspRoot, aspectName, expectedAspectLabel);
+    var actual = new InternalAspectsResolver(bazelData).resolveLabel(aspectName);
     assertEquals(expectedAspectLabel, actual);
   }
 
-  private BazelData createBazelData() {
+  private BazelData createBazelData(
+      String workspaceRoot, String bspRoot, String aspectName, String expectedAspectLabel) {
     return new BazelData() {
       @Override
       public String getExecRoot() {
@@ -59,28 +46,22 @@ public class InternalAspectsResolverTest {
 
       @Override
       public Path getBspProjectRoot() {
-        return bspRoot;
+        return Path.of(bspRoot);
       }
     };
   }
 
-  @Parameters
-  public static Collection<Object> data() {
-    return Arrays.asList(
-        (Object[])
-            new Object[][] {
-              {
-                "/Users/user/workspace/test-project",
-                "/Users/user/workspace/test-project",
-                "get_classpath",
-                "@//.bazelbsp:aspects.bzl%get_classpath"
-              },
-              {
-                "/Users/user/workspace/test-project",
-                "/Users/user/workspace/test-project/bsp-projects/test-project-bsp",
-                "get_classpath",
-                "@//bsp-projects/test-project-bsp/.bazelbsp:aspects.bzl%get_classpath"
-              },
-            });
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        Arguments.of(
+            "/Users/user/workspace/test-project",
+            "/Users/user/workspace/test-project",
+            "get_classpath",
+            "@//.bazelbsp:aspects.bzl%get_classpath"),
+        Arguments.of(
+            "/Users/user/workspace/test-project",
+            "/Users/user/workspace/test-project/bsp-projects/test-project-bsp",
+            "get_classpath",
+            "@//bsp-projects/test-project-bsp/.bazelbsp:aspects.bzl%get_classpath"));
   }
 }

@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.vavr.control.Option;
 import java.nio.file.Paths;
@@ -8,14 +9,14 @@ import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewT
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 public class InstallationContextJavaPathEntityMapperTest {
 
   private InstallationContextJavaPathEntityMapper mapper;
 
-  @Before
+  @BeforeEach
   public void beforeEach() {
     // given
     this.mapper = new InstallationContextJavaPathEntityMapper();
@@ -34,11 +35,11 @@ public class InstallationContextJavaPathEntityMapperTest {
     var javaPathTry = mapper.map(projectView);
 
     // then
-    assertThat(javaPathTry.isSuccess()).isTrue();
+    assertTrue(javaPathTry.isSuccess());
     var javaPath = javaPathTry.get();
 
     var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
-    assertThat(javaPath).isEqualTo(expectedJavaPath);
+    assertEquals(expectedJavaPath, javaPath);
   }
 
   @Test
@@ -53,11 +54,11 @@ public class InstallationContextJavaPathEntityMapperTest {
     var javaPathTry = mapper.map(projectView);
 
     // then
-    assertThat(javaPathTry.isSuccess()).isTrue();
+    assertTrue(javaPathTry.isSuccess());
     var javaPath = javaPathTry.get();
 
     var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
-    assertThat(javaPath).isEqualTo(expectedJavaPath);
+    assertEquals(expectedJavaPath, javaPath);
   }
 
   @Test
@@ -72,12 +73,11 @@ public class InstallationContextJavaPathEntityMapperTest {
     var javaPathTry = mapper.map(projectView);
 
     // then
-    assertThat(javaPathTry.isFailure()).isTrue();
-    assertThat(javaPathTry.getCause().getClass())
-        .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
-    assertThat(javaPathTry.getCause().getMessage())
-        .isEqualTo(
-            "Mapping project view into 'java path' failed! System property 'java.home' is not"
-                + " specified.");
+    assertTrue(javaPathTry.isFailure());
+    assertEquals(ProjectViewToExecutionContextEntityMapperException.class, javaPathTry.getCause().getClass());
+
+    var expectedMessage = "Mapping project view into 'java path' failed! System property 'java.home' is not"
+            + " specified.";
+    assertEquals(expectedMessage, javaPathTry.getCause().getMessage());
   }
 }

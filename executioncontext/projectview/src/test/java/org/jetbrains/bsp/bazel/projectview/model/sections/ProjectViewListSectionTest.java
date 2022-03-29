@@ -1,28 +1,18 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(value = Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> {
-
-  private final BiFunction<List<String>, List<String>, T> sectionConstructor;
-
-  public ProjectViewListSectionTest(
-      BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
-    this.sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
-  }
 
   private BiFunction<List<String>, List<String>, T> createSectionConstructor(
       BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
@@ -32,24 +22,27 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
             includedElements.map(elementMapper), excludedElements.map(elementMapper));
   }
 
-  @Parameters(name = "{index}: .equals() on a list section for {0}")
-  public static Collection<Object[]> data() {
-    return Arrays.asList(
-        new Object[][] {
-          {
-            (BiFunction<
-                    List<BuildTargetIdentifier>,
-                    List<BuildTargetIdentifier>,
-                    ProjectViewTargetsSection>)
-                ProjectViewTargetsSection::new,
-            (Function<String, BuildTargetIdentifier>)
-                (rawElement) -> new BuildTargetIdentifier("//:" + rawElement),
-          }
-        });
+  public static Stream<Arguments> data() {
+    var buildTargetIdentifierSectionMapper =
+        (BiFunction<
+                List<BuildTargetIdentifier>,
+                List<BuildTargetIdentifier>,
+                ProjectViewTargetsSection>)
+            ProjectViewTargetsSection::new;
+    var buildTargetIdentifierElementMapper =
+        (Function<String, BuildTargetIdentifier>)
+            (rawElement) -> new BuildTargetIdentifier("//:" + rawElement);
+    return Stream.of(
+        Arguments.of(buildTargetIdentifierSectionMapper, buildTargetIdentifierElementMapper));
   }
 
-  @Test
-  public void shouldReturnTrueForTheSameSectionsWithTheSameValues() {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void shouldReturnTrueForTheSameSectionsWithTheSameValues(
+      BiFunction<io.vavr.collection.List<V>, io.vavr.collection.List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    var sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
+
     // given & when
     var section1 =
         sectionConstructor.apply(
@@ -64,8 +57,12 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
     assertEquals(section1, section2);
   }
 
-  @Test
-  public void shouldReturnFalseForTheSameSectionsWithDifferentIncludedValues() {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void shouldReturnFalseForTheSameSectionsWithDifferentIncludedValues(
+      BiFunction<io.vavr.collection.List<V>, io.vavr.collection.List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    var sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
     // given & when
     var section1 =
         sectionConstructor.apply(
@@ -80,8 +77,12 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
     assertNotEquals(section1, section2);
   }
 
-  @Test
-  public void shouldReturnFalseForTheSameSectionsWithDifferentExcludedValues() {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void shouldReturnFalseForTheSameSectionsWithDifferentExcludedValues(
+      BiFunction<io.vavr.collection.List<V>, io.vavr.collection.List<V>, T> sectionMapper,
+      Function<String, V> elementMapper) {
+    var sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
     // given & when
     var section1 =
         sectionConstructor.apply(
