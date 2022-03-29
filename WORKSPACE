@@ -48,7 +48,7 @@ http_archive(
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config(scala_version = "2.13.8")
+scala_config()
 
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
@@ -156,7 +156,7 @@ sonatype_dependencies()
 # ======================================================================================================================
 # junit5
 
-load("//:third_party.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
+load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
 
 JUNIT_JUPITER_VERSION = "5.8.2"
 

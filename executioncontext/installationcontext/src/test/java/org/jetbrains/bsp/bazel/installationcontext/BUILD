@@ -1,4 +1,4 @@
-load("//:third_party.bzl", "java_junit5_test")
+load("//:junit5.bzl", "java_junit5_test")
 
 java_junit5_test(
     name = "InstallationContextTest",

@@ -1,5 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_library")
-load("//:third_party.bzl", "java_junit5_test")
+load("//:junit5.bzl", "java_junit5_test")
 
 java_junit5_test(
     name = "ProjectViewParserImplTest",
