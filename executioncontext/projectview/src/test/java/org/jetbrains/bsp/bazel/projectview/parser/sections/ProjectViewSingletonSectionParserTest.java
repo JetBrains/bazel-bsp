@@ -1,5 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.net.HostAndPort;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -16,9 +19,6 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingletonSection<V>> {
 

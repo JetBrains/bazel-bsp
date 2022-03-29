@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.vavr.collection.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProjectViewSectionSplitterTest {
 

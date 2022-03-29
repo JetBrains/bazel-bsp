@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java;
 
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
+
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
@@ -17,8 +19,6 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
-
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
 
 public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
   private final BazelPathsResolver bazelPathsResolver;

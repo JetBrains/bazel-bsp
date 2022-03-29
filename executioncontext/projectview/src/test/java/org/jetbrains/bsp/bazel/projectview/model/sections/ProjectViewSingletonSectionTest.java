@@ -1,5 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import com.google.common.net.HostAndPort;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,9 +11,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ProjectViewSingletonSectionTest<V, T extends ProjectViewSingletonSection<V>> {
 

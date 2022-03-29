@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.workspacecontext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WorkspaceContextTest {
 

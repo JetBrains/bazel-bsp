@@ -1,4 +1,3 @@
-
 # Changelog
 
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
@@ -7,8 +6,7 @@
 
 ### Features 🎉
 
-- Improved bazel runner. The BSP Client now receives invoked bazel command,
-  its output, duration and exit code.
+- Improved bazel runner. The BSP Client now receives invoked bazel command, its output, duration and exit code.
   | [#198](https://github.com/JetBrains/bazel-bsp/pull/198)
 - Scala diagnostics work without a fork (technically it worked already for a while).
   | [#170](https://github.com/JetBrains/bazel-bsp/pull/170)
@@ -17,34 +15,24 @@
 
 - Fixed extraction of java version and java home for bazel `5.0.0`.
   | [#165](https://github.com/JetBrains/bazel-bsp/pull/165)
-- Log messages are no longer trimmed.
-  | [#157](https://github.com/JetBrains/bazel-bsp/pull/157)
-- Memoize BazelProcess output so that it doesn't get lost.
-  | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
+- Log messages are no longer trimmed. | [#157](https://github.com/JetBrains/bazel-bsp/pull/157)
+- Memoize BazelProcess output so that it doesn't get lost. | [#154](https://github.com/JetBrains/bazel-bsp/pull/154)
 
 ### Changes 🔄
 
-- Support for excluded targets in the sync mechanism.
-  | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
-- Introduction of installation context.
-  | [#184](https://github.com/JetBrains/bazel-bsp/pull/184)
-- Project uses (mostly) `io.vavr.Option` and `io.vavr.List`.
-  | [#192](https://github.com/JetBrains/bazel-bsp/pull/192)
-- Introducing execution context and workspace context.
-  | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
+- Support for excluded targets in the sync mechanism. | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
+- Introduction of installation context. | [#184](https://github.com/JetBrains/bazel-bsp/pull/184)
+- Project uses (mostly) `io.vavr.Option` and `io.vavr.List`. | [#192](https://github.com/JetBrains/bazel-bsp/pull/192)
+- Introducing execution context and workspace context. | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
 - Changed the structure of the [README](README.md) and other documents and added contribution guide.
   | [#181](https://github.com/JetBrains/bazel-bsp/pull/181)
-- Project view parser has more logging, targets section is optional and 
-  sections are using specific types instead of raw strings.
-  | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
-- Improve the `install.sh` script. 
-  | [#167](https://github.com/JetBrains/bazel-bsp/pull/167)
-- Now the project is using the latest bazel version - `5.0.0`.
-  Installer skips bazelisk cache binaries during bazel binary discovery mechanism.
-  | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)
-- Rewrite of all endpoints to rely on single bazel aspect to extract all necessary data.
-  It improves performance and correctness as wel as extensibility of the server.
-  With this change also c++ support is temporarily dropped.
+- Project view parser has more logging, targets section is optional and sections are using specific types instead of raw
+  strings. | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
+- Improve the `install.sh` script. | [#167](https://github.com/JetBrains/bazel-bsp/pull/167)
+- Now the project is using the latest bazel version - `5.0.0`. Installer skips bazelisk cache binaries during bazel
+  binary discovery mechanism. | [#160](https://github.com/JetBrains/bazel-bsp/pull/160)
+- Rewrite of all endpoints to rely on single bazel aspect to extract all necessary data. It improves performance and
+  correctness as wel as extensibility of the server. With this change also c++ support is temporarily dropped.
   | [#147](https://github.com/JetBrains/bazel-bsp/pull/147)
 
 ## [1.1.1] - 16.02.2022
@@ -66,8 +54,7 @@
 
 - Server filters out non-runtime jars for running apps and tests.
   | [#131](https://github.com/JetBrains/bazel-bsp/pull/131)
-- Now server uses Java 11.
-  | [#129](https://github.com/JetBrains/bazel-bsp/pull/129)
+- Now server uses Java 11. | [#129](https://github.com/JetBrains/bazel-bsp/pull/129)
 - Bazel runner allows running a bazel command without positional arguments.
   | [#123](https://github.com/JetBrains/bazel-bsp/pull/123)
 
@@ -88,8 +75,7 @@
 
 ### Features 🎉
 
-- [This](CHANGELOG.md) changelog.
-  | [#97](https://github.com/JetBrains/bazel-bsp/pull/97)
+- [This](CHANGELOG.md) changelog. | [#97](https://github.com/JetBrains/bazel-bsp/pull/97)
 
 ### Changes 🔄
 
@@ -97,29 +83,23 @@
   | [#83](https://github.com/JetBrains/bazel-bsp/pull/83)
 - Github actions e2e tests execution - e2e tests are executed in parallel.
   | [#84](https://github.com/JetBrains/bazel-bsp/pull/84)
-- Project structure - now it is multi module project.
-  | [#87](https://github.com/JetBrains/bazel-bsp/pull/87)
+- Project structure - now it is multi module project. | [#87](https://github.com/JetBrains/bazel-bsp/pull/87)
 - Github actions unit tests execution - each module has a separate job.
   | [#89](https://github.com/JetBrains/bazel-bsp/pull/89)
-- Created [document](docs/dev/BUMPVERSION.md) with release tips.
-  | [#91](https://github.com/JetBrains/bazel-bsp/pull/91)
+- Created [document](docs/dev/BUMPVERSION.md) with release tips. | [#91](https://github.com/JetBrains/bazel-bsp/pull/91)
 
 ### Removed ✂️
 
-- Old implementation of e2e tests.
-  | [#86](https://github.com/JetBrains/bazel-bsp/pull/86)
+- Old implementation of e2e tests. | [#86](https://github.com/JetBrains/bazel-bsp/pull/86)
 
 ### Fixes 🛠️
 
-- Warnings generated by the [WORKSPACE file](WORKSPACE).
-  | [#81](https://github.com/JetBrains/bazel-bsp/pull/81)
+- Warnings generated by the [WORKSPACE file](WORKSPACE). | [#81](https://github.com/JetBrains/bazel-bsp/pull/81)
 - Semantic versioning parser - now it can parse every valid version.
   | [#93](https://github.com/JetBrains/bazel-bsp/pull/93)
-- `exports` attribute propagation to the BSP
-  | [#98](https://github.com/JetBrains/bazel-bsp/pull/98)
+- `exports` attribute propagation to the BSP | [#98](https://github.com/JetBrains/bazel-bsp/pull/98)
 - Now all `scala_junit_test` based rules (including `scala_specs2_junit_test`) are included in the BSP tests,
-  unfortunately without test classes.
-  | [#101](https://github.com/JetBrains/bazel-bsp/pull/101)
+  unfortunately without test classes. | [#101](https://github.com/JetBrains/bazel-bsp/pull/101)
 
 ## [1.0.0] - 23.08.2021
 

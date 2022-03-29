@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
 import ch.epfl.scala.bsp4j.DiagnosticSeverity;
@@ -11,8 +13,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StderrDiagnosticsParserTest {
 
