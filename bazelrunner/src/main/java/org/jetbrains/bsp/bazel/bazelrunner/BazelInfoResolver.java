@@ -8,16 +8,16 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 
-public class BazelDataResolver {
+public class BazelInfoResolver {
   private static final Pattern INFO_LINE_PATTERN = Pattern.compile("([\\w-]+): (.*)");
   private final BazelRunner bazelRunner;
 
-  public BazelDataResolver(BazelRunner bazelRunner) {
+  public BazelInfoResolver(BazelRunner bazelRunner) {
     this.bazelRunner = bazelRunner;
   }
 
-  public BazelData resolveBazelData() {
-    return new LazyBazelData(Lazy.of(this::readBazelInfoMap));
+  public BazelInfo resolveBazelInfo() {
+    return new LazyBazelInfo(Lazy.of(this::readBazelInfoMap));
   }
 
   private Map<String, String> readBazelInfoMap() {

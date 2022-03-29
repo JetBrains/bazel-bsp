@@ -12,6 +12,7 @@ java_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/config",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",

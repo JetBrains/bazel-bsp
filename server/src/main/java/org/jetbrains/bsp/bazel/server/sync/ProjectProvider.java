@@ -6,10 +6,12 @@ import org.jetbrains.bsp.bazel.server.sync.model.Project;
 public class ProjectProvider {
   private Project project;
   private final ProjectResolver projectResolver;
+  private final ProjectStorage projectStorage;
   private final java.util.List<ProjectChangeListener> listeners = new ArrayList<>();
 
-  public ProjectProvider(ProjectResolver projectResolver) {
+  public ProjectProvider(ProjectResolver projectResolver, ProjectStorage projectStorage) {
     this.projectResolver = projectResolver;
+    this.projectStorage = projectStorage;
   }
 
   public void addListener(ProjectChangeListener listener) {
@@ -43,11 +45,16 @@ public class ProjectProvider {
   }
 
   private void loadFromDisk() {
-    // TODO implement; do nothing if no project cache data is present
-    // notifyListeners(); // only if actually loaded
+    projectStorage
+        .load()
+        .forEach(
+            p -> {
+              project = p;
+              notifyListeners();
+            });
   }
 
   private void storeOnDisk() {
-    // TODO save project data to disk
+    projectStorage.store(project);
   }
 }

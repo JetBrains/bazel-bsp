@@ -1,9 +1,7 @@
 package org.jetbrains.bsp.bazel.commons;
 
-import com.google.common.base.Splitter;
 import java.net.URI;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class Uri implements Comparable<Uri> {
 
@@ -33,31 +31,6 @@ public class Uri implements Comparable<Uri> {
     }
     String path = String.format("/%s/%s", execRoot, execPath.substring(prefix.length()));
     return fromAbsolutePath(path);
-  }
-
-  public static Uri fromFileLabel(String fileLabel, String workspaceRoot) {
-    List<String> parts = divideFileLabel(fileLabel);
-    String path = String.format("/%s/%s/%s", workspaceRoot, parts.get(0), parts.get(1));
-    return fromAbsolutePath(path);
-  }
-
-  public static Uri packageDirFromLabel(String fileLabel, String workspaceRoot) {
-    List<String> parts = divideFileLabel(fileLabel);
-    String path = String.format("/%s/%s", workspaceRoot, parts.get(0));
-    return fromAbsolutePath(path);
-  }
-
-  private static List<String> divideFileLabel(String fileLabel) {
-    if (!fileLabel.startsWith("//")) {
-      throw new IllegalArgumentException(String.format("%s didn't start with %s", fileLabel, "//"));
-    }
-    String fileLabelWithoutPrefix = fileLabel.substring(2);
-    List<String> parts = Splitter.on(':').splitToList(fileLabelWithoutPrefix);
-    if (parts.size() != 2) {
-      throw new IllegalArgumentException(
-          String.format("Label %s didn't contain exactly one :", fileLabel));
-    }
-    return parts;
   }
 
   public static Uri fromWorkspacePath(String path, String workspaceRoot) {

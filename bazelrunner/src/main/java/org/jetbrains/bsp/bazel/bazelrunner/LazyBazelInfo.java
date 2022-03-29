@@ -5,46 +5,39 @@ import io.vavr.collection.Map;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class LazyBazelData implements BazelData {
+public class LazyBazelInfo implements BazelInfo {
   private final Lazy<Map<String, String>> bazelInfoOutput;
   private final Lazy<String> execRoot;
-  private final Lazy<String> workspaceRoot;
+  private final Lazy<Path> workspaceRoot;
   private final Lazy<String> binRoot;
   private final Lazy<SemanticVersion> version;
-  private final Path bspProjectRoot;
 
-  public LazyBazelData(Lazy<Map<String, String>> bazelInfoOutput) {
+  public LazyBazelInfo(Lazy<Map<String, String>> bazelInfoOutput) {
     this.bazelInfoOutput = bazelInfoOutput;
     this.execRoot = extract("execution_root");
-    this.workspaceRoot = extract("workspace");
+    this.workspaceRoot = extract("workspace").map(Paths::get);
     this.binRoot = extract("bazel-bin");
     this.version = extract("release").map(SemanticVersion::fromReleaseData);
-    this.bspProjectRoot = Paths.get("").toAbsolutePath().normalize();
   }
 
   @Override
-  public String getExecRoot() {
+  public String execRoot() {
     return execRoot.get();
   }
 
   @Override
-  public String getWorkspaceRoot() {
+  public Path workspaceRoot() {
     return workspaceRoot.get();
   }
 
   @Override
-  public String getBinRoot() {
+  public String binRoot() {
     return binRoot.get();
   }
 
   @Override
-  public SemanticVersion getVersion() {
+  public SemanticVersion version() {
     return version.get();
-  }
-
-  @Override
-  public Path getBspProjectRoot() {
-    return bspProjectRoot;
   }
 
   private Lazy<String> extract(String name) {

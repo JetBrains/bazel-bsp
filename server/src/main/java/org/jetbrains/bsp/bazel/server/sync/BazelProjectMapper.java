@@ -12,6 +12,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 import org.jetbrains.bsp.bazel.server.sync.model.Language;
@@ -70,7 +71,7 @@ public class BazelProjectMapper {
     var resources = resolveResources(target);
 
     var languagePlugin = languagePluginsService.getPlugin(languages);
-    var languageData = (Option<Object>) languagePlugin.resolveModule(target);
+    var languageData = (Option<LanguageData>) languagePlugin.resolveModule(target);
 
     var sourceDependencies = languagePlugin.dependencySources(target);
 

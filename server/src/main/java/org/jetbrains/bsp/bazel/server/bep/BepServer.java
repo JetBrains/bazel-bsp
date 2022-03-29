@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.commons.Uri;
@@ -47,9 +47,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
-  public BepServer(BazelData bazelData, BuildClient bspClient) {
+  public BepServer(BazelInfo bazelInfo, BuildClient bspClient) {
     this.bspClient = bspClient;
-    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelData, bspClient);
+    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelInfo, bspClient);
   }
 
   @Override

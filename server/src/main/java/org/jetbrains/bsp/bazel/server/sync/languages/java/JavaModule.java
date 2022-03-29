@@ -1,11 +1,14 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.util.Objects;
+import org.jetbrains.bsp.bazel.commons.Format;
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 
-public class JavaModule {
+public class JavaModule implements LanguageData {
   private final Jdk jdk;
   private final List<String> javacOpts;
   private final List<String> jvmOps;
@@ -18,16 +21,16 @@ public class JavaModule {
   private final List<URI> ideClasspath;
 
   public JavaModule(
-      Jdk jdk,
-      List<String> javacOpts,
-      List<String> jvmOps,
-      URI mainOutput,
-      Option<String> mainClass,
-      List<String> args,
-      List<URI> runtimeClasspath,
-      List<URI> compileClasspath,
-      List<URI> sourcesClasspath,
-      List<URI> ideClasspath) {
+      @JsonProperty("jdk") Jdk jdk,
+      @JsonProperty("javacOpts") List<String> javacOpts,
+      @JsonProperty("jvmOps") List<String> jvmOps,
+      @JsonProperty("mainOutput") URI mainOutput,
+      @JsonProperty("mainClass") Option<String> mainClass,
+      @JsonProperty("args") List<String> args,
+      @JsonProperty("runtimeClasspath") List<URI> runtimeClasspath,
+      @JsonProperty("compileClasspath") List<URI> compileClasspath,
+      @JsonProperty("sourcesClasspath") List<URI> sourcesClasspath,
+      @JsonProperty("ideClasspath") List<URI> ideClasspath) {
     this.jdk = jdk;
     this.javacOpts = javacOpts;
     this.jvmOps = jvmOps;
@@ -106,5 +109,21 @@ public class JavaModule {
         compileClasspath,
         sourcesClasspath,
         ideClasspath);
+  }
+
+  @Override
+  public String toString() {
+    return Format.object(
+        "JavaModule",
+        Format.entry("jdk", jdk),
+        Format.entry("javacOpts", Format.iterableShort(javacOpts)),
+        Format.entry("jvmOps", Format.iterableShort(jvmOps)),
+        Format.entry("mainOutput", mainOutput),
+        Format.entry("mainClass", mainClass),
+        Format.entry("args", Format.iterableShort(args)),
+        Format.entry("runtimeClasspath", Format.iterable(runtimeClasspath)),
+        Format.entry("compileClasspath", Format.iterable(compileClasspath)),
+        Format.entry("sourcesClasspath", Format.iterable(sourcesClasspath)),
+        Format.entry("ideClasspath", Format.iterable(ideClasspath)));
   }
 }
