@@ -1,16 +1,16 @@
 package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.vavr.control.Option;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstallationContextJavaPathEntityMapperTest {
 
@@ -74,9 +74,12 @@ public class InstallationContextJavaPathEntityMapperTest {
 
     // then
     assertTrue(javaPathTry.isFailure());
-    assertEquals(ProjectViewToExecutionContextEntityMapperException.class, javaPathTry.getCause().getClass());
+    assertEquals(
+        ProjectViewToExecutionContextEntityMapperException.class,
+        javaPathTry.getCause().getClass());
 
-    var expectedMessage = "Mapping project view into 'java path' failed! System property 'java.home' is not"
+    var expectedMessage =
+        "Mapping project view into 'java path' failed! System property 'java.home' is not"
             + " specified.";
     assertEquals(expectedMessage, javaPathTry.getCause().getMessage());
   }

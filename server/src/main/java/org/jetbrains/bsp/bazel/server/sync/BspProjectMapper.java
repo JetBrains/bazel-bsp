@@ -1,11 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.getModules;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspUri;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toLabels;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toUri;
-
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
@@ -54,6 +48,12 @@ import org.jetbrains.bsp.bazel.server.sync.model.Language;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.getModules;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspUri;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toLabels;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toUri;
 
 public class BspProjectMapper {
 

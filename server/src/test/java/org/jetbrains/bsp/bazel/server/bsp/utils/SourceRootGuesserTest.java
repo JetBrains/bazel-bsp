@@ -1,9 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

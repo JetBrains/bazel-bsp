@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers;
 
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
 import io.vavr.control.Option;

@@ -13,7 +13,6 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSec
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -61,7 +60,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -89,7 +88,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -114,7 +113,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -143,7 +142,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -177,7 +176,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -205,7 +204,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -241,7 +240,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 
@@ -270,7 +269,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
       Function<V, T> sectionMapper,
       Function<String, V> elementMapper) {
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
 
     var sectionName = parser.sectionName;
 

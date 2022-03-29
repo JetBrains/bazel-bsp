@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-
 import io.vavr.collection.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;

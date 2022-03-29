@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext;
 
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;

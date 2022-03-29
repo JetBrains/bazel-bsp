@@ -1,9 +1,9 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
-
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
+
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
 
 public class BepServerProjectListener implements ProjectChangeListener {
   private final BepServer bepServer;

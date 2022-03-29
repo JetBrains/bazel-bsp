@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.google.protobuf.TextFormat;
 import io.vavr.API;
 import io.vavr.collection.HashSet;
@@ -18,6 +16,8 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /** Responsible for querying bazel and constructing Project instance */
 public class ProjectResolver {

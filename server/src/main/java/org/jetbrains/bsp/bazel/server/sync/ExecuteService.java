@@ -1,8 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.getModules;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspUri;
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
@@ -23,6 +20,9 @@ import org.jetbrains.bsp.bazel.projectview.model.TargetSpecs;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.getModules;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspUri;
 
 public class ExecuteService {
 

@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.model;
 
-
-
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.net.HostAndPort;
 import io.vavr.collection.List;

@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala;
 
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
-
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.ScalaBuildTarget;
@@ -25,6 +23,8 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 import org.jetbrains.bsp.bazel.server.sync.model.Language;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
 
 public class ScalaLanguagePlugin extends LanguagePlugin<ScalaModule> {
   private final JavaLanguagePlugin javaLanguagePlugin;

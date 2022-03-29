@@ -1,3 +1,4 @@
+load("@rules_java//java:defs.bzl", "java_test")
 load("@rules_jvm_external//:specs.bzl", "maven", "parse")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls")
@@ -112,7 +113,7 @@ def java_junit5_test(name, srcs, test_package, deps = [], runtime_deps = [], **k
     else:
         fail("must specify 'test_package'")
 
-    native.java_test(
+    java_test(
         name = name,
         srcs = srcs,
         use_testrunner = False,

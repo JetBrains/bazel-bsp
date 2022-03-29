@@ -1,14 +1,14 @@
 package org.jetbrains.bsp.bazel.installationcontext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstallationContextTest {
 

@@ -27,7 +27,8 @@ public class ProjectViewRawSectionTest {
 
   @ParameterizedTest(name = "{index}: {0}.shouldCompareByName({1}) should equals {2}")
   @MethodSource("data")
-  public void shouldCompareByName(ProjectViewRawSection section, String nameToCompare, boolean expectedComparisonResult) {
+  public void shouldCompareByName(
+      ProjectViewRawSection section, String nameToCompare, boolean expectedComparisonResult) {
     // when
     var result = section.hasName(nameToCompare);
 
