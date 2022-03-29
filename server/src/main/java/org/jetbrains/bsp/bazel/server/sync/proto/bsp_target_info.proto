@@ -57,10 +57,6 @@ message ScalaToolchainInfo {
   repeated FileLocation compiler_classpath = 1;
 }
 
-message ThriftTargetInfo {
-  repeated FileLocation dependency_sources = 1;
-}
-
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -73,5 +69,4 @@ message TargetInfo {
   JavaRuntimeInfo java_runtime_info = 3000;
   ScalaTargetInfo scala_target_info = 4000;
   ScalaToolchainInfo scala_toolchain_info = 5000;
-  ThriftTargetInfo thrift_target_info = 6000;
 }
