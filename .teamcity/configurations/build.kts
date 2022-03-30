@@ -22,6 +22,7 @@ open class BazelBspBuildBuildType(name: String, moduleLabel: String) : BaseConfi
     }
 )
 
+
 object BuildTheProject : BazelBspBuildBuildType(
     name = "build the project",
     moduleLabel = "//...",
