@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -12,17 +12,26 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class InternalAspectsResolverTest {
 
-  @MethodSource("data")
-  @ParameterizedTest
-  public void shouldResolveLabels(
-      String workspaceRoot, String bspRoot, String aspectName, String expectedAspectLabel) {
-    var bazelData = createBazelData(workspaceRoot, bspRoot, aspectName, expectedAspectLabel);
-    var actual = new InternalAspectsResolver(bazelData).resolveLabel(aspectName);
-    assertEquals(expectedAspectLabel, actual);
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        Arguments.of(
+            // given
+            createBazelData(
+                "/Users/user/workspace/test-project", "/Users/user/workspace/test-project"),
+            "get_classpath",
+            // then
+            "@//.bazelbsp:aspects.bzl%get_classpath"),
+        Arguments.of(
+            // given
+            createBazelData(
+                "/Users/user/workspace/test-project",
+                "/Users/user/workspace/test-project/bsp-projects/test-project-bsp"),
+            "get_classpath",
+            // then
+            "@//bsp-projects/test-project-bsp/.bazelbsp:aspects.bzl%get_classpath"));
   }
 
-  private BazelData createBazelData(
-      String workspaceRoot, String bspRoot, String aspectName, String expectedAspectLabel) {
+  private static BazelData createBazelData(String workspaceRoot, String bspRoot) {
     return new BazelData() {
       @Override
       public String getExecRoot() {
@@ -31,7 +40,7 @@ public class InternalAspectsResolverTest {
 
       @Override
       public String getWorkspaceRoot() {
-        return workspaceRoot.toString();
+        return workspaceRoot;
       }
 
       @Override
@@ -51,17 +60,15 @@ public class InternalAspectsResolverTest {
     };
   }
 
-  public static Stream<Arguments> data() {
-    return Stream.of(
-        Arguments.of(
-            "/Users/user/workspace/test-project",
-            "/Users/user/workspace/test-project",
-            "get_classpath",
-            "@//.bazelbsp:aspects.bzl%get_classpath"),
-        Arguments.of(
-            "/Users/user/workspace/test-project",
-            "/Users/user/workspace/test-project/bsp-projects/test-project-bsp",
-            "get_classpath",
-            "@//bsp-projects/test-project-bsp/.bazelbsp:aspects.bzl%get_classpath"));
+  @MethodSource("data")
+  @ParameterizedTest(name = "{index}: internalAspectsResolver.resolveLabel({1}) should equals {2}")
+  public void shouldResolveLabels(
+      BazelData bazelData, String aspectName, String expectedAspectLabel) {
+    // when
+    var internalAspectsResolver = new InternalAspectsResolver(bazelData);
+    var aspectLabel = internalAspectsResolver.resolveLabel(aspectName);
+
+    // then
+    assertThat(aspectLabel).isEqualTo(expectedAspectLabel);
   }
 }

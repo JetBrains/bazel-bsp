@@ -22,6 +22,7 @@ JUNIT_PLATFORM_ARTIFACT_ID_LIST = [
 JUNIT_EXTRA_DEPENDENCIES = [
     ("org.apiguardian", "apiguardian-api", "1.0.0"),
     ("org.opentest4j", "opentest4j", "1.1.1"),
+    ("org.assertj", "assertj-core", "3.22.0"),
 ]
 
 def junit_jupiter_java_repositories(

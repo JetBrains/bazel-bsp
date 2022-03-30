@@ -8,7 +8,6 @@ java_junit5_test(
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep/parsers/error",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -20,6 +19,5 @@ java_junit5_test(
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep/parsers/error",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )

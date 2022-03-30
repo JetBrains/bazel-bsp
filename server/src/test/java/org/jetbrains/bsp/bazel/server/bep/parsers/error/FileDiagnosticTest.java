@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
@@ -179,6 +179,6 @@ public class FileDiagnosticTest {
     var diagnostics = FileDiagnostic.fromError(error).collect(Collectors.toList());
 
     // then
-    assertEquals(expectedDiagnostics, diagnostics);
+    assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expectedDiagnostics);
   }
 }
