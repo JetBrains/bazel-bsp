@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
@@ -32,12 +31,12 @@ public class WorkspaceContextTargetsEntityMapperTest {
     var targetsTry = mapper.map(projectView);
 
     // then
-    assertTrue(targetsTry.isFailure());
-    assertEquals(
-        ProjectViewToExecutionContextEntityMapperException.class, targetsTry.getCause().getClass());
-    assertEquals(
-        "Mapping project view into 'targets' failed! 'targets' section in project view is empty.",
-        targetsTry.getCause().getMessage());
+    assertThat(targetsTry.isFailure()).isTrue();
+    assertThat(targetsTry.getCause().getClass())
+        .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
+    assertThat(targetsTry.getCause().getMessage())
+        .isEqualTo(
+            "Mapping project view into 'targets' failed! 'targets' section in project view is empty.");
   }
 
   @Test
@@ -59,12 +58,12 @@ public class WorkspaceContextTargetsEntityMapperTest {
     var targetsTry = mapper.map(projectView);
 
     // then
-    assertTrue(targetsTry.isFailure());
-    assertEquals(
-        ProjectViewToExecutionContextEntityMapperException.class, targetsTry.getCause().getClass());
-    assertEquals(
-        "Mapping project view into 'targets' failed! 'targets' section has no included targets.",
-        targetsTry.getCause().getMessage());
+    assertThat(targetsTry.isFailure()).isTrue();
+    assertThat(targetsTry.getCause().getClass())
+        .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
+    assertThat(targetsTry.getCause().getMessage())
+        .isEqualTo(
+            "Mapping project view into 'targets' failed! 'targets' section has no included targets.");
   }
 
   @Test
@@ -89,18 +88,18 @@ public class WorkspaceContextTargetsEntityMapperTest {
     var targetsTry = mapper.map(projectView);
 
     // then
-    assertTrue(targetsTry.isSuccess());
+    assertThat(targetsTry.isSuccess()).isTrue();
     var targets = targetsTry.get();
 
     var expectedTargets =
         new ExecutionContextTargetsEntity(
-            io.vavr.collection.List.of(
+            List.of(
                 new BuildTargetIdentifier("//included_target1"),
                 new BuildTargetIdentifier("//included_target2"),
                 new BuildTargetIdentifier("//included_target3")),
-            io.vavr.collection.List.of(
+            List.of(
                 new BuildTargetIdentifier("//excluded_target1"),
                 new BuildTargetIdentifier("//excluded_target2")));
-    assertEquals(expectedTargets, targets);
+    assertThat(targets).isEqualTo(expectedTargets);
   }
 }

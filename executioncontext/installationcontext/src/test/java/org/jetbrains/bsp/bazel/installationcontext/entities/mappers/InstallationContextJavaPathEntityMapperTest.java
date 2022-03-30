@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vavr.control.Option;
 import java.nio.file.Paths;
@@ -35,11 +34,11 @@ public class InstallationContextJavaPathEntityMapperTest {
     var javaPathTry = mapper.map(projectView);
 
     // then
-    assertTrue(javaPathTry.isSuccess());
+    assertThat(javaPathTry.isSuccess()).isTrue();
     var javaPath = javaPathTry.get();
 
     var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
-    assertEquals(expectedJavaPath, javaPath);
+    assertThat(javaPath).isEqualTo(expectedJavaPath);
   }
 
   @Test
@@ -54,11 +53,11 @@ public class InstallationContextJavaPathEntityMapperTest {
     var javaPathTry = mapper.map(projectView);
 
     // then
-    assertTrue(javaPathTry.isSuccess());
+    assertThat(javaPathTry.isSuccess()).isTrue();
     var javaPath = javaPathTry.get();
 
     var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
-    assertEquals(expectedJavaPath, javaPath);
+    assertThat(javaPath).isEqualTo(expectedJavaPath);
   }
 
   @Test
@@ -73,14 +72,11 @@ public class InstallationContextJavaPathEntityMapperTest {
     var javaPathTry = mapper.map(projectView);
 
     // then
-    assertTrue(javaPathTry.isFailure());
-    assertEquals(
-        ProjectViewToExecutionContextEntityMapperException.class,
-        javaPathTry.getCause().getClass());
-
-    var expectedMessage =
-        "Mapping project view into 'java path' failed! System property 'java.home' is not"
-            + " specified.";
-    assertEquals(expectedMessage, javaPathTry.getCause().getMessage());
+    assertThat(javaPathTry.isFailure()).isTrue();
+    assertThat(javaPathTry.getCause().getClass())
+        .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
+    assertThat(javaPathTry.getCause().getMessage())
+        .isEqualTo(
+            "Mapping project view into 'java path' failed! System property 'java.home' is not specified.");
   }
 }

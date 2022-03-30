@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.installationcontext.entities.mappers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
@@ -23,6 +22,22 @@ public class InstallationContextDebuggerAddressEntityMapperTest {
 
   @Test
   public void
+      shouldReturnSuccessWithEmptyDebuggerAddressFromProjectViewIfDebuggerAddressIsNotSpecifiedInProjectView() {
+    // given
+    var projectView = ProjectView.builder().debuggerAddress(Option.none()).build().get();
+
+    // when
+    var debuggerAddressTry = mapper.map(projectView);
+
+    // then
+    assertThat(debuggerAddressTry.isSuccess()).isTrue();
+    var debuggerAddressOption = debuggerAddressTry.get();
+
+    assertThat(debuggerAddressOption).isEmpty();
+  }
+
+  @Test
+  public void
       shouldReturnSuccessWithDebuggerAddressFromProjectViewIfDebuggerAddressIsSpecifiedInProjectView() {
     // given
     var projectView =
@@ -37,30 +52,11 @@ public class InstallationContextDebuggerAddressEntityMapperTest {
     var debuggerAddressTry = mapper.map(projectView);
 
     // then
-    assertTrue(debuggerAddressTry.isSuccess());
+    assertThat(debuggerAddressTry.isSuccess()).isTrue();
     var debuggerAddressOption = debuggerAddressTry.get();
-
-    assertTrue(debuggerAddressOption.isDefined());
-    var debuggerAddress = debuggerAddressOption.get();
 
     var expectedDebuggerAddress =
         new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"));
-    assertEquals(expectedDebuggerAddress, debuggerAddress);
-  }
-
-  @Test
-  public void
-      shouldReturnSuccessWithEmptyDebuggerAddressFromProjectViewIfDebuggerAddressIsNotSpecifiedInProjectView() {
-    // given
-    var projectView = ProjectView.builder().debuggerAddress(Option.none()).build().get();
-
-    // when
-    var debuggerAddressTry = mapper.map(projectView);
-
-    // then
-    assertTrue(debuggerAddressTry.isSuccess());
-    var debuggerAddressOption = debuggerAddressTry.get();
-
-    assertTrue(debuggerAddressOption.isEmpty());
+    assertThat(debuggerAddressOption).containsExactly(expectedDebuggerAddress);
   }
 }

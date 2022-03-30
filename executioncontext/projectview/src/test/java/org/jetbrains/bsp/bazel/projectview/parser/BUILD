@@ -10,7 +10,6 @@ java_junit5_test(
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser:parser_mock_test_impl",
-        "@maven//:com_google_guava_guava",
     ],
 )
 

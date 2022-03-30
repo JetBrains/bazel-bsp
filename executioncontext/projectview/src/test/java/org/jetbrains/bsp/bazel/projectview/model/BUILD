@@ -7,6 +7,5 @@ java_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.projectview.model",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
-        "@maven//:com_google_guava_guava",
     ],
 )

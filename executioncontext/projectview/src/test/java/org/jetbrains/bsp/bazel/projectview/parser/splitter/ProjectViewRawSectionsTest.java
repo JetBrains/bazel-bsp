@@ -1,11 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vavr.collection.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
 
 public class ProjectViewRawSectionsTest {
@@ -20,7 +17,7 @@ public class ProjectViewRawSectionsTest {
     var sectionWithName = projectViewRawSections.getLastSectionWithName("doesntexist");
 
     // then
-    assertFalse(sectionWithName.isDefined());
+    assertThat(sectionWithName).isEmpty();
   }
 
   @Test
@@ -37,7 +34,7 @@ public class ProjectViewRawSectionsTest {
     var sectionWithName = projectViewRawSections.getLastSectionWithName("doesntexist");
 
     // then
-    assertFalse(sectionWithName.isDefined());
+    assertThat(sectionWithName).isEmpty();
   }
 
   @Test
@@ -55,7 +52,7 @@ public class ProjectViewRawSectionsTest {
 
     // then
     var expectedSection = new ProjectViewRawSection("name1", "body1");
-    assertEquals(expectedSection, sectionWithName.get());
+    assertThat(sectionWithName).containsExactly(expectedSection);
   }
 
   @Test
@@ -75,7 +72,7 @@ public class ProjectViewRawSectionsTest {
 
     // then
     var expectedSection = new ProjectViewRawSection("name1", "body1.3");
-    assertEquals(expectedSection, sectionWithName.get());
+    assertThat(sectionWithName).containsExactly(expectedSection);
   }
 
   @Test
@@ -85,10 +82,10 @@ public class ProjectViewRawSectionsTest {
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
-    var sectionsWithName = projectViewRawSections.getAllWithName("doesntexist").toJavaList();
+    var sectionsWithName = projectViewRawSections.getAllWithName("doesntexist");
 
     // then
-    assertTrue(sectionsWithName.isEmpty());
+    assertThat(sectionsWithName).isEmpty();
   }
 
   @Test
@@ -102,10 +99,10 @@ public class ProjectViewRawSectionsTest {
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
-    var sectionsWithName = projectViewRawSections.getAllWithName("doesntexist").toJavaList();
+    var sectionsWithName = projectViewRawSections.getAllWithName("doesntexist");
 
     // then
-    assertTrue(sectionsWithName.isEmpty());
+    assertThat(sectionsWithName).isEmpty();
   }
 
   @Test
@@ -121,15 +118,14 @@ public class ProjectViewRawSectionsTest {
     var projectViewRawSections = new ProjectViewRawSections(sections);
 
     // when
-    var sectionsWithName = projectViewRawSections.getAllWithName("name1").toJavaList();
+    var sectionsWithName = projectViewRawSections.getAllWithName("name1");
 
     // then
     var expectedSections =
         List.of(
                 new ProjectViewRawSection("name1", "body1.1"),
                 new ProjectViewRawSection("name1", "body1.3"),
-                new ProjectViewRawSection("name1", "body1.2"))
-            .toJavaList();
-    assertTrue(CollectionUtils.isEqualCollection(expectedSections, sectionsWithName));
+                new ProjectViewRawSection("name1", "body1.2"));
+    assertThat(sectionsWithName).containsExactlyInAnyOrderElementsOf(expectedSections);
   }
 }

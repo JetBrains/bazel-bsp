@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vavr.collection.List;
 import java.util.stream.Stream;
@@ -210,6 +210,6 @@ public class ProjectViewSectionSplitterTest {
     var sections = ProjectViewSectionSplitter.getRawSectionsForFileContent(fileContent);
 
     // then
-    assertEquals(expectedSections, sections);
+    assertThat(sections).isEqualTo(expectedSections);
   }
 }

@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,6 +33,6 @@ public class ProjectViewRawSectionTest {
     var result = section.hasName(nameToCompare);
 
     // then
-    assertEquals(expectedComparisonResult, result);
+    assertThat(result).isEqualTo(expectedComparisonResult);
   }
 }
