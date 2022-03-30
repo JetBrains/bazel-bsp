@@ -1,33 +1,23 @@
 package configurations
 
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-
-open class BazelBspUnitTestsBuildType(moduleLabel: String) : BaseConfiguration.BazelBspBaseBuildType(
+open class UnitTestsBuildType(moduleLabel: String) : BaseConfiguration.BaseBazelBuildType(
     name = "[unit tests] $moduleLabel tests",
-    steps = {
-        script {
-            this.name = "testing $moduleLabel module"
-            this.scriptContent = """bazel test $moduleLabel/..."""
-            this.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            this.dockerPull = true
-            this.dockerImage = "andrefmrocha/bazelisk"
-        }
-    }
+    command = "test",
+    targets = "$moduleLabel/...",
 )
 
-object BazelRunnerUnitTests : BazelBspUnitTestsBuildType(
+object BazelRunnerUnitTests : UnitTestsBuildType(
     moduleLabel = "//bazelrunner",
 )
 
-object CommonsUnitTests : BazelBspUnitTestsBuildType(
+object CommonsUnitTests : UnitTestsBuildType(
     moduleLabel = "//commons",
 )
 
-object ExecutionContextUnitTests : BazelBspUnitTestsBuildType(
+object ExecutionContextUnitTests : UnitTestsBuildType(
     moduleLabel = "//executioncontext",
 )
 
-object ServerUnitTests : BazelBspUnitTestsBuildType(
+object ServerUnitTests : UnitTestsBuildType(
     moduleLabel = "//server",
 )

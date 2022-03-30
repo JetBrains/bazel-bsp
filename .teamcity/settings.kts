@@ -45,7 +45,7 @@ project {
 
             buildType(E2eTests.CppProjectE2ETest)
 
-            buildType(E2eTests.BazelBspEntireRepositoryImportE2ETest)
+            buildType(E2eTests.EntireRepositoryImportE2ETest)
         }
     }.buildTypes()
 

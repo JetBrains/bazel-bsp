@@ -4,9 +4,11 @@ import jetbrains.buildServer.configs.kotlin.v10.toExtId
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
-open class BazelBspBaseBuildType(name: String, steps: BuildSteps.() -> Unit) : BuildType({
+open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit) : BuildType({
     id(name.toExtId())
     this.name = name
 
@@ -31,6 +33,30 @@ open class BazelBspBaseBuildType(name: String, steps: BuildSteps.() -> Unit) : B
         }
     }
 })
+
+open class BaseBazelBuildType(name: String, command: String, targets: String, arguments: String? = null) :
+    BaseBuildType(name, {
+        script {
+            this.scriptContent = """
+                wget $bazeliskUrl --directory-prefix=$cacheDir
+                chmod +x $bazelPath
+            """.trimIndent()
+        }
+        bazel {
+            this.command = command
+            this.targets = targets
+            this.arguments = arguments
+
+            param("toolPath", bazelPath)
+        }
+    }) {
+    companion object {
+        private const val bazeliskUrl =
+            "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64"
+        private const val cacheDir = "%system.agent.persistent.cache%/bazel/"
+        private const val bazelPath = "${cacheDir}bazelisk-linux-amd64"
+    }
+}
 
 object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp"
