@@ -16,6 +16,10 @@ open class BazelBspBaseBuildType(name: String, steps: BuildSteps.() -> Unit) : B
         root(BazelBspVcs)
     }
 
+    requirements {
+        equals("teamcity.agent.jvm.os.name", "Linux")
+    }
+
     features {
         commitStatusPublisher {
             publisher = github {
