@@ -16,6 +16,8 @@ open class BazelBspBuildBuildType(name: String, moduleLabel: String) : BaseConfi
             this.name = "building $moduleLabel"
             this.command = "build"
             this.targets = moduleLabel
+
+            param("toolPath", "%system.agent.persistent.cache%/bazel/bazelisk-linux-amd64")
         }
     }
 )
