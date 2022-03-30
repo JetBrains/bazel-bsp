@@ -77,6 +77,7 @@ public class InstallationContextJavaPathEntityMapperTest {
         .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
     assertThat(javaPathTry.getCause().getMessage())
         .isEqualTo(
-            "Mapping project view into 'java path' failed! System property 'java.home' is not specified.");
+            "Mapping project view into 'java path' failed! System property 'java.home' is not"
+                + " specified.");
   }
 }

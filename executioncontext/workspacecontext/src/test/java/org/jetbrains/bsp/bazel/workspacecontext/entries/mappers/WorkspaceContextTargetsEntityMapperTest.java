@@ -36,7 +36,8 @@ public class WorkspaceContextTargetsEntityMapperTest {
         .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
     assertThat(targetsTry.getCause().getMessage())
         .isEqualTo(
-            "Mapping project view into 'targets' failed! 'targets' section in project view is empty.");
+            "Mapping project view into 'targets' failed! 'targets' section in project view is"
+                + " empty.");
   }
 
   @Test
@@ -63,7 +64,8 @@ public class WorkspaceContextTargetsEntityMapperTest {
         .isEqualTo(ProjectViewToExecutionContextEntityMapperException.class);
     assertThat(targetsTry.getCause().getMessage())
         .isEqualTo(
-            "Mapping project view into 'targets' failed! 'targets' section has no included targets.");
+            "Mapping project view into 'targets' failed! 'targets' section has no included"
+                + " targets.");
   }
 
   @Test

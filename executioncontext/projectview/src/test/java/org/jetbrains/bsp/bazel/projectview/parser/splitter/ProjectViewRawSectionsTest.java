@@ -123,9 +123,9 @@ public class ProjectViewRawSectionsTest {
     // then
     var expectedSections =
         List.of(
-                new ProjectViewRawSection("name1", "body1.1"),
-                new ProjectViewRawSection("name1", "body1.3"),
-                new ProjectViewRawSection("name1", "body1.2"));
+            new ProjectViewRawSection("name1", "body1.1"),
+            new ProjectViewRawSection("name1", "body1.3"),
+            new ProjectViewRawSection("name1", "body1.2"));
     assertThat(sectionsWithName).containsExactlyInAnyOrderElementsOf(expectedSections);
   }
 }

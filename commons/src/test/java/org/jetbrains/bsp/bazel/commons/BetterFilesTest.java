@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.commons;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -20,7 +19,7 @@ public class BetterFilesTest {
     var fileContent = BetterFiles.tryReadFileContent(filePath);
 
     // then
-    assertTrue(fileContent.isFailure());
+    assertThat(fileContent.isFailure()).isTrue();
   }
 
   @Test
@@ -39,7 +38,7 @@ public class BetterFilesTest {
     var fileContent = BetterFiles.tryReadFileContent(filePath);
 
     // then
-    assertTrue(fileContent.isSuccess());
-    assertEquals("test content", fileContent.get());
+    assertThat(fileContent.isSuccess()).isTrue();
+    assertThat(fileContent.get()).isEqualTo("test content");
   }
 }
