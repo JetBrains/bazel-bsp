@@ -38,7 +38,7 @@ open class BaseBazelBuildType(name: String, command: String, targets: String, ar
     BaseBuildType(name, {
         script {
             this.scriptContent = """
-                wget $bazeliskUrl --directory-prefix=$cacheDir
+                wget $bazeliskUrl --directory-prefix=$cacheDir --no-clobber
                 chmod +x $bazelPath
             """.trimIndent()
         }
