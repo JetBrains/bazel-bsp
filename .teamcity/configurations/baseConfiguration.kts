@@ -34,7 +34,7 @@ open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit) : BuildType
     }
 })
 
-open class BaseBazelBuildType(name: String, command: String, targets: String, arguments: String? = null) :
+open class BaseBazelBuildType(name: String, command: String, targets: String?, arguments: String? = null) :
     BaseBuildType(name, {
         script {
             this.scriptContent = """
