@@ -43,4 +43,3 @@ object CppProjectE2ETest : E2ETestsBuildType(
 object EntireRepositoryImportE2ETest : E2ETestsBuildType(
     testLabel = "//e2e:BazelBspEntireRepositoryImportTest",
 )
-
