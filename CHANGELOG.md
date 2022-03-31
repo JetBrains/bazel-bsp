@@ -27,6 +27,8 @@
 
 - JUnit5!
   | [#206](https://github.com/JetBrains/bazel-bsp/pull/206)
+- Do not throw on aborted event from BEP. Show warning instead.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Readable `toString` for all `Project` related classes.
   | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Measure and report time of longer operations during sync.

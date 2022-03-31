@@ -25,6 +25,14 @@ public class BspClientLogger {
     log(MessageType.LOG, message);
   }
 
+  public void warn(String format, Object... args) {
+    warn(String.format(format, args));
+  }
+
+  public void warn(String message) {
+    log(MessageType.WARNING, message);
+  }
+
   private void log(MessageType messageType, String message) {
     if (bspClient == null) return;
 

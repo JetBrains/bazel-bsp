@@ -107,7 +107,7 @@ public class BazelBspServer {
     bspIntegrationData.setLauncher(launcher);
     BuildClient client = launcher.getRemoteProxy();
     this.bspClientLogger.initialize(client);
-    var bepServer = new BepServer(bazelInfo, client);
+    var bepServer = new BepServer(bazelInfo, client, bspClientLogger);
     compilationManager.setBepServer(bepServer);
     projectProvider.addListener(new BepServerProjectListener(bepServer));
     bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
