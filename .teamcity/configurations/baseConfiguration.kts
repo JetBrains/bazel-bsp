@@ -42,6 +42,7 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?, a
                 chmod +x $bazelPath
             """.trimIndent()
         }
+
         bazel {
             this.command = command
             this.targets = targets
