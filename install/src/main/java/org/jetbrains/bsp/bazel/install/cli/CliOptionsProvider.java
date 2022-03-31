@@ -8,7 +8,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 public class CliOptionsProvider {
 
@@ -41,7 +40,7 @@ public class CliOptionsProvider {
   private final String[] args;
   private final Options cliParserOptions;
 
-  public CliOptionsProvider(String[] args) throws ParseException {
+  public CliOptionsProvider(String[] args) {
     this.args = args;
 
     this.cliParserOptions = getCliParserOptions();

@@ -33,7 +33,7 @@ public class ServerInitializer {
 
     try {
       var bspProjectRoot = Paths.get("").toAbsolutePath();
-      var rootDir = bspProjectRoot.resolve(Constants.BAZELBSP_DIR_NAME);
+      var rootDir = bspProjectRoot.resolve(Constants.DOT_BAZELBSP_DIR_NAME);
       Files.createDirectories(rootDir);
 
       var traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);

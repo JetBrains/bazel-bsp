@@ -4,7 +4,7 @@ java_library(
     name = "install",
     srcs = glob(["*.java"]),
     visibility = ["//install:__subpackages__"],
-    resources = [ "//install/src/main/resources",],
+    resources = [ "//install/src/main/resources"],
     deps = [
         "//commons",
         "//executioncontext/projectview:parser",
