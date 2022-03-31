@@ -105,16 +105,19 @@ http_archive(
 # ======================================================================================================================
 # zlib - required by com_google_protobuf
 
-ZLIB_TAG = "1.2.11"
+ZLIB_TAG = "1.2.12"
 
-ZLIB_SHA = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1"
+ZLIB_SHA = "91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 
 http_archive(
     name = "zlib",
     build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
     sha256 = ZLIB_SHA,
     strip_prefix = "zlib-{}".format(ZLIB_TAG),
-    url = "https://zlib.net/zlib-{}.tar.gz".format(ZLIB_TAG),
+    urls = [
+        "http://mirror.tensorflow.org/zlib.net/zlib-{}.tar.gz".format(ZLIB_TAG),
+        "https://zlib.net/zlib-{}.tar.gz".format(ZLIB_TAG),
+    ],
 )
 
 # ======================================================================================================================
@@ -149,6 +152,23 @@ http_archive(
 load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
 
 sonatype_dependencies()
+
+# ======================================================================================================================
+# junit5
+
+load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
+
+JUNIT_JUPITER_VERSION = "5.8.2"
+
+JUNIT_PLATFORM_VERSION = "1.8.2"
+
+junit_jupiter_java_repositories(
+    version = JUNIT_JUPITER_VERSION,
+)
+
+junit_platform_java_repositories(
+    version = JUNIT_PLATFORM_VERSION,
+)
 
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------

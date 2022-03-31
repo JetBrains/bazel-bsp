@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.workspacecontext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
@@ -10,66 +9,74 @@ import io.vavr.control.Try;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 public class WorkspaceContextConstructorImplTest {
 
   private WorkspaceContextConstructorImpl workspaceContextConstructor;
 
-  @Before
+  @BeforeEach
   public void beforeEach() {
     // given
     this.workspaceContextConstructor = new WorkspaceContextConstructorImpl();
   }
 
-  // Try<WorkspaceContext> construct(Try<ProjectView> projectViewTry)
+  @Nested
+  @DisplayName("Try<WorkspaceContext> construct(Try<ProjectView> projectViewTry) tests")
+  class ConstructTryTest {
 
-  @Test
-  public void shouldReturnFailureIfProjectViewIsFailure() {
-    // given
-    var projectViewTry = Try.<ProjectView>failure(new Exception("exception message"));
+    @Test
+    public void shouldReturnFailureIfProjectViewIsFailure() {
+      // given
+      var projectViewTry = Try.<ProjectView>failure(new Exception("exception message"));
 
-    // when
-    var workspaceContextTry = workspaceContextConstructor.construct(projectViewTry);
+      // when
+      var workspaceContextTry = workspaceContextConstructor.construct(projectViewTry);
 
-    // then
-    assertTrue(workspaceContextTry.isFailure());
-    assertEquals(Exception.class, workspaceContextTry.getCause().getClass());
-    assertEquals("exception message", workspaceContextTry.getCause().getMessage());
+      // then
+      assertThat(workspaceContextTry.isFailure()).isTrue();
+      assertThat(workspaceContextTry.getCause().getClass()).isEqualTo(Exception.class);
+      assertThat(workspaceContextTry.getCause().getMessage()).isEqualTo("exception message");
+    }
   }
 
-  // Try<WorkspaceContext> construct(ProjectView projectView)
+  @Nested
+  @DisplayName("Try<WorkspaceContext> construct(ProjectView projectView) tests")
+  class ConstructTest {
 
-  @Test
-  public void shouldReturnSuccessIfProjectViewIsValid() {
-    // given
-    var projectView =
-        ProjectView.builder()
-            .targets(
-                Option.of(
-                    new ProjectViewTargetsSection(
-                        List.of(
-                            new BuildTargetIdentifier("//included_target1"),
-                            new BuildTargetIdentifier("//included_target2"),
-                            new BuildTargetIdentifier("//included_target3")),
-                        List.of(new BuildTargetIdentifier("//excluded_target1")))))
-            .build();
+    @Test
+    public void shouldReturnSuccessIfProjectViewIsValid() {
+      // given
+      var projectView =
+          ProjectView.builder()
+              .targets(
+                  Option.of(
+                      new ProjectViewTargetsSection(
+                          List.of(
+                              new BuildTargetIdentifier("//included_target1"),
+                              new BuildTargetIdentifier("//included_target2"),
+                              new BuildTargetIdentifier("//included_target3")),
+                          List.of(new BuildTargetIdentifier("//excluded_target1")))))
+              .build();
 
-    // when
-    var workspaceContextTry = workspaceContextConstructor.construct(projectView);
+      // when
+      var workspaceContextTry = workspaceContextConstructor.construct(projectView);
 
-    // then
-    assertTrue(workspaceContextTry.isSuccess());
-    var workspaceContext = workspaceContextTry.get();
+      // then
+      assertThat(workspaceContextTry.isSuccess()).isTrue();
+      var workspaceContext = workspaceContextTry.get();
 
-    var expectedTargets =
-        new ExecutionContextTargetsEntity(
-            io.vavr.collection.List.of(
-                new BuildTargetIdentifier("//included_target1"),
-                new BuildTargetIdentifier("//included_target2"),
-                new BuildTargetIdentifier("//included_target3")),
-            io.vavr.collection.List.of(new BuildTargetIdentifier("//excluded_target1")));
-    assertEquals(expectedTargets, workspaceContext.getTargets());
+      var expectedTargets =
+          new ExecutionContextTargetsEntity(
+              List.of(
+                  new BuildTargetIdentifier("//included_target1"),
+                  new BuildTargetIdentifier("//included_target2"),
+                  new BuildTargetIdentifier("//included_target3")),
+              List.of(new BuildTargetIdentifier("//excluded_target1")));
+      assertThat(workspaceContext.getTargets()).isEqualTo(expectedTargets);
+    }
   }
 }

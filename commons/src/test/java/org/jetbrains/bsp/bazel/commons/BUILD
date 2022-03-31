@@ -1,12 +1,10 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "BetterFilesTest",
     size = "small",
     srcs = ["BetterFilesTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.commons.test",
     deps = [
         "//commons/src/main/java/org/jetbrains/bsp/bazel/commons",
         "@maven//:io_vavr_vavr",

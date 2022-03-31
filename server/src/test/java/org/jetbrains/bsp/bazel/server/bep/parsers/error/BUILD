@@ -1,29 +1,23 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "FileDiagnosticTest",
     size = "small",
     srcs = ["FileDiagnosticTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.server.bep.parsers.error",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep/parsers/error",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "StderrDiagnosticsParserTest",
     size = "small",
     srcs = ["StderrDiagnosticsParserTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.server.bep.parsers.error",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep/parsers/error",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )

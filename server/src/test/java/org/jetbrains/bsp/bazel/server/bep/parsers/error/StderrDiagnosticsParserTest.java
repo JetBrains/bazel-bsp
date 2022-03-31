@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bep.parsers.error;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.Diagnostic;
@@ -9,28 +9,16 @@ import ch.epfl.scala.bsp4j.Position;
 import ch.epfl.scala.bsp4j.Range;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(value = Parameterized.class)
 public class StderrDiagnosticsParserTest {
 
-  private final String error;
-  private final Map<String, List<FileDiagnostic>> expectedDiagnostics;
-
-  public StderrDiagnosticsParserTest(
-      String error, Map<String, List<FileDiagnostic>> expectedDiagnostics) {
-    this.error = error;
-    this.expectedDiagnostics = expectedDiagnostics;
-  }
-
-  @Parameters(name = "{index}: FileDiagnostic.fromError({0}) should equals {1}")
-  public static List<Object[]> data() {
-    return List.of(
-        new Object[][] {
-          {
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        Arguments.of(
             // given - error in BUILD file
             "Loading:\n"
                 + "Loading: 0 packages loaded\n"
@@ -61,9 +49,8 @@ public class StderrDiagnosticsParserTest {
                           }
                         },
                         "/user/workspace/path/to/package/BUILD",
-                        new BuildTargetIdentifier("//path/to/package:test"))))
-          },
-          {
+                        new BuildTargetIdentifier("//path/to/package:test"))))),
+        Arguments.of(
             // given - error in one source file
             "Loading:\n"
                 + "Loading: 0 packages loaded\n"
@@ -128,9 +115,8 @@ public class StderrDiagnosticsParserTest {
                           }
                         },
                         "path/to/package/Test.scala",
-                        new BuildTargetIdentifier("//path/to/package:test"))))
-          },
-          {
+                        new BuildTargetIdentifier("//path/to/package:test"))))),
+        Arguments.of(
             // given - errors in two source files
             "Loading:\n"
                 + "Loading: 0 packages loaded\n"
@@ -218,9 +204,8 @@ public class StderrDiagnosticsParserTest {
                           }
                         },
                         "path/to/package/Test2.scala",
-                        new BuildTargetIdentifier("//path/to/package:test"))))
-          },
-          {
+                        new BuildTargetIdentifier("//path/to/package:test"))))),
+        Arguments.of(
             // given - errors in one source file
             "Loading:\n"
                 + "Loading: 0 packages loaded\n"
@@ -306,17 +291,17 @@ public class StderrDiagnosticsParserTest {
                           }
                         },
                         "path/to/package/Test.scala",
-                        new BuildTargetIdentifier("//path/to/package:test"))))
-          }
-        });
+                        new BuildTargetIdentifier("//path/to/package:test"))))));
   }
 
-  @Test
-  public void shouldParseEntireEventStderr() {
+  @MethodSource("data")
+  @ParameterizedTest(name = "{index}: StderrDiagnosticsParser.parse({0}) should equals {1}")
+  public void shouldParseEntireEventStderr(
+      String error, Map<String, List<FileDiagnostic>> expectedDiagnostics) {
     // when
     var diagnostics = StderrDiagnosticsParser.parse(error);
 
     // then
-    assertEquals(expectedDiagnostics, diagnostics);
+    assertThat(diagnostics).containsExactlyInAnyOrderEntriesOf(expectedDiagnostics);
   }
 }

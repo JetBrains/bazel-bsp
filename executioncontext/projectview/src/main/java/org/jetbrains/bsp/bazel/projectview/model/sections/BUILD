@@ -9,6 +9,7 @@ java_library(
     ],
     exports = [
         "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
     ],
     deps = [

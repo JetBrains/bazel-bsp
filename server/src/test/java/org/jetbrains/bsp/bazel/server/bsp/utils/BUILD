@@ -1,25 +1,21 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "SourceRootGuesserTest",
     size = "small",
     srcs = ["SourceRootGuesserTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.server.bsp.utils",
     deps = [
         "//commons",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "InternalAspectsResolverTest",
     size = "small",
     srcs = ["InternalAspectsResolverTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.server.bsp.utils",
     deps = [
         "//bazelrunner",
         "//commons",

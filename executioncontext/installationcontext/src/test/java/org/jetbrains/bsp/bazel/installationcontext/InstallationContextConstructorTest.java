@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.installationcontext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
@@ -12,59 +11,67 @@ import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJ
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 public class InstallationContextConstructorTest {
 
   private InstallationContextConstructor installationContextConstructor;
 
-  @Before
+  @BeforeEach
   public void beforeEach() {
     // given
     this.installationContextConstructor = new InstallationContextConstructor();
   }
 
-  // Try<WorkspaceContext> construct(Try<ProjectView> projectViewTry)
+  @Nested
+  @DisplayName("Try<WorkspaceContext> construct(projectViewTry) tests")
+  class ConstructProjectViewTryTest {
 
-  @Test
-  public void shouldReturnFailureIfProjectViewIsFailure() {
-    // given
-    var projectViewTry = Try.<ProjectView>failure(new Exception("exception message"));
+    @Test
+    public void shouldReturnFailureIfProjectViewIsFailure() {
+      // given
+      var projectViewTry = Try.<ProjectView>failure(new Exception("exception message"));
 
-    // when
-    var installationContextTry = installationContextConstructor.construct(projectViewTry);
+      // when
+      var installationContextTry = installationContextConstructor.construct(projectViewTry);
 
-    // then
-    assertTrue(installationContextTry.isFailure());
-    assertEquals(Exception.class, installationContextTry.getCause().getClass());
-    assertEquals("exception message", installationContextTry.getCause().getMessage());
+      // then
+      assertThat(installationContextTry.isFailure()).isTrue();
+      assertThat(installationContextTry.getCause().getClass()).isEqualTo(Exception.class);
+      assertThat(installationContextTry.getCause().getMessage()).isEqualTo("exception message");
+    }
   }
 
-  // Try<WorkspaceContext> construct(ProjectView projectView)
+  @Nested
+  @DisplayName("Try<WorkspaceContext> construct(projectView) tests")
+  class ConstructProjectViewTest {
 
-  @Test
-  public void shouldReturnSuccessIfProjectViewIsValid() {
-    // given
-    var projectView =
-        ProjectView.builder()
-            .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("/path/to/java"))))
-            .debuggerAddress(
-                Option.of(
-                    new ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))))
-            .build();
-    // when
-    var installationContextTry = installationContextConstructor.construct(projectView);
+    @Test
+    public void shouldReturnSuccessIfProjectViewIsValid() {
+      // given
+      var projectView =
+          ProjectView.builder()
+              .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("/path/to/java"))))
+              .debuggerAddress(
+                  Option.of(
+                      new ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))))
+              .build();
+      // when
+      var installationContextTry = installationContextConstructor.construct(projectView);
 
-    // then
-    assertTrue(installationContextTry.isSuccess());
-    var installationContext = installationContextTry.get();
+      // then
+      assertThat(installationContextTry.isSuccess()).isTrue();
+      var installationContext = installationContextTry.get();
 
-    var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
-    assertEquals(expectedJavaPath, installationContext.getJavaPath());
+      var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
+      assertThat(installationContext.getJavaPath()).isEqualTo(expectedJavaPath);
 
-    var expectedDebuggerAddress =
-        new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"));
-    assertEquals(expectedDebuggerAddress, installationContext.getDebuggerAddress().get());
+      var expectedDebuggerAddress =
+          new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"));
+      assertThat(installationContext.getDebuggerAddress().get()).isEqualTo(expectedDebuggerAddress);
+    }
   }
 }

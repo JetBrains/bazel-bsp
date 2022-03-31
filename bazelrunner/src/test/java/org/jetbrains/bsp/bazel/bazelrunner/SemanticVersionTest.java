@@ -1,24 +1,25 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SemanticVersionTest {
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowForNull() {
-    new SemanticVersion(null);
+    assertThrows(IllegalArgumentException.class, () -> new SemanticVersion(null));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowForTooShortVersion() {
-    new SemanticVersion("1.2");
+    assertThrows(IllegalArgumentException.class, () -> new SemanticVersion("1.2"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowForTooLongVersion() {
-    new SemanticVersion("1.2.3.4.5");
+    assertThrows(IllegalArgumentException.class, () -> new SemanticVersion("1.2.3.4.5"));
   }
 
   @Test

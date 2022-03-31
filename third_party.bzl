@@ -22,9 +22,8 @@ _deps = [
     _dependency("io.vavr:vavr:0.10.4"),
     _dependency("org.apache.logging.log4j:log4j-api:2.17.2"),
     _dependency("org.apache.logging.log4j:log4j-core:2.17.2"),
-    _dependency("junit:junit:4.13.2"),
-    _dependency("org.assertj:assertj-core:3.22.0"),
     _dependency("org.apache.commons:commons-collections4:jar:4.4"),
+    _dependency("org.junit.jupiter:junit-jupiter:5.8.2"),  # TODO remove
 ]
 
 def dependencies():

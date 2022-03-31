@@ -1,12 +1,10 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "ProjectViewTest",
     size = "small",
     srcs = ["ProjectViewTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.model",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
     ],

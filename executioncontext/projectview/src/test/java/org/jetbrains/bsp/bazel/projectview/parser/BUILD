@@ -1,13 +1,12 @@
-load("@rules_java//java:defs.bzl", "java_library", "java_test")
+load("@rules_java//java:defs.bzl", "java_library")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "ProjectViewParserImplTest",
     size = "small",
     srcs = ["ProjectViewParserImplTest.java"],
     resources = ["//executioncontext/projectview/src/test/resources:projectview"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser:parser_mock_test_impl",
