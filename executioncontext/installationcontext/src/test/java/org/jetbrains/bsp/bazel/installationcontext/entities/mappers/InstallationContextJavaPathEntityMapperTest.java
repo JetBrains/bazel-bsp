@@ -8,14 +8,14 @@ import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewT
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class InstallationContextJavaPathEntityMapperTest {
 
   private InstallationContextJavaPathEntityMapper mapper;
 
-  @Before
+  @BeforeEach
   public void beforeEach() {
     // given
     this.mapper = new InstallationContextJavaPathEntityMapper();

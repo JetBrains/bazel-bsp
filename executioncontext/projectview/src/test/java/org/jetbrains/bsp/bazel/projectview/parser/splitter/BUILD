@@ -1,37 +1,30 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "ProjectViewRawSectionsTest",
     size = "small",
     srcs = ["ProjectViewRawSectionsTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser.splitter",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
-        "@maven//:org_apache_commons_commons_collections4",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "ProjectViewRawSectionTest",
     size = "small",
     srcs = ["ProjectViewRawSectionTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser.splitter",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "ProjectViewSectionSplitterTest",
     size = "small",
     srcs = ["ProjectViewSectionSplitterTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser.splitter",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],

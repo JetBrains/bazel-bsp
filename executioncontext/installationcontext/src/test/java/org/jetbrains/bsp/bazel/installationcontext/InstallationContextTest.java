@@ -1,14 +1,13 @@
 package org.jetbrains.bsp.bazel.installationcontext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InstallationContextTest {
 
@@ -19,11 +18,10 @@ public class InstallationContextTest {
         InstallationContext.builder().debuggerAddress(Option.none()).build();
 
     // then
-    assertTrue(installationContextTry.isFailure());
-    assertEquals(IllegalStateException.class, installationContextTry.getCause().getClass());
-    assertEquals(
-        "Installation context creation failed! 'javaPath' has to be defined.",
-        installationContextTry.getCause().getMessage());
+    assertThat(installationContextTry.isFailure()).isTrue();
+    assertThat(installationContextTry.getCause().getClass()).isEqualTo(IllegalStateException.class);
+    assertThat(installationContextTry.getCause().getMessage())
+        .isEqualTo("Installation context creation failed! 'javaPath' has to be defined.");
   }
 
   @Test
@@ -39,15 +37,15 @@ public class InstallationContextTest {
             .build();
 
     // then
-    assertTrue(installationContextTry.isSuccess());
+    assertThat(installationContextTry.isSuccess()).isTrue();
     var installationContext = installationContextTry.get();
 
     var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
-    assertEquals(expectedJavaPath, installationContext.getJavaPath());
+    assertThat(installationContext.getJavaPath()).isEqualTo(expectedJavaPath);
 
     var expectedDebuggerAddress =
         Option.of(
             new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000")));
-    assertEquals(expectedDebuggerAddress, installationContext.getDebuggerAddress());
+    assertThat(installationContext.getDebuggerAddress()).isEqualTo(expectedDebuggerAddress);
   }
 }

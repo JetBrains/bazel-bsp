@@ -1,12 +1,11 @@
 package org.jetbrains.bsp.bazel.workspacecontext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class WorkspaceContextTest {
 
@@ -16,11 +15,10 @@ public class WorkspaceContextTest {
     var workspaceContextTry = WorkspaceContext.builder().build();
 
     // then
-    assertTrue(workspaceContextTry.isFailure());
-    assertEquals(IllegalStateException.class, workspaceContextTry.getCause().getClass());
-    assertEquals(
-        "Workspace context creation failed! 'targets' has to be defined.",
-        workspaceContextTry.getCause().getMessage());
+    assertThat(workspaceContextTry.isFailure()).isTrue();
+    assertThat(workspaceContextTry.getCause().getClass()).isEqualTo(IllegalStateException.class);
+    assertThat(workspaceContextTry.getCause().getMessage())
+        .isEqualTo("Workspace context creation failed! 'targets' has to be defined.");
   }
 
   @Test
@@ -37,7 +35,7 @@ public class WorkspaceContextTest {
             .build();
 
     // then
-    assertTrue(workspaceContextTry.isSuccess());
+    assertThat(workspaceContextTry.isSuccess()).isTrue();
     var workspaceContext = workspaceContextTry.get();
 
     var expectedTargets =
@@ -46,6 +44,6 @@ public class WorkspaceContextTest {
                 new BuildTargetIdentifier("//included_target1"),
                 new BuildTargetIdentifier("//included_target2")),
             List.of(new BuildTargetIdentifier("//excluded_target1")));
-    assertEquals(expectedTargets, workspaceContext.getTargets());
+    assertThat(workspaceContext.getTargets()).isEqualTo(expectedTargets);
   }
 }

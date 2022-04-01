@@ -1,73 +1,65 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.net.HostAndPort;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.function.Function;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(value = Parameterized.class)
 public class ProjectViewSingletonSectionTest<V, T extends ProjectViewSingletonSection<V>> {
 
-  private final Function<String, T> sectionConstructor;
-
-  public ProjectViewSingletonSectionTest(
-      Function<V, T> sectionMapper, Function<String, V> elementMapper) {
-    this.sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        bazelPathSectionArguments(), debuggerAddressSectionArguments(), javaPathSectionArguments());
   }
 
-  private Function<String, T> createSectionConstructor(
-      Function<V, T> sectionMapper, Function<String, V> elementMapper) {
+  private static Arguments bazelPathSectionArguments() {
+    return Arguments.of(createSectionConstructor(ProjectViewBazelPathSection::new, Paths::get));
+  }
+
+  private static Arguments debuggerAddressSectionArguments() {
+    return Arguments.of(
+        createSectionConstructor(ProjectViewDebuggerAddressSection::new, HostAndPort::fromString));
+  }
+
+  private static Arguments javaPathSectionArguments() {
+    return Arguments.of(createSectionConstructor(ProjectViewJavaPathSection::new, Paths::get));
+  }
+
+  private static <V, T extends ProjectViewSingletonSection<V>>
+      Function<String, T> createSectionConstructor(
+          Function<V, T> sectionMapper, Function<String, V> elementMapper) {
 
     return (rawValue) -> sectionMapper.apply(elementMapper.apply(rawValue));
   }
 
-  @Parameters(
-      name = "{index}: .equals() on a singleton section for {0} and {1} as another type section")
-  public static Collection<Object[]> data() {
-    return Arrays.asList(
-        new Object[][] {
-          {
-            (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new,
-            (Function<String, Path>) Paths::get
-          },
-          {
-            (Function<HostAndPort, ProjectViewDebuggerAddressSection>)
-                ProjectViewDebuggerAddressSection::new,
-            (Function<String, HostAndPort>) HostAndPort::fromString
-          },
-          {
-            (Function<Path, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new,
-            (Function<String, Path>) Paths::get
-          }
-        });
-  }
+  @ParameterizedTest
+  @MethodSource("data")
+  public void shouldReturnTrueForTheSameSectionsWithTheSameValues(
+      Function<String, T> sectionConstructor) {
 
-  @Test
-  public void shouldReturnTrueForTheSameSectionsWithTheSameValues() {
     // given & when
     var section1 = sectionConstructor.apply("value");
     var section2 = sectionConstructor.apply("value");
 
     // then
-    assertEquals(section1, section2);
+    assertThat(section1).isEqualTo(section2);
   }
 
-  @Test
-  public void shouldReturnFalseForTheSameSectionsWithDifferentValues() {
+  @ParameterizedTest
+  @MethodSource("data")
+  public void shouldReturnFalseForTheSameSectionsWithDifferentValues(
+      Function<String, T> sectionConstructor) {
+
     // given & when
     var section1 = sectionConstructor.apply("value");
     var section2 = sectionConstructor.apply("another_value");
 
     // then
-    assertNotEquals(section1, section2);
+    assertThat(section1).isNotEqualTo(section2);
   }
 }

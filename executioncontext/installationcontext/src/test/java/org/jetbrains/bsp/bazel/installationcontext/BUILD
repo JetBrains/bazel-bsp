@@ -1,24 +1,20 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "InstallationContextTest",
     size = "small",
     srcs = ["InstallationContextTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.installationcontext",
     deps = [
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "InstallationContextConstructorTest",
     size = "small",
     srcs = ["InstallationContextConstructorTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.installationcontext",
     deps = [
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
     ],

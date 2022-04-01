@@ -1,51 +1,46 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(value = Parameterized.class)
 public class SourceRootGuesserTest {
 
-  private URI input;
-  private String expectedOutput;
-
-  public SourceRootGuesserTest(String input, String expected) throws Exception {
-    this.input = (new URL(input)).toURI();
-    this.expectedOutput = expected;
+  public static Stream<Arguments> data() {
+    return Stream.of(
+        Arguments.of(
+            // given
+            "file:///WORKSPACE_ROOT/java_hello/src/main/java/com/hello/Hello.java",
+            // then
+            "/WORKSPACE_ROOT/java_hello/src/main/java"),
+        Arguments.of(
+            // given
+            "file:///WORKSPACE_ROOT/server/src/test/java/org/jetbrains/bsp/bazel/server/bsp/utils/SourceRootGuesserTest.java",
+            // then
+            "/WORKSPACE_ROOT/server/src/test/java"),
+        Arguments.of(
+            // given
+            "file:///WORKSPACE_ROOT/src/main/java/org/test/java",
+            // then
+            "/WORKSPACE_ROOT/src/main/java/org/test/java"),
+        Arguments.of(
+            // given
+            "file:///WORKSPACE_ROOT/foo/bar",
+            // then
+            "/WORKSPACE_ROOT/foo"));
   }
 
-  @Test
-  public void shouldGuessSourceRoots() {
-    String output = SourceRootGuesser.getSourcesRoot(input);
-    assertEquals(expectedOutput, output);
-  }
+  @MethodSource("data")
+  @ParameterizedTest(name = "{index}: SourceRootGuesser.getSourcesRoot({0}) should equals {1}")
+  public void shouldGuessSourceRoots(String input, String expectedOutput) {
+    // when
+    String output = SourceRootGuesser.getSourcesRoot(URI.create(input));
 
-  @Parameters
-  public static Collection<Object> data() {
-    return Arrays.asList(
-        (Object[])
-            new Object[][] {
-              {
-                "file:///WORKSPACE_ROOT/java_hello/src/main/java/com/hello/Hello.java",
-                "/WORKSPACE_ROOT/java_hello/src/main/java"
-              },
-              {
-                "file:///WORKSPACE_ROOT/server/src/test/java/org/jetbrains/bsp/bazel/server/bsp/utils/SourceRootGuesserTest.java",
-                "/WORKSPACE_ROOT/server/src/test/java"
-              },
-              {
-                "file:///WORKSPACE_ROOT/src/main/java/org/test/java",
-                "/WORKSPACE_ROOT/src/main/java/org/test/java"
-              },
-              {"file:///WORKSPACE_ROOT/foo/bar", "/WORKSPACE_ROOT/foo"}
-            });
+    // then
+    assertThat(output).isEqualTo(expectedOutput);
   }
 }

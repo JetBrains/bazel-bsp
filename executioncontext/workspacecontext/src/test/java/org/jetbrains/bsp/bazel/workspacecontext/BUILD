@@ -1,24 +1,20 @@
-load("@rules_java//java:defs.bzl", "java_test")
+load("//:junit5.bzl", "java_junit5_test")
 
-java_test(
+java_junit5_test(
     name = "WorkspaceContextConstructorImplTest",
     size = "small",
     srcs = ["WorkspaceContextConstructorImplTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
     deps = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "WorkspaceContextTest",
     size = "small",
     srcs = ["WorkspaceContextTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
     deps = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
