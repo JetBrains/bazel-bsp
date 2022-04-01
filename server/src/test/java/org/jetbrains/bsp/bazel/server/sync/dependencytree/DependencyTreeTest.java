@@ -3,9 +3,10 @@ package org.jetbrains.bsp.bazel.server.sync.dependencytree;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vavr.collection.HashSet;
+import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 // graphs generated using: https://arthursonzogni.com/Diagon/#GraphDAG
 public class DependencyTreeTest {
@@ -38,12 +39,8 @@ public class DependencyTreeTest {
     // └─┘
 
     // given
-    var a =
-        TargetInfo.newBuilder()
-            .setId("//A")
-            .addDependencies(Dependency.newBuilder().setId("//B").build())
-            .build();
-    TargetInfo b = TargetInfo.newBuilder().setId("//B").build();
+    var a = targetInfo("//A", List.of("//B"));
+    var b = targetInfo("//B", List.of());
 
     var targets = HashSet.of(a, b);
     var rootTargets = HashSet.of("//A", "//B");
@@ -73,16 +70,10 @@ public class DependencyTreeTest {
     // └─┘└─┘└─┘
 
     // given
-    var a =
-        TargetInfo.newBuilder()
-            .setId("//A")
-            .addDependencies(Dependency.newBuilder().setId("//b").build())
-            .addDependencies(Dependency.newBuilder().setId("//c").build())
-            .addDependencies(Dependency.newBuilder().setId("//d").build())
-            .build();
-    var b = TargetInfo.newBuilder().setId("//b").build();
-    var c = TargetInfo.newBuilder().setId("//c").build();
-    var d = TargetInfo.newBuilder().setId("//d").build();
+    var a = targetInfo("//A", List.of("//b", "//c", "//d"));
+    var b = targetInfo("//b", List.of());
+    var c = targetInfo("//c", List.of());
+    var d = targetInfo("//d", List.of());
 
     var targets = HashSet.of(a, b, c, d);
     var rootTargets = HashSet.of("//A");
@@ -117,21 +108,11 @@ public class DependencyTreeTest {
     // └─┘└─┘
 
     // given
-    var a =
-        TargetInfo.newBuilder()
-            .setId("//A")
-            .addDependencies(Dependency.newBuilder().setId("//b").build())
-            .addDependencies(Dependency.newBuilder().setId("//c").build())
-            .build();
-    var b =
-        TargetInfo.newBuilder()
-            .setId("//b")
-            .addDependencies(Dependency.newBuilder().setId("//d").build())
-            .addDependencies(Dependency.newBuilder().setId("//e").build())
-            .build();
-    var c = TargetInfo.newBuilder().setId("//c").build();
-    var d = TargetInfo.newBuilder().setId("//d").build();
-    var e = TargetInfo.newBuilder().setId("//e").build();
+    var a = targetInfo("//A", List.of("//b", "//c"));
+    var b = targetInfo("//b", List.of("//d", "//e"));
+    var c = targetInfo("//c", List.of());
+    var d = targetInfo("//d", List.of());
+    var e = targetInfo("//e", List.of());
 
     var targets = HashSet.of(a, b, c, d, e);
     var rootTargets = HashSet.of("//A");
@@ -171,28 +152,13 @@ public class DependencyTreeTest {
     // └─┘└─┘
 
     // given
-    var a =
-        TargetInfo.newBuilder()
-            .setId("//A")
-            .addDependencies(Dependency.newBuilder().setId("//b").build())
-            .addDependencies(Dependency.newBuilder().setId("//c").build())
-            .build();
-    var b =
-        TargetInfo.newBuilder()
-            .setId("//b")
-            .addDependencies(Dependency.newBuilder().setId("//D").build())
-            .addDependencies(Dependency.newBuilder().setId("//e").build())
-            .build();
-    var c = TargetInfo.newBuilder().setId("//c").build();
-    var d =
-        TargetInfo.newBuilder()
-            .setId("//D")
-            .addDependencies(Dependency.newBuilder().setId("//f").build())
-            .addDependencies(Dependency.newBuilder().setId("//g").build())
-            .build();
-    var e = TargetInfo.newBuilder().setId("//e").build();
-    var f = TargetInfo.newBuilder().setId("//f").build();
-    var g = TargetInfo.newBuilder().setId("//g").build();
+    var a = targetInfo("//A", List.of("//b", "//c"));
+    var b = targetInfo("//b", List.of("//D", "//e"));
+    var c = targetInfo("//c", List.of());
+    var d = targetInfo("//D", List.of("//f", "//g"));
+    var e = targetInfo("//e", List.of());
+    var f = targetInfo("//f", List.of());
+    var g = targetInfo("//g", List.of());
 
     var targets = HashSet.of(a, b, c, d, e, f, g);
     var rootTargets = HashSet.of("//A", "//D");
@@ -240,47 +206,18 @@ public class DependencyTreeTest {
     //          └─┘
 
     // given
-    var a =
-        TargetInfo.newBuilder()
-            .setId("//A")
-            .addDependencies(Dependency.newBuilder().setId("//B").build())
-            .addDependencies(Dependency.newBuilder().setId("//c").build())
-            .build();
-    var b =
-        TargetInfo.newBuilder()
-            .setId("//B")
-            .addDependencies(Dependency.newBuilder().setId("//d").build())
-            .addDependencies(Dependency.newBuilder().setId("//e").build())
-            .build();
-    var c =
-        TargetInfo.newBuilder()
-            .setId("//c")
-            .addDependencies(Dependency.newBuilder().setId("//F").build())
-            .addDependencies(Dependency.newBuilder().setId("//g").build())
-            .addDependencies(Dependency.newBuilder().setId("//h").build())
-            .build();
-    var d = TargetInfo.newBuilder().setId("//d").build();
-    var e = TargetInfo.newBuilder().setId("//e").build();
-    var f =
-        TargetInfo.newBuilder()
-            .setId("//F")
-            .addDependencies(Dependency.newBuilder().setId("//i").build())
-            .addDependencies(Dependency.newBuilder().setId("//j").build())
-            .build();
-    var g = TargetInfo.newBuilder().setId("//g").build();
-    var h = TargetInfo.newBuilder().setId("//h").build();
-    var i = TargetInfo.newBuilder().setId("//i").build();
-    var j =
-        TargetInfo.newBuilder()
-            .setId("//j")
-            .addDependencies(Dependency.newBuilder().setId("//k").build())
-            .build();
-    var k =
-        TargetInfo.newBuilder()
-            .setId("//k")
-            .addDependencies(Dependency.newBuilder().setId("//L").build())
-            .build();
-    var l = TargetInfo.newBuilder().setId("//L").build();
+    var a = targetInfo("//A", List.of("//B", "//c"));
+    var b = targetInfo("//B", List.of("//d", "//e"));
+    var c = targetInfo("//c", List.of("//F", "//g", "//h"));
+    var d = targetInfo("//d", List.of());
+    var e = targetInfo("//e", List.of());
+    var f = targetInfo("//F", List.of("//i", "//j"));
+    var g = targetInfo("//g", List.of());
+    var h = targetInfo("//h", List.of());
+    var i = targetInfo("//i", List.of());
+    var j = targetInfo("//j", List.of("//k"));
+    var k = targetInfo("//k", List.of("//L"));
+    var l = targetInfo("//L", List.of());
 
     var targets = HashSet.of(a, b, c, d, e, f, g, h, i, j, k, l);
     var rootTargets = HashSet.of("//A", "//B", "//F", "//L");
@@ -326,47 +263,18 @@ public class DependencyTreeTest {
     //          └─┘
 
     // given
-    var a =
-        TargetInfo.newBuilder()
-            .setId("//A")
-            .addDependencies(Dependency.newBuilder().setId("//B").build())
-            .addDependencies(Dependency.newBuilder().setId("//c").build())
-            .build();
-    var b =
-        TargetInfo.newBuilder()
-            .setId("//B")
-            .addDependencies(Dependency.newBuilder().setId("//d").build())
-            .addDependencies(Dependency.newBuilder().setId("//e").build())
-            .build();
-    var c =
-        TargetInfo.newBuilder()
-            .setId("//c")
-            .addDependencies(Dependency.newBuilder().setId("//F").build())
-            .addDependencies(Dependency.newBuilder().setId("//g").build())
-            .addDependencies(Dependency.newBuilder().setId("//h").build())
-            .build();
-    var d = TargetInfo.newBuilder().setId("//d").build();
-    var e = TargetInfo.newBuilder().setId("//e").build();
-    var f =
-        TargetInfo.newBuilder()
-            .setId("//F")
-            .addDependencies(Dependency.newBuilder().setId("//i").build())
-            .addDependencies(Dependency.newBuilder().setId("//j").build())
-            .build();
-    var g = TargetInfo.newBuilder().setId("//g").build();
-    var h = TargetInfo.newBuilder().setId("//h").build();
-    var i = TargetInfo.newBuilder().setId("//i").build();
-    var j =
-        TargetInfo.newBuilder()
-            .setId("//j")
-            .addDependencies(Dependency.newBuilder().setId("//k").build())
-            .build();
-    var k =
-        TargetInfo.newBuilder()
-            .setId("//k")
-            .addDependencies(Dependency.newBuilder().setId("//L").build())
-            .build();
-    var l = TargetInfo.newBuilder().setId("//L").build();
+    var a = targetInfo("//A", List.of("//B", "//c"));
+    var b = targetInfo("//B", List.of("//d", "//e"));
+    var c = targetInfo("//c", List.of("//F", "//g", "//h"));
+    var d = targetInfo("//d", List.of());
+    var e = targetInfo("//e", List.of());
+    var f = targetInfo("//F", List.of("//i", "//j"));
+    var g = targetInfo("//g", List.of());
+    var h = targetInfo("//h", List.of());
+    var i = targetInfo("//i", List.of());
+    var j = targetInfo("//j", List.of("//k"));
+    var k = targetInfo("//k", List.of("//L"));
+    var l = targetInfo("//L", List.of());
 
     var targets = HashSet.of(a, b, c, d, e, f, g, h, i, j, k, l);
     var rootTargets = HashSet.of("//A", "//B", "//F", "//L");
@@ -378,5 +286,15 @@ public class DependencyTreeTest {
     // then
     var expectedDependencies = HashSet.of(i, j, k, l);
     assertThat(dependencies).isEqualTo(expectedDependencies);
+  }
+
+  private TargetInfo targetInfo(String id, List<String> dependenciesIds) {
+    var dependencies = dependenciesIds.map(this::dependency);
+
+    return TargetInfo.newBuilder().setId(id).addAllDependencies(dependencies).build();
+  }
+
+  private Dependency dependency(String id) {
+    return Dependency.newBuilder().setId(id).build();
   }
 }
