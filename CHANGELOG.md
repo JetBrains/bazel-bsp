@@ -23,6 +23,8 @@
 
 ### Changes 🔄
 
+- Project uses bazel `5.1.0`.
+  | [#208](https://github.com/JetBrains/bazel-bsp/pull/208)
 - JUnit5!
   | [#206](https://github.com/JetBrains/bazel-bsp/pull/206)
 - Support for excluded targets in the sync mechanism.
