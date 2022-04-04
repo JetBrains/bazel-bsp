@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync.dependencytree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.vavr.collection.HashMap;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency;
@@ -14,7 +15,7 @@ public class DependencyTreeTest {
   @Test
   public void shouldReturnEmptyListForNotExistingTarget() {
     // given
-    var dependencyTree = new DependencyTree(HashSet.empty(), HashSet.empty());
+    var dependencyTree = new DependencyTree(HashMap.empty(), HashSet.empty());
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//does/not/exist");
@@ -42,9 +43,9 @@ public class DependencyTreeTest {
     var a = targetInfo("//A", List.of("//B"));
     var b = targetInfo("//B", List.of());
 
-    var targets = HashSet.of(a, b);
+    var idToTargetInfo = HashSet.of(a, b).toMap(TargetInfo::getId, x -> x);
     var rootTargets = HashSet.of("//A", "//B");
-    var dependencyTree = new DependencyTree(targets, rootTargets);
+    var dependencyTree = new DependencyTree(idToTargetInfo, rootTargets);
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//B");
@@ -75,9 +76,9 @@ public class DependencyTreeTest {
     var c = targetInfo("//c", List.of());
     var d = targetInfo("//d", List.of());
 
-    var targets = HashSet.of(a, b, c, d);
+    var idToTargetInfo = HashSet.of(a, b, c, d).toMap(TargetInfo::getId, x -> x);
     var rootTargets = HashSet.of("//A");
-    var dependencyTree = new DependencyTree(targets, rootTargets);
+    var dependencyTree = new DependencyTree(idToTargetInfo, rootTargets);
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A");
@@ -114,9 +115,9 @@ public class DependencyTreeTest {
     var d = targetInfo("//d", List.of());
     var e = targetInfo("//e", List.of());
 
-    var targets = HashSet.of(a, b, c, d, e);
+    var idToTargetInfo = HashSet.of(a, b, c, d, e).toMap(TargetInfo::getId, x -> x);
     var rootTargets = HashSet.of("//A");
-    var dependencyTree = new DependencyTree(targets, rootTargets);
+    var dependencyTree = new DependencyTree(idToTargetInfo, rootTargets);
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A");
@@ -160,9 +161,9 @@ public class DependencyTreeTest {
     var f = targetInfo("//f", List.of());
     var g = targetInfo("//g", List.of());
 
-    var targets = HashSet.of(a, b, c, d, e, f, g);
+    var idToTargetInfo = HashSet.of(a, b, c, d, e, f, g).toMap(TargetInfo::getId, x -> x);
     var rootTargets = HashSet.of("//A", "//D");
-    var dependencyTree = new DependencyTree(targets, rootTargets);
+    var dependencyTree = new DependencyTree(idToTargetInfo, rootTargets);
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A");
@@ -219,9 +220,10 @@ public class DependencyTreeTest {
     var k = targetInfo("//k", List.of("//L"));
     var l = targetInfo("//L", List.of());
 
-    var targets = HashSet.of(a, b, c, d, e, f, g, h, i, j, k, l);
+    var idToTargetInfo =
+        HashSet.of(a, b, c, d, e, f, g, h, i, j, k, l).toMap(TargetInfo::getId, x -> x);
     var rootTargets = HashSet.of("//A", "//B", "//F", "//L");
-    var dependencyTree = new DependencyTree(targets, rootTargets);
+    var dependencyTree = new DependencyTree(idToTargetInfo, rootTargets);
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A");
@@ -276,9 +278,10 @@ public class DependencyTreeTest {
     var k = targetInfo("//k", List.of("//L"));
     var l = targetInfo("//L", List.of());
 
-    var targets = HashSet.of(a, b, c, d, e, f, g, h, i, j, k, l);
+    var idToTargetInfo =
+        HashSet.of(a, b, c, d, e, f, g, h, i, j, k, l).toMap(TargetInfo::getId, x -> x);
     var rootTargets = HashSet.of("//A", "//B", "//F", "//L");
-    var dependencyTree = new DependencyTree(targets, rootTargets);
+    var dependencyTree = new DependencyTree(idToTargetInfo, rootTargets);
 
     // when
     var dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//F");

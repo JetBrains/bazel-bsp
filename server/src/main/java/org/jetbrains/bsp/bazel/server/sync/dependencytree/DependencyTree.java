@@ -12,19 +12,15 @@ public class DependencyTree {
   private final Map<String, TargetInfo> idToTargetInfo;
   private final Map<String, Lazy<Set<TargetInfo>>> idToLazyTransitiveDependencies;
 
-  public DependencyTree(Set<TargetInfo> targets, Set<String> rootTargets) {
+  public DependencyTree(Map<String, TargetInfo> idToTargetInfo, Set<String> rootTargets) {
     this.rootTargets = rootTargets;
-    this.idToTargetInfo = createIdToTargetInfoMap(targets);
-    this.idToLazyTransitiveDependencies = createIdToLazyTransitiveDependenciesMap(targets);
-  }
-
-  private Map<String, TargetInfo> createIdToTargetInfoMap(Set<TargetInfo> targets) {
-    return targets.toMap(TargetInfo::getId, x -> x);
+    this.idToTargetInfo = idToTargetInfo;
+    this.idToLazyTransitiveDependencies = createIdToLazyTransitiveDependenciesMap(idToTargetInfo);
   }
 
   private Map<String, Lazy<Set<TargetInfo>>> createIdToLazyTransitiveDependenciesMap(
-      Set<TargetInfo> targets) {
-    return targets.toMap(TargetInfo::getId, this::calculateLazyTransitiveDependenciesForTarget);
+      Map<String, TargetInfo> idToTargetInfo) {
+    return idToTargetInfo.mapValues(this::calculateLazyTransitiveDependenciesForTarget);
   }
 
   private Lazy<Set<TargetInfo>> calculateLazyTransitiveDependenciesForTarget(
@@ -33,20 +29,19 @@ public class DependencyTree {
   }
 
   private Set<TargetInfo> calculateTransitiveDependenciesForTarget(TargetInfo targetInfo) {
-    var strictlyTransitiveDependencies = calculateStrictlyTransitiveDependencies(targetInfo);
-    var directDependencies = calculateDirectDependencies(targetInfo);
+    var dependencies = getDependencies(targetInfo);
+    var strictlyTransitiveDependencies = calculateStrictlyTransitiveDependencies(dependencies);
+    var directDependencies = calculateDirectDependencies(dependencies);
 
     return strictlyTransitiveDependencies.addAll(directDependencies);
   }
 
-  private Set<TargetInfo> calculateStrictlyTransitiveDependencies(TargetInfo targetInfo) {
-    return getDependencies(targetInfo)
-        .flatMap(idToLazyTransitiveDependencies::get)
-        .flatMap(Lazy::get);
+  private Set<TargetInfo> calculateStrictlyTransitiveDependencies(Set<String> dependencies) {
+    return dependencies.flatMap(idToLazyTransitiveDependencies::get).flatMap(Lazy::get);
   }
 
-  private Set<TargetInfo> calculateDirectDependencies(TargetInfo targetInfo) {
-    return getDependencies(targetInfo).flatMap(idToTargetInfo::get);
+  private Set<TargetInfo> calculateDirectDependencies(Set<String> dependencies) {
+    return dependencies.flatMap(idToTargetInfo::get);
   }
 
   public Set<TargetInfo> transitiveDependenciesWithoutRootTargets(String targetId) {

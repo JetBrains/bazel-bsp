@@ -38,7 +38,7 @@ public class BazelProjectMapper {
   public Project createProject(
       Map<String, TargetInfo> targets, Set<String> rootTargets, ProjectView projectView) {
     languagePluginsService.prepareSync(targets.values());
-    var dependencyTree = new DependencyTree(targets.values().toSet(), rootTargets);
+    var dependencyTree = new DependencyTree(targets, rootTargets);
     var targetsToImport = selectTargetsToImport(rootTargets, targets);
     var modulesFromBazel = createModules(targetsToImport, dependencyTree);
     var workspaceRoot = bazelPathsResolver.workspaceRoot();
