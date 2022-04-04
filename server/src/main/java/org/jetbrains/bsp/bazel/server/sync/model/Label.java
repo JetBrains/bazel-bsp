@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class Label {
@@ -9,7 +10,7 @@ public class Label {
     return new Label(value);
   }
 
-  public Label(String value) {
+  public Label(@JsonProperty("value") String value) {
     this.value = value;
   }
 

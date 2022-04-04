@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.bazelrunner.utils;
+package org.jetbrains.bsp.bazel.commons;
 
 import java.time.Duration;
 

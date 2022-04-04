@@ -1,10 +1,13 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.List;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.util.Objects;
+import org.jetbrains.bsp.bazel.commons.Format;
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 
 public class Module {
   private final Label label;
@@ -16,19 +19,19 @@ public class Module {
   private final SourceSet sourceSet;
   private final Set<URI> resources;
   private final Set<URI> sourceDependencies;
-  private final Option<Object> languageData;
+  private final Option<LanguageData> languageData;
 
   public Module(
-      Label label,
-      boolean isSynthetic,
-      List<Label> directDependencies,
-      Set<Language> languages,
-      Set<Tag> tags,
-      URI baseDirectory,
-      SourceSet sourceSet,
-      Set<URI> resources,
-      Set<URI> sourceDependencies,
-      Option<Object> languageData) {
+      @JsonProperty("label") Label label,
+      @JsonProperty("synthetic") boolean isSynthetic,
+      @JsonProperty("directDependencies") List<Label> directDependencies,
+      @JsonProperty("languages") Set<Language> languages,
+      @JsonProperty("tags") Set<Tag> tags,
+      @JsonProperty("baseDirectory") URI baseDirectory,
+      @JsonProperty("sourceSet") SourceSet sourceSet,
+      @JsonProperty("resources") Set<URI> resources,
+      @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
+      @JsonProperty("languageData") Option<LanguageData> languageData) {
     this.label = label;
     this.isSynthetic = isSynthetic;
     this.directDependencies = directDependencies;
@@ -78,7 +81,7 @@ public class Module {
     return sourceDependencies;
   }
 
-  public Option<Object> languageData() {
+  public Option<LanguageData> languageData() {
     return languageData;
   }
 
@@ -112,5 +115,21 @@ public class Module {
         resources,
         sourceDependencies,
         languageData);
+  }
+
+  @Override
+  public String toString() {
+    return Format.object(
+        "Module",
+        Format.entry("label", label),
+        Format.entry("isSynthetic", isSynthetic),
+        Format.entry("directDependencies", Format.iterable(directDependencies)),
+        Format.entry("languages", Format.iterableShort(languages)),
+        Format.entry("tags", Format.iterableShort(tags)),
+        Format.entry("baseDirectory", baseDirectory),
+        Format.entry("sourceSet", sourceSet),
+        Format.entry("resources", Format.iterableShort(resources)),
+        Format.entry("sourceDependencies", Format.iterable(sourceDependencies)),
+        Format.entry("languageData", languageData));
   }
 }

@@ -1,11 +1,13 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.util.Objects;
 import java.util.function.Function;
+import org.jetbrains.bsp.bazel.commons.Format;
 
 /** Project is the internal model of the project. Bazel/Aspect Model -> Project -> BSP Model */
 public class Project {
@@ -14,7 +16,10 @@ public class Project {
   private final List<Module> modules;
   private final Map<Label, Module> moduleMap;
 
-  public Project(URI workspaceRoot, List<Module> modules, Map<URI, Label> sourceToTarget) {
+  public Project(
+      @JsonProperty("workspaceRoot") URI workspaceRoot,
+      @JsonProperty("modules") List<Module> modules,
+      @JsonProperty("sourceToTarget") Map<URI, Label> sourceToTarget) {
     this.workspaceRoot = workspaceRoot;
     this.sourceToTarget = sourceToTarget;
     this.modules = modules;
@@ -51,5 +56,13 @@ public class Project {
   @Override
   public int hashCode() {
     return Objects.hash(workspaceRoot, sourceToTarget, modules, moduleMap);
+  }
+
+  @Override
+  public String toString() {
+    return Format.object(
+        "Project",
+        Format.entry("workspaceRoot", workspaceRoot),
+        Format.entry("modules", Format.iterable(modules)));
   }
 }

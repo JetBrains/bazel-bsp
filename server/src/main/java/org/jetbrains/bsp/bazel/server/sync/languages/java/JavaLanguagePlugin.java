@@ -13,7 +13,7 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
@@ -22,13 +22,13 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
 public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
   private final BazelPathsResolver bazelPathsResolver;
-  private final BazelData bazelData;
+  private final BazelInfo bazelInfo;
   private final java.util.Map<String, String> environment = System.getenv();
   private Option<Jdk> jdk;
 
-  public JavaLanguagePlugin(BazelPathsResolver bazelPathsResolver, BazelData bazelData) {
+  public JavaLanguagePlugin(BazelPathsResolver bazelPathsResolver, BazelInfo bazelInfo) {
     this.bazelPathsResolver = bazelPathsResolver;
-    this.bazelData = bazelData;
+    this.bazelInfo = bazelInfo;
   }
 
   @Override
@@ -108,7 +108,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
         toBspId(module),
         javaModule.runtimeClasspath().map(URI::toString).asJava(),
         javaModule.jvmOps().asJava(),
-        bazelData.getWorkspaceRoot(),
+        bazelInfo.workspaceRoot().toString(),
         environment);
   }
 

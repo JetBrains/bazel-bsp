@@ -6,6 +6,8 @@
 
 ### Features 🎉
 
+- Server now keeps the state of the project between runs.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Improved bazel runner. The BSP Client now receives invoked bazel command,
   its output, duration and exit code.
   | [#198](https://github.com/JetBrains/bazel-bsp/pull/198)
@@ -27,6 +29,12 @@
   | [#208](https://github.com/JetBrains/bazel-bsp/pull/208)
 - JUnit5!
   | [#206](https://github.com/JetBrains/bazel-bsp/pull/206)
+- Do not throw on aborted event from BEP. Show warning instead.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
+- Readable `toString` for all `Project` related classes.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
+- Measure and report time of longer operations during sync.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Support for excluded targets in the sync mechanism.
   | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
 - Introduction of installation context.

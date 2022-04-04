@@ -5,6 +5,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//logger:__subpackages__"],
     deps = [
+        "//commons",
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

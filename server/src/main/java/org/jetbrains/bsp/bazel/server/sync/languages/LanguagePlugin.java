@@ -8,7 +8,7 @@ import io.vavr.control.Option;
 import java.net.URI;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 
-public abstract class LanguagePlugin<T> {
+public abstract class LanguagePlugin<T extends LanguageData> {
   public void prepareSync(Seq<TargetInfo> targets) {}
 
   public Option<T> resolveModule(TargetInfo targetInfo) {
@@ -19,7 +19,7 @@ public abstract class LanguagePlugin<T> {
     return HashSet.empty();
   }
 
-  public final void setModuleData(Object moduleData, BuildTarget buildTarget) {
+  public final void setModuleData(LanguageData moduleData, BuildTarget buildTarget) {
     applyModuleData((T) moduleData, buildTarget);
   }
 
