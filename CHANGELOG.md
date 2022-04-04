@@ -33,6 +33,8 @@
   | [#209](https://github.com/JetBrains/bazel-bsp/pull/209)
 - Project uses bazel `5.1.0`.
   | [#208](https://github.com/JetBrains/bazel-bsp/pull/208)
+- Parse bazel query output from stream rather than from all bytes.
+  | [#210](https://github.com/JetBrains/bazel-bsp/pull/210)
 - JUnit5!
   | [#206](https://github.com/JetBrains/bazel-bsp/pull/206)
 - Do not throw on aborted event from BEP. Show warning instead.
