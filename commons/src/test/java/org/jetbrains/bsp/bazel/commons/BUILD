@@ -10,3 +10,13 @@ java_junit5_test(
         "@maven//:io_vavr_vavr",
     ],
 )
+
+java_junit5_test(
+    name = "FormatTest",
+    size = "small",
+    srcs = ["FormatTest.java"],
+    test_package = "org.jetbrains.bsp.bazel.commons.test",
+    deps = [
+        "//commons/src/main/java/org/jetbrains/bsp/bazel/commons",
+    ],
+)

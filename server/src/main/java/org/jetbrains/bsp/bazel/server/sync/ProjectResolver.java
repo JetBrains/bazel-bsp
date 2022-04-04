@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
+import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
@@ -28,23 +29,33 @@ public class ProjectResolver {
   private final BazelBspAspectsManager bazelBspAspectsManager;
   private final ProjectViewProvider projectViewProvider;
   private final BazelProjectMapper bazelProjectMapper;
+  private final BspClientLogger logger;
 
   public ProjectResolver(
       BazelBspAspectsManager bazelBspAspectsManager,
       ProjectViewProvider projectViewProvider,
-      BazelProjectMapper bazelProjectMapper) {
+      BazelProjectMapper bazelProjectMapper,
+      BspClientLogger logger) {
     this.bazelBspAspectsManager = bazelBspAspectsManager;
     this.projectViewProvider = projectViewProvider;
     this.bazelProjectMapper = bazelProjectMapper;
+    this.logger = logger;
   }
 
   public Project resolve() {
-    var projectView = projectViewProvider.current();
-    var bepOutput = buildProjectWithAspect(projectView);
-    var aspectOutputs = bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP);
+    var projectView = logger.timed("Reading project view", projectViewProvider::current);
+    var bepOutput =
+        logger.timed("Building project with aspect", () -> buildProjectWithAspect(projectView));
+    var aspectOutputs =
+        logger.timed(
+            "Reading aspect output paths",
+            () -> bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP));
     var rootTargets = bepOutput.rootTargets();
-    var targets = readTargetMapFromAspectOutputs(aspectOutputs);
-    return bazelProjectMapper.createProject(targets, HashSet.ofAll(rootTargets), projectView);
+    var targets =
+        logger.timed("Parsing aspect outputs", () -> readTargetMapFromAspectOutputs(aspectOutputs));
+    return logger.timed(
+        "Mapping to internal model",
+        () -> bazelProjectMapper.createProject(targets, HashSet.ofAll(rootTargets), projectView));
   }
 
   private BepOutput buildProjectWithAspect(ProjectView projectView) {

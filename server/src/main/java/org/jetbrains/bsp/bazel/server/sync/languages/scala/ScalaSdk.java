@@ -1,8 +1,10 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.List;
 import java.net.URI;
 import java.util.Objects;
+import org.jetbrains.bsp.bazel.commons.Format;
 
 public class ScalaSdk {
   private final String organization;
@@ -11,7 +13,10 @@ public class ScalaSdk {
   private final List<URI> compilerJars;
 
   public ScalaSdk(
-      String organization, String version, String binaryVersion, List<URI> compilerJars) {
+      @JsonProperty("organization") String organization,
+      @JsonProperty("version") String version,
+      @JsonProperty("binaryVersion") String binaryVersion,
+      @JsonProperty("compilerJars") List<URI> compilerJars) {
     this.organization = organization;
     this.version = version;
     this.binaryVersion = binaryVersion;
@@ -48,5 +53,15 @@ public class ScalaSdk {
   @Override
   public int hashCode() {
     return Objects.hash(organization, version, binaryVersion, compilerJars);
+  }
+
+  @Override
+  public String toString() {
+    return Format.object(
+        "ScalaSdk",
+        Format.entry("organization", organization),
+        Format.entry("version", version),
+        Format.entry("binaryVersion", binaryVersion),
+        Format.entry("compilerJars", compilerJars));
   }
 }

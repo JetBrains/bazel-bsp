@@ -6,18 +6,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor;
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputCollector;
-import org.jetbrains.bsp.bazel.bazelrunner.utils.Format;
-import org.jetbrains.bsp.bazel.bazelrunner.utils.Stopwatch;
-import org.jetbrains.bsp.bazel.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.commons.Format;
+import org.jetbrains.bsp.bazel.commons.Stopwatch;
+import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 
 public class BazelProcess {
 
   private final Process process;
-  private final BuildClientLogger logger;
+  private final BspClientLogger logger;
 
   private static final Logger LOGGER = LogManager.getLogger(BazelProcess.class);
 
-  BazelProcess(Process process, BuildClientLogger logger) {
+  BazelProcess(Process process, BspClientLogger logger) {
     this.process = process;
     this.logger = logger;
   }
@@ -29,9 +29,8 @@ public class BazelProcess {
       var outputProcessor = new AsyncOutputProcessor();
       var stopwatch = Stopwatch.start();
       outputProcessor.start(
-          process.getInputStream(), stdoutCollector, logger::logMessage, LOGGER::info);
-      outputProcessor.start(
-          process.getErrorStream(), stderrCollector, logger::logError, LOGGER::info);
+          process.getInputStream(), stdoutCollector, logger::message, LOGGER::info);
+      outputProcessor.start(process.getErrorStream(), stderrCollector, logger::error, LOGGER::info);
       var exitCode = process.waitFor();
       outputProcessor.shutdown();
       var duration = stopwatch.stop();
@@ -56,8 +55,6 @@ public class BazelProcess {
   }
 
   private void logCompletion(int exitCode, Duration duration) {
-    logger.logMessage(
-        String.format(
-            "Command completed with exit code %d in %s", exitCode, Format.duration(duration)));
+    logger.message("Command completed in %s (exit code: %d)", Format.duration(duration), exitCode);
   }
 }

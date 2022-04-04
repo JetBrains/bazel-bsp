@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.commons.Uri;
 
 public class BepDiagnosticsDispatcher {
@@ -43,13 +43,13 @@ public class BepDiagnosticsDispatcher {
           .put(Severity.HINT, DiagnosticSeverity.HINT)
           .build();
 
-  private final BazelData bazelData;
+  private final BazelInfo bazelInfo;
   private final BuildClient bspClient;
 
   private final Map<BuildTargetIdentifier, List<URI>> buildTargetsSources = new HashMap<>();
 
-  public BepDiagnosticsDispatcher(BazelData bazelData, BuildClient bspClient) {
-    this.bazelData = bazelData;
+  public BepDiagnosticsDispatcher(BazelInfo bazelInfo, BuildClient bspClient) {
+    this.bazelInfo = bazelInfo;
     this.bspClient = bspClient;
   }
 
@@ -134,7 +134,8 @@ public class BepDiagnosticsDispatcher {
   }
 
   private Uri getUriForPath(String path) {
-    return Uri.fromExecOrWorkspacePath(path, bazelData.getExecRoot(), bazelData.getWorkspaceRoot());
+    return Uri.fromExecOrWorkspacePath(
+        path, bazelInfo.execRoot(), bazelInfo.workspaceRoot().toString());
   }
 
   public Map<BuildTargetIdentifier, List<URI>> getBuildTargetsSources() {

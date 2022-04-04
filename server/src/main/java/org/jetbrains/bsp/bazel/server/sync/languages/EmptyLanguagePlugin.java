@@ -4,12 +4,12 @@ import ch.epfl.scala.bsp4j.BuildTarget;
 import io.vavr.control.Option;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo;
 
-public class EmptyLanguagePlugin extends LanguagePlugin<Object> {
+public class EmptyLanguagePlugin extends LanguagePlugin<LanguageData> {
   @Override
-  public Option<Object> resolveModule(BspTargetInfo.TargetInfo targetInfo) {
+  public Option<LanguageData> resolveModule(BspTargetInfo.TargetInfo targetInfo) {
     return Option.none();
   }
 
   @Override
-  protected void applyModuleData(Object moduleData, BuildTarget buildTarget) {}
+  protected void applyModuleData(LanguageData moduleData, BuildTarget buildTarget) {}
 }
