@@ -66,7 +66,10 @@ object TestAggregator : BuildType({
     name = "test aggregator"
     type = Type.COMPOSITE
 
-    vcs { showDependenciesChanges = true }
+    vcs {
+        root(BaseConfiguration.BazelBspVcs)
+        showDependenciesChanges = true
+    }
 
     features {
         commitStatusPublisher {
