@@ -17,17 +17,14 @@ java_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.projectview.model.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
-        "@maven//:org_assertj_assertj_core",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "ProjectViewExcludableListSectionTest",
     size = "small",
     srcs = ["ProjectViewExcludableListSectionTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.model.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
     ],

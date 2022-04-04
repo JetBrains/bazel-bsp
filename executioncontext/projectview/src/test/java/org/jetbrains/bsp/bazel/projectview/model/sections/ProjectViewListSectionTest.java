@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.projectview.model.sections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vavr.collection.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,25 +18,25 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
   private static Arguments targetsSectionArguments() {
     var sectionConstructor =
         createSectionConstructor(
-            ProjectViewTargetsSection::new,
-            (rawElement) -> new BuildTargetIdentifier("//:" + rawElement));
+                ProjectViewBuildFlagsSection::new,
+                (Function<String, String>) (seed) -> "--flag_" + seed + "=dummy_value");
 
     return Arguments.of(sectionConstructor);
   }
 
   private static <V, T extends ProjectViewListSection<V>>
-      BiFunction<List<String>, List<String>, T> createSectionConstructor(
-          BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
+      Function<List<String>, T> createSectionConstructor(
+          Function<List<V>, T> sectionMapper, Function<String, V> elementMapper) {
 
-    return (includedElements, excludedElements) ->
+    return (elements) ->
         sectionMapper.apply(
-            includedElements.map(elementMapper), excludedElements.map(elementMapper));
+                elements.map(elementMapper));
   }
 
   @ParameterizedTest
   @MethodSource("data")
   public void shouldReturnTrueForTheSameSectionsWithTheSameValues(
-      BiFunction<List<String>, List<String>, T> sectionConstructor) {
+      Function<List<String>, T> sectionConstructor) {
     // given & when
     var section1 = sectionConstructor.apply(List.of("value1", "value2"));
     var section2 = sectionConstructor.apply(List.of("value1", "value2"));
@@ -48,32 +47,12 @@ public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> 
 
   @ParameterizedTest
   @MethodSource("data")
-  public void shouldReturnFalseForTheSameSectionsWithDifferentValues(BiFunction<List<String>, List<String>, T> sectionConstructor) {
+  public void shouldReturnFalseForTheSameSectionsWithDifferentValues(Function<List<String>, T> sectionConstructor) {
     // given & when
     var section1 = sectionConstructor.apply(List.of("value1", "value3"));
     var section2 = sectionConstructor.apply(List.of("value2", "value1"));
 
     // then
-    assertThat(section1).isNotEqualTo(section2);
-  }
-
-  @ParameterizedTest
-  @MethodSource("data")
-  public void shouldReturnFalseForTheSameSectionsWithDifferentExcludedValues(
-      BiFunction<List<String>, List<String>, T> sectionConstructor) {
-
-    // given & when
-    var section1 =
-        sectionConstructor.apply(
-            List.of("included_value1", "included_value2"),
-            List.of("excluded_value1", "excluded_value3", "excluded_value2"));
-    var section2 =
-        sectionConstructor.apply(
-            List.of("included_value2", "included_value1"),
-            List.of("excluded_value3", "excluded_value5", "excluded_value1"));
-
-    // then
-    assertThat(section1).isNotEqualTo(section2);
     assertThat(section1).isNotEqualTo(section2);
   }
 }

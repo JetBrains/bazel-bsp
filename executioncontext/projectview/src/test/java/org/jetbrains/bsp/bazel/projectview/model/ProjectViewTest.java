@@ -213,7 +213,7 @@ public class ProjectViewTest {
 
       var expectedBuildFlagsSection =
               new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
-      assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
+      assertThat(projectView.getBuildFlags().get()).isEqualTo(expectedBuildFlagsSection);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class ProjectViewTest {
 
       var expectedBuildFlagsSection =
               new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
-      assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
+      assertThat(projectView.getBuildFlags().get()).isEqualTo(expectedBuildFlagsSection);
     }
 
     @Test
@@ -323,7 +323,7 @@ public class ProjectViewTest {
       assertThat(projectView.getJavaPath().get()).isEqualTo(expectedJavaPathSection);
       var expectedBuildFlagsSection =
               new ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"));
-      assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
+      assertThat(projectView.getBuildFlags().get()).isEqualTo(expectedBuildFlagsSection);
     }
 
     @Test
@@ -418,7 +418,7 @@ public class ProjectViewTest {
                               "--build_flag1.2=value1.2",
                               "--build_flag2.1=value2.1",
                               "--build_flag2.2=value2.2"));
-      assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
+      assertThat(projectView.getBuildFlags().get()).isEqualTo(expectedBuildFlagsSection);
     }
 
     @Test
@@ -550,7 +550,7 @@ public class ProjectViewTest {
                               "--build_flag3.1=value3.1",
                               "--build_flag4.1=value4.1",
                               "--build_flag4.2=value4.2"));
-      assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
+      assertThat(projectView.getBuildFlags().get()).isEqualTo(expectedBuildFlagsSection);
     }
 
     @Test
@@ -684,7 +684,7 @@ public class ProjectViewTest {
                               "--build_flag3.1=value3.1",
                               "--build_flag4.1=value4.1",
                               "--build_flag4.2=value4.2"));
-      assertEquals(expectedBuildFlagsSection, projectView.getBuildFlags().get());
+      assertThat(projectView.getBuildFlags().get()).isEqualTo(expectedBuildFlagsSection);
     }
   }
 }

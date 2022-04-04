@@ -132,10 +132,10 @@ public class ProjectViewParserImplTest {
       var projectViewTry = parser.parse(projectViewFilePath);
 
       // then
-      assertTrue(projectViewTry.isSuccess());
+      assertThat(projectViewTry.isSuccess()).isTrue();
       var projectView = projectViewTry.get();
 
-      assertTrue(projectView.getBuildFlags().isEmpty());
+      assertThat(projectView.getBuildFlags()).isEmpty();
     }
 
     @Test

@@ -7,17 +7,14 @@ java_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.projectview.parser.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
-        "@maven//:org_assertj_assertj_core",
     ],
 )
 
-java_test(
+java_junit5_test(
     name = "ProjectViewExcludableListSectionParserTest",
     size = "small",
     srcs = ["ProjectViewExcludableListSectionParserTest.java"],
-    runtime_deps = [
-        "@maven//:junit_junit",
-    ],
+    test_package = "org.jetbrains.bsp.bazel.projectview.parser.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
     ],
