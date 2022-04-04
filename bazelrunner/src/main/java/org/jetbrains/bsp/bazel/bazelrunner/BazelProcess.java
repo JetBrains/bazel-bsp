@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.bazelrunner;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
+import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor;
@@ -41,20 +42,20 @@ public class BazelProcess {
     }
   }
 
-  public byte[] waitAndGetBinaryResult() {
+  public <T> T processBinaryOutput(Function<InputStream, T> func) {
     try {
       var stopwatch = Stopwatch.start();
-      byte[] bytes = process.getInputStream().readAllBytes();
+      var result = func.apply(process.getInputStream());
       var exitCode = process.waitFor();
       var duration = stopwatch.stop();
       logCompletion(exitCode, duration);
-      return bytes;
-    } catch (IOException | InterruptedException e) {
+      return result;
+    } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
 
   private void logCompletion(int exitCode, Duration duration) {
-    logger.message("Command completed in %s (exit code: %d)", Format.duration(duration), exitCode);
+    logger.message("Command completed in %s (exit code %d)", Format.duration(duration), exitCode);
   }
 }
