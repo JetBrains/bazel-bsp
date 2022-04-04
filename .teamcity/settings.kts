@@ -1,4 +1,5 @@
 import configurations.*
+import jetbrains.buildServer.configs.kotlin.v10.toExtId
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
@@ -46,7 +47,10 @@ project {
             buildType(E2eTests.EntireRepositoryImportE2ETest)
         }
 
-        buildType(TestAggregator)
+        buildType(TestAggregator, options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        })
     }.buildTypes()
 
     steps.forEach { buildType(it) }
@@ -58,6 +62,7 @@ project {
 
 
 object TestAggregator : BuildType({
+    id("test aggregator".toExtId())
     name = "test aggregator"
     type = Type.COMPOSITE
 
