@@ -8,7 +8,7 @@ import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 
-public class ThriftLanguagePlugin extends LanguagePlugin<Object> {
+public class ThriftLanguagePlugin extends LanguagePlugin<ThriftModule> {
   private static final String THRIFT_LIBRARY_RULE_NAME = "thrift_library";
 
   private final BazelPathsResolver bazelPathsResolver;
@@ -31,7 +31,7 @@ public class ThriftLanguagePlugin extends LanguagePlugin<Object> {
   }
 
   @Override
-  protected void applyModuleData(Object moduleData, BuildTarget buildTarget) {
+  protected void applyModuleData(ThriftModule moduleData, BuildTarget buildTarget) {
     // no actions needed
   }
 }
