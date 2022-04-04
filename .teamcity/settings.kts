@@ -58,6 +58,7 @@ project {
 
 
 object TestAggregator : BuildType({
+    name = "test aggregator"
     type = Type.COMPOSITE
 
     vcs { showDependenciesChanges = true }
