@@ -33,6 +33,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin;
+import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin;
 
 public class BazelBspServer {
 
@@ -66,8 +67,10 @@ public class BazelBspServer {
     var javaLanguagePlugin = new JavaLanguagePlugin(bazelPathsResolver, bazelInfo);
     var scalaLanguagePlugin = new ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver);
     var cppLanguagePlugin = new CppLanguagePlugin();
+    var thriftLanguagePlugin = new ThriftLanguagePlugin(bazelPathsResolver);
     var languagePluginsService =
-        new LanguagePluginsService(scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin);
+        new LanguagePluginsService(
+            scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin);
     var targetKindResolver = new TargetKindResolver();
     var bazelProjectMapper =
         new BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver);

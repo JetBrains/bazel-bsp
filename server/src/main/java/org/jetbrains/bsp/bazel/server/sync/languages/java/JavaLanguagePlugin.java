@@ -17,6 +17,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
+import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
@@ -82,7 +83,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
   }
 
   @Override
-  public Set<URI> dependencySources(TargetInfo targetInfo) {
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     if (!targetInfo.hasJavaTargetInfo()) {
       return HashSet.empty();
     }

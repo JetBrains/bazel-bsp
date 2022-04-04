@@ -12,6 +12,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
+import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
@@ -22,7 +23,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.SourceSet;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
 
 public class BazelProjectMapper {
-
   private final LanguagePluginsService languagePluginsService;
   private final BazelPathsResolver bazelPathsResolver;
   private final TargetKindResolver targetKindResolver;
@@ -39,8 +39,9 @@ public class BazelProjectMapper {
   public Project createProject(
       Map<String, TargetInfo> targets, Set<String> rootTargets, ProjectView projectView) {
     languagePluginsService.prepareSync(targets.values());
+    var dependencyTree = new DependencyTree(targets, rootTargets);
     var targetsToImport = selectTargetsToImport(rootTargets, targets);
-    var modulesFromBazel = createModules(targetsToImport);
+    var modulesFromBazel = createModules(targetsToImport, dependencyTree);
     var workspaceRoot = bazelPathsResolver.workspaceRoot();
     var syntheticModules = createSyntheticModules(modulesFromBazel, workspaceRoot, projectView);
     var allModules = modulesFromBazel.appendAll(syntheticModules);
@@ -55,13 +56,14 @@ public class BazelProjectMapper {
     return List.ofAll(rootTargets).flatMap(targets::get);
   }
 
-  private List<Module> createModules(List<TargetInfo> targetsToImport) {
+  private List<Module> createModules(
+      List<TargetInfo> targetsToImport, DependencyTree dependencyTree) {
     return targetsToImport
-        .map(this::createModule)
+        .map(target -> createModule(target, dependencyTree))
         .filter(module -> !module.tags().contains(Tag.NO_IDE));
   }
 
-  private Module createModule(TargetInfo target) {
+  private Module createModule(TargetInfo target, DependencyTree dependencyTree) {
     var label = Label.from(target.getId());
     var directDependencies = resolveDirectDependencies(target);
     var languages = inferLanguages(target);
@@ -73,7 +75,7 @@ public class BazelProjectMapper {
     var languagePlugin = languagePluginsService.getPlugin(languages);
     var languageData = (Option<LanguageData>) languagePlugin.resolveModule(target);
 
-    var sourceDependencies = languagePlugin.dependencySources(target);
+    var sourceDependencies = languagePlugin.dependencySources(target, dependencyTree);
 
     return new Module(
         label,

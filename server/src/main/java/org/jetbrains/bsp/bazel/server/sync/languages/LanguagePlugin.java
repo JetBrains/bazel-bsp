@@ -7,6 +7,7 @@ import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
+import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 
 public abstract class LanguagePlugin<T extends LanguageData> {
   public void prepareSync(Seq<TargetInfo> targets) {}
@@ -15,7 +16,7 @@ public abstract class LanguagePlugin<T extends LanguageData> {
     return Option.none();
   }
 
-  public Set<URI> dependencySources(TargetInfo targetInfo) {
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     return HashSet.empty();
   }
 

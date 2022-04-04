@@ -16,6 +16,10 @@
 
 ### Fixes 🛠️
 
+- Now sources of thrift dependencies are included as dependencies.
+  | [#202](https://github.com/JetBrains/bazel-bsp/pull/202)
+- Handle the case when there is no JDK in the project.
+  | [#200](https://github.com/JetBrains/bazel-bsp/pull/200)
 - Fixed extraction of java version and java home for bazel `5.0.0`.
   | [#165](https://github.com/JetBrains/bazel-bsp/pull/165)
 - Log messages are no longer trimmed.
