@@ -79,3 +79,4 @@ object TestAggregator : BuildType({
         }
     }
 })
+
