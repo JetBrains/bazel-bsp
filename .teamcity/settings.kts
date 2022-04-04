@@ -47,10 +47,7 @@ project {
             buildType(E2eTests.EntireRepositoryImportE2ETest)
         }
 
-        buildType(TestAggregator, options = {
-            onDependencyFailure = FailureAction.CANCEL
-            onDependencyCancel = FailureAction.CANCEL
-        })
+        buildType(TestAggregator)
     }.buildTypes()
 
     steps.forEach { buildType(it) }
