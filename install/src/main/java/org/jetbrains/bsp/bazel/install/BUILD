@@ -14,5 +14,6 @@ java_library(
         "@maven//:commons_cli_commons_cli",
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
         "//install/src/main/java/org/jetbrains/bsp/bazel/install/cli",
+        "@maven//:io_vavr_vavr",
     ],
 )

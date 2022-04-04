@@ -6,5 +6,6 @@ java_library(
     visibility = ["//install:__subpackages__"],
     deps = [
         "@maven//:commons_cli_commons_cli",
+        "@maven//:io_vavr_vavr",
     ],
 )
