@@ -184,6 +184,19 @@ def extract_scala_info(target, ctx, output_groups):
     )
     return scala_info
 
+def extract_runtime_jars(target, provider):
+    compilation_info = getattr(provider, "compilation_info", None)
+
+    if compilation_info:
+        return compilation_info.runtime_classpath
+
+    return getattr(provider, "transitive_runtime_jars", target[JavaInfo].transitive_runtime_jars)
+
+def extract_compile_jars(provider):
+    compilation_info = getattr(provider, "compilation_info", None)
+
+    return compilation_info.compilation_classpath if compilation_info else provider.transitive_compile_time_jars
+
 def extract_java_info(target, ctx, output_groups):
     provider = get_java_provider(target)
     if not provider:
@@ -204,8 +217,8 @@ def extract_java_info(target, ctx, output_groups):
     generated_jars, resolve_files_generated_jars = get_generated_jars(provider)
     resolve_files += resolve_files_generated_jars
 
-    runtime_jars = (provider.compilation_info.runtime_classpath if provider.compilation_info else provider.transitive_runtime_deps).to_list()
-    compile_jars = (provider.compilation_info.compilation_classpath if provider.compilation_info else provider.transitive_compile_time_jars).to_list()
+    runtime_jars = extract_runtime_jars(target, provider).to_list()
+    compile_jars = extract_compile_jars(provider).to_list()
     source_jars = provider.transitive_source_jars.to_list()
     resolve_files += runtime_jars
     resolve_files += compile_jars

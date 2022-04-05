@@ -16,6 +16,8 @@
 
 ### Fixes 🛠️
 
+- Kotlin targets don't break import.
+  | [#211](https://github.com/JetBrains/bazel-bsp/pull/211)
 - Now sources of thrift dependencies are included as dependencies.
   | [#202](https://github.com/JetBrains/bazel-bsp/pull/202)
 - Handle the case when there is no JDK in the project.
