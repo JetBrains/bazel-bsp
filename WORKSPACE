@@ -177,9 +177,9 @@ junit_platform_java_repositories(
 
 git_repository(
     name = "testkit",
-    commit = "2b5d71849abf47728953f62a6b50c9e927a69187",
     remote = "https://github.com/agluszak/bsp-testkit2.git",
-    shallow_since = "1648576682 +0200",
+    commit = "d8e18966e6bead84e2955b9afaed52903c3e5934",
+    shallow_since = "1649164803 +0200"
 )
 
 # ======================================================================================================================
