@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.install;
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails;
 import io.vavr.control.Try;
-import java.nio.file.Path;
 import org.jetbrains.bsp.bazel.install.cli.CliOptions;
 import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider;
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext;
@@ -24,13 +23,12 @@ public class Install {
   }
 
   private static Try<Void> createEnvironmentAndInstallBazelBspServer(CliOptions cliOptions) {
-    return tryInstallationContextCreator(cliOptions)
-        .flatMap(
-            installationContext -> tryBspConnectionDetailsCreator(installationContext, cliOptions))
-        .flatMap(details -> environmentCreatorProvider(cliOptions, details));
+    return constructInstallationContext(cliOptions)
+        .flatMap(installationContext -> createBspConnectionDetails(installationContext, cliOptions))
+        .flatMap(details -> createEnvironment(cliOptions, details));
   }
 
-  private static Try<InstallationContext> tryInstallationContextCreator(CliOptions cliOptions) {
+  private static Try<InstallationContext> constructInstallationContext(CliOptions cliOptions) {
     var resourcesProjectViewFilePath = "/default-projectview.bazelproject";
     var projectViewProvider =
         new ProjectViewDefaultFromResourcesProvider(
@@ -41,15 +39,14 @@ public class Install {
     return installationContextConstructor.construct(projectViewTry);
   }
 
-  private static Try<BspConnectionDetails> tryBspConnectionDetailsCreator(
+  private static Try<BspConnectionDetails> createBspConnectionDetails(
       InstallationContext installationContext, CliOptions cliOptions) {
     var bspConnectionDetailsCreator =
         new BspConnectionDetailsCreator(installationContext, cliOptions.getProjectViewFilePath());
     return bspConnectionDetailsCreator.create();
   }
 
-  private static Try<Void> environmentCreatorProvider(
-      CliOptions cliOptions, BspConnectionDetails details) {
+  private static Try<Void> createEnvironment(CliOptions cliOptions, BspConnectionDetails details) {
     var environmentCreator = new EnvironmentCreator(cliOptions.getWorkspaceRootDir(), details);
     return environmentCreator.create();
   }

@@ -22,7 +22,7 @@ cd "$project_path" || {
 rm -r .bsp/ >/dev/null 2>&1
 rm -r .bazelbsp/ >/dev/null 2>&1
 
-$bsp_path -p xd.bazelproject
+$bsp_path
 exit_code=$?
 
 if [ $exit_code -eq 0 ]; then
