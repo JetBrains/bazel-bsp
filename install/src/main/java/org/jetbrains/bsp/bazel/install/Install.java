@@ -7,7 +7,6 @@ import org.jetbrains.bsp.bazel.install.cli.CliOptions;
 import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider;
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext;
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContextConstructor;
-import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 
 public class Install {
 
@@ -20,7 +19,7 @@ public class Install {
     } else {
       createEnvironmentAndInstallBazelBspServer(cliOptions)
           .onSuccess(__ -> printInCaseOfSuccess(cliOptions))
-          .onFailure(exception -> printInCaseOfFailure(exception));
+          .onFailure(Install::printFailureReasonAndExit1);
     }
   }
 
@@ -35,10 +34,10 @@ public class Install {
   }
 
   private static Try<InstallationContext> tryInstallationContextCreator(CliOptions cliOptions) {
-    var rootDir = cliOptions.getWorkspaceRootDir();
-    var projectViewFilePath = cliOptions.getProjectViewFilePath();
-
-    var projectViewProvider = new ProjectViewDefaultParserProvider(rootDir, projectViewFilePath);
+    var resourcesProjectViewFilePath = "/default-projectview.bazelproject";
+    var projectViewProvider =
+        new ProjectViewDefaultFromResourcesProvider(
+            cliOptions.getProjectViewFilePath(), resourcesProjectViewFilePath);
     var projectViewTry = projectViewProvider.create();
 
     var installationContextConstructor = new InstallationContextConstructor();
@@ -59,14 +58,14 @@ public class Install {
   }
 
   private static void printInCaseOfSuccess(CliOptions cliOptions) {
-    System.out.println(
-        "Bazel BSP server installed in '"
-            + cliOptions.getWorkspaceRootDir().toAbsolutePath().normalize()
-            + "'.");
+    var absoluteDirWhereServerWasInstalledIn =
+        cliOptions.getWorkspaceRootDir().toAbsolutePath().normalize();
+    System.out.printf(
+        "Bazel BSP server installed in '%s'.\n", absoluteDirWhereServerWasInstalledIn);
   }
 
-  private static void printInCaseOfFailure(Throwable exception) {
-    System.out.println("Bazel BSP server installation failed! Reason: ");
+  private static void printFailureReasonAndExit1(Throwable exception) {
+    System.err.print("Bazel BSP server installation failed! Reason: ");
     exception.printStackTrace();
     System.exit(1);
   }

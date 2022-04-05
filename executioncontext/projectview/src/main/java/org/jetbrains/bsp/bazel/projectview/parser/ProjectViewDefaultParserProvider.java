@@ -13,11 +13,6 @@ public class ProjectViewDefaultParserProvider implements ProjectViewProvider {
   private final Path projectViewFile;
   private final Path defaultProjectViewFile;
 
-  public ProjectViewDefaultParserProvider(Path bspProjectRoot) {
-    this.projectViewFile = bspProjectRoot.resolve(Constants.PROJECT_VIEW_FILE_PATH);
-    this.defaultProjectViewFile = bspProjectRoot.resolve(Constants.DEFAULT_PROJECT_VIEW_FILE_PATH);
-  }
-
   public ProjectViewDefaultParserProvider(Path bspProjectRoot, Path projectViewFile) {
     this.projectViewFile = projectViewFile;
     this.defaultProjectViewFile = bspProjectRoot.resolve(Constants.DEFAULT_PROJECT_VIEW_FILE_PATH);

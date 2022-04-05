@@ -49,8 +49,7 @@ public class CliOptionsProvider {
   public Try<CliOptions> getOptions() {
     var parser = new DefaultParser();
 
-    return Try.of(() -> parser.parse(cliParserOptions, args, false))
-            .map(this::createCliOptions);
+    return Try.of(() -> parser.parse(cliParserOptions, args, false)).map(this::createCliOptions);
   }
 
   private static Options getCliParserOptions() {
