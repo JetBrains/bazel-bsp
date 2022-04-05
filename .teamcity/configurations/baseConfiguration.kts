@@ -67,3 +67,4 @@ object BazelBspVcs : GitVcsRoot({
     branch = "master"
     branchSpec = "refs/heads/(*)"
 })
+
