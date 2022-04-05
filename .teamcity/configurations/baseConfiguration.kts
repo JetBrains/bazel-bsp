@@ -8,10 +8,10 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
-open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit) : BuildType({
+open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit, artifactRules: String = "") : BuildType({
     id(name.toExtId())
     this.name = name
-
+    this.artifactRules = artifactRules
     this.steps(steps)
 
     vcs {
@@ -47,16 +47,16 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?, a
             this.command = command
             this.targets = targets
             this.arguments = arguments
-            this.startupOptions = defaultStartupOptions
+
             param("toolPath", bazelPath)
         }
-    }) {
+
+    }, "~/.cache/bazel => ~/.cache/bazel") {
     companion object {
         private const val bazeliskUrl =
             "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64"
         private const val cacheDir = "%system.agent.persistent.cache%/bazel/"
         private const val bazelPath = "${cacheDir}bazelisk-linux-amd64"
-        private const val defaultStartupOptions = "--output_base=.bazel-build-output"
     }
 }
 
