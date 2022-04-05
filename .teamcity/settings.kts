@@ -42,7 +42,7 @@ project {
             buildType(E2eTests.Java8ProjectE2ETest)
             buildType(E2eTests.Java11ProjectE2ETest)
 
-            buildType(E2eTests.CppProjectE2ETest)
+            // buildType(E2eTests.CppProjectE2ETest)
 
             buildType(E2eTests.EntireRepositoryImportE2ETest)
         }
