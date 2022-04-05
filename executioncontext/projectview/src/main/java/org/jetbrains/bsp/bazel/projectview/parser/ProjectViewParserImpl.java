@@ -84,7 +84,7 @@ public class ProjectViewParserImpl implements ProjectViewParser {
         .onFailure(
             exception ->
                 log.info("Failed to parse file {}. Parsing default file.", projectViewFilePath))
-        .orElse(parse(defaultProjectViewFileContent))
+        .orElse(() -> parse(defaultProjectViewFileContent))
         .onFailure(
             exception -> log.error("Failed to parse default file. Parsing failed!", exception));
   }

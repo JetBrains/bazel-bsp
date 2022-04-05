@@ -17,10 +17,10 @@ public class BspConnectionDetailsCreator {
   public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.ServerInitializer";
 
   private final InstallationContext installationContext;
-  private final Path projectViewFilePath;
+  private final Option<Path> projectViewFilePath;
 
   public BspConnectionDetailsCreator(
-      InstallationContext installationContext, Path projectViewFilePath) {
+      InstallationContext installationContext, Option<Path> projectViewFilePath) {
     this.installationContext = installationContext;
     this.projectViewFilePath = projectViewFilePath;
   }
@@ -93,6 +93,6 @@ public class BspConnectionDetailsCreator {
   }
 
   private List<String> appendProjectViewFilePath(List<String> argv) {
-    return argv.append(projectViewFilePath.toString());
+    return projectViewFilePath.map(Path::toString).map(argv::append).getOrElse(argv);
   }
 }

@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.Executors;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
@@ -21,8 +22,8 @@ import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 public class ServerInitializer {
 
   public static void main(String[] args) {
-    if (args.length != 1) {
-      System.err.printf("Expected path to project view file; got args: %s%n", Arrays.toString(args));
+    if (args.length > 1) {
+      System.err.printf("Expected optional path to project view file; got too many args: %s%n", Arrays.toString(args));
       System.exit(1);
     }
 
@@ -73,10 +74,18 @@ public class ServerInitializer {
   }
 
   private static ProjectView getProjectView(Path bspProjectRoot, String[] args) {
-    var pathToProjectView = Paths.get(args[0]);
-    var provider = new ProjectViewDefaultParserProvider(bspProjectRoot, pathToProjectView);
+    var provider = getProjectViewProvider(bspProjectRoot, args);
 
     return provider.create().get();
+  }
+
+  private static ProjectViewProvider getProjectViewProvider(Path bspProjectRoot, String[] args) {
+    if (args.length == 0) {
+      return new ProjectViewDefaultParserProvider(bspProjectRoot);
+    }
+
+    var pathToProjectView = Paths.get(args[0]);
+    return new ProjectViewDefaultParserProvider(bspProjectRoot, pathToProjectView);
   }
 
   private static String getBazelPath (ProjectView projectView){

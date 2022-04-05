@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.install.cli;
 
+import io.vavr.control.Option;
 import java.nio.file.Path;
 
 public class CliOptions {
@@ -7,13 +8,13 @@ public class CliOptions {
   private final Runnable printHelp;
 
   private final Path workspaceRootDir;
-  private final Path projectViewFilePath;
+  private final Option<Path> projectViewFilePath;
 
   CliOptions(
       boolean isHelpOptionUsed,
       Runnable printHelp,
       Path workspaceRootDir,
-      Path projectViewFilePath) {
+      Option<Path> projectViewFilePath) {
     this.isHelpOptionUsed = isHelpOptionUsed;
     this.printHelp = printHelp;
     this.workspaceRootDir = workspaceRootDir;
@@ -32,7 +33,7 @@ public class CliOptions {
     return workspaceRootDir;
   }
 
-  public Path getProjectViewFilePath() {
+  public Option<Path> getProjectViewFilePath() {
     return projectViewFilePath;
   }
 }

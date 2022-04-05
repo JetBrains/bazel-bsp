@@ -62,14 +62,8 @@ public class CliOptionsProvider {
   }
 
   private CliOptions createCliOptions(CommandLine cmd) {
-    var workspaceRootDir = getWorkspaceRootDir(cmd);
-    var defaultProjectViewFilePath = workspaceRootDir.resolve("default-projectview.bazelproject");
-
     return new CliOptions(
-        isHelpOptionUsed(cmd),
-        this::printHelp,
-        workspaceRootDir,
-        getProjectViewPath(cmd, defaultProjectViewFilePath));
+        isHelpOptionUsed(cmd), this::printHelp, getWorkspaceRootDir(cmd), getProjectViewPath(cmd));
   }
 
   private boolean isHelpOptionUsed(CommandLine cmd) {
@@ -88,9 +82,9 @@ public class CliOptionsProvider {
         : Paths.get("");
   }
 
-  private Path getProjectViewPath(CommandLine cmd, Path pathToDefaultProjectViewFile) {
-    return cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
-        ? Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT))
-        : pathToDefaultProjectViewFile;
+  private io.vavr.control.Option<Path> getProjectViewPath(CommandLine cmd) {
+    return io.vavr.control.Option.when(
+        cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT),
+        () -> Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT)));
   }
 }

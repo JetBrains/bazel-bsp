@@ -24,12 +24,9 @@ public class Install {
   }
 
   private static Try<Void> createEnvironmentAndInstallBazelBspServer(CliOptions cliOptions) {
-
     return tryInstallationContextCreator(cliOptions)
         .flatMap(
-            installationContext ->
-                tryBspConnectionDetailsCreator(
-                    installationContext, cliOptions.getProjectViewFilePath()))
+            installationContext -> tryBspConnectionDetailsCreator(installationContext, cliOptions))
         .flatMap(details -> environmentCreatorProvider(cliOptions, details));
   }
 
@@ -45,9 +42,9 @@ public class Install {
   }
 
   private static Try<BspConnectionDetails> tryBspConnectionDetailsCreator(
-      InstallationContext installationContext, Path projectViewFilePath) {
+      InstallationContext installationContext, CliOptions cliOptions) {
     var bspConnectionDetailsCreator =
-        new BspConnectionDetailsCreator(installationContext, projectViewFilePath);
+        new BspConnectionDetailsCreator(installationContext, cliOptions.getProjectViewFilePath());
     return bspConnectionDetailsCreator.create();
   }
 

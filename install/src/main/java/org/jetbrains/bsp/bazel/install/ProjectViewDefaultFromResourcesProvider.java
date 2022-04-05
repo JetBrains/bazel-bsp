@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.install;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.commons.BetterFiles;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -18,36 +17,42 @@ public class ProjectViewDefaultFromResourcesProvider implements ProjectViewProvi
 
   private static final ProjectViewParser PARSER = new ProjectViewParserImpl();
 
-  private final Path projectViewFile;
-  private final String defaultProjectViewFileResources;
+  private final Option<Path> projectViewFilePath;
+  private final String defaultProjectViewFileResourcesPath;
 
   public ProjectViewDefaultFromResourcesProvider(
-      Path projectViewFile, String defaultProjectViewFileResources) {
-    this.projectViewFile = projectViewFile;
-    this.defaultProjectViewFileResources = defaultProjectViewFileResources;
+      Option<Path> projectViewFilePath, String defaultProjectViewFileResourcesPath) {
+    this.projectViewFilePath = projectViewFilePath;
+    this.defaultProjectViewFileResourcesPath = defaultProjectViewFileResourcesPath;
   }
 
   @Override
   public Try<ProjectView> create() {
-    return readFileContentFromResources(defaultProjectViewFileResources)
-        .peek(System.out::println)
-        .flatMap(this::create);
+    return readFileContentFromResources(defaultProjectViewFileResourcesPath).flatMap(this::create);
   }
 
   private Try<String> readFileContentFromResources(String resourcesRawPath) {
     // TODO add https://youtrack.jetbrains.com/issue/BAZEL-18
-    return Try.of(() -> ProjectViewDefaultFromResourcesProvider.class.getResourceAsStream(resourcesRawPath))
-            .map(InputStreamReader::new)
-            .map(BufferedReader::new)
-            .mapTry(BufferedReader::lines)
-            .map(stream -> stream.collect(Collectors.joining("\n")));
+    return Try.of(
+            () ->
+                ProjectViewDefaultFromResourcesProvider.class.getResourceAsStream(resourcesRawPath))
+        .map(InputStreamReader::new)
+        .map(BufferedReader::new)
+        .mapTry(BufferedReader::lines)
+        .map(stream -> stream.collect(Collectors.joining("\n")));
   }
 
   private Try<ProjectView> create(String defaultProjectViewFileContent) {
-    return BetterFiles.tryReadFileContent(projectViewFile)
+    return projectViewFilePath
+        .map(projectViewFile -> create(projectViewFile, defaultProjectViewFileContent))
+        .getOrElse(() -> PARSER.parse(defaultProjectViewFileContent));
+  }
+
+  private Try<ProjectView> create(Path projectViewFilePath, String defaultProjectViewFileContent) {
+    return BetterFiles.tryReadFileContent(projectViewFilePath)
         .flatMap(
             projectViewFileContent ->
                 PARSER.parse(projectViewFileContent, defaultProjectViewFileContent))
-        .orElse(PARSER.parse(defaultProjectViewFileContent));
+        .orElse(() -> PARSER.parse(defaultProjectViewFileContent));
   }
 }
