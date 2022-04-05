@@ -23,7 +23,9 @@ public class ServerInitializer {
 
   public static void main(String[] args) {
     if (args.length > 1) {
-      System.err.printf("Expected optional path to project view file; got too many args: %s%n", Arrays.toString(args));
+      System.err.printf(
+          "Expected optional path to project view file; got too many args: %s%n",
+          Arrays.toString(args));
       System.exit(1);
     }
 
@@ -88,23 +90,27 @@ public class ServerInitializer {
     return new ProjectViewDefaultParserProvider(bspProjectRoot, pathToProjectView);
   }
 
-  private static String getBazelPath (ProjectView projectView){
-    return projectView.getBazelPath().map(ProjectViewSingletonSection::getValue).map(Path::toString).getOrElse(findOnPath("bazel"));
+  private static String getBazelPath(ProjectView projectView) {
+    return projectView
+        .getBazelPath()
+        .map(ProjectViewSingletonSection::getValue)
+        .map(Path::toString)
+        .getOrElse(findOnPath("bazel"));
   }
+
   private static String findOnPath(String bin) {
     var pathElements = Splitter.on(File.pathSeparator).splitToList(System.getenv("PATH"));
 
     return pathElements.stream()
-            .filter(ServerInitializer::isItNotBazeliskPath)
-            .map(element -> new File(element, bin))
-            .filter(File::canExecute)
-            .findFirst()
-            .map(File::toString)
-            .orElseThrow(() -> new NoSuchElementException("Could not find " + bin + " on your PATH"));
+        .filter(ServerInitializer::isItNotBazeliskPath)
+        .map(element -> new File(element, bin))
+        .filter(File::canExecute)
+        .findFirst()
+        .map(File::toString)
+        .orElseThrow(() -> new NoSuchElementException("Could not find " + bin + " on your PATH"));
   }
 
   private static boolean isItNotBazeliskPath(String path) {
     return !path.contains("bazelisk/");
   }
-
 }

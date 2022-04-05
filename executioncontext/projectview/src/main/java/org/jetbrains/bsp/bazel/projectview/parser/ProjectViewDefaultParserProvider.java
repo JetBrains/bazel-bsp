@@ -18,7 +18,7 @@ public class ProjectViewDefaultParserProvider implements ProjectViewProvider {
     this.projectViewFile = Option.none();
     this.defaultProjectViewFile = bspProjectRoot.resolve(Constants.DEFAULT_PROJECT_VIEW_FILE_PATH);
   }
-  
+
   public ProjectViewDefaultParserProvider(Path bspProjectRoot, Path projectViewFile) {
     this.projectViewFile = Option.of(projectViewFile);
     this.defaultProjectViewFile = bspProjectRoot.resolve(Constants.DEFAULT_PROJECT_VIEW_FILE_PATH);
