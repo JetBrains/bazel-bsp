@@ -40,6 +40,7 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?, a
             this.scriptContent = """
                 wget $bazeliskUrl --directory-prefix=$cacheDir --no-clobber
                 chmod +x $bazelPath
+                rm -r .bazel-build-output
             """.trimIndent()
         }
 
