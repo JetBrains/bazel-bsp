@@ -44,7 +44,7 @@ public class EnvironmentCreator {
   private Try<Void> createEmptyBuildFile(Path dotBazelBspDir) {
     var destinationBuildFilePath = dotBazelBspDir.resolve(Constants.BUILD_FILE_NAME);
 
-    return Try.run(() -> Files.createFile(destinationBuildFilePath));
+    return Try.run(() -> destinationBuildFilePath.toFile().createNewFile());
   }
 
   private Try<Void> copyDefaultProjectViewFilePath(Path dotBazelBspDir) {
