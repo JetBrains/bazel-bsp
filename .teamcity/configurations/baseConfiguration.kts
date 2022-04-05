@@ -34,7 +34,7 @@ open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit, artifactRul
     }
 })
 
-open class BaseBazelBuildType(name: String, command: String, targets: String?, arguments: String? = null) :
+open class BaseBazelBuildType(name: String, command: String, targets: String?) :
     BaseBuildType(name, {
         script {
             this.scriptContent = """
@@ -46,12 +46,12 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?, a
         bazel {
             this.command = command
             this.targets = targets
-            this.arguments = arguments
+            this.arguments = "--disk_cache=bazel-cache"
 
             param("toolPath", bazelPath)
         }
 
-    }, "~/.cache/bazel => ~/.cache/bazel") {
+    }, "bazel-cache => bazel-cache") {
     companion object {
         private const val bazeliskUrl =
             "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64"
