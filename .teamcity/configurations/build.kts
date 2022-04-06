@@ -10,3 +10,4 @@ object BuildTheProject : BuildBuildType(
     name = "build the project",
     moduleLabel = "//...",
 )
+
