@@ -9,7 +9,7 @@ version = "2021.2"
 project {
     vcsRoot(BaseConfiguration.BazelBspVcs)
 
-    val steps = sequential {
+    val allRawSteps = sequential {
         parallel {
             buildType(Format.JavaFormat)
             buildType(Format.BuildifierFormat)
@@ -33,6 +33,7 @@ project {
         parallel(options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
+
         }) {
             buildType(E2eTests.SampleRepoE2ETest)
 
@@ -50,9 +51,22 @@ project {
         buildType(TestAggregator)
     }.buildTypes()
 
-    steps.forEach { buildType(it) }
+    val indexOfBuildStep = allRawSteps.indexOf(Build.BuildTheProject)
+    val stepsBeforeBuild = allRawSteps.take(indexOfBuildStep)
+    val stepsAfterBuild = allRawSteps.drop(indexOfBuildStep)
 
-    steps.last().triggers {
+    val stepsAfterBuildWithArtifactDependency = stepsAfterBuild.map {
+        it.dependencies.artifacts(Build.BuildTheProject) {
+            buildRule = lastSuccessful()
+            artifactRules = "bazel-cache"
+        }
+    }
+
+    val allSteps = stepsBeforeBuild + stepsAfterBuild
+
+    allSteps.forEach { buildType(it) }
+
+    allRawSteps.last().triggers {
         vcs { }
     }
 }
