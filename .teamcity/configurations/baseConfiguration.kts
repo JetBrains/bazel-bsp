@@ -60,6 +60,38 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?) :
     }
 }
 
+open class BaseBazelBuildTypeClean(name: String, command: String, targets: String?) :
+    BaseBuildType(name, {
+        script {
+            this.scriptContent = """
+                wget $bazeliskUrl --directory-prefix=$cacheDir --no-clobber
+                chmod +x $bazelPath
+            """.trimIndent()
+        }
+
+        bazel {
+            this.command = "clean"
+            this.arguments = "--disk_cache=bazel-cache"
+            param("toolPath", bazelPath)
+        }
+
+        bazel {
+            this.command = command
+            this.targets = targets
+            this.arguments = "--disk_cache=bazel-cache"
+
+            param("toolPath", bazelPath)
+        }
+
+    }, "bazel-cache => bazel-cache") {
+    companion object {
+        private const val bazeliskUrl =
+            "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64"
+        private const val cacheDir = "%system.agent.persistent.cache%/bazel/"
+        private const val bazelPath = "${cacheDir}bazelisk-linux-amd64"
+    }
+}
+
 object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp"
     url = "https://github.com/JetBrains/bazel-bsp.git"
