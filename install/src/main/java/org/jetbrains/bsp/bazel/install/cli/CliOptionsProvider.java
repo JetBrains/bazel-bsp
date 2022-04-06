@@ -85,6 +85,6 @@ public class CliOptionsProvider {
   private io.vavr.control.Option<Path> getProjectViewPath(CommandLine cmd) {
     return io.vavr.control.Option.when(
         cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT),
-        () -> Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT)));
+        () -> Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT)).toAbsolutePath());
   }
 }
