@@ -4,6 +4,7 @@ open class UnitTestsBuildType(moduleLabel: String) : BaseConfiguration.BaseBazel
     name = "[unit tests] $moduleLabel tests",
     command = "test",
     targets = "$moduleLabel/...",
+    arguments = "--cache_test_results=no"
 )
 
 object BazelRunnerUnitTests : UnitTestsBuildType(

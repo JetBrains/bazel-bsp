@@ -34,7 +34,7 @@ open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit, artifactRul
     }
 })
 
-open class BaseBazelBuildType(name: String, command: String, targets: String?) :
+open class BaseBazelBuildType(name: String, command: String, targets: String?, arguments: String = "") :
     BaseBuildType(name, {
         script {
             this.scriptContent = """
@@ -46,7 +46,7 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?) :
         bazel {
             this.command = command
             this.targets = targets
-            this.arguments = "--disk_cache=bazel-cache"
+            this.arguments = "--disk_cache=bazel-cache $arguments"
 
             param("toolPath", bazelPath)
         }
