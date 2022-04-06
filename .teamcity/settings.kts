@@ -53,7 +53,7 @@ project {
 
     allSteps.takeLastWhile { it != Build.BuildTheProject }.forEach {
         it.dependencies.artifacts(Build.BuildTheProject) {
-            buildRule = lastSuccessful()
+            buildRule = sameChainOrLastFinished()
             artifactRules = "bazel-cache"
         }
     }
