@@ -9,7 +9,7 @@ version = "2021.2"
 project {
     vcsRoot(BaseConfiguration.BazelBspVcs)
 
-    val allRawSteps = sequential {
+    val allSteps = sequential {
         parallel {
             buildType(Format.JavaFormat)
             buildType(Format.BuildifierFormat)
@@ -51,22 +51,16 @@ project {
         buildType(TestAggregator)
     }.buildTypes()
 
-    val indexOfBuildStep = allRawSteps.indexOf(Build.BuildTheProject)
-    val stepsBeforeBuild = allRawSteps.take(indexOfBuildStep)
-    val stepsAfterBuild = allRawSteps.drop(indexOfBuildStep)
-
-    val stepsAfterBuildWithArtifactDependency = stepsAfterBuild.map {
+    allSteps.takeLastWhile { it != Build.BuildTheProject }.forEach {
         it.dependencies.artifacts(Build.BuildTheProject) {
             buildRule = lastSuccessful()
             artifactRules = "bazel-cache"
         }
     }
 
-    val allSteps = stepsBeforeBuild + stepsAfterBuild
-
     allSteps.forEach { buildType(it) }
 
-    allRawSteps.last().triggers {
+    allSteps.last().triggers {
         vcs { }
     }
 }
