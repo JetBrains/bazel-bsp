@@ -27,8 +27,8 @@ public class Constants {
   public static final String WORKSPACE_FILE_NAME = "WORKSPACE";
 
   public static final String ASPECTS_FILE_NAME = "aspects.bzl";
-  public static final String BAZELBSP_DIR_NAME = ".bazelbsp";
-  public static final String BSP_DIR_NAME = ".bsp";
+  public static final String DOT_BAZELBSP_DIR_NAME = ".bazelbsp";
+  public static final String DOT_BSP_DIR_NAME = ".bsp";
   public static final String BAZELBSP_JSON_FILE_NAME = "bazelbsp.json";
   public static final String BAZELBSP_TRACE_JSON_FILE_NAME = "bazelbsp.trace.json";
 

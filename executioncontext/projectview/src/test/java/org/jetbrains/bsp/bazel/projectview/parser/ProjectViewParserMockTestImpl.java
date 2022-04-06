@@ -25,7 +25,7 @@ public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
     return readFileContent(projectViewFilePath)
         .flatMap(
             projectViewFileContent -> parse(projectViewFileContent, defaultProjectViewFileContent))
-        .orElse(parse(defaultProjectViewFileContent));
+        .orElse(() -> parse(defaultProjectViewFileContent));
   }
 
   @Override

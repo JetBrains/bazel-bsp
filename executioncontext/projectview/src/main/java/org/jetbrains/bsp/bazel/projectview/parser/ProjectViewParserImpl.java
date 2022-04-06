@@ -22,7 +22,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSpl
  * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
  * @see org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
  */
-class ProjectViewParserImpl implements ProjectViewParser {
+public class ProjectViewParserImpl implements ProjectViewParser {
 
   private static final Logger log = LogManager.getLogger(ProjectViewParserImpl.class);
 
@@ -84,7 +84,7 @@ class ProjectViewParserImpl implements ProjectViewParser {
         .onFailure(
             exception ->
                 log.info("Failed to parse file {}. Parsing default file.", projectViewFilePath))
-        .orElse(parse(defaultProjectViewFileContent))
+        .orElse(() -> parse(defaultProjectViewFileContent))
         .onFailure(
             exception -> log.error("Failed to parse default file. Parsing failed!", exception));
   }

@@ -6,6 +6,9 @@
 
 ### Features 🎉
 
+- New installer - it is possible to specify installation directory
+  and project view file using flags.
+  | [#201](https://github.com/JetBrains/bazel-bsp/pull/201)
 - Server now keeps the state of the project between runs.
   | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Improved bazel runner. The BSP Client now receives invoked bazel command,
@@ -55,10 +58,10 @@
   | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
 - Changed the structure of the [README](README.md) and other documents and added contribution guide.
   | [#181](https://github.com/JetBrains/bazel-bsp/pull/181)
-- Project view parser has more logging, targets section is optional and 
+- Project view parser has more logging, targets section is optional and
   sections are using specific types instead of raw strings.
   | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
-- Improve the `install.sh` script. 
+- Improve the `install.sh` script.
   | [#167](https://github.com/JetBrains/bazel-bsp/pull/167)
 - Now the project is using the latest bazel version - `5.0.0`.
   Installer skips bazelisk cache binaries during bazel binary discovery mechanism.
