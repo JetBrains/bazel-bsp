@@ -71,7 +71,6 @@ project {
     }
 }
 
-
 object TestAggregator : BuildType({
     id("test aggregator".toExtId())
     name = "test aggregator"
