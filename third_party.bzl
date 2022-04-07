@@ -24,7 +24,7 @@ _deps = [
     _dependency("org.apache.logging.log4j:log4j-core:2.17.2"),
     _dependency("org.apache.commons:commons-collections4:jar:4.4"),
     _dependency("org.junit.jupiter:junit-jupiter:5.8.2"),  # TODO remove
-    _dependency("com.fasterxml.jackson.core:jackson-databind:2.13.0"),
+    _dependency("com.fasterxml.jackson.core:jackson-databind:2.13.2.2"),
     _dependency("io.vavr:vavr-jackson:0.10.3"),
 ]
 
