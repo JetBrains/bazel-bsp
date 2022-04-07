@@ -79,12 +79,23 @@ public class CliOptionsProvider {
   private Path getWorkspaceRootDir(CommandLine cmd) {
     return cmd.hasOption(DIRECTORY_SHORT_OPT)
         ? Paths.get(cmd.getOptionValue(DIRECTORY_SHORT_OPT))
-        : Paths.get("");
+        : getCurrentDirectory();
   }
 
   private io.vavr.control.Option<Path> getProjectViewPath(CommandLine cmd) {
     return io.vavr.control.Option.when(
         cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT),
-        () -> Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT)));
+        () -> calculateAbsoluteProjectViewPath(cmd));
+  }
+
+  private Path calculateAbsoluteProjectViewPath(CommandLine cmd) {
+    var currentDir = getCurrentDirectory();
+    var projectViewPath = Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT));
+
+    return currentDir.resolve(projectViewPath).normalize();
+  }
+
+  private Path getCurrentDirectory() {
+    return Paths.get("").toAbsolutePath();
   }
 }

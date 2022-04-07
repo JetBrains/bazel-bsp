@@ -19,6 +19,8 @@
 
 ### Fixes 🛠️
 
+- Project view path is mapped to the absolute path in the installer.
+  | [#213](https://github.com/JetBrains/bazel-bsp/pull/213)
 - Kotlin targets don't break import.
   | [#211](https://github.com/JetBrains/bazel-bsp/pull/211)
 - Now sources of thrift dependencies are included as dependencies.
