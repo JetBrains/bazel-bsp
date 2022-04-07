@@ -71,6 +71,11 @@ open class BaseBazelBuildTypeClean(name: String, command: String, targets: Strin
 
         bazel {
             this.command = "clean"
+            param("toolPath", bazelPath)
+        }
+
+        bazel {
+            this.command = "clean"
             this.arguments = "--disk_cache=bazel-cache"
             param("toolPath", bazelPath)
         }
