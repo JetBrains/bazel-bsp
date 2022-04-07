@@ -6,7 +6,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import com.google.common.net.HostAndPort;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
@@ -42,9 +42,9 @@ public class ProjectViewParserImplTest {
 
       // then
       assertThat(projectViewTry.isFailure()).isTrue();
-      assertThat(projectViewTry.getCause().getClass()).isEqualTo(IOException.class);
+      assertThat(projectViewTry.getCause().getClass()).isEqualTo(FileNotFoundException.class);
       assertThat(projectViewTry.getCause().getMessage())
-          .isEqualTo("/does/not/exist.bazelproject file does not exist!");
+          .isEqualTo("/does/not/exist.bazelproject (No such file or directory)");
     }
 
     @Test
@@ -57,9 +57,9 @@ public class ProjectViewParserImplTest {
 
       // then
       assertThat(projectViewTry.isFailure()).isTrue();
-      assertThat(projectViewTry.getCause().getClass()).isEqualTo(IOException.class);
+      assertThat(projectViewTry.getCause().getClass()).isEqualTo(FileNotFoundException.class);
       assertThat(projectViewTry.getCause().getMessage())
-          .isEqualTo("/projectview/does/not/exist.bazelproject file does not exist!");
+          .isEqualTo("/projectview/does/not/exist.bazelproject (No such file or directory)");
     }
 
     @Test
@@ -346,9 +346,9 @@ public class ProjectViewParserImplTest {
 
       // then
       assertThat(projectViewTry.isFailure()).isTrue();
-      assertThat(projectViewTry.getCause().getClass()).isEqualTo(IOException.class);
+      assertThat(projectViewTry.getCause().getClass()).isEqualTo(FileNotFoundException.class);
       assertThat(projectViewTry.getCause().getMessage())
-          .isEqualTo("/does/not/exist.bazelproject file does not exist!");
+          .isEqualTo("/does/not/exist.bazelproject (No such file or directory)");
     }
 
     @Test
@@ -362,9 +362,9 @@ public class ProjectViewParserImplTest {
 
       // then
       assertThat(projectViewTry.isFailure()).isTrue();
-      assertThat(projectViewTry.getCause().getClass()).isEqualTo(IOException.class);
+      assertThat(projectViewTry.getCause().getClass()).isEqualTo(FileNotFoundException.class);
       assertThat(projectViewTry.getCause().getMessage())
-              .isEqualTo("/does/not/exist.bazelproject file does not exist!");
+              .isEqualTo("/does/not/exist.bazelproject (No such file or directory)");
     }
 
     @Test
@@ -378,9 +378,9 @@ public class ProjectViewParserImplTest {
 
       // then
       assertThat(projectViewTry.isFailure()).isTrue();
-      assertThat(projectViewTry.getCause().getClass()).isEqualTo(IOException.class);
+      assertThat(projectViewTry.getCause().getClass()).isEqualTo(FileNotFoundException.class);
       assertThat(projectViewTry.getCause().getMessage())
-          .isEqualTo("/does/not/exist.bazelproject file does not exist!");
+          .isEqualTo("/does/not/exist.bazelproject (No such file or directory)");
     }
 
     @Test

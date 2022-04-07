@@ -1,5 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_library")
 load("//:junit5.bzl", "java_junit5_test")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 java_junit5_test(
     name = "ProjectViewParserImplTest",
@@ -13,10 +14,10 @@ java_junit5_test(
     ],
 )
 
-java_library(
+kt_jvm_library(
     name = "parser_mock_test_impl",
     testonly = 1,
-    srcs = ["ProjectViewParserMockTestImpl.java"],
+    srcs = ["ProjectViewParserMockTestImpl.kt"],
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "@maven//:com_google_guava_guava",

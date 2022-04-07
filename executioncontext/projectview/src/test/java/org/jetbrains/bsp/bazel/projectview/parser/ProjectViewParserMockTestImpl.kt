@@ -1,48 +1,61 @@
-package org.jetbrains.bsp.bazel.projectview.parser;
+package org.jetbrains.bsp.bazel.projectview.parser
 
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import io.vavr.control.Option;
-import io.vavr.control.Try;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import com.google.common.base.Charsets
+import com.google.common.io.CharStreams
+import io.vavr.control.Option
+import io.vavr.control.Try
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.writeText
 
-public class ProjectViewParserMockTestImpl extends ProjectViewParserImpl {
+class ProjectViewParserMockTestImpl : ProjectViewParserImpl() {
 
-  @Override
-  public Try<ProjectView> parse(Path projectViewFilePath, Path defaultProjectViewFilePath) {
-    return readFileContent(defaultProjectViewFilePath)
-        .flatMap(
-            defaultProjectViewFileContent ->
-                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent));
-  }
+    override fun parse(projectViewFilePath: Path, defaultProjectViewFilePath: Path): Try<ProjectView> =
+        Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
+            .flatMap { parseWithCopiedProjectViewFile(it, defaultProjectViewFilePath) }
 
-  private Try<ProjectView> parseWithDefault(
-      Path projectViewFilePath, String defaultProjectViewFileContent) {
-    return readFileContent(projectViewFilePath)
-        .flatMap(
-            projectViewFileContent -> parse(projectViewFileContent, defaultProjectViewFileContent));
-  }
+    private fun parseWithCopiedProjectViewFile(
+        copiedProjectViewFilePath: Path,
+        defaultProjectViewFile: Path
+    ): Try<ProjectView> =
+        Try.success(copyResourcesFileToTmpFile(defaultProjectViewFile))
+            .flatMap { super.parse(copiedProjectViewFilePath, it) }
 
-  @Override
-  public Try<ProjectView> parse(Path projectViewFilePath) {
-    return readFileContent(projectViewFilePath).flatMap(this::parse);
-  }
+    override fun parse(projectViewFilePath: Path): Try<ProjectView> =
+        Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
+            .flatMap { super.parse(it) }
 
-  private Try<String> readFileContent(Path filePath) {
-    // we read file content instead of passing plain file due to bazel resources packaging
-    var inputStream = ProjectViewParserMockTestImpl.class.getResourceAsStream(filePath.toString());
+    private fun copyResourcesFileToTmpFile(resourcesFile: Path): Path {
+        val resourcesFileContent = readFileContent(resourcesFile)
 
-    return Option.of(inputStream)
-        .map(this::readInputStream)
-        .getOrElse(Try.failure(new IOException(filePath + " file does not exist!")));
-  }
+        return createTempFileWithContentIfContentExists(resourcesFile, resourcesFileContent)
+    }
 
-  private Try<String> readInputStream(InputStream inputStream) {
-    return Try.success(new InputStreamReader(inputStream, Charsets.UTF_8))
-        .mapTry(CharStreams::toString);
-  }
+    // TODO @abrams27 - move to utils
+    private fun readFileContent(filePath: Path): String? {
+        // we read file content instead of passing plain file due to bazel resources packaging
+        val inputStream: InputStream? =
+            ProjectViewParserMockTestImpl::class.java.getResourceAsStream(filePath.toString())
+
+        return inputStream
+            ?.let { InputStreamReader(it, Charsets.UTF_8) }
+            ?.let { CharStreams.toString(it) }
+    }
+
+    private fun createTempFileWithContentIfContentExists(path: Path, content: String?): Path =
+        content?.let { createTempFileWithContent(path, it) } ?: path
+
+    private fun createTempFileWithContent(path: Path, content: String): Path {
+        val tempFile = File.createTempFile(path.toString(), "")
+        tempFile.deleteOnExit()
+        tempFile.writeText(content)
+
+        return tempFile.toPath()
+    }
 }
