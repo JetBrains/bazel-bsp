@@ -15,7 +15,7 @@ public class BspInfo {
     this(Paths.get("").toAbsolutePath().normalize());
   }
 
-  private Path bspProjectRoot() {
+  public Path bspProjectRoot() {
     return bspProjectRoot;
   }
 

@@ -15,7 +15,7 @@ public class BazelRunner {
   private static final String PUBLISH_ALL_ACTIONS = "--build_event_publish_all_actions";
   private static final String BES_BACKEND = "--bes_backend=grpc://localhost:";
 
-  private final String bazel;
+  private final BazelPathProvider bazelPathProvider;
 
   private Option<Integer> besBackendPort = Option.none();
   private final BspClientLogger bspClientLogger;
@@ -23,18 +23,18 @@ public class BazelRunner {
 
   // This is runner without workspace path. It is used to determine workspace
   // path and create a fully functional runner.
-  public static BazelRunner inCwd(String bazelBinaryPath, BspClientLogger bspClientLogger) {
-    return new BazelRunner(bazelBinaryPath, bspClientLogger, null);
+  public static BazelRunner inCwd(BazelPathProvider bazelPath, BspClientLogger bspClientLogger) {
+    return new BazelRunner(bazelPath, bspClientLogger, null);
   }
 
   public static BazelRunner of(
-      String bazelBinaryPath, BspClientLogger bspClientLogger, BazelInfo bazelInfo) {
-    return new BazelRunner(bazelBinaryPath, bspClientLogger, bazelInfo);
+      BazelPathProvider bazelPath, BspClientLogger bspClientLogger, BazelInfo bazelInfo) {
+    return new BazelRunner(bazelPath, bspClientLogger, bazelInfo);
   }
 
   private BazelRunner(
-      String bazelBinaryPath, BspClientLogger bspClientLogger, BazelInfo bazelInfo) {
-    this.bazel = bazelBinaryPath;
+      BazelPathProvider bazelPathProvider, BspClientLogger bspClientLogger, BazelInfo bazelInfo) {
+    this.bazelPathProvider = bazelPathProvider;
     this.bspClientLogger = bspClientLogger;
     this.bazelInfo = bazelInfo;
   }
@@ -86,7 +86,7 @@ public class BazelRunner {
   }
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
-    var processArgs = Lists.newArrayList(bazel, command);
+    var processArgs = Lists.newArrayList(bazelPathProvider.currentBazelPath(), command);
     processArgs.addAll(flags);
     processArgs.addAll(arguments);
     return processArgs;
