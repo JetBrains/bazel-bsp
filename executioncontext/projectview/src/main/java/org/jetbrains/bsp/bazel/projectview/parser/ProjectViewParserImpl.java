@@ -47,16 +47,12 @@ public class ProjectViewParserImpl implements ProjectViewParser {
         projectViewFilePath,
         defaultProjectViewFilePath);
 
-    return BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
+    return BetterFiles.tryReadFileContent(projectViewFilePath)
         .onFailure(
-            exception ->
-                log.error(
-                    "Failed to read default file {}. Parsing failed!",
-                    defaultProjectViewFilePath,
-                    exception))
+            exception -> log.error("Failed to read file {}. Parsing failed!", projectViewFilePath, exception))
         .flatMap(
-            defaultProjectViewFileContent ->
-                parseWithDefault(projectViewFilePath, defaultProjectViewFileContent))
+            projectViewFileContent ->
+                parse(projectViewFileContent, defaultProjectViewFilePath))
         .onSuccess(
             projectView ->
                 log.info(
@@ -67,26 +63,16 @@ public class ProjectViewParserImpl implements ProjectViewParser {
         .onFailure(
             exception ->
                 log.error(
-                    "Failed to parse default file {}. Parsing failed!",
-                    defaultProjectViewFilePath,
+                    "Failed to parse project view!",
                     exception));
   }
 
-  private Try<ProjectView> parseWithDefault(
-      Path projectViewFilePath, String defaultProjectViewFileContent) {
-    return BetterFiles.tryReadFileContent(projectViewFilePath)
-        .onFailure(
-            exception ->
-                log.info("Failed to read file {}. Parsing default file.", projectViewFilePath))
+  private Try<ProjectView> parse(
+      String projectViewFileContent, Path defaultProjectViewFilePath) {
+    return BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
         .flatMap(
-            projectViewFilePathContent ->
-                parse(projectViewFilePathContent, defaultProjectViewFileContent))
-        .onFailure(
-            exception ->
-                log.info("Failed to parse file {}. Parsing default file.", projectViewFilePath))
-        .orElse(() -> parse(defaultProjectViewFileContent))
-        .onFailure(
-            exception -> log.error("Failed to parse default file. Parsing failed!", exception));
+            defaultProjectViewFilePathContent ->
+                parse(projectViewFileContent, defaultProjectViewFilePathContent));
   }
 
   @Override

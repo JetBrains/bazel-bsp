@@ -352,6 +352,22 @@ public class ProjectViewParserImplTest {
     }
 
     @Test
+    public void shouldReturnFailureForNotExistingFile() {
+      // given
+      var projectViewFilePath = Paths.get("/does/not/exist.bazelproject");
+      var defaultProjectViewFilePath = Paths.get("/projectview/file1.bazelproject");
+
+      // when
+      var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
+
+      // then
+      assertThat(projectViewTry.isFailure()).isTrue();
+      assertThat(projectViewTry.getCause().getClass()).isEqualTo(IOException.class);
+      assertThat(projectViewTry.getCause().getMessage())
+              .isEqualTo("/does/not/exist.bazelproject file does not exist!");
+    }
+
+    @Test
     public void shouldReturnFailureForNotExistingDefaultFileAndNotExistingFile() {
       // given
       var projectViewFilePath = Paths.get("/does/not/exist.bazelproject");
@@ -466,35 +482,6 @@ public class ProjectViewParserImplTest {
       // given
       var projectViewFilePath = Paths.get("/projectview/file1.bazelproject");
       var defaultProjectViewFilePath = Paths.get("/projectview/file2.bazelproject");
-
-      // when
-      var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
-
-      // then
-      var expectedProjectViewTry =
-          ProjectView.builder()
-              .targets(
-                  Option.of(
-                      new ProjectViewTargetsSection(
-                          List.of(
-                              new BuildTargetIdentifier("//included_target1.1"),
-                              new BuildTargetIdentifier("//included_target1.2")),
-                          List.of(new BuildTargetIdentifier("//excluded_target1.1")))))
-              .bazelPath(Option.of(new ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-              .debuggerAddress(
-                  Option.of(
-                      new ProjectViewDebuggerAddressSection(
-                          HostAndPort.fromString("0.0.0.1:8000"))))
-              .javaPath(Option.of(new ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-              .build();
-      assertThat(projectViewTry).isEqualTo(expectedProjectViewTry);
-    }
-
-    @Test
-    public void shouldParseDefaultsForNotExistingFile() {
-      // given
-      var projectViewFilePath = Paths.get("/doesnt/exist.bazelproject");
-      var defaultProjectViewFilePath = Paths.get("/projectview/file1.bazelproject");
 
       // when
       var projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath);
