@@ -1,96 +1,82 @@
-package org.jetbrains.bsp.bazel.projectview.model.sections;
+package org.jetbrains.bsp.bazel.projectview.model.sections
 
-//import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-//import io.vavr.collection.List;
-//import java.util.Arrays;
-//import java.util.Collection;
-//import java.util.function.BiFunction;
-//import java.util.function.Function;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.junit.runners.Parameterized;
-//import org.junit.runners.Parameterized.Parameters;
-//
-//@RunWith(value = Parameterized.class)
-//public class ProjectViewExcludableListSectionTest<
-//    V, T extends ProjectViewExcludableListSection<V>> {
-//
-//  private final BiFunction<List<String>, List<String>, T> sectionConstructor;
-//
-//  public ProjectViewExcludableListSectionTest(
-//      BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
-//    this.sectionConstructor = createSectionConstructor(sectionMapper, elementMapper);
-//  }
-//
-//  private BiFunction<List<String>, List<String>, T> createSectionConstructor(
-//      BiFunction<List<V>, List<V>, T> sectionMapper, Function<String, V> elementMapper) {
-//
-//    return (includedElements, excludedElements) ->
-//        sectionMapper.apply(
-//            includedElements.map(elementMapper), excludedElements.map(elementMapper));
-//  }
-//
-//  @Parameters(name = "{index}: .equals() on an excludable list section for {0}")
-//  public static Collection<Object[]> data() {
-//    return Arrays.asList(
-//        new Object[][] {
-//          {
-//            (BiFunction<
-//                    List<BuildTargetIdentifier>,
-//                    List<BuildTargetIdentifier>,
-//                    ProjectViewTargetsSection>)
-//                ProjectViewTargetsSection::new,
-//            (Function<String, BuildTargetIdentifier>)
-//                (rawElement) -> new BuildTargetIdentifier("//:" + rawElement),
-//          }
-//        });
-//  }
-//
-//  @Test
-//  public void shouldReturnTrueForTheSameSectionsWithTheSameValues() {
-//    // given & when
-//    var section1 =
-//        sectionConstructor.apply(
-//            List.of("included_value1", "included_value2"),
-//            List.of("excluded_value1", "excluded_value3", "excluded_value2"));
-//    var section2 =
-//        sectionConstructor.apply(
-//            List.of("included_value2", "included_value1"),
-//            List.of("excluded_value3", "excluded_value2", "excluded_value1"));
-//
-//    // then
-//    assertEquals(section1, section2);
-//  }
-//
-//  @Test
-//  public void shouldReturnFalseForTheSameSectionsWithDifferentIncludedValues() {
-//    // given & when
-//    var section1 =
-//        sectionConstructor.apply(
-//            List.of("included_value1", "included_value3"),
-//            List.of("excluded_value1", "excluded_value3", "excluded_value2"));
-//    var section2 =
-//        sectionConstructor.apply(
-//            List.of("included_value2", "included_value1"),
-//            List.of("excluded_value3", "excluded_value2", "excluded_value1"));
-//
-//    // then
-//    assertNotEquals(section1, section2);
-//  }
-//
-//  @Test
-//  public void shouldReturnFalseForTheSameSectionsWithDifferentExcludedValues() {
-//    // given & when
-//    var section1 =
-//        sectionConstructor.apply(
-//            List.of("included_value1", "included_value2"),
-//            List.of("excluded_value1", "excluded_value3", "excluded_value2"));
-//    var section2 =
-//        sectionConstructor.apply(
-//            List.of("included_value2", "included_value1"),
-//            List.of("excluded_value3", "excluded_value5", "excluded_value1"));
-//
-//    // then
-//    assertNotEquals(section1, section2);
-//  }
-//}
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.vavr.collection.List
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+
+class ProjectViewExcludableListSectionTest<V, T : ProjectViewExcludableListSection<V>> {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    fun `should return true for the same sections with the same values`(sectionConstructor: (List<String>, List<String>) -> T) {
+        // given & when
+        val section1: T = sectionConstructor(
+            List.of("included_value1", "included_value2"),
+            List.of("excluded_value1", "excluded_value3", "excluded_value2")
+        )
+        val section2: T = sectionConstructor(
+            List.of("included_value2", "included_value1"),
+            List.of("excluded_value3", "excluded_value2", "excluded_value1")
+        )
+
+        // then
+        section1 shouldBe section2
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    fun `should return false for the same sections with different included values`(sectionConstructor: (List<String>, List<String>) -> T) {
+        // given & when
+        val section1: T = sectionConstructor(
+            List.of("included_value1", "included_value3"),
+            List.of("excluded_value1", "excluded_value3", "excluded_value2")
+        )
+        val section2: T = sectionConstructor(
+            List.of("included_value2", "included_value1"),
+            List.of("excluded_value3", "excluded_value2", "excluded_value1")
+        )
+
+        // then
+        section1 shouldNotBe section2
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    fun `should return false for the same sections with different excluded values`(sectionConstructor: (List<String>, List<String>) -> T) {
+        // given & when
+        val section1: T = sectionConstructor(
+            List.of("included_value1", "included_value2"),
+            List.of("excluded_value1", "excluded_value3", "excluded_value2")
+        )
+        val section2: T = sectionConstructor(
+            List.of("included_value2", "included_value1"),
+            List.of("excluded_value3", "excluded_value5", "excluded_value1")
+        )
+
+        // then
+        section1 shouldNotBe section2
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun data() = listOf(targetsSectionArguments())
+
+        private fun targetsSectionArguments(): Arguments {
+            val sectionConstructor =
+                createSectionConstructor(::ProjectViewTargetsSection) { BuildTargetIdentifier("//:$it") }
+
+            return Arguments.of(sectionConstructor)
+        }
+
+        private fun <V, T : ProjectViewExcludableListSection<V>> createSectionConstructor(
+            sectionMapper: (List<V>, List<V>) -> T, elementMapper: (String) -> V
+        ): (List<String>, List<String>) -> T = { includedElements, excludedElements ->
+            sectionMapper(includedElements.map(elementMapper), excludedElements.map(elementMapper))
+        }
+    }
+}

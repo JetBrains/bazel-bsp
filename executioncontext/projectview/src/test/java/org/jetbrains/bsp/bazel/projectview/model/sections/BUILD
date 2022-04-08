@@ -1,9 +1,9 @@
-load("//:junit5.bzl", "java_junit5_test")
+load("//:junit5.bzl", "java_junit5_test", "kt_junit5_test")
 
-java_junit5_test(
+kt_junit5_test(
     name = "ProjectViewListSectionTest",
     size = "small",
-    srcs = ["ProjectViewListSectionTest.java"],
+    srcs = ["ProjectViewListSectionTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.projectview.model.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
@@ -20,10 +20,10 @@ java_junit5_test(
     ],
 )
 
-java_junit5_test(
+kt_junit5_test(
     name = "ProjectViewExcludableListSectionTest",
     size = "small",
-    srcs = ["ProjectViewExcludableListSectionTest.java"],
+    srcs = ["ProjectViewExcludableListSectionTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.projectview.model.sections",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",

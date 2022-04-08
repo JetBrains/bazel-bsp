@@ -1,58 +1,51 @@
-package org.jetbrains.bsp.bazel.projectview.model.sections;
+package org.jetbrains.bsp.bazel.projectview.model.sections
 
-import static org.assertj.core.api.Assertions.assertThat;
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.vavr.collection.List
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
-import io.vavr.collection.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+class ProjectViewListSectionTest<V, T : ProjectViewListSection<V>> {
 
-public class ProjectViewListSectionTest<V, T extends ProjectViewListSection<V>> {
+    @ParameterizedTest
+    @MethodSource("data")
+    fun `should return true for the same sections with the same values`(sectionConstructor: (List<String>) -> T) {
+        // given & when
+        val section1 = sectionConstructor(List.of("value1", "value2"))
+        val section2 = sectionConstructor(List.of("value1", "value2"))
 
-  public static Stream<Arguments> data() {
-    return Stream.of(targetsSectionArguments());
-  }
+        // then
+        section1 shouldBe section2
+    }
 
-  private static Arguments targetsSectionArguments() {
-    var sectionConstructor =
-        createSectionConstructor(
-                ProjectViewBuildFlagsSection::new,
-                (Function<String, String>) (seed) -> "--flag_" + seed + "=dummy_value");
+    @ParameterizedTest
+    @MethodSource("data")
+    fun `should return false for the same sections with different values`(sectionConstructor: (List<String>) -> T) {
+        // given & when
+        val section1 = sectionConstructor(List.of("value1", "value3"))
+        val section2 = sectionConstructor(List.of("value2", "value1"))
 
-    return Arguments.of(sectionConstructor);
-  }
+        // then
+        section1 shouldNotBe section2
+    }
 
-  private static <V, T extends ProjectViewListSection<V>>
-      Function<List<String>, T> createSectionConstructor(
-          Function<List<V>, T> sectionMapper, Function<String, V> elementMapper) {
+    companion object {
 
-    return (elements) ->
-        sectionMapper.apply(
-                elements.map(elementMapper));
-  }
+        @JvmStatic
+        fun data() = listOf(buildFlagsSectionArguments())
 
-  @ParameterizedTest
-  @MethodSource("data")
-  public void shouldReturnTrueForTheSameSectionsWithTheSameValues(
-      Function<List<String>, T> sectionConstructor) {
-    // given & when
-    var section1 = sectionConstructor.apply(List.of("value1", "value2"));
-    var section2 = sectionConstructor.apply(List.of("value1", "value2"));
+        private fun buildFlagsSectionArguments(): Arguments {
+            val sectionConstructor =
+                createSectionConstructor(::ProjectViewBuildFlagsSection) { "--flag_$it=dummy_value" }
 
-    // then
-    assertThat(section1).isEqualTo(section2);
-  }
+            return Arguments.of(sectionConstructor)
+        }
 
-  @ParameterizedTest
-  @MethodSource("data")
-  public void shouldReturnFalseForTheSameSectionsWithDifferentValues(Function<List<String>, T> sectionConstructor) {
-    // given & when
-    var section1 = sectionConstructor.apply(List.of("value1", "value3"));
-    var section2 = sectionConstructor.apply(List.of("value2", "value1"));
-
-    // then
-    assertThat(section1).isNotEqualTo(section2);
-  }
+        private fun <V, T : ProjectViewListSection<V>?> createSectionConstructor(
+            sectionMapper: (List<V>) -> T,
+            elementMapper: (String) -> V,
+        ): (List<String>) -> T = { sectionMapper(it.map(elementMapper)) }
+    }
 }
