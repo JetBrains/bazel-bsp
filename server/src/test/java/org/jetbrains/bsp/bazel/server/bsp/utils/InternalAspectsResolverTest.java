@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
-import org.jetbrains.bsp.bazel.bazelrunner.SemanticVersion;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.junit.jupiter.api.Test;
 
@@ -60,11 +59,6 @@ public class InternalAspectsResolverTest {
 
       @Override
       public String binRoot() {
-        return null;
-      }
-
-      @Override
-      public SemanticVersion version() {
         return null;
       }
     };
