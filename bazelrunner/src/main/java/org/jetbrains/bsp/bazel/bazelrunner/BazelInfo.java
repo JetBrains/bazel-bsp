@@ -9,6 +9,4 @@ public interface BazelInfo {
   Path workspaceRoot();
 
   String binRoot();
-
-  SemanticVersion version();
 }
