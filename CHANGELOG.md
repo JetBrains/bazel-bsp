@@ -19,6 +19,8 @@
 
 ### Fixes 🛠️
 
+- Parsing of project view file fails if the file doesn't exist.
+  | [#215](https://github.com/JetBrains/bazel-bsp/pull/215)
 - Project view path is mapped to the absolute path in the installer.
   | [#213](https://github.com/JetBrains/bazel-bsp/pull/213)
 - Kotlin targets don't break import.
