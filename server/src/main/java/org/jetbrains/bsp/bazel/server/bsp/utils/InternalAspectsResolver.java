@@ -1,20 +1,18 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils;
 
 import io.vavr.Lazy;
-import java.nio.file.Paths;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 
 public class InternalAspectsResolver {
 
-  private final BazelData bazelData;
+  private final BazelInfo bazelInfo;
+  private final BspInfo bspInfo;
   private final Lazy<String> prefix = Lazy.of(this::getPrefix);
 
-  public InternalAspectsResolver(BazelData bazelData) {
-    this.bazelData = bazelData;
-  }
-
-  public String getAspectOutputIndicator() {
-    return ".bazelbsp/aspects.bzl";
+  public InternalAspectsResolver(BazelInfo bazelInfo, BspInfo bspInfo) {
+    this.bazelInfo = bazelInfo;
+    this.bspInfo = bspInfo;
   }
 
   public String resolveLabel(String aspect) {
@@ -22,9 +20,9 @@ public class InternalAspectsResolver {
   }
 
   private String getPrefix() {
-    var workspaceRoot = Paths.get(bazelData.getWorkspaceRoot());
-    var bspProjectRoot = bazelData.getBspProjectRoot();
-    var relative = workspaceRoot.relativize(bspProjectRoot).resolve(".bazelbsp").toString();
+    var workspaceRoot = bazelInfo.workspaceRoot();
+    var bazelBspDir = bspInfo.bazelBspDir();
+    var relative = workspaceRoot.relativize(bazelBspDir).toString();
     return String.format("@//%s:aspects.bzl%%", relative);
   }
 }

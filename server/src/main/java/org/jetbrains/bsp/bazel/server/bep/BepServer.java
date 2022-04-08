@@ -27,10 +27,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.commons.Uri;
+import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.FileDiagnostic;
 import org.jetbrains.bsp.bazel.server.bep.parsers.error.StderrDiagnosticsParser;
 
@@ -40,6 +41,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private static final int URI_PREFIX_LENGTH = 7;
 
   private final BuildClient bspClient;
+  private final BspClientLogger logger;
 
   private final BepDiagnosticsDispatcher diagnosticsDispatcher;
 
@@ -47,9 +49,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final Map<String, String> diagnosticsProtosLocations = new HashMap<>();
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
-  public BepServer(BazelData bazelData, BuildClient bspClient) {
+  public BepServer(BazelInfo bazelInfo, BuildClient bspClient, BspClientLogger logger) {
     this.bspClient = bspClient;
-    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelData, bspClient);
+    this.logger = logger;
+    this.diagnosticsDispatcher = new BepDiagnosticsDispatcher(bazelInfo, bspClient);
   }
 
   @Override
@@ -205,10 +208,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeAbortedEvent(BuildEventStreamProtos.Aborted aborted) {
     if (aborted.getReason() != BuildEventStreamProtos.Aborted.AbortReason.NO_BUILD) {
-      String errorMessage =
-          String.format(
-              "Command aborted with reason %s: %s", aborted.getReason(), aborted.getDescription());
-      throw new RuntimeException(errorMessage);
+      logger.warn(
+          "Command aborted with reason %s: %s", aborted.getReason(), aborted.getDescription());
     }
   }
 

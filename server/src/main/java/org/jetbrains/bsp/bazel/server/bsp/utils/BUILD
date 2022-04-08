@@ -7,8 +7,7 @@ java_library(
     deps = [
         "//bazelrunner",
         "//commons",
-        "@io_bazel//src/main/protobuf:analysis_java_proto",
-        "@io_bazel//src/main/protobuf:build_java_proto",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",

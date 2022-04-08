@@ -9,6 +9,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule;
+import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.model.Language;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
@@ -16,15 +17,18 @@ public class LanguagePluginsService {
   private final ScalaLanguagePlugin scalaLanguagePlugin;
   private final JavaLanguagePlugin javaLanguagePlugin;
   private final CppLanguagePlugin cppLanguagePlugin;
+  private final ThriftLanguagePlugin thriftLanguagePlugin;
   private final EmptyLanguagePlugin emptyLanguagePlugin;
 
   public LanguagePluginsService(
       ScalaLanguagePlugin scalaLanguagePlugin,
       JavaLanguagePlugin javaLanguagePlugin,
-      CppLanguagePlugin cppLanguagePlugin) {
+      CppLanguagePlugin cppLanguagePlugin,
+      ThriftLanguagePlugin thriftLanguagePlugin) {
     this.scalaLanguagePlugin = scalaLanguagePlugin;
     this.javaLanguagePlugin = javaLanguagePlugin;
     this.cppLanguagePlugin = cppLanguagePlugin;
+    this.thriftLanguagePlugin = thriftLanguagePlugin;
     this.emptyLanguagePlugin = new EmptyLanguagePlugin();
   }
 
@@ -32,6 +36,7 @@ public class LanguagePluginsService {
     scalaLanguagePlugin.prepareSync(targetInfos);
     javaLanguagePlugin.prepareSync(targetInfos);
     cppLanguagePlugin.prepareSync(targetInfos);
+    thriftLanguagePlugin.prepareSync(targetInfos);
   }
 
   public LanguagePlugin<?> getPlugin(Set<Language> languages) {
@@ -41,6 +46,8 @@ public class LanguagePluginsService {
       return javaLanguagePlugin;
     } else if (languages.contains(Language.CPP)) {
       return cppLanguagePlugin;
+    } else if (languages.contains(Language.THRIFT)) {
+      return thriftLanguagePlugin;
     } else {
       return emptyLanguagePlugin;
     }

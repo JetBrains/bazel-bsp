@@ -4,10 +4,10 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
 import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelData;
-import org.jetbrains.bsp.bazel.bazelrunner.BazelDataResolver;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.logger.BuildClientLogger;
+import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -16,6 +16,7 @@ import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.bsp.BspRequestsRunner;
 import org.jetbrains.bsp.bazel.server.bsp.BspServerApi;
 import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
@@ -27,6 +28,7 @@ import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectProvider;
 import org.jetbrains.bsp.bazel.server.sync.ProjectResolver;
+import org.jetbrains.bsp.bazel.server.sync.ProjectStorage;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver;
@@ -34,71 +36,65 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin;
+import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin;
 
 public class BazelBspServer {
 
   private final BazelBspServerConfig bazelBspServerConfig;
   private final BazelRunner bazelRunner;
-  private final BazelData bazelData;
+  private final BazelInfo bazelInfo;
 
   private BspServerApi bspServerApi;
-  private BazelBspCompilationManager bazelBspCompilationManager;
+  private BazelBspCompilationManager compilationManager;
   private ProjectProvider projectProvider;
-  private final BuildClientLogger buildClientLogger;
+  private final BspClientLogger bspClientLogger;
 
   public BazelBspServer(BazelBspServerConfig bazelBspServerConfig) {
     this.bazelBspServerConfig = bazelBspServerConfig;
     var bazelPath = bazelBspServerConfig.getBazelPath();
-    this.buildClientLogger = new BuildClientLogger();
-    var bazelDataResolver =
-        new BazelDataResolver(
-            BazelRunner.inCwd(
-                bazelPath,
-                buildClientLogger,
-                getDefaultBazelFlags(bazelBspServerConfig.getProjectView())));
-    this.bazelData = bazelDataResolver.resolveBazelData();
-    this.bazelRunner =
-        BazelRunner.of(
-            bazelPath,
-            buildClientLogger,
-            bazelData,
-            getDefaultBazelFlags(bazelBspServerConfig.getProjectView()));
+    this.bspClientLogger = new BspClientLogger();
+    var bazelDataResolver = new BazelInfoResolver(BazelRunner.inCwd(bazelPath, bspClientLogger, getDefaultBazelFlags(bazelBspServerConfig.getProjectView())));
+    this.bazelInfo = bazelDataResolver.resolveBazelInfo();
+    this.bazelRunner = BazelRunner.of(bazelPath, bspClientLogger, bazelInfo, getDefaultBazelFlags(bazelBspServerConfig.getProjectView()));
   }
 
   // this is only a temporary solution - will be changed later
   private List<String> getDefaultBazelFlags(ProjectView projectView) {
     return projectView
-        .getBuildFlags()
-        .map(ProjectViewBuildFlagsSection::getValues)
-        .map(io.vavr.collection.List::toJavaList)
-        .getOrElse(List.of());
+            .getBuildFlags()
+            .map(ProjectViewBuildFlagsSection::getValues)
+            .map(io.vavr.collection.List::toJavaList)
+            .getOrElse(List.of());
   }
 
   public void startServer(BspIntegrationData bspIntegrationData) {
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
 
-    this.bazelBspCompilationManager = new BazelBspCompilationManager(bazelRunner, bazelData);
-    var internalAspectsResolver = new InternalAspectsResolver(bazelData);
-    var bazelBspAspectsManager =
-        new BazelBspAspectsManager(bazelBspCompilationManager, internalAspectsResolver);
-    var bazelPathsResolver = new BazelPathsResolver(bazelData);
-    var javaLanguagePlugin = new JavaLanguagePlugin(bazelPathsResolver, bazelData);
+    var bspInfo = new BspInfo();
+    this.compilationManager = new BazelBspCompilationManager(bazelRunner, bazelInfo);
+    var aspectsResolver = new InternalAspectsResolver(bazelInfo, bspInfo);
+    var bazelBspAspectsManager = new BazelBspAspectsManager(compilationManager, aspectsResolver);
+    var bazelPathsResolver = new BazelPathsResolver(bazelInfo);
+    var javaLanguagePlugin = new JavaLanguagePlugin(bazelPathsResolver, bazelInfo);
     var scalaLanguagePlugin = new ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver);
     var cppLanguagePlugin = new CppLanguagePlugin();
+    var thriftLanguagePlugin = new ThriftLanguagePlugin(bazelPathsResolver);
     var languagePluginsService =
-        new LanguagePluginsService(scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin);
+        new LanguagePluginsService(
+            scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin);
     var targetKindResolver = new TargetKindResolver();
     var bazelProjectMapper =
         new BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver);
     var projectViewProvider = new ProjectViewProvider(bazelBspServerConfig.getProjectView());
     var projectResolver =
-        new ProjectResolver(bazelBspAspectsManager, projectViewProvider, bazelProjectMapper);
-    this.projectProvider = new ProjectProvider(projectResolver);
+        new ProjectResolver(
+            bazelBspAspectsManager, projectViewProvider, bazelProjectMapper, bspClientLogger);
+    var projectStorage = new ProjectStorage(bspInfo, bspClientLogger);
+    this.projectProvider = new ProjectProvider(projectResolver, projectStorage);
     var bspProjectMapper = new BspProjectMapper(languagePluginsService);
     var projectSyncService = new ProjectSyncService(bspProjectMapper, projectProvider);
-    var executeService =
-        new ExecuteService(bazelBspCompilationManager, projectProvider, bazelRunner);
+    var executeService = new ExecuteService(compilationManager, projectProvider, bazelRunner);
     var cppBuildServerService = new CppBuildServerService();
 
     this.bspServerApi =
@@ -125,9 +121,9 @@ public class BazelBspServer {
 
     bspIntegrationData.setLauncher(launcher);
     BuildClient client = launcher.getRemoteProxy();
-    this.buildClientLogger.setBuildClient(client);
-    var bepServer = new BepServer(bazelData, client);
-    bazelBspCompilationManager.setBepServer(bepServer);
+    this.bspClientLogger.initialize(client);
+    var bepServer = new BepServer(bazelInfo, client, bspClientLogger);
+    compilationManager.setBepServer(bepServer);
     projectProvider.addListener(new BepServerProjectListener(bepServer));
     bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }

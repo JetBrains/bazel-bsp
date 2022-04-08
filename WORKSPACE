@@ -19,11 +19,34 @@ http_archive(
 )
 
 # ======================================================================================================================
+# kotlin
+
+IO_BAZEL_KOTLIN_RULES_TAG = "v1.5.0"
+
+IO_BAZEL_KOTLIN_RULES_SHA = "12d22a3d9cbcf00f2e2d8f0683ba87d3823cb8c7f6837568dd7e48846e023307"
+
+http_archive(
+    name = "io_bazel_rules_kotlin",
+    sha256 = IO_BAZEL_KOTLIN_RULES_SHA,
+    url = "https://github.com/bazelbuild/rules_kotlin/releases/download/{}/rules_kotlin_release.tgz".format(IO_BAZEL_KOTLIN_RULES_TAG),
+)
+
+# ----------------------------------------------------------------------------------------------------------------------
+load("@io_bazel_rules_kotlin//kotlin:repositories.bzl", "kotlin_repositories")
+
+kotlin_repositories()
+
+# ----------------------------------------------------------------------------------------------------------------------
+load("@io_bazel_rules_kotlin//kotlin:core.bzl", "kt_register_toolchains")
+
+kt_register_toolchains()
+
+# ======================================================================================================================
 # bazel_skylib - starlark functions
 
-BAZEL_SKYLIB_TAG = "1.2.0"
+BAZEL_SKYLIB_TAG = "1.2.1"
 
-BAZEL_SKYLIB_SHA = "af87959afe497dc8dfd4c6cb66e1279cb98ccc84284619ebfec27d9c09a903de"
+BAZEL_SKYLIB_SHA = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728"
 
 http_archive(
     name = "bazel_skylib",
@@ -63,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.0.0"
+IO_BAZEL_TAG = "5.1.0"
 
-IO_BAZEL_SHA = "ce1b391335bd417b5f7ec99e9049aee751b24f4a0e61a6dad3535f0e108bc182"
+IO_BAZEL_SHA = "a394a99cae2d28179e1afca5f5e867fe36143478b81ccb5713d003dd827cc0fe"
 
 http_archive(
     name = "io_bazel",
@@ -77,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.0.0"
+GOOGLEAPIS_TAG = "5.1.0"
 
-GOOGLEAPIS_SHA = "ce1b391335bd417b5f7ec99e9049aee751b24f4a0e61a6dad3535f0e108bc182"
+GOOGLEAPIS_SHA = "a394a99cae2d28179e1afca5f5e867fe36143478b81ccb5713d003dd827cc0fe"
 
 http_archive(
     name = "googleapis",
@@ -91,9 +114,9 @@ http_archive(
 # ======================================================================================================================
 # rules_python - required by com_google_protobuf
 
-RULES_PYTHON_TAG = "0.6.0"
+RULES_PYTHON_TAG = "0.8.0"
 
-RULES_PYTHON_SHA = "a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502"
+RULES_PYTHON_SHA = "9fcf91dbcc31fde6d1edb15f117246d912c33c36f44cf681976bd886538deba6"
 
 http_archive(
     name = "rules_python",

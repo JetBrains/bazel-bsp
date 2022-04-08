@@ -56,7 +56,8 @@ public class InstallationContextJavaPathEntityMapperTest {
     assertThat(javaPathTry.isSuccess()).isTrue();
     var javaPath = javaPathTry.get();
 
-    var expectedJavaPath = new InstallationContextJavaPathEntity(Paths.get("/path/to/java"));
+    var expectedJavaPath =
+        new InstallationContextJavaPathEntity(Paths.get("/path/to/java/bin/java"));
     assertThat(javaPath).isEqualTo(expectedJavaPath);
   }
 

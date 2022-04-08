@@ -8,6 +8,11 @@
 
 - `build_flags` support in project view.
   | [#194](https://github.com/JetBrains/bazel-bsp/pull/194)
+- New installer - it is possible to specify installation directory
+  and project view file using flags.
+  | [#201](https://github.com/JetBrains/bazel-bsp/pull/201)
+- Server now keeps the state of the project between runs.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Improved bazel runner. The BSP Client now receives invoked bazel command,
   its output, duration and exit code.
   | [#198](https://github.com/JetBrains/bazel-bsp/pull/198)
@@ -16,6 +21,14 @@
 
 ### Fixes 🛠️
 
+- Project view path is mapped to the absolute path in the installer.
+  | [#213](https://github.com/JetBrains/bazel-bsp/pull/213)
+- Kotlin targets don't break import.
+  | [#211](https://github.com/JetBrains/bazel-bsp/pull/211)
+- Now sources of thrift dependencies are included as dependencies.
+  | [#202](https://github.com/JetBrains/bazel-bsp/pull/202)
+- Handle the case when there is no JDK in the project.
+  | [#200](https://github.com/JetBrains/bazel-bsp/pull/200)
 - Fixed extraction of java version and java home for bazel `5.0.0`.
   | [#165](https://github.com/JetBrains/bazel-bsp/pull/165)
 - Log messages are no longer trimmed.
@@ -25,8 +38,22 @@
 
 ### Changes 🔄
 
+- Deletion of semantic version class.
+  | [#216](https://github.com/JetBrains/bazel-bsp/pull/216)
+- Duplicate bazel output lines are not shown in bsp-client.
+  | [#209](https://github.com/JetBrains/bazel-bsp/pull/209)
+- Project uses bazel `5.1.0`.
+  | [#208](https://github.com/JetBrains/bazel-bsp/pull/208)
+- Parse bazel query output from stream rather than from all bytes.
+  | [#210](https://github.com/JetBrains/bazel-bsp/pull/210)
 - JUnit5!
   | [#206](https://github.com/JetBrains/bazel-bsp/pull/206)
+- Do not throw on aborted event from BEP. Show warning instead.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
+- Readable `toString` for all `Project` related classes.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
+- Measure and report time of longer operations during sync.
+  | [#205](https://github.com/JetBrains/bazel-bsp/issues/205)
 - Support for excluded targets in the sync mechanism.
   | [#196](https://github.com/JetBrains/bazel-bsp/pull/196)
 - Introduction of installation context.
@@ -37,10 +64,10 @@
   | [#172](https://github.com/JetBrains/bazel-bsp/pull/172)
 - Changed the structure of the [README](README.md) and other documents and added contribution guide.
   | [#181](https://github.com/JetBrains/bazel-bsp/pull/181)
-- Project view parser has more logging, targets section is optional and 
+- Project view parser has more logging, targets section is optional and
   sections are using specific types instead of raw strings.
   | [#166](https://github.com/JetBrains/bazel-bsp/pull/166)
-- Improve the `install.sh` script. 
+- Improve the `install.sh` script.
   | [#167](https://github.com/JetBrains/bazel-bsp/pull/167)
 - Now the project is using the latest bazel version - `5.0.0`.
   Installer skips bazelisk cache binaries during bazel binary discovery mechanism.

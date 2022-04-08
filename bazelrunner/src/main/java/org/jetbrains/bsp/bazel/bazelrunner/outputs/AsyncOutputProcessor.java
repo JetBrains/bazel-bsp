@@ -26,9 +26,12 @@ public class AsyncOutputProcessor {
     Runnable runnable =
         () -> {
           try (var reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String prevLine = null;
             while (!Thread.currentThread().isInterrupted()) {
               var line = reader.readLine();
               if (line == null) return;
+              if (line.equals(prevLine)) continue;
+              prevLine = line;
               Arrays.stream(handlers).forEach(h -> h.onNextLine(line));
             }
           } catch (IOException e) {

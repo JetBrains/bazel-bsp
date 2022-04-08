@@ -1,3 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.cpp;
 
-public class CppModule {}
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
+
+public class CppModule implements LanguageData {}

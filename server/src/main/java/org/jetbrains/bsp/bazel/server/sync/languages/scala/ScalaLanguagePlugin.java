@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.function.BiFunction;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
+import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
@@ -61,8 +62,8 @@ public class ScalaLanguagePlugin extends LanguagePlugin<ScalaModule> {
   }
 
   @Override
-  public Set<URI> dependencySources(TargetInfo targetInfo) {
-    return javaLanguagePlugin.dependencySources(targetInfo);
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
+    return javaLanguagePlugin.dependencySources(targetInfo, dependencyTree);
   }
 
   @Override
