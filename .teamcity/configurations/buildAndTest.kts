@@ -6,6 +6,6 @@ object BuildAndTestTheProject : BaseConfiguration.BaseBazelBuildTypeClean(
     targets1 = "//...",
     arguments1 = "",
     command2 = "test",
-    command2 = "//...",
+    targets2 = "//...",
     arguments2 = "--cache_test_results=no",
 )
