@@ -1,3 +1,7 @@
 targets:
 	//included_target2.1
 	-//excluded_target2.1
+
+build_flags:
+    --build_flag2.1=value2.1
+    --build_flag2.2=value2.2

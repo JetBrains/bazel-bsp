@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet;
@@ -114,7 +114,7 @@ public class IntelliJProjectTreeViewFix {
         projectView
             .getTargets()
             .toList()
-            .flatMap(ProjectViewListSection::getIncludedValues)
+            .flatMap(ProjectViewExcludableListSection::getValues)
             .map(BuildTargetIdentifier::getUri);
     return List.ofAll(stream);
   }

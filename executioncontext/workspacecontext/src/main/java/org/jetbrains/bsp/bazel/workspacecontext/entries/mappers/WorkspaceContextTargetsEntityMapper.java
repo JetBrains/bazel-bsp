@@ -30,14 +30,14 @@ public class WorkspaceContextTargetsEntityMapper
   }
 
   private ExecutionContextTargetsEntity map(ProjectViewTargetsSection targetsSection) {
-    var includedValues = List.ofAll(targetsSection.getIncludedValues());
+    var includedValues = List.ofAll(targetsSection.getValues());
     var excludedValues = List.ofAll(targetsSection.getExcludedValues());
 
     return new ExecutionContextTargetsEntity(includedValues, excludedValues);
   }
 
   private Try<ProjectViewTargetsSection> validate(ProjectViewTargetsSection targetsSection) {
-    if (targetsSection.getIncludedValues().isEmpty()) {
+    if (targetsSection.getValues().isEmpty()) {
       return Try.failure(
           new ProjectViewToExecutionContextEntityMapperException(
               NAME, "'targets' section has no included targets."));

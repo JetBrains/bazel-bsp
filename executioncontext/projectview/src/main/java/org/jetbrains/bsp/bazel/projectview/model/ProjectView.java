@@ -10,7 +10,9 @@ import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
@@ -37,15 +39,20 @@ public class ProjectView {
   /** path to java to run a server */
   private final Option<ProjectViewJavaPathSection> javaPath;
 
+  /** bazel flags added to all bazel command invocations */
+  private final Option<ProjectViewBuildFlagsSection> buildFlags;
+
   private ProjectView(
       Option<ProjectViewTargetsSection> targets,
       Option<ProjectViewBazelPathSection> bazelPath,
       Option<ProjectViewDebuggerAddressSection> debuggerAddress,
-      Option<ProjectViewJavaPathSection> javaPath) {
+      Option<ProjectViewJavaPathSection> javaPath,
+      Option<ProjectViewBuildFlagsSection> buildFlags) {
     this.targets = targets;
     this.bazelPath = bazelPath;
     this.debuggerAddress = debuggerAddress;
     this.javaPath = javaPath;
+    this.buildFlags = buildFlags;
   }
 
   public static ProjectView.Builder builder() {
@@ -58,7 +65,7 @@ public class ProjectView {
 
   public TargetSpecs targetSpecs() {
     return targets
-        .map(s -> new TargetSpecs(s.getIncludedValues(), s.getExcludedValues()))
+        .map(s -> new TargetSpecs(s.getValues(), s.getExcludedValues()))
         .getOrElse(TargetSpecs.empty());
   }
 
@@ -74,6 +81,10 @@ public class ProjectView {
     return javaPath;
   }
 
+  public Option<ProjectViewBuildFlagsSection> getBuildFlags() {
+    return buildFlags;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -82,12 +93,13 @@ public class ProjectView {
     return targets.equals(that.targets)
         && bazelPath.equals(that.bazelPath)
         && debuggerAddress.equals(that.debuggerAddress)
-        && javaPath.equals(that.javaPath);
+        && javaPath.equals(that.javaPath)
+        && buildFlags.equals(that.buildFlags);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(targets, bazelPath, debuggerAddress, javaPath);
+    return Objects.hash(targets, bazelPath, debuggerAddress, javaPath, buildFlags);
   }
 
   @Override
@@ -101,6 +113,8 @@ public class ProjectView {
         + debuggerAddress
         + ", javaPath="
         + javaPath
+        + ", buildFlags="
+        + buildFlags
         + '}';
   }
 
@@ -115,6 +129,8 @@ public class ProjectView {
     private Option<ProjectViewDebuggerAddressSection> debuggerAddress = Option.none();
 
     private Option<ProjectViewJavaPathSection> javaPath = Option.none();
+
+    private Option<ProjectViewBuildFlagsSection> buildFlags = Option.none();
 
     private Builder() {}
 
@@ -143,6 +159,11 @@ public class ProjectView {
       return this;
     }
 
+    public Builder buildFlags(Option<ProjectViewBuildFlagsSection> buildFlags) {
+      this.buildFlags = buildFlags;
+      return this;
+    }
+
     public Try<ProjectView> build() {
       log.debug(
           "Building project view with"
@@ -151,12 +172,14 @@ public class ProjectView {
               + " targets: {},"
               + " bazel path: {},"
               + " debugger address: {},"
-              + " java path: {}.",
+              + " java path: {},"
+              + " build flags: {}.",
           importedProjectViews,
           targets,
           bazelPath,
           debuggerAddress,
-          javaPath);
+          javaPath,
+          buildFlags);
 
       return Try.sequence(importedProjectViews).map(Seq::toList).map(this::buildWithImports);
     }
@@ -166,6 +189,7 @@ public class ProjectView {
       var bazelPath = combineBazelPathSection(importedProjectViews);
       var debuggerAddress = combineDebuggerAddressSection(importedProjectViews);
       var javaPath = combineJavaPathSection(importedProjectViews);
+      var buildFlags = combineBuildFlagsSection(importedProjectViews);
 
       log.debug(
           "Building project view with combined"
@@ -178,7 +202,7 @@ public class ProjectView {
           debuggerAddress,
           javaPath);
 
-      return new ProjectView(targets, bazelPath, debuggerAddress, javaPath);
+      return new ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags);
     }
 
     private Option<ProjectViewTargetsSection> combineTargetsSection(
@@ -188,16 +212,28 @@ public class ProjectView {
               importedProjectViews,
               targets,
               ProjectView::getTargets,
-              ProjectViewListSection::getIncludedValues);
+              ProjectViewExcludableListSection::getValues);
       var excludedTargets =
           combineListValuesWithImported(
               importedProjectViews,
               targets,
               ProjectView::getTargets,
-              ProjectViewListSection::getExcludedValues);
+              ProjectViewExcludableListSection::getExcludedValues);
 
-      return createInstanceOfListSectionOrEmpty(
+      return createInstanceOfExcludableListSectionOrEmpty(
           includedTargets, excludedTargets, ProjectViewTargetsSection::new);
+    }
+
+    private Option<ProjectViewBuildFlagsSection> combineBuildFlagsSection(
+        List<ProjectView> importedProjectViews) {
+      var flags =
+          combineListValuesWithImported(
+              importedProjectViews,
+              buildFlags,
+              ProjectView::getBuildFlags,
+              ProjectViewListSection::getValues);
+
+      return createInstanceOfListSectionOrEmpty(flags, ProjectViewBuildFlagsSection::new);
     }
 
     private <V, S extends ProjectViewListSection<V>, T extends Option<S>>
@@ -212,17 +248,26 @@ public class ProjectView {
           .map(sectionGetter)
           .flatMap(Option::toList)
           .map(valuesGetter)
-          .foldLeft(sectionValues, List::appendAll);
+          .foldRight(sectionValues, List::appendAll);
+    }
+
+    private <V, T extends ProjectViewExcludableListSection<V>>
+        Option<T> createInstanceOfExcludableListSectionOrEmpty(
+            List<V> includedElements,
+            List<V> excludedElements,
+            BiFunction<List<V>, List<V>, T> constructor) {
+      var areListsEmpty = includedElements.isEmpty() && excludedElements.isEmpty();
+      var isAnyElementInLists = !areListsEmpty;
+
+      return Option.when(
+          isAnyElementInLists, constructor.apply(includedElements, excludedElements));
     }
 
     private <V, T extends ProjectViewListSection<V>> Option<T> createInstanceOfListSectionOrEmpty(
-        List<V> includedElements,
-        List<V> excludedElements,
-        BiFunction<List<V>, List<V>, T> constructor) {
-      if (includedElements.isEmpty() && excludedElements.isEmpty()) {
-        return Option.none();
-      }
-      return Option.of(constructor.apply(includedElements, excludedElements));
+        List<V> values, Function<List<V>, T> constructor) {
+      var isAnyElementInList = !values.isEmpty();
+
+      return Option.when(isAnyElementInList, constructor.apply(values));
     }
 
     private Option<ProjectViewBazelPathSection> combineBazelPathSection(

@@ -2,11 +2,14 @@ package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
+import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
@@ -46,9 +49,14 @@ public class BazelBspServer {
 
   public BazelBspServer(BazelBspServerConfig config) {
     this.bspClientLogger = new BspClientLogger();
-    var bazelDataResolver = new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger));
+    var bazelDataResolver =
+        new BazelInfoResolver(
+            BazelRunner.inCwd(
+                config, bspClientLogger, getDefaultBazelFlags(config.currentProjectView())));
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
-    this.bazelRunner = BazelRunner.of(config, bspClientLogger, bazelInfo);
+    this.bazelRunner =
+        BazelRunner.of(
+            config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.currentProjectView()));
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
     var bspInfo = new BspInfo();
@@ -82,6 +90,15 @@ public class BazelBspServer {
             projectSyncService,
             executeService,
             cppBuildServerService);
+  }
+
+  // this is only a temporary solution - will be changed later
+  private List<String> getDefaultBazelFlags(ProjectView projectView) {
+    return projectView
+        .getBuildFlags()
+        .map(ProjectViewBuildFlagsSection::getValues)
+        .map(io.vavr.collection.List::toJavaList)
+        .getOrElse(List.of());
   }
 
   public void startServer(BspIntegrationData bspIntegrationData) {

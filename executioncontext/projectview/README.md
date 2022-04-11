@@ -104,8 +104,7 @@ These sections are read when server is starting -- usually when you open a proje
 A list of bazel target expressions, they support `/...` notation.
 
 Targets are built during the server lifetime, so the more targets you have, the slower your IDE experience might be. You
-can
-use negative targets to have server ignore certain targets (
+can use negative targets to have server ignore certain targets (
 e.g. `-//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...`).
 
 ##### example:
@@ -200,7 +199,18 @@ _We are working on it, you can expect support for this section in future release
 
 #### build_flags
 
-_We are working on it, you can expect support for this section in future releases._
+A set of bazel flags added to **all** bazel command invocations.
+
+##### example:
+
+```
+build_flags:
+  --define=ij_product=intellij-latest
+```
+
+##### default:
+
+No flags.
 
 ---
 

@@ -8,7 +8,8 @@ public class ProjectViewJavaPathSectionParser
     extends ProjectViewSingletonSectionParser<Path, ProjectViewJavaPathSection> {
 
   public ProjectViewJavaPathSectionParser() {
-    super(ProjectViewJavaPathSection.SECTION_NAME);
+    // TODO
+    super("java_path");
   }
 
   @Override

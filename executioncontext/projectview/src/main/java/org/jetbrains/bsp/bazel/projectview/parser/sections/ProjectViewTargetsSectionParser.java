@@ -5,10 +5,12 @@ import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection;
 
 public class ProjectViewTargetsSectionParser
-    extends ProjectViewListSectionParser<BuildTargetIdentifier, ProjectViewTargetsSection> {
+    extends ProjectViewExcludableListSectionParser<
+        BuildTargetIdentifier, ProjectViewTargetsSection> {
 
   public ProjectViewTargetsSectionParser() {
-    super(ProjectViewTargetsSection.SECTION_NAME);
+    // TODO
+    super("targets");
   }
 
   @Override

@@ -21,22 +21,32 @@ public class BazelRunner {
   private final BspClientLogger bspClientLogger;
   private final BazelInfo bazelInfo;
 
+  private final List<String> defaultFlags;
+
   // This is runner without workspace path. It is used to determine workspace
   // path and create a fully functional runner.
-  public static BazelRunner inCwd(BazelPathProvider bazelPath, BspClientLogger bspClientLogger) {
-    return new BazelRunner(bazelPath, bspClientLogger, null);
+  public static BazelRunner inCwd(
+      BazelPathProvider bazelPath, BspClientLogger bspClientLogger, List<String> defaultFlags) {
+    return new BazelRunner(bazelPath, bspClientLogger, null, defaultFlags);
   }
 
   public static BazelRunner of(
-      BazelPathProvider bazelPath, BspClientLogger bspClientLogger, BazelInfo bazelInfo) {
-    return new BazelRunner(bazelPath, bspClientLogger, bazelInfo);
+      BazelPathProvider bazelPath,
+      BspClientLogger bspClientLogger,
+      BazelInfo bazelInfo,
+      List<String> defaultFlags) {
+    return new BazelRunner(bazelPath, bspClientLogger, bazelInfo, defaultFlags);
   }
 
   private BazelRunner(
-      BazelPathProvider bazelPathProvider, BspClientLogger bspClientLogger, BazelInfo bazelInfo) {
+      BazelPathProvider bazelPathProvider,
+      BspClientLogger bspClientLogger,
+      BazelInfo bazelInfo,
+      List<String> defaultFlags) {
     this.bazelPathProvider = bazelPathProvider;
     this.bspClientLogger = bspClientLogger;
     this.bazelInfo = bazelInfo;
+    this.defaultFlags = defaultFlags;
   }
 
   public BazelRunnerCommandBuilder commandBuilder() {
@@ -87,6 +97,7 @@ public class BazelRunner {
 
   private List<String> getProcessArgs(String command, List<String> flags, List<String> arguments) {
     var processArgs = Lists.newArrayList(bazelPathProvider.currentBazelPath(), command);
+    processArgs.addAll(defaultFlags);
     processArgs.addAll(flags);
     processArgs.addAll(arguments);
     return processArgs;

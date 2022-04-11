@@ -6,6 +6,8 @@
 
 ### Features 🎉
 
+- `build_flags` support in project view.
+  | [#194](https://github.com/JetBrains/bazel-bsp/pull/194)
 - New installer - it is possible to specify installation directory
   and project view file using flags.
   | [#201](https://github.com/JetBrains/bazel-bsp/pull/201)

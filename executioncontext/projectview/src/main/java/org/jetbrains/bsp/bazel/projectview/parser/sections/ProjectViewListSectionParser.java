@@ -11,8 +11,8 @@ import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 /**
  * Implementation of list section parser.
  *
- * <p>It takes a raw section and search for entries - they are split by whitespaces, if entry starts
- * with '-' -- this entry is excluded, otherwise included.
+ * <p>It takes a raw section and search for entries - they are split by whitespaces, no entry is
+ * excluded even if it starts with '-'.
  *
  * @param <T> type of parsed list section
  */
@@ -21,7 +21,6 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
 
   private static final Logger log = LogManager.getLogger(ProjectViewListSectionParser.class);
 
-  private static final String EXCLUDED_ENTRY_PREFIX = "-";
   private static final Pattern WHITESPACE_CHAR_REGEX = Pattern.compile("[ \n\t]+");
 
   protected ProjectViewListSectionParser(String sectionName) {
@@ -66,23 +65,17 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
         .reduceOption(this::concatSectionsItems);
   }
 
-  private T concatSectionsItems(T section1, T section2) {
-    var includedItems = section1.getIncludedValues().appendAll(section2.getIncludedValues());
-    var excludedItems = section1.getExcludedValues().appendAll(section2.getExcludedValues());
+  protected T concatSectionsItems(T section1, T section2) {
+    var includedItems = section1.getValues().appendAll(section2.getValues());
 
-    return createInstance(includedItems, excludedItems);
+    return createInstance(includedItems);
   }
 
   @Override
   protected Option<T> parse(String sectionBody) {
     var allEntries = splitSectionEntries(sectionBody);
-    var rawIncludedEntries = filterIncludedEntries(allEntries);
-    var rawExcludedEntries = filterExcludedEntries(allEntries);
 
-    var includedEntries = rawIncludedEntries.map(this::mapRawValues);
-    var excludedEntries = rawExcludedEntries.map(this::mapRawValues);
-
-    return createInstanceOrEmpty(includedEntries, excludedEntries);
+    return parse(allEntries);
   }
 
   private List<String> splitSectionEntries(String sectionBody) {
@@ -91,30 +84,19 @@ abstract class ProjectViewListSectionParser<V, T extends ProjectViewListSection<
     return List.of(elements).filter(s -> !s.isBlank());
   }
 
-  private List<String> filterIncludedEntries(List<String> entries) {
-    return entries.filter(entry -> !isExcluded(entry));
-  }
+  protected Option<T> parse(List<String> allEntries) {
+    var values = allEntries.map(this::mapRawValues);
 
-  private List<String> filterExcludedEntries(List<String> entries) {
-    return entries.filter(this::isExcluded).map(this::removeExcludedEntryPrefix);
-  }
-
-  private String removeExcludedEntryPrefix(String excludedEntry) {
-    return excludedEntry.substring(1);
-  }
-
-  private boolean isExcluded(String entry) {
-    return entry.startsWith(EXCLUDED_ENTRY_PREFIX);
+    return createInstanceOrEmpty(values);
   }
 
   protected abstract V mapRawValues(String rawValue);
 
-  private Option<T> createInstanceOrEmpty(List<V> includedValues, List<V> excludedValues) {
-    var areBothListsEmpty = includedValues.isEmpty() && excludedValues.isEmpty();
-    var isAnyValuePresent = !areBothListsEmpty;
+  private Option<T> createInstanceOrEmpty(List<V> values) {
+    var isAnyValuePresent = !values.isEmpty();
 
-    return Option.when(isAnyValuePresent, createInstance(includedValues, excludedValues));
+    return Option.when(isAnyValuePresent, createInstance(values));
   }
 
-  protected abstract T createInstance(List<V> includedValues, List<V> excludedValues);
+  protected abstract T createInstance(List<V> values);
 }
