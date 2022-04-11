@@ -30,7 +30,6 @@ import org.jetbrains.bsp.bazel.server.sync.ProjectProvider;
 import org.jetbrains.bsp.bazel.server.sync.ProjectResolver;
 import org.jetbrains.bsp.bazel.server.sync.ProjectStorage;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
-import org.jetbrains.bsp.bazel.server.sync.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin;
@@ -40,47 +39,21 @@ import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 
 public class BazelBspServer {
 
-  private final BazelBspServerConfig bazelBspServerConfig;
   private final BazelRunner bazelRunner;
   private final BazelInfo bazelInfo;
 
-  private BspServerApi bspServerApi;
-  private BazelBspCompilationManager compilationManager;
-  private ProjectProvider projectProvider;
+  private final BspServerApi bspServerApi;
+  private final BazelBspCompilationManager compilationManager;
+  private final ProjectProvider projectProvider;
   private final BspClientLogger bspClientLogger;
 
-  public BazelBspServer(BazelBspServerConfig bazelBspServerConfig) {
-    this.bazelBspServerConfig = bazelBspServerConfig;
-    var bazelPath = bazelBspServerConfig.getBazelPath();
+  public BazelBspServer(BazelBspServerConfig config) {
     this.bspClientLogger = new BspClientLogger();
-    var bazelDataResolver =
-        new BazelInfoResolver(
-            BazelRunner.inCwd(
-                bazelPath,
-                bspClientLogger,
-                getDefaultBazelFlags(bazelBspServerConfig.getProjectView())));
+    var bazelDataResolver = new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger, getDefaultBazelFlags(config.getProjectView())));
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
-    this.bazelRunner =
-        BazelRunner.of(
-            bazelPath,
-            bspClientLogger,
-            bazelInfo,
-            getDefaultBazelFlags(bazelBspServerConfig.getProjectView()));
-  }
-
-  // this is only a temporary solution - will be changed later
-  private List<String> getDefaultBazelFlags(ProjectView projectView) {
-    return projectView
-        .getBuildFlags()
-        .map(ProjectViewBuildFlagsSection::getValues)
-        .map(io.vavr.collection.List::toJavaList)
-        .getOrElse(List.of());
-  }
-
-  public void startServer(BspIntegrationData bspIntegrationData) {
+    this.bazelRunner = BazelRunner.of(config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.getProjectView()));
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
-
     var bspInfo = new BspInfo();
     this.compilationManager = new BazelBspCompilationManager(bazelRunner, bazelInfo);
     var aspectsResolver = new InternalAspectsResolver(bazelInfo, bspInfo);
@@ -96,10 +69,8 @@ public class BazelBspServer {
     var targetKindResolver = new TargetKindResolver();
     var bazelProjectMapper =
         new BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver);
-    var projectViewProvider = new ProjectViewProvider(bazelBspServerConfig.getProjectView());
     var projectResolver =
-        new ProjectResolver(
-            bazelBspAspectsManager, projectViewProvider, bazelProjectMapper, bspClientLogger);
+        new ProjectResolver(bazelBspAspectsManager, config, bazelProjectMapper, bspClientLogger);
     var projectStorage = new ProjectStorage(bspInfo, bspClientLogger);
     this.projectProvider = new ProjectProvider(projectResolver, projectStorage);
     var bspProjectMapper = new BspProjectMapper(languagePluginsService);
@@ -114,7 +85,18 @@ public class BazelBspServer {
             projectSyncService,
             executeService,
             cppBuildServerService);
+  }
 
+  // this is only a temporary solution - will be changed later
+  private List<String> getDefaultBazelFlags(ProjectView projectView) {
+    return projectView
+            .getBuildFlags()
+            .map(ProjectViewBuildFlagsSection::getValues)
+            .map(io.vavr.collection.List::toJavaList)
+            .getOrElse(List.of());
+  }
+
+  public void startServer(BspIntegrationData bspIntegrationData) {
     integrateBsp(bspIntegrationData);
   }
 
