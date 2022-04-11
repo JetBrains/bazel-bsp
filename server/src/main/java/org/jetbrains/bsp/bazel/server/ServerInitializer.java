@@ -1,23 +1,17 @@
 package org.jetbrains.bsp.bazel.server;
 
-import com.google.common.base.Splitter;
 import io.grpc.Server;
-import java.io.File;
+import io.vavr.collection.Iterator;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.concurrent.Executors;
 import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
-import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 
 public class ServerInitializer {
 
@@ -35,8 +29,8 @@ public class ServerInitializer {
     var executor = Executors.newCachedThreadPool();
 
     try {
-      var bspProjectRoot = Paths.get("").toAbsolutePath();
-      var rootDir = bspProjectRoot.resolve(Constants.DOT_BAZELBSP_DIR_NAME);
+      var bspInfo = new BspInfo();
+      var rootDir = bspInfo.bazelBspDir();
       Files.createDirectories(rootDir);
 
       var traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME);
@@ -45,11 +39,10 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      var bazelBspServerConfig = getBazelBspServerConfig(bspProjectRoot, args);
+      var bazelBspServerConfig = getBazelBspServerConfig(bspInfo, args);
 
-      BspIntegrationData bspIntegrationData =
-          new BspIntegrationData(stdout, stdin, executor, traceWriter);
-      BazelBspServer bspServer = new BazelBspServer(bazelBspServerConfig);
+      var bspIntegrationData = new BspIntegrationData(stdout, stdin, executor, traceWriter);
+      var bspServer = new BazelBspServer(bazelBspServerConfig);
       bspServer.startServer(bspIntegrationData);
 
       Server server = bspIntegrationData.getServer().start();
@@ -69,48 +62,8 @@ public class ServerInitializer {
     }
   }
 
-  private static BazelBspServerConfig getBazelBspServerConfig(Path bspProjectRoot, String[] args) {
-    var projectView = getProjectView(bspProjectRoot, args);
-    var pathToBazel = getBazelPath(projectView);
-    return new BazelBspServerConfig(pathToBazel, projectView);
-  }
-
-  private static ProjectView getProjectView(Path bspProjectRoot, String[] args) {
-    var provider = getProjectViewProvider(bspProjectRoot, args);
-
-    return provider.create().get();
-  }
-
-  private static ProjectViewProvider getProjectViewProvider(Path bspProjectRoot, String[] args) {
-    if (args.length == 0) {
-      return new ProjectViewDefaultParserProvider(bspProjectRoot);
-    }
-
-    var pathToProjectView = Paths.get(args[0]);
-    return new ProjectViewDefaultParserProvider(bspProjectRoot, pathToProjectView);
-  }
-
-  private static String getBazelPath(ProjectView projectView) {
-    return projectView
-        .getBazelPath()
-        .map(ProjectViewSingletonSection::getValue)
-        .map(Path::toString)
-        .getOrElse(findOnPath("bazel"));
-  }
-
-  private static String findOnPath(String bin) {
-    var pathElements = Splitter.on(File.pathSeparator).splitToList(System.getenv("PATH"));
-
-    return pathElements.stream()
-        .filter(ServerInitializer::isItNotBazeliskPath)
-        .map(element -> new File(element, bin))
-        .filter(File::canExecute)
-        .findFirst()
-        .map(File::toString)
-        .orElseThrow(() -> new NoSuchElementException("Could not find " + bin + " on your PATH"));
-  }
-
-  private static boolean isItNotBazeliskPath(String path) {
-    return !path.contains("bazelisk/");
+  private static BazelBspServerConfig getBazelBspServerConfig(BspInfo bspInfo, String[] args) {
+    var projectViewPath = Iterator.of(args).headOption().map(Paths::get);
+    return new BazelBspServerConfig(projectViewPath, bspInfo);
   }
 }

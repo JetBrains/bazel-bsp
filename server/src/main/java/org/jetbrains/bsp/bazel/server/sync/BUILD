@@ -11,6 +11,7 @@ java_library(
         "//executioncontext/projectview:model",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/config",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",

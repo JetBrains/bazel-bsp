@@ -17,6 +17,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
+import org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 
@@ -43,19 +44,21 @@ public class ProjectResolver {
   }
 
   public Project resolve() {
-    var projectView = logger.timed("Reading project view", projectViewProvider::current);
+    var projectView = logger.timed("Reading project view", projectViewProvider::currentProjectView);
     var bepOutput =
         logger.timed("Building project with aspect", () -> buildProjectWithAspect(projectView));
     var aspectOutputs =
         logger.timed(
             "Reading aspect output paths",
             () -> bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP));
-    var rootTargets = bepOutput.rootTargets();
+    var rootTargets = HashSet.ofAll(bepOutput.rootTargets());
     var targets =
         logger.timed("Parsing aspect outputs", () -> readTargetMapFromAspectOutputs(aspectOutputs));
-    return logger.timed(
-        "Mapping to internal model",
-        () -> bazelProjectMapper.createProject(targets, HashSet.ofAll(rootTargets), projectView));
+    var model =
+        logger.timed(
+            "Mapping to internal model",
+            () -> bazelProjectMapper.createProject(targets, rootTargets, projectView));
+    return model;
   }
 
   private BepOutput buildProjectWithAspect(ProjectView projectView) {
