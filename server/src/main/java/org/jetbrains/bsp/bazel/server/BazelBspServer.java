@@ -49,9 +49,9 @@ public class BazelBspServer {
 
   public BazelBspServer(BazelBspServerConfig config) {
     this.bspClientLogger = new BspClientLogger();
-    var bazelDataResolver = new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger, getDefaultBazelFlags(config.getProjectView())));
+    var bazelDataResolver = new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger, getDefaultBazelFlags(config.currentProjectView())));
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
-    this.bazelRunner = BazelRunner.of(config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.getProjectView()));
+    this.bazelRunner = BazelRunner.of(config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.currentProjectView()));
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
     var bspInfo = new BspInfo();

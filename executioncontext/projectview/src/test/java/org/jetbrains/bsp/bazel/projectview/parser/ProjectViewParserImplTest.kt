@@ -338,15 +338,15 @@ class ProjectViewParserImplTest {
                     Option.of(
                         ProjectViewTargetsSection(
                             List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2"),
                                 BuildTargetIdentifier("//included_target2.1"),
                                 BuildTargetIdentifier("//included_target3.1"),
+                                BuildTargetIdentifier("//included_target1.1"),
+                                BuildTargetIdentifier("//included_target1.2"),
                                 BuildTargetIdentifier("//included_target4.1")
                             ),
                             List.of(
-                                BuildTargetIdentifier("//excluded_target1.1"),
                                 BuildTargetIdentifier("//excluded_target2.1"),
+                                BuildTargetIdentifier("//excluded_target1.1"),
                                 BuildTargetIdentifier("//excluded_target4.1"),
                                 BuildTargetIdentifier("//excluded_target4.2")
                             )
