@@ -12,9 +12,9 @@ public class CliOptions {
   private final Path workspaceRootDir;
   private final Option<Path> projectViewFilePath;
 
-  private final Option<String> javaPath;
+  private final Option<Path> javaPath;
 
-  private final Option<String> bazelPath;
+  private final Option<Path> bazelPath;
 
   private final Option<HostAndPort> debuggerAddress;
 
@@ -29,8 +29,8 @@ public class CliOptions {
       Runnable printHelp,
       Path workspaceRootDir,
       Option<Path> projectViewFilePath,
-      Option<String> javaPath,
-      Option<String> bazelPath,
+      Option<Path> javaPath,
+      Option<Path> bazelPath,
       Option<HostAndPort> debuggerAddress,
       Option<List<String>> target,
       Option<List<String>> buildFlags,
@@ -63,11 +63,11 @@ public class CliOptions {
     return projectViewFilePath;
   }
 
-  public Option<String> getJavaPath() {
+  public Option<Path> getJavaPath() {
     return javaPath;
   }
 
-  public Option<String> getBazelPath() {
+  public Option<Path> getBazelPath() {
     return bazelPath;
   }
 
