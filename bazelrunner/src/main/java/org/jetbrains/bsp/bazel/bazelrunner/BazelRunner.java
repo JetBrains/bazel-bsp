@@ -25,17 +25,24 @@ public class BazelRunner {
 
   // This is runner without workspace path. It is used to determine workspace
   // path and create a fully functional runner.
-  public static BazelRunner inCwd(BazelPathProvider bazelPath, BspClientLogger bspClientLogger, List<String> defaultFlags) {
+  public static BazelRunner inCwd(
+      BazelPathProvider bazelPath, BspClientLogger bspClientLogger, List<String> defaultFlags) {
     return new BazelRunner(bazelPath, bspClientLogger, null, defaultFlags);
   }
 
   public static BazelRunner of(
-      BazelPathProvider bazelPath, BspClientLogger bspClientLogger, BazelInfo bazelInfo, List<String> defaultFlags) {
+      BazelPathProvider bazelPath,
+      BspClientLogger bspClientLogger,
+      BazelInfo bazelInfo,
+      List<String> defaultFlags) {
     return new BazelRunner(bazelPath, bspClientLogger, bazelInfo, defaultFlags);
   }
 
   private BazelRunner(
-      BazelPathProvider bazelPathProvider, BspClientLogger bspClientLogger, BazelInfo bazelInfo, List<String> defaultFlags) {
+      BazelPathProvider bazelPathProvider,
+      BspClientLogger bspClientLogger,
+      BazelInfo bazelInfo,
+      List<String> defaultFlags) {
     this.bazelPathProvider = bazelPathProvider;
     this.bspClientLogger = bspClientLogger;
     this.bazelInfo = bazelInfo;
