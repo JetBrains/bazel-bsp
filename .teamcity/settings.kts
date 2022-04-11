@@ -15,20 +15,10 @@ project {
             buildType(Format.BuildifierFormat)
         }
 
-        buildType(Build.BuildTheProject, options = {
+        buildType(BuildAndTest.BuildAndTestTheProject, options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
-
-        parallel(options = {
-            onDependencyFailure = FailureAction.CANCEL
-            onDependencyCancel = FailureAction.CANCEL
-        }) {
-            buildType(UnitTests.BazelRunnerUnitTests)
-            buildType(UnitTests.CommonsUnitTests)
-            buildType(UnitTests.ExecutionContextUnitTests)
-            buildType(UnitTests.ServerUnitTests)
-        }
 
         parallel(options = {
             onDependencyFailure = FailureAction.CANCEL
@@ -48,15 +38,17 @@ project {
             buildType(E2eTests.EntireRepositoryImportE2ETest)
         }
 
-        buildType(TestAggregator)
+        buildType(ResultsAggregator)
     }.buildTypes()
 
-    allSteps.takeLastWhile { it != Build.BuildTheProject }.forEach {
-        it.dependencies.artifacts(Build.BuildTheProject) {
-            buildRule = sameChainOrLastFinished()
-            artifactRules = "bazel-cache"
+    allSteps.takeLastWhile { it != BuildAndTest.BuildAndTestTheProject }
+        .dropLast(1)
+        .forEach {
+            it.dependencies.artifacts(BuildAndTest.BuildAndTestTheProject) {
+                buildRule = sameChainOrLastFinished()
+                artifactRules = "bazel-cache"
+            }
         }
-    }
 
     allSteps.forEach { buildType(it) }
 
@@ -65,9 +57,10 @@ project {
     }
 }
 
-object TestAggregator : BuildType({
-    id("test aggregator".toExtId())
-    name = "test aggregator"
+object ResultsAggregator : BuildType({
+    id("pipeline results".toExtId())
+
+    name = "pipeline results"
     type = Type.COMPOSITE
 
     vcs {
@@ -86,4 +79,3 @@ object TestAggregator : BuildType({
         }
     }
 })
-

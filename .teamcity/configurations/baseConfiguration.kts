@@ -34,24 +34,26 @@ open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit, artifactRul
     }
 })
 
-open class BaseBazelBuildType(name: String, command: String, targets: String?, arguments: String = "") :
-    BaseBuildType(name, {
-        script {
-            this.scriptContent = """
+open class BaseBazelBuildType(name: String, command: String, targets: String?) :
+    BaseBuildType(
+        name = name,
+        steps = {
+            script {
+                this.scriptContent = """
                 wget $bazeliskUrl --directory-prefix=$cacheDir --no-clobber
                 chmod +x $bazelPath
             """.trimIndent()
-        }
+            }
 
-        bazel {
-            this.command = command
-            this.targets = targets
-            this.arguments = "--disk_cache=bazel-cache $arguments"
+            bazel {
+                this.command = command
+                this.targets = targets
+                this.arguments = "--disk_cache=bazel-cache"
 
-            param("toolPath", bazelPath)
-        }
+                param("toolPath", bazelPath)
+            }
+        }) {
 
-    }, "bazel-cache => bazel-cache") {
     companion object {
         private const val bazeliskUrl =
             "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64"
@@ -60,11 +62,19 @@ open class BaseBazelBuildType(name: String, command: String, targets: String?, a
     }
 }
 
-open class BaseBazelBuildTypeClean(name: String, command: String, targets: String?) :
-    BaseBuildType(name, {
+open class BaseBazelBuildTypeClean(
+    name: String,
+    command1: String,
+    targets1: String?,
+    arguments1: String,
+    command2: String,
+    targets2: String,
+    arguments2: String,
+) : BaseBuildType(
+    name = name, steps = {
         script {
             this.scriptContent = """
-                wget $bazeliskUrl --directory-prefix=$cacheDir --no-clobber
+                wget $bazeliskUrl --directory-prefix=$bazeliskCacheDir --no-clobber
                 chmod +x $bazelPath
             """.trimIndent()
         }
@@ -76,24 +86,37 @@ open class BaseBazelBuildTypeClean(name: String, command: String, targets: Strin
 
         bazel {
             this.command = "clean"
-            this.arguments = "--disk_cache=bazel-cache"
+            this.arguments = "--disk_cache=$cacheDir"
             param("toolPath", bazelPath)
         }
 
         bazel {
-            this.command = command
-            this.targets = targets
-            this.arguments = "--disk_cache=bazel-cache"
+            this.command = command1
+            this.targets = targets1
+            this.arguments = "--disk_cache=$cacheDir $arguments1"
 
             param("toolPath", bazelPath)
         }
 
-    }, "bazel-cache => bazel-cache") {
+        bazel {
+            this.command = command2
+            this.targets = targets2
+            this.arguments = "--disk_cache=$cacheDir $arguments2"
+
+            param("toolPath", bazelPath)
+        }
+
+    },
+    artifactRules = "$cacheDir => $cacheDir"
+) {
+
     companion object {
         private const val bazeliskUrl =
             "https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64"
-        private const val cacheDir = "%system.agent.persistent.cache%/bazel/"
-        private const val bazelPath = "${cacheDir}bazelisk-linux-amd64"
+        private const val bazeliskCacheDir = "%system.agent.persistent.cache%/bazel/"
+        private const val bazelPath = "${bazeliskCacheDir}bazelisk-linux-amd64"
+
+        private const val cacheDir = "bazel-cache"
     }
 }
 
