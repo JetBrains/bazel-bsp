@@ -56,11 +56,6 @@ public class InternalAspectsResolverTest {
       public Path workspaceRoot() {
         return workspaceRoot;
       }
-
-      @Override
-      public String binRoot() {
-        return null;
-      }
     };
   }
 }

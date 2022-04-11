@@ -22,9 +22,9 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
+import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper;
-import org.jetbrains.bsp.bazel.server.sync.BepServerProjectListener;
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectProvider;
@@ -45,7 +45,6 @@ public class BazelBspServer {
 
   private final BspServerApi bspServerApi;
   private final BazelBspCompilationManager compilationManager;
-  private final ProjectProvider projectProvider;
   private final BspClientLogger bspClientLogger;
 
   public BazelBspServer(BazelBspServerConfig config) {
@@ -61,7 +60,7 @@ public class BazelBspServer {
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
     var bspInfo = new BspInfo();
-    this.compilationManager = new BazelBspCompilationManager(bazelRunner, bazelInfo);
+    this.compilationManager = new BazelBspCompilationManager(bazelRunner);
     var aspectsResolver = new InternalAspectsResolver(bazelInfo, bspInfo);
     var bazelBspAspectsManager = new BazelBspAspectsManager(compilationManager, aspectsResolver);
     var bazelPathsResolver = new BazelPathsResolver(bazelInfo);
@@ -78,7 +77,7 @@ public class BazelBspServer {
     var projectResolver =
         new ProjectResolver(bazelBspAspectsManager, config, bazelProjectMapper, bspClientLogger);
     var projectStorage = new ProjectStorage(bspInfo, bspClientLogger);
-    this.projectProvider = new ProjectProvider(projectResolver, projectStorage);
+    var projectProvider = new ProjectProvider(projectResolver, projectStorage);
     var bspProjectMapper = new BspProjectMapper(languagePluginsService);
     var projectSyncService = new ProjectSyncService(bspProjectMapper, projectProvider);
     var executeService = new ExecuteService(compilationManager, projectProvider, bazelRunner);
@@ -119,9 +118,8 @@ public class BazelBspServer {
     bspIntegrationData.setLauncher(launcher);
     BuildClient client = launcher.getRemoteProxy();
     this.bspClientLogger.initialize(client);
-    var bepServer = new BepServer(bazelInfo, client, bspClientLogger);
+    var bepServer = new BepServer(client, bspClientLogger, new DiagnosticsService(bazelInfo));
     compilationManager.setBepServer(bepServer);
-    projectProvider.addListener(new BepServerProjectListener(bepServer));
     bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }
 

@@ -47,7 +47,7 @@ public class BspClientLogger {
     T result = supplier.get();
     var duration = sw.stop();
     if (duration.compareTo(LOG_OPERATION_THRESHOLD) >= 0) {
-      message("%s completed in %s.", description, Format.duration(duration));
+      message("%s completed in %s", description, Format.duration(duration));
     }
     return result;
   }
