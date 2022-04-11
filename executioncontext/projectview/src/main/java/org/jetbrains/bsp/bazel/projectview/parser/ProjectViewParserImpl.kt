@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.projectview.parser;
+package org.jetbrains.bsp.bazel.projectview.parser
 
 import io.vavr.collection.List
 import io.vavr.control.Try
@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.commons.BetterFiles
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewJavaPathSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
@@ -69,6 +70,7 @@ open class ProjectViewParserImpl : ProjectViewParser {
             .bazelPath(bazelPathParser.parseOrDefault(rawSections, defaultProjectView.bazelPath))
             .debuggerAddress(debuggerAddressParser.parseOrDefault(rawSections, defaultProjectView.debuggerAddress))
             .javaPath(javaPathParser.parseOrDefault(rawSections, defaultProjectView.javaPath))
+            .buildFlags(buildFlagsParser.parseOrDefault(rawSections, defaultProjectView.buildFlags))
             .build()
     }
 
@@ -87,10 +89,14 @@ open class ProjectViewParserImpl : ProjectViewParser {
 
         val rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent)
 
-        return ProjectView.builder().imports(findImportedProjectViews(rawSections))
-            .targets(targetsParser.parse(rawSections)).bazelPath(bazelPathParser.parse(rawSections))
-            .debuggerAddress(debuggerAddressParser.parse(rawSections)).javaPath(javaPathParser.parse(rawSections))
-            .build();
+        return ProjectView.builder()
+            .imports(findImportedProjectViews(rawSections))
+            .targets(targetsParser.parse(rawSections))
+            .bazelPath(bazelPathParser.parse(rawSections))
+            .debuggerAddress(debuggerAddressParser.parse(rawSections))
+            .javaPath(javaPathParser.parse(rawSections))
+            .buildFlags(buildFlagsParser.parse(rawSections))
+            .build()
     }
 
     private fun findImportedProjectViews(rawSections: ProjectViewRawSections): List<Try<ProjectView>> =
@@ -111,5 +117,6 @@ open class ProjectViewParserImpl : ProjectViewParser {
         private val bazelPathParser = ProjectViewBazelPathSectionParser()
         private val debuggerAddressParser = ProjectViewDebuggerAddressSectionParser()
         private val javaPathParser = ProjectViewJavaPathSectionParser()
+        private val buildFlagsParser = ProjectViewBuildFlagsSectionParser()
     }
 }
