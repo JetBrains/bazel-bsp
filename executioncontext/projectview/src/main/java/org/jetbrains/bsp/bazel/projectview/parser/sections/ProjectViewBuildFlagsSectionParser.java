@@ -7,7 +7,8 @@ public class ProjectViewBuildFlagsSectionParser
     extends ProjectViewListSectionParser<String, ProjectViewBuildFlagsSection> {
 
   public ProjectViewBuildFlagsSectionParser() {
-    super(ProjectViewBuildFlagsSection.SECTION_NAME);
+    // TODO
+    super("build_flags");
   }
 
   @Override

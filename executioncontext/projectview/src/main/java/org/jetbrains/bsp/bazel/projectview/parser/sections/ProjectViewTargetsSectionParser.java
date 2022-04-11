@@ -9,7 +9,8 @@ public class ProjectViewTargetsSectionParser
         BuildTargetIdentifier, ProjectViewTargetsSection> {
 
   public ProjectViewTargetsSectionParser() {
-    super(ProjectViewTargetsSection.SECTION_NAME);
+    // TODO
+    super("targets");
   }
 
   @Override

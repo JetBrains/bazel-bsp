@@ -8,7 +8,8 @@ public class ProjectViewBazelPathSectionParser
     extends ProjectViewSingletonSectionParser<Path, ProjectViewBazelPathSection> {
 
   public ProjectViewBazelPathSectionParser() {
-    super(ProjectViewBazelPathSection.SECTION_NAME);
+    // TODO
+    super("bazel_path");
   }
 
   @Override

@@ -7,7 +7,8 @@ public class ProjectViewDebuggerAddressSectionParser
     extends ProjectViewSingletonSectionParser<HostAndPort, ProjectViewDebuggerAddressSection> {
 
   public ProjectViewDebuggerAddressSectionParser() {
-    super(ProjectViewDebuggerAddressSection.SECTION_NAME);
+    // TODO
+    super("debugger_address");
   }
 
   @Override

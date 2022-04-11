@@ -248,7 +248,7 @@ public class ProjectView {
           .map(sectionGetter)
           .flatMap(Option::toList)
           .map(valuesGetter)
-          .foldLeft(sectionValues, List::appendAll);
+          .foldRight(sectionValues, List::appendAll);
     }
 
     private <V, T extends ProjectViewExcludableListSection<V>>
