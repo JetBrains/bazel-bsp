@@ -152,16 +152,21 @@ public class CliOptionsProvider {
     formatter.printHelp(INSTALLER_BINARY_NAME, cliParserOptions);
   }
 
+  // 2 things to test:
   private Path getWorkspaceRootDir(CommandLine cmd) {
     return cmd.hasOption(DIRECTORY_SHORT_OPT)
-        ? Paths.get(cmd.getOptionValue(DIRECTORY_SHORT_OPT))
-        : Paths.get("");
+        ? Paths.get(cmd.getOptionValue(DIRECTORY_SHORT_OPT)) // thing 1
+        : Paths.get(""); // thing 2
   }
 
+  // 3 things to test: path should be always absolute
+  // 1. no flag = option.none
+  // 2. absolute path -> absolute path '/path/to/......'
+  // 3. relative path -> should be mapped to absolute 'path/to/....' -> '/......../path/to/....'
+  // `.isAbsolute()`
+
   private io.vavr.control.Option<Path> getProjectViewFilePath(CommandLine cmd) {
-    return io.vavr.control.Option.when(
-        cmd.hasOption(PROJECT_VIEW_FILE_PATH_SHORT_OPT),
-        () -> Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT)));
+    return getOptionPathValue(cmd, PROJECT_VIEW_FILE_PATH_SHORT_OPT);
   }
 
   private io.vavr.control.Option<Path> getJavaPath(CommandLine cmd) {
@@ -177,24 +182,40 @@ public class CliOptionsProvider {
   }
 
   private io.vavr.control.Option<List<String>> getTarget(CommandLine cmd) {
-    return getOptionLListValue(cmd, TARGETS_SHORT_OPT);
+    return getOptionListValue(cmd, TARGETS_SHORT_OPT);
   }
 
   private io.vavr.control.Option<List<String>> getBuildFlags(CommandLine cmd) {
-    return getOptionLListValue(cmd, BUILD_FLAGS_SHORT_OPT);
+    return getOptionListValue(cmd, BUILD_FLAGS_SHORT_OPT);
   }
 
   private io.vavr.control.Option<List<String>> getInclude(CommandLine cmd) {
-    return getOptionLListValue(cmd, INCLUDE_SHORT_OPT);
+    return getOptionListValue(cmd, INCLUDE_SHORT_OPT);
   }
 
   private io.vavr.control.Option<String> getOptionValue(CommandLine cmd, String shortOpt) {
     return io.vavr.control.Option.when(cmd.hasOption(shortOpt), () -> cmd.getOptionValue(shortOpt));
   }
 
-  private io.vavr.control.Option<List<String>> getOptionLListValue(
+  private io.vavr.control.Option<List<String>> getOptionListValue(
       CommandLine cmd, String shortOpt) {
     return io.vavr.control.Option.when(cmd.hasOption(shortOpt), () -> cmd.getOptionValues(shortOpt))
         .map(List::of);
+  }
+
+  private io.vavr.control.Option<Path> getOptionPathValue(CommandLine cmd, String shortOpt) {
+    return io.vavr.control.Option.when(
+        cmd.hasOption(shortOpt), () -> calculateAbsoluteProjectViewPath(cmd).toAbsolutePath());
+  }
+
+  private Path calculateAbsoluteProjectViewPath(CommandLine cmd) {
+    var currentDir = getCurrentDirectory();
+    var projectViewPath = Paths.get(cmd.getOptionValue(PROJECT_VIEW_FILE_PATH_SHORT_OPT));
+
+    return currentDir.resolve(projectViewPath).normalize();
+  }
+
+  private Path getCurrentDirectory() {
+    return Paths.get("").toAbsolutePath();
   }
 }
