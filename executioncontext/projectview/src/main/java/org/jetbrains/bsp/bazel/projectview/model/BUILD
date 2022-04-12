@@ -10,18 +10,18 @@ java_library(
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model:__pkg__",
     ],
     exports = [
+        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model:model_kotlin",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
         "@maven//:io_vavr_vavr",
-        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model:model_kotlin",
     ],
     deps = [
         "//commons",
+        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model:model_kotlin",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model/sections",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
-        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model:model_kotlin",
     ],
 )
 
