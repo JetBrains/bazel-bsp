@@ -111,8 +111,7 @@ public class IntelliJProjectTreeViewFix {
 
   private List<String> importTargetSpecs(ProjectView projectView) {
     var stream =
-        projectView
-            .getTargets()
+        Option.of(projectView.getTargets())
             .toList()
             .flatMap(ProjectViewExcludableListSection::getValues)
             .map(BuildTargetIdentifier::getUri);

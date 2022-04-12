@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser
 
-import io.vavr.collection.List
+import io.vavr.control.Option
 import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.commons.BetterFiles
@@ -64,14 +64,17 @@ open class ProjectViewParserImpl : ProjectViewParser {
 
         log.debug("Parsing project view with default project view {}.", defaultProjectView)
 
-        return ProjectView.builder()
-            .imports(findImportedProjectViews(rawSections))
-            .targets(targetsParser.parseOrDefault(rawSections, defaultProjectView.targets))
-            .bazelPath(bazelPathParser.parseOrDefault(rawSections, defaultProjectView.bazelPath))
-            .debuggerAddress(debuggerAddressParser.parseOrDefault(rawSections, defaultProjectView.debuggerAddress))
-            .javaPath(javaPathParser.parseOrDefault(rawSections, defaultProjectView.javaPath))
-            .buildFlags(buildFlagsParser.parseOrDefault(rawSections, defaultProjectView.buildFlags))
-            .build()
+        return ProjectView.Builder(
+            imports = findImportedProjectViews(rawSections),
+            targets = targetsParser.parseOrDefault(rawSections, Option.of(defaultProjectView.targets)).orNull,
+            bazelPath = bazelPathParser.parseOrDefault(rawSections, Option.of(defaultProjectView.bazelPath)).orNull,
+            debuggerAddress = debuggerAddressParser.parseOrDefault(
+                rawSections,
+                Option.of(defaultProjectView.debuggerAddress)
+            ).orNull,
+            javaPath = javaPathParser.parseOrDefault(rawSections, Option.of(defaultProjectView.javaPath)).orNull,
+            buildFlags = buildFlagsParser.parseOrDefault(rawSections, Option.of(defaultProjectView.buildFlags)).orNull,
+        ).build()
     }
 
     override fun parse(projectViewFilePath: Path): Try<ProjectView> {
@@ -89,23 +92,25 @@ open class ProjectViewParserImpl : ProjectViewParser {
 
         val rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent)
 
-        return ProjectView.builder()
-            .imports(findImportedProjectViews(rawSections))
-            .targets(targetsParser.parse(rawSections))
-            .bazelPath(bazelPathParser.parse(rawSections))
-            .debuggerAddress(debuggerAddressParser.parse(rawSections))
-            .javaPath(javaPathParser.parse(rawSections))
-            .buildFlags(buildFlagsParser.parse(rawSections))
-            .build()
+        return ProjectView.Builder(
+            imports = findImportedProjectViews(rawSections),
+            targets = targetsParser.parse(rawSections).orNull,
+            bazelPath = bazelPathParser.parse(rawSections).orNull,
+            debuggerAddress = debuggerAddressParser.parse(rawSections).orNull,
+            javaPath = javaPathParser.parse(rawSections).orNull,
+            buildFlags = buildFlagsParser.parse(rawSections).orNull,
+        ).build()
     }
 
     private fun findImportedProjectViews(rawSections: ProjectViewRawSections): List<Try<ProjectView>> =
         rawSections
             .getAllWithName(IMPORT_STATEMENT)
+            .toJavaList()
+            .toList()
             .map(ProjectViewRawSection::getSectionBody)
             .map(String::trim)
             .map(Paths::get)
-            .peek { log.debug("Parsing imported file {}.", it) }
+            .onEach { log.debug("Parsing imported file {}.", it) }
             .map(this::parse)
 
     private companion object {

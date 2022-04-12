@@ -1,9 +1,9 @@
-load("//:junit5.bzl", "java_junit5_test")
+load("//:junit5.bzl", "kt_junit5_test")
 
-java_junit5_test(
-    name = "ProjectViewTest",
+kt_junit5_test(
+    name = "ProjectViewBuilderTest",
     size = "small",
-    srcs = ["ProjectViewTest.java"],
+    srcs = ["ProjectViewBuilderTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.projectview.model",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",

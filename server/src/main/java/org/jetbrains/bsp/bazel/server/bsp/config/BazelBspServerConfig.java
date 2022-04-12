@@ -34,8 +34,7 @@ public class BazelBspServerConfig implements ProjectViewProvider, BazelPathProvi
   }
 
   private String currentBazelPath(ProjectView projectView) {
-    return projectView
-        .getBazelPath()
+    return Option.of(projectView.getBazelPath())
         .map(ProjectViewSingletonSection::getValue)
         .map(Path::toString)
         .getOrElse(bazelFromPath);

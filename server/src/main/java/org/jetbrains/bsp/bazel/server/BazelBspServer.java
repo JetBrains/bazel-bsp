@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
+import io.vavr.control.Option;
 import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
@@ -94,8 +95,7 @@ public class BazelBspServer {
 
   // this is only a temporary solution - will be changed later
   private List<String> getDefaultBazelFlags(ProjectView projectView) {
-    return projectView
-        .getBuildFlags()
+    return Option.of(projectView.getBuildFlags())
         .map(ProjectViewBuildFlagsSection::getValues)
         .map(io.vavr.collection.List::toJavaList)
         .getOrElse(List.of());

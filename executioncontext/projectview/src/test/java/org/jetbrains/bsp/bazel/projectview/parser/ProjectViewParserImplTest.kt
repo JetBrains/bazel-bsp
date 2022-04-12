@@ -2,9 +2,8 @@ package org.jetbrains.bsp.bazel.projectview.parser
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import com.google.common.net.HostAndPort
+import io.kotest.matchers.shouldBe
 import io.vavr.collection.List
-import io.vavr.control.Option
-import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
@@ -41,10 +40,9 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isFailure).isTrue
-            assertThat(projectViewTry.cause.javaClass).isEqualTo(FileNotFoundException::class.java)
-            assertThat(projectViewTry.cause.message)
-                .isEqualTo("/does/not/exist.bazelproject (No such file or directory)")
+            projectViewTry.isFailure shouldBe true
+            projectViewTry.cause::class shouldBe FileNotFoundException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
         }
 
         @Test
@@ -56,12 +54,9 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isFailure).isTrue
-            assertThat(projectViewTry.cause.javaClass).isEqualTo(
-                FileNotFoundException::class.java
-            )
-            assertThat(projectViewTry.cause.message)
-                .isEqualTo("/projectview/does/not/exist.bazelproject (No such file or directory)")
+            projectViewTry.isFailure shouldBe true
+            projectViewTry.cause::class shouldBe FileNotFoundException::class
+            projectViewTry.cause.message shouldBe "/projectview/does/not/exist.bazelproject (No such file or directory)"
         }
 
         @Test
@@ -73,9 +68,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.targets).isEmpty()
+
+            projectView.targets shouldBe null
         }
 
         @Test
@@ -87,9 +83,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.bazelPath).isEmpty()
+
+            projectView.bazelPath shouldBe null
         }
 
         @Test
@@ -101,9 +98,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.debuggerAddress).isEmpty()
+
+            projectView.debuggerAddress shouldBe null
         }
 
         @Test
@@ -115,9 +113,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.javaPath).isEmpty()
+
+            projectView.javaPath shouldBe null
         }
 
         @Test
@@ -129,9 +128,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.buildFlags).isEmpty()
+
+            projectView.buildFlags shouldBe null
         }
 
         @Test
@@ -143,13 +143,18 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(Option.none())
-                .bazelPath(Option.none())
-                .debuggerAddress(Option.none())
-                .javaPath(Option.none())
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = null,
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = null,
+                buildFlags = null,
+            )
+
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -161,39 +166,25 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2")
-                            ),
-                            List.of(BuildTargetIdentifier("//excluded_target1.1"))
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"), BuildTargetIdentifier("//included_target1.2")
+                    ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.1:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2"
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -205,47 +196,35 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2"),
-                                BuildTargetIdentifier("//included_target4.1")
-                            ),
-                            List.of(
-                                BuildTargetIdentifier("//excluded_target1.1"),
-                                BuildTargetIdentifier("//excluded_target4.1"),
-                                BuildTargetIdentifier("//excluded_target4.2")
-                            )
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"),
+                        BuildTargetIdentifier("//included_target1.2"),
+                        BuildTargetIdentifier("//included_target4.1")
+                    ), List.of(
+                        BuildTargetIdentifier("//excluded_target1.1"),
+                        BuildTargetIdentifier("//excluded_target4.1"),
+                        BuildTargetIdentifier("//excluded_target4.2")
+                    )
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1",
+                        "--build_flag1.2=value1.2",
+                        "--build_flag4.1=value4.1",
+                        "--build_flag4.2=value4.2",
+                        "--build_flag4.3=value4.3",
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.1:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2",
-                                "--build_flag4.1=value4.1",
-                                "--build_flag4.2=value4.2",
-                                "--build_flag4.3=value4.3",
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -257,47 +236,35 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2"),
-                                BuildTargetIdentifier("//included_target7.1")
-                            ),
-                            List.of(
-                                BuildTargetIdentifier("//excluded_target1.1"),
-                                BuildTargetIdentifier("//excluded_target7.1"),
-                                BuildTargetIdentifier("//excluded_target7.2")
-                            )
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"),
+                        BuildTargetIdentifier("//included_target1.2"),
+                        BuildTargetIdentifier("//included_target7.1")
+                    ), List.of(
+                        BuildTargetIdentifier("//excluded_target1.1"),
+                        BuildTargetIdentifier("//excluded_target7.1"),
+                        BuildTargetIdentifier("//excluded_target7.2")
+                    )
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path7/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.7:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path7/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1",
+                        "--build_flag1.2=value1.2",
+                        "--build_flag7.1=value7.1",
+                        "--build_flag7.2=value7.2",
+                        "--build_flag7.3=value7.3",
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path7/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.7:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path7/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2",
-                                "--build_flag7.1=value7.1",
-                                "--build_flag7.2=value7.2",
-                                "--build_flag7.3=value7.3",
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -309,40 +276,27 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(BuildTargetIdentifier("//included_target8.1")),
-                            List.of(
-                                BuildTargetIdentifier("//excluded_target8.1"),
-                                BuildTargetIdentifier("//excluded_target8.2")
-                            )
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(BuildTargetIdentifier("//included_target8.1")), List.of(
+                        BuildTargetIdentifier("//excluded_target8.1"), BuildTargetIdentifier("//excluded_target8.2")
+                    )
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path8/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.8:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path8/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag8.1=value8.1",
+                        "--build_flag8.2=value8.2",
+                        "--build_flag8.3=value8.3",
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path8/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.8:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path8/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag8.1=value8.1",
-                                "--build_flag8.2=value8.2",
-                                "--build_flag8.3=value8.3",
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -354,63 +308,39 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2"),
-                                BuildTargetIdentifier("//included_target2.1"),
-                                BuildTargetIdentifier("//included_target3.1")
-                            ),
-                            List.of(
-                                BuildTargetIdentifier("//excluded_target1.1"),
-                                BuildTargetIdentifier("//excluded_target2.1"),
-                                BuildTargetIdentifier("//excluded_target5.1"),
-                                BuildTargetIdentifier("//excluded_target5.2")
-                            )
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"),
+                        BuildTargetIdentifier("//included_target1.2"),
+                        BuildTargetIdentifier("//included_target2.1"),
+                        BuildTargetIdentifier("//included_target3.1")
+                    ), List.of(
+                        BuildTargetIdentifier("//excluded_target1.1"),
+                        BuildTargetIdentifier("//excluded_target2.1"),
+                        BuildTargetIdentifier("//excluded_target5.1"),
+                        BuildTargetIdentifier("//excluded_target5.2")
+                    )
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path3/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path3/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1",
+                        "--build_flag1.2=value1.2",
+                        "--build_flag2.1=value2.1",
+                        "--build_flag2.2=value2.2",
+                        "--build_flag3.1=value3.1",
+                        "--build_flag5.1=value5.1",
+                        "--build_flag5.2=value5.2",
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path3/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.3:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path3/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2",
-                                "--build_flag5.1=value5.1",
-                                "--build_flag5.2=value5.2",
-                            )
-                        )
-                    )
-                )
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2",
-                                "--build_flag2.1=value2.1",
-                                "--build_flag2.2=value2.2",
-                                "--build_flag3.1=value3.1",
-                                "--build_flag5.1=value5.1",
-                                "--build_flag5.2=value5.2",
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -422,53 +352,41 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target2.1"),
-                                BuildTargetIdentifier("//included_target3.1"),
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2"),
-                                BuildTargetIdentifier("//included_target4.1")
-                            ),
-                            List.of(
-                                BuildTargetIdentifier("//excluded_target2.1"),
-                                BuildTargetIdentifier("//excluded_target1.1"),
-                                BuildTargetIdentifier("//excluded_target4.1"),
-                                BuildTargetIdentifier("//excluded_target4.2")
-                            )
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target2.1"),
+                        BuildTargetIdentifier("//included_target3.1"),
+                        BuildTargetIdentifier("//included_target1.1"),
+                        BuildTargetIdentifier("//included_target1.2"),
+                        BuildTargetIdentifier("//included_target4.1")
+                    ), List.of(
+                        BuildTargetIdentifier("//excluded_target2.1"),
+                        BuildTargetIdentifier("//excluded_target1.1"),
+                        BuildTargetIdentifier("//excluded_target4.1"),
+                        BuildTargetIdentifier("//excluded_target4.2")
+                    )
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag2.1=value2.1",
+                        "--build_flag2.2=value2.2",
+                        "--build_flag3.1=value3.1",
+                        "--build_flag1.1=value1.1",
+                        "--build_flag1.2=value1.2",
+                        "--build_flag4.1=value4.1",
+                        "--build_flag4.2=value4.2",
+                        "--build_flag4.3=value4.3",
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.1:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag2.1=value2.1",
-                                "--build_flag2.2=value2.2",
-                                "--build_flag3.1=value3.1",
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2",
-                                "--build_flag4.1=value4.1",
-                                "--build_flag4.2=value4.2",
-                                "--build_flag4.3=value4.3",
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
     }
 
@@ -485,12 +403,9 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isFailure).isTrue
-            assertThat(projectViewTry.cause.javaClass).isEqualTo(
-                FileNotFoundException::class.java
-            )
-            assertThat(projectViewTry.cause.message)
-                .isEqualTo("/does/not/exist.bazelproject (No such file or directory)")
+            projectViewTry.isFailure shouldBe true
+            projectViewTry.cause::class shouldBe FileNotFoundException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
         }
 
         @Test
@@ -503,12 +418,9 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isFailure).isTrue
-            assertThat(projectViewTry.cause.javaClass).isEqualTo(
-                FileNotFoundException::class.java
-            )
-            assertThat(projectViewTry.cause.message)
-                .isEqualTo("/does/not/exist.bazelproject (No such file or directory)")
+            projectViewTry.isFailure shouldBe true
+            projectViewTry.cause::class shouldBe FileNotFoundException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
         }
 
         @Test
@@ -521,12 +433,9 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isFailure).isTrue
-            assertThat(projectViewTry.cause.javaClass).isEqualTo(
-                FileNotFoundException::class.java
-            )
-            assertThat(projectViewTry.cause.message)
-                .isEqualTo("/does/not/exist.bazelproject (No such file or directory)")
+            projectViewTry.isFailure shouldBe true
+            projectViewTry.cause::class shouldBe FileNotFoundException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
         }
 
         @Test
@@ -539,39 +448,25 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2")
-                            ),
-                            List.of(BuildTargetIdentifier("//excluded_target1.1"))
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"), BuildTargetIdentifier("//included_target1.2")
+                    ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.1:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2"
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -584,9 +479,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.targets).isEmpty()
+
+            projectView.targets shouldBe null
         }
 
         @Test
@@ -599,9 +495,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.bazelPath).isEmpty()
+
+            projectView.bazelPath shouldBe null
         }
 
         @Test
@@ -614,9 +511,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.debuggerAddress).isEmpty()
+
+            projectView.debuggerAddress shouldBe null
         }
 
         @Test
@@ -629,9 +527,10 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            assertThat(projectViewTry.isSuccess).isTrue
+            projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
-            assertThat(projectView.javaPath).isEmpty()
+
+            projectView.javaPath shouldBe null
         }
 
         @Test
@@ -644,39 +543,25 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2")
-                            ),
-                            List.of(BuildTargetIdentifier("//excluded_target1.1"))
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"), BuildTargetIdentifier("//included_target1.2")
+                    ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.1:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2"
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -689,39 +574,25 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(
-                                BuildTargetIdentifier("//included_target1.1"),
-                                BuildTargetIdentifier("//included_target1.2")
-                            ),
-                            List.of(BuildTargetIdentifier("//excluded_target1.1"))
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1.1"), BuildTargetIdentifier("//included_target1.2")
+                    ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path1/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.1:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path1/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag1.1=value1.1",
-                                "--build_flag1.2=value1.2"
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
 
         @Test
@@ -734,40 +605,27 @@ class ProjectViewParserImplTest {
             val projectViewTry = parser.parse(projectViewFilePath, defaultProjectViewFilePath)
 
             // then
-            val expectedProjectViewTry = ProjectView.builder()
-                .targets(
-                    Option.of(
-                        ProjectViewTargetsSection(
-                            List.of(BuildTargetIdentifier("//included_target8.1")),
-                            List.of(
-                                BuildTargetIdentifier("//excluded_target8.1"),
-                                BuildTargetIdentifier("//excluded_target8.2")
-                            )
-                        )
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            val expectedProjectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(BuildTargetIdentifier("//included_target8.1")), List.of(
+                        BuildTargetIdentifier("//excluded_target8.1"), BuildTargetIdentifier("//excluded_target8.2")
+                    )
+                ),
+                bazelPath = ProjectViewBazelPathSection(Paths.get("path8/to/bazel")),
+                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.8:8000")),
+                javaPath = ProjectViewJavaPathSection(Paths.get("path8/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag8.1=value8.1",
+                        "--build_flag8.2=value8.2",
+                        "--build_flag8.3=value8.3",
                     )
                 )
-                .bazelPath(Option.of(ProjectViewBazelPathSection(Paths.get("path8/to/bazel"))))
-                .debuggerAddress(
-                    Option.of(
-                        ProjectViewDebuggerAddressSection(
-                            HostAndPort.fromString("0.0.0.8:8000")
-                        )
-                    )
-                )
-                .javaPath(Option.of(ProjectViewJavaPathSection(Paths.get("path8/to/java"))))
-                .buildFlags(
-                    Option.of(
-                        ProjectViewBuildFlagsSection(
-                            List.of(
-                                "--build_flag8.1=value8.1",
-                                "--build_flag8.2=value8.2",
-                                "--build_flag8.3=value8.3",
-                            )
-                        )
-                    )
-                )
-                .build()
-            assertThat(projectViewTry).isEqualTo(expectedProjectViewTry)
+            )
+            projectView shouldBe expectedProjectView
         }
     }
 }
