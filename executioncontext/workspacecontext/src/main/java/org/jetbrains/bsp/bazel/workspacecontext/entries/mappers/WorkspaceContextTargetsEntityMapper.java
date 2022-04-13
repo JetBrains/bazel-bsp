@@ -16,7 +16,7 @@ public class WorkspaceContextTargetsEntityMapper
 
   @Override
   public Try<ExecutionContextTargetsEntity> map(ProjectView projectView) {
-    var targetsSection = projectView.getTargets();
+    var targetsSection = Option.of(projectView.getTargets());
 
     return toTry(targetsSection).flatMap(this::validate).map(this::map);
   }

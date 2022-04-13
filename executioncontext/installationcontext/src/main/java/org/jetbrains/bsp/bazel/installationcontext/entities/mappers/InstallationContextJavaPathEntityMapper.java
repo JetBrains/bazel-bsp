@@ -19,8 +19,7 @@ public class InstallationContextJavaPathEntityMapper
 
   @Override
   public Try<InstallationContextJavaPathEntity> map(ProjectView projectView) {
-    return projectView
-        .getJavaPath()
+    return Option.of(projectView.getJavaPath())
         .map(this::map)
         .orElse(fromSystemProperty())
         .toTry(

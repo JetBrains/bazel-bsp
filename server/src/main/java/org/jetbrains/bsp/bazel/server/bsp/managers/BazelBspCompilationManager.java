@@ -36,7 +36,7 @@ public class BazelBspCompilationManager {
             .commandBuilder()
             .query()
             .withFlag(BazelFlag.outputProto())
-            .withTargets(targetSpecs.included().asJava(), targetSpecs.excluded().asJava())
+            .withTargets(targetSpecs.getIncluded().asJava(), targetSpecs.getExcluded().asJava())
             .executeBazelBesCommand();
 
     var queryResult = getQueryResultForProcess(bazelProcess);
@@ -48,7 +48,7 @@ public class BazelBspCompilationManager {
             .commandBuilder()
             .build()
             .withFlags(extraFlags.asJava())
-            .withTargets(targetSpecs.included().asJava(), targetSpecs.excluded().asJava())
+            .withTargets(targetSpecs.getIncluded().asJava(), targetSpecs.getExcluded().asJava())
             .executeBazelBesCommand()
             .waitAndGetResult();
 
