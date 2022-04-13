@@ -11,7 +11,6 @@ java_library(
     exports = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser:parser_kotlin",
-        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
     ],
     deps = [
         "//commons",
