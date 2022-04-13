@@ -12,6 +12,7 @@ kt_jvm_library(
     ],
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
+        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/generator/sections",
         "@maven//:io_vavr_vavr",
     ],
 )

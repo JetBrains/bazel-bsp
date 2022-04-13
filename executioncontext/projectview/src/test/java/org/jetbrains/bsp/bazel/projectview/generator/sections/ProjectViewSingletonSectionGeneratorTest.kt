@@ -16,10 +16,10 @@ class ProjectViewSingletonSectionGeneratorTest {
         @Test
         fun `should return null for null section`() {
             // given
-            val generator = ProjectViewJavaPathSectionGenerator()
             val section = null
 
             // when
+            val generator = ProjectViewJavaPathSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -29,10 +29,10 @@ class ProjectViewSingletonSectionGeneratorTest {
         @Test
         fun `should return pretty string for non null section`() {
             // given
-            val generator = ProjectViewJavaPathSectionGenerator()
             val section = ProjectViewJavaPathSection(Paths.get("/path/to/java"))
 
             // when
+            val generator = ProjectViewJavaPathSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then

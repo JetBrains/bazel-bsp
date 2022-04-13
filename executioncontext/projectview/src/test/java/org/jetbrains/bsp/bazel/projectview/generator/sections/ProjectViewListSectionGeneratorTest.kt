@@ -16,10 +16,10 @@ class ProjectViewListSectionGeneratorTest {
         @Test
         fun `should return null for null section`() {
             // given
-            val generator = ProjectViewBuildFlagsSectionGenerator()
             val section = null
 
             // when
+            val generator = ProjectViewBuildFlagsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -29,7 +29,6 @@ class ProjectViewListSectionGeneratorTest {
         @Test
         fun `should return pretty string for non null section`() {
             // given
-            val generator = ProjectViewBuildFlagsSectionGenerator()
             val section = ProjectViewBuildFlagsSection(
                 List.of(
                     "--build_flag1=value1",
@@ -39,15 +38,16 @@ class ProjectViewListSectionGeneratorTest {
             )
 
             // when
+            val generator = ProjectViewBuildFlagsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString =
                 """
-                 build_flags:
-                     --build_flag1=value1
-                     --build_flag2=value2
-                     --build_flag3=value3
+                build_flags:
+                    --build_flag1=value1
+                    --build_flag2=value2
+                    --build_flag3=value3
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }

@@ -21,7 +21,7 @@ interface ProjectViewGenerator {
      * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
      * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
      */
-    fun generatePrettyStringRepresentation(projectView: ProjectView): String
+    fun generatePrettyString(projectView: ProjectView): String
 
     /**
      * Saves provided project view (hopefuly using `generatePrettyStringRepresentation` result)
@@ -34,5 +34,5 @@ interface ProjectViewGenerator {
      * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
      * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
      */
-    fun generatePrettyStringRepresentationAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void>
+    fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void>
 }
