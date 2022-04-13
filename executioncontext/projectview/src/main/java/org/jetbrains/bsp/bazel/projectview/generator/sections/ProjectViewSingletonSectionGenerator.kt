@@ -6,7 +6,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSe
 abstract class ProjectViewSingletonSectionGenerator<in T : ProjectViewSingletonSection<*>> :
     ProjectViewSectionGenerator<T>() {
 
-    override fun generatePrettyStringRepresentationForNonNull(section: T): String =
+    override fun generatePrettyStringForNonNull(section: T): String =
         "${section.sectionName}: ${section.value}"
 }
 

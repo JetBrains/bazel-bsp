@@ -4,8 +4,8 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection
 
 abstract class ProjectViewSectionGenerator<in T : ProjectViewSection> {
 
-    fun generatePrettyStringRepresentation(section: T?): String? =
-        section?.let(::generatePrettyStringRepresentationForNonNull)
+    fun generatePrettyString(section: T?): String? =
+        section?.let(::generatePrettyStringForNonNull)
 
-    protected abstract fun generatePrettyStringRepresentationForNonNull(section: T): String
+    protected abstract fun generatePrettyStringForNonNull(section: T): String
 }

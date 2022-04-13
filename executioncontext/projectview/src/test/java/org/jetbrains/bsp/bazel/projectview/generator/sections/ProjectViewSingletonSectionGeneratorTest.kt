@@ -20,7 +20,7 @@ class ProjectViewSingletonSectionGeneratorTest {
             val section = null
 
             // when
-            val generatedString = generator.generatePrettyStringRepresentation(section)
+            val generatedString = generator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -33,7 +33,7 @@ class ProjectViewSingletonSectionGeneratorTest {
             val section = ProjectViewJavaPathSection(Paths.get("/path/to/java"))
 
             // when
-            val generatedString = generator.generatePrettyStringRepresentation(section)
+            val generatedString = generator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = "java_path: /path/to/java"

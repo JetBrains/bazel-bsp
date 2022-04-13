@@ -20,7 +20,7 @@ class ProjectViewListSectionGeneratorTest {
             val section = null
 
             // when
-            val generatedString = generator.generatePrettyStringRepresentation(section)
+            val generatedString = generator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -39,7 +39,7 @@ class ProjectViewListSectionGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyStringRepresentation(section)
+            val generatedString = generator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString =

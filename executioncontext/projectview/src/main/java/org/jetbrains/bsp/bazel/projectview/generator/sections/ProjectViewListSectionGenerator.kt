@@ -7,23 +7,26 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 abstract class ProjectViewListSectionGenerator<V, in T : ProjectViewListSection<V>> :
     ProjectViewSectionGenerator<T>() {
 
-    override fun generatePrettyStringRepresentationForNonNull(section: T): String {
-        val valuesPrettyStringRepresentation = generatePrettyStringRepresentationForValues(section.values)
+    override fun generatePrettyStringForNonNull(section: T): String {
+        val valuesPrettyStringRepresentation = generatePrettyStringForValues(
+            section.values,
+            ::generatePrettyStringForValueWithFourLeadingSpaces
+        )
 
         return "${section.sectionName}:\n${valuesPrettyStringRepresentation}"
     }
 
-    private fun generatePrettyStringRepresentationForValues(values: List<V>): String =
+    protected fun generatePrettyStringForValues(values: List<V>, transformer: (V) -> String): String =
         values.asJava().toList()
             .joinToString(
                 separator = "\n",
-                transform = ::generatePrettyStringRepresentationForValueWithLeadingFourSpaces
+                transform = transformer
             )
 
-    private fun generatePrettyStringRepresentationForValueWithLeadingFourSpaces(value: V): String =
-        "    ${generatePrettyStringRepresentationForValue(value)}"
+    protected fun generatePrettyStringForValueWithFourLeadingSpaces(value: V): String =
+        "    ${generatePrettyStringForValue(value)}"
 
-    protected open fun generatePrettyStringRepresentationForValue(value: V): String = value.toString()
+    protected open fun generatePrettyStringForValue(value: V): String = value.toString()
 }
 
 class ProjectViewBuildFlagsSectionGenerator : ProjectViewListSectionGenerator<String, ProjectViewBuildFlagsSection>()
