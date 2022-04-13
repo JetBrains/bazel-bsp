@@ -8,4 +8,3 @@ sealed class ProjectViewListSection<T> constructor(sectionName: String) : Projec
 
 data class ProjectViewBuildFlagsSection(override val values: List<String>) :
     ProjectViewListSection<String>("build_flags")
-
