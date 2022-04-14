@@ -6,7 +6,7 @@ kt_junit5_test(
     srcs = ["DefaultProjectViewGeneratorTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.projectview.generator",
     deps = [
+        "//executioncontext/projectview:parser",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/generator",
-        "//executioncontext/projectview:parser"
     ],
 )
