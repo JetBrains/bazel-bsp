@@ -3,10 +3,10 @@ package configurations
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
-open class E2ETestsBuildType(testTarget: String) : BaseConfiguration.BaseBazelBuildType(
+open class E2ETestsBuildType(testTarget: String) : BaseConfiguration.BaseBazelBuildTypeClean(
     name = "[e2e tests] $testTarget test",
-    command = "run",
-    targets = testTarget,
+    command1 = "run",
+    targets1 = testTarget,
 )
 
 object SampleRepoE2ETest : E2ETestsBuildType(

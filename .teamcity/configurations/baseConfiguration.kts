@@ -21,17 +21,6 @@ open class BaseBuildType(name: String, steps: BuildSteps.() -> Unit, artifactRul
     requirements {
         equals("teamcity.agent.jvm.os.name", "Linux")
     }
-
-    features {
-        commitStatusPublisher {
-            publisher = github {
-                githubUrl = "https://api.github.com"
-                authType = personalToken {
-                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
-                }
-            }
-        }
-    }
 })
 
 open class BaseBazelBuildType(name: String, command: String, targets: String?) :
@@ -66,10 +55,10 @@ open class BaseBazelBuildTypeClean(
     name: String,
     command1: String,
     targets1: String?,
-    arguments1: String,
-    command2: String,
-    targets2: String,
-    arguments2: String,
+    arguments1: String? = null,
+    command2: String? = null,
+    targets2: String? = null,
+    arguments2: String? = null,
 ) : BaseBuildType(
     name = name, steps = {
         script {
@@ -84,30 +73,31 @@ open class BaseBazelBuildTypeClean(
             param("toolPath", bazelPath)
         }
 
-        bazel {
-            this.command = "clean"
-            this.arguments = "--disk_cache=$cacheDir"
-            param("toolPath", bazelPath)
-        }
+//        bazel {
+//            this.command = "clean"
+//            this.arguments = "--disk_cache=$cacheDir"
+//            param("toolPath", bazelPath)
+//        }
 
         bazel {
             this.command = command1
             this.targets = targets1
-            this.arguments = "--disk_cache=$cacheDir $arguments1"
+//            this.arguments = "--disk_cache=$cacheDir $arguments1"
 
             param("toolPath", bazelPath)
         }
 
-        bazel {
-            this.command = command2
-            this.targets = targets2
-            this.arguments = "--disk_cache=$cacheDir $arguments2"
+        if (arguments2 != null) {
+            bazel {
+                this.command = command2
+                this.targets = targets2
+//                this.arguments = "--disk_cache=$cacheDir $arguments2"
 
-            param("toolPath", bazelPath)
+                param("toolPath", bazelPath)
+            }
         }
-
     },
-    artifactRules = "$cacheDir => $cacheDir"
+//    artifactRules = "$cacheDir => $cacheDir"
 ) {
 
     companion object {
