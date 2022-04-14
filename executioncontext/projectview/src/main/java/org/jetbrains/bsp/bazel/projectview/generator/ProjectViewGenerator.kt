@@ -7,6 +7,19 @@ import java.nio.file.Path
 interface ProjectViewGenerator {
 
     /**
+     * Saves provided project view (hopefuly using `generatePrettyStringRepresentation` result)
+     * in the file (which could be parsed by the `ProjectViewParser`).
+     *
+     * @param projectView - project view which should be saved in the file
+     * @param filePath - path to file where the project view should be saved
+     * @return `Try.Success` if the operation was successful, `Try.Failure` otherwise
+     *
+     * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
+     * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
+     */
+    fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void>
+
+    /**
      * Generates pretty (user-friendly) string representation of the provided
      * project view which could be saved in a file and then parsed with the `ProjectViewParser`.
      *
@@ -22,17 +35,4 @@ interface ProjectViewGenerator {
      * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
      */
     fun generatePrettyString(projectView: ProjectView): String
-
-    /**
-     * Saves provided project view (hopefuly using `generatePrettyStringRepresentation` result)
-     * in the file (which could be parsed by the `ProjectViewParser`).
-     *
-     * @param projectView - project view which should be saved in the file
-     * @param filePath - path to file where the project view should be saved
-     * @return `Try.Success` if the operation was successful, `Try.Failure` otherwise
-     *
-     * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
-     * @see org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
-     */
-    fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void>
 }

@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -14,13 +15,20 @@ class ProjectViewExcludableListSectionGeneratorTest {
     @DisplayName("ProjectViewTargetsSectionGenerator tests")
     inner class ProjectViewTargetsSectionGeneratorTest {
 
+        private lateinit var generator: ProjectViewTargetsSectionGenerator
+
+        @BeforeEach
+        fun beforeEach() {
+            // given
+            this.generator = ProjectViewTargetsSectionGenerator()
+        }
+
         @Test
         fun `should return null for null section`() {
             // given
             val section = null
 
             // when
-            val generator = ProjectViewTargetsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -39,7 +47,6 @@ class ProjectViewExcludableListSectionGeneratorTest {
             )
 
             // when
-            val generator = ProjectViewTargetsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -63,7 +70,6 @@ class ProjectViewExcludableListSectionGeneratorTest {
             )
 
             // when
-            val generator = ProjectViewTargetsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -90,7 +96,6 @@ class ProjectViewExcludableListSectionGeneratorTest {
             )
 
             // when
-            val generator = ProjectViewTargetsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then

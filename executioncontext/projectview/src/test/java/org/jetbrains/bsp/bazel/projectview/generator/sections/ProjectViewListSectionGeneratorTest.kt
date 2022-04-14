@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.generator.sections
 import io.kotest.matchers.shouldBe
 import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -13,13 +14,19 @@ class ProjectViewListSectionGeneratorTest {
     @DisplayName("ProjectViewBuildFlagsSectionGenerator tests")
     inner class ProjectViewBuildFlagsSectionGeneratorTest {
 
+        private lateinit var generator: ProjectViewBuildFlagsSectionGenerator
+
+        @BeforeEach
+        fun beforeEach() {
+            // given
+            this.generator = ProjectViewBuildFlagsSectionGenerator()
+        }
         @Test
         fun `should return null for null section`() {
             // given
             val section = null
 
             // when
-            val generator = ProjectViewBuildFlagsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -32,7 +39,6 @@ class ProjectViewListSectionGeneratorTest {
             val section = ProjectViewBuildFlagsSection(List.of())
 
             // when
-            val generator = ProjectViewBuildFlagsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then
@@ -55,7 +61,6 @@ class ProjectViewListSectionGeneratorTest {
             )
 
             // when
-            val generator = ProjectViewBuildFlagsSectionGenerator()
             val generatedString = generator.generatePrettyString(section)
 
             // then

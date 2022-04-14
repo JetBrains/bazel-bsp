@@ -7,12 +7,24 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.nio.file.Files
 import java.nio.file.Paths
 
 class DefaultProjectViewGeneratorTest {
+
+    private lateinit var generator: DefaultProjectViewGenerator
+
+    @BeforeEach
+    fun beforeEach() {
+        // given
+        this.generator = DefaultProjectViewGenerator()
+    }
 
     @Nested
     @DisplayName("fun generatePrettyString(projectView: ProjectView): String tests")
@@ -30,7 +42,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -59,7 +70,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -88,7 +98,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -118,7 +127,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -145,7 +153,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -185,7 +192,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -235,7 +241,6 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generator = DefaultProjectViewGenerator()
             val generatedString = generator.generatePrettyString(projectView)
 
             // then
@@ -257,6 +262,235 @@ class DefaultProjectViewGeneratorTest {
                 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
+        }
+    }
+
+    @Nested
+    @DisplayName("fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> tests")
+    inner class GeneratePrettyStringAndSaveInFileTest {
+
+        @Test
+        fun `should return success and save project view in the file`() {
+            // given
+            val filePath = File.createTempFile("project", "view").toPath()
+
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1"),
+                        BuildTargetIdentifier("//included_target2"),
+                        BuildTargetIdentifier("//included_target3"),
+                    ),
+                    List.of(
+                        BuildTargetIdentifier("//excluded_target1"),
+                        BuildTargetIdentifier("//excluded_target2"),
+                    )
+                ),
+                bazelPath = null, // TODO
+                debuggerAddress = null, // TODO
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1=value1",
+                        "--build_flag2=value2",
+                        "--build_flag3=value3",
+                    )
+                ),
+            )
+
+            // when
+            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+
+            // then
+            result.isSuccess shouldBe true
+
+            val expectedFileContent =
+                """
+                targets:
+                    //included_target1
+                    //included_target2
+                    //included_target3
+                    -//excluded_target1
+                    -//excluded_target2
+
+                java_path: /path/to/java
+                
+                build_flags:
+                    --build_flag1=value1
+                    --build_flag2=value2
+                    --build_flag3=value3
+                
+                """.trimIndent()
+            Files.readString(filePath) shouldBe expectedFileContent
+        }
+
+        @Test
+        fun `should return success and override project view in the file`() {
+            // given
+            val filePath = File.createTempFile("project", "view").toPath()
+            Files.writeString(filePath, "some random things, maybe previous project view")
+
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1"),
+                        BuildTargetIdentifier("//included_target2"),
+                        BuildTargetIdentifier("//included_target3"),
+                    ),
+                    List.of(
+                        BuildTargetIdentifier("//excluded_target1"),
+                        BuildTargetIdentifier("//excluded_target2"),
+                    )
+                ),
+                bazelPath = null, // TODO
+                debuggerAddress = null, // TODO
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1=value1",
+                        "--build_flag2=value2",
+                        "--build_flag3=value3",
+                    )
+                ),
+            )
+
+            // when
+            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+
+            // then
+            result.isSuccess shouldBe true
+
+            val expectedFileContent =
+                """
+                targets:
+                    //included_target1
+                    //included_target2
+                    //included_target3
+                    -//excluded_target1
+                    -//excluded_target2
+
+                java_path: /path/to/java
+                
+                build_flags:
+                    --build_flag1=value1
+                    --build_flag2=value2
+                    --build_flag3=value3
+                
+                """.trimIndent()
+            Files.readString(filePath) shouldBe expectedFileContent
+        }
+
+        @Test
+        fun `should return success and save project view with empty list sections in the file which should be parsable by the parser`() {
+            // given
+            val filePath = File.createTempFile("project", "view").toPath()
+
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(List.of(), List.of()),
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(List.of()),
+            )
+
+            val parser = ProjectViewParserImpl()
+
+            // when
+            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val parsedProjectViewTry = parser.parse(filePath)
+
+            // then
+            result.isSuccess shouldBe true
+            parsedProjectViewTry.isSuccess shouldBe true
+
+            val expectedProjectView = ProjectView(
+                targets = null,
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = null,
+            )
+            parsedProjectViewTry.get() shouldBe expectedProjectView
+        }
+
+        @Test
+        fun `should return success and save partly filled project view in the file which should be parsable by the parser`() {
+            // given
+            val filePath = File.createTempFile("project", "view").toPath()
+
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1"),
+                        BuildTargetIdentifier("//included_target2"),
+                        BuildTargetIdentifier("//included_target3"),
+                    ), List.of()
+                ),
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1=value1",
+                        "--build_flag2=value2",
+                        "--build_flag3=value3",
+                    )
+                ),
+            )
+
+            val parser = ProjectViewParserImpl()
+
+            // when
+            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val parsedProjectViewTry = parser.parse(filePath)
+
+            // then
+            result.isSuccess shouldBe true
+            parsedProjectViewTry.isSuccess shouldBe true
+
+            parsedProjectViewTry.get() shouldBe projectView
+        }
+
+        @Test
+        fun `should return success and save project view in the file which should be parsable by the parser`() {
+            // given
+            val filePath = File.createTempFile("project", "view").toPath()
+
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1"),
+                        BuildTargetIdentifier("//included_target2"),
+                        BuildTargetIdentifier("//included_target3"),
+                    ),
+                    List.of(
+                        BuildTargetIdentifier("//excluded_target1"),
+                        BuildTargetIdentifier("//excluded_target2"),
+                    )
+                ),
+                bazelPath = null, // TODO
+                debuggerAddress = null, // TODO
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1=value1",
+                        "--build_flag2=value2",
+                        "--build_flag3=value3",
+                    )
+                ),
+            )
+
+            val parser = ProjectViewParserImpl()
+
+            // when
+            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val parsedProjectViewTry = parser.parse(filePath)
+
+            // then
+            result.isSuccess shouldBe true
+            parsedProjectViewTry.isSuccess shouldBe true
+
+            parsedProjectViewTry.get() shouldBe projectView
         }
     }
 }

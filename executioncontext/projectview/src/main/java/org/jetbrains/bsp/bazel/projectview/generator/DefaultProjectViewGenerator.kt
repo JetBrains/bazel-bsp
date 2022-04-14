@@ -5,9 +5,17 @@ import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFl
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewJavaPathSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import java.nio.file.Files
 import java.nio.file.Path
 
 class DefaultProjectViewGenerator : ProjectViewGenerator {
+
+    override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> =
+        writeStringToFile(filePath, generatePrettyString(projectView))
+
+    private fun writeStringToFile(destinationPath: Path, string: String): Try<Void> {
+        return Try.run { Files.writeString(destinationPath, string) }
+    }
 
     override fun generatePrettyString(projectView: ProjectView): String =
         listOfNotNull(
@@ -16,9 +24,6 @@ class DefaultProjectViewGenerator : ProjectViewGenerator {
             buildFlagsGenerator.generatePrettyString(projectView.buildFlags),
         ).joinToString(separator = "\n\n", postfix = "\n")
 
-    override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> {
-        TODO("Not yet implemented")
-    }
 
     private companion object {
         private val targetsGenerator = ProjectViewTargetsSectionGenerator()
