@@ -134,6 +134,80 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
+        fun `should return pretty string with project view for project view with empty list sections`() {
+            // given
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(List.of(), List.of()),
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(List.of()),
+            )
+
+            // when
+            val generator = DefaultProjectViewGenerator()
+            val generatedString = generator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                """
+                targets:
+
+                java_path: /path/to/java
+
+                build_flags:
+                
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
+        fun `should return pretty string with project view for partly filled project view`() {
+            // given
+            val projectView = ProjectView(
+                targets = ProjectViewTargetsSection(
+                    List.of(
+                        BuildTargetIdentifier("//included_target1"),
+                        BuildTargetIdentifier("//included_target2"),
+                        BuildTargetIdentifier("//included_target3"),
+                    ), List.of()
+                ),
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                buildFlags = ProjectViewBuildFlagsSection(
+                    List.of(
+                        "--build_flag1=value1",
+                        "--build_flag2=value2",
+                        "--build_flag3=value3",
+                    )
+                ),
+            )
+
+            // when
+            val generator = DefaultProjectViewGenerator()
+            val generatedString = generator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                """
+                targets:
+                    //included_target1
+                    //included_target2
+                    //included_target3
+
+                java_path: /path/to/java
+
+                build_flags:
+                    --build_flag1=value1
+                    --build_flag2=value2
+                    --build_flag3=value3
+                
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
         fun `should return pretty string with project view for full project view`() {
             // given
             val projectView = ProjectView(
@@ -148,8 +222,8 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = null,
-                debuggerAddress = null,
+                bazelPath = null, // TODO
+                debuggerAddress = null, // TODO
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(

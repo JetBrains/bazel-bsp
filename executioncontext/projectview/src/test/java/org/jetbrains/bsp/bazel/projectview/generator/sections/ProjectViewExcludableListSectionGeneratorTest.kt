@@ -28,15 +28,35 @@ class ProjectViewExcludableListSectionGeneratorTest {
         }
 
         @Test
-        fun `should return pretty string for non null section`() {
+        fun `should return pretty string for section with included targets`() {
             // given
             val section = ProjectViewTargetsSection(
                 List.of(
                     BuildTargetIdentifier("//included_target1"),
                     BuildTargetIdentifier("//included_target2"),
                     BuildTargetIdentifier("//included_target3"),
-                ),
-                List.of(
+                ), List.of()
+            )
+
+            // when
+            val generator = ProjectViewTargetsSectionGenerator()
+            val generatedString = generator.generatePrettyString(section)
+
+            // then
+            val expectedGeneratedString = """
+                targets:
+                    //included_target1
+                    //included_target2
+                    //included_target3
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
+        fun `should return pretty string for section with excluded targets`() {
+            // given
+            val section = ProjectViewTargetsSection(
+                List.of(), List.of(
                     BuildTargetIdentifier("//excluded_target1"),
                     BuildTargetIdentifier("//excluded_target2"),
                 )
@@ -47,8 +67,34 @@ class ProjectViewExcludableListSectionGeneratorTest {
             val generatedString = generator.generatePrettyString(section)
 
             // then
-            val expectedGeneratedString =
-                """
+            val expectedGeneratedString = """
+                targets:
+                    -//excluded_target1
+                    -//excluded_target2
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
+        fun `should return pretty string for section with included and excluded targets`() {
+            // given
+            val section = ProjectViewTargetsSection(
+                List.of(
+                    BuildTargetIdentifier("//included_target1"),
+                    BuildTargetIdentifier("//included_target2"),
+                    BuildTargetIdentifier("//included_target3"),
+                ), List.of(
+                    BuildTargetIdentifier("//excluded_target1"),
+                    BuildTargetIdentifier("//excluded_target2"),
+                )
+            )
+
+            // when
+            val generator = ProjectViewTargetsSectionGenerator()
+            val generatedString = generator.generatePrettyString(section)
+
+            // then
+            val expectedGeneratedString = """
                 targets:
                     //included_target1
                     //included_target2

@@ -21,15 +21,17 @@ abstract class ProjectViewExcludableListSectionGenerator<V, in T : ProjectViewEx
      */
     override fun generatePrettyStringForNonNull(section: T): String {
         val includedValuesPrettyStringRepresentation = generatePrettyStringForValues(
-            section.values,
-            ::generatePrettyStringForValueWithFourLeadingSpaces
+            section.values, ::generatePrettyStringForValueWithFourLeadingSpaces
         )
         val excludedValuesPrettyStringRepresentation = generatePrettyStringForValues(
-            section.excludedValues,
-            ::generatePrettyStringForExcludedValueWithFourLeadingSpacesAndExcludeSign
+            section.excludedValues, ::generatePrettyStringForExcludedValueWithFourLeadingSpacesAndExcludeSign
         )
 
-        return "${section.sectionName}:\n$includedValuesPrettyStringRepresentation\n$excludedValuesPrettyStringRepresentation"
+        return listOfNotNull(
+            "${section.sectionName}:",
+            includedValuesPrettyStringRepresentation,
+            excludedValuesPrettyStringRepresentation,
+        ).joinToString(separator = "\n")
     }
 
     private fun generatePrettyStringForExcludedValueWithFourLeadingSpacesAndExcludeSign(value: V): String =
@@ -39,6 +41,5 @@ abstract class ProjectViewExcludableListSectionGenerator<V, in T : ProjectViewEx
 class ProjectViewTargetsSectionGenerator :
     ProjectViewExcludableListSectionGenerator<BuildTargetIdentifier, ProjectViewTargetsSection>() {
 
-    override fun generatePrettyStringForValue(value: BuildTargetIdentifier): String =
-        value.uri
+    override fun generatePrettyStringForValue(value: BuildTargetIdentifier): String = value.uri
 }

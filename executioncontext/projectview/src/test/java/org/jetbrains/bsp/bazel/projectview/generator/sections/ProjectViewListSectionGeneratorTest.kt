@@ -27,6 +27,23 @@ class ProjectViewListSectionGeneratorTest {
         }
 
         @Test
+        fun `should return pretty string for empty section`() {
+            // given
+            val section = ProjectViewBuildFlagsSection(List.of())
+
+            // when
+            val generator = ProjectViewBuildFlagsSectionGenerator()
+            val generatedString = generator.generatePrettyString(section)
+
+            // then
+            val expectedGeneratedString =
+                """
+                build_flags:
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
         fun `should return pretty string for non null section`() {
             // given
             val section = ProjectViewBuildFlagsSection(
