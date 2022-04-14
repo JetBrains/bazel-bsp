@@ -18,11 +18,11 @@ public class CliOptions {
 
   private final Option<HostAndPort> debuggerAddress;
 
-  private final Option<List<String>> target;
+  private final Option<List<String>> targets;
 
   private final Option<List<String>> buildFlags;
 
-  private final Option<List<String>> include;
+  //  private final Option<List<String>> include;
 
   CliOptions(
       boolean isHelpOptionUsed,
@@ -32,9 +32,8 @@ public class CliOptions {
       Option<Path> javaPath,
       Option<Path> bazelPath,
       Option<HostAndPort> debuggerAddress,
-      Option<List<String>> target,
-      Option<List<String>> buildFlags,
-      Option<List<String>> include) {
+      Option<List<String>> targets,
+      Option<List<String>> buildFlags) {
     this.isHelpOptionUsed = isHelpOptionUsed;
     this.printHelp = printHelp;
     this.workspaceRootDir = workspaceRootDir;
@@ -42,9 +41,8 @@ public class CliOptions {
     this.javaPath = javaPath;
     this.bazelPath = bazelPath;
     this.debuggerAddress = debuggerAddress;
-    this.target = target;
+    this.targets = targets;
     this.buildFlags = buildFlags;
-    this.include = include;
   }
 
   public void printHelp() {
@@ -75,15 +73,16 @@ public class CliOptions {
     return debuggerAddress;
   }
 
-  public Option<List<String>> getTarget() {
-    return target;
+  public Option<List<String>> getTargets() {
+    return targets;
   }
 
   public Option<List<String>> getBuildFlags() {
     return buildFlags;
   }
 
-  public Option<List<String>> getInclude() {
-    return include;
-  }
+  //  public Option<List<String>> getInclude() {
+  //    return include;
+  //  }
+
 }

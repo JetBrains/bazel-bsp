@@ -41,9 +41,10 @@ public class CliOptionsProvider {
   private static final Option targetsOption =
       Option.builder(TARGETS_SHORT_OPT)
           .longOpt("targets")
-          .hasArg()
+          .hasArgs()
           .argName("target")
-          .desc("to do")
+          .desc(
+              "Project view targets, you can read more about it here: https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets.")
           .build();
 
   private static final String BUILD_FLAGS_SHORT_OPT = "f";
@@ -51,20 +52,21 @@ public class CliOptionsProvider {
   private static final Option buildFlagsOption =
       Option.builder(BUILD_FLAGS_SHORT_OPT)
           .longOpt("build_flags")
-          .hasArg()
+          .hasArgs()
           .argName("flag")
-          .desc("to do")
+          .desc(
+              "Project view build flags, you can read more about it here: https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets.")
           .build();
 
-  private static final String INCLUDE_SHORT_OPT = "i";
-
-  private static final Option includeOption =
-      Option.builder(INCLUDE_SHORT_OPT)
-          .longOpt("include")
-          .hasArg()
-          .argName("statement")
-          .desc("to do")
-          .build();
+  //  private static final String INCLUDE_SHORT_OPT = "i";
+  //
+  //  private static final Option includeOption =
+  //      Option.builder(INCLUDE_SHORT_OPT)
+  //          .longOpt("include")
+  //          .hasArgs()
+  //          .argName("path")
+  //          .desc("to do")
+  //          .build();
 
   private static final String BAZEL_PATH_SHORT_OPT = "b";
 
@@ -73,7 +75,8 @@ public class CliOptionsProvider {
           .longOpt("bazel_path")
           .hasArg()
           .argName("path")
-          .desc("to do")
+          .desc(
+              "Project view bazel path, you can read more about it here: https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets.")
           .build();
 
   private static final String DEBUGGER_ADDRESS_SHORT_OPT = "x";
@@ -83,7 +86,8 @@ public class CliOptionsProvider {
           .longOpt("debugger_address")
           .hasArg()
           .argName("address")
-          .desc("to do")
+          .desc(
+              "Project view debugger address, you can read more about it here: https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets.")
           .build();
 
   private static final String JAVA_PATH_SHORT_OPT = "j";
@@ -93,7 +97,8 @@ public class CliOptionsProvider {
           .longOpt("java_path")
           .hasArg()
           .argName("path")
-          .desc("to do")
+          .desc(
+              "Project view java path, you can read more about it here: https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets.")
           .build();
 
   public static final String INSTALLER_BINARY_NAME = "bazelbsp-install";
@@ -120,7 +125,7 @@ public class CliOptionsProvider {
     cliOptions.addOption(helpOption);
     cliOptions.addOption(targetsOption);
     cliOptions.addOption(buildFlagsOption);
-    cliOptions.addOption(includeOption);
+    //    cliOptions.addOption(includeOption);
     cliOptions.addOption(bazelPathOption);
     cliOptions.addOption(debuggerAddressOption);
     cliOptions.addOption(javaPathOption);
@@ -137,9 +142,8 @@ public class CliOptionsProvider {
         getJavaPath(cmd),
         getBazelPath(cmd),
         getDebuggerAddress(cmd),
-        getTarget(cmd),
-        getBuildFlags(cmd),
-        getInclude(cmd));
+        getTargets(cmd),
+        getBuildFlags(cmd));
   }
 
   private boolean isHelpOptionUsed(CommandLine cmd) {
@@ -181,7 +185,7 @@ public class CliOptionsProvider {
     return getOptionValue(cmd, DEBUGGER_ADDRESS_SHORT_OPT).map(HostAndPort::fromString);
   }
 
-  private io.vavr.control.Option<List<String>> getTarget(CommandLine cmd) {
+  private io.vavr.control.Option<List<String>> getTargets(CommandLine cmd) {
     return getOptionListValue(cmd, TARGETS_SHORT_OPT);
   }
 
@@ -189,9 +193,9 @@ public class CliOptionsProvider {
     return getOptionListValue(cmd, BUILD_FLAGS_SHORT_OPT);
   }
 
-  private io.vavr.control.Option<List<String>> getInclude(CommandLine cmd) {
-    return getOptionListValue(cmd, INCLUDE_SHORT_OPT);
-  }
+  //  private io.vavr.control.Option<List<String>> getInclude(CommandLine cmd) {
+  //    return getOptionListValue(cmd, INCLUDE_SHORT_OPT);
+  //  }
 
   private io.vavr.control.Option<String> getOptionValue(CommandLine cmd, String shortOpt) {
     return io.vavr.control.Option.when(cmd.hasOption(shortOpt), () -> cmd.getOptionValue(shortOpt));
