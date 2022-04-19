@@ -123,8 +123,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun projectViewFilePath(cmd: CommandLine): Path? =
             getOptionValueAndMapToAbsolutePath(cmd, PROJECT_VIEW_FILE_PATH_SHORT_OPT)
-                    ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
-                    ?.let(Path::normalize)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
