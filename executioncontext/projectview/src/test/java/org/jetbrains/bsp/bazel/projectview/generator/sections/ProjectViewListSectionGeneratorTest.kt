@@ -21,6 +21,7 @@ class ProjectViewListSectionGeneratorTest {
             // given
             this.generator = ProjectViewBuildFlagsSectionGenerator()
         }
+        
         @Test
         fun `should return null for null section`() {
             // given
