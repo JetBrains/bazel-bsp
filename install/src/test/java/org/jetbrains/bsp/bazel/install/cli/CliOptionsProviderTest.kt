@@ -47,6 +47,46 @@ class CliOptionsProviderTest {
             val expectedWorkspaceRootDir = Paths.get("").toAbsolutePath()
             cliOptions.workspaceRootDir shouldBe expectedWorkspaceRootDir
         }
+
+        @Test
+        fun `should return success and absolute path to provided workspace root dir if not absolute specified`() {
+            // given
+            val args = arrayOf("-d", "path/to/dir")
+
+            // when
+            val provider = CliOptionsProvider(args)
+            val cliOptionsTry = provider.getOptions()
+
+            // then
+            cliOptionsTry.isSuccess shouldBe true
+            val cliOptions = cliOptionsTry.get()
+
+            val expectedWorkspaceRootDir = Paths.get("path/to/dir").toAbsolutePath()
+            cliOptions.workspaceRootDir shouldBe Option.of(expectedWorkspaceRootDir)
+            cliOptions.workspaceRootDir.isAbsolute shouldBe true
+        }
+
+        @Test
+        fun `should return success and absolute path to provided workspace root dir if relative specified`() {
+            // given
+            val args = arrayOf("-d", "../../path/to/dir")
+
+            // when
+            val provider = CliOptionsProvider(args)
+            val cliOptionsTry = provider.getOptions()
+
+            // then
+            cliOptionsTry.isSuccess shouldBe true
+            val cliOptions = cliOptionsTry.get()
+
+            val expectedWorkspaceRootDir = Paths.get("")
+                    .toAbsolutePath()
+                    .parent
+                    .parent
+                    .resolve("path/to/dir")
+            cliOptions.workspaceRootDir shouldBe Option.of(expectedWorkspaceRootDir)
+            cliOptions.workspaceRootDir.isAbsolute shouldBe true
+        }
     }
 
     @Nested
@@ -443,7 +483,7 @@ class CliOptionsProviderTest {
             val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
             cliOptions.projectViewCliOptions.debuggerAddress shouldBe Option.of(expectedDebuggerAddress)
 
-            val expectedBuildFlags = listOf("--build_flag1=value1","--build_flag1=value2","--build_flag1=value3")
+            val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions.buildFlags shouldBe Option.of(expectedBuildFlags)
         }
     }

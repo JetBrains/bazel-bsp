@@ -119,23 +119,24 @@ class CliOptionsProvider(private val args: Array<String>) {
     }
 
     private fun workspaceRootDir(cmd: CommandLine): Path =
-            getOptionValueAndMapToPath(cmd, WORKSPACE_ROOT_DIR_SHORT_OPT) ?: calculateCurrentAbsoluteDirectory()
+            getOptionValueAndMapToAbsolutePath(cmd, WORKSPACE_ROOT_DIR_SHORT_OPT) ?: calculateCurrentAbsoluteDirectory()
 
     private fun projectViewFilePath(cmd: CommandLine): Path? =
-            getOptionValueAndMapToPath(cmd, PROJECT_VIEW_FILE_PATH_SHORT_OPT)
+            getOptionValueAndMapToAbsolutePath(cmd, PROJECT_VIEW_FILE_PATH_SHORT_OPT)
                     ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
                     ?.let(Path::normalize)
 
-    private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToPath(cmd, JAVA_PATH_SHORT_OPT)
-            ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
-            ?.let(Path::normalize)
+    private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
-    private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToPath(cmd, BAZEL_PATH_SHORT_OPT)
-            ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
-            ?.let(Path::normalize)
 
-    private fun getOptionValueAndMapToPath(cmd: CommandLine, shortOpt: String): Path? =
+    private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
+
+
+    private fun getOptionValueAndMapToAbsolutePath(cmd: CommandLine, shortOpt: String): Path? =
             cmd.getOptionValue(shortOpt)?.let(Paths::get)
+                    ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
+                    ?.let(Path::normalize)
+
 
     private fun debuggerAddress(cmd: CommandLine): HostAndPort? =
             cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)?.let(HostAndPort::fromString)
