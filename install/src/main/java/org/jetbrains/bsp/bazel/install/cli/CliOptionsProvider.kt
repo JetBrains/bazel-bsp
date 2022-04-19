@@ -13,7 +13,7 @@ class CliOptionsProvider(private val args: Array<String>) {
     init {
         val helpOption = Option.builder(HELP_SHORT_OPT)
                 .longOpt("help")
-                .desc("Show help")
+                .desc("Show help.")
                 .build()
         cliParserOptions.addOption(helpOption)
 
@@ -22,7 +22,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 .hasArg()
                 .argName("path")
                 .desc("Path to directory where bazel bsp server should be setup. "
-                        + "Current directory will be used by default")
+                        + "Current directory will be used by default.")
                 .build()
         cliParserOptions.addOption(workspaceRootDirectoryOption)
 
@@ -30,15 +30,16 @@ class CliOptionsProvider(private val args: Array<String>) {
                 .longOpt("project_view_file")
                 .hasArg()
                 .argName("path")
-                .desc("Path to project view file.")
+                .desc("Path to project view file. " +
+                        "OR The path of the new project view file which will be generated using generation flags.")
                 .build()
         cliParserOptions.addOption(projectViewFilePathOption)
 
         val targetsOption = Option.builder(TARGETS_SHORT_OPT)
                 .longOpt("targets")
                 .hasArgs()
-                .argName("target")
-                .desc("Project view targets, you can read more about it here:" +
+                .argName("targets")
+                .desc("Add targets to the generated project view file, you can read more about it here:" +
                         " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets.")
                 .build()
         cliParserOptions.addOption(targetsOption)
@@ -46,9 +47,9 @@ class CliOptionsProvider(private val args: Array<String>) {
         val buildFlagsOption = Option.builder(BUILD_FLAGS_SHORT_OPT)
                 .longOpt("build_flags")
                 .hasArgs()
-                .argName("flag")
-                .desc("Project view build flags, you can read more about it here:" +
-                        " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_flags")
+                .argName("flags")
+                .desc("Add build flags to the generated project view file, you can read more about it here:" +
+                        " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_flags.")
                 .build()
         cliParserOptions.addOption(buildFlagsOption)
 
@@ -56,8 +57,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 .longOpt("bazel_path")
                 .hasArg()
                 .argName("path")
-                .desc("Project view bazel path, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path")
+                .desc("Add bazel path to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path.")
                 .build()
         cliParserOptions.addOption(bazelPathOption)
 
@@ -65,8 +66,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 .longOpt("debugger_address")
                 .hasArg()
                 .argName("address")
-                .desc("Project view debugger address, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address")
+                .desc("Add debugger address to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address.")
                 .build()
         cliParserOptions.addOption(debuggerAddressOption)
 
@@ -74,9 +75,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 .longOpt("java_path")
                 .hasArg()
                 .argName("path")
-                .desc(
-                        "Project view java path, you can read more about it here: " +
-                                "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path")
+                .desc("Add java path to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path.")
                 .build()
         cliParserOptions.addOption(javaPathOption)
     }
@@ -95,19 +95,15 @@ class CliOptionsProvider(private val args: Array<String>) {
                     projectViewCliOptions = createProjectViewCliOptions(cmd),
             )
 
+    private fun workspaceRootDir(cmd: CommandLine): Path =
+            getOptionValueAndMapToAbsolutePath(cmd, WORKSPACE_ROOT_DIR_SHORT_OPT) ?: calculateCurrentAbsoluteDirectory()
+
+    private fun projectViewFilePath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, PROJECT_VIEW_FILE_PATH_SHORT_OPT)
+
     private fun createHelpCliOptions(cmd: CommandLine): HelpCliOptions =
             HelpCliOptions(
                     isHelpOptionUsed = isHelpOptionUsed(cmd),
                     printHelp = ::printHelp,
-            )
-
-    private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions =
-            ProjectViewCliOptions(
-                    javaPath = javaPath(cmd),
-                    bazelPath = bazelPath(cmd),
-                    debuggerAddress = debuggerAddress(cmd),
-                    targets = targets(cmd),
-                    buildFlags = buildFlags(cmd),
             )
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
@@ -115,16 +111,28 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 150
-        formatter.printHelp(INSTALLER_BINARY_NAME, cliParserOptions)
+        formatter.printHelp(INSTALLER_BINARY_NAME, cliParserOptions, true)
     }
 
-    private fun workspaceRootDir(cmd: CommandLine): Path =
-            getOptionValueAndMapToAbsolutePath(cmd, WORKSPACE_ROOT_DIR_SHORT_OPT) ?: calculateCurrentAbsoluteDirectory()
+    private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
+            if (isAnyGenerationFlagSet(cmd))
+                ProjectViewCliOptions(
+                        javaPath = javaPath(cmd),
+                        bazelPath = bazelPath(cmd),
+                        debuggerAddress = debuggerAddress(cmd),
+                        targets = targets(cmd),
+                        buildFlags = buildFlags(cmd),
+                )
+            else null
 
-    private fun projectViewFilePath(cmd: CommandLine): Path? =
-            getOptionValueAndMapToAbsolutePath(cmd, PROJECT_VIEW_FILE_PATH_SHORT_OPT)
+    private fun isAnyGenerationFlagSet(cmd: CommandLine): Boolean =
+            cmd.hasOption(TARGETS_SHORT_OPT) or
+                    cmd.hasOption(JAVA_PATH_SHORT_OPT) or
+                    cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
+                    cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
+                    cmd.hasOption(BUILD_FLAGS_SHORT_OPT)
 
-    private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
+    fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
     private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
 
@@ -136,11 +144,9 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun debuggerAddress(cmd: CommandLine): HostAndPort? =
             cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)?.let(HostAndPort::fromString)
 
-    private fun targets(cmd: CommandLine): List<String>? =
-            cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
+    private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
-    private fun buildFlags(cmd: CommandLine): List<String>? =
-            cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
+    private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
 

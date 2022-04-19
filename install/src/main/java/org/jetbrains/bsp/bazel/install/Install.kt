@@ -13,9 +13,10 @@ object Install {
     @JvmStatic
     fun main(args: Array<String>) {
         val cliOptionsProvider = CliOptionsProvider(args)
+        // TODO .get() wont be needed later (https://youtrack.jetbrains.com/issue/BAZEL-23)
         val cliOptions = cliOptionsProvider.getOptions().get()
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
-            cliOptions.helpCliOptions.printHelp.invoke()
+            cliOptions.helpCliOptions.printHelp()
         } else {
             createEnvironmentAndInstallBazelBspServer(cliOptions)
                     .onSuccess { printInCaseOfSuccess(cliOptions) }
