@@ -15,7 +15,12 @@ project {
             buildType(Format.BuildifierFormat)
         }
 
-        buildType(BuildAndTest.BuildAndTestTheProject, options = {
+        buildType(Build.BuildTheProject, options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        })
+
+        buildType(UnitTests.UnitTests, options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
