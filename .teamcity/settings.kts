@@ -52,7 +52,8 @@ project {
     allSteps.last().triggers {
         vcs {
             triggerRules = """
-                "-:comment=^[release]:**"
+                +:.
+                -:comment=^[release]:**
             """.trimIndent()
 
         }
