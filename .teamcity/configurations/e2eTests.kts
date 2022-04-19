@@ -8,7 +8,7 @@ open class BazelBspE2ETestsBuildType(testLabel: String) : BaseConfiguration.Base
     steps = {
         script {
             this.name = "running $testLabel e2e test"
-            this.scriptContent = """bazel run $testLabel/..."""
+            this.scriptContent = """bazel run $testLabel"""
             this.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             this.dockerPull = true
             this.dockerImage = "andrefmrocha/bazelisk"
