@@ -41,15 +41,6 @@ project {
         buildType(ResultsAggregator)
     }.buildTypes()
 
-//    allSteps.takeLastWhile { it != BuildAndTest.BuildAndTestTheProject }
-//        .dropLast(1)
-//        .forEach {
-//            it.dependencies.artifacts(BuildAndTest.BuildAndTestTheProject) {
-//                buildRule = sameChainOrLastFinished()
-//                artifactRules = "bazel-cache"
-//            }
-//        }
-
     allSteps.forEach { buildType(it) }
 
     allSteps.last().triggers {
