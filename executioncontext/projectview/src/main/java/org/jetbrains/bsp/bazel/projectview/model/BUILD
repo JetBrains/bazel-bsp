@@ -6,7 +6,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = [
         "//executioncontext/projectview:__pkg__",
-        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser:__subpackages__",
+        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview:__subpackages__",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model:__pkg__",
     ],
     exports = [
@@ -30,7 +30,7 @@ kt_jvm_library(
     srcs = glob(["*.kt"]),
     visibility = [
         "//executioncontext/projectview:__pkg__",
-        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser:__subpackages__",
+        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview:__subpackages__",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model:__pkg__",
     ],
     exports = [
