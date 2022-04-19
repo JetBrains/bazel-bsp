@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.generator.sections
 
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
 
@@ -16,3 +18,8 @@ abstract class ProjectViewSingletonSectionGenerator<in T : ProjectViewSingletonS
 }
 
 class ProjectViewJavaPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewJavaPathSection>()
+
+class ProjectViewDebuggerAddressSectionGenerator :
+    ProjectViewSingletonSectionGenerator<ProjectViewDebuggerAddressSection>()
+
+class ProjectViewBazelPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBazelPathSection>()
