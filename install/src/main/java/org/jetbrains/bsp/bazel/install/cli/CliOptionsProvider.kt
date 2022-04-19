@@ -91,7 +91,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             CliOptions(
                     helpCliOptions = createHelpCliOptions(cmd),
                     workspaceRootDir = workspaceRootDir(cmd),
-                    projectViewFilePath = io.vavr.control.Option.of(projectViewFilePath(cmd)),
+                    projectViewFilePath = projectViewFilePath(cmd),
                     projectViewCliOptions = createProjectViewCliOptions(cmd),
             )
 
@@ -103,11 +103,11 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions =
             ProjectViewCliOptions(
-                    javaPath = io.vavr.control.Option.of(javaPath(cmd)),
-                    bazelPath = io.vavr.control.Option.of(bazelPath(cmd)),
-                    debuggerAddress = io.vavr.control.Option.of(debuggerAddress(cmd)),
-                    targets = io.vavr.control.Option.of(targets(cmd)),
-                    buildFlags = io.vavr.control.Option.of(buildFlags(cmd)),
+                    javaPath = javaPath(cmd),
+                    bazelPath = bazelPath(cmd),
+                    debuggerAddress = debuggerAddress(cmd),
+                    targets = targets(cmd),
+                    buildFlags = buildFlags(cmd),
             )
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
@@ -126,28 +126,21 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
-
     private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
-
 
     private fun getOptionValueAndMapToAbsolutePath(cmd: CommandLine, shortOpt: String): Path? =
             cmd.getOptionValue(shortOpt)?.let(Paths::get)
                     ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
                     ?.let(Path::normalize)
 
-
     private fun debuggerAddress(cmd: CommandLine): HostAndPort? =
             cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)?.let(HostAndPort::fromString)
 
-    private fun targets(cmd: CommandLine): io.vavr.collection.List<String>? =
-            cmd.getOptionValues(TARGETS_SHORT_OPT)
-                    ?.toList()
-                    ?.let { io.vavr.collection.List.ofAll(it) }
+    private fun targets(cmd: CommandLine): List<String>? =
+            cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
-    private fun buildFlags(cmd: CommandLine): io.vavr.collection.List<String>? =
-            cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)
-                    ?.toList()
-                    ?.let { io.vavr.collection.List.ofAll(it) }
+    private fun buildFlags(cmd: CommandLine): List<String>? =
+            cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
 
