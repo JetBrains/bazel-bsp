@@ -13,8 +13,8 @@ public class Install {
     var cliOptionsProvider = new CliOptionsProvider(args);
     var cliOptions = cliOptionsProvider.getOptions().get();
 
-    if (cliOptions.isHelpOptionUsed()) {
-      cliOptions.printHelp();
+    if (cliOptions.getHelpCliOptions().isHelpOptionUsed()) {
+      cliOptions.getHelpCliOptions().getPrintHelp().invoke();
     } else {
       createEnvironmentAndInstallBazelBspServer(cliOptions)
           .onSuccess(__ -> printInCaseOfSuccess(cliOptions))

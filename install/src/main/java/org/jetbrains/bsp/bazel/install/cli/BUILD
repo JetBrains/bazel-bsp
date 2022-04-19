@@ -1,8 +1,9 @@
 load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "cli",
-    srcs = glob(["*.java"]),
+    srcs = glob(["*.kt"]),
     visibility = [
         "//install/src/main/java/org/jetbrains/bsp/bazel/install:__subpackages__",
         "//install/src/test/java/org/jetbrains/bsp/bazel/install/cli:__pkg__",
