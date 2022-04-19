@@ -494,3 +494,4 @@ class DefaultProjectViewGeneratorTest {
         }
     }
 }
+
