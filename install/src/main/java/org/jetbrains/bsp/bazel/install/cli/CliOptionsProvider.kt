@@ -132,7 +132,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                     cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
                     cmd.hasOption(BUILD_FLAGS_SHORT_OPT)
 
-    fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
+    private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
     private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
 
