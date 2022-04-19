@@ -53,7 +53,7 @@ project {
         vcs {
             triggerRules = """
                 +:.
-                -:comment=^[release]:**
+                -:comment=^\[release\x]:**
             """.trimIndent()
 
         }
