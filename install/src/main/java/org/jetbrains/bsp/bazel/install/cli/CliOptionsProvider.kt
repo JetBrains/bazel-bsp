@@ -108,10 +108,11 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
 
+
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 150
-        formatter.printHelp(INSTALLER_BINARY_NAME, cliParserOptions, true)
+        formatter.printHelp(INSTALLER_BINARY_NAME, null, cliParserOptions, "footer", true)
     }
 
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
