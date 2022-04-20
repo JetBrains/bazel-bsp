@@ -249,150 +249,163 @@ class CliOptionsProviderTest {
             }
         }
 
-    @Nested
-    @DisplayName("cliOptions.projectViewCliOptions.bazelPath tests")
-    inner class BazelPathTest {
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.bazelPath tests")
+        inner class BazelPathTest {
 
-        @Test
-        fun `should return success and null if path is not specified`() {
-            // given
-            val args = arrayOf<String>()
+            @Test
+            fun `should return success and null if path is not specified`() {
+                // given
+                val args = arrayOf<String>()
 
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
 
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
 
-            cliOptions.projectViewCliOptions?.bazelPath shouldBe null
+                cliOptions.projectViewCliOptions?.bazelPath shouldBe null
+            }
+
+            @Test
+            fun `should return success and absolute path if bazel path is specified`() {
+                // given
+                val args = arrayOf("-b", "/path/to/bazel")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBazelPath = Paths.get("/path/to/bazel")
+                cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
+            }
+
+            @Test
+            fun `should return success and absolute path to provided java file if not absolute specified`() {
+                // given
+                val args = arrayOf("-b", "path/to/bazel")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBazelPath = Paths.get("path/to/bazel").toAbsolutePath()
+                cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
+                cliOptions.projectViewCliOptions?.bazelPath?.isAbsolute shouldBe true
+            }
+
+            @Test
+            fun `should return success and absolute path to provided java file if relative specified`() {
+                // given
+                val args = arrayOf("-b", "../../path/to/bazel")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBazelPath = Paths.get("")
+                        .toAbsolutePath()
+                        .parent
+                        .parent
+                        .resolve("path/to/bazel")
+                cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
+                cliOptions.projectViewCliOptions?.bazelPath?.isAbsolute shouldBe true
+            }
         }
 
-        @Test
-        fun `should return success and absolute path if bazel path is specified`() {
-            // given
-            val args = arrayOf("-b", "/path/to/bazel")
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.debuggerAddress test")
+        inner class DebuggerAddressTest {
 
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
+            @Test
+            fun `should return success if debugger address is specified`() {
+                // given
+                val args = arrayOf("-x", "host:8000")
 
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
 
-            val expectedBazelPath = Paths.get("/path/to/bazel")
-            cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
+                cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+            }
         }
 
-        @Test
-        fun `should return success and absolute path to provided java file if not absolute specified`() {
-            // given
-            val args = arrayOf("-b", "path/to/bazel")
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.targets test")
+        inner class TargetsTests {
 
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
+            @Test
+            fun `should return success if targets are specified`() {
+                // given
+                val args = arrayOf(
+                        "-t",
+                        "//included_target1",
+                        "-//excluded_target1",
+                        "//included_target2",
+                        "//included_target3",
+                        "-//excluded_target2",
+                )
 
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
 
-            val expectedBazelPath = Paths.get("path/to/bazel").toAbsolutePath()
-            cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
-            cliOptions.projectViewCliOptions?.bazelPath?.isAbsolute shouldBe true
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedTargets = listOf(
+                        "//included_target1",
+                        "-//excluded_target1",
+                        "//included_target2",
+                        "//included_target3",
+                        "-//excluded_target2",
+                )
+                cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
+            }
         }
 
-        @Test
-        fun `should return success and absolute path to provided java file if relative specified`() {
-            // given
-            val args = arrayOf("-b", "../../path/to/bazel")
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.buildFlags test")
+        inner class BuildFlagsTest {
 
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
+            @Test
+            fun `should return success if build flags are specified`() {
+                // given
+                val args = arrayOf("-f", "--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
 
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
 
-            val expectedBazelPath = Paths.get("")
-                    .toAbsolutePath()
-                    .parent
-                    .parent
-                    .resolve("path/to/bazel")
-            cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
-            cliOptions.projectViewCliOptions?.bazelPath?.isAbsolute shouldBe true
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
+                cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
+            }
         }
-    }
 
-    @Nested
-    @DisplayName("cliOptions.projectViewCliOptions.debuggerAddress test")
-    inner class DebuggerAddressTest {
-        @Test
-        fun `should return success if debugger address is specified`() {
-            // given
-            val args = arrayOf("-x", "host:8000")
-
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
-
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
-
-            val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
-            cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
-        }
-    }
-
-    @Nested
-    @DisplayName("cliOptions.projectViewCliOptions.targets test")
-    inner class TargetsTests {
-        @Test
-        fun `should return success if targets are specified`() {
-            // given
-            val args = arrayOf("-t", "//target1", "//target2", "//target3" , "-//excluded_target1")
-
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
-
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
-
-            val expectedTargets = listOf("//target1", "//target2", "//target3", "-//excluded_target1")
-            cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
-        }
-    }
-
-    @Nested
-    @DisplayName("cliOptions.projectViewCliOptions.buildFlags test")
-    inner class BuildFlagsTest {
-        @Test
-        fun `should return success if build flags are specified`() {
-            // given
-            val args = arrayOf("-f", "--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
-
-            // when
-            val provider = CliOptionsProvider(args)
-            val cliOptionsTry = provider.getOptions()
-
-            // then
-            cliOptionsTry.isSuccess shouldBe true
-            val cliOptions = cliOptionsTry.get()
-
-            val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
-            cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
-        }
-    }
-
-    @Nested
-    @DisplayName("Test for All Flags")
-    inner class TestForAllFlags {
         @Test
         fun `should return success if all flags are specified`() {
             // given
@@ -408,10 +421,11 @@ class CliOptionsProviderTest {
                     "-x",
                     "host:8000",
                     "-t",
-                    "//target1",
-                    "//target2",
-                    "//target3",
+                    "//included_target1",
                     "-//excluded_target1",
+                    "//included_target2",
+                    "//included_target3",
+                    "-//excluded_target2",
                     "-f",
                     "--build_flag1=value1",
                     "--build_flag1=value2",
@@ -442,17 +456,19 @@ class CliOptionsProviderTest {
             val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
             cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
 
-            val expectedTargets = listOf("//target1", "//target2", "//target3", "-//excluded_target1")
+            val expectedTargets = listOf(
+                    "//included_target1",
+                    "-//excluded_target1",
+                    "//included_target2",
+                    "//included_target3",
+                    "-//excluded_target2",
+            )
             cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
         }
-    }
 
-    @Nested
-    @DisplayName("Test for hall of the flags")
-    inner class TestForHalfOfTheFlags {
         @Test
         fun `should return success if half of all flags are specified`() {
             // given
@@ -489,6 +505,5 @@ class CliOptionsProviderTest {
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
         }
-    }
     }
 }
