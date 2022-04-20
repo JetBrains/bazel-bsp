@@ -44,18 +44,30 @@ project {
         }
 
         buildType(ResultsAggregator)
+
+        buildType(Release.Release)
+
     }.buildTypes()
 
     allSteps.forEach { buildType(it) }
 
     // we dont want to trigger it here for releases
-    allSteps.last().triggers {
+    allSteps.dropLast(1).last().triggers {
         vcs {
             triggerRules = """
                 +:.
                 -:comment=^\[release\]:**
             """.trimIndent()
+        }
+    }
 
+    allSteps.last().triggers {
+        vcs {
+            triggerRules = """
+                +:comment=^\[release\]:**
+            """.trimIndent()
+
+            branchFilter = "+:<default>"
         }
     }
 }
