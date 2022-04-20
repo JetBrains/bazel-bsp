@@ -7,7 +7,7 @@ sonatype_java_export(
     maven_coordinates = "org.jetbrains.bsp:bazel-bsp:1.1.1",
     maven_profile = "org.jetbrains",
     pom_template = "//:pom.xml",
-    resources = ["//server/src/main/resources"],
+    resources = ["//log4j_config"],
     visibility = ["//visibility:public"],
     runtime_deps = [
         "//commons",
@@ -20,7 +20,7 @@ java_binary(
     name = "bsp-install",
     srcs = glob(["*.java"]),
     main_class = "org.jetbrains.bsp.bazel.install.Install",
-    resources = ["//server/src/main/resources"],
+    resources = ["//log4j_config"],
     visibility = ["//visibility:public"],
     runtime_deps = [
         "//commons",

@@ -3,7 +3,7 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "bazelrunner",
     srcs = glob(["*.java"]),
-    resources = ["//bazelrunner/src/main/resources"],
+    resources = ["//log4j_config"],
     visibility = ["//bazelrunner:__subpackages__"],
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/outputs",

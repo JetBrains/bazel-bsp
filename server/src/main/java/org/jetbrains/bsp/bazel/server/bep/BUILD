@@ -3,7 +3,7 @@ load("@rules_java//java:defs.bzl", "java_library")
 java_library(
     name = "bep",
     srcs = glob(["*.java"]),
-    resources = ["//server/src/main/resources"],
+    resources = ["//log4j_config"],
     visibility = ["//server:__subpackages__"],
     deps = [
         "//bazelrunner",

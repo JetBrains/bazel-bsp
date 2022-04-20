@@ -4,6 +4,7 @@ load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 java_library(
     name = "parser",
     srcs = glob(["*.java"]),
+    resources = ["//log4j_config"],
     visibility = [
         "//executioncontext/projectview:__pkg__",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser:__pkg__",
@@ -27,6 +28,7 @@ java_library(
 kt_jvm_library(
     name = "parser_kotlin",
     srcs = glob(["*.kt"]),
+    resources = ["//log4j_config"],
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
