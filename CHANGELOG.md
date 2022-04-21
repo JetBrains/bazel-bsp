@@ -6,6 +6,9 @@
 
 ### Features 🎉
 
+- New installer with project view generator - 
+  now it is possible to create a project view using installer.
+  | [#227](https://github.com/JetBrains/bazel-bsp/pull/227)
 - New implementation of diagnostics extraction. It collects
   both warnings and errors, doesn't show irrelevant errors
   in BUILD files, shows line and character position and does
