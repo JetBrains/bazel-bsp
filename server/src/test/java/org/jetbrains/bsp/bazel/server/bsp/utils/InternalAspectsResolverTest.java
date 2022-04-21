@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.junit.jupiter.api.Test;
@@ -46,16 +47,6 @@ public class InternalAspectsResolverTest {
   }
 
   private static BazelInfo createBazelInfo(Path workspaceRoot) {
-    return new BazelInfo() {
-      @Override
-      public String execRoot() {
-        return null;
-      }
-
-      @Override
-      public Path workspaceRoot() {
-        return workspaceRoot;
-      }
-    };
+    return new BasicBazelInfo(null, workspaceRoot);
   }
 }

@@ -2,9 +2,8 @@ package org.jetbrains.bsp.bazel.server.diagnostics
 
 import ch.epfl.scala.bsp4j.*
 import org.assertj.core.api.Assertions
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.junit.jupiter.api.Test
-import java.nio.file.Path
 import java.nio.file.Paths
 import ch.epfl.scala.bsp4j.Diagnostic as BspDiagnostic
 import ch.epfl.scala.bsp4j.Position as BspPosition
@@ -439,10 +438,7 @@ class DiagnosticsServiceTest {
   }
 
   private fun extractDiagnostics(output: String): List<PublishDiagnosticsParams>? {
-    val bazelInfo = object : BazelInfo {
-      override fun execRoot(): String? = null
-      override fun workspaceRoot(): Path = workspacePath
-    }
+    val bazelInfo = BasicBazelInfo(null, workspacePath)
     return DiagnosticsService(bazelInfo).extractDiagnostics(output)
   }
 

@@ -25,9 +25,8 @@ public class BazelRunner {
 
   // This is runner without workspace path. It is used to determine workspace
   // path and create a fully functional runner.
-  public static BazelRunner inCwd(
-      BazelPathProvider bazelPath, BspClientLogger bspClientLogger, List<String> defaultFlags) {
-    return new BazelRunner(bazelPath, bspClientLogger, null, defaultFlags);
+  public static BazelRunner inCwd(BazelPathProvider bazelPath, BspClientLogger bspClientLogger) {
+    return new BazelRunner(bazelPath, bspClientLogger, null, List.of());
   }
 
   public static BazelRunner of(
