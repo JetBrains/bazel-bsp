@@ -45,6 +45,8 @@
 
 ### Changes 🔄
 
+- Logging level has been set to info and doesn't include events.
+  | [#223](https://github.com/JetBrains/bazel-bsp/pull/223)
 - Deletion of semantic version class.
   | [#216](https://github.com/JetBrains/bazel-bsp/pull/216)
 - Duplicate bazel output lines are not shown in bsp-client.

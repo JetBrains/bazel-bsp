@@ -131,7 +131,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     var label = event.getId().getTargetCompleted().getLabel();
     var targetComplete = event.getCompleted();
     var outputGroups = targetComplete.getOutputGroupList();
-    LOGGER.info("Consuming target completed event " + targetComplete);
+    LOGGER.debug("Consuming target completed event " + targetComplete);
     bepOutputBuilder.storeTargetOutputGroups(label, outputGroups);
   }
 
