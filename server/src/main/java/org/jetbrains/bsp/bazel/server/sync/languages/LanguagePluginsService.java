@@ -44,8 +44,9 @@ public class LanguagePluginsService {
       return scalaLanguagePlugin;
     } else if (languages.contains(Language.JAVA) || languages.contains(Language.KOTLIN)) {
       return javaLanguagePlugin;
-    } else if (languages.contains(Language.CPP)) {
-      return cppLanguagePlugin;
+      // TODO https://youtrack.jetbrains.com/issue/BAZEL-25
+      //    } else if (languages.contains(Language.CPP)) {
+      //      return cppLanguagePlugin;
     } else if (languages.contains(Language.THRIFT)) {
       return thriftLanguagePlugin;
     } else {

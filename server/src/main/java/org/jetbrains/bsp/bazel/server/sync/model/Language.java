@@ -8,7 +8,8 @@ public enum Language {
   SCALA("scala", HashSet.of(".scala")),
   JAVA("java", HashSet.of(".java")),
   KOTLIN("kotlin", HashSet.of(".kt"), HashSet.of(Language.JAVA.name)),
-  CPP("cpp", HashSet.of(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
+  // TODO https://youtrack.jetbrains.com/issue/BAZEL-25
+  // CPP("cpp", HashSet.of(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
   THRIFT("thrift", HashSet.of(".thrift"));
 
   private final String name;
