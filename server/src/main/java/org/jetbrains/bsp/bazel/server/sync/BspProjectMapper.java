@@ -119,8 +119,6 @@ public class BspProjectMapper {
   }
 
   public SourcesResult sources(Project project, SourcesParams sourcesParams) {
-    // TODO cover `bepServer.getBuildTargetsSources().put(label, srcs)` line from original
-    // implementation
     // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
     // we need a use case with some generated files and then figure out how to handle it
     var labels = toLabels(sourcesParams.getTargets());

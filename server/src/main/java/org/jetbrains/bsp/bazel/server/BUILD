@@ -16,6 +16,7 @@ java_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",

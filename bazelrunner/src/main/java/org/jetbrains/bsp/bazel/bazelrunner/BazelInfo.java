@@ -7,6 +7,4 @@ public interface BazelInfo {
   String execRoot();
 
   Path workspaceRoot();
-
-  String binRoot();
 }

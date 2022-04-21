@@ -9,13 +9,11 @@ public class LazyBazelInfo implements BazelInfo {
   private final Lazy<Map<String, String>> bazelInfoOutput;
   private final Lazy<String> execRoot;
   private final Lazy<Path> workspaceRoot;
-  private final Lazy<String> binRoot;
 
   public LazyBazelInfo(Lazy<Map<String, String>> bazelInfoOutput) {
     this.bazelInfoOutput = bazelInfoOutput;
     this.execRoot = extract("execution_root");
     this.workspaceRoot = extract("workspace").map(Paths::get);
-    this.binRoot = extract("bazel-bin");
   }
 
   @Override
@@ -26,11 +24,6 @@ public class LazyBazelInfo implements BazelInfo {
   @Override
   public Path workspaceRoot() {
     return workspaceRoot.get();
-  }
-
-  @Override
-  public String binRoot() {
-    return binRoot.get();
   }
 
   private Lazy<String> extract(String name) {

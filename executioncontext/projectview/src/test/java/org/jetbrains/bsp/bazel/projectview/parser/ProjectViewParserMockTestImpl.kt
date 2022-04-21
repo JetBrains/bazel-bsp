@@ -2,17 +2,12 @@ package org.jetbrains.bsp.bazel.projectview.parser
 
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
-import io.vavr.control.Option
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import java.io.File
-import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.writeText
 
 class ProjectViewParserMockTestImpl : ProjectViewParserImpl() {
 

@@ -6,6 +6,11 @@
 
 ### Features 🎉
 
+- New implementation of diagnostics extraction. It collects
+  both warnings and errors, doesn't show irrelevant errors
+  in BUILD files, shows line and character position and does
+  not run bazel query before each build anymore.
+  | [#225](https://github.com/JetBrains/bazel-bsp/pull/225)
 - `build_flags` support in project view.
   | [#194](https://github.com/JetBrains/bazel-bsp/pull/194)
 - New installer - it is possible to specify installation directory

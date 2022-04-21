@@ -6,7 +6,6 @@ import io.vavr.collection.Map;
 import io.vavr.control.Option;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 
 public class BazelInfoResolver {
   private static final Pattern INFO_LINE_PATTERN = Pattern.compile("([\\w-]+): (.*)");
@@ -22,12 +21,7 @@ public class BazelInfoResolver {
 
   private Map<String, String> readBazelInfoMap() {
     var bazelProcessResult =
-        bazelRunner
-            .commandBuilder()
-            .info()
-            .withFlag(BazelFlag.color(true))
-            .executeBazelCommand()
-            .waitAndGetResult();
+        bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult();
 
     return bazelProcessResult
         .stdoutLines()

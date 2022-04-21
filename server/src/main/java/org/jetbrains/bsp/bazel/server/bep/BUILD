@@ -9,7 +9,7 @@ java_library(
         "//bazelrunner",
         "//commons",
         "//logger",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep/parsers/error",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "@com_google_protobuf//:protobuf_java",
         "@googleapis//:google_devtools_build_v1_build_events_java_proto",
         "@googleapis//:google_devtools_build_v1_publish_build_event_java_grpc",
