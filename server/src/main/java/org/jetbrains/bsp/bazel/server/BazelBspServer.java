@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
@@ -49,17 +50,16 @@ public class BazelBspServer {
 
   public BazelBspServer(BazelBspServerConfig config) {
     this.bspClientLogger = new BspClientLogger();
+    var bspInfo = new BspInfo();
+    var bazelInfoStorage = new BazelInfoStorage(bspInfo);
     var bazelDataResolver =
-        new BazelInfoResolver(
-            BazelRunner.inCwd(
-                config, bspClientLogger, getDefaultBazelFlags(config.currentProjectView())));
+        new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger), bazelInfoStorage);
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
     this.bazelRunner =
         BazelRunner.of(
             config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.currentProjectView()));
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
-    var bspInfo = new BspInfo();
     this.compilationManager = new BazelBspCompilationManager(bazelRunner);
     var aspectsResolver = new InternalAspectsResolver(bazelInfo, bspInfo);
     var bazelBspAspectsManager = new BazelBspAspectsManager(compilationManager, aspectsResolver);
