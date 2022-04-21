@@ -6,6 +6,9 @@
 
 ### Features 🎉
 
+- New installer with project view generator - 
+  now it is possible to create a project view using installer.
+  | [#227](https://github.com/JetBrains/bazel-bsp/pull/227)
 - New implementation of diagnostics extraction. It collects
   both warnings and errors, doesn't show irrelevant errors
   in BUILD files, shows line and character position and does
@@ -45,6 +48,8 @@
 
 ### Changes 🔄
 
+- `bazel info` call caching mechanism.
+  | [#228](https://github.com/JetBrains/bazel-bsp/pull/228)
 - Logging level has been set to info and doesn't include events.
   | [#223](https://github.com/JetBrains/bazel-bsp/pull/223)
 - Deletion of semantic version class.

@@ -9,6 +9,14 @@ java_library(
 )
 
 java_library(
+    name = "generator",
+    visibility = ["//visibility:public"],
+    exports = [
+        "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/generator",
+    ],
+)
+
+java_library(
     name = "parser",
     visibility = ["//visibility:public"],
     exports = [
