@@ -8,15 +8,16 @@ import java.nio.file.Path
 class ProjectViewDefaultInstallerProvider {
 
     fun parseProjectViewOrGenerateAndSave(cliOptions: CliOptions): Try<ProjectView> =
-            if (cliOptions.projectViewCliOptions == null) todo(cliOptions.projectViewFilePath) else todo2(cliOptions)
+            if (cliOptions.projectViewCliOptions == null) defaultProjectViewFromResourcesProvider(cliOptions.projectViewFilePath)
+            else projectViewProvideAndSaveFromCliOptions(cliOptions)
 
-    private fun todo(projectViewFilePath: Path?): Try<ProjectView> {
+    private fun defaultProjectViewFromResourcesProvider(projectViewFilePath: Path?): Try<ProjectView> {
         val projectViewProvider = ProjectViewDefaultFromResourcesProvider(projectViewFilePath, resourcesProjectViewFilePath)
 
         return projectViewProvider.create()
     }
 
-    private fun todo2(cliOptions: CliOptions): Try<ProjectView> {
+    private fun projectViewProvideAndSaveFromCliOptions(cliOptions: CliOptions): Try<ProjectView> {
         val provider = ProjectViewCLiOptionsProvider()
 
         return provider.generateProjectViewAndSave(cliOptions)

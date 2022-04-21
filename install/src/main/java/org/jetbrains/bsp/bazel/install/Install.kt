@@ -15,10 +15,13 @@ object Install {
         val cliOptionsProvider = CliOptionsProvider(args)
         // TODO .get() wont be needed later (https://youtrack.jetbrains.com/issue/BAZEL-23)
         val cliOptions = cliOptionsProvider.getOptions().get()
-
-        val projectViewCliOptionsCheck = ProjectViewCLiOptionsProvider()
-        projectViewCliOptionsCheck.generateProjectViewAndSave(cliOptions)
-
+        if (cliOptions.projectViewCliOptions != null) {
+            val projectViewCliOptions = ProjectViewCLiOptionsProvider()
+            projectViewCliOptions.generateProjectViewAndSave(cliOptions)
+        } else {
+            val default = ProjectViewDefaultInstallerProvider()
+            default.parseProjectViewOrGenerateAndSave(cliOptions)
+        }
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
             cliOptions.helpCliOptions.printHelp()
         } else {
@@ -27,7 +30,6 @@ object Install {
                     .onFailure(::printFailureReasonAndExit1)
         }
     }
-
     private fun createEnvironmentAndInstallBazelBspServer(cliOptions: CliOptions): Try<Void> =
             constructInstallationContext(cliOptions)
                     .flatMap { createBspConnectionDetails(it, cliOptions) }
