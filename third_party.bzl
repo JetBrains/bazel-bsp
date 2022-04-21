@@ -25,6 +25,7 @@ _deps = [
     _dependency("org.apache.commons:commons-collections4:jar:4.4"),
     _dependency("org.junit.jupiter:junit-jupiter:5.8.2"),  # TODO remove
     _dependency("com.fasterxml.jackson.core:jackson-databind:2.13.2.2"),
+    _dependency("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2"),
     _dependency("io.vavr:vavr-jackson:0.10.3"),
 ]
 

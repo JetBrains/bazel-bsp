@@ -47,6 +47,6 @@ public class InternalAspectsResolverTest {
   }
 
   private static BazelInfo createBazelInfo(Path workspaceRoot) {
-    return new BasicBazelInfo(null, workspaceRoot);
+    return new BasicBazelInfo("", workspaceRoot);
   }
 }

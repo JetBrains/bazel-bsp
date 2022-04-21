@@ -109,7 +109,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
         toBspId(module),
         javaModule.runtimeClasspath().map(URI::toString).asJava(),
         javaModule.jvmOps().asJava(),
-        bazelInfo.workspaceRoot().toString(),
+        bazelInfo.getWorkspaceRoot().toString(),
         environment);
   }
 

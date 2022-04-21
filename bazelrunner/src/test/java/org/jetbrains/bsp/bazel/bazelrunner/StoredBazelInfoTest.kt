@@ -15,7 +15,7 @@ class ProjectStorageTest {
     val storage = BazelInfoStorage(path)
 
     val empty = storage.load()
-    Assertions.assertThat(empty).isEmpty()
+    Assertions.assertThat(empty).isNull()
 
     val bazelInfo = BasicBazelInfo(
         "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b/execroot/bazel_bsp",
@@ -23,7 +23,6 @@ class ProjectStorageTest {
 
     storage.store(bazelInfo)
     val loaded = storage.load()
-    loaded.forEach { Assertions.assertThat(it).isEqualTo(bazelInfo) }
-    loaded.onEmpty { AssertionsForClassTypes.fail("bazel info not loaded") }
+    Assertions.assertThat(loaded).isEqualTo(bazelInfo)
   }
 }

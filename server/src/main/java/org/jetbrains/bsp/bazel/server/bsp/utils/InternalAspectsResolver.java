@@ -20,7 +20,7 @@ public class InternalAspectsResolver {
   }
 
   private String getPrefix() {
-    var workspaceRoot = bazelInfo.workspaceRoot();
+    var workspaceRoot = bazelInfo.getWorkspaceRoot();
     var bazelBspDir = bspInfo.bazelBspDir();
     var relative = workspaceRoot.relativize(bazelBspDir).toString();
     return String.format("@//%s:aspects.bzl%%", relative);
