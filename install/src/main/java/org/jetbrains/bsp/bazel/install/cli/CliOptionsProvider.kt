@@ -112,7 +112,7 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 150
-        formatter.printHelp(INSTALLER_BINARY_NAME, null, cliParserOptions, "footer", true)
+        formatter.printHelp(INSTALLER_BINARY_NAME, null, cliParserOptions, "If you will use generation flags, they will be used. If you will not use, the default generator will be used.", true)
     }
 
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =

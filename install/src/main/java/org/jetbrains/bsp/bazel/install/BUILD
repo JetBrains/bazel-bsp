@@ -8,8 +8,8 @@ kt_jvm_library(
     deps = [
         "//commons",
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
-        "//executioncontext/projectview:parser",
         "//executioncontext/projectview:generator",
+        "//executioncontext/projectview:parser",
         "//install/src/main/java/org/jetbrains/bsp/bazel/install/cli",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
