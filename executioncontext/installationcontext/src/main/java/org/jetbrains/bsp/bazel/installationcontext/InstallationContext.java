@@ -69,7 +69,8 @@ public class InstallationContext extends ExecutionContext {
             "Installation context creation failed! 'javaPath' has to be defined.";
         return Try.failure(new IllegalStateException(exceptionMessage));
       }
-      return Try.success(new InstallationContext(javaPath.get(), debuggerAddress, projectViewFilePath));
+      return Try.success(
+          new InstallationContext(javaPath.get(), debuggerAddress, projectViewFilePath));
     }
   }
 }
