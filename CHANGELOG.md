@@ -48,6 +48,8 @@
 
 ### Changes 🔄
 
+- `bazel info` call caching mechanism.
+  | [#228](https://github.com/JetBrains/bazel-bsp/pull/228)
 - Logging level has been set to info and doesn't include events.
   | [#223](https://github.com/JetBrains/bazel-bsp/pull/223)
 - Deletion of semantic version class.
