@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.install
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import io.vavr.collection.List
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.ProjectViewCliOptions
@@ -9,55 +10,64 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
 
 class ProjectViewCLiOptionsProvider {
+
     fun generateProjectViewAndSave(cliOptions: CliOptions): Try<ProjectView> {
         val generator = DefaultProjectViewGenerator()
-        val a = generateProjectView(cliOptions)
-        return generator.generatePrettyStringAndSaveInFile(a, cliOptions.projectViewFilePath
+        val generatedProjectView = generateProjectView(cliOptions)
+        return generator.generatePrettyStringAndSaveInFile(generatedProjectView, cliOptions.projectViewFilePath
                 ?: cliOptions.workspaceRootDir.resolve("projectview.bazelproject"))
-                .map { a }
+                .map { generatedProjectView }
     }
 
     private fun generateProjectView(cliOptions: CliOptions): ProjectView {
-        val projectViewCliOptions = cliOptions.projectViewCliOptions
         return ProjectView(
-                javaPath = javaPathSection(projectViewCliOptions),
-                bazelPath = bazelPathSection(projectViewCliOptions),
-                debuggerAddress = debuggerAddressSection(projectViewCliOptions),
-                targets = targetsSection(projectViewCliOptions),
-                buildFlags = buildFlagsSection(projectViewCliOptions),
+                javaPath = javaPathSection(cliOptions.projectViewCliOptions),
+                bazelPath = bazelPathSection(cliOptions.projectViewCliOptions),
+                debuggerAddress = debuggerAddressSection(cliOptions.projectViewCliOptions),
+                targets = targetsSection(cliOptions.projectViewCliOptions),
+                buildFlags = buildFlagsSection(cliOptions.projectViewCliOptions),
         )
     }
 
     private fun javaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
             projectViewCliOptions
                     ?.javaPath
-                    ?.let { ProjectViewJavaPathSection(it) }
+                    ?.let(::ProjectViewJavaPathSection)
 
     private fun bazelPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelPathSection? =
             projectViewCliOptions
                     ?.bazelPath
-                    ?.let { ProjectViewBazelPathSection(it) }
+                    ?.let(::ProjectViewBazelPathSection)
 
     private fun targetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewTargetsSection? {
+
+        val excludedTargets = excludedTargetProvider(projectViewCliOptions)
+        val includedTargets = includedTargetsProvider(projectViewCliOptions)
+        return ProjectViewTargetsSection(includedTargets, excludedTargets)
+    }
+
+    private fun excludedTargetProvider(projectViewCliOptions: ProjectViewCliOptions?): List<BuildTargetIdentifier> {
         val excludedTargets = projectViewCliOptions
                 ?.targets?.filter { it.startsWith("-") }
                 ?.map(::BuildTargetIdentifier)
+        return List.ofAll(excludedTargets)
+    }
+
+    private fun includedTargetsProvider(projectViewCliOptions: ProjectViewCliOptions?): List<BuildTargetIdentifier> {
         val includedTargets = projectViewCliOptions
                 ?.targets?.filterNot { it.startsWith("-") }
                 ?.map(::BuildTargetIdentifier)
-        val excludedTargetsCorrectType = io.vavr.collection.List.ofAll(excludedTargets)
-        val includedTargetsCorrectType = io.vavr.collection.List.ofAll(includedTargets)
-        return ProjectViewTargetsSection(includedTargetsCorrectType, excludedTargetsCorrectType)
+        return List.ofAll(includedTargets)
     }
 
     private fun debuggerAddressSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDebuggerAddressSection? =
             projectViewCliOptions
                     ?.debuggerAddress
-                    ?.let { ProjectViewDebuggerAddressSection(it) }
+                    ?.let(::ProjectViewDebuggerAddressSection)
 
     private fun buildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
             projectViewCliOptions
                     ?.buildFlags
-                    ?.let { ProjectViewBuildFlagsSection(io.vavr.collection.List.ofAll(it)) }
+                    ?.let { ProjectViewBuildFlagsSection(List.ofAll(it)) }
 
 }

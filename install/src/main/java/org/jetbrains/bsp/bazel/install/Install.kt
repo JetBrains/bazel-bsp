@@ -15,13 +15,16 @@ object Install {
         val cliOptionsProvider = CliOptionsProvider(args)
         // TODO .get() wont be needed later (https://youtrack.jetbrains.com/issue/BAZEL-23)
         val cliOptions = cliOptionsProvider.getOptions().get()
-        if (cliOptions.projectViewCliOptions != null) {
-            val projectViewCliOptions = ProjectViewCLiOptionsProvider()
-            projectViewCliOptions.generateProjectViewAndSave(cliOptions)
-        } else {
-            val default = ProjectViewDefaultInstallerProvider()
-            default.parseProjectViewOrGenerateAndSave(cliOptions)
-        }
+//        if (cliOptions.projectViewCliOptions != null) {
+//            val projectViewCliOptions = ProjectViewCLiOptionsProvider()
+//            projectViewCliOptions.generateProjectViewAndSave(cliOptions)
+//        } else {
+//            val default = ProjectViewDefaultInstallerProvider()
+//            default.parseProjectViewOrGenerateAndSave(cliOptions)
+//        }
+//        val provider = ProjectViewDefaultInstallerProvider()
+//        val projectViewTry = provider.parseProjectViewOrGenerateAndSave(cliOptions)
+
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
             cliOptions.helpCliOptions.printHelp()
         } else {
@@ -36,11 +39,12 @@ object Install {
                     .flatMap { createEnvironment(it, cliOptions) }
 
     private fun constructInstallationContext(cliOptions: CliOptions): Try<InstallationContext> {
-        val resourcesProjectViewFilePath = "/default-projectview.bazelproject"
-        val projectViewProvider = ProjectViewDefaultFromResourcesProvider(
-                cliOptions.projectViewFilePath, resourcesProjectViewFilePath)
-        val projectViewTry = projectViewProvider.create()
-
+//        val resourcesProjectViewFilePath = "/default-projectview.bazelproject"
+//        val projectViewProvider = ProjectViewDefaultFromResourcesProvider(
+//                cliOptions.projectViewFilePath, resourcesProjectViewFilePath)
+//        val projectViewTry = projectViewProvider.create()
+        val provider = ProjectViewDefaultInstallerProvider()
+        val projectViewTry = provider.parseProjectViewOrGenerateAndSave(cliOptions)
         val installationContextConstructor = InstallationContextConstructor()
         return installationContextConstructor.construct(projectViewTry)
     }
