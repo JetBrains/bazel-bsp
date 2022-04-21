@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
 object BazelRootMessageParser : Parser {
-  private const val TargetLabel = """(//[\w/.-]+:[\w/.-]+)"""
+  private const val TargetLabel = """(//[\w/.-]*:[\w/.-]+)"""
 
   override fun tryParse(output: Output): List<Diagnostic> =
       findErrorInBUILD(output) ?: findWarningsInInfoMessage(output) ?: emptyList()
@@ -27,12 +27,8 @@ object BazelRootMessageParser : Parser {
     return output.tryTake(ErrorInBUILD)
         ?.let { match ->
           val targetLabel = match.groupValues[4].ifEmpty { null }
-          val compilerDiagnostics = collectCompilerDiagnostics(output, targetLabel)
-          if (compilerDiagnostics.isEmpty()) {
-            return listOf(createError(match, targetLabel))
-          } else {
-            return compilerDiagnostics
-          }
+          return collectCompilerDiagnostics(output, targetLabel)
+              .ifEmpty { listOf(createError(match, targetLabel)) }
         }
   }
 
