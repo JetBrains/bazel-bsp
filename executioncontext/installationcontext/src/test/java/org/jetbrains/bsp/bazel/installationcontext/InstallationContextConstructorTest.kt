@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.installationcontext
 
 import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
+import io.vavr.control.Option
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity
@@ -21,7 +22,8 @@ class InstallationContextConstructorTest {
     @BeforeEach
     fun beforeEach() {
         // given
-        this.installationContextConstructor = InstallationContextConstructor()
+        this.installationContextConstructor =
+            InstallationContextConstructor(Option.of(Paths.get("/path/to/projectview.bazelproject")))
     }
 
     @Nested

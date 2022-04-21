@@ -20,26 +20,18 @@ object Install {
             cliOptions.helpCliOptions.printHelp()
         } else {
             createEnvironmentAndInstallBazelBspServer(cliOptions)
-                    .onSuccess { printInCaseOfSuccess(cliOptions) }
-                    .onFailure(::printFailureReasonAndExit1)
+                .onSuccess { printInCaseOfSuccess(cliOptions) }
+                .onFailure(::printFailureReasonAndExit1)
         }
     }
 
     private fun createEnvironmentAndInstallBazelBspServer(cliOptions: CliOptions): Try<Void> =
-            constructInstallationContext(cliOptions)
-                    .flatMap { createBspConnectionDetails(it, cliOptions) }
-                    .flatMap { createEnvironment(it, cliOptions) }
+        InstallationContextProvider.parseProjectViewOrGenerateAndSaveAndCreateInstallationContext(cliOptions)
+            .flatMap(::createBspConnectionDetails)
+            .flatMap { createEnvironment(it, cliOptions) }
 
-    private fun constructInstallationContext(cliOptions: CliOptions): Try<InstallationContext> {
-        val provider = ProjectViewDefaultInstallerProvider()
-        val projectViewTry = provider.parseProjectViewOrGenerateAndSave(cliOptions)
-        val installationContextConstructor = InstallationContextConstructor()
-        return installationContextConstructor.construct(projectViewTry)
-    }
-
-    private fun createBspConnectionDetails(
-            installationContext: InstallationContext, cliOptions: CliOptions): Try<BspConnectionDetails> {
-        val bspConnectionDetailsCreator = BspConnectionDetailsCreator(installationContext, cliOptions.projectViewFilePath)
+    private fun createBspConnectionDetails(installationContext: InstallationContext): Try<BspConnectionDetails> {
+        val bspConnectionDetailsCreator = BspConnectionDetailsCreator(installationContext)
 
         return bspConnectionDetailsCreator.create()
     }

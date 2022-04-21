@@ -8,8 +8,7 @@ import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class BspConnectionDetailsCreator(private val installationContext: InstallationContext,
-                                  private val projectViewFilePath: Path?) {
+class BspConnectionDetailsCreator(private val installationContext: InstallationContext) {
 
     fun create(): Try<BspConnectionDetails> =
             calculateArgv()
@@ -56,7 +55,7 @@ class BspConnectionDetailsCreator(private val installationContext: InstallationC
                     ?.value
                     ?.let { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$it" }
 
-    private fun projectViewFilePathArgv(): String? = projectViewFilePath?.toString()
+    private fun projectViewFilePathArgv(): String? = installationContext.projectViewFilePath.orNull?.toString()
 
     private companion object {
         private const val CLASSPATH_FLAG = "-classpath"

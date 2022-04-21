@@ -9,19 +9,17 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import java.nio.file.Path
 
-class ProjectViewCLiOptionsProvider {
+object ProjectViewCLiOptionsProvider {
 
-    fun generateProjectViewAndSave(cliOptions: CliOptions): Try<ProjectView> {
+    private const val EXCLUDED_TARGET_PREFIX = "-"
+
+    fun generateProjectViewAndSave(cliOptions: CliOptions, generatedProjectViewFilePath: Path): Try<ProjectView> {
         val generator = DefaultProjectViewGenerator()
         val projectView = toProjectView(cliOptions.projectViewCliOptions)
-        val projectViewFilePath = calculateProjectViewPath(cliOptions)
 
-        return generator.generatePrettyStringAndSaveInFile(projectView, projectViewFilePath)
+        return generator.generatePrettyStringAndSaveInFile(projectView, generatedProjectViewFilePath)
                 .map { projectView }
     }
-
-    private fun calculateProjectViewPath(cliOptions: CliOptions): Path =
-            cliOptions.projectViewFilePath ?: cliOptions.workspaceRootDir.resolve(DEFAULT_PROJECT_VIEW_FILE_NAME)
 
     private fun toProjectView(projectViewCliOptions: ProjectViewCliOptions?): ProjectView =
             ProjectView(
@@ -66,9 +64,4 @@ class ProjectViewCLiOptionsProvider {
 
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
             projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(io.vavr.collection.List.ofAll(it)) }
-
-    private companion object {
-        private const val DEFAULT_PROJECT_VIEW_FILE_NAME = "projectview.bazelproject"
-        private const val EXCLUDED_TARGET_PREFIX = "-"
-    }
 }
