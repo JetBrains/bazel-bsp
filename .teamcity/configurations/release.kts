@@ -15,10 +15,10 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
                 apt-get install -y wget
                 pip3 install lxml
                 bazel build //...
-                echo %env.PGP_SECRET% | base64 -di | gpg --import
+                echo %env.GPG_SECRET% | base64 -di | gpg --import
                 bazel run --stamp \
-                  --define "maven_user=%jetbrains.sonatype.access.token.username%" \
-                  --define "maven_password=%jetbrains.sonatype.access.token.password%" \
+                  --define "maven_user=%env.SONATYPE_USERNAME%" \
+                  --define "maven_password=%env.SONATYPE_PASSWORD%" \
                   //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
             """.trimIndent()
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
