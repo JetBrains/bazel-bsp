@@ -15,7 +15,6 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
                 apt-get install -y wget
                 pip3 install lxml
                 bazel build //...
-                echo xdd | base64 -di | gpg --import
                 bazel run --stamp \
                   --define "maven_user=xddd" \
                   --define "maven_password=xddd" \
