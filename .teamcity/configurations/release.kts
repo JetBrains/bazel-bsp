@@ -12,8 +12,9 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
         script {
             this.scriptContent = """
                 apt-get update
-                apt-get gpg
+                apt-get install -y gpg
                 apt-get install -y python3-pip
+                apt-get install -y wget
                 pip3 install lxml
                 wget https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64
                 chmod +x bazelisk-linux-amd64
