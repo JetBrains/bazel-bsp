@@ -17,7 +17,7 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
                 wget https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64
                 chmod +x bazelisk-linux-amd64
                 echo %env.PGP_SECRET% | base64 -di | gpg --import
-                bazelisk-linux-amd64 run --stamp \
+                ./bazelisk-linux-amd64 run --stamp \
                   --define "maven_user=%jetbrains.sonatype.access.token.username%" \
                   --define "maven_password=%jetbrains.sonatype.access.token.password%" \
                   //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
