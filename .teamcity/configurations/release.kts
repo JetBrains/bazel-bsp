@@ -8,6 +8,7 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
     steps = {
         script {
             this.scriptContent = """
+                set -ex
                 apt-get update
                 apt-get install -y gpg
                 apt-get install -y python3-pip
