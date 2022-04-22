@@ -5,9 +5,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
 open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
     name = "[release] $name",
-    params = {
-        password("gpg_secret", "credentialsJSON:bd309ca0-3387-4a6b-a185-95d162209e1e")
-    },
     steps = {
         script {
             this.scriptContent = """
@@ -18,7 +15,7 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
                 pip3 install lxml
                 wget https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64
                 chmod +x bazelisk-linux-amd64
-                echo %gpg_secret% | base64 -di | gpg --import
+                echo %env.PGP_SECRET% | base64 -di | gpg --import
                 bazelisk-linux-amd64 run --stamp \
                   --define "maven_user=%jetbrains.sonatype.access.token.username%" \
                   --define "maven_password=%jetbrains.sonatype.access.token.password%" \

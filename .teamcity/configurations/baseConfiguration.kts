@@ -9,15 +9,12 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 open class BaseBuildType(
     name: String,
     steps: BuildSteps.() -> Unit,
-    params: ParametrizedWithType.() -> Unit = { },
     artifactRules: String = ""
 ) : BuildType({
     id(name.toExtId())
     this.name = name
     this.artifactRules = artifactRules
     this.steps(steps)
-
-    this.params(params)
 
     vcs {
         root(BazelBspVcs)
