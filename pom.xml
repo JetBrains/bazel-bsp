@@ -33,10 +33,16 @@
             <url>https://github.com/jastice</url>
         </developer>
         <developer>
-            <id>Abrams27</id>
+            <id>abrams27</id>
             <name>Marcin Abramowicz</name>
-            <email>abramowiczmarcin99@gmail.com</email>
-            <url>https://github.com/Abrams27</url>
+            <email>marcin.abramowicz@jetbrains.com</email>
+            <url>https://github.com/abrams27</url>
+        </developer>
+        <developer>
+            <id>lukaszwawrzyk</id>
+            <name>Łukasz Wawrzyk</name>
+            <email>lwawrzyk@virtuslab.com</email>
+            <url>https://github.com/lukaszwawrzyk</url>
         </developer>
         <developer>
             <id>agluszak</id>

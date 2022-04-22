@@ -17,13 +17,12 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 - Compilation: Ability to compile
 - Run: Ability to run
 - Test: Ability to test
-- Prerequisites: Any prerequisites needed to properly run the server to its full capabilities
 
-| Language | Import | Compilation | Run | Test | Diagnostics | Prerequisites | Notes | 
-| - | - | - | - | - | - | - | - |
-| Scala | ✅ | ✅ | ✅ | ✅ | ✅ | [Toolchain Registration](docs/usage/scala.md) | N/A | 
-| Java | ✅ | ✅ | ✅ | ✅ | ❌ | N/A | N/A | 
-| Kotlin | ✅ | ✅ | ✅ | ✅ | ✅ | Requires [this version](https://github.com/agluszak/rules_kotlin/tree/diagnostics-updated) of rules_kotlin | KotlinJS support is minimal and not advised without further setting changes. Java source files in a kotlin rule will not possess diagnostics. |
+| Language | Import | Compilation | Run | Test | Diagnostics |
+| - | - | - | - | - | - |
+| Scala | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Java | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Kotlin | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ## Installation
 
@@ -33,7 +32,7 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 2. Run in the directory where Bazel BSP should be installed:
 
 ```
-cs launch org.jetbrains.bsp:bazel-bsp:1.1.1 -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:2.0.0 -M org.jetbrains.bsp.bazel.install.Install
 ```
 
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
@@ -45,8 +44,7 @@ Might be useful during development
 #### Using install script
 
 1. Be inside this project
-2. Run `./install.sh` if you want to install Bazel BSP in this project or `./install.sh <path to the directory>` if you
-   want to install it in a different directory
+2. Run `./install.sh <installer flags>` (`--help` is available)
 
 #### Using coursier
 
