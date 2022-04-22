@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -329,7 +328,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view in the file`() {
             // given
-            val filePath = File.createTempFile("project", "view").toPath()
+            val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -388,7 +387,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and override project view in the file`() {
             // given
-            val filePath = File.createTempFile("project", "view").toPath()
+            val filePath = Paths.get("path/to/projectview.bazelproject")
             Files.writeString(filePath, "some random things, maybe previous project view")
 
             val projectView = ProjectView(
@@ -448,7 +447,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view with empty list sections in the file which should be parsable by the parser`() {
             // given
-            val filePath = File.createTempFile("project", "view").toPath()
+            val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(List.of(), List.of()),
@@ -481,7 +480,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save partly filled project view in the file which should be parsable by the parser`() {
             // given
-            val filePath = File.createTempFile("project", "view").toPath()
+            val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -519,7 +518,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view in the file which should be parsable by the parser`() {
             // given
-            val filePath = File.createTempFile("project", "view").toPath()
+            val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
