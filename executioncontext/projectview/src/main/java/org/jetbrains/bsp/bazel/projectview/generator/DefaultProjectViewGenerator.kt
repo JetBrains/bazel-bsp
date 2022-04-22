@@ -16,7 +16,10 @@ class DefaultProjectViewGenerator : ProjectViewGenerator {
         writeStringToFile(filePath, generatePrettyString(projectView))
 
     private fun writeStringToFile(destinationPath: Path, string: String): Try<Void> {
-        return Try.run { Files.writeString(destinationPath, string) }
+        return Try.run {
+            Files.createDirectories(destinationPath.parent)
+            Files.writeString(destinationPath, string)
+        }
     }
 
     override fun generatePrettyString(projectView: ProjectView): String =
