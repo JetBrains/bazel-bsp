@@ -10,20 +10,18 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
             this.scriptContent = """
                 set -ex
                 apt-get update
-                apt-get install -y gpg
                 apt-get install -y python3-pip
-                apt-get install -y wget
                 pip3 install lxml
-                bazel build //...
+                cd "/usr/local/lib/bazel/bin" && curl -fLO https://releases.bazel.build/5.1.0/release/bazel-5.1.0-linux-x86_64 && chmod +x bazel-5.1.0-linux-x86_64 && cd -
                 echo %env.GPG_SECRET% | base64 -di | gpg --import
                 bazel run --stamp \
-                  --define "maven_user=%env.SONATYPE_USERNAME%" \
-                  --define "maven_password=%env.SONATYPE_PASSWORD%" \
+                  --define "maven_user=%jetbrains.sonatype.access.token.username%" \
+                  --define "maven_password=%jetbrains.sonatype.access.token.password%" \
                   //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
             """.trimIndent()
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
-            dockerImage = "andrefmrocha/bazelisk"
+            dockerImage = "gcr.io/cloud-marketplace-containers/google/bazel"
         }
     }
 )
