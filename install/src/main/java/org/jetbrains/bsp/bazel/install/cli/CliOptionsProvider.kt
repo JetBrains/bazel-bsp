@@ -126,7 +126,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
 
-
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 150

@@ -2,16 +2,16 @@ package org.jetbrains.bsp.bazel.server.sync.languages.java;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.control.Option;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 
 public class Jdk {
   private final String version;
-  private final Option<URI> javaHome;
+  private final Option<Path> javaHome;
 
   public Jdk(
-      @JsonProperty("version") String version, @JsonProperty("javaHome") Option<URI> javaHome) {
+      @JsonProperty("version") String version, @JsonProperty("javaHome") Option<Path> javaHome) {
     this.version = version;
     this.javaHome = javaHome;
   }
@@ -20,7 +20,7 @@ public class Jdk {
     return version;
   }
 
-  public Option<URI> javaHome() {
+  public Option<Path> javaHome() {
     return javaHome;
   }
 

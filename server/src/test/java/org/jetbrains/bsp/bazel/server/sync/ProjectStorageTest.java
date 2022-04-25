@@ -10,6 +10,7 @@ import io.vavr.control.Option;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk;
@@ -30,14 +31,14 @@ public class ProjectStorageTest {
   public void shouldStoreAndLoadProject() throws IOException {
     var path = DopeTemp.INSTANCE.createTempPath("project-cache-test.json");
     Files.deleteIfExists(path);
-    var storage = new ProjectStorage(path, new BspClientLogger());
+    var storage = new FileProjectStorage(path, new BspClientLogger());
 
     var empty = storage.load();
     assertThat(empty).isEmpty();
 
     var project =
         new Project(
-            URI.create("file:///root"),
+            Paths.get(URI.create("file:///root")),
             List.of(
                 new Module(
                     Label.from("//project:project"),
@@ -45,10 +46,10 @@ public class ProjectStorageTest {
                     List.of(Label.from("//project:dep")),
                     HashSet.of(Language.JAVA),
                     HashSet.of(Tag.LIBRARY),
-                    URI.create("file:///root/project"),
+                    Paths.get(URI.create("file:///root/project")),
                     new SourceSet(
-                        HashSet.of(URI.create("file:///root/project/Lib.java")),
-                        HashSet.of(URI.create("file:///root/project/"))),
+                        HashSet.of(Paths.get(URI.create("file:///root/project/Lib.java"))),
+                        HashSet.of(Paths.get(URI.create("file:///root/project/")))),
                     HashSet.empty(),
                     HashSet.empty(),
                     Option.some(
@@ -58,16 +59,19 @@ public class ProjectStorageTest {
                             Option.some(
                                 new JavaModule(
                                     new Jdk("8", Option.none()),
+                                    Option.none(),
                                     List.empty(),
                                     List.empty(),
-                                    URI.create("file:///tmp/out"),
+                                    Paths.get(URI.create("file:///tmp/out")),
                                     Option.none(),
                                     List.empty(),
                                     List.empty(),
                                     List.empty(),
                                     List.empty(),
                                     List.empty())))))),
-            HashMap.of(URI.create("file:///root/project/Lib.java"), Label.from("file:///root")));
+            HashMap.of(
+                Paths.get(URI.create("file:///root/project/Lib.java")),
+                Label.from("file:///root")));
 
     storage.store(project);
     var loaded = storage.load();

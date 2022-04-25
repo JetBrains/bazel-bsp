@@ -14,32 +14,32 @@ import com.google.devtools.build.v1.PublishLifecycleEventRequest;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
-import org.jetbrains.bsp.bazel.logger.BspClientLogger;
-import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
+import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticBspMapper;
+import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsParser;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
 
   private final BuildClient bspClient;
-  private final BspClientLogger logger;
 
   private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
+  private final DiagnosticBspMapper diagnosticBspMapper;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
-  private final DiagnosticsService diagnosticsService;
-
-  public BepServer(
-      BuildClient bspClient, BspClientLogger logger, DiagnosticsService diagnosticsService) {
+  public BepServer(BuildClient bspClient, DiagnosticBspMapper diagnosticBspMapper) {
     this.bspClient = bspClient;
-    this.logger = logger;
-    this.diagnosticsService = diagnosticsService;
+    this.diagnosticBspMapper = diagnosticBspMapper;
   }
 
   @Override
@@ -64,10 +64,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
       processBuildStartedEvent(event);
       processFinishedEvent(event);
+      processActionCompletedEvent(event);
       fetchNamedSet(event);
       processCompletedEvent(event);
       processAbortedEvent(event);
-      processProgressEvent(event);
     } catch (IOException e) {
       LOGGER.error("Error deserializing BEP proto: {}", e.toString());
     }
@@ -127,6 +127,36 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
+  private void processActionCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.getId().hasActionCompleted()) {
+      consumeActionCompletedEvent(event);
+    }
+  }
+
+  private void consumeActionCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
+    var label = event.getId().getActionCompleted().getLabel();
+    var actionEvent = event.getAction();
+    if (!actionEvent.getSuccess()) {
+      String stdErrText = "";
+      if (actionEvent.getStderr().getFileCase() == BuildEventStreamProtos.File.FileCase.URI) {
+        var path = Paths.get(URI.create(actionEvent.getStderr().getUri()));
+        try {
+          stdErrText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+          // noop
+        }
+      } else if (actionEvent.getStderr().getFileCase()
+          == BuildEventStreamProtos.File.FileCase.CONTENTS) {
+        stdErrText = actionEvent.getStderr().getContents().toStringUtf8();
+      }
+
+      var parsed = new DiagnosticsParser().parse(stdErrText);
+      var events = diagnosticBspMapper.createDiagnostics(parsed, label);
+
+      events.forEach(bspClient::onBuildPublishDiagnostics);
+    }
+  }
+
   private void consumeCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
     var label = event.getId().getTargetCompleted().getLabel();
     var targetComplete = event.getCompleted();
@@ -146,18 +176,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       LOGGER.warn(
           "Command aborted with reason {}: {}", aborted.getReason(), aborted.getDescription());
     }
-  }
-
-  private void processProgressEvent(BuildEventStreamProtos.BuildEvent event) {
-    if (event.hasProgress()) {
-      consumeProgressEvent(event.getProgress());
-    }
-  }
-
-  private void consumeProgressEvent(BuildEventStreamProtos.Progress progress) {
-    diagnosticsService
-        .extractDiagnostics(progress.getStderr())
-        .forEach(bspClient::onBuildPublishDiagnostics);
   }
 
   public BepOutput getBepOutput() {

@@ -9,6 +9,8 @@ import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewTargets
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.nio.file.Path
+import kotlin.io.path.outputStream
+import kotlin.io.path.writeText
 
 object DefaultProjectViewGenerator : ProjectViewGenerator {
 

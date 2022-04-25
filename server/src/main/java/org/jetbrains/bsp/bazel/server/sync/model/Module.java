@@ -1,10 +1,10 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
@@ -12,25 +12,25 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 public class Module {
   private final Label label;
   private final boolean isSynthetic;
-  private final List<Label> directDependencies;
+  private final Seq<Label> directDependencies;
   private final Set<Language> languages;
   private final Set<Tag> tags;
-  private final URI baseDirectory;
+  private final Path baseDirectory;
   private final SourceSet sourceSet;
-  private final Set<URI> resources;
-  private final Set<URI> sourceDependencies;
+  private final Set<Path> resources;
+  private final Set<Path> sourceDependencies;
   private final Option<LanguageData> languageData;
 
   public Module(
       @JsonProperty("label") Label label,
       @JsonProperty("synthetic") boolean isSynthetic,
-      @JsonProperty("directDependencies") List<Label> directDependencies,
+      @JsonProperty("directDependencies") Seq<Label> directDependencies,
       @JsonProperty("languages") Set<Language> languages,
       @JsonProperty("tags") Set<Tag> tags,
-      @JsonProperty("baseDirectory") URI baseDirectory,
+      @JsonProperty("baseDirectory") Path baseDirectory,
       @JsonProperty("sourceSet") SourceSet sourceSet,
-      @JsonProperty("resources") Set<URI> resources,
-      @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
+      @JsonProperty("resources") Set<Path> resources,
+      @JsonProperty("sourceDependencies") Set<Path> sourceDependencies,
       @JsonProperty("languageData") Option<LanguageData> languageData) {
     this.label = label;
     this.isSynthetic = isSynthetic;
@@ -53,7 +53,7 @@ public class Module {
     return isSynthetic;
   }
 
-  public List<Label> directDependencies() {
+  public Seq<Label> directDependencies() {
     return directDependencies;
   }
 
@@ -65,7 +65,7 @@ public class Module {
     return tags;
   }
 
-  public URI baseDirectory() {
+  public Path baseDirectory() {
     return baseDirectory;
   }
 
@@ -73,11 +73,11 @@ public class Module {
     return sourceSet;
   }
 
-  public Set<URI> resources() {
+  public Set<Path> resources() {
     return resources;
   }
 
-  public Set<URI> sourceDependencies() {
+  public Set<Path> sourceDependencies() {
     return sourceDependencies;
   }
 

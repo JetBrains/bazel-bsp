@@ -19,6 +19,7 @@ java_library(
         "@com_google_protobuf//:protobuf_java",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",

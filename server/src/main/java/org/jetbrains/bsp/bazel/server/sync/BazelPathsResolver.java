@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import io.vavr.collection.List;
-import java.net.URI;
+import io.vavr.collection.Array;
+import io.vavr.collection.Seq;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,16 +16,12 @@ public class BazelPathsResolver {
     this.bazelInfo = bazelInfo;
   }
 
-  public URI workspaceRoot() {
-    return bazelInfo.getWorkspaceRoot().toAbsolutePath().toUri();
+  public Path workspaceRoot() {
+    return bazelInfo.getWorkspaceRoot().toAbsolutePath();
   }
 
-  public List<URI> resolveUris(java.util.List<FileLocation> fileLocations) {
-    return List.ofAll(fileLocations).map(this::resolveUri);
-  }
-
-  public URI resolveUri(FileLocation fileLocation) {
-    return resolve(fileLocation).toUri();
+  public Seq<Path> resolvePaths(java.util.List<FileLocation> fileLocations) {
+    return fileLocations.stream().map(this::resolve).collect(Array.collector());
   }
 
   public Path resolve(FileLocation fileLocation) {

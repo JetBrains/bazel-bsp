@@ -7,12 +7,12 @@ import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
+import io.vavr.collection.Array;
 import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.net.URI;
+import java.nio.file.Path;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -27,14 +27,17 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
   private final java.util.Map<String, String> environment = System.getenv();
   private Option<Jdk> jdk;
 
+  private JdkResolver jdkResolver;
+
   public JavaLanguagePlugin(BazelPathsResolver bazelPathsResolver, BazelInfo bazelInfo) {
     this.bazelPathsResolver = bazelPathsResolver;
     this.bazelInfo = bazelInfo;
+    this.jdkResolver = new JdkResolver(bazelPathsResolver);
   }
 
   @Override
   public void prepareSync(Seq<TargetInfo> targets) {
-    this.jdk = new JdkResolver(bazelPathsResolver).resolve(targets);
+    this.jdk = jdkResolver.resolve(targets);
   }
 
   @Override
@@ -44,18 +47,23 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     }
 
     var javaTargetInfo = targetInfo.getJavaTargetInfo();
-    var javacOpts = List.ofAll(javaTargetInfo.getJavacOptsList());
-    var jvmOpts = List.ofAll(javaTargetInfo.getJvmFlagsList());
-    var mainOutput = bazelPathsResolver.resolveUri(javaTargetInfo.getJars(0).getBinaryJars(0));
+    var javacOpts = Array.ofAll(javaTargetInfo.getJavacOptsList());
+    var jvmOpts = Array.ofAll(javaTargetInfo.getJvmFlagsList());
+    var mainOutput = bazelPathsResolver.resolve(javaTargetInfo.getJars(0).getBinaryJars(0));
     var mainClass = getMainClass(javaTargetInfo);
-    var args = List.ofAll(javaTargetInfo.getArgsList());
-    var runtimeClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getRuntimeClasspathList());
-    var compileClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getCompileClasspathList());
-    var sourcesClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getSourceClasspathList());
+    var args = Array.ofAll(javaTargetInfo.getArgsList());
+    var runtimeClasspath =
+        bazelPathsResolver.resolvePaths(javaTargetInfo.getRuntimeClasspathList());
+    var compileClasspath =
+        bazelPathsResolver.resolvePaths(javaTargetInfo.getCompileClasspathList());
+    var sourcesClasspath = bazelPathsResolver.resolvePaths(javaTargetInfo.getSourceClasspathList());
     var ideClasspath = resolveIdeClasspath(runtimeClasspath, compileClasspath);
+    var runtimeJdk = jdkResolver.resolveJdk(targetInfo).flatMap(JdkResolver.JdkCandidate::asJdk);
+
     var module =
         new JavaModule(
             getJdk(),
+            runtimeJdk,
             javacOpts,
             jvmOpts,
             mainOutput,
@@ -78,17 +86,17 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     return jdk.getOrElseThrow(() -> new RuntimeException("Failed to resolve JDK for project"));
   }
 
-  private List<URI> resolveIdeClasspath(List<URI> runtimeClasspath, List<URI> compileClasspath) {
+  private Seq<Path> resolveIdeClasspath(Seq<Path> runtimeClasspath, Seq<Path> compileClasspath) {
     return new IdeClasspathResolver(runtimeClasspath, compileClasspath).resolve();
   }
 
   @Override
-  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
+  public Set<Path> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     if (!targetInfo.hasJavaTargetInfo()) {
       return HashSet.empty();
     }
     var sourceJars = targetInfo.getJavaTargetInfo().getSourceClasspathList();
-    return HashSet.ofAll(sourceJars).map(bazelPathsResolver::resolveUri);
+    return HashSet.ofAll(sourceJars).map(bazelPathsResolver::resolve);
   }
 
   @Override
@@ -100,14 +108,14 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
 
   public JvmBuildTarget toJvmBuildTarget(JavaModule javaModule) {
     var jdk = javaModule.jdk();
-    var javaHome = jdk.javaHome().map(URI::toString).getOrNull();
+    var javaHome = jdk.javaHome().map(Path::toString).getOrNull();
     return new JvmBuildTarget(javaHome, jdk.javaVersion());
   }
 
   public JvmEnvironmentItem toJvmEnvironmentItem(Module module, JavaModule javaModule) {
     return new JvmEnvironmentItem(
         toBspId(module),
-        javaModule.runtimeClasspath().map(URI::toString).asJava(),
+        javaModule.runtimeClasspath().map(Path::toString).asJava(),
         javaModule.jvmOps().asJava(),
         bazelInfo.getWorkspaceRoot().toString(),
         environment);
@@ -117,7 +125,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     return new JavacOptionsItem(
         toBspId(module),
         javaModule.javacOpts().toJavaList(),
-        javaModule.ideClasspath().map(URI::toString).toJavaList(),
+        javaModule.ideClasspath().map(Path::toString).toJavaList(),
         javaModule.mainOutput().toString());
   }
 }

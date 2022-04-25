@@ -4,7 +4,7 @@ import static org.jetbrains.bsp.bazel.server.sync.BspMappings.getModules;
 import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
 import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspUri;
 import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toLabels;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toUri;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toPath;
 
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTarget;
@@ -43,7 +43,7 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestProvider;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class BspProjectMapper {
     this.languagePluginsService = languagePluginsService;
   }
 
-  public InitializeBuildResult initializeServer(List<Language> supportedLanguages) {
+  public InitializeBuildResult initializeServer(Seq<Language> supportedLanguages) {
     var languageNames = supportedLanguages.map(Language::getName).toJavaList();
 
     var capabilities = new BuildServerCapabilities();
@@ -172,7 +172,7 @@ public class BspProjectMapper {
 
   public InverseSourcesResult inverseSources(
       Project project, InverseSourcesParams inverseSourcesParams) {
-    var documentUri = toUri(inverseSourcesParams.getTextDocument());
+    var documentUri = toPath(inverseSourcesParams.getTextDocument());
     var targets = project.findTargetBySource(documentUri).map(BspMappings::toBspId).toList();
     return new InverseSourcesResult(targets.toJavaList());
   }

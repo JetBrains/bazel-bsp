@@ -4,11 +4,12 @@ import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import java.nio.file.Path
 
 class BazelRunner private constructor(
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientLogger: BspClientLogger,
-    private val bazelInfo: BazelInfo?,
+    private val workspaceRoot: Path?,
 ) {
 
   companion object {
@@ -18,16 +19,16 @@ class BazelRunner private constructor(
     // path and create a fully functional runner.
     @JvmStatic
     fun inCwd(workspaceContextProvider: WorkspaceContextProvider, bspClientLogger: BspClientLogger): BazelRunner {
-      return BazelRunner(workspaceContextProvider, bspClientLogger, bazelInfo = null)
+      return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot = null)
     }
 
     @JvmStatic
     fun of(
         workspaceContextProvider: WorkspaceContextProvider,
         bspClientLogger: BspClientLogger,
-        bazelInfo: BazelInfo?,
+        workspaceRoot: Path?,
     ): BazelRunner {
-      return BazelRunner(workspaceContextProvider, bspClientLogger, bazelInfo)
+      return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot)
     }
   }
 
@@ -49,7 +50,7 @@ class BazelRunner private constructor(
     val processArgs = listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flags + arguments
     logInvocation(processArgs)
     val processBuilder = ProcessBuilder(processArgs)
-    bazelInfo?.let { processBuilder.directory(it.workspaceRoot.toFile()) }
+    workspaceRoot?.let { processBuilder.directory(it.toFile()) }
     val process = processBuilder.start()
     return BazelProcess(process, bspClientLogger)
   }

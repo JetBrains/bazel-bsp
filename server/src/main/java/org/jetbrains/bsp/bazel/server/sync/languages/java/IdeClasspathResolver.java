@@ -1,24 +1,25 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java;
 
-import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class IdeClasspathResolver {
 
   private final Set<String> runtimeJars;
   private final Set<String> runtimeMavenJarSuffixes;
-  private final List<String> compileJars;
+  private final Seq<String> compileJars;
 
-  public IdeClasspathResolver(List<URI> runtimeClasspath, List<URI> compileClasspath) {
-    this.runtimeJars = runtimeClasspath.map(URI::toString).toSet();
+  public IdeClasspathResolver(Seq<Path> runtimeClasspath, Seq<Path> compileClasspath) {
+    this.runtimeJars = runtimeClasspath.map(Path::toString).toSet();
     this.runtimeMavenJarSuffixes = runtimeJars.flatMap(this::toMavenSuffix);
-    this.compileJars = compileClasspath.map(URI::toString);
+    this.compileJars = compileClasspath.map(Path::toString);
   }
 
-  public List<URI> resolve() {
-    return compileJars.map(this::findRuntimeEquivalent).map(URI::create);
+  public Seq<Path> resolve() {
+    return compileJars.iterator().map(this::findRuntimeEquivalent).map(Paths::get).toArray();
   }
 
   private String findRuntimeEquivalent(String compileJar) {

@@ -4,7 +4,7 @@ import io.vavr.PartialFunction;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
@@ -17,7 +17,7 @@ public class JdkResolver {
   }
 
   public Option<Jdk> resolve(Seq<TargetInfo> targets) {
-    var allCandidates = targets.flatMap(this::resolveJdk).distinct();
+    var allCandidates = targets.iterator().flatMap(this::resolveJdk).distinct().toArray();
     if (allCandidates.isEmpty()) return Option.none();
     var latestVersion = candidatesWithLatestVersion(allCandidates);
     var complete = allCandidates.filter(JdkCandidate::isComplete);
@@ -63,7 +63,7 @@ public class JdkResolver {
     return javaHome.map(jh -> new JdkCandidate(true, javaHome, version));
   }
 
-  private Option<JdkCandidate> resolveJdk(TargetInfo targetInfo) {
+  public Option<JdkCandidate> resolveJdk(TargetInfo targetInfo) {
     var hasRuntimeJavaHome =
         targetInfo.hasJavaRuntimeInfo() && targetInfo.getJavaRuntimeInfo().hasJavaHome();
 
@@ -75,7 +75,7 @@ public class JdkResolver {
             ? (targetInfo.getJavaRuntimeInfo().getJavaHome())
             : (hasToolchainJavaHome ? targetInfo.getJavaToolchainInfo().getJavaHome() : null);
 
-    var javaHome = Option.of(javaHomeFile).map(bazelPathsResolver::resolveUri);
+    var javaHome = Option.of(javaHomeFile).map(bazelPathsResolver::resolve);
 
     Option<String> version =
         targetInfo.hasJavaToolchainInfo()
@@ -85,12 +85,12 @@ public class JdkResolver {
     return Option.some(new JdkCandidate(hasRuntimeJavaHome, javaHome, version));
   }
 
-  private static class JdkCandidate {
+  public static class JdkCandidate {
     final boolean isRuntime;
-    final Option<URI> javaHome;
+    final Option<Path> javaHome;
     final Option<String> version;
 
-    public JdkCandidate(boolean isRuntime, Option<URI> javaHome, Option<String> version) {
+    public JdkCandidate(boolean isRuntime, Option<Path> javaHome, Option<String> version) {
       this.isRuntime = isRuntime;
       this.javaHome = javaHome;
       this.version = version;

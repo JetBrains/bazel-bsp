@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vavr.collection.List;
-import java.net.URI;
+import io.vavr.collection.Seq;
+import java.nio.file.Path;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 
@@ -10,13 +10,13 @@ public class ScalaSdk {
   private final String organization;
   private final String version;
   private final String binaryVersion;
-  private final List<URI> compilerJars;
+  private final Seq<Path> compilerJars;
 
   public ScalaSdk(
       @JsonProperty("organization") String organization,
       @JsonProperty("version") String version,
       @JsonProperty("binaryVersion") String binaryVersion,
-      @JsonProperty("compilerJars") List<URI> compilerJars) {
+      @JsonProperty("compilerJars") Seq<Path> compilerJars) {
     this.organization = organization;
     this.version = version;
     this.binaryVersion = binaryVersion;
@@ -35,7 +35,7 @@ public class ScalaSdk {
     return binaryVersion;
   }
 
-  public List<URI> compilerJars() {
+  public Seq<Path> compilerJars() {
     return compilerJars;
   }
 

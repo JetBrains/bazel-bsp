@@ -1,11 +1,12 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import io.vavr.collection.Array;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,8 +19,8 @@ import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
 
 public class IntelliJProjectTreeViewFix {
-  public List<Module> createModules(
-      URI workspaceRoot, List<Module> modules, WorkspaceContext workspaceContext) {
+  public Seq<Module> createModules(
+      Path workspaceRoot, Seq<Module> modules, WorkspaceContext workspaceContext) {
     if (isFullWorkspaceImport(workspaceContext)) {
       return createWorkspaceRootModule(workspaceRoot, modules);
     } else {
@@ -31,18 +32,18 @@ public class IntelliJProjectTreeViewFix {
     return importTargetSpecs(workspaceContext).exists(s -> s.startsWith("//..."));
   }
 
-  private List<Module> createWorkspaceRootModule(URI workspaceRoot, List<Module> modules) {
+  private Seq<Module> createWorkspaceRootModule(Path workspaceRoot, Seq<Module> modules) {
     var existingRootDirectories = resolveExistingRootDirectories(modules);
     if (existingRootDirectories.contains(workspaceRoot)) {
-      return List.empty();
+      return Array.empty();
     }
 
     var rootModule = syntheticModule("bsp-workspace-root", workspaceRoot);
-    return List.of(rootModule);
+    return Array.of(rootModule);
   }
 
-  private List<Module> createMultipleModules(
-      WorkspaceContext workspaceContext, URI workspaceRoot, List<Module> modules) {
+  private Seq<Module> createMultipleModules(
+      WorkspaceContext workspaceContext, Path workspaceRoot, Seq<Module> modules) {
     var existingRootDirectories = resolveExistingRootDirectories(modules);
     var expectedRootDirs = resolveExpectedRootDirs(workspaceContext, workspaceRoot);
     return expectedRootDirs.flatMap(
@@ -51,23 +52,23 @@ public class IntelliJProjectTreeViewFix {
             return Option.none();
           }
 
-          var relative = Paths.get(workspaceRoot).relativize(Paths.get(root)).toString();
+          var relative = workspaceRoot.relativize(root).toString();
           var moduleName = relative + "-modules-root";
           return Option.some(syntheticModule(moduleName, root));
         });
   }
 
-  private Set<URI> resolveExistingRootDirectories(List<Module> modules) {
-    return modules.toSet().map(Module::sourceSet).flatMap(SourceSet::sourceRoots);
+  private Set<Path> resolveExistingRootDirectories(Seq<Module> modules) {
+    return modules.iterator().map(Module::sourceSet).flatMap(SourceSet::sourceRoots).toSet();
   }
 
-  private List<URI> resolveExpectedRootDirs(WorkspaceContext workspaceContext, URI workspaceRoot) {
+  private Seq<Path> resolveExpectedRootDirs(WorkspaceContext workspaceContext, Path workspaceRoot) {
     var dirs = rootDirsFromTargetSpecs(workspaceContext, workspaceRoot).sorted();
     if (dirs.isEmpty()) return List.empty();
     return removeAlreadyIncludedSubdirs(dirs);
   }
 
-  private List<URI> removeAlreadyIncludedSubdirs(List<String> dirs) {
+  private Seq<Path> removeAlreadyIncludedSubdirs(Seq<String> dirs) {
     var buffer = new ArrayList<String>();
     var current = dirs.get(0);
     buffer.add(current);
@@ -77,19 +78,17 @@ public class IntelliJProjectTreeViewFix {
         buffer.add(current);
       }
     }
-    return List.ofAll(buffer.stream().map(URI::create));
+    return Array.ofAll(buffer.stream().map(Paths::get));
   }
 
-  private List<String> rootDirsFromTargetSpecs(
-      WorkspaceContext workspaceContext, URI workspaceRoot) {
-    var root = Paths.get(workspaceRoot);
+  private Seq<String> rootDirsFromTargetSpecs(
+      WorkspaceContext workspaceContext, Path workspaceRoot) {
     return importTargetSpecs(workspaceContext)
         .map(s -> stripSuffixes(s, ":all", "...", "/"))
         .map(s -> stripPrefixes(s, "//"))
-        .map(root::resolve)
+        .map(workspaceRoot::resolve)
         .filter(Files::exists)
-        .map(Path::toUri)
-        .map(URI::toString);
+        .map(Path::toString);
   }
 
   private String stripSuffixes(String s, String... suffixes) {
@@ -110,17 +109,16 @@ public class IntelliJProjectTreeViewFix {
     return s;
   }
 
-  private List<String> importTargetSpecs(WorkspaceContext workspaceContext) {
-    var stream =
-        Option.of(workspaceContext.getTargets())
-            .toList()
-            .flatMap(TargetsSpec::getValues)
-            .map(BuildTargetIdentifier::getUri);
-    return List.ofAll(stream);
+  private Seq<String> importTargetSpecs(WorkspaceContext workspaceContext) {
+    return Option.of(workspaceContext.getTargets())
+        .iterator()
+        .flatMap(TargetsSpec::getValues)
+        .map(BuildTargetIdentifier::getUri)
+        .toArray();
   }
 
-  private Module syntheticModule(String moduleName, URI baseDirectory) {
-    HashSet<URI> resources = HashSet.of(baseDirectory);
+  private Module syntheticModule(String moduleName, Path baseDirectory) {
+    HashSet<Path> resources = HashSet.of(baseDirectory);
     return new Module(
         Label.from(moduleName),
         true,

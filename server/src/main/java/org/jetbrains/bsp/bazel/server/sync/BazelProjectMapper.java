@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
+import io.vavr.collection.Array;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
 import io.vavr.collection.Map;
+import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.net.URI;
 import java.nio.file.Path;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -52,16 +52,18 @@ public class BazelProjectMapper {
 
   // When we will be implementing transitive import (configurable through project view),
   // here we will implement the logic to include more targets than the root ones.
-  private List<TargetInfo> selectTargetsToImport(
+  private Seq<TargetInfo> selectTargetsToImport(
       Set<String> rootTargets, Map<String, TargetInfo> targets) {
-    return List.ofAll(rootTargets).flatMap(targets::get);
+    return rootTargets.iterator().flatMap(targets::get).toArray();
   }
 
-  private List<Module> createModules(
-      List<TargetInfo> targetsToImport, DependencyTree dependencyTree) {
+  private Seq<Module> createModules(
+      Seq<TargetInfo> targetsToImport, DependencyTree dependencyTree) {
     return targetsToImport
+        .iterator()
         .map(target -> createModule(target, dependencyTree))
-        .filter(module -> !module.tags().contains(Tag.NO_IDE));
+        .filter(module -> !module.tags().contains(Tag.NO_IDE))
+        .toArray();
   }
 
   private Module createModule(TargetInfo target, DependencyTree dependencyTree) {
@@ -69,7 +71,7 @@ public class BazelProjectMapper {
     var directDependencies = resolveDirectDependencies(target);
     var languages = inferLanguages(target);
     var tags = targetKindResolver.resolveTags(target);
-    var baseDirectory = bazelPathsResolver.labelToDirectory(label).toUri();
+    var baseDirectory = bazelPathsResolver.labelToDirectory(label);
     var sourceSet = resolveSourceSet(target);
     var resources = resolveResources(target);
 
@@ -91,13 +93,18 @@ public class BazelProjectMapper {
         languageData);
   }
 
-  private List<Label> resolveDirectDependencies(TargetInfo target) {
-    return List.ofAll(target.getDependenciesList()).map(dep -> Label.from(dep.getId()));
+  private Seq<Label> resolveDirectDependencies(TargetInfo target) {
+    return target.getDependenciesList().stream()
+        .map(dep -> Label.from(dep.getId()))
+        .collect(Array.collector());
   }
 
   private Set<Language> inferLanguages(TargetInfo target) {
-    return HashSet.ofAll(target.getSourcesList())
-        .flatMap(source -> Language.all().filter(language -> isLanguageFile(source, language)));
+    return target.getSourcesList().stream()
+        .flatMap(
+            source ->
+                Language.all().filter(language -> isLanguageFile(source, language)).toJavaStream())
+        .collect(HashSet.collector());
   }
 
   private boolean isLanguageFile(FileLocation file, Language language) {
@@ -107,22 +114,22 @@ public class BazelProjectMapper {
   private SourceSet resolveSourceSet(TargetInfo target) {
     var sources = HashSet.ofAll(target.getSourcesList()).map(bazelPathsResolver::resolve);
     var sourceRoots = sources.map(SourceRootGuesser::getSourcesRoot);
-    return new SourceSet(sources.map(Path::toUri), sourceRoots.map(Path::toUri));
+    return new SourceSet(sources, sourceRoots);
   }
 
-  private Set<URI> resolveResources(TargetInfo target) {
-    return bazelPathsResolver.resolveUris(target.getResourcesList()).toSet();
+  private Set<Path> resolveResources(TargetInfo target) {
+    return bazelPathsResolver.resolvePaths(target.getResourcesList()).toSet();
   }
 
   // TODO make this feature configurable with flag in project view file
-  private List<Module> createSyntheticModules(
-      List<Module> modulesFromBazel, URI workspaceRoot, WorkspaceContext workspaceContext) {
+  private Seq<Module> createSyntheticModules(
+      Seq<Module> modulesFromBazel, Path workspaceRoot, WorkspaceContext workspaceContext) {
     return new IntelliJProjectTreeViewFix()
         .createModules(workspaceRoot, modulesFromBazel, workspaceContext);
   }
 
-  private Map<URI, Label> buildReverseSourceMapping(List<Module> modules) {
-    var output = new java.util.HashMap<URI, Label>();
+  private Map<Path, Label> buildReverseSourceMapping(Seq<Module> modules) {
+    var output = new java.util.HashMap<Path, Label>();
     modules.forEach(
         module -> {
           module.sourceSet().sources().forEach(source -> output.put(source, module.label()));
