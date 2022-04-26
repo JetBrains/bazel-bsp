@@ -113,13 +113,6 @@ public class BspProjectMapper {
         return new BuildTargetCapabilities(canCompile, canTest, canRun);
     }
 
-//    private BuildTargetCapabilities forManual (Module module) {
-//        var canCompile = !module.tags().contains(Tag.MANUAL);
-//        var canTest = !module.tags().contains(Tag.MANUAL);
-//        var canRun = !module.tags().contains(Tag.MANUAL);
-//        return new BuildTargetCapabilities(canCompile, canTest, canRun);
-//    }
-
     private void applyLanguageData(Module module, BuildTarget buildTarget) {
         var plugin = languagePluginsService.getPlugin(module.languages());
         module.languageData().forEach(data -> plugin.setModuleData(data, buildTarget));
