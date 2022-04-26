@@ -57,203 +57,210 @@ import org.jetbrains.bsp.bazel.server.sync.model.Tag;
 
 public class BspProjectMapper {
 
-  private final LanguagePluginsService languagePluginsService;
+    private final LanguagePluginsService languagePluginsService;
 
-  public BspProjectMapper(LanguagePluginsService languagePluginsService) {
-    this.languagePluginsService = languagePluginsService;
-  }
+    public BspProjectMapper(LanguagePluginsService languagePluginsService) {
+        this.languagePluginsService = languagePluginsService;
+    }
 
-  public InitializeBuildResult initializeServer(List<Language> supportedLanguages) {
-    var languageNames = supportedLanguages.map(Language::getName).toJavaList();
+    public InitializeBuildResult initializeServer(List<Language> supportedLanguages) {
+        var languageNames = supportedLanguages.map(Language::getName).toJavaList();
 
-    var capabilities = new BuildServerCapabilities();
-    capabilities.setCompileProvider(new CompileProvider(languageNames));
-    capabilities.setRunProvider(new RunProvider(languageNames));
-    capabilities.setTestProvider(new TestProvider(languageNames));
-    capabilities.setDependencySourcesProvider(true);
-    capabilities.setInverseSourcesProvider(true);
-    capabilities.setResourcesProvider(true);
-    capabilities.setJvmRunEnvironmentProvider(true);
-    capabilities.setJvmTestEnvironmentProvider(true);
-    return new InitializeBuildResult(
-        Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities);
-  }
+        var capabilities = new BuildServerCapabilities();
+        capabilities.setCompileProvider(new CompileProvider(languageNames));
+        capabilities.setRunProvider(new RunProvider(languageNames));
+        capabilities.setTestProvider(new TestProvider(languageNames));
+        capabilities.setDependencySourcesProvider(true);
+        capabilities.setInverseSourcesProvider(true);
+        capabilities.setResourcesProvider(true);
+        capabilities.setJvmRunEnvironmentProvider(true);
+        capabilities.setJvmTestEnvironmentProvider(true);
+        return new InitializeBuildResult(
+                Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities);
+    }
 
-  public WorkspaceBuildTargetsResult workspaceTargets(Project project) {
-    var buildTargets = project.modules().map(this::toBuildTarget);
-    return new WorkspaceBuildTargetsResult(buildTargets.toJavaList());
-  }
+    public WorkspaceBuildTargetsResult workspaceTargets(Project project) {
+        var buildTargets = project.modules().map(this::toBuildTarget);
+        return new WorkspaceBuildTargetsResult(buildTargets.toJavaList());
+    }
 
-  private BuildTarget toBuildTarget(Module module) {
-    var label = toBspId(module);
-    var dependencies = module.directDependencies().map(BspMappings::toBspId);
-    var languages = module.languages().flatMap(Language::getAllNames);
-    var capabilities = inferCapabilities(module);
-    var tags = module.tags().flatMap(BspMappings::toBspTag);
-    var baseDirectory = toBspUri(module.baseDirectory());
+    private BuildTarget toBuildTarget(Module module) {
+        var label = toBspId(module);
+        var dependencies = module.directDependencies().map(BspMappings::toBspId);
+        var languages = module.languages().flatMap(Language::getAllNames);
+        var capabilities = inferCapabilities(module);
+        var tags = module.tags().flatMap(BspMappings::toBspTag);
+        var baseDirectory = toBspUri(module.baseDirectory());
 
-    var buildTarget =
-        new BuildTarget(
-            label,
-            tags.toJavaList(),
-            languages.toJavaList(),
-            dependencies.toJavaList(),
-            capabilities);
-    buildTarget.setDisplayName(label.getUri());
-    buildTarget.setBaseDirectory(baseDirectory);
-    applyLanguageData(module, buildTarget);
+        var buildTarget =
+                new BuildTarget(
+                        label,
+                        tags.toJavaList(),
+                        languages.toJavaList(),
+                        dependencies.toJavaList(),
+                        capabilities);
+        buildTarget.setDisplayName(label.getUri());
+        buildTarget.setBaseDirectory(baseDirectory);
+        applyLanguageData(module, buildTarget);
 
-    return buildTarget;
-  }
+        return buildTarget;
+    }
 
-  private BuildTargetCapabilities inferCapabilities(Module module) {
-    var canCompile = !module.tags().contains(Tag.NO_BUILD);
-    var canTest = module.tags().contains(Tag.TEST);
-    var canRun = module.tags().contains(Tag.APPLICATION);
-    return new BuildTargetCapabilities(canCompile, canTest, canRun);
-  }
+    private BuildTargetCapabilities inferCapabilities(Module module) {
+        var canCompile = !module.tags().contains(Tag.NO_BUILD) || !module.tags().contains(Tag.MANUAL);
+        var canTest = module.tags().contains(Tag.TEST) || !module.tags().contains(Tag.MANUAL);
+        var canRun = module.tags().contains(Tag.APPLICATION) || !module.tags().contains(Tag.MANUAL);
+        return new BuildTargetCapabilities(canCompile, canTest, canRun);
+    }
 
-  private void applyLanguageData(Module module, BuildTarget buildTarget) {
-    var plugin = languagePluginsService.getPlugin(module.languages());
-    module.languageData().forEach(data -> plugin.setModuleData(data, buildTarget));
-  }
+//    private BuildTargetCapabilities forManual (Module module) {
+//        var canCompile = !module.tags().contains(Tag.MANUAL);
+//        var canTest = !module.tags().contains(Tag.MANUAL);
+//        var canRun = !module.tags().contains(Tag.MANUAL);
+//        return new BuildTargetCapabilities(canCompile, canTest, canRun);
+//    }
 
-  public SourcesResult sources(Project project, SourcesParams sourcesParams) {
-    // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
-    // we need a use case with some generated files and then figure out how to handle it
-    var labels = toLabels(sourcesParams.getTargets());
-    var sourcesItems =
-        labels.map(
-            label ->
+    private void applyLanguageData(Module module, BuildTarget buildTarget) {
+        var plugin = languagePluginsService.getPlugin(module.languages());
+        module.languageData().forEach(data -> plugin.setModuleData(data, buildTarget));
+    }
+
+    public SourcesResult sources(Project project, SourcesParams sourcesParams) {
+        // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
+        // we need a use case with some generated files and then figure out how to handle it
+        var labels = toLabels(sourcesParams.getTargets());
+        var sourcesItems =
+                labels.map(
+                        label ->
+                                project
+                                        .findModule(label)
+                                        .map(this::toSourcesItem)
+                                        .getOrElse(() -> emptySourcesItem(label)));
+        return new SourcesResult(sourcesItems.toJavaList());
+    }
+
+    private SourcesItem toSourcesItem(Module module) {
+        var sourceSet = module.sourceSet();
+        var sourceItems =
+                sourceSet
+                        .sources()
+                        .map(source -> new SourceItem(toBspUri(source), SourceItemKind.FILE, false));
+        var sourceRoots = sourceSet.sourceRoots().map(BspMappings::toBspUri);
+
+        var sourcesItem = new SourcesItem(toBspId(module), sourceItems.toJavaList());
+        sourcesItem.setRoots(sourceRoots.toJavaList());
+        return sourcesItem;
+    }
+
+    private SourcesItem emptySourcesItem(Label label) {
+        return new SourcesItem(toBspId(label), Collections.emptyList());
+    }
+
+    public ResourcesResult resources(Project project, ResourcesParams resourcesParams) {
+        var labels = toLabels(resourcesParams.getTargets());
+        var resourcesItems =
+                labels.map(
+                        label ->
+                                project
+                                        .findModule(label)
+                                        .map(this::toResourcesItem)
+                                        .getOrElse(() -> emptyResourcesItem(label)));
+        return new ResourcesResult(resourcesItems.toJavaList());
+    }
+
+    private ResourcesItem toResourcesItem(Module module) {
+        var resources = module.resources().map(BspMappings::toBspUri);
+        return new ResourcesItem(toBspId(module), resources.toJavaList());
+    }
+
+    private ResourcesItem emptyResourcesItem(Label label) {
+        return new ResourcesItem(toBspId(label), Collections.emptyList());
+    }
+
+    public InverseSourcesResult inverseSources(
+            Project project, InverseSourcesParams inverseSourcesParams) {
+        var documentUri = toUri(inverseSourcesParams.getTextDocument());
+        var targets = project.findTargetBySource(documentUri).map(BspMappings::toBspId).toList();
+        return new InverseSourcesResult(targets.toJavaList());
+    }
+
+    public DependencySourcesResult dependencySources(
+            Project project, DependencySourcesParams dependencySourcesParams) {
+        var labels = toLabels(dependencySourcesParams.getTargets());
+        var items = labels.map(label -> getDependencySourcesItem(project, label));
+        return new DependencySourcesResult(items.toJavaList());
+    }
+
+    private DependencySourcesItem getDependencySourcesItem(Project project, Label label) {
+        var sources =
                 project
-                    .findModule(label)
-                    .map(this::toSourcesItem)
-                    .getOrElse(() -> emptySourcesItem(label)));
-    return new SourcesResult(sourcesItems.toJavaList());
-  }
+                        .findModule(label)
+                        .map(module -> module.sourceDependencies().map(BspMappings::toBspUri))
+                        .getOrElse(HashSet.empty());
+        return new DependencySourcesItem(toBspId(label), sources.toJavaList());
+    }
 
-  private SourcesItem toSourcesItem(Module module) {
-    var sourceSet = module.sourceSet();
-    var sourceItems =
-        sourceSet
-            .sources()
-            .map(source -> new SourceItem(toBspUri(source), SourceItemKind.FILE, false));
-    var sourceRoots = sourceSet.sourceRoots().map(BspMappings::toBspUri);
+    public JvmRunEnvironmentResult jvmRunEnvironment(
+            Project project, JvmRunEnvironmentParams params) {
+        var targets = params.getTargets();
+        var result = getJvmEnvironmentItems(project, targets).toJavaList();
+        return new JvmRunEnvironmentResult(result);
+    }
 
-    var sourcesItem = new SourcesItem(toBspId(module), sourceItems.toJavaList());
-    sourcesItem.setRoots(sourceRoots.toJavaList());
-    return sourcesItem;
-  }
+    public JvmTestEnvironmentResult jvmTestEnvironment(
+            Project project, JvmTestEnvironmentParams params) {
+        var targets = params.getTargets();
+        var result = getJvmEnvironmentItems(project, targets).toJavaList();
+        return new JvmTestEnvironmentResult(result);
+    }
 
-  private SourcesItem emptySourcesItem(Label label) {
-    return new SourcesItem(toBspId(label), Collections.emptyList());
-  }
+    private Set<JvmEnvironmentItem> getJvmEnvironmentItems(
+            Project project, java.util.List<BuildTargetIdentifier> targets) {
+        var labels = toLabels(targets);
+        return labels.flatMap(
+                label -> project.findModule(label).flatMap(this::extractJvmEnvironmentItem));
+    }
 
-  public ResourcesResult resources(Project project, ResourcesParams resourcesParams) {
-    var labels = toLabels(resourcesParams.getTargets());
-    var resourcesItems =
-        labels.map(
-            label ->
-                project
-                    .findModule(label)
-                    .map(this::toResourcesItem)
-                    .getOrElse(() -> emptyResourcesItem(label)));
-    return new ResourcesResult(resourcesItems.toJavaList());
-  }
+    private Option<JvmEnvironmentItem> extractJvmEnvironmentItem(Module module) {
+        var javaLanguagePlugin = languagePluginsService.javaPlugin();
+        return languagePluginsService
+                .extractJavaModule(module)
+                .map(javaModule -> javaLanguagePlugin.toJvmEnvironmentItem(module, javaModule));
+    }
 
-  private ResourcesItem toResourcesItem(Module module) {
-    var resources = module.resources().map(BspMappings::toBspUri);
-    return new ResourcesItem(toBspId(module), resources.toJavaList());
-  }
+    public JavacOptionsResult buildTargetJavacOptions(Project project, JavacOptionsParams params) {
+        var modules = getModules(project, params.getTargets());
+        var items = modules.flatMap(this::extractJavacOptionsItem);
+        return new JavacOptionsResult(items.toJavaList());
+    }
 
-  private ResourcesItem emptyResourcesItem(Label label) {
-    return new ResourcesItem(toBspId(label), Collections.emptyList());
-  }
+    private Option<JavacOptionsItem> extractJavacOptionsItem(Module module) {
+        var javaLanguagePlugin = languagePluginsService.javaPlugin();
+        return languagePluginsService
+                .extractJavaModule(module)
+                .map(javaModule -> javaLanguagePlugin.toJavacOptionsItem(module, javaModule));
+    }
 
-  public InverseSourcesResult inverseSources(
-      Project project, InverseSourcesParams inverseSourcesParams) {
-    var documentUri = toUri(inverseSourcesParams.getTextDocument());
-    var targets = project.findTargetBySource(documentUri).map(BspMappings::toBspId).toList();
-    return new InverseSourcesResult(targets.toJavaList());
-  }
+    public ScalacOptionsResult buildTargetScalacOptions(Project project, ScalacOptionsParams params) {
+        var modules = getModules(project, params.getTargets());
+        var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
+        var items = modules.flatMap(scalaLanguagePlugin::toScalacOptionsItem);
+        return new ScalacOptionsResult(items.toJavaList());
+    }
 
-  public DependencySourcesResult dependencySources(
-      Project project, DependencySourcesParams dependencySourcesParams) {
-    var labels = toLabels(dependencySourcesParams.getTargets());
-    var items = labels.map(label -> getDependencySourcesItem(project, label));
-    return new DependencySourcesResult(items.toJavaList());
-  }
+    public ScalaTestClassesResult buildTargetScalaTestClasses(
+            Project project, ScalaTestClassesParams params) {
+        var modules = getModules(project, params.getTargets());
+        var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
+        var items = modules.flatMap(scalaLanguagePlugin::toScalaTestClassesItem);
+        return new ScalaTestClassesResult(items.toJavaList());
+    }
 
-  private DependencySourcesItem getDependencySourcesItem(Project project, Label label) {
-    var sources =
-        project
-            .findModule(label)
-            .map(module -> module.sourceDependencies().map(BspMappings::toBspUri))
-            .getOrElse(HashSet.empty());
-    return new DependencySourcesItem(toBspId(label), sources.toJavaList());
-  }
-
-  public JvmRunEnvironmentResult jvmRunEnvironment(
-      Project project, JvmRunEnvironmentParams params) {
-    var targets = params.getTargets();
-    var result = getJvmEnvironmentItems(project, targets).toJavaList();
-    return new JvmRunEnvironmentResult(result);
-  }
-
-  public JvmTestEnvironmentResult jvmTestEnvironment(
-      Project project, JvmTestEnvironmentParams params) {
-    var targets = params.getTargets();
-    var result = getJvmEnvironmentItems(project, targets).toJavaList();
-    return new JvmTestEnvironmentResult(result);
-  }
-
-  private Set<JvmEnvironmentItem> getJvmEnvironmentItems(
-      Project project, java.util.List<BuildTargetIdentifier> targets) {
-    var labels = toLabels(targets);
-    return labels.flatMap(
-        label -> project.findModule(label).flatMap(this::extractJvmEnvironmentItem));
-  }
-
-  private Option<JvmEnvironmentItem> extractJvmEnvironmentItem(Module module) {
-    var javaLanguagePlugin = languagePluginsService.javaPlugin();
-    return languagePluginsService
-        .extractJavaModule(module)
-        .map(javaModule -> javaLanguagePlugin.toJvmEnvironmentItem(module, javaModule));
-  }
-
-  public JavacOptionsResult buildTargetJavacOptions(Project project, JavacOptionsParams params) {
-    var modules = getModules(project, params.getTargets());
-    var items = modules.flatMap(this::extractJavacOptionsItem);
-    return new JavacOptionsResult(items.toJavaList());
-  }
-
-  private Option<JavacOptionsItem> extractJavacOptionsItem(Module module) {
-    var javaLanguagePlugin = languagePluginsService.javaPlugin();
-    return languagePluginsService
-        .extractJavaModule(module)
-        .map(javaModule -> javaLanguagePlugin.toJavacOptionsItem(module, javaModule));
-  }
-
-  public ScalacOptionsResult buildTargetScalacOptions(Project project, ScalacOptionsParams params) {
-    var modules = getModules(project, params.getTargets());
-    var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
-    var items = modules.flatMap(scalaLanguagePlugin::toScalacOptionsItem);
-    return new ScalacOptionsResult(items.toJavaList());
-  }
-
-  public ScalaTestClassesResult buildTargetScalaTestClasses(
-      Project project, ScalaTestClassesParams params) {
-    var modules = getModules(project, params.getTargets());
-    var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
-    var items = modules.flatMap(scalaLanguagePlugin::toScalaTestClassesItem);
-    return new ScalaTestClassesResult(items.toJavaList());
-  }
-
-  public ScalaMainClassesResult buildTargetScalaMainClasses(
-      Project project, ScalaMainClassesParams params) {
-    var modules = getModules(project, params.getTargets());
-    var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
-    var items = modules.flatMap(scalaLanguagePlugin::toScalaMainClassesItem);
-    return new ScalaMainClassesResult(items.toJavaList());
-  }
+    public ScalaMainClassesResult buildTargetScalaMainClasses(
+            Project project, ScalaMainClassesParams params) {
+        var modules = getModules(project, params.getTargets());
+        var scalaLanguagePlugin = languagePluginsService.scalaPlugin();
+        var items = modules.flatMap(scalaLanguagePlugin::toScalaMainClassesItem);
+        return new ScalaMainClassesResult(items.toJavaList());
+    }
 }
