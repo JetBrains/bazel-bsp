@@ -35,6 +35,8 @@ public class BspMappings {
         return Option.some(BuildTargetTag.NO_IDE);
       case NO_BUILD:
         return Option.none();
+      case MANUAL:
+        return Option.none();
       default:
         throw new RuntimeException("Unexpected tag: " + tag);
     }
