@@ -20,10 +20,6 @@ public class TargetKindResolver {
                         .map(Map.Entry::getValue)
                         .findFirst()
                         .orElse(Tag.NO_IDE);
-//        var tagToManual = ruleSuffixToTargetType.entrySet().stream()
-//                .filter(entry -> targetInfo.getKind().endsWith("_" + entry.getKey()))
-//                .map(Map.Entry::getValue)
-//                .findAny("manual");
         if (targetInfo.getTagsList().contains("no-ide")) {
             return HashSet.of(tag, Tag.NO_IDE);
         } else if (targetInfo.getTagsList().contains("manual")) {
