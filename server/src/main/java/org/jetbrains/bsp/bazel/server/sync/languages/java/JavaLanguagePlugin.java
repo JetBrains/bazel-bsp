@@ -23,18 +23,21 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
 public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
   private final BazelPathsResolver bazelPathsResolver;
+  private final JdkResolver jdkResolver;
   private final BazelInfo bazelInfo;
   private final java.util.Map<String, String> environment = System.getenv();
   private Option<Jdk> jdk;
 
-  public JavaLanguagePlugin(BazelPathsResolver bazelPathsResolver, BazelInfo bazelInfo) {
+  public JavaLanguagePlugin(
+      BazelPathsResolver bazelPathsResolver, JdkResolver jdkResolver, BazelInfo bazelInfo) {
     this.bazelPathsResolver = bazelPathsResolver;
+    this.jdkResolver = jdkResolver;
     this.bazelInfo = bazelInfo;
   }
 
   @Override
   public void prepareSync(Seq<TargetInfo> targets) {
-    this.jdk = new JdkResolver(bazelPathsResolver).resolve(targets);
+    this.jdk = Option.of(jdkResolver.resolve(targets.asJava()));
   }
 
   @Override

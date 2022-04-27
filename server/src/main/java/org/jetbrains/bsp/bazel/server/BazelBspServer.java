@@ -36,6 +36,8 @@ import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin;
+import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver;
+import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver;
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin;
 
@@ -64,7 +66,8 @@ public class BazelBspServer {
     var aspectsResolver = new InternalAspectsResolver(bazelInfo, bspInfo);
     var bazelBspAspectsManager = new BazelBspAspectsManager(compilationManager, aspectsResolver);
     var bazelPathsResolver = new BazelPathsResolver(bazelInfo);
-    var javaLanguagePlugin = new JavaLanguagePlugin(bazelPathsResolver, bazelInfo);
+    var jdkResolver = new JdkResolver(bazelPathsResolver, new JdkVersionResolver());
+    var javaLanguagePlugin = new JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo);
     var scalaLanguagePlugin = new ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver);
     var cppLanguagePlugin = new CppLanguagePlugin();
     var thriftLanguagePlugin = new ThriftLanguagePlugin(bazelPathsResolver);
