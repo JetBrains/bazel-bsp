@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.net.HostAndPort;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import java.nio.file.Path;
@@ -46,9 +45,9 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     var parser = new ProjectViewDebuggerAddressSectionParser();
     var rawValueConstructor = (Function<String, String>) (seed) -> "host_" + seed + ":8080";
     var sectionMapper =
-        (Function<HostAndPort, ProjectViewDebuggerAddressSection>)
+        (Function<String, ProjectViewDebuggerAddressSection>)
             ProjectViewDebuggerAddressSection::new;
-    var elementMapper = (Function<String, HostAndPort>) HostAndPort::fromString;
+    var elementMapper = (Function<String, String>) x -> x;
 
     var sectionConstructor =
         createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);

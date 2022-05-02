@@ -9,12 +9,10 @@ kt_jvm_library(
     ],
     exports = [
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
         "@maven//:org_apache_commons_commons_collections4",
     ],

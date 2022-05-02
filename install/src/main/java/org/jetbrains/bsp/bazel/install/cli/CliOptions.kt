@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.install.cli
 
-import com.google.common.net.HostAndPort
 import java.nio.file.Path
 
 data class HelpCliOptions internal constructor(
@@ -11,7 +10,7 @@ data class HelpCliOptions internal constructor(
 data class ProjectViewCliOptions internal constructor(
         val javaPath: Path?,
         val bazelPath: Path?,
-        val debuggerAddress: HostAndPort?,
+        val debuggerAddress: String?,
         val targets: List<String>?,
         val buildFlags: List<String>?,
 )

@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.parser
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
 import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -176,7 +175,7 @@ class ProjectViewParserImplTest {
                     ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -212,7 +211,7 @@ class ProjectViewParserImplTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -252,7 +251,7 @@ class ProjectViewParserImplTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path7/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.7:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.7:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path7/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -286,7 +285,7 @@ class ProjectViewParserImplTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path8/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.8:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.8:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path8/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -326,7 +325,7 @@ class ProjectViewParserImplTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path3/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path3/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -371,7 +370,7 @@ class ProjectViewParserImplTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -458,7 +457,7 @@ class ProjectViewParserImplTest {
                     ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -553,7 +552,7 @@ class ProjectViewParserImplTest {
                     ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -584,7 +583,7 @@ class ProjectViewParserImplTest {
                     ), List.of(BuildTargetIdentifier("//excluded_target1.1"))
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.1:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -615,7 +614,7 @@ class ProjectViewParserImplTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path8/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.8:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.8:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path8/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(

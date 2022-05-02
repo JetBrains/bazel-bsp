@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.install
 
-
 import io.vavr.control.Option
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.BetterFiles

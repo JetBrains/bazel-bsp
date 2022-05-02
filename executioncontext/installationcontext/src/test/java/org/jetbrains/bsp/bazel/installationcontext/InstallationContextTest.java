@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.installationcontext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.net.HostAndPort;
 import io.vavr.control.Option;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity;
@@ -32,8 +31,7 @@ public class InstallationContextTest {
             .javaPath(new InstallationContextJavaPathEntity(Paths.get("/path/to/java")))
             .debuggerAddress(
                 Option.of(
-                    new InstallationContextDebuggerAddressEntity(
-                        HostAndPort.fromString("host:8000"))))
+                    new InstallationContextDebuggerAddressEntity("host:8000")))
             .build();
 
     // then
@@ -45,7 +43,7 @@ public class InstallationContextTest {
 
     var expectedDebuggerAddress =
         Option.of(
-            new InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000")));
+            new InstallationContextDebuggerAddressEntity("host:8000"));
     assertThat(installationContext.getDebuggerAddress()).isEqualTo(expectedDebuggerAddress);
   }
 }

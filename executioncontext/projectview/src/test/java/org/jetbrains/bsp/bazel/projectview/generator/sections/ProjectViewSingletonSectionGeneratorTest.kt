@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.generator.sections
 
-import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
@@ -78,7 +77,7 @@ class ProjectViewSingletonSectionGeneratorTest {
         @Test
         fun `should return pretty string for non null section`() {
             // given
-            val section = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000"))
+            val section = ProjectViewDebuggerAddressSection("localhost:8000")
 
             // when
             val generatedString = generator.generatePrettyString(section)

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.installationcontext
 
-import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Option
 import io.vavr.control.Try
@@ -55,7 +54,7 @@ class InstallationContextConstructorTest {
             val projectView =
                 ProjectView.Builder(
                     javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))
+                    debuggerAddress = ProjectViewDebuggerAddressSection("host:8000")
                 )
                     .build()
             // when
@@ -68,7 +67,7 @@ class InstallationContextConstructorTest {
             val expectedJavaPath = InstallationContextJavaPathEntity(Paths.get("/path/to/java"))
             installationContext.javaPath shouldBe expectedJavaPath
 
-            val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"))
+            val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity("host:8000")
             installationContext.debuggerAddress.get() shouldBe expectedDebuggerAddress
         }
     }

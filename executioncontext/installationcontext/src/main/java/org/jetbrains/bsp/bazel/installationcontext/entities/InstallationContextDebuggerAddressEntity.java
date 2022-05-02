@@ -1,12 +1,11 @@
 package org.jetbrains.bsp.bazel.installationcontext.entities;
 
-import com.google.common.net.HostAndPort;
 import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextSingletonEntity;
 
 public class InstallationContextDebuggerAddressEntity
-    extends ExecutionContextSingletonEntity<HostAndPort> {
+    extends ExecutionContextSingletonEntity<String> {
 
-  public InstallationContextDebuggerAddressEntity(HostAndPort value) {
+  public InstallationContextDebuggerAddressEntity(String value) {
     super(value);
   }
 

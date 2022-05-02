@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections
 
-import com.google.common.net.HostAndPort
 import java.nio.file.Path
 
 sealed class ProjectViewSingletonSection<T>(sectionName: String) : ProjectViewSection(sectionName) {
@@ -14,8 +13,8 @@ data class ProjectViewJavaPathSection(override val value: Path) :
     }
 }
 
-data class ProjectViewDebuggerAddressSection(override val value: HostAndPort) :
-    ProjectViewSingletonSection<HostAndPort>(SECTION_NAME) {
+data class ProjectViewDebuggerAddressSection(override val value: String) :
+    ProjectViewSingletonSection<String>(SECTION_NAME) {
     companion object {
         const val SECTION_NAME = "debugger_address"
     }

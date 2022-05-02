@@ -13,7 +13,6 @@ kt_jvm_library(
         "//install/src/main/java/org/jetbrains/bsp/bazel/install/cli",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
-        "@maven//:com_google_guava_guava",
         "@maven//:commons_cli_commons_cli",
         "@maven//:io_vavr_vavr",
     ],

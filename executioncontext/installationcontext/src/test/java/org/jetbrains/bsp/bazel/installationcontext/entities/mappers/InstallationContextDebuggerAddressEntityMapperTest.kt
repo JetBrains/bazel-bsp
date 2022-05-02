@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.installationcontext.entities.mappers
 
-import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Option
 import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity
@@ -39,7 +38,7 @@ class InstallationContextDebuggerAddressEntityMapperTest {
         // given
         val projectView =
             ProjectView.Builder(
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))
+                debuggerAddress = ProjectViewDebuggerAddressSection("host:8000")
             ).build().get()
 
         // when
@@ -49,7 +48,7 @@ class InstallationContextDebuggerAddressEntityMapperTest {
         debuggerAddressTry.isSuccess shouldBe true
         val debuggerAddressOption = debuggerAddressTry.get()
 
-        val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"))
+        val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity("host:8000")
         debuggerAddressOption shouldBe Option.of(expectedDebuggerAddress)
     }
 }
