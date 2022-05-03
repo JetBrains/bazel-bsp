@@ -10,7 +10,7 @@ abstract class ProjectViewSectionGenerator<in T : ProjectViewSection> {
      * If section is null, should return null
      */
     fun generatePrettyString(section: T?): String? =
-        section?.let(::generatePrettyStringForNonNull)
+            section?.let(::generatePrettyStringForNonNull)
 
     protected abstract fun generatePrettyStringForNonNull(section: T): String
 }
