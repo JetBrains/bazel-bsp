@@ -213,6 +213,7 @@ maven_install(
         "org.apache.commons:commons-collections4:jar:4.4",
         "org.junit.jupiter:junit-jupiter:5.8.2",
         "com.fasterxml.jackson.core:jackson-databind:2.13.2.2",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2",
         "io.vavr:vavr-jackson:0.10.3",
     ],
     fetch_sources = True,
