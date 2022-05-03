@@ -1,62 +1,34 @@
-package org.jetbrains.bsp.bazel.workspacecontext;
+package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Option;
-import io.vavr.control.Try;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext;
-import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity;
+import io.vavr.control.Try
+import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextConstructor
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 
 /**
- * Representation of <code>ExecutionContext</code> used during server lifetime.
+ * Representation of `ExecutionContext` used during server lifetime.
  *
  * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
  */
-public class WorkspaceContext extends ExecutionContext {
+data class WorkspaceContext(
+    /**
+     * Targets (included and excluded) on which the user wants to work.
+     *
+     *
+     * Obtained from `ProjectView` simply by mapping 'targets' section.
+     */
+    val targets: ExecutionContextTargetsEntity
+) : ExecutionContext()
 
-  /**
-   * Targets (included and excluded) on which the user wants to work.
-   *
-   * <p>Obtained from <code>ProjectView</code> simply by mapping 'targets' section.
-   */
-  private final ExecutionContextTargetsEntity targets;
 
-  private WorkspaceContext(ExecutionContextTargetsEntity targets) {
-    this.targets = targets;
-  }
+object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContext> {
 
-  public ExecutionContextTargetsEntity getTargets() {
-    return targets;
-  }
+    private val log = LogManager.getLogger(WorkspaceContextConstructor::class.java)
 
-  public static WorkspaceContext.Builder builder() {
-    return new Builder();
-  }
+    override fun construct(projectView: ProjectView): Try<WorkspaceContext> {
+        log.info("Constructing workspace context for: {}.", projectView)
 
-  public static class Builder {
-
-    private static final Logger log = LogManager.getLogger(WorkspaceContext.Builder.class);
-
-    private Option<ExecutionContextTargetsEntity> targets = Option.none();
-
-    private Builder() {}
-
-    public Builder targets(ExecutionContextTargetsEntity targets) {
-      this.targets = Option.of(targets);
-
-      return this;
+        return WorkspaceContextTargetsEntityMapper.map(projectView).map { WorkspaceContext(it) }
     }
-
-    public Try<WorkspaceContext> build() {
-      if (targets.isEmpty()) {
-        var exceptionMessage = "Workspace context creation failed! 'targets' has to be defined.";
-
-        log.error(exceptionMessage);
-
-        return Try.failure(new IllegalStateException(exceptionMessage));
-      }
-
-      return Try.success(new WorkspaceContext(targets.get()));
-    }
-  }
 }

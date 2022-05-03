@@ -1,8 +1,7 @@
-package org.jetbrains.bsp.bazel.installationcontext.entities.mappers
+package org.jetbrains.bsp.bazel.installationcontext
 
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity
+import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.junit.jupiter.api.BeforeEach

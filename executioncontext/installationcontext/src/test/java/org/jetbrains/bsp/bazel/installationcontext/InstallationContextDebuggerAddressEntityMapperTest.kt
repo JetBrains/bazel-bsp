@@ -1,8 +1,6 @@
-package org.jetbrains.bsp.bazel.installationcontext.entities.mappers
+package org.jetbrains.bsp.bazel.installationcontext
 
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Option
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.junit.jupiter.api.BeforeEach
@@ -30,7 +28,7 @@ class InstallationContextDebuggerAddressEntityMapperTest {
         debuggerAddressTry.isSuccess shouldBe true
         val debuggerAddressOption = debuggerAddressTry.get()
 
-        debuggerAddressOption shouldBe Option.none()
+        debuggerAddressOption shouldBe null
     }
 
     @Test
@@ -49,6 +47,6 @@ class InstallationContextDebuggerAddressEntityMapperTest {
         val debuggerAddressOption = debuggerAddressTry.get()
 
         val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity("host:8000")
-        debuggerAddressOption shouldBe Option.of(expectedDebuggerAddress)
+        debuggerAddressOption shouldBe expectedDebuggerAddress
     }
 }

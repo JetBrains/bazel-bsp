@@ -1,10 +1,7 @@
 package org.jetbrains.bsp.bazel.installationcontext
 
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Option
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
@@ -22,7 +19,7 @@ class InstallationContextConstructorTest {
     fun beforeEach() {
         // given
         this.installationContextConstructor =
-            InstallationContextConstructor(Option.of(Paths.get("/path/to/projectview.bazelproject")))
+            InstallationContextConstructor(Paths.get("/path/to/projectview.bazelproject"))
     }
 
     @Nested
@@ -55,8 +52,8 @@ class InstallationContextConstructorTest {
                 ProjectView.Builder(
                     javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                     debuggerAddress = ProjectViewDebuggerAddressSection("host:8000")
-                )
-                    .build()
+                ).build()
+
             // when
             val installationContextTry = installationContextConstructor.construct(projectView)
 
@@ -68,7 +65,7 @@ class InstallationContextConstructorTest {
             installationContext.javaPath shouldBe expectedJavaPath
 
             val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity("host:8000")
-            installationContext.debuggerAddress.get() shouldBe expectedDebuggerAddress
+            installationContext.debuggerAddress shouldBe expectedDebuggerAddress
         }
     }
 }

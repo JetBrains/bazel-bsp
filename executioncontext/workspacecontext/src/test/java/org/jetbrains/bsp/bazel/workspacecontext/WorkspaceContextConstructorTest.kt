@@ -3,24 +3,13 @@ package org.jetbrains.bsp.bazel.workspacecontext
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
-import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class WorkspaceContextConstructorImplTest {
-
-    private lateinit var workspaceContextConstructor: WorkspaceContextConstructorImpl
-
-    @BeforeEach
-    fun beforeEach() {
-        // given
-        this.workspaceContextConstructor = WorkspaceContextConstructorImpl()
-    }
+class WorkspaceContextConstructorTest {
 
     @Nested
     @DisplayName("fun construct(projectViewTry: Try<ProjectView>): Try<WorkspaceContext> tests")
@@ -32,7 +21,7 @@ class WorkspaceContextConstructorImplTest {
             val projectViewTry = Try.failure<ProjectView>(Exception("exception message"))
 
             // when
-            val workspaceContextTry = workspaceContextConstructor.construct(projectViewTry)
+            val workspaceContextTry = WorkspaceContextConstructor.construct(projectViewTry)
 
             // then
             workspaceContextTry.isFailure shouldBe true
@@ -52,17 +41,17 @@ class WorkspaceContextConstructorImplTest {
                 ProjectView.Builder(
                     targets =
                     ProjectViewTargetsSection(
-                        List.of(
+                        io.vavr.collection.List.of(
                             BuildTargetIdentifier("//included_target1"),
                             BuildTargetIdentifier("//included_target2"),
                             BuildTargetIdentifier("//included_target3")
                         ),
-                        List.of(BuildTargetIdentifier("//excluded_target1")),
+                        io.vavr.collection.List.of(BuildTargetIdentifier("//excluded_target1")),
                     )
                 ).build()
 
             // when
-            val workspaceContextTry = workspaceContextConstructor.construct(projectView)
+            val workspaceContextTry = WorkspaceContextConstructor.construct(projectView)
 
             // then
             workspaceContextTry.isSuccess shouldBe true
@@ -70,11 +59,11 @@ class WorkspaceContextConstructorImplTest {
 
             val expectedTargets =
                 ExecutionContextTargetsEntity(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3")
-                    ), List.of(BuildTargetIdentifier("//excluded_target1"))
+                    ), listOf(BuildTargetIdentifier("//excluded_target1"))
                 )
             workspaceContext.targets shouldBe expectedTargets
         }

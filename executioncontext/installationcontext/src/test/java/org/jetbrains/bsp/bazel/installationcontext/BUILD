@@ -1,9 +1,9 @@
-load("//:junit5.bzl", "java_junit5_test", "kt_junit5_test")
+load("//:junit5.bzl", "kt_junit5_test")
 
-java_junit5_test(
-    name = "InstallationContextTest",
+kt_junit5_test(
+    name = "InstallationContextConstructorTest",
     size = "small",
-    srcs = ["InstallationContextTest.java"],
+    srcs = ["InstallationContextConstructorTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.installationcontext",
     deps = [
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
@@ -11,9 +11,19 @@ java_junit5_test(
 )
 
 kt_junit5_test(
-    name = "InstallationContextConstructorTest",
+    name = "InstallationContextDebuggerAddressEntityMapperTest",
     size = "small",
-    srcs = ["InstallationContextConstructorTest.kt"],
+    srcs = ["InstallationContextDebuggerAddressEntityMapperTest.kt"],
+    test_package = "org.jetbrains.bsp.bazel.installationcontext",
+    deps = [
+        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
+    ],
+)
+
+kt_junit5_test(
+    name = "InstallationContextJavaPathEntityMapperTest",
+    size = "small",
+    srcs = ["InstallationContextJavaPathEntityMapperTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.installationcontext",
     deps = [
         "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",

@@ -1,19 +1,19 @@
 load("//:junit5.bzl", "java_junit5_test", "kt_junit5_test")
 
 kt_junit5_test(
-    name = "WorkspaceContextConstructorImplTest",
+    name = "WorkspaceContextConstructorTest",
     size = "small",
-    srcs = ["WorkspaceContextConstructorImplTest.kt"],
+    srcs = ["WorkspaceContextConstructorTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.workspacecontext",
     deps = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )
 
-java_junit5_test(
-    name = "WorkspaceContextTest",
+kt_junit5_test(
+    name = "WorkspaceContextTargetsEntityMapperTest",
     size = "small",
-    srcs = ["WorkspaceContextTest.java"],
+    srcs = ["WorkspaceContextTargetsEntityMapperTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.workspacecontext",
     deps = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",

@@ -1,16 +1,24 @@
-package org.jetbrains.bsp.bazel.installationcontext.entities;
+package org.jetbrains.bsp.bazel.installationcontext
 
-import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextSingletonEntity;
+import io.vavr.control.Try
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
+import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityNullableMapper
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 
-public class InstallationContextDebuggerAddressEntity
-    extends ExecutionContextSingletonEntity<String> {
+data class InstallationContextDebuggerAddressEntity(override val value: String) :
+    ExecutionContextSingletonEntity<String>()
 
-  public InstallationContextDebuggerAddressEntity(String value) {
-    super(value);
-  }
 
-  @Override
-  public String toString() {
-    return "InstallationContextDebuggerAddressEntity{" + "value=" + value + '}';
-  }
+class InstallationContextDebuggerAddressEntityMapper :
+    ProjectViewToExecutionContextEntityNullableMapper<InstallationContextDebuggerAddressEntity> {
+
+    override fun map(projectView: ProjectView): Try<InstallationContextDebuggerAddressEntity?> {
+        val debuggerAddressEntity = projectView.debuggerAddress?.let(::map)
+
+        return Try.success(debuggerAddressEntity)
+    }
+
+    private fun map(debuggerAddressSection: ProjectViewDebuggerAddressSection): InstallationContextDebuggerAddressEntity =
+        InstallationContextDebuggerAddressEntity(debuggerAddressSection.value)
 }

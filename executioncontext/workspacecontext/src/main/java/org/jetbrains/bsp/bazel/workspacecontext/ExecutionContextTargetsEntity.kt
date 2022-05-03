@@ -1,42 +1,50 @@
-package org.jetbrains.bsp.bazel.workspacecontext.entries;
+package org.jetbrains.bsp.bazel.workspacecontext
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
-import io.vavr.collection.List;
-import java.util.Objects;
-import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.bsp.bazel.executioncontext.api.entries.ExecutionContextListEntity;
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import io.vavr.control.Try
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextListEntity
+import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
+import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 
-public class ExecutionContextTargetsEntity
-    extends ExecutionContextListEntity<BuildTargetIdentifier> {
+class ExecutionContextTargetsEntity(
+    override val includedValues: List<BuildTargetIdentifier>,
+    override val excludedValues: List<BuildTargetIdentifier>,
+) : ExecutionContextListEntity<BuildTargetIdentifier>()
 
-  public ExecutionContextTargetsEntity(
-      List<BuildTargetIdentifier> includedValues, List<BuildTargetIdentifier> excludedValues) {
-    super(includedValues, excludedValues);
-  }
 
-  @Override
-  public String toString() {
-    return "ExecutionContextTargetsEntity{"
-        + "includedValues="
-        + includedValues
-        + ", excludedValues="
-        + excludedValues
-        + '}';
-  }
+object WorkspaceContextTargetsEntityMapper : ProjectViewToExecutionContextEntityMapper<ExecutionContextTargetsEntity> {
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    ExecutionContextTargetsEntity that = (ExecutionContextTargetsEntity) o;
-    return CollectionUtils.isEqualCollection(
-            includedValues.toJavaList(), that.includedValues.toJavaList())
-        && CollectionUtils.isEqualCollection(
-            excludedValues.toJavaList(), that.excludedValues.toJavaList());
-  }
+    private const val NAME = "targets"
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(includedValues, excludedValues);
-  }
+    // TODO will be changed anyway soon
+    override fun map(projectView: ProjectView): Try<ExecutionContextTargetsEntity> =
+        toTry(projectView.targets)
+            .flatMap(::validate)
+            .map(::map)
+
+    private fun toTry(targetsSection: ProjectViewTargetsSection?): Try<ProjectViewTargetsSection> =
+        // TODO will be changed after ProjectView transition into vavr
+        targetsSection?.let { Try.success(it) } ?: Try.failure(
+            ProjectViewToExecutionContextEntityMapperException(
+                NAME, "'targets' section in project view is empty."
+            )
+        )
+
+    private fun validate(targetsSection: ProjectViewTargetsSection): Try<ProjectViewTargetsSection> {
+        return if (targetsSection.values.isEmpty) {
+            Try.failure(
+                ProjectViewToExecutionContextEntityMapperException(
+                    NAME, "'targets' section has no included targets."
+                )
+            )
+        } else Try.success(targetsSection)
+    }
+
+    private fun map(targetsSection: ProjectViewTargetsSection): ExecutionContextTargetsEntity =
+        ExecutionContextTargetsEntity(
+            targetsSection.values.asJava().toList(),
+            targetsSection.excludedValues.asJava().toList()
+        )
 }

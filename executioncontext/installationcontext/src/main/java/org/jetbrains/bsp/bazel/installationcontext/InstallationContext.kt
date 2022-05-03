@@ -1,76 +1,41 @@
-package org.jetbrains.bsp.bazel.installationcontext;
+package org.jetbrains.bsp.bazel.installationcontext
 
-import io.vavr.control.Option;
-import io.vavr.control.Try;
-import java.nio.file.Path;
-import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext;
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity;
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity;
+import io.vavr.control.Try
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextConstructor
+import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import java.nio.file.Path
 
-public class InstallationContext extends ExecutionContext {
+data class InstallationContext(
+    val javaPath: InstallationContextJavaPathEntity,
+    val debuggerAddress: InstallationContextDebuggerAddressEntity?,
+    val projectViewFilePath: Path?,
+) : ExecutionContext()
 
-  private final InstallationContextJavaPathEntity javaPath;
-  private final Option<InstallationContextDebuggerAddressEntity> debuggerAddress;
 
-  private final Option<Path> projectViewFilePath;
+class InstallationContextConstructor(private val projectViewFilePath: Path?) :
+    ExecutionContextConstructor<InstallationContext> {
 
-  private InstallationContext(
-      InstallationContextJavaPathEntity javaPath,
-      Option<InstallationContextDebuggerAddressEntity> debuggerAddress,
-      Option<Path> projectViewFilePath) {
-    this.javaPath = javaPath;
-    this.debuggerAddress = debuggerAddress;
-    this.projectViewFilePath = projectViewFilePath;
-  }
+    override fun construct(projectView: ProjectView): Try<InstallationContext> =
+        javaPathMapper.map(projectView).flatMap { withJavaPath(it, projectView) }
 
-  public static Builder builder() {
-    return new Builder();
-  }
+    private fun withJavaPath(
+        javaPathEntity: InstallationContextJavaPathEntity,
+        projectView: ProjectView
+    ): Try<InstallationContext> =
+        debuggerAddressMapper.map(projectView).map { withJavaPathAndDebuggerAddress(javaPathEntity, it) }
 
-  public InstallationContextJavaPathEntity getJavaPath() {
-    return javaPath;
-  }
+    private fun withJavaPathAndDebuggerAddress(
+        javaPathEntity: InstallationContextJavaPathEntity,
+        debuggerAddressEntity: InstallationContextDebuggerAddressEntity?
+    ): InstallationContext = InstallationContext(
+        javaPath = javaPathEntity,
+        debuggerAddress = debuggerAddressEntity,
+        projectViewFilePath = projectViewFilePath
+    )
 
-  public Option<InstallationContextDebuggerAddressEntity> getDebuggerAddress() {
-    return debuggerAddress;
-  }
-
-  public Option<Path> getProjectViewFilePath() {
-    return projectViewFilePath;
-  }
-
-  public static class Builder {
-
-    private Option<InstallationContextJavaPathEntity> javaPath = Option.none();
-    private Option<InstallationContextDebuggerAddressEntity> debuggerAddress = Option.none();
-    private Option<Path> projectViewFilePath = Option.none();
-
-    private Builder() {}
-
-    public Builder javaPath(InstallationContextJavaPathEntity javaPath) {
-      this.javaPath = Option.of(javaPath);
-      return this;
+    private companion object {
+        private val javaPathMapper = InstallationContextJavaPathEntityMapper()
+        private val debuggerAddressMapper = InstallationContextDebuggerAddressEntityMapper()
     }
-
-    public Builder debuggerAddress(
-        Option<InstallationContextDebuggerAddressEntity> debuggerAddress) {
-      this.debuggerAddress = debuggerAddress;
-      return this;
-    }
-
-    public Builder projectViewFilePath(Option<Path> projectViewFilePath) {
-      this.projectViewFilePath = projectViewFilePath;
-      return this;
-    }
-
-    public Try<InstallationContext> build() {
-      if (javaPath.isEmpty()) {
-        var exceptionMessage =
-            "Installation context creation failed! 'javaPath' has to be defined.";
-        return Try.failure(new IllegalStateException(exceptionMessage));
-      }
-      return Try.success(
-          new InstallationContext(javaPath.get(), debuggerAddress, projectViewFilePath));
-    }
-  }
 }

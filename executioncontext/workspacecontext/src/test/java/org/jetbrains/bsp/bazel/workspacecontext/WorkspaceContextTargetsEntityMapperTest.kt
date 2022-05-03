@@ -1,24 +1,14 @@
-package org.jetbrains.bsp.bazel.workspacecontext.entries.mappers
+package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.collection.List
-import org.jetbrains.bsp.bazel.executioncontext.api.entries.mappers.ProjectViewToExecutionContextEntityMapperException
+import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.workspacecontext.entries.ExecutionContextTargetsEntity
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class WorkspaceContextTargetsEntityMapperTest {
-
-    private lateinit var mapper: WorkspaceContextTargetsEntityMapper
-
-    @BeforeEach
-    fun beforeEach() {
-        // given
-        this.mapper = WorkspaceContextTargetsEntityMapper()
-    }
 
     @Test
     fun `should return fail if targets are null`() {
@@ -26,7 +16,7 @@ class WorkspaceContextTargetsEntityMapperTest {
         val projectView = ProjectView.Builder(targets = null).build().get()
 
         // when
-        val targetsTry = mapper.map(projectView)
+        val targetsTry = WorkspaceContextTargetsEntityMapper.map(projectView)
 
         // then
         targetsTry.isFailure shouldBe true
@@ -48,7 +38,7 @@ class WorkspaceContextTargetsEntityMapperTest {
         ).build().get()
 
         // when
-        val targetsTry = mapper.map(projectView)
+        val targetsTry = WorkspaceContextTargetsEntityMapper.map(projectView)
 
         // then
         targetsTry.isFailure shouldBe true
@@ -75,7 +65,7 @@ class WorkspaceContextTargetsEntityMapperTest {
             ).build().get()
 
         // when
-        val targetsTry = mapper.map(projectView)
+        val targetsTry = WorkspaceContextTargetsEntityMapper.map(projectView)
 
         // then
         targetsTry.isSuccess shouldBe true
@@ -83,12 +73,12 @@ class WorkspaceContextTargetsEntityMapperTest {
 
         val expectedTargets =
             ExecutionContextTargetsEntity(
-                List.of(
+                listOf(
                     BuildTargetIdentifier("//included_target1"),
                     BuildTargetIdentifier("//included_target2"),
                     BuildTargetIdentifier("//included_target3"),
                 ),
-                List.of(
+                listOf(
                     BuildTargetIdentifier("//excluded_target1"),
                     BuildTargetIdentifier("//excluded_target2"),
                 ),
