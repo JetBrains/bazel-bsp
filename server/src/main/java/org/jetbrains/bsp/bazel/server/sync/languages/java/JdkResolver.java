@@ -17,7 +17,7 @@ public class JdkResolver {
   }
 
   public Option<Jdk> resolve(Seq<TargetInfo> targets) {
-    var allCandidates = targets.flatMap(this::resolveJdk);
+    var allCandidates = targets.flatMap(this::resolveJdk).distinct();
     if (allCandidates.isEmpty()) return Option.none();
     var latestVersion = candidatesWithLatestVersion(allCandidates);
     var complete = allCandidates.filter(JdkCandidate::isComplete);

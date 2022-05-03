@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
@@ -14,7 +15,7 @@ public class Project {
   private final URI workspaceRoot;
   private final Map<URI, Label> sourceToTarget;
   private final List<Module> modules;
-  private final Map<Label, Module> moduleMap;
+  @JsonIgnore private final Map<Label, Module> moduleMap;
 
   public Project(
       @JsonProperty("workspaceRoot") URI workspaceRoot,
