@@ -6,7 +6,7 @@
 
 ### Features 🎉
 
-- Manual tag added.When this tag is used build, run and test will not be done without explicitly asked.
+- Manual tag support added.When this tag is used build, run and test will not be done without explicitly asked.
   | [#236](https://youtrack.jetbrains.com/issue/BAZEL-40)
 
 ## [2.0.0] - 22.04.2022
