@@ -17,20 +17,20 @@ abstract class ProjectViewListSectionGenerator<V, in T : ProjectViewListSection<
      */
     override fun generatePrettyStringForNonNull(section: T): String {
         val valuesPrettyStringRepresentation = generatePrettyStringForValues(
-                section.values, ::generatePrettyStringForValueWithFourLeadingSpaces
+            section.values, ::generatePrettyStringForValueWithFourLeadingSpaces
         )
 
         return listOfNotNull(
-                "${section.sectionName}:",
-                valuesPrettyStringRepresentation
+            "${section.sectionName}:",
+            valuesPrettyStringRepresentation
         ).joinToString(separator = "\n")
     }
 
     protected fun generatePrettyStringForValues(values: List<V>, transformer: (V) -> String): String? =
-            if (values.isEmpty) null else values.asJava().toList().joinToString(separator = "\n", transform = transformer)
+        if (values.isEmpty) null else values.asJava().toList().joinToString(separator = "\n", transform = transformer)
 
     protected fun generatePrettyStringForValueWithFourLeadingSpaces(value: V): String =
-            "    ${generatePrettyStringForValue(value)}"
+        "    ${generatePrettyStringForValue(value)}"
 
     protected open fun generatePrettyStringForValue(value: V): String = value.toString()
 }
