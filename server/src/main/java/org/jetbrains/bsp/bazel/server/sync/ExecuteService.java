@@ -100,7 +100,7 @@ public class ExecuteService {
     var bazelResult =
         bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult();
 
-    return new CleanCacheResult(bazelResult.stdout(), true);
+    return new CleanCacheResult(bazelResult.getStdout(), true);
   }
 
   private BazelProcessResult build(Set<BuildTargetIdentifier> bspIds) {

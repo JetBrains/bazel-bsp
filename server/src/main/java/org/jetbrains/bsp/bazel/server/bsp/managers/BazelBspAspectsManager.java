@@ -25,7 +25,7 @@ public class BazelBspAspectsManager {
             targetSpecs,
             List.of(
                 BazelFlag.aspect(aspectsResolver.resolveLabel(aspect)),
-                BazelFlag.outputGroups(outputGroups),
+                BazelFlag.outputGroups(outputGroups.toJavaList()),
                 BazelFlag.keepGoing(),
                 BazelFlag.color(true)));
     return result.bepOutput();

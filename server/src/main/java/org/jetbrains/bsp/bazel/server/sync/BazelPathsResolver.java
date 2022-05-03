@@ -17,7 +17,7 @@ public class BazelPathsResolver {
   }
 
   public URI workspaceRoot() {
-    return bazelInfo.workspaceRoot().toAbsolutePath().toUri();
+    return bazelInfo.getWorkspaceRoot().toAbsolutePath().toUri();
   }
 
   public List<URI> resolveUris(java.util.List<FileLocation> fileLocations) {
@@ -49,13 +49,13 @@ public class BazelPathsResolver {
 
   private Path resolveOutput(FileLocation fileLocation) {
     return Paths.get(
-        bazelInfo.execRoot(),
+        bazelInfo.getExecRoot(),
         fileLocation.getRootExecutionPathFragment(),
         fileLocation.getRelativePath());
   }
 
   private Path resolveSource(FileLocation fileLocation) {
-    return bazelInfo.workspaceRoot().resolve(fileLocation.getRelativePath());
+    return bazelInfo.getWorkspaceRoot().resolve(fileLocation.getRelativePath());
   }
 
   private boolean isMainWorkspaceSource(FileLocation fileLocation) {
@@ -64,7 +64,7 @@ public class BazelPathsResolver {
 
   public Path labelToDirectory(Label label) {
     var relativePath = extractRelativePath(label.getValue());
-    return bazelInfo.workspaceRoot().resolve(relativePath);
+    return bazelInfo.getWorkspaceRoot().resolve(relativePath);
   }
 
   private String extractRelativePath(String label) {

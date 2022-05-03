@@ -44,7 +44,7 @@ class DiagnosticBspMapper(private val bazelInfo: BazelInfo) {
   private fun toAbsoluteUri(rawFileLocation: String): String {
     var path = Paths.get(rawFileLocation)
     if (!path.isAbsolute) {
-      path = bazelInfo.workspaceRoot().resolve(path)
+      path = bazelInfo.workspaceRoot.resolve(path)
     }
     return path.toUri().toString()
   }
