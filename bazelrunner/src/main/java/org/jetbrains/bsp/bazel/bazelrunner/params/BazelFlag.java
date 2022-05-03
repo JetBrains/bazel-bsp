@@ -27,6 +27,8 @@ public class BazelFlag {
     return arg("aspects", name);
   }
 
+  public static String buildManual() { return flag("build_manual_tests"); }
+
   private static String arg(String name, String value) {
     return String.format("--%s=%s", name, value);
   }
@@ -34,4 +36,5 @@ public class BazelFlag {
   private static String flag(String name) {
     return "--" + name;
   }
+
 }

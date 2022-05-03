@@ -27,7 +27,8 @@ public class BazelBspAspectsManager {
                 BazelFlag.aspect(aspectsResolver.resolveLabel(aspect)),
                 BazelFlag.outputGroups(outputGroups),
                 BazelFlag.keepGoing(),
-                BazelFlag.color(true)));
+                BazelFlag.color(true),
+                BazelFlag.buildManual()));
     return result.bepOutput();
   }
 }
