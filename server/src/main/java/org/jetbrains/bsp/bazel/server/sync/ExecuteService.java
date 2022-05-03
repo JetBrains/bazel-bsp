@@ -115,6 +115,6 @@ public class ExecuteService {
   }
 
   private boolean isBuildable(Module m) {
-    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) || !m.tags().contains(Tag.MANUAL);
+    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) && !m.tags().contains(Tag.MANUAL);
   }
 }

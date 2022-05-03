@@ -26,5 +26,4 @@ java_library(
         "@maven//:io_vavr_vavr_jackson",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
     ],
-    tags = ["manual"],
 )
