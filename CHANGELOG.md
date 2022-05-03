@@ -10,7 +10,9 @@
 
 ### Features 🎉
 
-- New installer with project view generator - 
+- Manual tag added.When this tag is used build, run and test will not be done without explicitly asked.
+  | [#236](https://youtrack.jetbrains.com/issue/BAZEL-40)
+- New installer with project view generator -
   now it is possible to create a project view using installer.
   | [#227](https://github.com/JetBrains/bazel-bsp/pull/227)
 - New implementation of diagnostics extraction. It collects
