@@ -1,4 +1,4 @@
-load("//:junit5.bzl", "java_junit5_test", "kt_junit5_test")
+load("//:junit5.bzl", "kt_junit5_test")
 
 kt_junit5_test(
     name = "WorkspaceContextConstructorTest",

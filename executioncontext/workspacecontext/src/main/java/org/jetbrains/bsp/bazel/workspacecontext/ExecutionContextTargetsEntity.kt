@@ -8,7 +8,7 @@ import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContex
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 
-class ExecutionContextTargetsEntity(
+data class ExecutionContextTargetsEntity(
     override val includedValues: List<BuildTargetIdentifier>,
     override val excludedValues: List<BuildTargetIdentifier>,
 ) : ExecutionContextListEntity<BuildTargetIdentifier>()
