@@ -4,13 +4,17 @@
 
 ## [Unreleased]
 
-...
+### Changes 🔄
+
+- Map label->module is no longer serialized -
+  it was doubling size of the file.
+  | [#233](https://github.com/JetBrains/bazel-bsp/pull/233)
 
 ## [2.0.0] - 22.04.2022
 
 ### Features 🎉
 
-- New installer with project view generator - 
+- New installer with project view generator -
   now it is possible to create a project view using installer.
   | [#227](https://github.com/JetBrains/bazel-bsp/pull/227)
 - New implementation of diagnostics extraction. It collects

@@ -196,7 +196,30 @@ junit_platform_java_repositories(
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
 # ======================================================================================================================
+# maven
 
-load("@bazel_bsp//:third_party.bzl", "dependencies")
+load("@rules_jvm_external//:defs.bzl", "maven_install")
 
-dependencies()
+maven_install(
+    artifacts = [
+        "com.google.code.gson:gson:2.8.9",
+        "com.google.guava:guava:31.0.1-jre",
+        "ch.epfl.scala:bsp4j:2.0.0",
+        "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
+        "commons-cli:commons-cli:jar:1.5.0",
+        "io.vavr:vavr:0.10.4",
+        "org.apache.logging.log4j:log4j-api:2.17.2",
+        "org.apache.logging.log4j:log4j-core:2.17.2",
+        "org.apache.commons:commons-collections4:jar:4.4",
+        "org.junit.jupiter:junit-jupiter:5.8.2",
+        "com.fasterxml.jackson.core:jackson-databind:2.13.2.2",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2",
+        "io.vavr:vavr-jackson:0.10.3",
+    ],
+    fetch_sources = True,
+    repositories = [
+        "https://jcenter.bintray.com",
+        "https://maven.google.com",
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
