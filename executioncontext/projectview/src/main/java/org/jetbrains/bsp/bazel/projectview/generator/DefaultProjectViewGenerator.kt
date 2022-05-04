@@ -1,11 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.generator
 
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBazelPathSectionGenerator
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFlagsSectionGenerator
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewDebuggerAddressSectionGenerator
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewJavaPathSectionGenerator
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewTargetsSectionGenerator
+import org.jetbrains.bsp.bazel.projectview.generator.sections.*
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import java.nio.file.Files
 import java.nio.file.Path
@@ -37,5 +33,6 @@ class DefaultProjectViewGenerator : ProjectViewGenerator {
         private val bazelPathGenerator = ProjectViewBazelPathSectionGenerator()
         private val javaPathSectionGenerator = ProjectViewJavaPathSectionGenerator()
         private val buildFlagsGenerator = ProjectViewBuildFlagsSectionGenerator()
+        private val manualSectionGenerator = ProjectViewManualSectionGenerator()
     }
 }

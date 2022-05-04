@@ -7,7 +7,7 @@ public class ProjectViewManualSectionParser
 
   public ProjectViewManualSectionParser() {
     // TODO
-    super("manual");
+    super("build_manual_targets");
   }
 
   @Override
