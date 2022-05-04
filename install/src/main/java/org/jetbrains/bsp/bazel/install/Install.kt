@@ -5,7 +5,6 @@ import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
-import org.jetbrains.bsp.bazel.installationcontext.InstallationContextConstructor
 import kotlin.system.exitProcess
 
 object Install {

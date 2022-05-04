@@ -19,6 +19,5 @@ kt_jvm_library(
     srcs = ["ProjectViewParserMockTestImpl.kt"],
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
-        "@maven//:com_google_guava_guava",
     ],
 )

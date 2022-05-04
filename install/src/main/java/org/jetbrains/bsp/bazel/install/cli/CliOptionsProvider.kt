@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.install.cli
 
-import com.google.common.net.HostAndPort
 import io.vavr.control.Try
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
@@ -171,8 +170,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             ?.let { calculateCurrentAbsoluteDirectory().resolve(it) }
             ?.let(Path::normalize)
 
-    private fun debuggerAddress(cmd: CommandLine): HostAndPort? =
-        cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)?.let(HostAndPort::fromString)
+    private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 

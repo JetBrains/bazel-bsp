@@ -1,10 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import com.google.common.net.HostAndPort;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 
 public class ProjectViewDebuggerAddressSectionParser
-    extends ProjectViewSingletonSectionParser<HostAndPort, ProjectViewDebuggerAddressSection> {
+    extends ProjectViewSingletonSectionParser<String, ProjectViewDebuggerAddressSection> {
 
   public ProjectViewDebuggerAddressSectionParser() {
     // TODO
@@ -12,12 +11,12 @@ public class ProjectViewDebuggerAddressSectionParser
   }
 
   @Override
-  protected HostAndPort mapRawValue(String rawValue) {
-    return HostAndPort.fromString(rawValue);
+  protected String mapRawValue(String rawValue) {
+    return rawValue;
   }
 
   @Override
-  protected ProjectViewDebuggerAddressSection createInstance(HostAndPort value) {
+  protected ProjectViewDebuggerAddressSection createInstance(String value) {
     return new ProjectViewDebuggerAddressSection(value);
   }
 }

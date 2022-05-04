@@ -8,11 +8,9 @@ kt_jvm_library(
         "//install/src/test/java/org/jetbrains/bsp/bazel/install/cli:__pkg__",
     ],
     exports = [
-        "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
-        "@maven//:com_google_guava_guava",
         "@maven//:commons_cli_commons_cli",
         "@maven//:io_vavr_vavr",
     ],

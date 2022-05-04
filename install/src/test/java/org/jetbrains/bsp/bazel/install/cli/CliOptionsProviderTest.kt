@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.install.cli
 
-import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -344,7 +343,7 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
+                val expectedDebuggerAddress = "host:8000"
                 cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
             }
         }
@@ -453,7 +452,7 @@ class CliOptionsProviderTest {
             val expectedBazelPath = Paths.get("/path/to/bazel")
             cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
 
-            val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
+            val expectedDebuggerAddress = "host:8000"
             cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
 
             val expectedTargets = listOf(
@@ -499,7 +498,7 @@ class CliOptionsProviderTest {
             val expectedJavaPath = Paths.get("/path/to/java")
             cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
 
-            val expectedDebuggerAddress = HostAndPort.fromString("host:8000")
+            val expectedDebuggerAddress = "host:8000"
             cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")

@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.generator
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import com.google.common.net.HostAndPort
 import io.vavr.collection.List
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -117,7 +116,7 @@ class DefaultProjectViewGeneratorTest {
             val projectView = ProjectView(
                 targets = null,
                 bazelPath = null,
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = null,
                 buildFlags = null,
             )
@@ -195,7 +194,7 @@ class DefaultProjectViewGeneratorTest {
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(List.of(), List.of()),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(List.of()),
             )
@@ -281,7 +280,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -343,7 +342,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -403,7 +402,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(
@@ -452,7 +451,7 @@ class DefaultProjectViewGeneratorTest {
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(List.of(), List.of()),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(List.of()),
             )
@@ -470,7 +469,7 @@ class DefaultProjectViewGeneratorTest {
             val expectedProjectView = ProjectView(
                 targets = null,
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
             )
@@ -533,7 +532,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     List.of(

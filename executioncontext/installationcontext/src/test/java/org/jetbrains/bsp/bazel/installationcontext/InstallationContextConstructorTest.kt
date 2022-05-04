@@ -1,11 +1,7 @@
 package org.jetbrains.bsp.bazel.installationcontext
 
-import com.google.common.net.HostAndPort
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Option
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextDebuggerAddressEntity
-import org.jetbrains.bsp.bazel.installationcontext.entities.InstallationContextJavaPathEntity
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
@@ -23,7 +19,7 @@ class InstallationContextConstructorTest {
     fun beforeEach() {
         // given
         this.installationContextConstructor =
-            InstallationContextConstructor(Option.of(Paths.get("/path/to/projectview.bazelproject")))
+            InstallationContextConstructor(Paths.get("/path/to/projectview.bazelproject"))
     }
 
     @Nested
@@ -55,9 +51,9 @@ class InstallationContextConstructorTest {
             val projectView =
                 ProjectView.Builder(
                     javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("host:8000"))
-                )
-                    .build()
+                    debuggerAddress = ProjectViewDebuggerAddressSection("host:8000")
+                ).build()
+
             // when
             val installationContextTry = installationContextConstructor.construct(projectView)
 
@@ -68,8 +64,8 @@ class InstallationContextConstructorTest {
             val expectedJavaPath = InstallationContextJavaPathEntity(Paths.get("/path/to/java"))
             installationContext.javaPath shouldBe expectedJavaPath
 
-            val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity(HostAndPort.fromString("host:8000"))
-            installationContext.debuggerAddress.get() shouldBe expectedDebuggerAddress
+            val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity("host:8000")
+            installationContext.debuggerAddress shouldBe expectedDebuggerAddress
         }
     }
 }

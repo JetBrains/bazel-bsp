@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.install
 
-import io.vavr.control.Option
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
@@ -21,7 +20,7 @@ object InstallationContextProvider {
             ProjectViewDefaultFromResourcesProvider(projectViewFilePath, RESOURCES_PROJECT_VIEW_FILE_PATH)
         val projectViewTry = projectViewProvider.create()
 
-        val installationContextConstructor = InstallationContextConstructor(Option.of(projectViewFilePath))
+        val installationContextConstructor = InstallationContextConstructor(projectViewFilePath)
         return installationContextConstructor.construct(projectViewTry)
     }
 
@@ -30,7 +29,7 @@ object InstallationContextProvider {
         val projectViewTry =
             ProjectViewCLiOptionsProvider.generateProjectViewAndSave(cliOptions, generatedProjectViewFilePath)
 
-        val installationContextConstructor = InstallationContextConstructor(Option.of(generatedProjectViewFilePath))
+        val installationContextConstructor = InstallationContextConstructor(generatedProjectViewFilePath)
         return installationContextConstructor.construct(projectViewTry)
     }
 

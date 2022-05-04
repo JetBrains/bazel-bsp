@@ -1,20 +1,18 @@
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "installationcontext",
-    srcs = glob(["*.java"]),
+    srcs = glob(["*.kt"]),
     visibility = [
-        "//visibility:public",
+        "//executioncontext/installationcontext:__pkg__",
+        "//executioncontext/installationcontext/src/test/java/org/jetbrains/bsp/bazel/installationcontext:__pkg__",
     ],
     exports = [
         "//executioncontext/api",
-        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//executioncontext/api",
-        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities",
-        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext/entities/mappers",
         "@maven//:io_vavr_vavr",
     ],
 )
