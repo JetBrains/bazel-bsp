@@ -1,9 +1,9 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewManualSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewManualTargetsSection;
 
 public class ProjectViewManualSectionParser
-    extends ProjectViewSingletonSectionParser<Boolean, ProjectViewManualSection> {
+    extends ProjectViewSingletonSectionParser<Boolean, ProjectViewManualTargetsSection> {
 
   public ProjectViewManualSectionParser() {
     // TODO
@@ -16,7 +16,7 @@ public class ProjectViewManualSectionParser
   }
 
   @Override
-  protected ProjectViewManualSection createInstance(Boolean value) {
-    return new ProjectViewManualSection(value);
+  protected ProjectViewManualTargetsSection createInstance(Boolean value) {
+    return new ProjectViewManualTargetsSection(value);
   }
 }

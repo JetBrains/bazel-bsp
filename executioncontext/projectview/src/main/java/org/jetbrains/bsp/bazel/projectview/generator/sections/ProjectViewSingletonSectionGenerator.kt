@@ -21,4 +21,4 @@ class ProjectViewDebuggerAddressSectionGenerator :
 
 class ProjectViewBazelPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBazelPathSection>()
 
-class ProjectViewManualSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewManualSection>()
+class ProjectViewManualSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewManualTargetsSection>()

@@ -22,7 +22,7 @@ data class ProjectView constructor(
         /** bazel flags added to all bazel command invocations  */
         val buildFlags: ProjectViewBuildFlagsSection?,
         /** build manual targets to build, run and test by explicitly asking. */
-        val buildManualTargets: ProjectViewManualSection?,
+        val buildManualTargets: ProjectViewManualTargetsSection?,
 ) {
 
     fun targetSpecs(): TargetSpecs = targets?.let {
@@ -40,7 +40,7 @@ data class ProjectView constructor(
             private val debuggerAddress: ProjectViewDebuggerAddressSection? = null,
             private val javaPath: ProjectViewJavaPathSection? = null,
             private val buildFlags: ProjectViewBuildFlagsSection? = null,
-            private val buildManualTargets: ProjectViewManualSection? = null,
+            private val buildManualTargets: ProjectViewManualTargetsSection? = null,
     ) {
 
         fun build(): Try<ProjectView> {
@@ -162,7 +162,7 @@ data class ProjectView constructor(
         private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): ProjectViewJavaPathSection? =
                 javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
 
-        private fun combineManualSection(importedProjectViews: List<ProjectView>): ProjectViewManualSection? =
+        private fun combineManualSection(importedProjectViews: List<ProjectView>): ProjectViewManualTargetsSection? =
                 buildManualTargets
                         ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
 
