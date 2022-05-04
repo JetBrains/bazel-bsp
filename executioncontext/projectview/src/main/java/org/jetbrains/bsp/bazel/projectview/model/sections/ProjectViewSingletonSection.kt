@@ -27,3 +27,10 @@ data class ProjectViewBazelPathSection(override val value: Path) :
         const val SECTION_NAME = "bazel_path"
     }
 }
+
+data class ProjectViewManualSection(override val value: Boolean) :
+        ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "build_manual_targets"
+    }
+}
