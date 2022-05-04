@@ -52,13 +52,15 @@ data class ProjectView constructor(
                             + " bazel path: {},"
                             + " debugger address: {},"
                             + " java path: {},"
-                            + " build flags: {}.",
+                            + " build flags: {}."
+                            + "build manual targets : {}",
                     imports,
                     targets,
                     bazelPath,
                     debuggerAddress,
                     javaPath,
-                    buildFlags
+                    buildFlags,
+                    buildManualTargets
             )
 
             return Try.sequence(imports)
