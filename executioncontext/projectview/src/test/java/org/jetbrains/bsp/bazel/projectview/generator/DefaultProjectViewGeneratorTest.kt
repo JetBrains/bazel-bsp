@@ -5,11 +5,7 @@ import com.google.common.net.HostAndPort
 import io.vavr.collection.List
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -36,11 +32,12 @@ class DefaultProjectViewGeneratorTest {
         fun `should return empty line for project view with all null fields`() {
             // given
             val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
-                buildFlags = null,
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    buildManualTargets = null,
             )
 
             // when
@@ -54,21 +51,22 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string only with targets for project view only with targets`() {
             // given
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ),
+                            List.of(
+                                    BuildTargetIdentifier("//excluded_target1"),
+                                    BuildTargetIdentifier("//excluded_target2"),
+                            )
                     ),
-                    List.of(
-                        BuildTargetIdentifier("//excluded_target1"),
-                        BuildTargetIdentifier("//excluded_target2"),
-                    )
-                ),
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
-                buildFlags = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    buildManualTargets = null,
             )
 
             // when
@@ -76,7 +74,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 targets:
                     //included_target1
                     //included_target2
@@ -92,11 +90,12 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string only with bazel path for project view only with bazel path`() {
             // given
             val projectView = ProjectView(
-                targets = null,
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = null,
-                javaPath = null,
-                buildFlags = null,
+                    targets = null,
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    buildManualTargets = null,
             )
 
             // when
@@ -104,7 +103,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 bazel_path: /path/to/bazel
                 
                 """.trimIndent()
@@ -115,11 +114,12 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string only with debugger address for project view only with debugger address`() {
             // given
             val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = null,
-                buildFlags = null,
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = null,
+                    buildFlags = null,
+                    buildManualTargets = null,
             )
 
             // when
@@ -127,7 +127,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 debugger_address: localhost:8000
                 
                 """.trimIndent()
@@ -138,11 +138,12 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string only with java path for project view only with java path`() {
             // given
             val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = null,
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = null,
+                    buildManualTargets = null,
             )
 
             // when
@@ -150,7 +151,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 java_path: /path/to/java
                 
                 """.trimIndent()
@@ -161,17 +162,18 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string only with build flags for project view only with build flags`() {
             // given
             val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             // when
@@ -179,7 +181,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 build_flags:
                     --build_flag1=value1
                     --build_flag2=value2
@@ -193,11 +195,12 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(List.of(), List.of()),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(List.of()),
+                    targets = ProjectViewTargetsSection(List.of(), List.of()),
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(List.of()),
+                    buildManualTargets = null,
             )
 
             // when
@@ -205,7 +208,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 targets:
 
                 bazel_path: /path/to/bazel
@@ -224,23 +227,24 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string with project view for partly filled project view`() {
             // given
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
-                    ), List.of()
-                ),
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ), List.of()
+                    ),
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             // when
@@ -248,7 +252,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 targets:
                     //included_target1
                     //included_target2
@@ -269,27 +273,28 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string with project view for full project view`() {
             // given
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ),
+                            List.of(
+                                    BuildTargetIdentifier("//excluded_target1"),
+                                    BuildTargetIdentifier("//excluded_target2"),
+                            )
                     ),
-                    List.of(
-                        BuildTargetIdentifier("//excluded_target1"),
-                        BuildTargetIdentifier("//excluded_target2"),
-                    )
-                ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             // when
@@ -297,7 +302,7 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                """
+                    """
                 targets:
                     //included_target1
                     //included_target2
@@ -331,27 +336,28 @@ class DefaultProjectViewGeneratorTest {
             val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ),
+                            List.of(
+                                    BuildTargetIdentifier("//excluded_target1"),
+                                    BuildTargetIdentifier("//excluded_target2"),
+                            )
                     ),
-                    List.of(
-                        BuildTargetIdentifier("//excluded_target1"),
-                        BuildTargetIdentifier("//excluded_target2"),
-                    )
-                ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             // when
@@ -361,7 +367,7 @@ class DefaultProjectViewGeneratorTest {
             result.isSuccess shouldBe true
 
             val expectedFileContent =
-                """
+                    """
                 targets:
                     //included_target1
                     //included_target2
@@ -391,27 +397,28 @@ class DefaultProjectViewGeneratorTest {
             Files.writeString(filePath, "some random things, maybe previous project view")
 
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ),
+                            List.of(
+                                    BuildTargetIdentifier("//excluded_target1"),
+                                    BuildTargetIdentifier("//excluded_target2"),
+                            )
                     ),
-                    List.of(
-                        BuildTargetIdentifier("//excluded_target1"),
-                        BuildTargetIdentifier("//excluded_target2"),
-                    )
-                ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             // when
@@ -421,7 +428,7 @@ class DefaultProjectViewGeneratorTest {
             result.isSuccess shouldBe true
 
             val expectedFileContent =
-                """
+                    """
                 targets:
                     //included_target1
                     //included_target2
@@ -450,11 +457,12 @@ class DefaultProjectViewGeneratorTest {
             val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(List.of(), List.of()),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(List.of()),
+                    targets = ProjectViewTargetsSection(List.of(), List.of()),
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(List.of()),
+                    buildManualTargets = null,
             )
 
             val parser = ProjectViewParserImpl()
@@ -468,11 +476,12 @@ class DefaultProjectViewGeneratorTest {
             parsedProjectViewTry.isSuccess shouldBe true
 
             val expectedProjectView = ProjectView(
-                targets = null,
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = null,
+                    targets = null,
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = null,
+                    buildManualTargets = null,
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -483,23 +492,24 @@ class DefaultProjectViewGeneratorTest {
             val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
-                    ), List.of()
-                ),
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ), List.of()
+                    ),
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             val parser = ProjectViewParserImpl()
@@ -521,27 +531,28 @@ class DefaultProjectViewGeneratorTest {
             val filePath = Paths.get("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(
-                    List.of(
-                        BuildTargetIdentifier("//included_target1"),
-                        BuildTargetIdentifier("//included_target2"),
-                        BuildTargetIdentifier("//included_target3"),
+                    targets = ProjectViewTargetsSection(
+                            List.of(
+                                    BuildTargetIdentifier("//included_target1"),
+                                    BuildTargetIdentifier("//included_target2"),
+                                    BuildTargetIdentifier("//included_target3"),
+                            ),
+                            List.of(
+                                    BuildTargetIdentifier("//excluded_target1"),
+                                    BuildTargetIdentifier("//excluded_target2"),
+                            )
                     ),
-                    List.of(
-                        BuildTargetIdentifier("//excluded_target1"),
-                        BuildTargetIdentifier("//excluded_target2"),
-                    )
-                ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
-                        "--build_flag1=value1",
-                        "--build_flag2=value2",
-                        "--build_flag3=value3",
-                    )
-                ),
+                    bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                    debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
+                    javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                            List.of(
+                                    "--build_flag1=value1",
+                                    "--build_flag2=value2",
+                                    "--build_flag3=value3",
+                            )
+                    ),
+                    buildManualTargets = null,
             )
 
             val parser = ProjectViewParserImpl()

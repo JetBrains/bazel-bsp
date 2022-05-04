@@ -28,6 +28,7 @@ object ProjectViewCLiOptionsProvider {
                     debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
                     targets = toTargetsSection(projectViewCliOptions),
                     buildFlags = toBuildFlagsSection(projectViewCliOptions),
+                    buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
@@ -35,6 +36,9 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toBazelPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelPathSection? =
             projectViewCliOptions?.bazelPath?.let(::ProjectViewBazelPathSection)
+
+    private fun toBuildManualTargetsSection(projectViewCliOptions: ProjectViewCliOptions?) : ProjectViewManualTargetsSection?=
+            projectViewCliOptions?.buildManualTargets?.let(::ProjectViewManualTargetsSection)
 
     private fun toTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewTargetsSection? =
             projectViewCliOptions?.targets?.let(::toTargetsSectionNotNull)
