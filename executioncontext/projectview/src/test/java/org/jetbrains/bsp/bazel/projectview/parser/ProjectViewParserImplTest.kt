@@ -152,6 +152,7 @@ class ProjectViewParserImplTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -182,7 +183,8 @@ class ProjectViewParserImplTest {
                     List.of(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -222,7 +224,8 @@ class ProjectViewParserImplTest {
                         "--build_flag4.2=value4.2",
                         "--build_flag4.3=value4.3",
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -262,7 +265,8 @@ class ProjectViewParserImplTest {
                         "--build_flag7.2=value7.2",
                         "--build_flag7.3=value7.3",
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -294,7 +298,8 @@ class ProjectViewParserImplTest {
                         "--build_flag8.2=value8.2",
                         "--build_flag8.3=value8.3",
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -338,7 +343,8 @@ class ProjectViewParserImplTest {
                         "--build_flag5.1=value5.1",
                         "--build_flag5.2=value5.2",
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -384,7 +390,8 @@ class ProjectViewParserImplTest {
                         "--build_flag4.2=value4.2",
                         "--build_flag4.3=value4.3",
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -464,7 +471,8 @@ class ProjectViewParserImplTest {
                     List.of(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -559,7 +567,8 @@ class ProjectViewParserImplTest {
                     List.of(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -590,7 +599,8 @@ class ProjectViewParserImplTest {
                     List.of(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -623,7 +633,8 @@ class ProjectViewParserImplTest {
                         "--build_flag8.2=value8.2",
                         "--build_flag8.3=value8.3",
                     )
-                )
+                ),
+                buildManualTargets = null,
             )
             projectView shouldBe expectedProjectView
         }
