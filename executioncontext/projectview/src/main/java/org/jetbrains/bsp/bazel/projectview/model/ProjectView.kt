@@ -21,7 +21,7 @@ data class ProjectView constructor(
         val javaPath: ProjectViewJavaPathSection?,
         /** bazel flags added to all bazel command invocations  */
         val buildFlags: ProjectViewBuildFlagsSection?,
-        /** build manual targets to build, run and test by explicitly asking. */
+        /** flag for building manual targets. */
         val buildManualTargets: ProjectViewManualTargetsSection?,
 ) {
 
@@ -75,14 +75,14 @@ data class ProjectView constructor(
             val debuggerAddress = combineDebuggerAddressSection(importedProjectViews)
             val javaPath = combineJavaPathSection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
-            val buildManualTargets = combineManualTargetsSection(importedProjectViews)
+            val buildManualTargets = combileBuildManualTargetsSection(importedProjectViews)
             log.debug(
                     "Building project view with combined"
                             + " targets: {},"
                             + " bazel path: {},"
                             + " debugger address: {},"
                             + " java path: {}."
-                            + "manual targets : {}",
+                            + "build manual targets : {}",
                     targets,
                     bazelPath,
                     debuggerAddress,
@@ -164,7 +164,7 @@ data class ProjectView constructor(
         private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): ProjectViewJavaPathSection? =
                 javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
 
-        private fun combineManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewManualTargetsSection? =
+        private fun combileBuildManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewManualTargetsSection? =
                 buildManualTargets
                         ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
 
