@@ -7,7 +7,7 @@ kt_jvm_library(
     visibility = ["//install:__subpackages__"],
     deps = [
         "//commons",
-        "//executioncontext/installationcontext/src/main/java/org/jetbrains/bsp/bazel/installationcontext",
+        "//executioncontext/installationcontext",
         "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",
         "//install/src/main/java/org/jetbrains/bsp/bazel/install/cli",

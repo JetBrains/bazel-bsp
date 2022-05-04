@@ -12,8 +12,11 @@ import java.nio.file.Paths
 data class InstallationContextJavaPathEntity(override val value: Path) : ExecutionContextSingletonEntity<Path>()
 
 
-class InstallationContextJavaPathEntityMapper :
+internal object InstallationContextJavaPathEntityMapper :
     ProjectViewToExecutionContextEntityMapper<InstallationContextJavaPathEntity> {
+
+    private const val NAME = "java path"
+    private const val JAVA_HOME_PROPERTY_KEY = "java.home"
 
     override fun map(projectView: ProjectView): Try<InstallationContextJavaPathEntity> =
         fromProjectView(projectView) ?: readFromSystemPropertyAndMapOrFailure()
@@ -45,9 +48,4 @@ class InstallationContextJavaPathEntityMapper :
 
     private fun map(rawJavaPath: Path): InstallationContextJavaPathEntity =
         InstallationContextJavaPathEntity(rawJavaPath)
-
-    private companion object {
-        private const val NAME = "java path"
-        private const val JAVA_HOME_PROPERTY_KEY = "java.home"
-    }
 }

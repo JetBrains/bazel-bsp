@@ -10,7 +10,7 @@ data class InstallationContextDebuggerAddressEntity(override val value: String) 
     ExecutionContextSingletonEntity<String>()
 
 
-class InstallationContextDebuggerAddressEntityMapper :
+internal object InstallationContextDebuggerAddressEntityMapper :
     ProjectViewToExecutionContextEntityNullableMapper<InstallationContextDebuggerAddressEntity> {
 
     override fun map(projectView: ProjectView): Try<InstallationContextDebuggerAddressEntity?> {

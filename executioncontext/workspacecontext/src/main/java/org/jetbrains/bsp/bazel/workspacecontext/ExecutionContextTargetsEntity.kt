@@ -14,7 +14,7 @@ data class ExecutionContextTargetsEntity(
 ) : ExecutionContextListEntity<BuildTargetIdentifier>()
 
 
-object WorkspaceContextTargetsEntityMapper : ProjectViewToExecutionContextEntityMapper<ExecutionContextTargetsEntity> {
+internal object WorkspaceContextTargetsEntityMapper : ProjectViewToExecutionContextEntityMapper<ExecutionContextTargetsEntity> {
 
     private const val NAME = "targets"
 

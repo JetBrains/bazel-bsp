@@ -10,14 +10,6 @@ import java.nio.file.Paths
 
 class InstallationContextJavaPathEntityMapperTest {
 
-    private lateinit var mapper: InstallationContextJavaPathEntityMapper
-
-    @BeforeEach
-    fun beforeEach() {
-        // given
-        this.mapper = InstallationContextJavaPathEntityMapper()
-    }
-
     @Test
     fun `should return success with java path from project view if java path is specified in project view`() {
         // given
@@ -26,7 +18,7 @@ class InstallationContextJavaPathEntityMapperTest {
         ).build().get()
 
         // when
-        val javaPathTry = mapper.map(projectView)
+        val javaPathTry = InstallationContextJavaPathEntityMapper.map(projectView)
 
         // then
         javaPathTry.isSuccess shouldBe true
@@ -43,7 +35,7 @@ class InstallationContextJavaPathEntityMapperTest {
         System.setProperty("java.home", "/path/to/java")
 
         // when
-        val javaPathTry = mapper.map(projectView)
+        val javaPathTry = InstallationContextJavaPathEntityMapper.map(projectView)
 
         // then
         javaPathTry.isSuccess shouldBe true
@@ -60,7 +52,7 @@ class InstallationContextJavaPathEntityMapperTest {
         System.clearProperty("java.home")
 
         // when
-        val javaPathTry = mapper.map(projectView)
+        val javaPathTry = InstallationContextJavaPathEntityMapper.map(projectView)
 
         // then
         javaPathTry.isFailure shouldBe true

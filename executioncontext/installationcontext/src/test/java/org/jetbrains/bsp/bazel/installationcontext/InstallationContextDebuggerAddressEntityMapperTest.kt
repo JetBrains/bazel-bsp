@@ -3,18 +3,9 @@ package org.jetbrains.bsp.bazel.installationcontext
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class InstallationContextDebuggerAddressEntityMapperTest {
-
-    private lateinit var mapper: InstallationContextDebuggerAddressEntityMapper
-
-    @BeforeEach
-    fun beforeEach() {
-        // given
-        this.mapper = InstallationContextDebuggerAddressEntityMapper()
-    }
 
     @Test
     fun `should return success with empty debugger address from project view if debugger address is not specified in project view`() {
@@ -22,7 +13,7 @@ class InstallationContextDebuggerAddressEntityMapperTest {
         val projectView = ProjectView.Builder(debuggerAddress = null).build().get()
 
         // when
-        val debuggerAddressTry = mapper.map(projectView)
+        val debuggerAddressTry = InstallationContextDebuggerAddressEntityMapper.map(projectView)
 
         // then
         debuggerAddressTry.isSuccess shouldBe true
@@ -40,7 +31,7 @@ class InstallationContextDebuggerAddressEntityMapperTest {
             ).build().get()
 
         // when
-        val debuggerAddressTry = mapper.map(projectView)
+        val debuggerAddressTry = InstallationContextDebuggerAddressEntityMapper.map(projectView)
 
         // then
         debuggerAddressTry.isSuccess shouldBe true
