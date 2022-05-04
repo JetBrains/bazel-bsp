@@ -159,7 +159,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                         debuggerAddress = debuggerAddress(cmd),
                         targets = targets(cmd),
                         buildFlags = buildFlags(cmd),
-                        buildManualTargets =
+                        buildManualTargets = buildManualTargets(cmd),
                 )
             else null
 
@@ -168,13 +168,12 @@ class CliOptionsProvider(private val args: Array<String>) {
                     cmd.hasOption(JAVA_PATH_SHORT_OPT) or
                     cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
                     cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
-                    cmd.hasOption(BUILD_FLAGS_SHORT_OPT)
+                    cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
+                    cmd.hasOption(MANUAL_TARGETS_OPT)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
     private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
-
-    private fun buildManualTargets(cmd: CommandLine): String? = cmd.getOptionValue(MANUAL_TARGETS_OPT)?.let(Boolean::)
 
     private fun getOptionValueAndMapToAbsolutePath(cmd: CommandLine, shortOpt: String): Path? =
             cmd.getOptionValue(shortOpt)?.let(Paths::get)
@@ -187,6 +186,8 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
     private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
+
+    private fun buildManualTargets(cmd: CommandLine): Boolean? = cmd.getOptionValue(MANUAL_TARGETS_OPT)?.toBoolean()
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
 
