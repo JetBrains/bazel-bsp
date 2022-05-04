@@ -9,7 +9,7 @@ import java.nio.file.Path
 class DefaultProjectViewGenerator : ProjectViewGenerator {
 
     override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> =
-        writeStringToFile(filePath, generatePrettyString(projectView))
+            writeStringToFile(filePath, generatePrettyString(projectView))
 
     private fun writeStringToFile(destinationPath: Path, string: String): Try<Void> {
         return Try.run {
@@ -19,13 +19,14 @@ class DefaultProjectViewGenerator : ProjectViewGenerator {
     }
 
     override fun generatePrettyString(projectView: ProjectView): String =
-        listOfNotNull(
-            targetsGenerator.generatePrettyString(projectView.targets),
-            bazelPathGenerator.generatePrettyString(projectView.bazelPath),
-            debuggerAddressGenerator.generatePrettyString(projectView.debuggerAddress),
-            javaPathSectionGenerator.generatePrettyString(projectView.javaPath),
-            buildFlagsGenerator.generatePrettyString(projectView.buildFlags),
-        ).joinToString(separator = "\n\n", postfix = "\n")
+            listOfNotNull(
+                    targetsGenerator.generatePrettyString(projectView.targets),
+                    bazelPathGenerator.generatePrettyString(projectView.bazelPath),
+                    debuggerAddressGenerator.generatePrettyString(projectView.debuggerAddress),
+                    javaPathSectionGenerator.generatePrettyString(projectView.javaPath),
+                    buildFlagsGenerator.generatePrettyString(projectView.buildFlags),
+                    manualSectionGenerator.generatePrettyString(projectView.buildManualTargets),
+            ).joinToString(separator = "\n\n", postfix = "\n")
 
     private companion object {
         private val targetsGenerator = ProjectViewTargetsSectionGenerator()

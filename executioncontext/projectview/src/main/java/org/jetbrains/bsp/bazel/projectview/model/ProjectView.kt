@@ -21,7 +21,8 @@ data class ProjectView constructor(
         val javaPath: ProjectViewJavaPathSection?,
         /** bazel flags added to all bazel command invocations  */
         val buildFlags: ProjectViewBuildFlagsSection?,
-
+        /** build manual targets to build, run and test by explicitly asking. */
+        val buildManualTargets: ProjectViewManualSection?,
 ) {
 
     fun targetSpecs(): TargetSpecs = targets?.let {
@@ -39,6 +40,7 @@ data class ProjectView constructor(
             private val debuggerAddress: ProjectViewDebuggerAddressSection? = null,
             private val javaPath: ProjectViewJavaPathSection? = null,
             private val buildFlags: ProjectViewBuildFlagsSection? = null,
+            private val buildManualTargets: ProjectViewManualSection? = null,
     ) {
 
         fun build(): Try<ProjectView> {
@@ -71,18 +73,21 @@ data class ProjectView constructor(
             val debuggerAddress = combineDebuggerAddressSection(importedProjectViews)
             val javaPath = combineJavaPathSection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
+            val buildManualTargets = combineManualSection(importedProjectViews)
             log.debug(
                     "Building project view with combined"
                             + " targets: {},"
                             + " bazel path: {},"
                             + " debugger address: {},"
-                            + " java path: {}.",
+                            + " java path: {}."
+                            + "manual targets : {}",
                     targets,
                     bazelPath,
                     debuggerAddress,
-                    javaPath
+                    javaPath,
+                    buildManualTargets,
             )
-            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags)
+            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags, buildManualTargets)
         }
 
         private fun combineTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewTargetsSection? {
@@ -157,6 +162,9 @@ data class ProjectView constructor(
         private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): ProjectViewJavaPathSection? =
                 javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
 
+        private fun combineManualSection(importedProjectViews: List<ProjectView>): ProjectViewManualSection? =
+                buildManualTargets
+                        ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
 
         private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
                 importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?
