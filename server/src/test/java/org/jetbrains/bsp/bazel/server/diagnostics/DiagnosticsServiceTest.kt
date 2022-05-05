@@ -414,6 +414,51 @@ class DiagnosticsServiceTest {
     diagnostics shouldContainExactlyInAnyOrder expected
   }
 
+  @Test
+  fun `should parse java symbol not found error`() {
+      // given
+      val output = """
+            Loading: 
+            Loading: 0 packages loaded
+            WARNING: The target pattern '//e2e:all' is ambiguous: ':all' is both a wildcard, and the name of an existing sh_binary rule; using the latter interpretation
+            Analyzing: 91 targets (0 packages loaded, 0 targets configured)
+            INFO: Analyzed 91 targets (0 packages loaded, 0 targets configured).
+            INFO: Found 91 targets...
+            [0 / 5] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+            INFO: From KotlinCompile //server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics:diagnostics { kt: 9, java: 0, srcjars: 0 } for darwin:
+            [2 / 20] [Prepa] JdepsMerge //server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics:diagnostics { jdeps: 2 }
+            warning: '-Xuse-experimental' is deprecated and will be removed in a future release
+            ERROR: /Users/marcin.abramowicz/dev/ww/bazel-bsp/server/src/main/java/org/jetbrains/bsp/bazel/server/bep/BUILD:3:13: Building server/src/main/java/org/jetbrains/bsp/bazel/server/bep/libbep-class.jar (4 source files) failed: (Exit 1): java failed: error executing command external/remotejdk11_macos/bin/java -XX:-CompactStrings '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED' '--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED' ... (remaining 17 arguments skipped)
+            server/src/main/java/org/jetbrains/bsp/bazel/server/bep/BepServer.java:55: error: cannot find symbol
+                return new BepStreamObserver(thi, responseObserver);
+                                             ^
+              symbol:   variable thi
+              location: class BepServer
+            INFO: Elapsed time: 2.279s, Critical Path: 2.07s
+            INFO: 6 processes: 3 internal, 3 worker.
+            FAILED: Build did NOT complete successfully
+      """.trimIndent()
+
+      // when
+      val diagnostics = extractDiagnostics(output)
+
+      // then
+      val expected = listOf(
+          PublishDiagnosticsParams(
+              TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/bep/BepServer.java"),
+              BuildTargetIdentifier(""),
+              ErrorDiagnostic(
+                  Position(55, 34),
+                  """
+                      cannot find symbol
+                          return new BepStreamObserver(thi, responseObserver);
+                                                       ^
+                        symbol:   variable thi
+                        location: class BepServer
+                  """.trimIndent())))
+      diagnostics shouldContainExactlyInAnyOrder expected
+  }
+
   private fun PublishDiagnosticsParams(
       textDocument: TextDocumentIdentifier,
       buildTarget: BuildTargetIdentifier,
