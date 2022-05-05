@@ -6,7 +6,7 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
-import org.jetbrains.bsp.bazel.utils.DopeFiles
+import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.file.Path

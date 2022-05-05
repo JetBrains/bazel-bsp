@@ -1,14 +1,12 @@
-package org.jetbrains.bsp.bazel.utils
+package org.jetbrains.bsp.bazel.utils.dope
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.nio.file.AccessDeniedException
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
-import kotlin.io.path.Path
 
 class DopeFilesTest {
 
@@ -19,7 +17,7 @@ class DopeFilesTest {
         @Test
         fun `should return failure for not existing file`() {
             // given
-            val filePath = Path("file/doesnt/exist")
+            val filePath = DopeTemp.createTempPath("file/doesnt/exist")
 
             // when
             val fileContentTry = DopeFiles.readText(filePath)
@@ -27,15 +25,12 @@ class DopeFilesTest {
             // then
             fileContentTry.isFailure shouldBe true
             fileContentTry.cause::class shouldBe NoSuchFileException::class
-            fileContentTry.cause.message shouldBe "file/doesnt/exist"
         }
 
         @Test
         fun `should parse existing file and return success`() {
             // given
-            val file = File.createTempFile("test", "file")
-            file.deleteOnExit()
-            val filePath = file.toPath()
+            val filePath = DopeTemp.createTempFile("path/to/file")
             Files.writeString(filePath, "test content")
 
             // when
@@ -56,12 +51,9 @@ class DopeFilesTest {
         @Test
         fun `should return failure for path without writing permission`() {
             // given
-            val file = File.createTempFile("not", "writable")
-            file.deleteOnExit()
-            file.setWritable(false)
-            val filePath = file.toPath()
+            val filePath = DopeTemp.createTempFile("path/to/file", false)
 
-            // then
+            // when
             val writeResult = DopeFiles.writeText(filePath, "test content")
 
             // then
@@ -73,11 +65,9 @@ class DopeFilesTest {
         @Test
         fun `should return success and create the file save text for normal path`() {
             // given
-            val file = File.createTempFile("not", "writable")
-            file.delete()
-            val filePath = file.toPath()
+            val filePath = DopeTemp.createTempPath("path/to/file")
 
-            // then
+            // when
             val writeResult = DopeFiles.writeText(filePath, "test content")
 
             // then
@@ -88,12 +78,10 @@ class DopeFilesTest {
         @Test
         fun `should return success and override file content`() {
             // given
-            val file = File.createTempFile("not", "writable")
-            file.deleteOnExit()
-            val filePath = file.toPath()
+            val filePath = DopeTemp.createTempFile("path/to/file")
             Files.writeString(filePath, "old content")
 
-            // then
+            // when
             val writeResult = DopeFiles.writeText(filePath, "test content")
 
             // then

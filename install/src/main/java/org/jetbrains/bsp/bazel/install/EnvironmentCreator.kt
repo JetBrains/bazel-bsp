@@ -4,7 +4,7 @@ import ch.epfl.scala.bsp4j.BspConnectionDetails
 import com.google.gson.GsonBuilder
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
-import org.jetbrains.bsp.bazel.utils.DopeFiles
+import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path

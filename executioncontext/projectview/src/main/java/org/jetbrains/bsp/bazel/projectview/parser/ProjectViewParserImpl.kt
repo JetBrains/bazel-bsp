@@ -12,7 +12,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSec
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
-import org.jetbrains.bsp.bazel.utils.DopeFiles
+import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.nio.file.Path
 import java.nio.file.Paths
 

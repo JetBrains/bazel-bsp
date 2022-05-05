@@ -29,7 +29,7 @@ kt_jvm_library(
     srcs = glob(["*.kt"]),
     resources = ["//log4j_config"],
     deps = [
-        "//utils:dope_files",
+        "//utils:dope",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/sections",
         "@maven//:io_vavr_vavr",
