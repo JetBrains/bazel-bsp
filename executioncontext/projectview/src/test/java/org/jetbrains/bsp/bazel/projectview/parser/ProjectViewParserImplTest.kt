@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.FileNotFoundException
+import java.nio.file.NoSuchFileException
 import java.nio.file.Paths
 
 class ProjectViewParserImplTest {
@@ -40,8 +40,8 @@ class ProjectViewParserImplTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe FileNotFoundException::class
-            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
+            projectViewTry.cause::class shouldBe NoSuchFileException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject"
         }
 
         @Test
@@ -54,8 +54,8 @@ class ProjectViewParserImplTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe FileNotFoundException::class
-            projectViewTry.cause.message shouldBe "/projectview/does/not/exist.bazelproject (No such file or directory)"
+            projectViewTry.cause::class shouldBe NoSuchFileException::class
+            projectViewTry.cause.message shouldBe "/projectview/does/not/exist.bazelproject"
         }
 
         @Test
@@ -403,8 +403,8 @@ class ProjectViewParserImplTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe FileNotFoundException::class
-            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
+            projectViewTry.cause::class shouldBe NoSuchFileException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject"
         }
 
         @Test
@@ -418,8 +418,8 @@ class ProjectViewParserImplTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe FileNotFoundException::class
-            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
+            projectViewTry.cause::class shouldBe NoSuchFileException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject"
         }
 
         @Test
@@ -433,8 +433,8 @@ class ProjectViewParserImplTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe FileNotFoundException::class
-            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject (No such file or directory)"
+            projectViewTry.cause::class shouldBe NoSuchFileException::class
+            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject"
         }
 
         @Test

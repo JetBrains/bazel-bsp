@@ -7,6 +7,7 @@ kt_jvm_library(
     visibility = ["//install:__subpackages__"],
     deps = [
         "//commons",
+        "//utils:dope_files",
         "//executioncontext/installationcontext",
         "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",
