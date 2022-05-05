@@ -9,4 +9,7 @@ object DopeFiles {
     // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58
     fun readText(filePath: Path): Try<String> =
         Try.of { Files.readString(filePath) }
+
+    fun writeText(filePath: Path, text: String): Try<Void> =
+        Try.run { Files.writeString(filePath, text) }
 }

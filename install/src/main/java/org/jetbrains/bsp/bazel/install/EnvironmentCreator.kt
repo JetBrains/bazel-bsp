@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BspConnectionDetails
 import com.google.gson.GsonBuilder
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.utils.DopeFiles
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -64,9 +65,6 @@ class EnvironmentCreator(private val projectRootDir: Path,
         val destinationBspDiscoveryFilePath = dotBspDir.resolve(Constants.BAZELBSP_JSON_FILE_NAME)
         val fileContent = GsonBuilder().setPrettyPrinting().create().toJson(discoveryDetails)
 
-        return writeStringToFile(destinationBspDiscoveryFilePath, fileContent)
+        return DopeFiles.writeText(destinationBspDiscoveryFilePath, fileContent)
     }
-
-    private fun writeStringToFile(destinationPath: Path, string: String): Try<Void> =
-            Try.run { Files.writeString(destinationPath, string) }
 }
