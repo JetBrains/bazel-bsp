@@ -23,25 +23,21 @@ object CompilerDiagnosticParser : Parser {
           ?.let { match ->
             val path = match.groupValues[1]
             val line = match.groupValues[2].toInt()
-            val column = match.groupValues[3].toIntOrNull() ?: tryFindColumnNumber(output) ?: 1
+            val messageLines = collectMessageLines(match.groupValues[5], output)
+            val column = match.groupValues[3].toIntOrNull() ?: tryFindColumnNumber(messageLines) ?: 1
             val level = if (match.groupValues[4] == "warning") Level.Warning else Level.Error
-            val message = constructMessage(match.groupValues[5], output)
+            val message = messageLines.joinToString("\n")
             Diagnostic(Position(line, column), message, level, path, targetLabel)
           }
 
-  private fun tryFindColumnNumber(output: Output): Int? {
-    val line = output.peek(limit = 20).find { IssuePositionMarker.matches(it) }
-    return line?.indexOf("^")?. let { it + 1 }
-  }
-
-  private fun constructMessage(header: String, output: Output): String {
+  private fun collectMessageLines(header: String, output: Output): List<String> {
     val lines = mutableListOf<String>()
     lines.addAll(tryCollectLinesMatchingIssueDetails(output))
     if (lines.isEmpty()) {
       lines.addAll(tryCollectLinesTillErrorMarker(output))
     }
     lines.add(0, header)
-    return lines.joinToString("\n")
+    return lines
   }
 
   private val IssuePositionMarker = """^\s*\^\s*$""".toRegex() // ^ surrounded by whitespace only
@@ -56,4 +52,9 @@ object CompilerDiagnosticParser : Parser {
 
   private fun tryCollectLinesMatchingIssueDetails(output: Output) =
       generateSequence { output.tryTake(IssueDetails)?.value }.toList()
+
+  private fun tryFindColumnNumber(messageLines: List<String>): Int? {
+    val line = messageLines.find { IssuePositionMarker.matches(it) }
+    return line?.indexOf("^")?. let { it + 1 }
+  }
 }
