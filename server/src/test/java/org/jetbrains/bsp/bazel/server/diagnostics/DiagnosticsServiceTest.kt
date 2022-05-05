@@ -77,7 +77,7 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
-                Position(3, 1),
+                Position(3, 18),
                 """type mismatch;
                   | found   : String("test")
                   | required: Int
@@ -132,7 +132,7 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test1.scala"),
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
-                Position(21, 1),
+                Position(21, 21),
                 """type mismatch;
                   |  found   : Int(42)
                   |  required: String
@@ -143,7 +143,7 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test2.scala"),
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
-                Position(37, 1),
+                Position(37, 18),
                 """type mismatch;
                   |  found   : String("test")
                   |  required: Int
@@ -198,14 +198,14 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
-                Position(21, 1),
+                Position(21, 21),
                 """type mismatch;
                   |  found   : Int(42)
                   |  required: String
                   |    val x: String = 42
                   |                    ^""".trimMargin()),
             ErrorDiagnostic(
-                Position(37, 1),
+                Position(37, 18),
                 """type mismatch;
                   |  found   : String("test")
                   |  required: Int
@@ -302,14 +302,14 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/project/src/main/scala/com/example/project/File1.scala"),
             BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
             ErrorDiagnostic(
-                Position(11, 1),
+                Position(11, 18),
                 """type mismatch;
                   |  found   : String("sd")
                   |  required: Int
                   |    val x: Int = "sd"
                   |                 ^""".trimMargin()),
             WarningDiagnostic(
-                Position(11, 1),
+                Position(11, 7),
                 """local val x in method promote is never used
                    |  val x: Int = "sd"
                    |      ^""".trimMargin())),
@@ -317,12 +317,12 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/project/src/main/scala/com/example/project/File2.scala"),
             BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
             WarningDiagnostic(
-                Position(26, 1),
+                Position(26, 24),
                 """private val versionsWriter in object File2 is never used
                    |  private implicit val versionsWriter: ConfigWriter[Versions] = deriveWriter[Versions]
                    |                       ^""".trimMargin()),
             WarningDiagnostic(
-                Position(28, 1),
+                Position(28, 22),
                 """private val File2ProtocolWriter in object File2 is never used
                    |private implicit val File2ProtocolWriter: ConfigWriter[File2Protocol] =
                    |                     ^""".trimMargin())))
@@ -358,7 +358,7 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/intellij/release-tool/src/main/scala/com/intellij/releasetool/PluginResolver.scala"),
             BuildTargetIdentifier("//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool"),
             WarningDiagnostic(
-                Position(14, 1),
+                Position(14, 5),
                 """match may not be exhaustive.
                    |It would fail on the following inputs: Bundled(_), BundledCrossVersion(_, _, _), Direct(_), Empty(), FromSources(_, _), Versioned((x: String forSome x not in "com.intellijUpdaterPlugin"), _, _)
                    |    key match {
@@ -367,7 +367,7 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/intellij/release-tool/src/main/scala/com/intellij/releasetool/Json.scala"),
             BuildTargetIdentifier("//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool"),
             WarningDiagnostic(
-                Position(29, 1),
+                Position(29, 37),
                 """trait ScalaObjectMapper in package scala is deprecated (since 2.12.1): ScalaObjectMapper is deprecated because Manifests are not supported in Scala3, you might want to use ClassTagExtensions as a replacement
                    |    val m = new ObjectMapper() with ScalaObjectMapper
                    |                                    ^""".trimMargin())))
@@ -402,12 +402,12 @@ class DiagnosticsServiceTest {
             TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/sync/ProjectResolver.java"),
             BuildTargetIdentifier(""),
             ErrorDiagnostic(
-                Position(20, 1),
+                Position(20, 8),
                 """symbol not found org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider
                    |import org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider;
                    |       ^""".trimMargin()),
             ErrorDiagnostic(
-                Position(37, 1),
+                Position(37, 7),
                 """could not resolve ProjectViewProvider
                    |      ProjectViewProvider projectViewProvider,
                    |      ^""".trimMargin())))

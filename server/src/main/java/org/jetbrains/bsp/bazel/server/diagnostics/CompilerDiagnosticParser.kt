@@ -23,11 +23,16 @@ object CompilerDiagnosticParser : Parser {
           ?.let { match ->
             val path = match.groupValues[1]
             val line = match.groupValues[2].toInt()
-            val column = match.groupValues[3].toIntOrNull() ?: 1
+            val column = match.groupValues[3].toIntOrNull() ?: tryFindColumnNumber(output) ?: 1
             val level = if (match.groupValues[4] == "warning") Level.Warning else Level.Error
             val message = constructMessage(match.groupValues[5], output)
             Diagnostic(Position(line, column), message, level, path, targetLabel)
           }
+
+  private fun tryFindColumnNumber(output: Output): Int? {
+    val line = output.peek(limit = 20).find { IssuePositionMarker.matches(it) }
+    return line?.indexOf("^")?. let { it + 1 }
+  }
 
   private fun constructMessage(header: String, output: Output): String {
     val lines = mutableListOf<String>()
