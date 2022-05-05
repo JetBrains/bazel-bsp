@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
 import ch.epfl.scala.bsp4j.*
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import org.assertj.core.api.Assertions
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.junit.jupiter.api.Test
@@ -34,9 +35,9 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
                 Position(12, 37),
-                "ERROR: /user/workspace/path/to/package/BUILD:12:37: in java_test rule //path/to/package:test: target '//path/to/another/package:lib' is not visible from target '//path/to/package:test'. Check the visibility declaration of the former target if you think the dependency is legitimate")
+                "in java_test rule //path/to/package:test: target '//path/to/another/package:lib' is not visible from target '//path/to/package:test'. Check the visibility declaration of the former target if you think the dependency is legitimate")
         ))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   @Test
@@ -437,7 +438,7 @@ class DiagnosticsServiceTest {
     return BspDiagnostic(Range(adjustedPosition, adjustedPosition), message).apply { this.severity = severity }
   }
 
-  private fun extractDiagnostics(output: String): List<PublishDiagnosticsParams>? {
+  private fun extractDiagnostics(output: String): List<PublishDiagnosticsParams> {
     val bazelInfo = BasicBazelInfo("", workspacePath)
     return DiagnosticsService(bazelInfo).extractDiagnostics(output)
   }
