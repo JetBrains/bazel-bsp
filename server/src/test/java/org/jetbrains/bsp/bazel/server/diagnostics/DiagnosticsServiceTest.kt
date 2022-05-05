@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.server.diagnostics
 
 import ch.epfl.scala.bsp4j.*
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import org.assertj.core.api.Assertions
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
@@ -79,14 +78,13 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
                 Position(3, 1),
-                """path/to/package/Test.scala:3: error: type mismatch;
+                """type mismatch;
                   | found   : String("test")
                   | required: Int
                   |  val foo: Int = "test"
                   |                 ^""".trimMargin())))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
-
 
   @Test
   fun `should extract diagnostics for error in 2 source files`() {
@@ -135,7 +133,7 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
                 Position(21, 1),
-                """path/to/package/Test1.scala:21: error: type mismatch;
+                """type mismatch;
                   |  found   : Int(42)
                   |  required: String
                   |    val x: String = 42
@@ -146,13 +144,13 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
                 Position(37, 1),
-                """path/to/package/Test2.scala:37: error: type mismatch;
+                """type mismatch;
                   |  found   : String("test")
                   |  required: Int
                   |    val x: Int = "test"
                   |                 ^""".trimMargin())
         ))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   @Test
@@ -201,20 +199,20 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//path/to/package:test"),
             ErrorDiagnostic(
                 Position(21, 1),
-                """path/to/package/Test.scala:21: error: type mismatch;
+                """type mismatch;
                   |  found   : Int(42)
                   |  required: String
                   |    val x: String = 42
                   |                    ^""".trimMargin()),
             ErrorDiagnostic(
                 Position(37, 1),
-                """path/to/package/Test.scala:37: error: type mismatch;
+                """type mismatch;
                   |  found   : String("test")
                   |  required: Int
                   |    val x: Int = "test"
                   |                 ^""".trimMargin())
         ))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   @Test
@@ -261,15 +259,15 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//server/src/test/java/org/jetbrains/bsp/bazel/server/diagnostics:diagnostics"),
             ErrorDiagnostic(
                 Position(12, 18),
-                """server/src/test/java/org/jetbrains/bsp/bazel/server/diagnostics/DiagnosticsServiceTest.kt:12:18: error: type mismatch: inferred type is String but Int was expected
+                """type mismatch: inferred type is String but Int was expected
                   |val int: Int = "STRING"
                   |^""".trimMargin()),
             ErrorDiagnostic(
                 Position(13, 24),
-                """server/src/test/java/org/jetbrains/bsp/bazel/server/diagnostics/DiagnosticsServiceTest.kt:13:24: error: the integer literal does not conform to the expected type String
+                """the integer literal does not conform to the expected type String
                   |val string: String = 1
                   |^""".trimMargin())))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   @Test
@@ -305,14 +303,14 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
             ErrorDiagnostic(
                 Position(11, 1),
-                """project/src/main/scala/com/example/project/File1.scala:11: error: type mismatch;
+                """type mismatch;
                   |  found   : String("sd")
                   |  required: Int
                   |    val x: Int = "sd"
                   |                 ^""".trimMargin()),
             WarningDiagnostic(
                 Position(11, 1),
-                """project/src/main/scala/com/example/project/File1.scala:11: warning: local val x in method promote is never used
+                """local val x in method promote is never used
                    |  val x: Int = "sd"
                    |      ^""".trimMargin())),
         PublishDiagnosticsParams(
@@ -320,15 +318,15 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
             WarningDiagnostic(
                 Position(26, 1),
-                """project/src/main/scala/com/example/project/File2.scala:26: warning: private val versionsWriter in object File2 is never used
+                """private val versionsWriter in object File2 is never used
                    |  private implicit val versionsWriter: ConfigWriter[Versions] = deriveWriter[Versions]
                    |                       ^""".trimMargin()),
             WarningDiagnostic(
                 Position(28, 1),
-                """project/src/main/scala/com/example/project/File2.scala:28: warning: private val File2ProtocolWriter in object File2 is never used
+                """private val File2ProtocolWriter in object File2 is never used
                    |private implicit val File2ProtocolWriter: ConfigWriter[File2Protocol] =
                    |                     ^""".trimMargin())))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   @Test
@@ -361,7 +359,7 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool"),
             WarningDiagnostic(
                 Position(14, 1),
-                """intellij/release-tool/src/main/scala/com/intellij/releasetool/PluginResolver.scala:14: warning: match may not be exhaustive.
+                """match may not be exhaustive.
                    |It would fail on the following inputs: Bundled(_), BundledCrossVersion(_, _, _), Direct(_), Empty(), FromSources(_, _), Versioned((x: String forSome x not in "com.intellijUpdaterPlugin"), _, _)
                    |    key match {
                    |    ^""".trimMargin())),
@@ -370,10 +368,10 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier("//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool"),
             WarningDiagnostic(
                 Position(29, 1),
-                """intellij/release-tool/src/main/scala/com/intellij/releasetool/Json.scala:29: warning: trait ScalaObjectMapper in package scala is deprecated (since 2.12.1): ScalaObjectMapper is deprecated because Manifests are not supported in Scala3, you might want to use ClassTagExtensions as a replacement
+                """trait ScalaObjectMapper in package scala is deprecated (since 2.12.1): ScalaObjectMapper is deprecated because Manifests are not supported in Scala3, you might want to use ClassTagExtensions as a replacement
                    |    val m = new ObjectMapper() with ScalaObjectMapper
                    |                                    ^""".trimMargin())))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   @Test
@@ -405,15 +403,15 @@ class DiagnosticsServiceTest {
             BuildTargetIdentifier(""),
             ErrorDiagnostic(
                 Position(20, 1),
-                """server/src/main/java/org/jetbrains/bsp/bazel/server/sync/ProjectResolver.java:20: error: symbol not found org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider
+                """symbol not found org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider
                    |import org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider;
                    |       ^""".trimMargin()),
             ErrorDiagnostic(
                 Position(37, 1),
-                """server/src/main/java/org/jetbrains/bsp/bazel/server/sync/ProjectResolver.java:37: error: could not resolve ProjectViewProvider
+                """could not resolve ProjectViewProvider
                    |      ProjectViewProvider projectViewProvider,
                    |      ^""".trimMargin())))
-    Assertions.assertThat(diagnostics).containsExactlyInAnyOrderElementsOf(expected)
+    diagnostics shouldContainExactlyInAnyOrder expected
   }
 
   private fun PublishDiagnosticsParams(
@@ -442,5 +440,4 @@ class DiagnosticsServiceTest {
     val bazelInfo = BasicBazelInfo("", workspacePath)
     return DiagnosticsService(bazelInfo).extractDiagnostics(output)
   }
-
 }

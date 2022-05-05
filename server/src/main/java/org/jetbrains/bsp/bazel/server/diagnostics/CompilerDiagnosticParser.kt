@@ -14,7 +14,7 @@ object CompilerDiagnosticParser : Parser {
       (?::(\d+))?      # optional column number (3)
       :\               # ": " separator
       ([a-zA-Z\ ]+):\  # level (4)
-      .*               # actual error message
+      (.*)             # actual error message (5)
       $                # end of line
       """.toRegex(RegexOption.COMMENTS)
 
@@ -25,7 +25,7 @@ object CompilerDiagnosticParser : Parser {
             val line = match.groupValues[2].toInt()
             val column = match.groupValues[3].toIntOrNull() ?: 1
             val level = if (match.groupValues[4] == "warning") Level.Warning else Level.Error
-            val message = constructMessage(match.value, output)
+            val message = constructMessage(match.groupValues[5], output)
             Diagnostic(Position(line, column), message, level, path, targetLabel)
           }
 
