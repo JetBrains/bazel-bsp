@@ -385,7 +385,6 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                             List.of("--build_flag4.1=value4.1", "--build_flag4.2=value4.2")
                     ),
-                    buildManualTargets = null,
             )
                     .build()
 
@@ -504,7 +503,6 @@ class ProjectViewBuilderTest {
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag4.1=value4.1", "--build_flag4.2=value4.2")
                             ),
-                            buildManualTargets = null,
                     ).build()
 
             // then

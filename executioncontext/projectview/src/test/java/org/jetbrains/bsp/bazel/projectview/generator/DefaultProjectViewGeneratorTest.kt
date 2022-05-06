@@ -192,6 +192,30 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
+        fun `should return pretty string only with manual tag for project view only with manual tag`() {
+            // given
+            val projectView = ProjectView(
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("true".toBoolean()),
+            )
+
+            // when
+            val generatedString = generator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                    """
+                build_manual_targets: true
+                
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
@@ -200,8 +224,9 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
                     javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(List.of()),
-                    buildManualTargets = null,
-            )
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
+
+                    )
 
             // when
             val generatedString = generator.generatePrettyString(projectView)
@@ -218,6 +243,8 @@ class DefaultProjectViewGeneratorTest {
                 java_path: /path/to/java
 
                 build_flags:
+                
+                build_manual_targets: false
                 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -294,7 +321,7 @@ class DefaultProjectViewGeneratorTest {
                                     "--build_flag3=value3",
                             )
                     ),
-                    buildManualTargets = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -320,6 +347,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+                    
+                build_manual_targets: false
                 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -357,7 +386,7 @@ class DefaultProjectViewGeneratorTest {
                                     "--build_flag3=value3",
                             )
                     ),
-                    buildManualTargets = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -385,6 +414,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+    
+                build_manual_targets: false
                 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -418,7 +449,7 @@ class DefaultProjectViewGeneratorTest {
                                     "--build_flag3=value3",
                             )
                     ),
-                    buildManualTargets = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -446,6 +477,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+    
+                build_manual_targets: false
                 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -462,7 +495,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
                     javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(List.of()),
-                    buildManualTargets = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
 
             val parser = ProjectViewParserImpl()
