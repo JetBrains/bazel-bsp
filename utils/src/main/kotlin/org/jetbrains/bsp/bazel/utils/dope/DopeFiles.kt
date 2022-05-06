@@ -37,4 +37,16 @@ object DopeFiles {
             Files.createDirectories(filePath.parent)
             Files.writeString(filePath, text)
         }
+
+    // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58
+    /**
+     * Creates directories (recursive).
+     *
+     * @param dir - path of directory to create (including subdirectories)
+     * @return
+     *  - `Try.success` with dir path if operation was successful
+     *  - `Try.failure` otherwise
+     */
+    fun createDirectories(dir: Path): Try<Path> =
+        Try.of { Files.createDirectories(dir) }
 }
