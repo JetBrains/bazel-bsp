@@ -5,5 +5,5 @@ kt_jvm_library(
     visibility = ["//visibility:public"],
     exports = [
         "//utils/src/main/kotlin/org/jetbrains/bsp/bazel/utils/dope",
-    ]
+    ],
 )
