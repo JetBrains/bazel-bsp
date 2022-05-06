@@ -347,7 +347,7 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-                    
+        
                 build_manual_targets: false
                 
                 """.trimIndent()

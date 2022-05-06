@@ -130,6 +130,7 @@ class ProjectViewParserImplTest {
             projectView.buildFlags shouldBe null
         }
 
+
         @Test
         fun `should parse empty file`() {
             // given
