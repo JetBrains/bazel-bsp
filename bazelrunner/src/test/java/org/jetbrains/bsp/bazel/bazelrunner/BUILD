@@ -7,6 +7,7 @@ kt_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.bazelrunner",
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner",
+        "//utils:dope",
         "@maven//:io_vavr_vavr",
     ],
 )

@@ -10,7 +10,6 @@ import io.vavr.control.Option;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk;
@@ -22,13 +21,14 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+import org.jetbrains.bsp.bazel.utils.dope.DopeTemp;
 import org.junit.jupiter.api.Test;
 
 public class ProjectStorageTest {
 
   @Test
   public void shouldStoreAndLoadProject() throws IOException {
-    var path = Paths.get(System.getProperty("java.io.tmpdir"), "project-cache-test.json");
+    var path = DopeTemp.INSTANCE.createTempPath("project-cache-test.json");
     Files.deleteIfExists(path);
     var storage = new ProjectStorage(path, new BspClientLogger());
 
