@@ -98,7 +98,8 @@ class ProjectViewBuilderTest {
                             bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
                             debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("127.0.0.1:8000")),
                             javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
-                            buildFlags = ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2"))
+                            buildFlags = ProjectViewBuildFlagsSection(List.of("--build_flag1=value1", "--build_flag2=value2")),
+                            buildManualTargets = null,
                     ).build()
 
             // then
@@ -148,8 +149,9 @@ class ProjectViewBuilderTest {
                             ),
                             javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(
-                                    List.of("--build_flag1=value1", "--build_flag2=value2")
-                            )
+                                    List.of("--build_flag1=value1", "--build_flag2=value2"),
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             // when
@@ -200,6 +202,7 @@ class ProjectViewBuilderTest {
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag1=value1", "--build_flag2=value2")
                             ),
+                            buildManualTargets = null,
                     ).build()
 
             // then
@@ -242,7 +245,8 @@ class ProjectViewBuilderTest {
                             javaPath = ProjectViewJavaPathSection(Paths.get("imported/path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
-                            )
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             // when
@@ -267,7 +271,8 @@ class ProjectViewBuilderTest {
                             javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag2.1=value2.1", "--build_flag2.2=value2.2")
-                            )
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             // then
@@ -329,7 +334,8 @@ class ProjectViewBuilderTest {
                             javaPath = ProjectViewJavaPathSection(Paths.get("imported1/path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
-                            )
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             val importedProjectViewTry2 =
@@ -358,7 +364,8 @@ class ProjectViewBuilderTest {
                             javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag3.1=value3.1")
-                            )
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             // when
@@ -377,7 +384,8 @@ class ProjectViewBuilderTest {
                     ),
                     buildFlags = ProjectViewBuildFlagsSection(
                             List.of("--build_flag4.1=value4.1", "--build_flag4.2=value4.2")
-                    )
+                    ),
+                    buildManualTargets = null,
             )
                     .build()
 
@@ -446,7 +454,8 @@ class ProjectViewBuilderTest {
                             javaPath = ProjectViewJavaPathSection(Paths.get("imported1/path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
-                            )
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             val importedProjectViewTry2 =
@@ -472,6 +481,7 @@ class ProjectViewBuilderTest {
                             debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("0.0.0.3:8000")),
                             javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
                             buildFlags = ProjectViewBuildFlagsSection(List.of("--build_flag3.1=value3.1")),
+                            buildManualTargets = null,
                     ).build()
 
             val importedProjectViewTry4 = ProjectView.Builder().build()
@@ -493,7 +503,8 @@ class ProjectViewBuilderTest {
                             ),
                             buildFlags = ProjectViewBuildFlagsSection(
                                     List.of("--build_flag4.1=value4.1", "--build_flag4.2=value4.2")
-                            )
+                            ),
+                            buildManualTargets = null,
                     ).build()
 
             // then
