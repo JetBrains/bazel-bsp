@@ -9,6 +9,9 @@
 - Map label->module is no longer serialized -
   it was doubling size of the file.
   | [#233](https://github.com/JetBrains/bazel-bsp/pull/233)
+- Diagnostic message doesn't contain path to file anymore.
+  Also, column number is now inferred from the message.
+  | [#238](https://github.com/JetBrains/bazel-bsp/pull/238)
 
 ## [2.0.0] - 22.04.2022
 

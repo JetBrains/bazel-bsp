@@ -16,27 +16,29 @@ object BazelRootMessageParser : Parser {
       :(\d+)          # line number (2)
       (?::(\d+))?     # optional column number (3)
       :\              # ": " separator
+      (               # beginning of the error message (4)
       (?:.*           # part of actual error message wrapped with label into optional group
-      $TargetLabel    # target label (4)
+      $TargetLabel    # target label (5)
       )?              # make target label optional
       .*              # part of actual error message
+      )               # end of the error message (4)
       $               # end of line
       """.toRegex(RegexOption.COMMENTS)
 
   private fun findErrorInBUILD(output: Output): List<Diagnostic>? {
     return output.tryTake(ErrorInBUILD)
         ?.let { match ->
-          val targetLabel = match.groupValues[4].ifEmpty { null }
+          val targetLabel = match.groupValues[5].ifEmpty { null }
           return collectCompilerDiagnostics(output, targetLabel)
               .ifEmpty { listOf(createError(match, targetLabel)) }
         }
   }
 
   private fun createError(match: MatchResult, targetLabel: String?): Diagnostic {
-    val message = match.value
     val path = match.groupValues[1]
     val line = match.groupValues[2].toInt()
     val column = match.groupValues[3].toIntOrNull() ?: 1
+    val message = match.groupValues[4]
     return Diagnostic(Position(line, column), message, Level.Error, path, targetLabel)
   }
 

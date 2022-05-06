@@ -1,9 +1,9 @@
 load("//:junit5.bzl", "kt_junit5_test")
 
 kt_junit5_test(
-    name = "diagnostics",
+    name = "DiagnosticsServiceTest",
     size = "small",
-    srcs = glob(["*.kt"]),
+    srcs = ["DiagnosticsServiceTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.server.diagnostics",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
