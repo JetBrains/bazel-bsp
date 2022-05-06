@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.utils.dope
 
-import io.kotest.matchers.collections.shouldEndWith
-import io.kotest.matchers.collections.shouldStartWith
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
@@ -32,7 +30,25 @@ class DopeTempTest {
         }
 
         @Test
-        fun `should return path to writable file`() {
+        fun `should return path with 1 directory to writable file`() {
+            // given
+            val rawPath = "path/file.xd"
+
+            // when
+            val path = DopeTemp.createTempFile(rawPath)
+
+            // then
+            Files.exists(path) shouldBe true
+            Files.isWritable(path) shouldBe true
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
+
+            Files.exists(path.parent) shouldBe true
+            path.parent.fileName.toString() shouldStartWith "path"
+        }
+
+        @Test
+        fun `should return path with 2 directories to writable file`() {
             // given
             val rawPath = "path/to/file.xd"
 
@@ -44,7 +60,11 @@ class DopeTempTest {
             Files.isWritable(path) shouldBe true
             path.fileName.toString() shouldStartWith "file"
             path.fileName.toString() shouldEndWith ".xd"
+
+            Files.exists(path.parent.parent) shouldBe true
             path.parent.fileName.toString() shouldStartWith "to"
+
+            Files.exists(path.parent.parent) shouldBe true
             path.parent.parent.fileName.toString() shouldStartWith "path"
         }
 
@@ -61,7 +81,11 @@ class DopeTempTest {
             Files.isWritable(path) shouldBe false
             path.fileName.toString() shouldStartWith "file"
             path.fileName.toString() shouldEndWith ".xd"
+
+            Files.exists(path.parent) shouldBe true
             path.parent.fileName.toString() shouldStartWith "to"
+
+            Files.exists(path.parent.parent) shouldBe true
             path.parent.parent.fileName.toString() shouldStartWith "path"
         }
     }
@@ -85,7 +109,24 @@ class DopeTempTest {
         }
 
         @Test
-        fun `should return path (file shouldn't exist)`() {
+        fun `should return path with 1 directory (file shouldn't exist)`() {
+            // given
+            val rawPath = "path/file.xd"
+
+            // when
+            val path = DopeTemp.createTempPath(rawPath)
+
+            // then
+            Files.exists(path) shouldBe false
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
+
+            Files.exists(path.parent) shouldBe false
+            path.parent.fileName.toString() shouldStartWith "path"
+        }
+
+        @Test
+        fun `should return path with 2 directories (file shouldn't exist)`() {
             // given
             val rawPath = "path/to/file.xd"
 
@@ -96,7 +137,11 @@ class DopeTempTest {
             Files.exists(path) shouldBe false
             path.fileName.toString() shouldStartWith "file"
             path.fileName.toString() shouldEndWith ".xd"
+
+            Files.exists(path.parent) shouldBe false
             path.parent.fileName.toString() shouldStartWith "to"
+
+            Files.exists(path.parent.parent) shouldBe false
             path.parent.parent.fileName.toString() shouldStartWith "path"
         }
     }

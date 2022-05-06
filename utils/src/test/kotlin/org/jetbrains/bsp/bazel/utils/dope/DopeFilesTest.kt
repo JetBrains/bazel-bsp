@@ -17,7 +17,7 @@ class DopeFilesTest {
         @Test
         fun `should return failure for not existing file`() {
             // given
-            val filePath = DopeTemp.createTempPath("file/doesnt/exist")
+            val filePath = DopeTemp.createTempPath("file/doesnt/exist.xd")
 
             // when
             val fileContentTry = DopeFiles.readText(filePath)
@@ -30,7 +30,7 @@ class DopeFilesTest {
         @Test
         fun `should parse existing file and return success`() {
             // given
-            val filePath = DopeTemp.createTempFile("path/to/file")
+            val filePath = DopeTemp.createTempFile("path/to/file.xd")
             Files.writeString(filePath, "test content")
 
             // when
@@ -51,7 +51,7 @@ class DopeFilesTest {
         @Test
         fun `should return failure for path without writing permission`() {
             // given
-            val filePath = DopeTemp.createTempFile("path/to/file", false)
+            val filePath = DopeTemp.createTempFile("path/to/file.xd", false)
 
             // when
             val writeResult = DopeFiles.writeText(filePath, "test content")
@@ -65,7 +65,7 @@ class DopeFilesTest {
         @Test
         fun `should return success and create the file save text for normal path`() {
             // given
-            val filePath = DopeTemp.createTempPath("path/to/file")
+            val filePath = DopeTemp.createTempPath("path/to/file.xd")
 
             // when
             val writeResult = DopeFiles.writeText(filePath, "test content")
@@ -78,7 +78,7 @@ class DopeFilesTest {
         @Test
         fun `should return success and override file content`() {
             // given
-            val filePath = DopeTemp.createTempFile("path/to/file")
+            val filePath = DopeTemp.createTempFile("path/to/file.xd")
             Files.writeString(filePath, "old content")
 
             // when

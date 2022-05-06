@@ -5,65 +5,95 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 
+/**
+ * Trys are dope, exceptions are not... Soooo use `DopeTemp` to create temp files / dirs to be dope!
+ */
 object DopeTemp {
 
+    /**
+     * Creates a temp file, allows to edit writable flag.
+     * Sets `.deleteOnExit()`.
+     *
+     * @param rawPath - path to the place where file should be created
+     * @param writable - flag set using `setWritable`
+     *
+     * @return Path to the created temp file
+     */
     fun createTempFile(rawPath: String, writable: Boolean = true): Path {
-        val tempFile = createTmpFileWithDirs(rawPath)
+        val path = Path(rawPath)
+        val dirs = createTempDirs(path.parent)
+        val tempFile = createTempFileInDirs(dirs, path.fileName)
+
         tempFile.deleteOnExit()
         tempFile.setWritable(writable)
 
         return tempFile.toPath()
     }
 
+    /**
+     * Creates a temp path - it means that file nor directories don't exist.
+     *
+     * @param rawPath - path which should be used to create a temp path
+     * @return temp path
+     */
     fun createTempPath(rawPath: String): Path {
-        val tempFile = createTmpFileWithDirs(rawPath)
+        val path = Path(rawPath)
+        val dirs = createTempDirs(path.parent)
+        val tempFile = createTempFileInDirs(dirs, path.fileName)
+
         tempFile.delete()
         tempFile.deleteOnExit()
+        deleteAllDirs(dirs)
+
 
         return tempFile.toPath()
     }
 
-    private fun createTmpFileWithDirs(rawPath: String): File {
-        val path = Path(rawPath)
-        val dirs = createTempDirs(path)
+    private fun createTempDirs(path: Path?): List<Path>? =
+        path?.let { createTempDirsNotNull(it) }
 
-        return createTempFile(dirs, path)
-    }
-
-    private fun createTempDirs(path: Path): Path? {
-        val pathList = path.toList()
-        val firstDir = getFirstDirAndMapToString(pathList)
-        val subdirectories = removeFirstDirAndFileFromPathListAndMapToString(pathList)
+    private fun createTempDirsNotNull(path: Path): List<Path>? {
+        val pathList = path.toList().map { it.toString() }
+        val firstDir = pathList.firstOrNull()
+        val subdirectories = pathList.drop(1)
 
         return createFirstDirAndSubdirectories(firstDir, subdirectories)
     }
 
-    private fun getFirstDirAndMapToString(pathList: List<Path>): String? =
-        pathList.firstOrNull()?.let(Path::toString)
-
-    private fun removeFirstDirAndFileFromPathListAndMapToString(pathList: List<Path>): List<String> =
-        pathList.drop(1).dropLast(1).map(Path::toString)
-
-    private fun createFirstDirAndSubdirectories(firstDir: String?, subdirectories: List<String>): Path? =
-        firstDir?.let(Files::createTempDirectory)
+    private fun createFirstDirAndSubdirectories(firstDir: String?, subdirectories: List<String>): List<Path>? =
+        firstDir?.let { Files.createTempDirectory(it) }
             ?.let { createSubdirectories(it, subdirectories) }
 
-    private fun createSubdirectories(firstDir: Path, subdirectories: List<String>): Path =
-        subdirectories.fold(firstDir, Files::createTempDirectory)
+    private fun createSubdirectories(firstDir: Path, subdirectories: List<String>): List<Path> =
+        subdirectories.runningFold(firstDir, Files::createTempDirectory)
 
-    private fun createTempFile(dir: Path?, path: Path): File {
-        val fileName = calculateFileName(path)
-        val extension = calculateExtension(path)
+    private fun createTempFileInDirs(dirs: List<Path>?, fileNamePath: Path): File {
+        val dir = dirs?.lastOrNull()
+
+        return createTempFileInDir(dir, fileNamePath)
+    }
+
+    private fun createTempFileInDir(dir: Path?, fileNamePath: Path): File {
+        val fileName = calculateFileName(fileNamePath)
+        val extension = calculateExtension(fileNamePath)
         val dirFile = dir?.toFile()
 
         return File.createTempFile(fileName, extension, dirFile)
     }
 
     // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58
-    private fun calculateFileName(path: Path): String =
-        path.fileName.toString().substringBeforeLast(".")
+    private fun calculateFileName(fileNamePath: Path): String =
+        fileNamePath.toString().substringBeforeLast(".")
 
     // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58
-    private fun calculateExtension(path: Path): String =
-        ".${path.fileName.toString().substringAfterLast('.', "")}"
+    private fun calculateExtension(fileNamePath: Path): String =
+        ".${fileNamePath.toString().substringAfterLast('.', "")}"
+
+    private fun deleteAllDirs(dirs: List<Path>?) =
+        dirs?.reversed()
+            ?.map { it.toFile() }
+            ?.forEach {
+                it.delete()
+                it.deleteOnExit()
+            }
 }
