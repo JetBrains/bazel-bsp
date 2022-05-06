@@ -4,8 +4,6 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.extension
-import kotlin.io.path.nameWithoutExtension
 
 object DopeTemp {
 
@@ -61,9 +59,11 @@ object DopeTemp {
         return File.createTempFile(fileName, extension, dirFile)
     }
 
+    // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58
     private fun calculateFileName(path: Path): String =
-        path.fileName.nameWithoutExtension
+        path.fileName.toString().substringBeforeLast(".")
 
+    // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58
     private fun calculateExtension(path: Path): String =
-        ".${path.extension}"
+        ".${path.fileName.toString().substringAfterLast('.', "")}"
 }

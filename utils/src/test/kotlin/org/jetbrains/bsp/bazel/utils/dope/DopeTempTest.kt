@@ -1,14 +1,14 @@
 package org.jetbrains.bsp.bazel.utils.dope
 
+import io.kotest.matchers.collections.shouldEndWith
+import io.kotest.matchers.collections.shouldStartWith
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
-import kotlin.io.path.extension
-import kotlin.io.path.name
-import kotlin.io.path.nameWithoutExtension
 
 class DopeTempTest {
 
@@ -27,8 +27,8 @@ class DopeTempTest {
             // then
             Files.exists(path) shouldBe true
             Files.isWritable(path) shouldBe true
-            path.extension shouldBe "xd"
-            path.nameWithoutExtension shouldStartWith "file"
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
         }
 
         @Test
@@ -42,10 +42,10 @@ class DopeTempTest {
             // then
             Files.exists(path) shouldBe true
             Files.isWritable(path) shouldBe true
-            path.extension shouldBe "xd"
-            path.nameWithoutExtension shouldStartWith "file"
-            path.parent.name shouldStartWith "to"
-            path.parent.parent.name shouldStartWith "path"
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
+            path.parent.fileName.toString() shouldStartWith "to"
+            path.parent.parent.fileName.toString() shouldStartWith "path"
         }
 
         @Test
@@ -59,10 +59,10 @@ class DopeTempTest {
             // then
             Files.exists(path) shouldBe true
             Files.isWritable(path) shouldBe false
-            path.extension shouldBe "xd"
-            path.nameWithoutExtension shouldStartWith "file"
-            path.parent.name shouldStartWith "to"
-            path.parent.parent.name shouldStartWith "path"
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
+            path.parent.fileName.toString() shouldStartWith "to"
+            path.parent.parent.fileName.toString() shouldStartWith "path"
         }
     }
 
@@ -80,8 +80,8 @@ class DopeTempTest {
 
             // then
             Files.exists(path) shouldBe false
-            path.extension shouldBe "xd"
-            path.nameWithoutExtension shouldStartWith "file"
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
         }
 
         @Test
@@ -94,10 +94,10 @@ class DopeTempTest {
 
             // then
             Files.exists(path) shouldBe false
-            path.extension shouldBe "xd"
-            path.nameWithoutExtension shouldStartWith "file"
-            path.parent.name shouldStartWith "to"
-            path.parent.parent.name shouldStartWith "path"
+            path.fileName.toString() shouldStartWith "file"
+            path.fileName.toString() shouldEndWith ".xd"
+            path.parent.fileName.toString() shouldStartWith "to"
+            path.parent.parent.fileName.toString() shouldStartWith "path"
         }
     }
 }
