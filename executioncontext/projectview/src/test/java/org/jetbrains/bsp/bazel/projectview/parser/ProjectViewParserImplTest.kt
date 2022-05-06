@@ -130,6 +130,20 @@ class ProjectViewParserImplTest {
             projectView.buildFlags shouldBe null
         }
 
+        @Test
+        fun `should return empty build manual targets for file without build manual targets section`() {
+            // given
+            val projectViewFilePath = Paths.get("/projectview/without/build_manual_targets.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.buildManualTargets shouldBe null
+        }
 
         @Test
         fun `should parse empty file`() {
