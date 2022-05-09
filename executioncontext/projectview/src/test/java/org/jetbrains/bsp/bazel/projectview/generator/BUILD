@@ -8,5 +8,6 @@ kt_junit5_test(
     deps = [
         "//executioncontext/projectview:parser",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/generator",
+        "//utils:dope",
     ],
 )

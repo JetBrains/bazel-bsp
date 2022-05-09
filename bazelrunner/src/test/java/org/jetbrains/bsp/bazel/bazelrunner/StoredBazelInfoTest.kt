@@ -1,16 +1,14 @@
-package org.jetbrains.bsp.bazel.bazelrunner;
+package org.jetbrains.bsp.bazel.bazelrunner
 
 import org.assertj.core.api.Assertions
-import org.assertj.core.api.AssertionsForClassTypes
+import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.Test
-import java.nio.file.Files
 import java.nio.file.Paths
 
 class ProjectStorageTest {
   @Test
   fun shouldStoreAndLoadProject() {
-    val path = Paths.get(System.getProperty("java.io.tmpdir"), "bazel-info-cache-test.json")
-        .also { Files.deleteIfExists(it) }
+    val path = DopeTemp.createTempPath("bazel-info-cache-test.json")
 
     val storage = BazelInfoStorage(path)
 

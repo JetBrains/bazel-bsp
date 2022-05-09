@@ -8,6 +8,7 @@ java_junit5_test(
     deps = [
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "//utils:dope",
         "@maven//:io_vavr_vavr",
     ],
 )

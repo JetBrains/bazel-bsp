@@ -2,11 +2,11 @@ package org.jetbrains.bsp.bazel.install
 
 import io.vavr.control.Option
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.commons.BetterFiles
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.ProjectViewProvider
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParser
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
+import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.file.Path
@@ -35,7 +35,7 @@ class ProjectViewDefaultFromResourcesProvider(private val projectViewFilePath: P
                     .getOrElse { PARSER.parse(defaultProjectViewFileContent) }
 
     private fun create(projectViewFilePath: Path, defaultProjectViewFileContent: String): Try<ProjectView> =
-            BetterFiles.tryReadFileContent(projectViewFilePath)
+            DopeFiles.readText(projectViewFilePath)
                     .flatMap { PARSER.parse(it, defaultProjectViewFileContent) }
                     .orElse { PARSER.parse(defaultProjectViewFileContent) }
 

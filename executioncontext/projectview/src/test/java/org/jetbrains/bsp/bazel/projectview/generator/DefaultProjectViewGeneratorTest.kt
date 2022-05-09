@@ -10,6 +10,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAdd
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
+import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -327,7 +328,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view in the file`() {
             // given
-            val filePath = Paths.get("path/to/projectview.bazelproject")
+            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -386,7 +387,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and override project view in the file`() {
             // given
-            val filePath = Paths.get("path/to/projectview.bazelproject")
+            val filePath = DopeTemp.createTempFile("path/to/projectview.bazelproject")
             Files.writeString(filePath, "some random things, maybe previous project view")
 
             val projectView = ProjectView(
@@ -446,7 +447,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view with empty list sections in the file which should be parsable by the parser`() {
             // given
-            val filePath = Paths.get("path/to/projectview.bazelproject")
+            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(List.of(), List.of()),
@@ -479,7 +480,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save partly filled project view in the file which should be parsable by the parser`() {
             // given
-            val filePath = Paths.get("path/to/projectview.bazelproject")
+            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -517,7 +518,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view in the file which should be parsable by the parser`() {
             // given
-            val filePath = Paths.get("path/to/projectview.bazelproject")
+            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(

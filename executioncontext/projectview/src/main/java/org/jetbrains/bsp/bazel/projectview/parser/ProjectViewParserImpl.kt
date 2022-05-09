@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import io.vavr.control.Option
 import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.commons.BetterFiles
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
@@ -13,6 +12,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSec
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
+import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -27,7 +27,7 @@ open class ProjectViewParserImpl : ProjectViewParser {
     override fun parse(projectViewFilePath: Path, defaultProjectViewFilePath: Path): Try<ProjectView> {
         log.info("Parsing project view from {} with default from {}.", projectViewFilePath, defaultProjectViewFilePath)
 
-        return BetterFiles.tryReadFileContent(projectViewFilePath)
+        return DopeFiles.readText(projectViewFilePath)
             .onFailure { log.error("Failed to read file {}. Parsing failed!", projectViewFilePath, it) }
             .flatMap { parse(it, defaultProjectViewFilePath) }
             .onSuccess {
@@ -42,7 +42,7 @@ open class ProjectViewParserImpl : ProjectViewParser {
     }
 
     private fun parse(projectViewFileContent: String, defaultProjectViewFilePath: Path): Try<ProjectView> =
-        BetterFiles.tryReadFileContent(defaultProjectViewFilePath)
+        DopeFiles.readText(defaultProjectViewFilePath)
             .flatMap { parse(projectViewFileContent, it) }
 
 
@@ -80,7 +80,7 @@ open class ProjectViewParserImpl : ProjectViewParser {
     override fun parse(projectViewFilePath: Path): Try<ProjectView> {
         log.info("Parsing project view from {}.", projectViewFilePath)
 
-        return BetterFiles.tryReadFileContent(projectViewFilePath)
+        return DopeFiles.readText(projectViewFilePath)
             .onFailure { log.error("Failed to read file {}. Parsing failed!", projectViewFilePath, it) }
             .flatMap(this::parse)
             .onSuccess { log.info("Project view from {} parsed!\n{}", projectViewFilePath, it) }
