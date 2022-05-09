@@ -7,7 +7,7 @@ class BazelRunner private constructor(
     private val bazelPathProvider: BazelPathProvider,
     private val bspClientLogger: BspClientLogger,
     private val bazelInfo: BazelInfo?,
-    private val defaultFlags: List<String>
+    private val defaultFlags: BazelFlagsProvider
 ) {
 
   companion object {
@@ -16,8 +16,8 @@ class BazelRunner private constructor(
     // This is runner without workspace path. It is used to determine workspace
     // path and create a fully functional runner.
     @JvmStatic
-    fun inCwd(bazelPath: BazelPathProvider, bspClientLogger: BspClientLogger): BazelRunner {
-      return BazelRunner(bazelPath, bspClientLogger, bazelInfo = null, emptyList())
+    fun inCwd(bazelPath: BazelPathProvider, bspClientLogger: BspClientLogger, bazelFlags: BazelFlagsProvider): BazelRunner {
+      return BazelRunner(bazelPath, bspClientLogger, bazelInfo = null, bazelFlags)
     }
 
     @JvmStatic
@@ -25,7 +25,7 @@ class BazelRunner private constructor(
         bazelPath: BazelPathProvider,
         bspClientLogger: BspClientLogger,
         bazelInfo: BazelInfo?,
-        defaultFlags: List<String>): BazelRunner {
+        defaultFlags: BazelFlagsProvider): BazelRunner {
       return BazelRunner(bazelPath, bspClientLogger, bazelInfo, defaultFlags)
     }
   }
@@ -43,7 +43,7 @@ class BazelRunner private constructor(
   }
 
   fun runBazelCommand(command: String, flags: List<String>, arguments: List<String>): BazelProcess {
-    val processArgs = listOf(bazel(), command) + defaultFlags + flags + arguments
+    val processArgs = listOf(bazel(), command) + defaultFlags.currentBazelFlags() + flags + arguments
     logInvocation(processArgs)
     val processBuilder = ProcessBuilder(processArgs)
     bazelInfo?.let { processBuilder.directory(it.workspaceRoot.toFile()) }

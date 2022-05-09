@@ -5,14 +5,18 @@ import io.vavr.Lazy;
 import io.vavr.control.Option;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.NoSuchElementException;
+
+import org.jetbrains.bsp.bazel.bazelrunner.BazelFlagsProvider;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelPathProvider;
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewDefaultParserProvider;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 
-public class BazelBspServerConfig implements ProjectViewProvider, BazelPathProvider {
+public class BazelBspServerConfig implements ProjectViewProvider, BazelPathProvider, BazelFlagsProvider {
 
   private final Lazy<String> bazelFromPath = Lazy.of(this::findBazelOnPath);
   private final ProjectViewDefaultParserProvider projectViewProvider;
@@ -54,5 +58,17 @@ public class BazelBspServerConfig implements ProjectViewProvider, BazelPathProvi
 
   private boolean isItNotBazeliskPath(String path) {
     return !path.contains("bazelisk/");
+  }
+
+  @Override
+  public List<String> currentBazelFlags(){
+    return currentBazelFlags(currentProjectView());
+  }
+
+  public List<String> currentBazelFlags(ProjectView projectView){
+    return Option.of(projectView.getBuildFlags())
+        .map(ProjectViewBuildFlagsSection::getValues)
+        .map(io.vavr.collection.List::toJavaList)
+        .getOrElse(List.of());
   }
 }

@@ -53,11 +53,11 @@ public class BazelBspServer {
     var bspInfo = new BspInfo();
     var bazelInfoStorage = new BazelInfoStorage(bspInfo);
     var bazelDataResolver =
-        new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger), bazelInfoStorage);
+        new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger, config), bazelInfoStorage);
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
     this.bazelRunner =
         BazelRunner.of(
-            config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.currentProjectView()));
+            config, bspClientLogger, bazelInfo, config);
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
     this.compilationManager = new BazelBspCompilationManager(bazelRunner);
@@ -93,12 +93,12 @@ public class BazelBspServer {
   }
 
   // this is only a temporary solution - will be changed later
-  private List<String> getDefaultBazelFlags(ProjectView projectView) {
-    return Option.of(projectView.getBuildFlags())
-        .map(ProjectViewBuildFlagsSection::getValues)
-        .map(io.vavr.collection.List::toJavaList)
-        .getOrElse(List.of());
-  }
+//  private List<String> getDefaultBazelFlags(ProjectView projectView) {
+//    return Option.of(projectView.getBuildFlags())
+//        .map(ProjectViewBuildFlagsSection::getValues)
+//        .map(io.vavr.collection.List::toJavaList)
+//        .getOrElse(List.of());
+//  }
 
   public void startServer(BspIntegrationData bspIntegrationData) {
     integrateBsp(bspIntegrationData);
