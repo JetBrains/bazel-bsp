@@ -89,6 +89,9 @@ class WorkspaceContextConstructorTest {
 
             val expectedBazelPathSpec = BazelPathSpec(Path("/path/to/bazel"))
             workspaceContext.bazelPath shouldBe expectedBazelPathSpec
+
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
         }
     }
 
@@ -109,7 +112,8 @@ class WorkspaceContextConstructorTest {
             val expectedWorkspaceContext = WorkspaceContext(
                 targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
-                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel"))
+                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
+                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             )
             workspaceContext shouldBe expectedWorkspaceContext
         }

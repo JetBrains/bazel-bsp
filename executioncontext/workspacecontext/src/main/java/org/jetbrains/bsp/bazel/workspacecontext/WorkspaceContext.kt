@@ -33,6 +33,13 @@ data class WorkspaceContext(
      * Obtained from `ProjectView` if not null, otherwise deducted from `PATH`.
      */
     val bazelPath: BazelPathSpec,
+
+    /**
+     * Path to the `.bazelbsp` dir in the project root
+     *
+     * Deducted from working directory.
+     */
+    val dotBazelBspDirPath: DotBazelBspDirPathSpec,
 ) : ExecutionContext()
 
 
@@ -46,12 +53,15 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
         // maybe TRY is not that good xd
         return TargetsSpecMapper.map(projectView).flatMap { targetsSpec ->
             BuildFlagsSpecMapper.map(projectView).flatMap { buildFlagsSpec ->
-                BazelPathSpecMapper.map(projectView).map { bazelPathSpec ->
-                    WorkspaceContext(
-                        targets = targetsSpec,
-                        buildFlags = buildFlagsSpec,
-                        bazelPath = bazelPathSpec,
-                    )
+                BazelPathSpecMapper.map(projectView).flatMap { bazelPathSpec ->
+                    DotBazelBspDirPathSpecMapper.map(projectView).map { dotBazelBspDirPathSpec ->
+                        WorkspaceContext(
+                            targets = targetsSpec,
+                            buildFlags = buildFlagsSpec,
+                            bazelPath = bazelPathSpec,
+                            dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                        )
+                    }
                 }
             }
         }
@@ -60,12 +70,15 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
     override fun constructDefault(): Try<WorkspaceContext> =
         TargetsSpecMapper.default().flatMap { targetsSpec ->
             BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
-                BazelPathSpecMapper.default().map { bazelPathSpec ->
-                    WorkspaceContext(
-                        targets = targetsSpec,
-                        buildFlags = buildFlagsSpec,
-                        bazelPath = bazelPathSpec,
-                    )
+                BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
+                    DotBazelBspDirPathSpecMapper.default().map { dotBazelBspDirPathSpec ->
+                        WorkspaceContext(
+                            targets = targetsSpec,
+                            buildFlags = buildFlagsSpec,
+                            bazelPath = bazelPathSpec,
+                            dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                        )
+                    }
                 }
             }
         }
