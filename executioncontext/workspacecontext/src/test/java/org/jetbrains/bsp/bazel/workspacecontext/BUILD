@@ -11,9 +11,9 @@ kt_junit5_test(
 )
 
 kt_junit5_test(
-    name = "WorkspaceContextTargetsEntityMapperTest",
+    name = "TargetsSpecMapperTest",
     size = "small",
-    srcs = ["WorkspaceContextTargetsEntityMapperTest.kt"],
+    srcs = ["TargetsSpecMapperTest.kt"],
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],

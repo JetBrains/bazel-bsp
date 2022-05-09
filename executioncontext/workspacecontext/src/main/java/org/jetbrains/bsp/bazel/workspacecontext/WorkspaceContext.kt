@@ -18,7 +18,7 @@ data class WorkspaceContext(
      *
      * Obtained from `ProjectView` simply by mapping 'targets' section.
      */
-    val targets: ExecutionContextTargetsEntity
+    val targets: TargetsSpec
 ) : ExecutionContext()
 
 
@@ -29,6 +29,6 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
     override fun construct(projectView: ProjectView): Try<WorkspaceContext> {
         log.info("Constructing workspace context for: {}.", projectView)
 
-        return WorkspaceContextTargetsEntityMapper.map(projectView).map { WorkspaceContext(it) }
+        return TargetsSpecMapper.map(projectView).map { WorkspaceContext(it) }
     }
 }

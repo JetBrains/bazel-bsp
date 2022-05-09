@@ -58,7 +58,7 @@ class WorkspaceContextConstructorTest {
             val workspaceContext = workspaceContextTry.get()
 
             val expectedTargets =
-                ExecutionContextTargetsEntity(
+                TargetsSpec(
                     listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),

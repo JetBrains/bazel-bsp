@@ -8,20 +8,43 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.Test
 
-class WorkspaceContextTargetsEntityMapperTest {
+class TargetsSpecMapperTest {
 
     @Test
-    fun `should return fail if targets are null`() {
+    fun `should return success with default spec if targets are null`() {
         // given
         val projectView = ProjectView.Builder(targets = null).build().get()
 
         // when
-        val targetsTry = WorkspaceContextTargetsEntityMapper.map(projectView)
+        val targetsSpecTry = TargetsSpecMapper.map(projectView)
 
         // then
-        targetsTry.isFailure shouldBe true
-        targetsTry.cause::class shouldBe ProjectViewToExecutionContextEntityMapperException::class
-        targetsTry.cause.message shouldBe "Mapping project view into 'targets' failed! 'targets' section in project view is empty."
+        targetsSpecTry.isSuccess shouldBe true
+        val targetsSpec = targetsSpecTry.get()
+
+        val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+        targetsSpec shouldBe expectedTargetsSpec
+    }
+
+    @Test
+    fun `should return success and default if targets have no values`() {
+        // given
+        val projectView = ProjectView.Builder(
+            targets = ProjectViewTargetsSection(
+                List.of(),
+                List.of()
+            )
+        ).build().get()
+
+        // when
+        val targetsSpecTry = TargetsSpecMapper.map(projectView)
+
+        // then
+        targetsSpecTry.isSuccess shouldBe true
+        val targetsSpec = targetsSpecTry.get()
+
+        val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+        targetsSpec shouldBe expectedTargetsSpec
     }
 
     @Test
@@ -38,12 +61,12 @@ class WorkspaceContextTargetsEntityMapperTest {
         ).build().get()
 
         // when
-        val targetsTry = WorkspaceContextTargetsEntityMapper.map(projectView)
+        val targetsSpecTry = TargetsSpecMapper.map(projectView)
 
         // then
-        targetsTry.isFailure shouldBe true
-        targetsTry.cause::class shouldBe ProjectViewToExecutionContextEntityMapperException::class
-        targetsTry.cause.message shouldBe "Mapping project view into 'targets' failed! 'targets' section has no included targets."
+        targetsSpecTry.isFailure shouldBe true
+        targetsSpecTry.cause::class shouldBe ProjectViewToExecutionContextEntityMapperException::class
+        targetsSpecTry.cause.message shouldBe "Mapping project view into 'targets' failed! 'targets' section has no included targets."
     }
 
     @Test
@@ -65,14 +88,14 @@ class WorkspaceContextTargetsEntityMapperTest {
             ).build().get()
 
         // when
-        val targetsTry = WorkspaceContextTargetsEntityMapper.map(projectView)
+        val targetsSpecTry = TargetsSpecMapper.map(projectView)
 
         // then
-        targetsTry.isSuccess shouldBe true
-        val targets = targetsTry.get()
+        targetsSpecTry.isSuccess shouldBe true
+        val targetsSpec = targetsSpecTry.get()
 
         val expectedTargets =
-            ExecutionContextTargetsEntity(
+            TargetsSpec(
                 listOf(
                     BuildTargetIdentifier("//included_target1"),
                     BuildTargetIdentifier("//included_target2"),
@@ -83,6 +106,6 @@ class WorkspaceContextTargetsEntityMapperTest {
                     BuildTargetIdentifier("//excluded_target2"),
                 ),
             )
-        targets shouldBe expectedTargets
+        targetsSpec shouldBe expectedTargets
     }
 }
