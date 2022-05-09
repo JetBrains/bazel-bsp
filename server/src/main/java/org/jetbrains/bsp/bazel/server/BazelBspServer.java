@@ -91,15 +91,7 @@ public class BazelBspServer {
             executeService,
             cppBuildServerService);
   }
-
-  // this is only a temporary solution - will be changed later
-//  private List<String> getDefaultBazelFlags(ProjectView projectView) {
-//    return Option.of(projectView.getBuildFlags())
-//        .map(ProjectViewBuildFlagsSection::getValues)
-//        .map(io.vavr.collection.List::toJavaList)
-//        .getOrElse(List.of());
-//  }
-
+  
   public void startServer(BspIntegrationData bspIntegrationData) {
     integrateBsp(bspIntegrationData);
   }
