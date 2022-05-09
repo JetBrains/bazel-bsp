@@ -4,10 +4,10 @@ import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 
 class BazelRunner private constructor(
-    private val bazelPathProvider: BazelPathProvider,
-    private val bspClientLogger: BspClientLogger,
-    private val bazelInfo: BazelInfo?,
-    private val defaultFlags: BazelFlagsProvider
+        private val bazelPathProvider: BazelPathProvider,
+        private val bspClientLogger: BspClientLogger,
+        private val bazelInfo: BazelInfo?,
+        private val defaultFlags: BazelFlagsProvider?
 ) {
 
   companion object {
@@ -17,7 +17,7 @@ class BazelRunner private constructor(
     // path and create a fully functional runner.
     @JvmStatic
     fun inCwd(bazelPath: BazelPathProvider, bspClientLogger: BspClientLogger, bazelFlags: BazelFlagsProvider): BazelRunner {
-      return BazelRunner(bazelPath, bspClientLogger, bazelInfo = null, bazelFlags)
+      return BazelRunner(bazelPath, bspClientLogger, bazelInfo = null, null)
     }
 
     @JvmStatic
