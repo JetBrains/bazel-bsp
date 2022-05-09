@@ -2,12 +2,13 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 
 class BazelRunner private constructor(
-    private val bazelPathProvider: BazelPathProvider,
+    private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientLogger: BspClientLogger,
     private val bazelInfo: BazelInfo?,
-    private val defaultFlags: List<String>
 ) {
 
   companion object {
@@ -16,17 +17,17 @@ class BazelRunner private constructor(
     // This is runner without workspace path. It is used to determine workspace
     // path and create a fully functional runner.
     @JvmStatic
-    fun inCwd(bazelPath: BazelPathProvider, bspClientLogger: BspClientLogger): BazelRunner {
-      return BazelRunner(bazelPath, bspClientLogger, bazelInfo = null, emptyList())
+    fun inCwd(workspaceContextProvider: WorkspaceContextProvider, bspClientLogger: BspClientLogger): BazelRunner {
+      return BazelRunner(workspaceContextProvider, bspClientLogger, bazelInfo = null)
     }
 
     @JvmStatic
     fun of(
-        bazelPath: BazelPathProvider,
+        workspaceContextProvider: WorkspaceContextProvider,
         bspClientLogger: BspClientLogger,
         bazelInfo: BazelInfo?,
-        defaultFlags: List<String>): BazelRunner {
-      return BazelRunner(bazelPath, bspClientLogger, bazelInfo, defaultFlags)
+    ): BazelRunner {
+      return BazelRunner(workspaceContextProvider, bspClientLogger, bazelInfo)
     }
   }
 
@@ -43,7 +44,9 @@ class BazelRunner private constructor(
   }
 
   fun runBazelCommand(command: String, flags: List<String>, arguments: List<String>): BazelProcess {
-    val processArgs = listOf(bazel(), command) + defaultFlags + flags + arguments
+    val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
+
+    val processArgs = listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flags + arguments
     logInvocation(processArgs)
     val processBuilder = ProcessBuilder(processArgs)
     bazelInfo?.let { processBuilder.directory(it.workspaceRoot.toFile()) }
@@ -57,7 +60,8 @@ class BazelRunner private constructor(
         .also { bspClientLogger.message(it) }
   }
 
-  private fun bazel() = bazelPathProvider.currentBazelPath()
+  private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelPath.value.toString()
+  private fun buildFlags(workspaceContext: WorkspaceContext): List<String> = workspaceContext.buildFlags.values
 
   fun setBesBackendPort(port: Int) {
     besBackendPort = port

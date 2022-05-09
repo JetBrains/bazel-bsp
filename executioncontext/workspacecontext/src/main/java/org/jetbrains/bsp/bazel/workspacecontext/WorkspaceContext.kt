@@ -34,6 +34,7 @@ data class WorkspaceContext(
      */
     val bazelPath: BazelPathSpec,
 
+    // TODO replace `BspInfo`
     /**
      * Path to the `.bazelbsp` dir in the project root
      *

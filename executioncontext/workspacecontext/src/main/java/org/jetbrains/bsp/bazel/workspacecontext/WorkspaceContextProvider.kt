@@ -1,14 +1,12 @@
-package org.jetbrains.bsp.bazel.server.bsp.config
+package org.jetbrains.bsp.bazel.workspacecontext
 
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
-import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
-import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextConstructor
 import java.nio.file.Path
 
 interface WorkspaceContextProvider {
 
-    fun currentWorkspaceContext(): Try<WorkspaceContext>
+    fun currentWorkspaceContext(): WorkspaceContext
 }
 
 
@@ -16,10 +14,11 @@ class DefaultWorkspaceContextProvider(private val projectViewPath: Path?) : Work
 
     private val projectViewParser = ProjectViewParserImpl()
 
-    override fun currentWorkspaceContext(): Try<WorkspaceContext> =
+    override fun currentWorkspaceContext(): WorkspaceContext =
         when (projectViewPath) {
-            null -> WorkspaceContextConstructor.constructDefault()
-            else -> parseProjectViewAndConstructWorkspaceContext(projectViewPath)
+            // we rally need to think about exceptions / try
+            null -> WorkspaceContextConstructor.constructDefault().get()
+            else -> parseProjectViewAndConstructWorkspaceContext(projectViewPath).get()
         }
 
     private fun parseProjectViewAndConstructWorkspaceContext(projectViewPath: Path): Try<WorkspaceContext> {

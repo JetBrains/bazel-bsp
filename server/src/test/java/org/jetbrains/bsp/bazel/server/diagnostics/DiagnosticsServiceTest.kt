@@ -1,6 +1,10 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import ch.epfl.scala.bsp4j.DiagnosticSeverity
+import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
+import ch.epfl.scala.bsp4j.Range
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.junit.jupiter.api.Test

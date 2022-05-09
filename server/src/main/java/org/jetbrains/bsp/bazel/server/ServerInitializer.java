@@ -10,8 +10,9 @@ import java.util.Arrays;
 import java.util.concurrent.Executors;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
+import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class ServerInitializer {
 
@@ -39,10 +40,10 @@ public class ServerInitializer {
               Files.newOutputStream(
                   traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 
-      var bazelBspServerConfig = getBazelBspServerConfig(bspInfo, args);
+      var workspaceContextProvider = getWorkspaceContextProvider(args);
 
       var bspIntegrationData = new BspIntegrationData(stdout, stdin, executor, traceWriter);
-      var bspServer = new BazelBspServer(bazelBspServerConfig);
+      var bspServer = new BazelBspServer(workspaceContextProvider);
       bspServer.startServer(bspIntegrationData);
 
       Server server = bspIntegrationData.getServer().start();
@@ -62,8 +63,9 @@ public class ServerInitializer {
     }
   }
 
-  private static BazelBspServerConfig getBazelBspServerConfig(BspInfo bspInfo, String[] args) {
+  private static WorkspaceContextProvider getWorkspaceContextProvider(String[] args) {
     var projectViewPath = Iterator.of(args).headOption().map(Paths::get);
-    return new BazelBspServerConfig(projectViewPath, bspInfo);
+
+    return new DefaultWorkspaceContextProvider(projectViewPath.getOrNull());
   }
 }

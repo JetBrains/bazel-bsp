@@ -8,10 +8,8 @@ java_library(
         "//bazelrunner",
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
-        "//executioncontext/projectview:model",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/config",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
@@ -25,5 +23,6 @@ java_library(
         "@maven//:io_vavr_vavr",
         "@maven//:io_vavr_vavr_jackson",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
+        "//executioncontext/workspacecontext",
     ],
 )

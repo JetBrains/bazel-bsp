@@ -30,14 +30,6 @@ data class ProjectView constructor(
     val buildFlags: ProjectViewBuildFlagsSection?,
 ) {
 
-    fun targetSpecs(): TargetSpecs = targets?.let {
-        TargetSpecs(
-            io.vavr.collection.List.ofAll(it.values),
-            io.vavr.collection.List.ofAll(it.excludedValues)
-        )
-    } ?: TargetSpecs.empty()
-
-
     class Builder constructor(
         private val imports: List<Try<ProjectView>> = emptyList(),
         private val targets: ProjectViewTargetsSection? = null,

@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.generator
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import io.vavr.collection.List
 import io.kotest.matchers.shouldBe
+import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection

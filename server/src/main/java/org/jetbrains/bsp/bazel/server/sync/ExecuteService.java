@@ -19,10 +19,10 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.projectview.model.TargetSpecs;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 
 public class ExecuteService {
 
@@ -104,7 +104,9 @@ public class ExecuteService {
   }
 
   private BazelProcessResult build(Set<BuildTargetIdentifier> bspIds) {
-    return compilationManager.buildTargetsWithBep(TargetSpecs.of(bspIds)).processResult();
+    var targetsSpec = new TargetsSpec(bspIds.toJavaList(), Collections.emptyList());
+
+    return compilationManager.buildTargetsWithBep(targetsSpec).processResult();
   }
 
   private Set<BuildTargetIdentifier> selectTargets(java.util.List<BuildTargetIdentifier> targets) {
