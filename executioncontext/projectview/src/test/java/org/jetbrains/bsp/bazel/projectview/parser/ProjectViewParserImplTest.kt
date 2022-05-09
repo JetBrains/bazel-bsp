@@ -195,7 +195,7 @@ class ProjectViewParserImplTest {
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -236,7 +236,7 @@ class ProjectViewParserImplTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -277,7 +277,7 @@ class ProjectViewParserImplTest {
                         "--build_flag7.3=value7.3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -310,7 +310,7 @@ class ProjectViewParserImplTest {
                         "--build_flag8.3=value8.3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -355,7 +355,7 @@ class ProjectViewParserImplTest {
                         "--build_flag5.2=value5.2",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -402,7 +402,7 @@ class ProjectViewParserImplTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -483,7 +483,7 @@ class ProjectViewParserImplTest {
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -579,7 +579,7 @@ class ProjectViewParserImplTest {
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -611,7 +611,7 @@ class ProjectViewParserImplTest {
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -645,7 +645,7 @@ class ProjectViewParserImplTest {
                         "--build_flag8.3=value8.3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }

@@ -75,7 +75,7 @@ data class ProjectView constructor(
             val debuggerAddress = combineDebuggerAddressSection(importedProjectViews)
             val javaPath = combineJavaPathSection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
-            val buildManualTargets = combileBuildManualTargetsSection(importedProjectViews)
+            val buildManualTargets = combineBuildManualTargetsSection(importedProjectViews)
             log.debug(
                     "Building project view with combined"
                             + " targets: {},"
@@ -164,7 +164,7 @@ data class ProjectView constructor(
         private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): ProjectViewJavaPathSection? =
                 javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
 
-        private fun combileBuildManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewManualTargetsSection? =
+        private fun combineBuildManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewManualTargetsSection? =
                 buildManualTargets
                         ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
 
