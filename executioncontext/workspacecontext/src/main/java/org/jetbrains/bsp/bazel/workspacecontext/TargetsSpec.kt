@@ -44,4 +44,6 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
             targetsSection.values.asJava().toList(),
             targetsSection.excludedValues.asJava().toList()
         )
+
+    override fun default(): Try<TargetsSpec> = Try.success(defaultTargetsSpec)
 }

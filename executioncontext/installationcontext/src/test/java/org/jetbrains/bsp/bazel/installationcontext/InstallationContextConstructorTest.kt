@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 class InstallationContextConstructorTest {
 
@@ -19,7 +20,7 @@ class InstallationContextConstructorTest {
     fun beforeEach() {
         // given
         this.installationContextConstructor =
-            InstallationContextConstructor(Paths.get("/path/to/projectview.bazelproject"))
+            InstallationContextConstructor(Path("/path/to/projectview.bazelproject"))
     }
 
     @Nested
@@ -66,6 +67,34 @@ class InstallationContextConstructorTest {
 
             val expectedDebuggerAddress = InstallationContextDebuggerAddressEntity("host:8000")
             installationContext.debuggerAddress shouldBe expectedDebuggerAddress
+
+            val expectedProjectViewFilePath = Path("/path/to/projectview.bazelproject")
+            installationContext.projectViewFilePath shouldBe expectedProjectViewFilePath
+        }
+    }
+
+    @Nested
+    @DisplayName("fun constructDefault(): Try<InstallationContext> tests")
+    inner class ConstructDefaultTest {
+
+        @Test
+        fun `should return success and default installation context`() {
+            // given
+            System.setProperty("java.home", "/path/to/java")
+
+            // when
+            val installationContextTry = installationContextConstructor.constructDefault()
+
+            // then
+            installationContextTry.isSuccess shouldBe true
+            val installationContext = installationContextTry.get()
+
+            val expectedInstallationContext = InstallationContext(
+                javaPath = InstallationContextJavaPathEntity(Path("/path/to/java/bin/java")),
+                debuggerAddress = null,
+                projectViewFilePath = Path("/path/to/projectview.bazelproject"),
+            )
+            installationContext shouldBe expectedInstallationContext
         }
     }
 }

@@ -21,6 +21,8 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
             else -> Try.success(map(projectView.bazelPath!!))
         }
 
+    override fun default(): Try<BazelPathSpec> = findBazelOnPath()
+
     private fun findBazelOnPath(): Try<BazelPathSpec> =
         findBazelOnPathOrNull()?.let { Try.success(it) }
             ?: Try.failure(
@@ -46,4 +48,5 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
 
     private fun map(bazelPathSection: ProjectViewBazelPathSection): BazelPathSpec =
         BazelPathSpec(bazelPathSection.value)
+
 }

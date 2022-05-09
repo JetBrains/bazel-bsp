@@ -91,4 +91,27 @@ class WorkspaceContextConstructorTest {
             workspaceContext.bazelPath shouldBe expectedBazelPathSpec
         }
     }
+
+    @Nested
+    @DisplayName("fun constructDefault(): Try<WorkspaceContext> tests")
+    inner class ConstructDefaultTest {
+
+        @Test
+        fun `should return success and default workspace context`() {
+            // given
+            // when
+            val workspaceContextTry = WorkspaceContextConstructor.constructDefault()
+
+            // then
+            workspaceContextTry.isSuccess shouldBe true
+            val workspaceContext = workspaceContextTry.get()
+
+            val expectedWorkspaceContext = WorkspaceContext(
+                targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
+                buildFlags = BuildFlagsSpec(emptyList()),
+                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel"))
+            )
+            workspaceContext shouldBe expectedWorkspaceContext
+        }
+    }
 }

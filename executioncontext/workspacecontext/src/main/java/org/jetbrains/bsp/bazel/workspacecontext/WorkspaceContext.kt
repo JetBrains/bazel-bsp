@@ -56,4 +56,17 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
             }
         }
     }
+
+    override fun constructDefault(): Try<WorkspaceContext> =
+        TargetsSpecMapper.default().flatMap { targetsSpec ->
+            BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
+                BazelPathSpecMapper.default().map { bazelPathSpec ->
+                    WorkspaceContext(
+                        targets = targetsSpec,
+                        buildFlags = buildFlagsSpec,
+                        bazelPath = bazelPathSpec,
+                    )
+                }
+            }
+        }
 }

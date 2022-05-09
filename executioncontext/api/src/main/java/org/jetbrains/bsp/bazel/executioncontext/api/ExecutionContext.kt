@@ -27,4 +27,6 @@ interface ExecutionContextConstructor<T : ExecutionContext> {
         projectViewTry.flatMap(::construct)
 
     fun construct(projectView: ProjectView): Try<T>
+
+    fun constructDefault(): Try<T>
 }

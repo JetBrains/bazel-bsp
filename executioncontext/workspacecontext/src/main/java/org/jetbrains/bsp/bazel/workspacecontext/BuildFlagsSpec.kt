@@ -26,4 +26,6 @@ internal object BuildFlagsSpecMapper : ProjectViewToExecutionContextEntityMapper
         BuildFlagsSpec(
             values = targetsSection.values.asJava().toList()
         )
+
+    override fun default(): Try<BuildFlagsSpec> = Try.success(defaultBuildFlagsSpec)
 }

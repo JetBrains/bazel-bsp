@@ -45,6 +45,8 @@ class ProjectViewToExecutionContextEntityMapperException(entityName: String, mes
 
 interface ProjectViewToExecutionContextEntityBaseMapper<T> {
     fun map(projectView: ProjectView): Try<T>
+
+    fun default(): Try<T>
 }
 
 
