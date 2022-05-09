@@ -2,19 +2,19 @@ package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextListEntity
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextExcludableListEntity
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 
 data class TargetsSpec(
-    override val includedValues: List<BuildTargetIdentifier>,
+    override val values: List<BuildTargetIdentifier>,
     override val excludedValues: List<BuildTargetIdentifier>,
-) : ExecutionContextListEntity<BuildTargetIdentifier>()
+) : ExecutionContextExcludableListEntity<BuildTargetIdentifier>()
 
 private val defaultTargetsSpec = TargetsSpec(
-    includedValues = listOf(BuildTargetIdentifier("//...")),
+    values = listOf(BuildTargetIdentifier("//...")),
     excludedValues = emptyList(),
 )
 

@@ -18,7 +18,14 @@ data class WorkspaceContext(
      *
      * Obtained from `ProjectView` simply by mapping 'targets' section.
      */
-    val targets: TargetsSpec
+    val targets: TargetsSpec,
+
+    /**
+     * Build flags which should be added to each bazel call.
+     *
+     * Obtained from `ProjectView` simply by mapping `build_flags` section.
+     */
+    val buildFlags: BuildFlagsSpec,
 ) : ExecutionContext()
 
 
@@ -29,6 +36,10 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
     override fun construct(projectView: ProjectView): Try<WorkspaceContext> {
         log.info("Constructing workspace context for: {}.", projectView)
 
-        return TargetsSpecMapper.map(projectView).map { WorkspaceContext(it) }
+        return TargetsSpecMapper.map(projectView)
+            .flatMap { withTargetsSpec(projectView, it) }
     }
+
+    private fun withTargetsSpec(projectView: ProjectView, targetsSpec: TargetsSpec): Try<WorkspaceContext> =
+        BuildFlagsSpecMapper.map(projectView).map { WorkspaceContext(targets = targetsSpec, buildFlags = it) }
 }

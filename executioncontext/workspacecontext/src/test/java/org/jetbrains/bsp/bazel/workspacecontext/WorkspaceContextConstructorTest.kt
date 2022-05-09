@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -47,6 +48,13 @@ class WorkspaceContextConstructorTest {
                             BuildTargetIdentifier("//included_target3")
                         ),
                         io.vavr.collection.List.of(BuildTargetIdentifier("//excluded_target1")),
+                    ),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                        io.vavr.collection.List.of(
+                            "--build_flag1=value1",
+                            "--build_flag2=value2",
+                            "--build_flag3=value3",
+                        )
                     )
                 ).build()
 
@@ -66,6 +74,15 @@ class WorkspaceContextConstructorTest {
                     ), listOf(BuildTargetIdentifier("//excluded_target1"))
                 )
             workspaceContext.targets shouldBe expectedTargets
+
+            val expectedBuildFlagsSpec = BuildFlagsSpec(
+                listOf(
+                    "--build_flag1=value1",
+                    "--build_flag2=value2",
+                    "--build_flag3=value3",
+                )
+            )
+            workspaceContext.buildFlags shouldBe expectedBuildFlagsSpec
         }
     }
 }
