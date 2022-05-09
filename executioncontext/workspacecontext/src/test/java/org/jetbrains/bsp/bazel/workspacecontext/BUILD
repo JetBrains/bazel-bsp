@@ -11,6 +11,16 @@ kt_junit5_test(
 )
 
 kt_junit5_test(
+    name = "BazelPathSpecMapperTest",
+    size = "small",
+    srcs = ["BazelPathSpecMapperTest.kt"],
+    associates = [
+        "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
+    ],
+    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
+)
+
+kt_junit5_test(
     name = "BuildFlagsSpecMapperTest",
     size = "small",
     srcs = ["BuildFlagsSpecMapperTest.kt"],

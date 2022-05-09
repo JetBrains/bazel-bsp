@@ -4,11 +4,13 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import kotlin.io.path.Path
 
 class WorkspaceContextConstructorTest {
 
@@ -55,7 +57,8 @@ class WorkspaceContextConstructorTest {
                             "--build_flag2=value2",
                             "--build_flag3=value3",
                         )
-                    )
+                    ),
+                    bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel"))
                 ).build()
 
             // when
@@ -83,6 +86,9 @@ class WorkspaceContextConstructorTest {
                 )
             )
             workspaceContext.buildFlags shouldBe expectedBuildFlagsSpec
+
+            val expectedBazelPathSpec = BazelPathSpec(Path("/path/to/bazel"))
+            workspaceContext.bazelPath shouldBe expectedBazelPathSpec
         }
     }
 }
