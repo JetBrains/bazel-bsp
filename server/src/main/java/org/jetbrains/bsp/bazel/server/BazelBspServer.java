@@ -53,7 +53,7 @@ public class BazelBspServer {
     var bspInfo = new BspInfo();
     var bazelInfoStorage = new BazelInfoStorage(bspInfo);
     var bazelDataResolver =
-        new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger, config), bazelInfoStorage);
+        new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger), bazelInfoStorage);
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
     this.bazelRunner =
         BazelRunner.of(

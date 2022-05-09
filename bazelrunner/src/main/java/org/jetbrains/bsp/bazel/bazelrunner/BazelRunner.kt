@@ -16,7 +16,7 @@ class BazelRunner private constructor(
     // This is runner without workspace path. It is used to determine workspace
     // path and create a fully functional runner.
     @JvmStatic
-    fun inCwd(bazelPath: BazelPathProvider, bspClientLogger: BspClientLogger, bazelFlags: BazelFlagsProvider): BazelRunner {
+    fun inCwd(bazelPath: BazelPathProvider, bspClientLogger: BspClientLogger): BazelRunner {
       return BazelRunner(bazelPath, bspClientLogger, bazelInfo = null, null)
     }
 
@@ -43,7 +43,7 @@ class BazelRunner private constructor(
   }
 
   fun runBazelCommand(command: String, flags: List<String>, arguments: List<String>): BazelProcess {
-    val processArgs = listOf(bazel(), command) + defaultFlags.currentBazelFlags() + flags + arguments
+    val processArgs = listOf(bazel(), command) + (defaultFlags?.currentBazelFlags() ?: emptyList()) + flags + arguments
     logInvocation(processArgs)
     val processBuilder = ProcessBuilder(processArgs)
     bazelInfo?.let { processBuilder.directory(it.workspaceRoot.toFile()) }
