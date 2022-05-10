@@ -514,7 +514,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection(HostAndPort.fromString("localhost:8000")),
                     javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                     buildFlags = null,
-                    buildManualTargets = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
