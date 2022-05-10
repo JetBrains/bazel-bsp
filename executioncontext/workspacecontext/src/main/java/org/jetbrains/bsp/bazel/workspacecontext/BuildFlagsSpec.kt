@@ -24,7 +24,7 @@ internal object BuildFlagsSpecMapper : ProjectViewToExecutionContextEntityMapper
 
     private fun mapNotEmptySection(targetsSection: ProjectViewBuildFlagsSection): BuildFlagsSpec =
         BuildFlagsSpec(
-            values = targetsSection.values.asJava().toList()
+            values = targetsSection.values
         )
 
     override fun default(): Try<BuildFlagsSpec> = Try.success(defaultBuildFlagsSpec)

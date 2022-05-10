@@ -14,10 +14,9 @@ object ProjectViewCLiOptionsProvider {
     private const val EXCLUDED_TARGET_PREFIX = "-"
 
     fun generateProjectViewAndSave(cliOptions: CliOptions, generatedProjectViewFilePath: Path): Try<ProjectView> {
-        val generator = DefaultProjectViewGenerator()
         val projectView = toProjectView(cliOptions.projectViewCliOptions)
 
-        return generator.generatePrettyStringAndSaveInFile(projectView, generatedProjectViewFilePath)
+        return DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, generatedProjectViewFilePath)
                 .map { projectView }
     }
 
@@ -43,9 +42,7 @@ object ProjectViewCLiOptionsProvider {
         val includedTargets = calculateIncludedTargets(targets)
         val excludedTargets = calculateExcludedTargets(targets)
 
-        return ProjectViewTargetsSection(
-                io.vavr.collection.List.ofAll(includedTargets),
-                io.vavr.collection.List.ofAll(excludedTargets))
+        return ProjectViewTargetsSection(includedTargets, excludedTargets)
     }
 
     private fun calculateIncludedTargets(targets: List<String>?): List<BuildTargetIdentifier> =
@@ -63,5 +60,5 @@ object ProjectViewCLiOptionsProvider {
             projectViewCliOptions?.debuggerAddress?.let(::ProjectViewDebuggerAddressSection)
 
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
-            projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(io.vavr.collection.List.ofAll(it)) }
+            projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
 }

@@ -44,15 +44,15 @@ class WorkspaceContextConstructorTest {
                 ProjectView.Builder(
                     targets =
                     ProjectViewTargetsSection(
-                        io.vavr.collection.List.of(
+                        listOf(
                             BuildTargetIdentifier("//included_target1"),
                             BuildTargetIdentifier("//included_target2"),
                             BuildTargetIdentifier("//included_target3")
                         ),
-                        io.vavr.collection.List.of(BuildTargetIdentifier("//excluded_target1")),
+                        listOf(BuildTargetIdentifier("//excluded_target1")),
                     ),
                     buildFlags = ProjectViewBuildFlagsSection(
-                        io.vavr.collection.List.of(
+                        listOf(
                             "--build_flag1=value1",
                             "--build_flag2=value2",
                             "--build_flag3=value3",

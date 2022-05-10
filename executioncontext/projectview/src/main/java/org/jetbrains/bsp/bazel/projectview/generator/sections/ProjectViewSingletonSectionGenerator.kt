@@ -17,9 +17,9 @@ abstract class ProjectViewSingletonSectionGenerator<in T : ProjectViewSingletonS
         "${section.sectionName}: ${section.value}"
 }
 
-class ProjectViewJavaPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewJavaPathSection>()
+object ProjectViewJavaPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewJavaPathSection>()
 
-class ProjectViewDebuggerAddressSectionGenerator :
+object ProjectViewDebuggerAddressSectionGenerator :
     ProjectViewSingletonSectionGenerator<ProjectViewDebuggerAddressSection>()
 
-class ProjectViewBazelPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBazelPathSection>()
+object ProjectViewBazelPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBazelPathSection>()

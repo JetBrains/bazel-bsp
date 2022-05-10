@@ -35,15 +35,12 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
         }
 
     private fun hasEmptyIncludedValuesAndEmptyExcludedValues(targetsSection: ProjectViewTargetsSection): Boolean =
-        targetsSection.values.isEmpty and targetsSection.excludedValues.isEmpty
+        targetsSection.values.isEmpty() and targetsSection.excludedValues.isEmpty()
     private fun hasEmptyIncludedValuesAndNonEmptyExcludedValues(targetsSection: ProjectViewTargetsSection): Boolean =
-        targetsSection.values.isEmpty and !targetsSection.excludedValues.isEmpty
+        targetsSection.values.isEmpty() and targetsSection.excludedValues.isNotEmpty()
 
     private fun mapNotEmptySection(targetsSection: ProjectViewTargetsSection): TargetsSpec =
-        TargetsSpec(
-            targetsSection.values.asJava().toList(),
-            targetsSection.excludedValues.asJava().toList()
-        )
+        TargetsSpec(targetsSection.values, targetsSection.excludedValues)
 
     override fun default(): Try<TargetsSpec> = Try.success(defaultTargetsSpec)
 }

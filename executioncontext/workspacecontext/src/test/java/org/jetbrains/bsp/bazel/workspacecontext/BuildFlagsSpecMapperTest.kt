@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
 import io.kotest.matchers.shouldBe
-import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.junit.jupiter.api.DisplayName
@@ -36,7 +35,7 @@ class BuildFlagsSpecMapperTest {
             val projectView =
                 ProjectView.Builder(
                     buildFlags = ProjectViewBuildFlagsSection(
-                        List.of(
+                        listOf(
                             "--build_flag1=value1",
                             "--build_flag2=value2",
                             "--build_flag3=value3",

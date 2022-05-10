@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
@@ -37,8 +36,8 @@ class TargetsSpecMapperTest {
             // given
             val projectView = ProjectView.Builder(
                 targets = ProjectViewTargetsSection(
-                    List.of(),
-                    List.of()
+                    emptyList(),
+                    emptyList()
                 )
             ).build().get()
 
@@ -58,8 +57,8 @@ class TargetsSpecMapperTest {
             // given
             val projectView = ProjectView.Builder(
                 targets = ProjectViewTargetsSection(
-                    List.of(),
-                    List.of(
+                    emptyList(),
+                    listOf(
                         BuildTargetIdentifier("//excluded_target1"),
                         BuildTargetIdentifier("//excluded_target2"),
                     )
@@ -81,12 +80,12 @@ class TargetsSpecMapperTest {
             val projectView =
                 ProjectView.Builder(
                     targets = ProjectViewTargetsSection(
-                        List.of(
+                        listOf(
                             BuildTargetIdentifier("//included_target1"),
                             BuildTargetIdentifier("//included_target2"),
                             BuildTargetIdentifier("//included_target3")
                         ),
-                        List.of(
+                        listOf(
                             BuildTargetIdentifier("//excluded_target1"),
                             BuildTargetIdentifier("//excluded_target2"),
                         ),

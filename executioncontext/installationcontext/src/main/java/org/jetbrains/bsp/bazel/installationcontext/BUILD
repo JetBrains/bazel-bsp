@@ -13,6 +13,7 @@ kt_jvm_library(
     ],
     deps = [
         "//executioncontext/api",
+        "//executioncontext/projectview:parser",
         "@maven//:io_vavr_vavr",
     ],
 )

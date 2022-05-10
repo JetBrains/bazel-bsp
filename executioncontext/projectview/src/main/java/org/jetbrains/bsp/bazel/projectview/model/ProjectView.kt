@@ -118,12 +118,10 @@ data class ProjectView constructor(
             importedProjectViews: List<ProjectView>,
             section: T?,
             sectionGetter: (ProjectView) -> T?,
-            valuesGetter: (T) -> io.vavr.collection.List<V>
+            valuesGetter: (T) -> List<V>
         ): List<V> {
             val sectionValues = section
                 ?.let(valuesGetter)
-                ?.toJavaList()
-                ?.toList()
                 .orEmpty()
 
             val importedValues = importedProjectViews
@@ -136,15 +134,15 @@ data class ProjectView constructor(
         private fun <V, T : ProjectViewExcludableListSection<V>?> createInstanceOfExcludableListSectionOrNull(
             includedElements: List<V>,
             excludedElements: List<V>,
-            constructor: (io.vavr.collection.List<V>, io.vavr.collection.List<V>) -> T
+            constructor: (List<V>, List<V>) -> T
         ): T? = if (includedElements.isEmpty() && excludedElements.isEmpty()) null else constructor(
-            io.vavr.collection.List.ofAll(includedElements),
-            io.vavr.collection.List.ofAll(excludedElements),
+            includedElements,
+            excludedElements
         )
 
         private fun <V, T : ProjectViewListSection<V>?> createInstanceOfListSectionOrNull(
-            values: List<V>, constructor: (io.vavr.collection.List<V>) -> T
-        ): T? = if (values.isEmpty()) null else constructor(io.vavr.collection.List.ofAll(values))
+            values: List<V>, constructor: (List<V>) -> T
+        ): T? = if (values.isEmpty()) null else constructor(values)
 
         private fun combineBazelPathSection(importedProjectViews: List<ProjectView>): ProjectViewBazelPathSection? =
             bazelPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::bazelPath)

@@ -1,8 +1,8 @@
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "splitter",
-    srcs = glob(["*.java"]),
+    srcs = glob(["*.kt"]),
     visibility = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser:__subpackages__",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser/splitter:__pkg__",
@@ -12,6 +12,5 @@ java_library(
     ],
     deps = [
         "@maven//:io_vavr_vavr",
-        "@maven//:org_apache_commons_commons_collections4",
     ],
 )
