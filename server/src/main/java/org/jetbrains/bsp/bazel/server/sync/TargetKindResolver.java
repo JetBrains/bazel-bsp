@@ -22,6 +22,8 @@ public class TargetKindResolver {
             .orElse(Tag.NO_IDE);
     if (targetInfo.getTagsList().contains("no-ide")) {
       return HashSet.of(tag, Tag.NO_IDE);
+    } else if (targetInfo.getTagsList().contains("manual")) {
+      return HashSet.of(tag, Tag.MANUAL);
     }
     return HashSet.of(tag);
   }

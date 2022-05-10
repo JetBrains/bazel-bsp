@@ -5,5 +5,6 @@ public enum Tag {
   TEST,
   LIBRARY,
   NO_IDE,
-  NO_BUILD
+  NO_BUILD,
+  MANUAL,
 }
