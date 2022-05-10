@@ -25,9 +25,7 @@ class EnvironmentCreator(
     }
 
     private fun createDotBazelBspFiles(dotBazelBspDir: Path): Try<Void> =
-        copyAspects(dotBazelBspDir)
-            .flatMap { createEmptyBuildFile(dotBazelBspDir) }
-            .flatMap { copyDefaultProjectViewFilePath(dotBazelBspDir) }
+        copyAspects(dotBazelBspDir).flatMap { createEmptyBuildFile(dotBazelBspDir) }
 
     private fun copyAspects(dotBazelBspDir: Path): Try<Void> {
         val resourcesAspectsPath = "/" + Constants.ASPECTS_FILE_NAME
@@ -40,13 +38,6 @@ class EnvironmentCreator(
         val destinationBuildFilePath = dotBazelBspDir.resolve(Constants.BUILD_FILE_NAME)
 
         return Try.run { destinationBuildFilePath.toFile().createNewFile() }
-    }
-
-    private fun copyDefaultProjectViewFilePath(dotBazelBspDir: Path): Try<Void> {
-        val resourcesProjectViewFilePath = "/default-projectview.bazelproject"
-        val destinationProjectViewFilePath = dotBazelBspDir.resolve("default-projectview.bazelproject")
-
-        return copyFileFromResources(resourcesProjectViewFilePath, destinationProjectViewFilePath)
     }
 
     private fun copyFileFromResources(resourcesPath: String, destinationPath: Path): Try<Void> =

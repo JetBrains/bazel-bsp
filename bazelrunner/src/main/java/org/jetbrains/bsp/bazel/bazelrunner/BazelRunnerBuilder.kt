@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import com.google.common.collect.ImmutableList
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils
+import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 
 open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
@@ -39,9 +40,15 @@ open class BazelRunnerBuilder internal constructor(
     return this
   }
 
+  open fun withTargets(targetsSpec: TargetsSpec): BazelRunnerBuilder {
+    val joinedTargets = BazelArgumentsUtils.joinBazelTargets(targetsSpec.values, targetsSpec.excludedValues)
+    arguments.add(joinedTargets)
+    return this
+  }
+
   open fun withTargets(
-      includedTargets: List<BuildTargetIdentifier>,
-      excludedTargets: List<BuildTargetIdentifier>
+    includedTargets: List<BuildTargetIdentifier>,
+    excludedTargets: List<BuildTargetIdentifier>
   ): BazelRunnerBuilder? {
     val joinedTargets = BazelArgumentsUtils.joinBazelTargets(includedTargets, excludedTargets)
     arguments.add(joinedTargets)

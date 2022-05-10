@@ -10,25 +10,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
 
 public class IntelliJProjectTreeViewFix {
   public List<Module> createModules(
-      URI workspaceRoot, List<Module> modules, ProjectView projectView) {
-    if (isFullWorkspaceImport(projectView)) {
+      URI workspaceRoot, List<Module> modules, WorkspaceContext workspaceContext) {
+    if (isFullWorkspaceImport(workspaceContext)) {
       return createWorkspaceRootModule(workspaceRoot, modules);
     } else {
-      return createMultipleModules(projectView, workspaceRoot, modules);
+      return createMultipleModules(workspaceContext, workspaceRoot, modules);
     }
   }
 
-  private boolean isFullWorkspaceImport(ProjectView projectView) {
-    return importTargetSpecs(projectView).exists(s -> s.startsWith("//..."));
+  private boolean isFullWorkspaceImport(WorkspaceContext workspaceContext) {
+    return importTargetSpecs(workspaceContext).exists(s -> s.startsWith("//..."));
   }
 
   private List<Module> createWorkspaceRootModule(URI workspaceRoot, List<Module> modules) {
@@ -42,9 +42,9 @@ public class IntelliJProjectTreeViewFix {
   }
 
   private List<Module> createMultipleModules(
-      ProjectView projectView, URI workspaceRoot, List<Module> modules) {
+      WorkspaceContext workspaceContext, URI workspaceRoot, List<Module> modules) {
     var existingRootDirectories = resolveExistingRootDirectories(modules);
-    var expectedRootDirs = resolveExpectedRootDirs(projectView, workspaceRoot);
+    var expectedRootDirs = resolveExpectedRootDirs(workspaceContext, workspaceRoot);
     return expectedRootDirs.flatMap(
         root -> {
           if (existingRootDirectories.contains(root)) {
@@ -61,8 +61,8 @@ public class IntelliJProjectTreeViewFix {
     return modules.toSet().map(Module::sourceSet).flatMap(SourceSet::sourceRoots);
   }
 
-  private List<URI> resolveExpectedRootDirs(ProjectView projectView, URI workspaceRoot) {
-    var dirs = rootDirsFromTargetSpecs(projectView, workspaceRoot).sorted();
+  private List<URI> resolveExpectedRootDirs(WorkspaceContext workspaceContext, URI workspaceRoot) {
+    var dirs = rootDirsFromTargetSpecs(workspaceContext, workspaceRoot).sorted();
     if (dirs.isEmpty()) return List.empty();
     return removeAlreadyIncludedSubdirs(dirs);
   }
@@ -80,9 +80,10 @@ public class IntelliJProjectTreeViewFix {
     return List.ofAll(buffer.stream().map(URI::create));
   }
 
-  private List<String> rootDirsFromTargetSpecs(ProjectView projectView, URI workspaceRoot) {
+  private List<String> rootDirsFromTargetSpecs(
+      WorkspaceContext workspaceContext, URI workspaceRoot) {
     var root = Paths.get(workspaceRoot);
-    return importTargetSpecs(projectView)
+    return importTargetSpecs(workspaceContext)
         .map(s -> stripSuffixes(s, ":all", "...", "/"))
         .map(s -> stripPrefixes(s, "//"))
         .map(root::resolve)
@@ -109,11 +110,11 @@ public class IntelliJProjectTreeViewFix {
     return s;
   }
 
-  private List<String> importTargetSpecs(ProjectView projectView) {
+  private List<String> importTargetSpecs(WorkspaceContext workspaceContext) {
     var stream =
-        Option.of(projectView.getTargets())
+        Option.of(workspaceContext.getTargets())
             .toList()
-            .flatMap(ProjectViewExcludableListSection::getValues)
+            .flatMap(TargetsSpec::getValues)
             .map(BuildTargetIdentifier::getUri);
     return List.ofAll(stream);
   }

@@ -21,4 +21,6 @@ internal object InstallationContextDebuggerAddressEntityMapper :
 
     private fun map(debuggerAddressSection: ProjectViewDebuggerAddressSection): InstallationContextDebuggerAddressEntity =
         InstallationContextDebuggerAddressEntity(debuggerAddressSection.value)
+
+    override fun default(): Try<InstallationContextDebuggerAddressEntity?> = Try.success(null)
 }

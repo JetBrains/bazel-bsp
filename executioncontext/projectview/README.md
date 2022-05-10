@@ -13,16 +13,11 @@ from [Bazel Plugin for Intellij](https://ij.bazel.build/docs/project-views.html)
 > your IDE workspace.
 
 
-**Note:** Each section has a default value -- some (e.g. `targets`) are located
-in `.bazelbsp/default-projectview.bazelproject`, some (e.g. `bazel_path`) are deducted at the runtime.
-
 ## Usage
 
 **Note:** We will be changing this mechanism in future releases.
 
 Simply put `projectview.bazelproject` file in the root of your project and fill it.
-
-_Remember that you can always find the default values in `.bazelbsp/default-projectview.bazelproject`._
 
 ## Available sections
 

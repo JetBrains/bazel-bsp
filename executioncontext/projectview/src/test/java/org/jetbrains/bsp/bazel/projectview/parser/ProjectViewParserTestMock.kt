@@ -4,23 +4,13 @@ import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import java.io.File
+import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
+import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.file.Path
 
-class ProjectViewParserMockTestImpl : ProjectViewParserImpl() {
-
-    override fun parse(projectViewFilePath: Path, defaultProjectViewFilePath: Path): Try<ProjectView> =
-        Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
-            .flatMap { parseWithCopiedProjectViewFile(it, defaultProjectViewFilePath) }
-
-    private fun parseWithCopiedProjectViewFile(
-        copiedProjectViewFilePath: Path,
-        defaultProjectViewFile: Path
-    ): Try<ProjectView> =
-        Try.success(copyResourcesFileToTmpFile(defaultProjectViewFile))
-            .flatMap { super.parse(copiedProjectViewFilePath, it) }
+object ProjectViewParserTestMock : DefaultProjectViewParser() {
 
     override fun parse(projectViewFilePath: Path): Try<ProjectView> =
         Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
@@ -36,7 +26,7 @@ class ProjectViewParserMockTestImpl : ProjectViewParserImpl() {
     private fun readFileContent(filePath: Path): String? {
         // we read file content instead of passing plain file due to bazel resources packaging
         val inputStream: InputStream? =
-            ProjectViewParserMockTestImpl::class.java.getResourceAsStream(filePath.toString())
+            ProjectViewParserTestMock::class.java.getResourceAsStream(filePath.toString())
 
         return inputStream
             ?.let { InputStreamReader(it, Charsets.UTF_8) }
@@ -47,10 +37,9 @@ class ProjectViewParserMockTestImpl : ProjectViewParserImpl() {
         content?.let { createTempFileWithContent(path, it) } ?: path
 
     private fun createTempFileWithContent(path: Path, content: String): Path {
-        val tempFile = File.createTempFile(path.toString(), "")
-        tempFile.deleteOnExit()
-        tempFile.writeText(content)
+        val tempFile = DopeTemp.createTempFile(path.toString())
+        DopeFiles.writeText(tempFile, content)
 
-        return tempFile.toPath()
+        return tempFile
     }
 }

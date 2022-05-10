@@ -23,7 +23,8 @@ class InstallationContextConstructor(private val projectViewFilePath: Path?) :
         javaPathEntity: InstallationContextJavaPathEntity,
         projectView: ProjectView
     ): Try<InstallationContext> =
-        InstallationContextDebuggerAddressEntityMapper.map(projectView).map { withJavaPathAndDebuggerAddress(javaPathEntity, it) }
+        InstallationContextDebuggerAddressEntityMapper.map(projectView)
+            .map { withJavaPathAndDebuggerAddress(javaPathEntity, it) }
 
     private fun withJavaPathAndDebuggerAddress(
         javaPathEntity: InstallationContextJavaPathEntity,
@@ -33,4 +34,15 @@ class InstallationContextConstructor(private val projectViewFilePath: Path?) :
         debuggerAddress = debuggerAddressEntity,
         projectViewFilePath = projectViewFilePath
     )
+
+    override fun constructDefault(): Try<InstallationContext> =
+        InstallationContextJavaPathEntityMapper.default().flatMap { javaPathSpec ->
+            InstallationContextDebuggerAddressEntityMapper.default().map { debuggerAddressSpec ->
+                InstallationContext(
+                    javaPath = javaPathSpec,
+                    debuggerAddress = debuggerAddressSpec,
+                    projectViewFilePath = projectViewFilePath
+                )
+            }
+        }
 }

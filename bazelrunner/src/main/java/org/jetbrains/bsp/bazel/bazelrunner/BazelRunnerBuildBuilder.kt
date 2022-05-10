@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils
+import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 
 class BazelRunnerBuildBuilder(
     bazelRunner: BazelRunner,
@@ -11,6 +12,9 @@ class BazelRunnerBuildBuilder(
   override fun withTargets(bazelTargets: List<String>): BazelRunnerBuilder {
     return withArguments(bazelTargets)
   }
+
+  override fun withTargets(targetsSpec: TargetsSpec): BazelRunnerBuilder =
+     withTargets(targetsSpec.values, targetsSpec.excludedValues)
 
   override fun withTargets(
       includedTargets: List<BuildTargetIdentifier>,

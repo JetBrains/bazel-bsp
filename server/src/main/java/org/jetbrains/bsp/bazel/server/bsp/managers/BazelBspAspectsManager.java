@@ -2,9 +2,9 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import io.vavr.collection.List;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
-import org.jetbrains.bsp.bazel.projectview.model.TargetSpecs;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
+import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 
 public class BazelBspAspectsManager {
 
@@ -19,7 +19,7 @@ public class BazelBspAspectsManager {
   }
 
   public BepOutput fetchFilesFromOutputGroups(
-      TargetSpecs targetSpecs, String aspect, List<String> outputGroups) {
+      TargetsSpec targetSpecs, String aspect, List<String> outputGroups) {
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
             targetSpecs,

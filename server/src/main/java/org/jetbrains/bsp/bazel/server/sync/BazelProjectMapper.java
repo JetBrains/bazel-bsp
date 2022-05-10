@@ -10,7 +10,6 @@ import java.net.URI;
 import java.nio.file.Path;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
@@ -21,6 +20,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
 
 public class BazelProjectMapper {
   private final LanguagePluginsService languagePluginsService;
@@ -37,13 +37,14 @@ public class BazelProjectMapper {
   }
 
   public Project createProject(
-      Map<String, TargetInfo> targets, Set<String> rootTargets, ProjectView projectView) {
+      Map<String, TargetInfo> targets, Set<String> rootTargets, WorkspaceContext workspaceContext) {
     languagePluginsService.prepareSync(targets.values());
     var dependencyTree = new DependencyTree(targets, rootTargets);
     var targetsToImport = selectTargetsToImport(rootTargets, targets);
     var modulesFromBazel = createModules(targetsToImport, dependencyTree);
     var workspaceRoot = bazelPathsResolver.workspaceRoot();
-    var syntheticModules = createSyntheticModules(modulesFromBazel, workspaceRoot, projectView);
+    var syntheticModules =
+        createSyntheticModules(modulesFromBazel, workspaceRoot, workspaceContext);
     var allModules = modulesFromBazel.appendAll(syntheticModules);
     var sourceToTarget = buildReverseSourceMapping(modulesFromBazel);
     return new Project(workspaceRoot, allModules, sourceToTarget);
@@ -115,9 +116,9 @@ public class BazelProjectMapper {
 
   // TODO make this feature configurable with flag in project view file
   private List<Module> createSyntheticModules(
-      List<Module> modulesFromBazel, URI workspaceRoot, ProjectView projectView) {
+      List<Module> modulesFromBazel, URI workspaceRoot, WorkspaceContext workspaceContext) {
     return new IntelliJProjectTreeViewFix()
-        .createModules(workspaceRoot, modulesFromBazel, projectView);
+        .createModules(workspaceRoot, modulesFromBazel, workspaceContext);
   }
 
   private Map<URI, Label> buildReverseSourceMapping(List<Module> modules) {

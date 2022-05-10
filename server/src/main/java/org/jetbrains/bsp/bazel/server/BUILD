@@ -7,11 +7,10 @@ java_library(
     deps = [
         "//bazelrunner",
         "//commons",
-        "//executioncontext/projectview:parser",
+        "//executioncontext/workspacecontext",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/config",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",

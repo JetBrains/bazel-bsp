@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.generator.sections
 
-import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 
@@ -27,7 +26,7 @@ abstract class ProjectViewListSectionGenerator<V, in T : ProjectViewListSection<
     }
 
     protected fun generatePrettyStringForValues(values: List<V>, transformer: (V) -> String): String? =
-        if (values.isEmpty) null else values.asJava().toList().joinToString(separator = "\n", transform = transformer)
+        if (values.isEmpty()) null else values.joinToString(separator = "\n", transform = transformer)
 
     protected fun generatePrettyStringForValueWithFourLeadingSpaces(value: V): String =
         "    ${generatePrettyStringForValue(value)}"
@@ -35,4 +34,4 @@ abstract class ProjectViewListSectionGenerator<V, in T : ProjectViewListSection<
     protected open fun generatePrettyStringForValue(value: V): String = value.toString()
 }
 
-class ProjectViewBuildFlagsSectionGenerator : ProjectViewListSectionGenerator<String, ProjectViewBuildFlagsSection>()
+object ProjectViewBuildFlagsSectionGenerator : ProjectViewListSectionGenerator<String, ProjectViewBuildFlagsSection>()

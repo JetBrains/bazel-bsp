@@ -2,9 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.generator.sections
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import io.vavr.collection.List
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,21 +13,13 @@ class ProjectViewExcludableListSectionGeneratorTest {
     @DisplayName("ProjectViewTargetsSectionGenerator tests")
     inner class ProjectViewTargetsSectionGeneratorTest {
 
-        private lateinit var generator: ProjectViewTargetsSectionGenerator
-
-        @BeforeEach
-        fun beforeEach() {
-            // given
-            this.generator = ProjectViewTargetsSectionGenerator()
-        }
-
         @Test
         fun `should return null for null section`() {
             // given
             val section = null
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewTargetsSectionGenerator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -39,15 +29,15 @@ class ProjectViewExcludableListSectionGeneratorTest {
         fun `should return pretty string for section with included targets`() {
             // given
             val section = ProjectViewTargetsSection(
-                List.of(
+                listOf(
                     BuildTargetIdentifier("//included_target1"),
                     BuildTargetIdentifier("//included_target2"),
                     BuildTargetIdentifier("//included_target3"),
-                ), List.of()
+                ), emptyList()
             )
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewTargetsSectionGenerator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = """
@@ -63,14 +53,14 @@ class ProjectViewExcludableListSectionGeneratorTest {
         fun `should return pretty string for section with excluded targets`() {
             // given
             val section = ProjectViewTargetsSection(
-                List.of(), List.of(
+                emptyList(), listOf(
                     BuildTargetIdentifier("//excluded_target1"),
                     BuildTargetIdentifier("//excluded_target2"),
                 )
             )
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewTargetsSectionGenerator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = """
@@ -85,18 +75,18 @@ class ProjectViewExcludableListSectionGeneratorTest {
         fun `should return pretty string for section with included and excluded targets`() {
             // given
             val section = ProjectViewTargetsSection(
-                List.of(
+                listOf(
                     BuildTargetIdentifier("//included_target1"),
                     BuildTargetIdentifier("//included_target2"),
                     BuildTargetIdentifier("//included_target3"),
-                ), List.of(
+                ), listOf(
                     BuildTargetIdentifier("//excluded_target1"),
                     BuildTargetIdentifier("//excluded_target2"),
                 )
             )
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewTargetsSectionGenerator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = """

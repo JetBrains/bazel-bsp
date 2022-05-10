@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.generator
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import io.vavr.collection.List
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
@@ -9,9 +8,8 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsS
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.projectview.parser.ProjectViewParserImpl
+import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -19,14 +17,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class DefaultProjectViewGeneratorTest {
-
-    private lateinit var generator: DefaultProjectViewGenerator
-
-    @BeforeEach
-    fun beforeEach() {
-        // given
-        this.generator = DefaultProjectViewGenerator()
-    }
 
     @Nested
     @DisplayName("fun generatePrettyString(projectView: ProjectView): String tests")
@@ -44,7 +34,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             generatedString shouldBe "\n"
@@ -55,12 +45,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
                     ),
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//excluded_target1"),
                         BuildTargetIdentifier("//excluded_target2"),
                     )
@@ -72,7 +62,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
@@ -83,7 +73,7 @@ class DefaultProjectViewGeneratorTest {
                     //included_target3
                     -//excluded_target1
                     -//excluded_target2
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -100,13 +90,13 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
                 """
                 bazel_path: /path/to/bazel
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -123,13 +113,13 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
                 """
                 debugger_address: localhost:8000
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -146,13 +136,13 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
                 """
                 java_path: /path/to/java
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -166,7 +156,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -175,7 +165,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
@@ -184,7 +174,7 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -193,15 +183,15 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(List.of(), List.of()),
+                targets = ProjectViewTargetsSection(emptyList(), emptyList()),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(List.of()),
+                buildFlags = ProjectViewBuildFlagsSection(emptyList()),
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
@@ -209,13 +199,13 @@ class DefaultProjectViewGeneratorTest {
                 targets:
 
                 bazel_path: /path/to/bazel
-                
+
                 debugger_address: localhost:8000
-                
+
                 java_path: /path/to/java
 
                 build_flags:
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -225,17 +215,17 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
-                    ), List.of()
+                    ), emptyList()
                 ),
                 bazelPath = null,
                 debuggerAddress = null,
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -244,7 +234,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
@@ -260,7 +250,7 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -270,12 +260,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
                     ),
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//excluded_target1"),
                         BuildTargetIdentifier("//excluded_target2"),
                     )
@@ -284,7 +274,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -293,7 +283,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val generatedString = generator.generatePrettyString(projectView)
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
 
             // then
             val expectedGeneratedString =
@@ -306,16 +296,16 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target2
 
                 bazel_path: /path/to/bazel
-                
+
                 debugger_address: localhost:8000
-                
+
                 java_path: /path/to/java
-                
+
                 build_flags:
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-                
+
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -332,12 +322,12 @@ class DefaultProjectViewGeneratorTest {
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
                     ),
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//excluded_target1"),
                         BuildTargetIdentifier("//excluded_target2"),
                     )
@@ -346,7 +336,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -355,7 +345,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
 
             // then
             result.isSuccess shouldBe true
@@ -370,16 +360,16 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target2
 
                 bazel_path: /path/to/bazel
-                
+
                 debugger_address: localhost:8000
-                
+
                 java_path: /path/to/java
-                
+
                 build_flags:
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-                
+
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -392,12 +382,12 @@ class DefaultProjectViewGeneratorTest {
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
                     ),
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//excluded_target1"),
                         BuildTargetIdentifier("//excluded_target2"),
                     )
@@ -406,7 +396,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -415,7 +405,7 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
 
             // then
             result.isSuccess shouldBe true
@@ -430,16 +420,16 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target2
 
                 bazel_path: /path/to/bazel
-                
+
                 debugger_address: localhost:8000
-                
+
                 java_path: /path/to/java
-                
+
                 build_flags:
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-                
+
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -450,17 +440,17 @@ class DefaultProjectViewGeneratorTest {
             val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
-                targets = ProjectViewTargetsSection(List.of(), List.of()),
+                targets = ProjectViewTargetsSection(emptyList(), emptyList()),
                 bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(List.of()),
+                buildFlags = ProjectViewBuildFlagsSection(emptyList()),
             )
 
-            val parser = ProjectViewParserImpl()
+            val parser = DefaultProjectViewParser()
 
             // when
-            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
             val parsedProjectViewTry = parser.parse(filePath)
 
             // then
@@ -484,17 +474,17 @@ class DefaultProjectViewGeneratorTest {
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
-                    ), List.of()
+                    ), emptyList()
                 ),
                 bazelPath = null,
                 debuggerAddress = null,
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -502,10 +492,10 @@ class DefaultProjectViewGeneratorTest {
                 ),
             )
 
-            val parser = ProjectViewParserImpl()
+            val parser = DefaultProjectViewParser()
 
             // when
-            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
             val parsedProjectViewTry = parser.parse(filePath)
 
             // then
@@ -522,12 +512,12 @@ class DefaultProjectViewGeneratorTest {
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
                         BuildTargetIdentifier("//included_target3"),
                     ),
-                    List.of(
+                    listOf(
                         BuildTargetIdentifier("//excluded_target1"),
                         BuildTargetIdentifier("//excluded_target2"),
                     )
@@ -536,7 +526,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
-                    List.of(
+                    listOf(
                         "--build_flag1=value1",
                         "--build_flag2=value2",
                         "--build_flag3=value3",
@@ -544,10 +534,10 @@ class DefaultProjectViewGeneratorTest {
                 ),
             )
 
-            val parser = ProjectViewParserImpl()
+            val parser = DefaultProjectViewParser()
 
             // when
-            val result = generator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
             val parsedProjectViewTry = parser.parse(filePath)
 
             // then

@@ -4,10 +4,13 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import kotlin.io.path.Path
 
 class WorkspaceContextConstructorTest {
 
@@ -41,13 +44,21 @@ class WorkspaceContextConstructorTest {
                 ProjectView.Builder(
                     targets =
                     ProjectViewTargetsSection(
-                        io.vavr.collection.List.of(
+                        listOf(
                             BuildTargetIdentifier("//included_target1"),
                             BuildTargetIdentifier("//included_target2"),
                             BuildTargetIdentifier("//included_target3")
                         ),
-                        io.vavr.collection.List.of(BuildTargetIdentifier("//excluded_target1")),
-                    )
+                        listOf(BuildTargetIdentifier("//excluded_target1")),
+                    ),
+                    buildFlags = ProjectViewBuildFlagsSection(
+                        listOf(
+                            "--build_flag1=value1",
+                            "--build_flag2=value2",
+                            "--build_flag3=value3",
+                        )
+                    ),
+                    bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel"))
                 ).build()
 
             // when
@@ -58,7 +69,7 @@ class WorkspaceContextConstructorTest {
             val workspaceContext = workspaceContextTry.get()
 
             val expectedTargets =
-                ExecutionContextTargetsEntity(
+                TargetsSpec(
                     listOf(
                         BuildTargetIdentifier("//included_target1"),
                         BuildTargetIdentifier("//included_target2"),
@@ -66,6 +77,45 @@ class WorkspaceContextConstructorTest {
                     ), listOf(BuildTargetIdentifier("//excluded_target1"))
                 )
             workspaceContext.targets shouldBe expectedTargets
+
+            val expectedBuildFlagsSpec = BuildFlagsSpec(
+                listOf(
+                    "--build_flag1=value1",
+                    "--build_flag2=value2",
+                    "--build_flag3=value3",
+                )
+            )
+            workspaceContext.buildFlags shouldBe expectedBuildFlagsSpec
+
+            val expectedBazelPathSpec = BazelPathSpec(Path("/path/to/bazel"))
+            workspaceContext.bazelPath shouldBe expectedBazelPathSpec
+
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
+        }
+    }
+
+    @Nested
+    @DisplayName("fun constructDefault(): Try<WorkspaceContext> tests")
+    inner class ConstructDefaultTest {
+
+        @Test
+        fun `should return success and default workspace context`() {
+            // given
+            // when
+            val workspaceContextTry = WorkspaceContextConstructor.constructDefault()
+
+            // then
+            workspaceContextTry.isSuccess shouldBe true
+            val workspaceContext = workspaceContextTry.get()
+
+            val expectedWorkspaceContext = WorkspaceContext(
+                targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
+                buildFlags = BuildFlagsSpec(emptyList()),
+                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
+                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            )
+            workspaceContext shouldBe expectedWorkspaceContext
         }
     }
 }

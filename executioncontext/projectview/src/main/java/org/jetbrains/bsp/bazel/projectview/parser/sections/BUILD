@@ -1,8 +1,8 @@
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "sections",
-    srcs = glob(["*.java"]),
+    srcs = glob(["*.kt"]),
     visibility = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser:__pkg__",
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/parser/sections:__pkg__",

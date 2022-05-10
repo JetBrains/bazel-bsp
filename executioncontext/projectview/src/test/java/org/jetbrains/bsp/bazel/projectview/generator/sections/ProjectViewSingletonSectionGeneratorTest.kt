@@ -4,7 +4,6 @@ import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -16,21 +15,13 @@ class ProjectViewSingletonSectionGeneratorTest {
     @DisplayName("ProjectViewJavaPathSectionGenerator tests")
     inner class ProjectViewJavaPathSectionGeneratorTest {
 
-        private lateinit var generator: ProjectViewJavaPathSectionGenerator
-
-        @BeforeEach
-        fun beforeEach() {
-            // given
-            this.generator = ProjectViewJavaPathSectionGenerator()
-        }
-
         @Test
         fun `should return null for null section`() {
             // given
             val section = null
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewJavaPathSectionGenerator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -42,7 +33,7 @@ class ProjectViewSingletonSectionGeneratorTest {
             val section = ProjectViewJavaPathSection(Paths.get("/path/to/java"))
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewJavaPathSectionGenerator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = "java_path: /path/to/java"
@@ -54,21 +45,13 @@ class ProjectViewSingletonSectionGeneratorTest {
     @DisplayName("ProjectViewDebuggerAddressSectionGenerator tests")
     inner class ProjectViewDebuggerAddressSectionGeneratorTest {
 
-        private lateinit var generator: ProjectViewDebuggerAddressSectionGenerator
-
-        @BeforeEach
-        fun beforeEach() {
-            // given
-            this.generator = ProjectViewDebuggerAddressSectionGenerator()
-        }
-
         @Test
         fun `should return null for null section`() {
             // given
             val section = null
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewDebuggerAddressSectionGenerator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -80,7 +63,7 @@ class ProjectViewSingletonSectionGeneratorTest {
             val section = ProjectViewDebuggerAddressSection("localhost:8000")
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewDebuggerAddressSectionGenerator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = "debugger_address: localhost:8000"
@@ -92,21 +75,13 @@ class ProjectViewSingletonSectionGeneratorTest {
     @DisplayName("ProjectViewBazelPathSectionGenerator tests")
     inner class ProjectViewBazelPathSectionGeneratorTest {
 
-        private lateinit var generator: ProjectViewBazelPathSectionGenerator
-
-        @BeforeEach
-        fun beforeEach() {
-            // given
-            this.generator = ProjectViewBazelPathSectionGenerator()
-        }
-
         @Test
         fun `should return null for null section`() {
             // given
             val section = null
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewBazelPathSectionGenerator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -118,7 +93,7 @@ class ProjectViewSingletonSectionGeneratorTest {
             val section = ProjectViewBazelPathSection(Paths.get("/path/to/bazel"))
 
             // when
-            val generatedString = generator.generatePrettyString(section)
+            val generatedString = ProjectViewBazelPathSectionGenerator.generatePrettyString(section)
 
             // then
             val expectedGeneratedString = "bazel_path: /path/to/bazel"

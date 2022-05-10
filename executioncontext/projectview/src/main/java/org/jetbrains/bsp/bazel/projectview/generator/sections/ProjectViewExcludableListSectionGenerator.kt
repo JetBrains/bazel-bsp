@@ -38,7 +38,7 @@ abstract class ProjectViewExcludableListSectionGenerator<V, in T : ProjectViewEx
         "    -${generatePrettyStringForValue(value)}"
 }
 
-class ProjectViewTargetsSectionGenerator :
+object ProjectViewTargetsSectionGenerator :
     ProjectViewExcludableListSectionGenerator<BuildTargetIdentifier, ProjectViewTargetsSection>() {
 
     override fun generatePrettyStringForValue(value: BuildTargetIdentifier): String = value.uri

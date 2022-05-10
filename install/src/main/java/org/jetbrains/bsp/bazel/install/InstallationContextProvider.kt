@@ -2,13 +2,13 @@ package org.jetbrains.bsp.bazel.install
 
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
+import org.jetbrains.bsp.bazel.installationcontext.DefaultInstallationContextProvider
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContextConstructor
 import java.nio.file.Path
 
 object InstallationContextProvider {
 
-    private const val RESOURCES_PROJECT_VIEW_FILE_PATH = "/default-projectview.bazelproject"
     private const val DEFAULT_GENERATED_PROJECT_VIEW_FILE_NAME = "projectview.bazelproject"
 
     fun parseProjectViewOrGenerateAndSaveAndCreateInstallationContext(cliOptions: CliOptions): Try<InstallationContext> =
@@ -16,12 +16,9 @@ object InstallationContextProvider {
         else generateAndSaveProjectViewAndCreateInstallationContext(cliOptions)
 
     private fun parseProjectViewAndCreateInstallationContext(projectViewFilePath: Path?): Try<InstallationContext> {
-        val projectViewProvider =
-            ProjectViewDefaultFromResourcesProvider(projectViewFilePath, RESOURCES_PROJECT_VIEW_FILE_PATH)
-        val projectViewTry = projectViewProvider.create()
+        val defaultInstallationContextProvider = DefaultInstallationContextProvider(projectViewFilePath)
 
-        val installationContextConstructor = InstallationContextConstructor(projectViewFilePath)
-        return installationContextConstructor.construct(projectViewTry)
+        return defaultInstallationContextProvider.currentInstallationContext()
     }
 
     private fun generateAndSaveProjectViewAndCreateInstallationContext(cliOptions: CliOptions): Try<InstallationContext> {

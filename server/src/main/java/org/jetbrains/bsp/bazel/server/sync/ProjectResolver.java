@@ -15,11 +15,11 @@ import java.nio.file.Paths;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
-import org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 /** Responsible for querying bazel and constructing Project instance */
 public class ProjectResolver {
@@ -28,25 +28,29 @@ public class ProjectResolver {
   private static final String ARTIFACTS_OUTPUT_GROUP = "bsp-ide-resolve-transitive-deps";
 
   private final BazelBspAspectsManager bazelBspAspectsManager;
-  private final ProjectViewProvider projectViewProvider;
+  private final WorkspaceContextProvider workspaceContextProvider;
   private final BazelProjectMapper bazelProjectMapper;
   private final BspClientLogger logger;
 
   public ProjectResolver(
       BazelBspAspectsManager bazelBspAspectsManager,
-      ProjectViewProvider projectViewProvider,
+      WorkspaceContextProvider workspaceContextProvider,
       BazelProjectMapper bazelProjectMapper,
       BspClientLogger logger) {
     this.bazelBspAspectsManager = bazelBspAspectsManager;
-    this.projectViewProvider = projectViewProvider;
+    this.workspaceContextProvider = workspaceContextProvider;
     this.bazelProjectMapper = bazelProjectMapper;
     this.logger = logger;
   }
 
   public Project resolve() {
-    var projectView = logger.timed("Reading project view", projectViewProvider::currentProjectView);
+    var workspaceContext =
+        logger.timed(
+            "Reading project view adn creating workspace context",
+            workspaceContextProvider::currentWorkspaceContext);
     var bepOutput =
-        logger.timed("Building project with aspect", () -> buildProjectWithAspect(projectView));
+        logger.timed(
+            "Building project with aspect", () -> buildProjectWithAspect(workspaceContext));
     var aspectOutputs =
         logger.timed(
             "Reading aspect output paths",
@@ -57,13 +61,13 @@ public class ProjectResolver {
     var model =
         logger.timed(
             "Mapping to internal model",
-            () -> bazelProjectMapper.createProject(targets, rootTargets, projectView));
+            () -> bazelProjectMapper.createProject(targets, rootTargets, workspaceContext));
     return model;
   }
 
-  private BepOutput buildProjectWithAspect(ProjectView projectView) {
+  private BepOutput buildProjectWithAspect(WorkspaceContext workspaceContext) {
     return bazelBspAspectsManager.fetchFilesFromOutputGroups(
-        projectView.targetSpecs(),
+        workspaceContext.getTargets(),
         ASPECT_NAME,
         List.of(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP));
   }

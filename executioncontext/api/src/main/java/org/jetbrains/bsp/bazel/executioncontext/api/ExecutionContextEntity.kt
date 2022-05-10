@@ -7,18 +7,24 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
  * Base `ExecutionContext` entity class - you need to extend it or
  * `ExecutionContextListEntity` or `ExecutionContextSingletonEntity` if you want to create your entity.
  *
- * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextListEntity
+ * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextExcludableListEntity
  * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
  */
 abstract class ExecutionContextEntity
-
 
 /**
  * Base list-based `ExecutionContext` entity class - you need to extend it if you want to
  * create your list-based entity.
  */
 abstract class ExecutionContextListEntity<T> : ExecutionContextEntity() {
-    abstract val includedValues: List<T>
+    abstract val values: List<T>
+}
+
+/**
+ * Base list-based `ExecutionContext` entity class - you need to extend it if you want to
+ * create your list-based with excluded values entity.
+ */
+abstract class ExecutionContextExcludableListEntity<T> : ExecutionContextListEntity<T>() {
     abstract val excludedValues: List<T>
 }
 
@@ -39,6 +45,8 @@ class ProjectViewToExecutionContextEntityMapperException(entityName: String, mes
 
 interface ProjectViewToExecutionContextEntityBaseMapper<T> {
     fun map(projectView: ProjectView): Try<T>
+
+    fun default(): Try<T>
 }
 
 

@@ -27,6 +27,8 @@ internal object InstallationContextJavaPathEntityMapper :
     private fun map(javaPathSection: ProjectViewJavaPathSection): InstallationContextJavaPathEntity =
         InstallationContextJavaPathEntity(javaPathSection.value)
 
+    override fun default(): Try<InstallationContextJavaPathEntity> = readFromSystemPropertyAndMapOrFailure()
+
     private fun readFromSystemPropertyAndMapOrFailure(): Try<InstallationContextJavaPathEntity> {
         return readFromSystemPropertyAndMap()?.let { Try.success(it) }
             ?: Try.failure(

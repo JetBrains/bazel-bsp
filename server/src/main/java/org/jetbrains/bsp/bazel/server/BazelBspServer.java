@@ -2,22 +2,17 @@ package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
-import io.vavr.control.Option;
-import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
 import org.jetbrains.bsp.bazel.server.bsp.BspRequestsRunner;
 import org.jetbrains.bsp.bazel.server.bsp.BspServerApi;
-import org.jetbrains.bsp.bazel.server.bsp.config.BazelBspServerConfig;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
@@ -38,6 +33,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class BazelBspServer {
 
@@ -48,16 +44,15 @@ public class BazelBspServer {
   private final BazelBspCompilationManager compilationManager;
   private final BspClientLogger bspClientLogger;
 
-  public BazelBspServer(BazelBspServerConfig config) {
+  public BazelBspServer(WorkspaceContextProvider workspaceContextProvider) {
     this.bspClientLogger = new BspClientLogger();
     var bspInfo = new BspInfo();
     var bazelInfoStorage = new BazelInfoStorage(bspInfo);
     var bazelDataResolver =
-        new BazelInfoResolver(BazelRunner.inCwd(config, bspClientLogger), bazelInfoStorage);
+        new BazelInfoResolver(
+            BazelRunner.inCwd(workspaceContextProvider, bspClientLogger), bazelInfoStorage);
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
-    this.bazelRunner =
-        BazelRunner.of(
-            config, bspClientLogger, bazelInfo, getDefaultBazelFlags(config.currentProjectView()));
+    this.bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, bazelInfo);
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);
     this.compilationManager = new BazelBspCompilationManager(bazelRunner);
@@ -75,7 +70,8 @@ public class BazelBspServer {
     var bazelProjectMapper =
         new BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver);
     var projectResolver =
-        new ProjectResolver(bazelBspAspectsManager, config, bazelProjectMapper, bspClientLogger);
+        new ProjectResolver(
+            bazelBspAspectsManager, workspaceContextProvider, bazelProjectMapper, bspClientLogger);
     var projectStorage = new ProjectStorage(bspInfo, bspClientLogger);
     var projectProvider = new ProjectProvider(projectResolver, projectStorage);
     var bspProjectMapper = new BspProjectMapper(languagePluginsService);
@@ -90,14 +86,6 @@ public class BazelBspServer {
             projectSyncService,
             executeService,
             cppBuildServerService);
-  }
-
-  // this is only a temporary solution - will be changed later
-  private List<String> getDefaultBazelFlags(ProjectView projectView) {
-    return Option.of(projectView.getBuildFlags())
-        .map(ProjectViewBuildFlagsSection::getValues)
-        .map(io.vavr.collection.List::toJavaList)
-        .getOrElse(List.of());
   }
 
   public void startServer(BspIntegrationData bspIntegrationData) {
