@@ -19,7 +19,7 @@ public class BazelBspAspectsManager {
   }
 
   public BepOutput fetchFilesFromOutputGroups(
-          TargetsSpec targetSpecs, String aspect, List<String> outputGroups) {
+      TargetsSpec targetSpecs, String aspect, List<String> outputGroups) {
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
             targetSpecs,

@@ -80,7 +80,8 @@ public class IntelliJProjectTreeViewFix {
     return List.ofAll(buffer.stream().map(URI::create));
   }
 
-  private List<String> rootDirsFromTargetSpecs(WorkspaceContext workspaceContext, URI workspaceRoot) {
+  private List<String> rootDirsFromTargetSpecs(
+      WorkspaceContext workspaceContext, URI workspaceRoot) {
     var root = Paths.get(workspaceRoot);
     return importTargetSpecs(workspaceContext)
         .map(s -> stripSuffixes(s, ":all", "...", "/"))
