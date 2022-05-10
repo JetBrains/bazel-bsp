@@ -21,5 +21,4 @@ kt_jvm_library(
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser",
         "@maven//:com_google_guava_guava",
     ],
-    tags = ["no-ide"],
 )
