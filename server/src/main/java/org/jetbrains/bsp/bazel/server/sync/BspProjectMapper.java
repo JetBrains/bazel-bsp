@@ -107,9 +107,9 @@ public class BspProjectMapper {
   }
 
   private BuildTargetCapabilities inferCapabilities(Module module) {
-    var canCompile = !module.tags().contains(Tag.NO_BUILD);
-    var canTest = module.tags().contains(Tag.TEST);
-    var canRun = module.tags().contains(Tag.APPLICATION);
+    var canCompile = !module.tags().contains(Tag.NO_BUILD) && !module.tags().contains(Tag.MANUAL);
+    var canTest = module.tags().contains(Tag.TEST) && !module.tags().contains(Tag.MANUAL);
+    var canRun = module.tags().contains(Tag.APPLICATION) && !module.tags().contains(Tag.MANUAL);
     return new BuildTargetCapabilities(canCompile, canTest, canRun);
   }
 
