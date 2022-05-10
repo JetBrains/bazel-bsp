@@ -6,6 +6,8 @@
 
 ### Changes 🔄
 
+- New project view parser without default file.
+  | [#242](https://github.com/JetBrains/bazel-bsp/pull/242)
 - Map label->module is no longer serialized -
   it was doubling size of the file.
   | [#233](https://github.com/JetBrains/bazel-bsp/pull/233)
