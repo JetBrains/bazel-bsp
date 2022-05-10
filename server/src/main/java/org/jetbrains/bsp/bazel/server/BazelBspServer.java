@@ -2,16 +2,12 @@ package org.jetbrains.bsp.bazel.server;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import io.grpc.ServerBuilder;
-import io.vavr.control.Option;
-import java.util.List;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
-import org.jetbrains.bsp.bazel.projectview.model.ProjectView;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime;
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData;
@@ -91,7 +87,7 @@ public class BazelBspServer {
             executeService,
             cppBuildServerService);
   }
-  
+
   public void startServer(BspIntegrationData bspIntegrationData) {
     integrateBsp(bspIntegrationData);
   }

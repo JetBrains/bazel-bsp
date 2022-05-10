@@ -43,7 +43,7 @@ class BazelRunner private constructor(
   }
 
   fun runBazelCommand(command: String, flags: List<String>, arguments: List<String>): BazelProcess {
-    val processArgs = listOf(bazel(), command) + (defaultFlags?.currentBazelFlags() ?: emptyList()) + flags + arguments
+    val processArgs = listOf(bazel(), command) + bazelFlags() + flags + arguments
     logInvocation(processArgs)
     val processBuilder = ProcessBuilder(processArgs)
     bazelInfo?.let { processBuilder.directory(it.workspaceRoot.toFile()) }
@@ -58,6 +58,8 @@ class BazelRunner private constructor(
   }
 
   private fun bazel() = bazelPathProvider.currentBazelPath()
+
+  private fun bazelFlags() = (defaultFlags?.currentBazelFlags() ?: emptyList())
 
   fun setBesBackendPort(port: Int) {
     besBackendPort = port
