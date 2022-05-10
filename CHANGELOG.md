@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Features 🎉
+
+- Build flags are reloaded during sync.
+  | [#242](https://github.com/JetBrains/bazel-bsp/pull/242)
+
 ### Changes 🔄
 
 - New project view parser without default file.
