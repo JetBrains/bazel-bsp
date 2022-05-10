@@ -585,7 +585,7 @@ class DefaultProjectViewGeneratorTest {
                                     "--build_flag3=value3",
                             )
                     ),
-                    buildManualTargets = null,
+                    buildManualTargets = ProjectViewManualTargetsSection("false".toBoolean()),
             )
 
             val parser = ProjectViewParserImpl()
