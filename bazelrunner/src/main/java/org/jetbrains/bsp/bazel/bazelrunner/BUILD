@@ -10,6 +10,7 @@ kt_jvm_library(
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/params",
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
+        "//executioncontext/workspacecontext",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "@maven//:ch_epfl_scala_bsp4j",
@@ -19,6 +20,5 @@ kt_jvm_library(
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
-        "//executioncontext/workspacecontext",
     ],
 )

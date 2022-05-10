@@ -8,6 +8,7 @@ java_library(
         "//bazelrunner",
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
+        "//executioncontext/workspacecontext",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
@@ -23,6 +24,5 @@ java_library(
         "@maven//:io_vavr_vavr",
         "@maven//:io_vavr_vavr_jackson",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
-        "//executioncontext/workspacecontext",
     ],
 )
