@@ -43,7 +43,8 @@ public class BazelProjectMapper {
     var targetsToImport = selectTargetsToImport(rootTargets, targets);
     var modulesFromBazel = createModules(targetsToImport, dependencyTree);
     var workspaceRoot = bazelPathsResolver.workspaceRoot();
-    var syntheticModules = createSyntheticModules(modulesFromBazel, workspaceRoot, workspaceContext);
+    var syntheticModules =
+        createSyntheticModules(modulesFromBazel, workspaceRoot, workspaceContext);
     var allModules = modulesFromBazel.appendAll(syntheticModules);
     var sourceToTarget = buildReverseSourceMapping(modulesFromBazel);
     return new Project(workspaceRoot, allModules, sourceToTarget);

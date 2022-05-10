@@ -49,7 +49,8 @@ public class ProjectResolver {
             "Reading project view adn creating workspace context",
             workspaceContextProvider::currentWorkspaceContext);
     var bepOutput =
-        logger.timed("Building project with aspect", () -> buildProjectWithAspect(workspaceContext));
+        logger.timed(
+            "Building project with aspect", () -> buildProjectWithAspect(workspaceContext));
     var aspectOutputs =
         logger.timed(
             "Reading aspect output paths",
@@ -66,7 +67,7 @@ public class ProjectResolver {
 
   private BepOutput buildProjectWithAspect(WorkspaceContext workspaceContext) {
     return bazelBspAspectsManager.fetchFilesFromOutputGroups(
-            workspaceContext.getTargets(),
+        workspaceContext.getTargets(),
         ASPECT_NAME,
         List.of(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP));
   }

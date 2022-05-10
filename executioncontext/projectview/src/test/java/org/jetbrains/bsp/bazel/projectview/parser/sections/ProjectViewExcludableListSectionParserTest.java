@@ -68,7 +68,10 @@ public class ProjectViewExcludableListSectionParserTest<
       Function<String, String> rawIncludedElementConstructor,
       Function<String, V> elementMapper,
       List<String> rawElements) {
-    return rawElements.stream().map(rawIncludedElementConstructor).map(elementMapper).collect(Collectors.toList());
+    return rawElements.stream()
+        .map(rawIncludedElementConstructor)
+        .map(elementMapper)
+        .collect(Collectors.toList());
   }
 
   @Nested

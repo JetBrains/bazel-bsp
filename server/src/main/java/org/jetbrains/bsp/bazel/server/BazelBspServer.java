@@ -49,7 +49,8 @@ public class BazelBspServer {
     var bspInfo = new BspInfo();
     var bazelInfoStorage = new BazelInfoStorage(bspInfo);
     var bazelDataResolver =
-        new BazelInfoResolver(BazelRunner.inCwd(workspaceContextProvider, bspClientLogger), bazelInfoStorage);
+        new BazelInfoResolver(
+            BazelRunner.inCwd(workspaceContextProvider, bspClientLogger), bazelInfoStorage);
     this.bazelInfo = bazelDataResolver.resolveBazelInfo();
     this.bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, bazelInfo);
     var serverLifetime = new BazelBspServerLifetime();
@@ -69,7 +70,8 @@ public class BazelBspServer {
     var bazelProjectMapper =
         new BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver);
     var projectResolver =
-        new ProjectResolver(bazelBspAspectsManager, workspaceContextProvider, bazelProjectMapper, bspClientLogger);
+        new ProjectResolver(
+            bazelBspAspectsManager, workspaceContextProvider, bazelProjectMapper, bspClientLogger);
     var projectStorage = new ProjectStorage(bspInfo, bspClientLogger);
     var projectProvider = new ProjectProvider(projectResolver, projectStorage);
     var bspProjectMapper = new BspProjectMapper(languagePluginsService);
