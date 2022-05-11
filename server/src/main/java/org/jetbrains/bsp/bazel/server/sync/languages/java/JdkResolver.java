@@ -4,7 +4,7 @@ import io.vavr.PartialFunction;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
@@ -75,7 +75,7 @@ public class JdkResolver {
             ? (targetInfo.getJavaRuntimeInfo().getJavaHome())
             : (hasToolchainJavaHome ? targetInfo.getJavaToolchainInfo().getJavaHome() : null);
 
-    var javaHome = Option.of(javaHomeFile).map(bazelPathsResolver::resolve);
+    var javaHome = Option.of(javaHomeFile).map(bazelPathsResolver::resolveUri);
 
     Option<String> version =
         targetInfo.hasJavaToolchainInfo()
@@ -87,10 +87,10 @@ public class JdkResolver {
 
   public static class JdkCandidate {
     final boolean isRuntime;
-    final Option<Path> javaHome;
+    final Option<URI> javaHome;
     final Option<String> version;
 
-    public JdkCandidate(boolean isRuntime, Option<Path> javaHome, Option<String> version) {
+    public JdkCandidate(boolean isRuntime, Option<URI> javaHome, Option<String> version) {
       this.isRuntime = isRuntime;
       this.javaHome = javaHome;
       this.version = version;

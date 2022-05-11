@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
@@ -15,10 +15,10 @@ public class Module {
   private final Seq<Label> directDependencies;
   private final Set<Language> languages;
   private final Set<Tag> tags;
-  private final Path baseDirectory;
+  private final URI baseDirectory;
   private final SourceSet sourceSet;
-  private final Set<Path> resources;
-  private final Set<Path> sourceDependencies;
+  private final Set<URI> resources;
+  private final Set<URI> sourceDependencies;
   private final Option<LanguageData> languageData;
 
   public Module(
@@ -27,10 +27,10 @@ public class Module {
       @JsonProperty("directDependencies") Seq<Label> directDependencies,
       @JsonProperty("languages") Set<Language> languages,
       @JsonProperty("tags") Set<Tag> tags,
-      @JsonProperty("baseDirectory") Path baseDirectory,
+      @JsonProperty("baseDirectory") URI baseDirectory,
       @JsonProperty("sourceSet") SourceSet sourceSet,
-      @JsonProperty("resources") Set<Path> resources,
-      @JsonProperty("sourceDependencies") Set<Path> sourceDependencies,
+      @JsonProperty("resources") Set<URI> resources,
+      @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
       @JsonProperty("languageData") Option<LanguageData> languageData) {
     this.label = label;
     this.isSynthetic = isSynthetic;
@@ -65,7 +65,7 @@ public class Module {
     return tags;
   }
 
-  public Path baseDirectory() {
+  public URI baseDirectory() {
     return baseDirectory;
   }
 
@@ -73,11 +73,11 @@ public class Module {
     return sourceSet;
   }
 
-  public Set<Path> resources() {
+  public Set<URI> resources() {
     return resources;
   }
 
-  public Set<Path> sourceDependencies() {
+  public Set<URI> sourceDependencies() {
     return sourceDependencies;
   }
 

@@ -15,6 +15,7 @@ import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.function.BiFunction;
@@ -63,7 +64,7 @@ public class ScalaLanguagePlugin extends LanguagePlugin<ScalaModule> {
   }
 
   @Override
-  public Set<Path> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     return javaLanguagePlugin.dependencySources(targetInfo, dependencyTree);
   }
 
@@ -77,7 +78,7 @@ public class ScalaLanguagePlugin extends LanguagePlugin<ScalaModule> {
             sdk.version(),
             sdk.binaryVersion(),
             ScalaPlatform.JVM,
-            sdk.compilerJars().map(Path::toString).toJavaList());
+            sdk.compilerJars().map(URI::toString).toJavaList());
 
     scalaModule
         .javaModule()

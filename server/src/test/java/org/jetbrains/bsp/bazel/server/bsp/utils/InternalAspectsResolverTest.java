@@ -26,7 +26,7 @@ public class InternalAspectsResolverTest {
     var aspectLabel = internalAspectsResolver.resolveLabel("get_classpath");
 
     // then
-    assertThat(aspectLabel).isEqualTo("@//.bazelbsp:aspects.bzl%get_classpath");
+    assertThat(aspectLabel).isEqualTo("@bazelbsp_aspect//:aspects.bzl%get_classpath");
   }
 
   @Test
@@ -41,7 +41,7 @@ public class InternalAspectsResolverTest {
 
     // then
     assertThat(aspectLabel)
-        .isEqualTo("@//bsp-projects/test-project-bsp/.bazelbsp:aspects.bzl%get_classpath");
+        .isEqualTo("@bazelbsp_aspect//:aspects.bzl%get_classpath");
   }
 
   private InternalAspectsResolver createAspectsResolver(

@@ -3,8 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.java;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URI;
 
 public class IdeClasspathResolver {
 
@@ -12,14 +11,14 @@ public class IdeClasspathResolver {
   private final Set<String> runtimeMavenJarSuffixes;
   private final Seq<String> compileJars;
 
-  public IdeClasspathResolver(Seq<Path> runtimeClasspath, Seq<Path> compileClasspath) {
-    this.runtimeJars = runtimeClasspath.map(Path::toString).toSet();
+  public IdeClasspathResolver(Seq<URI> runtimeClasspath, Seq<URI> compileClasspath) {
+    this.runtimeJars = runtimeClasspath.map(URI::toString).toSet();
     this.runtimeMavenJarSuffixes = runtimeJars.flatMap(this::toMavenSuffix);
-    this.compileJars = compileClasspath.map(Path::toString);
+    this.compileJars = compileClasspath.map(URI::toString);
   }
 
-  public Seq<Path> resolve() {
-    return compileJars.iterator().map(this::findRuntimeEquivalent).map(Paths::get).toArray();
+  public Seq<URI> resolve() {
+    return compileJars.iterator().map(this::findRuntimeEquivalent).map(URI::create).toArray();
   }
 
   private String findRuntimeEquivalent(String compileJar) {

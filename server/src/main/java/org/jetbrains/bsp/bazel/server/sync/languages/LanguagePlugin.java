@@ -5,7 +5,7 @@ import io.vavr.collection.HashSet;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.nio.file.Path;
+import java.net.URI;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 
@@ -16,7 +16,7 @@ public abstract class LanguagePlugin<T extends LanguageData> {
     return Option.none();
   }
 
-  public Set<Path> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     return HashSet.empty();
   }
 

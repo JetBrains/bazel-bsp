@@ -5,29 +5,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.Objects;
 import java.util.function.Function;
 import org.jetbrains.bsp.bazel.commons.Format;
 
 /** Project is the internal model of the project. Bazel/Aspect Model -> Project -> BSP Model */
 public class Project {
-  private final Path workspaceRoot;
-  private final Map<Path, Label> sourceToTarget;
+  private final URI workspaceRoot;
+  private final Map<URI, Label> sourceToTarget;
   private final Seq<Module> modules;
   @JsonIgnore private final Map<Label, Module> moduleMap;
 
   public Project(
-      @JsonProperty("workspaceRoot") Path workspaceRoot,
+      @JsonProperty("workspaceRoot") URI workspaceRoot,
       @JsonProperty("modules") Seq<Module> modules,
-      @JsonProperty("sourceToTarget") Map<Path, Label> sourceToTarget) {
+      @JsonProperty("sourceToTarget") Map<URI, Label> sourceToTarget) {
     this.workspaceRoot = workspaceRoot;
     this.sourceToTarget = sourceToTarget;
     this.modules = modules;
     this.moduleMap = modules.toMap(Module::label, Function.identity());
   }
 
-  public Path workspaceRoot() {
+  public URI workspaceRoot() {
     return workspaceRoot;
   }
 
@@ -39,11 +39,11 @@ public class Project {
     return moduleMap.get(label);
   }
 
-  public Option<Label> findTargetBySource(Path documentUri) {
+  public Option<Label> findTargetBySource(URI documentUri) {
     return sourceToTarget.get(documentUri);
   }
 
-  public Map<Path, Label> sourceToTarget() {
+  public Map<URI, Label> sourceToTarget() {
     return sourceToTarget;
   }
 

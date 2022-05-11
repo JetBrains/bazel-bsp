@@ -50,12 +50,12 @@ public class ScalaSdkResolver {
     }
     var version = maybeVersions.distinct().sorted().last();
     var binaryVersion = toBinaryVersion(version);
-    var sdk = new ScalaSdk("org.scala-lang", version, binaryVersion, compilerJars);
+    var sdk = new ScalaSdk("org.scala-lang", version, binaryVersion, compilerJars.map(Path::toUri));
     return Option.some(sdk);
   }
 
-  private Option<String> extractVersion(Path uri) {
-    var name = uri.getFileName().toString();
+  private Option<String> extractVersion(Path path) {
+    var name = path.getFileName().toString();
     var matcher = VERSION_PATTERN.matcher(name);
     if (matcher.matches()) {
       return Option.some(matcher.group(1));

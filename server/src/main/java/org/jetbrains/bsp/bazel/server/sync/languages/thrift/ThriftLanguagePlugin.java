@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.thrift;
 
 import ch.epfl.scala.bsp4j.BuildTarget;
 import io.vavr.collection.Set;
-import java.nio.file.Path;
+import java.net.URI;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
@@ -18,12 +18,12 @@ public class ThriftLanguagePlugin extends LanguagePlugin<ThriftModule> {
   }
 
   @Override
-  public Set<Path> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     return dependencyTree
         .transitiveDependenciesWithoutRootTargets(targetInfo.getId())
         .filter(this::isThriftLibrary)
         .flatMap(TargetInfo::getSourcesList)
-        .map(bazelPathsResolver::resolve);
+        .map(bazelPathsResolver::resolveUri);
   }
 
   private boolean isThriftLibrary(TargetInfo target) {

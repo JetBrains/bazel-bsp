@@ -2,26 +2,26 @@ package org.jetbrains.bsp.bazel.server.sync.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.Set;
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 
 public class SourceSet {
-  private final Set<Path> sources;
-  private final Set<Path> sourceRoots;
+  private final Set<URI> sources;
+  private final Set<URI> sourceRoots;
 
   public SourceSet(
-      @JsonProperty("sources") Set<Path> sources,
-      @JsonProperty("sourceRoots") Set<Path> sourceRoots) {
+      @JsonProperty("sources") Set<URI> sources,
+      @JsonProperty("sourceRoots") Set<URI> sourceRoots) {
     this.sources = sources;
     this.sourceRoots = sourceRoots;
   }
 
-  public Set<Path> sources() {
+  public Set<URI> sources() {
     return sources;
   }
 
-  public Set<Path> sourceRoots() {
+  public Set<URI> sourceRoots() {
     return sourceRoots;
   }
 

@@ -7,6 +7,7 @@ import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
+import java.net.URI;
 import java.nio.file.Path;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -71,7 +72,7 @@ public class BazelProjectMapper {
     var directDependencies = resolveDirectDependencies(target);
     var languages = inferLanguages(target);
     var tags = targetKindResolver.resolveTags(target);
-    var baseDirectory = bazelPathsResolver.labelToDirectory(label);
+    var baseDirectory = bazelPathsResolver.labelToDirectory(label).toUri();
     var sourceSet = resolveSourceSet(target);
     var resources = resolveResources(target);
 
@@ -114,22 +115,22 @@ public class BazelProjectMapper {
   private SourceSet resolveSourceSet(TargetInfo target) {
     var sources = HashSet.ofAll(target.getSourcesList()).map(bazelPathsResolver::resolve);
     var sourceRoots = sources.map(SourceRootGuesser::getSourcesRoot);
-    return new SourceSet(sources, sourceRoots);
+    return new SourceSet(sources.map(Path::toUri), sourceRoots.map(Path::toUri));
   }
 
-  private Set<Path> resolveResources(TargetInfo target) {
-    return bazelPathsResolver.resolvePaths(target.getResourcesList()).toSet();
+  private Set<URI> resolveResources(TargetInfo target) {
+    return bazelPathsResolver.resolveUris(target.getResourcesList()).toSet();
   }
 
   // TODO make this feature configurable with flag in project view file
   private Seq<Module> createSyntheticModules(
-      Seq<Module> modulesFromBazel, Path workspaceRoot, WorkspaceContext workspaceContext) {
+      Seq<Module> modulesFromBazel, URI workspaceRoot, WorkspaceContext workspaceContext) {
     return new IntelliJProjectTreeViewFix()
         .createModules(workspaceRoot, modulesFromBazel, workspaceContext);
   }
 
-  private Map<Path, Label> buildReverseSourceMapping(Seq<Module> modules) {
-    var output = new java.util.HashMap<Path, Label>();
+  private Map<URI, Label> buildReverseSourceMapping(Seq<Module> modules) {
+    var output = new java.util.HashMap<URI, Label>();
     modules.forEach(
         module -> {
           module.sourceSet().sources().forEach(source -> output.put(source, module.label()));

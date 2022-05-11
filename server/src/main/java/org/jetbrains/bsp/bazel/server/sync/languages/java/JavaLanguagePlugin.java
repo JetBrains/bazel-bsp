@@ -12,7 +12,7 @@ import io.vavr.collection.HashSet;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
-import java.nio.file.Path;
+import java.net.URI;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -49,14 +49,12 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     var javaTargetInfo = targetInfo.getJavaTargetInfo();
     var javacOpts = Array.ofAll(javaTargetInfo.getJavacOptsList());
     var jvmOpts = Array.ofAll(javaTargetInfo.getJvmFlagsList());
-    var mainOutput = bazelPathsResolver.resolve(javaTargetInfo.getJars(0).getBinaryJars(0));
+    var mainOutput = bazelPathsResolver.resolveUri(javaTargetInfo.getJars(0).getBinaryJars(0));
     var mainClass = getMainClass(javaTargetInfo);
     var args = Array.ofAll(javaTargetInfo.getArgsList());
-    var runtimeClasspath =
-        bazelPathsResolver.resolvePaths(javaTargetInfo.getRuntimeClasspathList());
-    var compileClasspath =
-        bazelPathsResolver.resolvePaths(javaTargetInfo.getCompileClasspathList());
-    var sourcesClasspath = bazelPathsResolver.resolvePaths(javaTargetInfo.getSourceClasspathList());
+    var runtimeClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getRuntimeClasspathList());
+    var compileClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getCompileClasspathList());
+    var sourcesClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getSourceClasspathList());
     var ideClasspath = resolveIdeClasspath(runtimeClasspath, compileClasspath);
     var runtimeJdk = jdkResolver.resolveJdk(targetInfo).flatMap(JdkResolver.JdkCandidate::asJdk);
 
@@ -86,17 +84,17 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     return jdk.getOrElseThrow(() -> new RuntimeException("Failed to resolve JDK for project"));
   }
 
-  private Seq<Path> resolveIdeClasspath(Seq<Path> runtimeClasspath, Seq<Path> compileClasspath) {
+  private Seq<URI> resolveIdeClasspath(Seq<URI> runtimeClasspath, Seq<URI> compileClasspath) {
     return new IdeClasspathResolver(runtimeClasspath, compileClasspath).resolve();
   }
 
   @Override
-  public Set<Path> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
+  public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
     if (!targetInfo.hasJavaTargetInfo()) {
       return HashSet.empty();
     }
     var sourceJars = targetInfo.getJavaTargetInfo().getSourceClasspathList();
-    return HashSet.ofAll(sourceJars).map(bazelPathsResolver::resolve);
+    return HashSet.ofAll(sourceJars).map(bazelPathsResolver::resolveUri);
   }
 
   @Override
@@ -108,14 +106,14 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
 
   public JvmBuildTarget toJvmBuildTarget(JavaModule javaModule) {
     var jdk = javaModule.jdk();
-    var javaHome = jdk.javaHome().map(Path::toString).getOrNull();
+    var javaHome = jdk.javaHome().map(URI::toString).getOrNull();
     return new JvmBuildTarget(javaHome, jdk.javaVersion());
   }
 
   public JvmEnvironmentItem toJvmEnvironmentItem(Module module, JavaModule javaModule) {
     return new JvmEnvironmentItem(
         toBspId(module),
-        javaModule.runtimeClasspath().map(Path::toString).asJava(),
+        javaModule.runtimeClasspath().map(URI::toString).asJava(),
         javaModule.jvmOps().asJava(),
         bazelInfo.getWorkspaceRoot().toString(),
         environment);
@@ -125,7 +123,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     return new JavacOptionsItem(
         toBspId(module),
         javaModule.javacOpts().toJavaList(),
-        javaModule.ideClasspath().map(Path::toString).toJavaList(),
+        javaModule.ideClasspath().map(URI::toString).toJavaList(),
         javaModule.mainOutput().toString());
   }
 }

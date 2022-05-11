@@ -7,8 +7,6 @@ import io.vavr.collection.HashSet;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
@@ -42,8 +40,8 @@ public class BspMappings {
     }
   }
 
-  public static String toBspUri(Path path) {
-    return path.toUri().toString();
+  public static String toBspUri(URI uri) {
+    return uri.toString();
   }
 
   public static String toBspUri(BuildTargetIdentifier uri) {
@@ -54,11 +52,11 @@ public class BspMappings {
     return toLabels(targets).flatMap(project::findModule);
   }
 
-  public static Set<Label> toLabels(java.util.List<BuildTargetIdentifier> targets) {
-    return HashSet.ofAll(targets).map(BuildTargetIdentifier::getUri).map(Label::from);
+  public static URI toUri(TextDocumentIdentifier textDocument) {
+    return URI.create(textDocument.getUri());
   }
 
-  public static Path toPath(TextDocumentIdentifier textDocument) {
-    return Paths.get(URI.create(textDocument.getUri()));
+  public static Set<Label> toLabels(java.util.List<BuildTargetIdentifier> targets) {
+    return HashSet.ofAll(targets).map(BuildTargetIdentifier::getUri).map(Label::from);
   }
 }

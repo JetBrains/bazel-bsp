@@ -4,7 +4,7 @@ import static org.jetbrains.bsp.bazel.server.sync.BspMappings.getModules;
 import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId;
 import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspUri;
 import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toLabels;
-import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toPath;
+import static org.jetbrains.bsp.bazel.server.sync.BspMappings.toUri;
 
 import ch.epfl.scala.bsp4j.BuildServerCapabilities;
 import ch.epfl.scala.bsp4j.BuildTarget;
@@ -172,7 +172,7 @@ public class BspProjectMapper {
 
   public InverseSourcesResult inverseSources(
       Project project, InverseSourcesParams inverseSourcesParams) {
-    var documentUri = toPath(inverseSourcesParams.getTextDocument());
+    var documentUri = toUri(inverseSourcesParams.getTextDocument());
     var targets = project.findTargetBySource(documentUri).map(BspMappings::toBspId).toList();
     return new InverseSourcesResult(targets.toJavaList());
   }

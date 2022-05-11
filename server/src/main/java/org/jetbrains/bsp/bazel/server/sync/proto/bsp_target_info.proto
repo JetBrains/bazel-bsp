@@ -47,7 +47,6 @@ message JavaToolchainInfo {
 
 message JavaRuntimeInfo {
   FileLocation java_home = 1;
-  string version = 2;
 }
 
 message ScalaTargetInfo {
