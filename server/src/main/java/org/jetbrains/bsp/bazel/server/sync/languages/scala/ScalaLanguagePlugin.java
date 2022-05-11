@@ -16,7 +16,6 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.function.BiFunction;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;

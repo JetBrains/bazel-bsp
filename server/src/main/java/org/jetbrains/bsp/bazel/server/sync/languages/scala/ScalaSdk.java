@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.server.sync.languages.scala;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.Seq;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 

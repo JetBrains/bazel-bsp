@@ -24,8 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
-import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticBspMapper;
-import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsParser;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
@@ -138,22 +136,27 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     var label = event.getId().getActionCompleted().getLabel();
     var actionEvent = event.getAction();
     if (!actionEvent.getSuccess()) {
-      String stdErrText = "";
-      if (actionEvent.getStderr().getFileCase() == BuildEventStreamProtos.File.FileCase.URI) {
-        var path = Paths.get(URI.create(actionEvent.getStderr().getUri()));
-        try {
-          stdErrText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-          // noop
-        }
-      } else if (actionEvent.getStderr().getFileCase()
-          == BuildEventStreamProtos.File.FileCase.CONTENTS) {
-        stdErrText = actionEvent.getStderr().getContents().toStringUtf8();
-      }
-
-      var events = diagnosticsService.extractDiagnostics(stdErrText, label);
-      events.forEach(bspClient::onBuildPublishDiagnostics);
+      consumeUnsuccessfulActionCompletedEvent(actionEvent, label);
     }
+  }
+
+  private void consumeUnsuccessfulActionCompletedEvent(
+      BuildEventStreamProtos.ActionExecuted actionEvent, String label) {
+    String stdErrText = "";
+    if (actionEvent.getStderr().getFileCase() == BuildEventStreamProtos.File.FileCase.URI) {
+      var path = Paths.get(URI.create(actionEvent.getStderr().getUri()));
+      try {
+        stdErrText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+      } catch (IOException e) {
+        // noop
+      }
+    } else if (actionEvent.getStderr().getFileCase()
+        == BuildEventStreamProtos.File.FileCase.CONTENTS) {
+      stdErrText = actionEvent.getStderr().getContents().toStringUtf8();
+    }
+
+    var events = diagnosticsService.extractDiagnostics(stdErrText, label);
+    events.forEach(bspClient::onBuildPublishDiagnostics);
   }
 
   private void consumeCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
