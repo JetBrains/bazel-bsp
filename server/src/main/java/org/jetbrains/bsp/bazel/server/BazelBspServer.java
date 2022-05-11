@@ -21,6 +21,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticBspMapper;
+import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper;
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper;
@@ -146,7 +147,7 @@ public class BazelBspServer {
     bspIntegrationData.setLauncher(launcher);
     BuildClient client = launcher.getRemoteProxy();
     this.bspClientLogger.initialize(client);
-    var bepServer = new BepServer(client, new DiagnosticBspMapper(bazelInfo));
+    var bepServer = new BepServer(client, new DiagnosticsService(bazelInfo));
     compilationManager.setBepServer(bepServer);
     bspIntegrationData.setServer(ServerBuilder.forPort(0).addService(bepServer).build());
   }

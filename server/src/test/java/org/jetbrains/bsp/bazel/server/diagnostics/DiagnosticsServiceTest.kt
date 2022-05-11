@@ -487,9 +487,6 @@ class DiagnosticsServiceTest {
 
   private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams>? {
     val bazelInfo = BasicBazelInfo("", workspacePath)
-    val parser = DiagnosticsParser()
-    val mapper = DiagnosticBspMapper(bazelInfo)
-
-    return mapper.createDiagnostics(parser.parse(output), buildTarget)
+    return DiagnosticsService(bazelInfo).extractDiagnostics(output, buildTarget)
   }
 }

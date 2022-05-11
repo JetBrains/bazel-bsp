@@ -14,10 +14,6 @@ class DiagnosticBspMapper(private val bazelInfo: BazelInfo) {
 
   fun createDiagnostics(diagnostics: List<Diagnostic>, target: String): List<PublishDiagnosticsParams> {
     val ident = BuildTargetIdentifier(target)
-    if (diagnostics.isEmpty()) {
-      return listOf(PublishDiagnosticsParams(TextDocumentIdentifier("unknown"), ident, listOf(), false))
-    }
-
     return diagnostics
       .groupBy { it.fileLocation }
       .map { kv ->

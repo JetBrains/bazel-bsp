@@ -26,6 +26,7 @@ import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticBspMapper;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsParser;
+import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -34,12 +35,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final BuildClient bspClient;
 
   private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
-  private final DiagnosticBspMapper diagnosticBspMapper;
+  private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
-  public BepServer(BuildClient bspClient, DiagnosticBspMapper diagnosticBspMapper) {
+  public BepServer(BuildClient bspClient, DiagnosticsService diagnosticsService) {
     this.bspClient = bspClient;
-    this.diagnosticBspMapper = diagnosticBspMapper;
+    this.diagnosticsService = diagnosticsService;
   }
 
   @Override
@@ -150,9 +151,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
         stdErrText = actionEvent.getStderr().getContents().toStringUtf8();
       }
 
-      var parsed = new DiagnosticsParser().parse(stdErrText);
-      var events = diagnosticBspMapper.createDiagnostics(parsed, label);
-
+      var events = diagnosticsService.extractDiagnostics(stdErrText, label);
       events.forEach(bspClient::onBuildPublishDiagnostics);
     }
   }
