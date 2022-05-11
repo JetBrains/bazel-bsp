@@ -35,7 +35,14 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
   }
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
-    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "8");
+    // TODO this was always broken. We resolve local_jdk which is actual jdk installed
+    // on the running machine. In my case as well as on CI it is Java 11. We were
+    // returning this path annotated as Java 8, but actually it was java 11 anyway.
+    // now it is detected because the version is actually checked rather than inferred
+    // from heuristics.
+    // We should figure out a way to enforce bazel to download runtime jdk that matches
+    // expected number.
+    var exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "11");
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(

@@ -1,8 +1,11 @@
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "sync",
-    srcs = glob(["**/*.java"]),
+    srcs = glob([
+        "**/*.java",
+        "**/*.kt",
+    ]),
     visibility = ["//visibility:public"],
     deps = [
         "//bazelrunner",

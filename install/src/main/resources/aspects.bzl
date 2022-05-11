@@ -382,6 +382,7 @@ PRIVATE_COMPILE_DEPS = [
     "_scala_toolchain",
     "_scalac",
     "_jvm",
+    "runtime_jdk",
 ]
 
 RUNTIME_DEPS = [
