@@ -23,21 +23,21 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
 public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
   private final BazelPathsResolver bazelPathsResolver;
+  private final JdkResolver jdkResolver;
   private final BazelInfo bazelInfo;
   private final java.util.Map<String, String> environment = System.getenv();
   private Option<Jdk> jdk;
 
-  private JdkResolver jdkResolver;
-
-  public JavaLanguagePlugin(BazelPathsResolver bazelPathsResolver, BazelInfo bazelInfo) {
+  public JavaLanguagePlugin(
+      BazelPathsResolver bazelPathsResolver, JdkResolver jdkResolver, BazelInfo bazelInfo) {
     this.bazelPathsResolver = bazelPathsResolver;
+    this.jdkResolver = jdkResolver;
     this.bazelInfo = bazelInfo;
-    this.jdkResolver = new JdkResolver(bazelPathsResolver);
   }
 
   @Override
   public void prepareSync(Seq<TargetInfo> targets) {
-    this.jdk = jdkResolver.resolve(targets);
+    this.jdk = Option.of(jdkResolver.resolve(targets.asJava()));
   }
 
   @Override
@@ -56,7 +56,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     var compileClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getCompileClasspathList());
     var sourcesClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getSourceClasspathList());
     var ideClasspath = resolveIdeClasspath(runtimeClasspath, compileClasspath);
-    var runtimeJdk = jdkResolver.resolveJdk(targetInfo).flatMap(JdkResolver.JdkCandidate::asJdk);
+    var runtimeJdk = Option.of(jdkResolver.resolveJdk(targetInfo));
 
     var module =
         new JavaModule(

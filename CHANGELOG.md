@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+...
+
+## [2.1.0] - 11.05.2022
+
 ### Features 🎉
 
 - Build flags are reloaded during sync.
@@ -11,6 +15,8 @@
 
 ### Changes 🔄
 
+- Support for detecting jdk through runtime_jdk poperty; infer jdk
+  | [#241](https://github.com/JetBrains/bazel-bsp/pull/241)
 - New project view parser without default file.
   | [#242](https://github.com/JetBrains/bazel-bsp/pull/242)
 - Map label->module is no longer serialized -
@@ -187,7 +193,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.1.0...HEAD
+
+[2.1.0]: https://github.com/JetBrains/bazel-bsp/compare/2.0.0...2.1.0
 
 [2.0.0]: https://github.com/JetBrains/bazel-bsp/compare/1.1.1...2.0.0
 
