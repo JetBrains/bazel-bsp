@@ -142,19 +142,23 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeUnsuccessfulActionCompletedEvent(
       BuildEventStreamProtos.ActionExecuted actionEvent, String label) {
-    String stdErrText = "";
     if (actionEvent.getStderr().getFileCase() == BuildEventStreamProtos.File.FileCase.URI) {
       var path = Paths.get(URI.create(actionEvent.getStderr().getUri()));
       try {
-        stdErrText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        String stdErrText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        processDiagnosticText(stdErrText, label);
       } catch (IOException e) {
         // noop
       }
     } else if (actionEvent.getStderr().getFileCase()
         == BuildEventStreamProtos.File.FileCase.CONTENTS) {
-      stdErrText = actionEvent.getStderr().getContents().toStringUtf8();
+      processDiagnosticText(actionEvent.getStderr().getContents().toStringUtf8(), label);
+    } else {
+      processDiagnosticText("", label);
     }
+  }
 
+  private void processDiagnosticText(String stdErrText, String label) {
     var events = diagnosticsService.extractDiagnostics(stdErrText, label);
     events.forEach(bspClient::onBuildPublishDiagnostics);
   }
