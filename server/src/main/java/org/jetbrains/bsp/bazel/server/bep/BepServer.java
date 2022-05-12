@@ -15,7 +15,6 @@ import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
@@ -145,7 +144,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     if (actionEvent.getStderr().getFileCase() == BuildEventStreamProtos.File.FileCase.URI) {
       var path = Paths.get(URI.create(actionEvent.getStderr().getUri()));
       try {
-        String stdErrText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        String stdErrText = Files.readString(path);
         processDiagnosticText(stdErrText, label);
       } catch (IOException e) {
         // noop
