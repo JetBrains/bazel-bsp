@@ -140,7 +140,7 @@ class DefaultProjectViewParserTest {
             projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
 
-            projectView.buildFlags shouldBe null
+            projectView.buildManualTargets shouldBe null
         }
 
         @Test

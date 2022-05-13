@@ -190,6 +190,7 @@ class CliOptionsProviderTest {
         @DisplayName("cliOptions.projectViewCliOptions.javaPath tests")
         inner class JavaPathTest {
 
+
             @Test
             fun `should return success and absolute path to provided java file if java path is specified`() {
                 // given
@@ -405,6 +406,28 @@ class CliOptionsProviderTest {
             }
         }
 
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.buildManualTargets test")
+        inner class BuildManualTargetsTest {
+
+            @Test
+            fun `should return success if build manual targets are specified`() {
+                // given
+                val args = arrayOf("-m", "true")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBuildManualTargets = "true".toBoolean()
+                cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
+            }
+        }
+
         @Test
         fun `should return success if all flags are specified`() {
             // given
@@ -428,7 +451,9 @@ class CliOptionsProviderTest {
                     "-f",
                     "--build_flag1=value1",
                     "--build_flag1=value2",
-                    "--build_flag1=value3"
+                    "--build_flag1=value3",
+                    "-m",
+                    "false"
             )
 
             // when
@@ -462,6 +487,8 @@ class CliOptionsProviderTest {
                     "//included_target3",
                     "-//excluded_target2",
             )
+
+            val expectedBuildManualTargets = "false".toBoolean()
             cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
