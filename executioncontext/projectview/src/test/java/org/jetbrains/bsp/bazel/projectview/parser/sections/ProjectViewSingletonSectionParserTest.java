@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
@@ -22,196 +23,205 @@ import org.junit.jupiter.params.provider.MethodSource;
 // TODO to kotlin
 public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingletonSection<V>> {
 
-  public static Stream<Arguments> data() {
-    return Stream.of(
-        bazelPathSectionArguments(), debuggerAddressSectionArguments(), javaPathSectionArguments());
-  }
-
-  private static Arguments bazelPathSectionArguments() {
-    var parser = ProjectViewBazelPathSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/bazel/" + seed;
-    var sectionMapper =
-        (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new;
-    var elementMapper = (Function<String, Path>) Paths::get;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static Arguments debuggerAddressSectionArguments() {
-    var parser = ProjectViewDebuggerAddressSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "host_" + seed + ":8080";
-    var sectionMapper =
-        (Function<String, ProjectViewDebuggerAddressSection>)
-            ProjectViewDebuggerAddressSection::new;
-    var elementMapper = (Function<String, String>) x -> x;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-//  private static Arguments buildManualTargetsSectionArguments(){
-//    var parser = ProjectViewManualSectionParser.INSTANCE;
-//    var rawValueConstructor =
-//
-//  }
-  private static Arguments javaPathSectionArguments() {
-    var parser = ProjectViewJavaPathSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/java/" + seed;
-    var sectionMapper =
-        (Function<Path, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new;
-    var elementMapper = (Function<String, Path>) Paths::get;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static <V, T extends ProjectViewSingletonSection<V>>
-      Function<String, T> createSectionConstructor(
-          Function<String, String> rawValueConstructor,
-          Function<V, T> sectionMapper,
-          Function<String, V> elementMapper) {
-
-    return (seed) -> sectionMapper.apply(elementMapper.apply(rawValueConstructor.apply(seed)));
-  }
-
-  @Nested
-  @DisplayName("T parse(rawSection) tests")
-  class ParseRawSectionTest {
-
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
-    @ParameterizedTest
-    public void shouldReturnFailureForWrongSectionName(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
-      // given
-      var rawSection = new ProjectViewRawSection("wrongsection", "value");
-
-      // when
-      var sectionTry = parser.parse(rawSection);
-
-      // then
-      assertThat(sectionTry.isFailure()).isTrue();
-      assertThat(sectionTry.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
-      assertThat(sectionTry.getCause().getMessage())
-          .isEqualTo(
-              "Project view parsing failed! Expected '"
-                  + sectionName
-                  + "' section name, got 'wrongsection'!");
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                bazelPathSectionArguments(), debuggerAddressSectionArguments(), javaPathSectionArguments());
     }
 
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
-    @ParameterizedTest
-    public void shouldReturnEmptyForEmptySectionBody(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
-      // given
-      var rawSection = new ProjectViewRawSection(sectionName, "");
+    private static Arguments bazelPathSectionArguments() {
+        var parser = ProjectViewBazelPathSectionParser.INSTANCE;
+        var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/bazel/" + seed;
+        var sectionMapper =
+                (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new;
+        var elementMapper = (Function<String, Path>) Paths::get;
 
-      // when
-      var sectionTry = parser.parse(rawSection);
+        var sectionConstructor =
+                createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        var sectionName = parser.getSectionName();
 
-      // then
-      assertThat(sectionTry.isSuccess()).isTrue();
-      var section = sectionTry.get();
-
-      assertThat(section).isNull();
+        return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
     }
 
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
-    @ParameterizedTest
-    public void shouldReturnSectionWithTrimmedValue(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
-      // given
-      var rawSection =
-          new ProjectViewRawSection(
-              sectionName, "  " + rawValueConstructor.apply("value") + "\t\n");
+    private static Arguments debuggerAddressSectionArguments() {
+        var parser = ProjectViewDebuggerAddressSectionParser.INSTANCE;
+        var rawValueConstructor = (Function<String, String>) (seed) -> "host_" + seed + ":8080";
+        var sectionMapper =
+                (Function<String, ProjectViewDebuggerAddressSection>)
+                        ProjectViewDebuggerAddressSection::new;
+        var elementMapper = (Function<String, String>) x -> x;
 
-      // when
-      var sectionTry = parser.parse(rawSection);
+        var sectionConstructor =
+                createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        var sectionName = parser.getSectionName();
 
-      // then
-      assertThat(sectionTry.isSuccess()).isTrue();
-      var section = sectionTry.get();
-
-      var expectedSection = sectionConstructor.apply("value");
-      assertThat(section).isEqualTo(expectedSection);
-    }
-  }
-
-  @Nested
-  @DisplayName("T parse(rawSections) tests")
-  class ParseRawSectionsTest {
-
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
-    @ParameterizedTest
-    public void shouldReturnLastSectionWithoutExplicitDefault(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
-      // given
-      var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
-      var rawSection2 =
-          new ProjectViewRawSection(sectionName, "  " + rawValueConstructor.apply("value2") + "\n");
-      var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
-      var rawSection4 =
-          new ProjectViewRawSection(
-              sectionName, "    " + rawValueConstructor.apply("value4") + "\n  ");
-      var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
-
-      var rawSections =
-          new ProjectViewRawSections(
-              List.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
-
-      // when
-      var section = parser.parse(rawSections);
-
-      // then
-      var expectedSection = sectionConstructor.apply("value4");
-      assertThat(section).isEqualTo(expectedSection);
+        return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
     }
 
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
-    @ParameterizedTest
-    public void shouldReturnEmptyIfSectionDoesntExist(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
-      // given
-      var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
-      var rawSection2 = new ProjectViewRawSection("another_section2", "  value2");
-      var rawSection3 = new ProjectViewRawSection("another_section3", "\tvalue3\n");
+    private static Arguments buildManualTargetsSectionArguments() {
+        var parser = ProjectViewManualSectionParser.INSTANCE;
+        var rawValueConstructor = (Function<String, String>) (seed) -> "false" + seed;
+        var sectionMapper = (Function<Boolean, ProjectViewBuildManualTargetsSection>)
+                ProjectViewBuildManualTargetsSection::new;
+        var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
 
-      var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
+        var sectionConstructor =
+                createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        var sectionName = parser.getSectionName();
 
-      // when
-      var section = parser.parse(rawSections);
-
-      // then
-      assertThat(section).isNull();
+        return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
     }
-  }
+
+    private static Arguments javaPathSectionArguments() {
+        var parser = ProjectViewJavaPathSectionParser.INSTANCE;
+        var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/java/" + seed;
+        var sectionMapper =
+                (Function<Path, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new;
+        var elementMapper = (Function<String, Path>) Paths::get;
+
+        var sectionConstructor =
+                createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        var sectionName = parser.getSectionName();
+
+        return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
+    }
+
+    private static <V, T extends ProjectViewSingletonSection<V>>
+    Function<String, T> createSectionConstructor(
+            Function<String, String> rawValueConstructor,
+            Function<V, T> sectionMapper,
+            Function<String, V> elementMapper) {
+
+        return (seed) -> sectionMapper.apply(elementMapper.apply(rawValueConstructor.apply(seed)));
+    }
+
+    @Nested
+    @DisplayName("T parse(rawSection) tests")
+    class ParseRawSectionTest {
+
+        @MethodSource(
+                "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+        @ParameterizedTest
+        public void shouldReturnFailureForWrongSectionName(
+                ProjectViewSingletonSectionParser<V, T> parser,
+                Function<String, String> rawValueConstructor,
+                Function<String, T> sectionConstructor,
+                String sectionName) {
+            // given
+            var rawSection = new ProjectViewRawSection("wrongsection", "value");
+
+            // when
+            var sectionTry = parser.parse(rawSection);
+
+            // then
+            assertThat(sectionTry.isFailure()).isTrue();
+            assertThat(sectionTry.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(sectionTry.getCause().getMessage())
+                    .isEqualTo(
+                            "Project view parsing failed! Expected '"
+                                    + sectionName
+                                    + "' section name, got 'wrongsection'!");
+        }
+
+        @MethodSource(
+                "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+        @ParameterizedTest
+        public void shouldReturnEmptyForEmptySectionBody(
+                ProjectViewSingletonSectionParser<V, T> parser,
+                Function<String, String> rawValueConstructor,
+                Function<String, T> sectionConstructor,
+                String sectionName) {
+            // given
+            var rawSection = new ProjectViewRawSection(sectionName, "");
+
+            // when
+            var sectionTry = parser.parse(rawSection);
+
+            // then
+            assertThat(sectionTry.isSuccess()).isTrue();
+            var section = sectionTry.get();
+
+            assertThat(section).isNull();
+        }
+
+        @MethodSource(
+                "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+        @ParameterizedTest
+        public void shouldReturnSectionWithTrimmedValue(
+                ProjectViewSingletonSectionParser<V, T> parser,
+                Function<String, String> rawValueConstructor,
+                Function<String, T> sectionConstructor,
+                String sectionName) {
+            // given
+            var rawSection =
+                    new ProjectViewRawSection(
+                            sectionName, "  " + rawValueConstructor.apply("value") + "\t\n");
+
+            // when
+            var sectionTry = parser.parse(rawSection);
+
+            // then
+            assertThat(sectionTry.isSuccess()).isTrue();
+            var section = sectionTry.get();
+
+            var expectedSection = sectionConstructor.apply("value");
+            assertThat(section).isEqualTo(expectedSection);
+        }
+    }
+
+    @Nested
+    @DisplayName("T parse(rawSections) tests")
+    class ParseRawSectionsTest {
+
+        @MethodSource(
+                "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+        @ParameterizedTest
+        public void shouldReturnLastSectionWithoutExplicitDefault(
+                ProjectViewSingletonSectionParser<V, T> parser,
+                Function<String, String> rawValueConstructor,
+                Function<String, T> sectionConstructor,
+                String sectionName) {
+            // given
+            var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
+            var rawSection2 =
+                    new ProjectViewRawSection(sectionName, "  " + rawValueConstructor.apply("value2") + "\n");
+            var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
+            var rawSection4 =
+                    new ProjectViewRawSection(
+                            sectionName, "    " + rawValueConstructor.apply("value4") + "\n  ");
+            var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
+
+            var rawSections =
+                    new ProjectViewRawSections(
+                            List.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
+
+            // when
+            var section = parser.parse(rawSections);
+
+            // then
+            var expectedSection = sectionConstructor.apply("value4");
+            assertThat(section).isEqualTo(expectedSection);
+        }
+
+        @MethodSource(
+                "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+        @ParameterizedTest
+        public void shouldReturnEmptyIfSectionDoesntExist(
+                ProjectViewSingletonSectionParser<V, T> parser,
+                Function<String, String> rawValueConstructor,
+                Function<String, T> sectionConstructor,
+                String sectionName) {
+            // given
+            var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
+            var rawSection2 = new ProjectViewRawSection("another_section2", "  value2");
+            var rawSection3 = new ProjectViewRawSection("another_section3", "\tvalue3\n");
+
+            var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
+
+            // when
+            var section = parser.parse(rawSections);
+
+            // then
+            assertThat(section).isNull();
+        }
+    }
 }
