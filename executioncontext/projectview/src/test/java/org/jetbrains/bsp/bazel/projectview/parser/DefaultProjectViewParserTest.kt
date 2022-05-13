@@ -3,11 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -133,6 +129,21 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
+        fun `should return empty build manual targets section for file without build manual targets section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/build_manual_targets.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.buildFlags shouldBe null
+        }
+
+        @Test
         fun `should parse empty file`() {
             // given
             val projectViewFilePath = Path("/projectview/empty.bazelproject")
@@ -150,6 +161,7 @@ class DefaultProjectViewParserTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -180,7 +192,8 @@ class DefaultProjectViewParserTest {
                     listOf(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
-                )
+                ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -220,7 +233,8 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.2=value4.2",
                         "--build_flag4.3=value4.3",
                     )
-                )
+                ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -261,7 +275,8 @@ class DefaultProjectViewParserTest {
                         "--build_flag7.2=value7.2",
                         "--build_flag7.3=value7.3",
                     )
-                )
+                ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -293,7 +308,8 @@ class DefaultProjectViewParserTest {
                         "--build_flag8.2=value8.2",
                         "--build_flag8.3=value8.3",
                     )
-                )
+                ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -337,7 +353,8 @@ class DefaultProjectViewParserTest {
                         "--build_flag5.1=value5.1",
                         "--build_flag5.2=value5.2",
                     )
-                )
+                ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }
@@ -383,7 +400,8 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.2=value4.2",
                         "--build_flag4.3=value4.3",
                     )
-                )
+                ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             projectView shouldBe expectedProjectView
         }

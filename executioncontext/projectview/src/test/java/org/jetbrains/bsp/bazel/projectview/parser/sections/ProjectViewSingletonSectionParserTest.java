@@ -56,6 +56,11 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
   }
 
+//  private static Arguments buildManualTargetsSectionArguments(){
+//    var parser = ProjectViewManualSectionParser.INSTANCE;
+//    var rawValueConstructor =
+//
+//  }
   private static Arguments javaPathSectionArguments() {
     var parser = ProjectViewJavaPathSectionParser.INSTANCE;
     var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/java/" + seed;
