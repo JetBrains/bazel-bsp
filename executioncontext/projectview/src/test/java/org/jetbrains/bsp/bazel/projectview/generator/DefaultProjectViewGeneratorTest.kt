@@ -3,11 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.DisplayName
@@ -31,6 +27,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             // when
@@ -59,6 +56,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             // when
@@ -87,6 +85,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             // when
@@ -110,6 +109,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             // when
@@ -133,6 +133,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
+                buildManualTargets = null,
             )
 
             // when
@@ -162,6 +163,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = null,
             )
 
             // when
@@ -180,6 +182,29 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
+        fun `should return pretty string only with manual tag for project view only with manual tag`() {
+            // given
+            val projectView = ProjectView(
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    buildManualTargets = ProjectViewBuildManualTargetsSection("true".toBoolean()),
+            )
+
+            // when
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                    """
+                 build_manual_targets: true
+                 
+                 """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+        @Test
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
@@ -188,6 +213,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -205,6 +231,8 @@ class DefaultProjectViewGeneratorTest {
                 java_path: /path/to/java
 
                 build_flags:
+                
+                build_manual_targets: false
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -231,6 +259,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = null,
             )
 
             // when
@@ -280,6 +309,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -305,6 +335,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+
+                build_manual_targets: false
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -342,6 +374,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -369,6 +402,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+
+                build_manual_targets: false
 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -402,6 +437,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
 
             // when
@@ -430,6 +466,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
+                build_manual_targets: false
+
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -445,6 +483,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
 
             val parser = DefaultProjectViewParser()
@@ -463,6 +502,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
+                buildManualTargets = null,
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -490,6 +530,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -532,6 +573,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = null,
             )
 
             val parser = DefaultProjectViewParser()
