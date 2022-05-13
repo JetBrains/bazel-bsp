@@ -16,3 +16,5 @@ build_flags:
     --build_flag8.1=value8.1
     --build_flag8.2=value8.2
     --build_flag8.3=value8.3
+
+build_manual_targets: false

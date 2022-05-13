@@ -502,7 +502,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -530,7 +530,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
             )
 
             val parser = DefaultProjectViewParser()

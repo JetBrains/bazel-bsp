@@ -27,6 +27,7 @@ object ProjectViewCLiOptionsProvider {
                     debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
                     targets = toTargetsSection(projectViewCliOptions),
                     buildFlags = toBuildFlagsSection(projectViewCliOptions),
+                    buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
@@ -37,6 +38,9 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewTargetsSection? =
             projectViewCliOptions?.targets?.let(::toTargetsSectionNotNull)
+
+    private fun toBuildManualTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildManualTargetsSection? =
+            projectViewCliOptions?.buildManualTargets?.let(::ProjectViewBuildManualTargetsSection)
 
     private fun toTargetsSectionNotNull(targets: List<String>?): ProjectViewTargetsSection {
         val includedTargets = calculateIncludedTargets(targets)
