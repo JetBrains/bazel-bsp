@@ -181,7 +181,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
 
-    private fun buildManualTargets(cmd: CommandLine): Boolean? = cmd.getOptionValue(BUILD_MANUAL_TARGETS_OPT).toBoolean()
+    private fun buildManualTargets(cmd: CommandLine): Boolean? = cmd.getOptionValue(BUILD_MANUAL_TARGETS_OPT)?.toBoolean()
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
