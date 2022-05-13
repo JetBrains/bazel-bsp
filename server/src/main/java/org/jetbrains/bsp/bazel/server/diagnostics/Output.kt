@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
-class Output(private val lines: List<String>) {
+class Output(private val lines: List<String>, val targetLabel: String) {
 
   private var pointer = 0
 
@@ -24,4 +24,6 @@ class Output(private val lines: List<String>) {
 
   fun tryTake(regex: Regex): MatchResult? =
       peek()?.let { regex.matchEntire(it) }?.also { take() }
+
+  fun fullOutput(): String = lines.joinToString(System.lineSeparator())
 }
