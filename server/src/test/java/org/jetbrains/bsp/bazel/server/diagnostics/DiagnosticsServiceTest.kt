@@ -398,13 +398,13 @@ class DiagnosticsServiceTest {
                    |FAILED: Build did NOT complete successfully""".trimMargin()
 
     // when
-    val diagnostics = extractDiagnostics(output, "")
+    val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
 
     // then
     val expected = listOf(
         PublishDiagnosticsParams(
             TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/sync/ProjectResolver.java"),
-            BuildTargetIdentifier(""),
+            BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
             ErrorDiagnostic(
                 Position(20, 8),
                 """symbol not found org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider
@@ -444,13 +444,13 @@ class DiagnosticsServiceTest {
       """.trimIndent()
 
       // when
-      val diagnostics = extractDiagnostics(output, "")
+      val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
 
       // then
       val expected = listOf(
           PublishDiagnosticsParams(
               TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/bep/BepServer.java"),
-              BuildTargetIdentifier(""),
+              BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
               ErrorDiagnostic(
                   Position(55, 34),
                   """
