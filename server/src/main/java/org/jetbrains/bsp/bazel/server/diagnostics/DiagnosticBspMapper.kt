@@ -18,10 +18,9 @@ class DiagnosticBspMapper(private val bazelInfo: BazelInfo) {
       .map { kv ->
         val bspDiagnostics = kv.value.map { createDiagnostic(it) }
         val doc = TextDocumentIdentifier(toAbsoluteUri(kv.key.first))
-        PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), bspDiagnostics, false);
+        PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), bspDiagnostics, false)
       }
   }
-
 
   private fun createDiagnostic(it: Diagnostic): BspDiagnostic {
     val position = BspPosition(it.position.line - 1, it.position.character - 1)
