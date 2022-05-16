@@ -52,8 +52,7 @@ object BazelRootMessageParser : Parser {
 
   private fun findWarningsInInfoMessage(output: Output): List<Diagnostic>? {
     return output.tryTake(InfoMessage)
-        ?.let { collectCompilerDiagnostics(output) }
-        }
+      ?.let { collectCompilerDiagnostics(output) }
   }
 
   private fun collectCompilerDiagnostics(output: Output) =
