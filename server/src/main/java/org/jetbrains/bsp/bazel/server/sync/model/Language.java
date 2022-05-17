@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
+import io.vavr.collection.Array;
 import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 
 public enum Language {
@@ -12,6 +13,7 @@ public enum Language {
   // CPP("cpp", HashSet.of(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
   THRIFT("thrift", HashSet.of(".thrift"));
 
+  private static final Seq<Language> ALL = Array.of(values());
   private final String name;
   private final Set<String> extensions;
   private final Set<String> allNames;
@@ -26,8 +28,8 @@ public enum Language {
     this(name, extensions, HashSet.of());
   }
 
-  public static List<Language> all() {
-    return List.of(values());
+  public static Seq<Language> all() {
+    return ALL;
   }
 
   public String getName() {

@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.diagnostics
 object CompilerDiagnosticParser : Parser {
 
   override fun tryParse(output: Output): List<Diagnostic> =
-      listOfNotNull(tryParseOne(output, targetLabel = null))
+      listOfNotNull(tryParseOne(output))
 
   // Example:
   // server/DiagnosticsServiceTest.kt:12:18: error: type mismatch: inferred type is String but Int was expected
@@ -18,7 +18,7 @@ object CompilerDiagnosticParser : Parser {
       $                # end of line
       """.toRegex(RegexOption.COMMENTS)
 
-  fun tryParseOne(output: Output, targetLabel: String?): Diagnostic? =
+  fun tryParseOne(output: Output): Diagnostic? =
       output.tryTake(DiagnosticHeader)
           ?.let { match ->
             val path = match.groupValues[1]
@@ -27,7 +27,7 @@ object CompilerDiagnosticParser : Parser {
             val column = match.groupValues[3].toIntOrNull() ?: tryFindColumnNumber(messageLines) ?: 1
             val level = if (match.groupValues[4] == "warning") Level.Warning else Level.Error
             val message = messageLines.joinToString("\n")
-            Diagnostic(Position(line, column), message, level, path, targetLabel)
+            Diagnostic(Position(line, column), message, level, path, output.targetLabel)
           }
 
   private fun collectMessageLines(header: String, output: Output): List<String> {

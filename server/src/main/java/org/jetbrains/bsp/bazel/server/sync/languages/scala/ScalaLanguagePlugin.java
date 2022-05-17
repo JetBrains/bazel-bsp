@@ -11,11 +11,12 @@ import ch.epfl.scala.bsp4j.ScalaPlatform;
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem;
 import ch.epfl.scala.bsp4j.ScalacOptionsItem;
 import io.vavr.Tuple2;
-import io.vavr.collection.List;
+import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.util.Collections;
 import java.util.function.BiFunction;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
@@ -51,7 +52,7 @@ public class ScalaLanguagePlugin extends LanguagePlugin<ScalaModule> {
 
     var scalaTargetInfo = targetInfo.getScalaTargetInfo();
     var sdk = getScalaSdk();
-    var scalacOpts = List.ofAll(scalaTargetInfo.getScalacOptsList());
+    var scalacOpts = Array.ofAll(scalaTargetInfo.getScalacOptsList());
     var module = new ScalaModule(sdk, scalacOpts, javaLanguagePlugin.resolveModule(targetInfo));
     return Option.some(module);
   }
@@ -130,7 +131,7 @@ public class ScalaLanguagePlugin extends LanguagePlugin<ScalaModule> {
                       var args = javaModule.args().asJava();
                       var jvmOpts = javaModule.jvmOps().asJava();
                       var scalaMainClass = new ScalaMainClass(mainClass, args, jvmOpts);
-                      var mainClasses = List.of(scalaMainClass).asJava();
+                      var mainClasses = Collections.singletonList(scalaMainClass);
                       return new ScalaMainClassesItem(id, mainClasses);
                     }));
   }

@@ -29,7 +29,7 @@ class DiagnosticsServiceTest {
             """.trimIndent()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//path/to/package:test")
 
     // then
     val expected = listOf(
@@ -73,7 +73,7 @@ class DiagnosticsServiceTest {
             |FAILED: Build did NOT complete successfully""".trimMargin()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//path/to/package:test")
 
     // then
     val expected = listOf(
@@ -128,7 +128,7 @@ class DiagnosticsServiceTest {
             |""".trimMargin()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//path/to/package:test")
 
     // then
     val expected = listOf(
@@ -194,7 +194,7 @@ class DiagnosticsServiceTest {
             |FAILED: Build did NOT complete successfully
             """.trimMargin()
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//path/to/package:test")
 
     // then
     val expected = listOf(
@@ -254,7 +254,7 @@ class DiagnosticsServiceTest {
     """.trimIndent()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//server/src/test/java/org/jetbrains/bsp/bazel/server/diagnostics:diagnostics")
 
     // then
     val expected = listOf(
@@ -298,7 +298,7 @@ class DiagnosticsServiceTest {
                    |Build failed""".trimMargin()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
 
     // then
     val expected = listOf(
@@ -354,7 +354,7 @@ class DiagnosticsServiceTest {
                    |INFO: Build completed successfully, 2 total actions""".trimMargin()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool")
 
     // then
     val expected = listOf(
@@ -398,13 +398,13 @@ class DiagnosticsServiceTest {
                    |FAILED: Build did NOT complete successfully""".trimMargin()
 
     // when
-    val diagnostics = extractDiagnostics(output)
+    val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
 
     // then
     val expected = listOf(
         PublishDiagnosticsParams(
             TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/sync/ProjectResolver.java"),
-            BuildTargetIdentifier(""),
+            BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
             ErrorDiagnostic(
                 Position(20, 8),
                 """symbol not found org.jetbrains.bsp.bazel.server.bsp.config.ProjectViewProvider
@@ -444,13 +444,13 @@ class DiagnosticsServiceTest {
       """.trimIndent()
 
       // when
-      val diagnostics = extractDiagnostics(output)
+      val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
 
       // then
       val expected = listOf(
           PublishDiagnosticsParams(
               TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/bep/BepServer.java"),
-              BuildTargetIdentifier(""),
+              BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
               ErrorDiagnostic(
                   Position(55, 34),
                   """
@@ -485,8 +485,8 @@ class DiagnosticsServiceTest {
     return BspDiagnostic(Range(adjustedPosition, adjustedPosition), message).apply { this.severity = severity }
   }
 
-  private fun extractDiagnostics(output: String): List<PublishDiagnosticsParams> {
+  private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams>? {
     val bazelInfo = BasicBazelInfo("", workspacePath)
-    return DiagnosticsService(bazelInfo).extractDiagnostics(output)
+    return DiagnosticsService(bazelInfo).extractDiagnostics(output, buildTarget)
   }
 }

@@ -19,7 +19,7 @@ class BazelProcess internal constructor(
     val outputProcessor = AsyncOutputProcessor()
     val stopwatch = Stopwatch.start()
     outputProcessor.start(process.inputStream, stdoutCollector, logger::message, LOGGER::info)
-    outputProcessor.start(process.errorStream, stderrCollector, logger::error, LOGGER::info)
+    outputProcessor.start(process.errorStream, stderrCollector, logger::message, LOGGER::info)
     val exitCode = process.waitFor()
     outputProcessor.shutdown()
     val duration = stopwatch.stop()

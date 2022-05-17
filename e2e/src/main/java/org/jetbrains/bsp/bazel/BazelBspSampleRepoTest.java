@@ -328,7 +328,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     ScalaBuildTarget scalaTarget =
         new ScalaBuildTarget(
             "org.scala-lang", "2.12.8", "2.12", ScalaPlatform.JVM, scalaTargetsJars);
-    scalaTarget.setJvmBuildTarget(new JvmBuildTarget("external/local_jdk/", "8"));
+    scalaTarget.setJvmBuildTarget(new JvmBuildTarget("external/local_jdk/", "11"));
 
     BuildTarget exampleExampleTarget =
         new BuildTarget(
