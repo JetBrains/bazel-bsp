@@ -52,11 +52,11 @@ public class BspMappings {
     return toLabels(targets).flatMap(project::findModule);
   }
 
-  public static Set<Label> toLabels(java.util.List<BuildTargetIdentifier> targets) {
-    return HashSet.ofAll(targets).map(BuildTargetIdentifier::getUri).map(Label::from);
-  }
-
   public static URI toUri(TextDocumentIdentifier textDocument) {
     return URI.create(textDocument.getUri());
+  }
+
+  public static Set<Label> toLabels(java.util.List<BuildTargetIdentifier> targets) {
+    return HashSet.ofAll(targets).map(BuildTargetIdentifier::getUri).map(Label::from);
   }
 }

@@ -28,13 +28,12 @@ object BazelRootMessageParser : Parser {
   private fun findErrorInBUILD(output: Output): List<Diagnostic>? {
     return output.tryTake(ErrorInBUILD)
         ?.let { match ->
-          val targetLabel = match.groupValues[5].ifEmpty { null }
-          return collectCompilerDiagnostics(output, targetLabel)
-              .ifEmpty { listOf(createError(match, targetLabel)) }
+          return collectCompilerDiagnostics(output)
+              .ifEmpty { listOf(createError(match, output.targetLabel)) }
         }
   }
 
-  private fun createError(match: MatchResult, targetLabel: String?): Diagnostic {
+  private fun createError(match: MatchResult, targetLabel: String): Diagnostic {
     val path = match.groupValues[1]
     val line = match.groupValues[2].toInt()
     val column = match.groupValues[3].toIntOrNull() ?: 1
@@ -53,12 +52,9 @@ object BazelRootMessageParser : Parser {
 
   private fun findWarningsInInfoMessage(output: Output): List<Diagnostic>? {
     return output.tryTake(InfoMessage)
-        ?.let { match ->
-          val targetLabel = match.groupValues[1]
-          return collectCompilerDiagnostics(output, targetLabel)
-        }
+      ?.let { collectCompilerDiagnostics(output) }
   }
 
-  private fun collectCompilerDiagnostics(output: Output, targetLabel: String?) =
-      generateSequence { CompilerDiagnosticParser.tryParseOne(output, targetLabel) }.toList()
+  private fun collectCompilerDiagnostics(output: Output) =
+      generateSequence { CompilerDiagnosticParser.tryParseOne(output) }.toList()
 }

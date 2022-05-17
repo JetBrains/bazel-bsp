@@ -7,8 +7,8 @@ import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.JavacOptionsItem;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
+import io.vavr.collection.Array;
 import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
@@ -47,18 +47,21 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     }
 
     var javaTargetInfo = targetInfo.getJavaTargetInfo();
-    var javacOpts = List.ofAll(javaTargetInfo.getJavacOptsList());
-    var jvmOpts = List.ofAll(javaTargetInfo.getJvmFlagsList());
+    var javacOpts = Array.ofAll(javaTargetInfo.getJavacOptsList());
+    var jvmOpts = Array.ofAll(javaTargetInfo.getJvmFlagsList());
     var mainOutput = bazelPathsResolver.resolveUri(javaTargetInfo.getJars(0).getBinaryJars(0));
     var mainClass = getMainClass(javaTargetInfo);
-    var args = List.ofAll(javaTargetInfo.getArgsList());
+    var args = Array.ofAll(javaTargetInfo.getArgsList());
     var runtimeClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getRuntimeClasspathList());
     var compileClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getCompileClasspathList());
     var sourcesClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getSourceClasspathList());
     var ideClasspath = resolveIdeClasspath(runtimeClasspath, compileClasspath);
+    var runtimeJdk = Option.of(jdkResolver.resolveJdk(targetInfo));
+
     var module =
         new JavaModule(
             getJdk(),
+            runtimeJdk,
             javacOpts,
             jvmOpts,
             mainOutput,
@@ -81,7 +84,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     return jdk.getOrElseThrow(() -> new RuntimeException("Failed to resolve JDK for project"));
   }
 
-  private List<URI> resolveIdeClasspath(List<URI> runtimeClasspath, List<URI> compileClasspath) {
+  private Seq<URI> resolveIdeClasspath(Seq<URI> runtimeClasspath, Seq<URI> compileClasspath) {
     return new IdeClasspathResolver(runtimeClasspath, compileClasspath).resolve();
   }
 

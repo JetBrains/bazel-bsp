@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server;
 
 import io.grpc.Server;
 import io.vavr.collection.Iterator;
+import io.vavr.control.Option;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -43,7 +44,7 @@ public class ServerInitializer {
       var workspaceContextProvider = getWorkspaceContextProvider(args);
 
       var bspIntegrationData = new BspIntegrationData(stdout, stdin, executor, traceWriter);
-      var bspServer = new BazelBspServer(workspaceContextProvider);
+      var bspServer = new BazelBspServer(bspInfo, workspaceContextProvider, Option.none());
       bspServer.startServer(bspIntegrationData);
 
       Server server = bspIntegrationData.getServer().start();

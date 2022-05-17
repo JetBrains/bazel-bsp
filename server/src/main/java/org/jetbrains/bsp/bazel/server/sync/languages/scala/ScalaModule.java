@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
@@ -10,12 +10,12 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 
 public class ScalaModule implements LanguageData {
   private final ScalaSdk sdk;
-  private final List<String> scalacOpts;
+  private final Seq<String> scalacOpts;
   private final Option<JavaModule> javaModule;
 
   public ScalaModule(
       @JsonProperty("sdk") ScalaSdk sdk,
-      @JsonProperty("scalacOpts") List<String> scalacOpts,
+      @JsonProperty("scalacOpts") Seq<String> scalacOpts,
       @JsonProperty("javaModule") Option<JavaModule> javaModule) {
     this.sdk = sdk;
     this.scalacOpts = scalacOpts;
@@ -26,7 +26,7 @@ public class ScalaModule implements LanguageData {
     return sdk;
   }
 
-  public List<String> scalacOpts() {
+  public Seq<String> scalacOpts() {
     return scalacOpts;
   }
 

@@ -4,8 +4,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.protobuf.TextFormat;
 import io.vavr.API;
+import io.vavr.collection.Array;
+import io.vavr.collection.HashMap;
 import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import java.io.IOException;
@@ -69,19 +70,20 @@ public class ProjectResolver {
     return bazelBspAspectsManager.fetchFilesFromOutputGroups(
         workspaceContext.getTargets(),
         ASPECT_NAME,
-        List.of(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP));
+        Array.of(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP));
   }
 
   private Map<String, TargetInfo> readTargetMapFromAspectOutputs(Set<URI> files) {
     return files
+        .toJavaParallelStream()
         .map(API.unchecked(this::readTargetInfoFromFile))
-        .toMap(TargetInfo::getId, Function.identity());
+        .collect(HashMap.collector(TargetInfo::getId, Function.identity()));
   }
 
   private TargetInfo readTargetInfoFromFile(URI uri) throws IOException {
     var builder = TargetInfo.newBuilder();
     var parser = TextFormat.Parser.newBuilder().setAllowUnknownFields(true).build();
-    parser.merge(Files.readString(Paths.get(uri), UTF_8), builder);
+    parser.merge(Files.newBufferedReader(Paths.get(uri), UTF_8), builder);
     return builder.build();
   }
 }

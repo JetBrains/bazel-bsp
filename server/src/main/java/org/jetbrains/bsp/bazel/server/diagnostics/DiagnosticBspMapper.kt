@@ -12,22 +12,14 @@ import ch.epfl.scala.bsp4j.Range as BspRange
 
 class DiagnosticBspMapper(private val bazelInfo: BazelInfo) {
 
-  fun diagnostics(parsedDiagnostics: List<Diagnostic>): List<PublishDiagnosticsParams> =
-      sequence {
-        val grouped = parsedDiagnostics.groupBy { it.fileLocation }
-        for ((location, diagnostics) in grouped) {
-          yield(createParams(location, diagnostics))
-        }
-      }.toList()
-
-  private fun createParams(
-      rawFileLocation: String,
-      fileDiagnostics: List<Diagnostic>
-  ): PublishDiagnosticsParams {
-    val fileLocation = TextDocumentIdentifier(toAbsoluteUri(rawFileLocation))
-    val targetId = BuildTargetIdentifier(fileDiagnostics[0].targetLabel ?: "")
-    val diagnostics = fileDiagnostics.map { createDiagnostic(it) }
-    return PublishDiagnosticsParams(fileLocation, targetId, diagnostics, false)
+  fun createDiagnostics(diagnostics: List<Diagnostic>): List<PublishDiagnosticsParams> {
+    return diagnostics
+      .groupBy {  Pair(it.fileLocation, it.targetLabel) }
+      .map { kv ->
+        val bspDiagnostics = kv.value.map { createDiagnostic(it) }
+        val doc = TextDocumentIdentifier(toAbsoluteUri(kv.key.first))
+        PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), bspDiagnostics, false)
+      }
   }
 
   private fun createDiagnostic(it: Diagnostic): BspDiagnostic {

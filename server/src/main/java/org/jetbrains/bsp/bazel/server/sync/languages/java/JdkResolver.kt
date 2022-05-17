@@ -26,6 +26,10 @@ class JdkResolver(
       )?.asJdk()
   }
 
+  fun resolveJdk(target: TargetInfo): Jdk? {
+    return resolveJdkData(target)?.let { JdkCandidate(it).asJdk() }
+  }
+
   private fun candidatesWithLatestVersion(candidates: List<JdkCandidate>): List<JdkCandidate> =
       findLatestVersion(candidates)
         ?.let { version -> candidates.filter { it.version == version } }

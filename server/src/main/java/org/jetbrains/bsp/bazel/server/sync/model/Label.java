@@ -6,12 +6,12 @@ import java.util.Objects;
 public class Label {
   private final String value;
 
-  public static Label from(String value) {
-    return new Label(value);
-  }
-
   public Label(@JsonProperty("value") String value) {
     this.value = value;
+  }
+
+  public static Label from(String value) {
+    return new Label(value);
   }
 
   public String getValue() {

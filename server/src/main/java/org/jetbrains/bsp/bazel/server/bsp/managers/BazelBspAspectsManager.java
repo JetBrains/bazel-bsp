@@ -1,7 +1,9 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
-import io.vavr.collection.List;
+import io.vavr.collection.Array;
+import io.vavr.collection.Seq;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
+import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
@@ -19,11 +21,13 @@ public class BazelBspAspectsManager {
   }
 
   public BepOutput fetchFilesFromOutputGroups(
-      TargetsSpec targetSpecs, String aspect, List<String> outputGroups) {
+      TargetsSpec targetSpecs, String aspect, Seq<String> outputGroups) {
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
             targetSpecs,
-            List.of(
+            Array.of(
+                BazelFlag.repositoryOverride(
+                    Constants.ASPECT_REPOSITORY, aspectsResolver.getBazelBspRoot()),
                 BazelFlag.aspect(aspectsResolver.resolveLabel(aspect)),
                 BazelFlag.outputGroups(outputGroups.toJavaList()),
                 BazelFlag.keepGoing(),

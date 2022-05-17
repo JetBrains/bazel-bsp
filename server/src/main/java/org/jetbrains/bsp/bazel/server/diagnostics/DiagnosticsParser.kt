@@ -2,16 +2,16 @@ package org.jetbrains.bsp.bazel.server.diagnostics
 
 class DiagnosticsParser {
 
-  fun parse(bazelOutput: String): List<Diagnostic> {
-    val output = prepareOutput(bazelOutput)
+  fun parse(bazelOutput: String, target: String): List<Diagnostic> {
+    val output = prepareOutput(bazelOutput, target)
     val diagnostics = collectDiagnostics(output)
     return deduplicate(diagnostics)
   }
 
-  private fun prepareOutput(bazelOutput: String): Output {
+  private fun prepareOutput(bazelOutput: String, target: String): Output {
     val lines = bazelOutput.lines()
     val relevantLines = lines.filterNot { line -> IgnoredLines.any { it.matches(line) } }
-    return Output(relevantLines)
+    return Output(relevantLines, target)
   }
 
   private fun collectDiagnostics(output: Output): List<Diagnostic> {
@@ -25,6 +25,19 @@ class DiagnosticsParser {
         }
       }
     }
+
+    if (diagnostics.isEmpty()) {
+      diagnostics.add(
+        Diagnostic(
+          position = Position(0, 0),
+          message = output.fullOutput(),
+          level = Level.Error,
+          fileLocation = "<unknown>",
+          targetLabel = output.targetLabel
+        )
+      )
+    }
+
     return diagnostics.toList()
   }
 
@@ -32,12 +45,7 @@ class DiagnosticsParser {
       parsedDiagnostics
           .groupBy { Triple(it.fileLocation, it.message, it.position) }
           .values
-          .map { similar ->
-            if (similar.size == 1)
-              similar.first()
-            else
-              similar.find { it.targetLabel != null } ?: similar.first()
-          }
+          .map { it.first() }
 
   companion object {
     private val Parsers = listOf(
