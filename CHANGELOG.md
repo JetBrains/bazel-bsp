@@ -6,11 +6,12 @@
 
 ### Features 🎉
 
-- Build flags are reloaded during sync.
-  | [#242](https://github.com/JetBrains/bazel-bsp/pull/242)
 - Manual tag support added. When this tag is used build,
   run and test will not be done without explicitly asked.
   | [#236](https://github.com/JetBrains/bazel-bsp/pull/236)
+- Build flags are reloaded during sync.
+  | [#242](https://github.com/JetBrains/bazel-bsp/pull/242)
+
 
 ### Changes 🔄
 
