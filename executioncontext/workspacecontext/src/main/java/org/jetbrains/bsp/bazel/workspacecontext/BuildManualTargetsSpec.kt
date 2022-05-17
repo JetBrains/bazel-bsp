@@ -9,7 +9,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManual
 data class BuildManualTargetsSpec(override val value: Boolean) : ExecutionContextSingletonEntity<Boolean>()
 
 private val defaultBuildManualTargetsSpec = BuildManualTargetsSpec(
-        value = false
+    value = false
 )
 
 internal object BuildManualTargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<BuildManualTargetsSpec> {
@@ -17,11 +17,9 @@ internal object BuildManualTargetsSpecMapper : ProjectViewToExecutionContextEnti
     override fun map(projectView: ProjectView): Try<BuildManualTargetsSpec> {
         return if (projectView.buildManualTargets == null) default()
         else Try.success(map(projectView.buildManualTargets!!))
-}
-
-    override fun default(): Try<BuildManualTargetsSpec> {
-        return Try.success(defaultBuildManualTargetsSpec)
     }
+
+    override fun default(): Try<BuildManualTargetsSpec> = Try.success(defaultBuildManualTargetsSpec)
 
     private fun map(buildManualTargetsSection: ProjectViewBuildManualTargetsSection): BuildManualTargetsSpec =
             BuildManualTargetsSpec(buildManualTargetsSection.value)

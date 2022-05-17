@@ -8,16 +8,16 @@ import java.nio.file.Path
 
 object DefaultProjectViewGenerator : ProjectViewGenerator {
 
-    override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> =
-        DopeFiles.writeText(filePath, generatePrettyString(projectView))
+override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> =
+    DopeFiles.writeText(filePath, generatePrettyString(projectView))
 
-    override fun generatePrettyString(projectView: ProjectView): String =
-        listOfNotNull(
-            ProjectViewTargetsSectionGenerator.generatePrettyString(projectView.targets),
-            ProjectViewBazelPathSectionGenerator.generatePrettyString(projectView.bazelPath),
-            ProjectViewDebuggerAddressSectionGenerator.generatePrettyString(projectView.debuggerAddress),
-            ProjectViewJavaPathSectionGenerator.generatePrettyString(projectView.javaPath),
-            ProjectViewBuildFlagsSectionGenerator.generatePrettyString(projectView.buildFlags),
-            ProjectViewBuildManualTargetsSectionGenerator.generatePrettyString(projectView.buildManualTargets),
-        ).joinToString(separator = "\n\n", postfix = "\n")
+override fun generatePrettyString(projectView: ProjectView): String =
+    listOfNotNull(
+        ProjectViewTargetsSectionGenerator.generatePrettyString(projectView.targets),
+        ProjectViewBazelPathSectionGenerator.generatePrettyString(projectView.bazelPath),
+        ProjectViewDebuggerAddressSectionGenerator.generatePrettyString(projectView.debuggerAddress),
+        ProjectViewJavaPathSectionGenerator.generatePrettyString(projectView.javaPath),
+        ProjectViewBuildFlagsSectionGenerator.generatePrettyString(projectView.buildFlags),
+        ProjectViewBuildManualTargetsSectionGenerator.generatePrettyString(projectView.buildManualTargets),
+    ).joinToString(separator = "\n\n", postfix = "\n")
 }

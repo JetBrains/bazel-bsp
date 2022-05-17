@@ -423,7 +423,7 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                val expectedBuildManualTargets = "true".toBoolean()
+                val expectedBuildManualTargets = true
                 cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
             }
         }
@@ -488,11 +488,13 @@ class CliOptionsProviderTest {
                     "-//excluded_target2",
             )
 
-            val expectedBuildManualTargets = "false".toBoolean()
             cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
+
+            val expectedBuildManualTargets = false
+            cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
         }
 
         @Test

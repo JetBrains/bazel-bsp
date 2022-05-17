@@ -3,7 +3,16 @@ package org.jetbrains.bsp.bazel.projectview.model
 import io.vavr.collection.Seq
 import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
+
 
 /**
  * Representation of the project view file.
@@ -25,15 +34,15 @@ data class ProjectView constructor(
     val buildManualTargets: ProjectViewBuildManualTargetsSection?,
 ) {
 
-class Builder constructor(
-    private val imports: List<Try<ProjectView>> = emptyList(),
-    private val targets: ProjectViewTargetsSection? = null,
-    private val bazelPath: ProjectViewBazelPathSection? = null,
-    private val debuggerAddress: ProjectViewDebuggerAddressSection? = null,
-    private val javaPath: ProjectViewJavaPathSection? = null,
-    private val buildFlags: ProjectViewBuildFlagsSection? = null,
-    private val buildManualTargets: ProjectViewBuildManualTargetsSection? = null,
-) {
+    class Builder constructor(
+        private val imports: List<Try<ProjectView>> = emptyList(),
+        private val targets: ProjectViewTargetsSection? = null,
+        private val bazelPath: ProjectViewBazelPathSection? = null,
+        private val debuggerAddress: ProjectViewDebuggerAddressSection? = null,
+        private val javaPath: ProjectViewJavaPathSection? = null,
+        private val buildFlags: ProjectViewBuildFlagsSection? = null,
+        private val buildManualTargets: ProjectViewBuildManualTargetsSection? = null,
+    ) {
 
 fun build(): Try<ProjectView> {
     log.debug(
