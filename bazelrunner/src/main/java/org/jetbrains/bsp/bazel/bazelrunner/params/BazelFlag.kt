@@ -13,6 +13,9 @@ object BazelFlag {
   @JvmStatic fun aspect(name: String) =
       arg("aspects", name)
 
+  @JvmStatic fun buildManual(): String? =
+    flag("build_manual_tests")
+
   private fun arg(name: String, value: String) =
       String.format("--%s=%s", name, value)
 
