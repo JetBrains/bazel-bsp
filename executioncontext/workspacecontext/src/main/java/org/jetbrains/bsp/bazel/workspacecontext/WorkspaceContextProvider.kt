@@ -9,7 +9,6 @@ interface WorkspaceContextProvider {
     fun currentWorkspaceContext(): WorkspaceContext
 }
 
-
 class DefaultWorkspaceContextProvider(private val projectViewPath: Path?) : WorkspaceContextProvider {
 
     override fun currentWorkspaceContext(): WorkspaceContext =
