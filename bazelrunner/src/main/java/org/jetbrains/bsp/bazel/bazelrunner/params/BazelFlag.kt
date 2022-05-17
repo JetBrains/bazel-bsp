@@ -13,7 +13,7 @@ object BazelFlag {
   @JvmStatic fun aspect(name: String) =
       arg("aspects", name)
 
-  @JvmStatic fun buildManual(): String? =
+  @JvmStatic fun buildManualTests(): String? =
     flag("build_manual_tests")
 
   private fun arg(name: String, value: String) =

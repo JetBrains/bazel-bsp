@@ -193,7 +193,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -234,7 +234,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -276,7 +276,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag7.3=value7.3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -309,7 +309,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag8.3=value8.3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -354,7 +354,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag5.2=value5.2",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -401,7 +401,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }
