@@ -1,19 +1,15 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala;
 
-import io.vavr.collection.List;
+import io.vavr.collection.Array;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
-import java.net.URI;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 
 public class ScalaSdkResolver {
-  private final BazelPathsResolver bazelPathsResolver;
-  private final Pattern VERSION_PATTERN =
-      Pattern.compile("scala-(?:library|compiler|reflect)-(.*)\\.jar");
   private static final Comparator<String> SCALA_VERSION_COMPARATOR =
       (a, b) -> {
         var aParts = a.split("\\.");
@@ -24,6 +20,9 @@ public class ScalaSdkResolver {
         }
         return 0;
       };
+  private final BazelPathsResolver bazelPathsResolver;
+  private final Pattern VERSION_PATTERN =
+      Pattern.compile("scala-(?:library|compiler|reflect)-(.*)\\.jar");
 
   public ScalaSdkResolver(BazelPathsResolver bazelPathsResolver) {
     this.bazelPathsResolver = bazelPathsResolver;
@@ -44,19 +43,19 @@ public class ScalaSdkResolver {
 
     var scalaToolchain = targetInfo.getScalaToolchainInfo();
     var compilerJars =
-        bazelPathsResolver.resolveUris(scalaToolchain.getCompilerClasspathList()).sorted();
+        bazelPathsResolver.resolvePaths(scalaToolchain.getCompilerClasspathList()).sorted();
     var maybeVersions = compilerJars.flatMap(this::extractVersion);
     if (maybeVersions.isEmpty()) {
       return Option.none();
     }
     var version = maybeVersions.distinct().sorted().last();
     var binaryVersion = toBinaryVersion(version);
-    var sdk = new ScalaSdk("org.scala-lang", version, binaryVersion, compilerJars);
+    var sdk = new ScalaSdk("org.scala-lang", version, binaryVersion, compilerJars.map(Path::toUri));
     return Option.some(sdk);
   }
 
-  private Option<String> extractVersion(URI uri) {
-    var name = Paths.get(uri).getFileName().toString();
+  private Option<String> extractVersion(Path path) {
+    var name = path.getFileName().toString();
     var matcher = VERSION_PATTERN.matcher(name);
     if (matcher.matches()) {
       return Option.some(matcher.group(1));
@@ -65,6 +64,6 @@ public class ScalaSdkResolver {
   }
 
   private String toBinaryVersion(String version) {
-    return List.of(version.split("\\.")).take(2).mkString(".");
+    return Array.of(version.split("\\.")).take(2).mkString(".");
   }
 }

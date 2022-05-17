@@ -3,9 +3,9 @@ package org.jetbrains.bsp.bazel.server.sync;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 
 public class ProjectProvider {
-  private Project project;
   private final ProjectResolver projectResolver;
   private final ProjectStorage projectStorage;
+  private Project project;
 
   public ProjectProvider(ProjectResolver projectResolver, ProjectStorage projectStorage) {
     this.projectResolver = projectResolver;

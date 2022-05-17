@@ -30,7 +30,7 @@ public class ProjectStorageTest {
   public void shouldStoreAndLoadProject() throws IOException {
     var path = DopeTemp.INSTANCE.createTempPath("project-cache-test.json");
     Files.deleteIfExists(path);
-    var storage = new ProjectStorage(path, new BspClientLogger());
+    var storage = new FileProjectStorage(path, new BspClientLogger());
 
     var empty = storage.load();
     assertThat(empty).isEmpty();
@@ -58,6 +58,7 @@ public class ProjectStorageTest {
                             Option.some(
                                 new JavaModule(
                                     new Jdk("8", Option.none()),
+                                    Option.none(),
                                     List.empty(),
                                     List.empty(),
                                     URI.create("file:///tmp/out"),

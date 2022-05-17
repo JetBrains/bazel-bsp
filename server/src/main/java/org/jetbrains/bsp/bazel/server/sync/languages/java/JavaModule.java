@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.util.Objects;
@@ -10,28 +10,33 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 
 public class JavaModule implements LanguageData {
   private final Jdk jdk;
-  private final List<String> javacOpts;
-  private final List<String> jvmOps;
+
+  private final Option<Jdk> runtimeJdk;
+
+  private final Seq<String> javacOpts;
+  private final Seq<String> jvmOps;
   private final URI mainOutput;
   private final Option<String> mainClass;
-  private final List<String> args;
-  private final List<URI> runtimeClasspath;
-  private final List<URI> compileClasspath;
-  private final List<URI> sourcesClasspath;
-  private final List<URI> ideClasspath;
+  private final Seq<String> args;
+  private final Seq<URI> runtimeClasspath;
+  private final Seq<URI> compileClasspath;
+  private final Seq<URI> sourcesClasspath;
+  private final Seq<URI> ideClasspath;
 
   public JavaModule(
       @JsonProperty("jdk") Jdk jdk,
-      @JsonProperty("javacOpts") List<String> javacOpts,
-      @JsonProperty("jvmOps") List<String> jvmOps,
+      @JsonProperty("runtimeJdk") Option<Jdk> runtimeJdk,
+      @JsonProperty("javacOpts") Seq<String> javacOpts,
+      @JsonProperty("jvmOps") Seq<String> jvmOps,
       @JsonProperty("mainOutput") URI mainOutput,
       @JsonProperty("mainClass") Option<String> mainClass,
-      @JsonProperty("args") List<String> args,
-      @JsonProperty("runtimeClasspath") List<URI> runtimeClasspath,
-      @JsonProperty("compileClasspath") List<URI> compileClasspath,
-      @JsonProperty("sourcesClasspath") List<URI> sourcesClasspath,
-      @JsonProperty("ideClasspath") List<URI> ideClasspath) {
+      @JsonProperty("args") Seq<String> args,
+      @JsonProperty("runtimeClasspath") Seq<URI> runtimeClasspath,
+      @JsonProperty("compileClasspath") Seq<URI> compileClasspath,
+      @JsonProperty("sourcesClasspath") Seq<URI> sourcesClasspath,
+      @JsonProperty("ideClasspath") Seq<URI> ideClasspath) {
     this.jdk = jdk;
+    this.runtimeJdk = runtimeJdk;
     this.javacOpts = javacOpts;
     this.jvmOps = jvmOps;
     this.mainOutput = mainOutput;
@@ -47,11 +52,15 @@ public class JavaModule implements LanguageData {
     return jdk;
   }
 
-  public List<String> javacOpts() {
+  public Option<Jdk> runtimeJdk() {
+    return runtimeJdk;
+  }
+
+  public Seq<String> javacOpts() {
     return javacOpts;
   }
 
-  public List<String> jvmOps() {
+  public Seq<String> jvmOps() {
     return jvmOps;
   }
 
@@ -63,23 +72,23 @@ public class JavaModule implements LanguageData {
     return mainClass;
   }
 
-  public List<String> args() {
+  public Seq<String> args() {
     return args;
   }
 
-  public List<URI> runtimeClasspath() {
+  public Seq<URI> runtimeClasspath() {
     return runtimeClasspath;
   }
 
-  public List<URI> compileClasspath() {
+  public Seq<URI> compileClasspath() {
     return compileClasspath;
   }
 
-  public List<URI> sourcesClasspath() {
+  public Seq<URI> sourcesClasspath() {
     return sourcesClasspath;
   }
 
-  public List<URI> ideClasspath() {
+  public Seq<URI> ideClasspath() {
     return ideClasspath;
   }
 

@@ -2,8 +2,8 @@ package org.jetbrains.bsp.bazel.server.sync.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vavr.collection.List;
 import io.vavr.collection.Map;
+import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.util.Objects;
@@ -14,12 +14,12 @@ import org.jetbrains.bsp.bazel.commons.Format;
 public class Project {
   private final URI workspaceRoot;
   private final Map<URI, Label> sourceToTarget;
-  private final List<Module> modules;
+  private final Seq<Module> modules;
   @JsonIgnore private final Map<Label, Module> moduleMap;
 
   public Project(
       @JsonProperty("workspaceRoot") URI workspaceRoot,
-      @JsonProperty("modules") List<Module> modules,
+      @JsonProperty("modules") Seq<Module> modules,
       @JsonProperty("sourceToTarget") Map<URI, Label> sourceToTarget) {
     this.workspaceRoot = workspaceRoot;
     this.sourceToTarget = sourceToTarget;
@@ -31,7 +31,7 @@ public class Project {
     return workspaceRoot;
   }
 
-  public List<Module> modules() {
+  public Seq<Module> modules() {
     return modules;
   }
 
@@ -41,6 +41,10 @@ public class Project {
 
   public Option<Label> findTargetBySource(URI documentUri) {
     return sourceToTarget.get(documentUri);
+  }
+
+  public Map<URI, Label> sourceToTarget() {
+    return sourceToTarget;
   }
 
   @Override
@@ -61,9 +65,6 @@ public class Project {
 
   @Override
   public String toString() {
-    return Format.object(
-        "Project",
-        Format.entry("workspaceRoot", workspaceRoot),
-        Format.entry("modules", Format.iterable(modules)));
+    return Format.object("Project", Format.entry("workspaceRoot", workspaceRoot));
   }
 }

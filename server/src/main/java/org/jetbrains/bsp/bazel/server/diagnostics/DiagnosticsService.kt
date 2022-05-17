@@ -8,9 +8,9 @@ class DiagnosticsService(bazelInfo: BazelInfo) {
   private val parser = DiagnosticsParser()
   private val mapper = DiagnosticBspMapper(bazelInfo)
 
-  fun extractDiagnostics(bazelOutput: String): List<PublishDiagnosticsParams> {
-    val parsedDiagnostics = parser.parse(bazelOutput)
-    return mapper.diagnostics(parsedDiagnostics)
+  fun extractDiagnostics(bazelOutput: String, targetLabel: String): List<PublishDiagnosticsParams> {
+    val parsedDiagnostics = parser.parse(bazelOutput, targetLabel)
+    return mapper.createDiagnostics(parsedDiagnostics)
   }
 
 }

@@ -5,7 +5,7 @@ data class Diagnostic(
     val message: String,
     val level: Level,
     val fileLocation: String,
-    val targetLabel: String?
+    val targetLabel: String
 )
 
 data class Position(val line: Int, val character: Int)

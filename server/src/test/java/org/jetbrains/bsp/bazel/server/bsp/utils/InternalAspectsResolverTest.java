@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 
 public class InternalAspectsResolverTest {
 
+  private static BazelInfo createBazelInfo(Path workspaceRoot) {
+    return new BasicBazelInfo("", workspaceRoot);
+  }
+
   @Test
   public void shouldResolveLabelForBspRootAtWorkspaceRoot() {
     // given
@@ -22,7 +26,7 @@ public class InternalAspectsResolverTest {
     var aspectLabel = internalAspectsResolver.resolveLabel("get_classpath");
 
     // then
-    assertThat(aspectLabel).isEqualTo("@//.bazelbsp:aspects.bzl%get_classpath");
+    assertThat(aspectLabel).isEqualTo("@bazelbsp_aspect//:aspects.bzl%get_classpath");
   }
 
   @Test
@@ -36,17 +40,12 @@ public class InternalAspectsResolverTest {
     var aspectLabel = internalAspectsResolver.resolveLabel("get_classpath");
 
     // then
-    assertThat(aspectLabel)
-        .isEqualTo("@//bsp-projects/test-project-bsp/.bazelbsp:aspects.bzl%get_classpath");
+    assertThat(aspectLabel).isEqualTo("@bazelbsp_aspect//:aspects.bzl%get_classpath");
   }
 
   private InternalAspectsResolver createAspectsResolver(
       String workspaceRoot, String bspProjectRoot) {
     return new InternalAspectsResolver(
         createBazelInfo(Paths.get(workspaceRoot)), new BspInfo(Paths.get(bspProjectRoot)));
-  }
-
-  private static BazelInfo createBazelInfo(Path workspaceRoot) {
-    return new BasicBazelInfo("", workspaceRoot);
   }
 }

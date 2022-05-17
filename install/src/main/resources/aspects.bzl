@@ -307,6 +307,10 @@ def extract_java_runtime(target, ctx, dep_targets):
 
     if java_common.JavaRuntimeInfo in target:
         runtime = target[java_common.JavaRuntimeInfo]
+    else:
+        runtime_jdk = getattr(ctx.rule.attr, "runtime_jdk", None)
+        if runtime_jdk and java_common.JavaRuntimeInfo in runtime_jdk:
+            runtime = runtime_jdk[java_common.JavaRuntimeInfo]
 
     runtime_info = None
     if runtime != None:

@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.utils;
 
 import io.vavr.Lazy;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
+import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 
 public class InternalAspectsResolver {
@@ -19,10 +20,11 @@ public class InternalAspectsResolver {
     return prefix.get() + aspect;
   }
 
+  public String getBazelBspRoot() {
+    return this.bspInfo.bazelBspDir().toString();
+  }
+
   private String getPrefix() {
-    var workspaceRoot = bazelInfo.getWorkspaceRoot();
-    var bazelBspDir = bspInfo.bazelBspDir();
-    var relative = workspaceRoot.relativize(bazelBspDir).toString();
-    return String.format("@//%s:aspects.bzl%%", relative);
+    return "@" + Constants.ASPECT_REPOSITORY + "//:aspects.bzl%";
   }
 }
