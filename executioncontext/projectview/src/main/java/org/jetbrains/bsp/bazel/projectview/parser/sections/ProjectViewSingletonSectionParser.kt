@@ -67,7 +67,8 @@ object ProjectViewJavaPathSectionParser :
     override fun createInstance(value: Path): ProjectViewJavaPathSection = ProjectViewJavaPathSection(value)
 }
 
-object ProjectViewManualSectionParser : ProjectViewSingletonSectionParser<Boolean, ProjectViewBuildManualTargetsSection>(ProjectViewBuildManualTargetsSection.SECTION_NAME) {
+object ProjectViewBuildManualTargetsSectionParser : ProjectViewSingletonSectionParser<Boolean, ProjectViewBuildManualTargetsSection>(ProjectViewBuildManualTargetsSection.SECTION_NAME) {
+
     override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
     override fun createInstance(value: Boolean): ProjectViewBuildManualTargetsSection = ProjectViewBuildManualTargetsSection(value)
 }

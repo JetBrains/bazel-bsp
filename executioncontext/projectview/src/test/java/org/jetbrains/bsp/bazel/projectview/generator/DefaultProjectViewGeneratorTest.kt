@@ -190,7 +190,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = null,
                     javaPath = null,
                     buildFlags = null,
-                    buildManualTargets = ProjectViewBuildManualTargetsSection("true".toBoolean()),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             // when
@@ -213,7 +213,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
 
             // when

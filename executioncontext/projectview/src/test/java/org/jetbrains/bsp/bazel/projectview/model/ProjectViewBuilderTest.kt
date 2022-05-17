@@ -93,7 +93,7 @@ class ProjectViewBuilderTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
                     javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 ).build()
 
             // then
@@ -116,7 +116,7 @@ class ProjectViewBuilderTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             projectView shouldBe expectedProjectView
         }

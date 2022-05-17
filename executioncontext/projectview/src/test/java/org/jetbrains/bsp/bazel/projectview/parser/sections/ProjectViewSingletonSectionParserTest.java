@@ -58,7 +58,7 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     }
 
     private static Arguments buildManualTargetsSectionArguments() {
-        var parser = ProjectViewManualSectionParser.INSTANCE;
+        var parser = ProjectViewBuildManualTargetsSectionParser.INSTANCE;
         var rawValueConstructor = (Function<String, String>) (seed) -> "false" + seed;
         var sectionMapper = (Function<Boolean, ProjectViewBuildManualTargetsSection>)
                 ProjectViewBuildManualTargetsSection::new;

@@ -42,7 +42,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
             debuggerAddress = ProjectViewDebuggerAddressSectionParser.parse(rawSections),
             javaPath = ProjectViewJavaPathSectionParser.parse(rawSections),
             buildFlags = ProjectViewBuildFlagsSectionParser.parse(rawSections),
-            buildManualTargets = ProjectViewManualSectionParser.parse(rawSections),
+            buildManualTargets = ProjectViewBuildManualTargetsSectionParser.parse(rawSections),
         ).build()
     }
 
