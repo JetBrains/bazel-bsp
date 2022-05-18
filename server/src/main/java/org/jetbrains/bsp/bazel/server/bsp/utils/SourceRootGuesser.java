@@ -18,7 +18,7 @@ public class SourceRootGuesser {
         fs.getPathMatcher(
             "glob:**/"
                 + "{main,test,tests,src,3rdparty,3rd_party,thirdparty,third_party}/"
-                + "{resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
+                + "{*resources,scala,java,kotlin,jvm,proto,python,protobuf,py}");
     PathMatcher defaultTestRootPattern = fs.getPathMatcher("glob:**/{test,tests}");
 
     Optional<Path> sourceRootGuess =

@@ -24,4 +24,6 @@ data class CliOptions internal constructor(
         val workspaceRootDir: Path,
         val projectViewFilePath: Path?,
         val projectViewCliOptions: ProjectViewCliOptions?,
+        val useBloop: Boolean,
+        val projectName: String?
 )

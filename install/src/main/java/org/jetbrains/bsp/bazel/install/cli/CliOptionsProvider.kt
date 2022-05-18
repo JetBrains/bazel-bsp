@@ -136,6 +136,18 @@ class CliOptionsProvider(private val args: Array<String>) {
             )
             .build()
         cliParserOptions.addOption(importDepthOption)
+        
+        val useBloopOption = Option.builder(USE_BLOOP_SHORT_OPT)
+            .longOpt("use_bloop")
+            .build()
+        cliParserOptions.addOption(useBloopOption)
+
+        val projectNameOption = Option.builder(PROJECT_NAME_SHORT_OPT)
+            .longOpt("project_name")
+            .hasArg()
+            .argName("name")
+            .build()
+        cliParserOptions.addOption(projectNameOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -150,6 +162,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             workspaceRootDir = workspaceRootDir(cmd),
             projectViewFilePath = projectViewFilePath(cmd),
             projectViewCliOptions = createProjectViewCliOptions(cmd),
+            useBloop = useBloop(cmd),
+            projectName = projectName(cmd)
         )
 
     private fun workspaceRootDir(cmd: CommandLine): Path =
@@ -165,6 +179,10 @@ class CliOptionsProvider(private val args: Array<String>) {
         )
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
+
+    private fun useBloop(cmd: CommandLine): Boolean = cmd.hasOption(USE_BLOOP_SHORT_OPT)
+
+    private fun projectName(cmd: CommandLine): String? = cmd.getOptionValue(PROJECT_NAME_SHORT_OPT)
 
     private fun printHelp() {
         val formatter = HelpFormatter()
@@ -247,6 +265,8 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val DIRECTORIES_SHORT_OPT = "r"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
+        private const val USE_BLOOP_SHORT_OPT = "u"
+        private const val PROJECT_NAME_SHORT_OPT = "n"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }

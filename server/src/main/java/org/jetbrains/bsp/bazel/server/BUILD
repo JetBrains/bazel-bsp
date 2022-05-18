@@ -19,12 +19,14 @@ java_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "@io_bazel//src/main/protobuf:build_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar",
+        "@maven//:ch_epfl_scala_bloop_config_2_13",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
+        "@maven//:org_scala_lang_scala_library",
     ],
 )
 

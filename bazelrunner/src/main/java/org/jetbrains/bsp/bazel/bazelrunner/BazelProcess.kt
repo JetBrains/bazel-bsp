@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor
-import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputCollector
 import org.jetbrains.bsp.bazel.commons.Format
 import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -14,17 +13,13 @@ class BazelProcess internal constructor(
 ) {
 
   fun waitAndGetResult(): BazelProcessResult {
-    val stdoutCollector = OutputCollector()
-    val stderrCollector = OutputCollector()
-    val outputProcessor = AsyncOutputProcessor()
+    val outputProcessor = AsyncOutputProcessor(process, logger::message, LOGGER::info)
     val stopwatch = Stopwatch.start()
-    outputProcessor.start(process.inputStream, stdoutCollector, logger::message, LOGGER::info)
-    outputProcessor.start(process.errorStream, stderrCollector, logger::message, LOGGER::info)
-    val exitCode = process.waitFor()
-    outputProcessor.shutdown()
+
+    val exitCode = outputProcessor.waitForExit()
     val duration = stopwatch.stop()
     logCompletion(exitCode, duration)
-    return BazelProcessResult(stdoutCollector, stderrCollector, exitCode)
+    return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
   }
 
   private fun logCompletion(exitCode: Int, duration: Duration) {

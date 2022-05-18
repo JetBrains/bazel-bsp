@@ -249,11 +249,15 @@ def extract_java_info(target, ctx, output_groups):
 
 def find_scalac_classpath(runfiles):
     result = []
+    found_scala_compiler_jar = False
     for file in runfiles:
         name = file.basename
-        if file.extension == "jar" and ("scala-compiler" in name or "scala-library" in name or "scala-reflect" in name):
+        if file.extension == "jar" and "scala-compiler" in name:
+            found_scala_compiler_jar = True
             result.append(file)
-    return result if len(result) >= 3 else []
+        elif file.extension == "jar" and ("scala-library" in name or "scala-reflect" in name):
+            result.append(file)
+    return result if found_scala_compiler_jar and len(result) >= 3 else []
 
 def extract_scala_toolchain_info(target, ctx, output_groups):
     runfiles = target.default_runfiles.files.to_list()

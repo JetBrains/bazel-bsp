@@ -224,6 +224,8 @@ maven_install(
         "com.fasterxml.jackson.core:jackson-databind:2.13.3",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3",
         "io.vavr:vavr-jackson:0.10.3",
+        "ch.epfl.scala:bloop-config_2.13:1.5.0",
+        "org.scala-lang:scala-library:2.13.8",
     ],
     fetch_sources = True,
     repositories = [
