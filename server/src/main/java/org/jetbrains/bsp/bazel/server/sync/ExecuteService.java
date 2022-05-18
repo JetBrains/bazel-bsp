@@ -32,11 +32,12 @@ public class ExecuteService {
   private final ProjectProvider projectProvider;
   private final BazelRunner bazelRunner;
   private final WorkspaceContextProvider workspaceContextProvider;
+
   public ExecuteService(
-          BazelBspCompilationManager compilationManager,
-          ProjectProvider projectProvider,
-          BazelRunner bazelRunner,
-          WorkspaceContextProvider workspaceContextProvider) {
+      BazelBspCompilationManager compilationManager,
+      ProjectProvider projectProvider,
+      BazelRunner bazelRunner,
+      WorkspaceContextProvider workspaceContextProvider) {
     this.compilationManager = compilationManager;
     this.projectProvider = projectProvider;
     this.bazelRunner = bazelRunner;
@@ -121,12 +122,12 @@ public class ExecuteService {
   }
 
   private boolean isBuildable(Module m) {
-    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) && !m.tags().contains(Tag.MANUAL);
+    checkManualTag(m);
+    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD);
   }
-  private WorkspaceContext checkManualTag(Module m){
-    if (!m.tags().contains(Tag.MANUAL)) {
-      return workspaceContextProvider.currentWorkspaceContext();
-    }
-   else return null;
+
+  private WorkspaceContext checkManualTag(Module m) {
+    if (!m.tags().contains(Tag.MANUAL)) return null;
+    else return workspaceContextProvider.currentWorkspaceContext();
   }
 }
