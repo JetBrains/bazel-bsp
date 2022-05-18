@@ -62,7 +62,9 @@ public class BspProjectMapper {
   private final LanguagePluginsService languagePluginsService;
   private final WorkspaceContextProvider workspaceContextProvider;
 
-  public BspProjectMapper(LanguagePluginsService languagePluginsService, WorkspaceContextProvider workspaceContextProvider) {
+  public BspProjectMapper(
+      LanguagePluginsService languagePluginsService,
+      WorkspaceContextProvider workspaceContextProvider) {
     this.languagePluginsService = languagePluginsService;
     this.workspaceContextProvider = workspaceContextProvider;
   }
@@ -111,17 +113,16 @@ public class BspProjectMapper {
   }
 
   private BuildTargetCapabilities inferCapabilities(Module module) {
-    var canCompile = !module.tags().contains(Tag.NO_BUILD) && !module.tags().contains(Tag.MANUAL);
-    var canTest = module.tags().contains(Tag.TEST) && !module.tags().contains(Tag.MANUAL);
-    var canRun = module.tags().contains(Tag.APPLICATION) && !module.tags().contains(Tag.MANUAL);
+    checkManualTag(module);
+    var canCompile = !module.tags().contains(Tag.NO_BUILD);
+    var canTest = module.tags().contains(Tag.TEST);
+    var canRun = module.tags().contains(Tag.APPLICATION);
     return new BuildTargetCapabilities(canCompile, canTest, canRun);
   }
 
-  private WorkspaceContext checkManualTag(Module module){
-    if (!module.tags().contains(Tag.MANUAL)) {
-      return workspaceContextProvider.currentWorkspaceContext();
-    }
-    else return null;
+  private WorkspaceContext checkManualTag(Module module) {
+    if (!module.tags().contains(Tag.MANUAL)) return null;
+    else return workspaceContextProvider.currentWorkspaceContext();
   }
 
   private void applyLanguageData(Module module, BuildTarget buildTarget) {
