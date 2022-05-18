@@ -54,13 +54,17 @@ import org.jetbrains.bsp.bazel.server.sync.model.Language;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class BspProjectMapper {
 
   private final LanguagePluginsService languagePluginsService;
+  private final WorkspaceContextProvider workspaceContextProvider;
 
-  public BspProjectMapper(LanguagePluginsService languagePluginsService) {
+  public BspProjectMapper(LanguagePluginsService languagePluginsService, WorkspaceContextProvider workspaceContextProvider) {
     this.languagePluginsService = languagePluginsService;
+    this.workspaceContextProvider = workspaceContextProvider;
   }
 
   public InitializeBuildResult initializeServer(Seq<Language> supportedLanguages) {
@@ -111,6 +115,13 @@ public class BspProjectMapper {
     var canTest = module.tags().contains(Tag.TEST) && !module.tags().contains(Tag.MANUAL);
     var canRun = module.tags().contains(Tag.APPLICATION) && !module.tags().contains(Tag.MANUAL);
     return new BuildTargetCapabilities(canCompile, canTest, canRun);
+  }
+
+  private WorkspaceContext checkManualTag(Module module){
+    if (!module.tags().contains(Tag.MANUAL)) {
+      return workspaceContextProvider.currentWorkspaceContext();
+    }
+    else return null;
   }
 
   private void applyLanguageData(Module module, BuildTarget buildTarget) {
