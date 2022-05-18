@@ -120,10 +120,10 @@ public class BspProjectMapper {
   }
 
   private boolean isManualTargetBuildable(Module module) {
-      if (!module.tags().contains(Tag.MANUAL)){
+      if (module.tags().contains(Tag.MANUAL)){
         return workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
       }
-      else return false;
+      else return true;
     }
 
 
