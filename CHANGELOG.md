@@ -10,12 +10,11 @@
 
 ### Features 🎉
 
-- Manual tag and build_manual_targets support. 
-  Using this flag it is possible to build targets marked as manual
+- Manual tag and `build_manual_targets` support. 
+  Using this flag it is possible to build targets marked as manual.
   | [#236](https://github.com/JetBrains/bazel-bsp/pull/236)
 - Build flags are reloaded during sync.
   | [#242](https://github.com/JetBrains/bazel-bsp/pull/242)
-
 
 ### Changes 🔄
 
