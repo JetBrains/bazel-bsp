@@ -199,11 +199,12 @@ class DefaultProjectViewGeneratorTest {
             // then
             val expectedGeneratedString =
                     """
-                 build_manual_targets: true
-                 
-                 """.trimIndent()
+                 |build_manual_targets: true
+
+                 """.trimMargin()
             generatedString shouldBe expectedGeneratedString
         }
+
         @Test
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
@@ -437,7 +438,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
 
             // when
@@ -483,7 +484,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
 
             val parser = DefaultProjectViewParser()
@@ -502,7 +503,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -530,7 +531,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
 
             val parser = DefaultProjectViewParser()

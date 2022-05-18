@@ -477,7 +477,6 @@ def _bsp_target_info_aspect_impl(target, ctx):
     ]
 
     java_target_info = extract_java_info(target, ctx, output_groups) if not "manual" in rule_attrs.tags else None
-    print(rule_attrs.tags)
     scala_toolchain_info = extract_scala_toolchain_info(target, ctx, output_groups)
     scala_target_info = extract_scala_info(target, ctx, output_groups)
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)

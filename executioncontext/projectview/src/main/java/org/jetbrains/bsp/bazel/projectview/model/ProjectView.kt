@@ -46,28 +46,28 @@ data class ProjectView constructor(
 
 fun build(): Try<ProjectView> {
     log.debug(
-            "Building project view with"
-                    + " imports: {}"
-                    + " and (before combining with imported project views)"
-                    + " targets: {},"
-                    + " bazel path: {},"
-                    + " debugger address: {},"
-                    + " java path: {},"
-                    + " build flags: {}."
-                    + "build manual targets: {}",
-            imports,
-            targets,
-            bazelPath,
-            debuggerAddress,
-            javaPath,
-            buildFlags,
-            buildManualTargets,
+    "Building project view with"
+            + " imports: {}"
+            + " and (before combining with imported project views)"
+            + " targets: {},"
+            + " bazel path: {},"
+            + " debugger address: {},"
+            + " java path: {},"
+            + " build flags: {}."
+            + "build manual targets: {}",
+        imports,
+        targets,
+        bazelPath,
+        debuggerAddress,
+        javaPath,
+        buildFlags,
+        buildManualTargets,
 )
 
     return Try.sequence(imports)
-            .map(Seq<ProjectView>::toJavaList)
-            .map(MutableList<ProjectView>::toList)
-            .map(::buildWithImports)
+        .map(Seq<ProjectView>::toJavaList)
+        .map(MutableList<ProjectView>::toList)
+        .map(::buildWithImports)
 }
 
 private fun buildWithImports(importedProjectViews: List<ProjectView>): ProjectView {
@@ -78,47 +78,47 @@ private fun buildWithImports(importedProjectViews: List<ProjectView>): ProjectVi
     val buildFlags = combineBuildFlagsSection(importedProjectViews)
     val buildManualTargets = combineManualTargetsSection(importedProjectViews)
     log.debug(
-            "Building project view with combined"
-                    + " targets: {},"
-                    + " bazel path: {},"
-                    + " debugger address: {},"
-                    + " java path: {},"
-                    + "build manual targets {}.",
-            targets,
-            bazelPath,
-            debuggerAddress,
-            javaPath,
-            buildManualTargets
+    "Building project view with combined"
+            + " targets: {},"
+            + " bazel path: {},"
+            + " debugger address: {},"
+            + " java path: {},"
+            + "build manual targets {}.",
+        targets,
+        bazelPath,
+        debuggerAddress,
+        javaPath,
+        buildManualTargets
     )
     return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags, buildManualTargets)
 }
 
 private fun combineTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewTargetsSection? {
     val includedTargets = combineListValuesWithImported(
-            importedProjectViews,
-            targets,
-            ProjectView::targets,
-            ProjectViewTargetsSection::values
+        importedProjectViews,
+        targets,
+        ProjectView::targets,
+        ProjectViewTargetsSection::values
     )
     val excludedTargets = combineListValuesWithImported(
-            importedProjectViews,
-            targets,
-            ProjectView::targets,
-            ProjectViewTargetsSection::excludedValues
+        importedProjectViews,
+        targets,
+        ProjectView::targets,
+        ProjectViewTargetsSection::excludedValues
     )
     return createInstanceOfExcludableListSectionOrNull(
-            includedTargets,
-            excludedTargets,
-            ::ProjectViewTargetsSection
+        includedTargets,
+        excludedTargets,
+        ::ProjectViewTargetsSection
     )
 }
 
 private fun combineBuildFlagsSection(importedProjectViews: List<ProjectView>): ProjectViewBuildFlagsSection? {
     val flags = combineListValuesWithImported(
-            importedProjectViews,
-            buildFlags,
-            ProjectView::buildFlags,
-            ProjectViewBuildFlagsSection::values,
+        importedProjectViews,
+        buildFlags,
+        ProjectView::buildFlags,
+        ProjectViewBuildFlagsSection::values,
     )
 
     return createInstanceOfListSectionOrNull(flags, ::ProjectViewBuildFlagsSection)
@@ -131,12 +131,12 @@ private fun <V, T : ProjectViewListSection<V>> combineListValuesWithImported(
         valuesGetter: (T) -> List<V>
 ): List<V> {
     val sectionValues = section
-            ?.let(valuesGetter)
-            .orEmpty()
+        ?.let(valuesGetter)
+        .orEmpty()
 
     val importedValues = importedProjectViews
-            .mapNotNull(sectionGetter)
-            .flatMap(valuesGetter)
+        .mapNotNull(sectionGetter)
+        .flatMap(valuesGetter)
 
     return importedValues + sectionValues
 }
@@ -165,7 +165,7 @@ private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): Pro
 
 private fun combineManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewBuildManualTargetsSection? =
         buildManualTargets
-                ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
+            ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
 
 private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
         importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?

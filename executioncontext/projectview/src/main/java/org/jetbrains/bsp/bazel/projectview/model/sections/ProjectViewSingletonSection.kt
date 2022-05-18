@@ -7,28 +7,28 @@ sealed class ProjectViewSingletonSection<T>(sectionName: String) : ProjectViewSe
 }
 
 data class ProjectViewJavaPathSection(override val value: Path) :
-        ProjectViewSingletonSection<Path>(SECTION_NAME) {
+    ProjectViewSingletonSection<Path>(SECTION_NAME) {
     companion object {
         const val SECTION_NAME = "java_path"
     }
 }
 
 data class ProjectViewDebuggerAddressSection(override val value: String) :
-        ProjectViewSingletonSection<String>(SECTION_NAME) {
+    ProjectViewSingletonSection<String>(SECTION_NAME) {
     companion object {
         const val SECTION_NAME = "debugger_address"
     }
 }
 
 data class ProjectViewBazelPathSection(override val value: Path) :
-        ProjectViewSingletonSection<Path>(SECTION_NAME) {
+    ProjectViewSingletonSection<Path>(SECTION_NAME) {
     companion object {
         const val SECTION_NAME = "bazel_path"
     }
 }
 
 data class ProjectViewBuildManualTargetsSection(override val value: Boolean) :
-        ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
+    ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
     companion object {
         const val SECTION_NAME = "build_manual_targets"
     }
