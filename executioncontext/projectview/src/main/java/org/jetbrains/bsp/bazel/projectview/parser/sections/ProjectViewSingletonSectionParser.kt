@@ -1,7 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import java.nio.file.Path
 import kotlin.io.path.Path
