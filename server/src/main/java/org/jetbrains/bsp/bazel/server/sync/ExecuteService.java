@@ -23,7 +23,6 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
-import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class ExecuteService {
@@ -122,12 +121,13 @@ public class ExecuteService {
   }
 
   private boolean isBuildable(Module m) {
-    checkManualTag(m);
-    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD);
+    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) && isManualTargetBuildable(m);
   }
 
-  private WorkspaceContext checkManualTag(Module m) {
-    if (!m.tags().contains(Tag.MANUAL)) return null;
-    else return workspaceContextProvider.currentWorkspaceContext();
+  private boolean isManualTargetBuildable(Module m) {
+    if (!m.tags().contains(Tag.MANUAL)){
+    return workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
+  }
+   else return false;
   }
 }

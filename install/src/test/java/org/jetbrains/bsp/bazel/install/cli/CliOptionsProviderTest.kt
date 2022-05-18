@@ -190,7 +190,6 @@ class CliOptionsProviderTest {
         @DisplayName("cliOptions.projectViewCliOptions.javaPath tests")
         inner class JavaPathTest {
 
-
             @Test
             fun `should return success and absolute path to provided java file if java path is specified`() {
                 // given

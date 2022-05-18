@@ -113,17 +113,19 @@ public class BspProjectMapper {
   }
 
   private BuildTargetCapabilities inferCapabilities(Module module) {
-    checkManualTag(module);
-    var canCompile = !module.tags().contains(Tag.NO_BUILD);
+    var canCompile = !module.tags().contains(Tag.NO_BUILD) && isManualTargetBuildable(module);
     var canTest = module.tags().contains(Tag.TEST);
     var canRun = module.tags().contains(Tag.APPLICATION);
     return new BuildTargetCapabilities(canCompile, canTest, canRun);
   }
 
-  private WorkspaceContext checkManualTag(Module module) {
-    if (!module.tags().contains(Tag.MANUAL)) return null;
-    else return workspaceContextProvider.currentWorkspaceContext();
-  }
+  private boolean isManualTargetBuildable(Module module) {
+      if (!module.tags().contains(Tag.MANUAL)){
+        return workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
+      }
+      else return false;
+    }
+
 
   private void applyLanguageData(Module module, BuildTarget buildTarget) {
     var plugin = languagePluginsService.getPlugin(module.languages());
