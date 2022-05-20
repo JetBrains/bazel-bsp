@@ -97,12 +97,6 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(javaPathOption)
 
-        val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
-            .longOpt("build_manual_targets")
-            .hasArg().argName("boolean")
-            .desc("TODO")
-            .build()
-        cliParserOptions.addOption(manualTargetsOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -140,7 +134,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-                "If any generation flag (-b, -f, -j, -t, -x) " +
+                "If any generation flag (-b, -f, -j, -t, -x, -m) " +
                 "is used, the installer will generate a new project view file with these sections. " +
                 "If --project_view_file (-p) flag is used as well, the new project view file " +
                 "will be created under this location (it will override the existing file if exists). " +

@@ -23,16 +23,16 @@ abstract class ProjectViewSingletonSectionParser<V, T : ProjectViewSingletonSect
 ) : ProjectViewSectionParser<T>() {
 
     override fun parse(rawSections: ProjectViewRawSections): T? =
-            rawSections.getLastSectionWithName(sectionName)
-                    ?.let { parse(it) }
-                    ?.get()
-                    .also { log.debug("Parsed '$sectionName' section. Result:\n$it") }
+        rawSections.getLastSectionWithName(sectionName)
+                ?.let { parse(it) }
+                ?.get()
+                .also { log.debug("Parsed '$sectionName' section. Result:\n$it") }
 
     override fun parse(sectionBody: String): T? =
-            sectionBody.trim()
-                    .ifBlank { null }
-                    ?.let { mapRawValue(it) }
-                    ?.let { createInstance(it) }
+        sectionBody.trim()
+            .ifBlank { null }
+            ?.let { mapRawValue(it) }
+            ?.let { createInstance(it) }
 
     protected abstract fun mapRawValue(rawValue: String): V
 
@@ -45,7 +45,7 @@ abstract class ProjectViewSingletonSectionParser<V, T : ProjectViewSingletonSect
 
 
 object ProjectViewBazelPathSectionParser :
-        ProjectViewSingletonSectionParser<Path, ProjectViewBazelPathSection>(ProjectViewBazelPathSection.SECTION_NAME) {
+    ProjectViewSingletonSectionParser<Path, ProjectViewBazelPathSection>(ProjectViewBazelPathSection.SECTION_NAME) {
 
     override fun mapRawValue(rawValue: String): Path = Path(rawValue)
 
@@ -59,7 +59,7 @@ object ProjectViewDebuggerAddressSectionParser :
     override fun mapRawValue(rawValue: String): String = rawValue
 
     override fun createInstance(value: String): ProjectViewDebuggerAddressSection =
-            ProjectViewDebuggerAddressSection(value)
+        ProjectViewDebuggerAddressSection(value)
 }
 
 
@@ -74,6 +74,7 @@ object ProjectViewJavaPathSectionParser :
 object ProjectViewBuildManualTargetsSectionParser :
         ProjectViewSingletonSectionParser<Boolean, ProjectViewBuildManualTargetsSection>(ProjectViewBuildManualTargetsSection.SECTION_NAME)
 {
+
     override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
     override fun createInstance(value: Boolean): ProjectViewBuildManualTargetsSection = ProjectViewBuildManualTargetsSection(value)
 }

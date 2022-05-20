@@ -44,25 +44,25 @@ data class ProjectView constructor(
         private val buildManualTargets: ProjectViewBuildManualTargetsSection? = null,
     ) {
 
-fun build(): Try<ProjectView> {
-    log.debug(
-    "Building project view with"
-            + " imports: {}"
-            + " and (before combining with imported project views)"
-            + " targets: {},"
-            + " bazel path: {},"
-            + " debugger address: {},"
-            + " java path: {},"
-            + " build flags: {}."
-            + "build manual targets: {}",
-        imports,
-        targets,
-        bazelPath,
-        debuggerAddress,
-        javaPath,
-        buildFlags,
-        buildManualTargets,
-)
+    fun build(): Try<ProjectView> {
+        log.debug(
+        "Building project view with"
+                + " imports: {}"
+                + " and (before combining with imported project views)"
+                + " targets: {},"
+                + " bazel path: {},"
+                + " debugger address: {},"
+                + " java path: {},"
+                + " build flags: {}."
+                + "build manual targets: {}",
+            imports,
+            targets,
+            bazelPath,
+            debuggerAddress,
+            javaPath,
+            buildFlags,
+            buildManualTargets,
+    )
 
     return Try.sequence(imports)
         .map(Seq<ProjectView>::toJavaList)

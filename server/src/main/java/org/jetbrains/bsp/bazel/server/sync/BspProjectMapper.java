@@ -54,7 +54,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.Language;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
-import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class BspProjectMapper {
@@ -113,19 +112,16 @@ public class BspProjectMapper {
   }
 
   private BuildTargetCapabilities inferCapabilities(Module module) {
-    var canCompile = !module.tags().contains(Tag.NO_BUILD) && isManualTargetBuildable(module);
+    var canCompile = !module.tags().contains(Tag.NO_BUILD) && isBuildableIfManual(module);
     var canTest = module.tags().contains(Tag.TEST);
     var canRun = module.tags().contains(Tag.APPLICATION);
     return new BuildTargetCapabilities(canCompile, canTest, canRun);
   }
 
-  private boolean isManualTargetBuildable(Module module) {
-      if (module.tags().contains(Tag.MANUAL)){
-        return workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
-      }
-      else return true;
-    }
-
+  private boolean isBuildableIfManual(Module module) {
+    return module.tags().contains(Tag.MANUAL)
+            && workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
+  }
 
   private void applyLanguageData(Module module, BuildTarget buildTarget) {
     var plugin = languagePluginsService.getPlugin(module.languages());
