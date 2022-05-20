@@ -28,5 +28,4 @@ java_library(
     exports = [
         "//dep/deeper",
     ],
-
 )

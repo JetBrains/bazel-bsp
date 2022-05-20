@@ -121,11 +121,10 @@ public class ExecuteService {
   }
 
   private boolean isBuildable(Module m) {
-    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) && isManualTargetBuildable(m);
+    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) && isBuildableIfManual(m);
   }
 
-  private boolean isManualTargetBuildable(Module m) {
-    return m.tags().contains(Tag.MANUAL)
-        && workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
+  private boolean isBuildableIfManual(Module m) {
+    return m.tags().contains(Tag.MANUAL) ? workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue() : true;
   }
 }
