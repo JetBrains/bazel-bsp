@@ -150,6 +150,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 debuggerAddress = debuggerAddress(cmd),
                 targets = targets(cmd),
                 buildFlags = buildFlags(cmd),
+                directories = directories(cmd),
+                deriveTargetsFlag = deriveTargetsFlag(cmd)
             )
         else null
 
@@ -158,7 +160,9 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(JAVA_PATH_SHORT_OPT) or
                 cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
                 cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
-                cmd.hasOption(BUILD_FLAGS_SHORT_OPT)
+                cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
+                cmd.hasOption(DIRECTORIES_SHORT_OPT) or
+                cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
@@ -171,11 +175,15 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
 
+    private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
+
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
     private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
+
+    private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.getOptionValue(DERIVE_TARGETS_FLAG_SHORT_OPT).toBoolean()
 
     companion object {
         private const val HELP_SHORT_OPT = "h"
@@ -186,6 +194,8 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val BAZEL_PATH_SHORT_OPT = "b"
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
+        private const val DIRECTORIES_SHORT_OPT = "r"
+        private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }

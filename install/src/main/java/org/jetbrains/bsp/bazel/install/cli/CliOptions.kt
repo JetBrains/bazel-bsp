@@ -13,6 +13,8 @@ data class ProjectViewCliOptions internal constructor(
         val debuggerAddress: String?,
         val targets: List<String>?,
         val buildFlags: List<String>?,
+        val directories: List<String>?,
+        val deriveTargetsFlag: Boolean?
 )
 
 data class CliOptions internal constructor(

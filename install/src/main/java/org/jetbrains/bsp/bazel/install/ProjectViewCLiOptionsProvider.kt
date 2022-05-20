@@ -27,6 +27,8 @@ object ProjectViewCLiOptionsProvider {
                     debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
                     targets = toTargetsSection(projectViewCliOptions),
                     buildFlags = toBuildFlagsSection(projectViewCliOptions),
+                    directories = toDirectoriesSection(projectViewCliOptions),
+                    deriveTargetsFlag = toDeriveTargetFlagSection(projectViewCliOptions)
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
@@ -45,6 +47,16 @@ object ProjectViewCLiOptionsProvider {
         return ProjectViewTargetsSection(includedTargets, excludedTargets)
     }
 
+    private fun toDirectoriesSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDirectoriesSection? =
+            projectViewCliOptions?.directories?.let(::toDirectoriesSectionNotNull)
+
+    private fun toDirectoriesSectionNotNull(directories: List<String>?): ProjectViewDirectoriesSection {
+        val includedDirectories = calculateIncludedTargets(directories)
+        val excludedDirectories = calculateExcludedTargets(directories)
+
+        return ProjectViewDirectoriesSection(includedDirectories, excludedDirectories)
+    }
+
     private fun calculateIncludedTargets(targets: List<String>?): List<BuildTargetIdentifier> =
             targets.orEmpty()
                     .filterNot { it.startsWith(EXCLUDED_TARGET_PREFIX) }
@@ -61,4 +73,7 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
             projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
+
+    private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFlagSection? =
+            projectViewCliOptions?.deriveTargetsFlag?.let(::ProjectViewDeriveTargetsFlagSection)
 }

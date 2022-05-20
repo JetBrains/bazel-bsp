@@ -16,3 +16,13 @@ data class ProjectViewTargetsSection(
         const val SECTION_NAME = "targets"
     }
 }
+
+data class ProjectViewDirectoriesSection(
+        override val values: List<BuildTargetIdentifier>,
+        override val excludedValues: List<BuildTargetIdentifier>,
+) : ProjectViewExcludableListSection<BuildTargetIdentifier>(SECTION_NAME) {
+
+    companion object {
+        const val SECTION_NAME = "directories"
+    }
+}
