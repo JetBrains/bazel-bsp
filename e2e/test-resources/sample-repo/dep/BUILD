@@ -28,5 +28,5 @@ java_library(
     exports = [
         "//dep/deeper",
     ],
-tags = ["manual"],
+
 )

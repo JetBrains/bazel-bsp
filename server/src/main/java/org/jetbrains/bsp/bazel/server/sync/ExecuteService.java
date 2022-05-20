@@ -125,9 +125,7 @@ public class ExecuteService {
   }
 
   private boolean isManualTargetBuildable(Module m) {
-    if (m.tags().contains(Tag.MANUAL)){
-    return workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
-  }
-   else return true;
+    return m.tags().contains(Tag.MANUAL)
+        && workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
   }
 }

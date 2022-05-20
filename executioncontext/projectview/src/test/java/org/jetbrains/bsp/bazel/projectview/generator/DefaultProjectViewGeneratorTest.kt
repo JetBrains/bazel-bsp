@@ -3,7 +3,12 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.DisplayName
@@ -199,9 +204,9 @@ class DefaultProjectViewGeneratorTest {
             // then
             val expectedGeneratedString =
                     """
-                 |build_manual_targets: true
-
-                 """.trimMargin()
+                    |build_manual_targets: true
+                    |
+                    """.trimMargin()
             generatedString shouldBe expectedGeneratedString
         }
 
@@ -310,7 +315,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
 
             // when
@@ -375,7 +380,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection("false".toBoolean()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
             )
 
             // when
