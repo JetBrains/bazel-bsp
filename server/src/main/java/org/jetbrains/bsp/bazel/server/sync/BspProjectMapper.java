@@ -119,9 +119,10 @@ public class BspProjectMapper {
   }
 
   private boolean isBuildableIfManual(Module module) {
-    return module.tags().contains(Tag.MANUAL) ? workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue() : true;
-
-    }
+    return module.tags().contains(Tag.MANUAL)
+        ? workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue()
+        : true;
+  }
 
   private void applyLanguageData(Module module, BuildTarget buildTarget) {
     var plugin = languagePluginsService.getPlugin(module.languages());

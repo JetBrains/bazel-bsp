@@ -22,11 +22,11 @@ public class TargetKindResolver {
     }
 
     var tag =
-      ruleSuffixToTargetType.entrySet().stream()
-        .filter(entry -> targetInfo.getKind().endsWith("_" + entry.getKey()))
-        .map(Map.Entry::getValue)
-        .findFirst()
-        .orElse(NO_IDE);
+        ruleSuffixToTargetType.entrySet().stream()
+            .filter(entry -> targetInfo.getKind().endsWith("_" + entry.getKey()))
+            .map(Map.Entry::getValue)
+            .findFirst()
+            .orElse(NO_IDE);
     if (targetInfo.getTagsList().contains("no-ide")) {
       return tag.add(Tag.NO_IDE);
     } else if (targetInfo.getTagsList().contains("manual")) {
