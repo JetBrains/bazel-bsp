@@ -99,7 +99,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
         val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
             .longOpt("build_manual_targets")
-            .desc("TODO")
             .build()
         cliParserOptions.addOption(manualTargetsOption)
 
@@ -140,12 +139,12 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-                "If any generation flag (-b, -f, -j, -t, -x, -m) " +
-                "is used, the installer will generate a new project view file with these sections. " +
-                "If --project_view_file (-p) flag is used as well, the new project view file " +
-                "will be created under this location (it will override the existing file if exists). " +
-                "Otherwise the new file `projectview.bazelproject` will be created.",
-        true
+            "If any generation flag (-b, -f, -j, -t, -x, -m) " +
+                    "is used, the installer will generate a new project view file with these sections. " +
+                    "If --project_view_file (-p) flag is used as well, the new project view file " +
+                    "will be created under this location (it will override the existing file if exists). " +
+                    "Otherwise the new file `projectview.bazelproject` will be created.",
+            true
         )
     }
 
@@ -159,15 +158,15 @@ class CliOptionsProvider(private val args: Array<String>) {
                 buildFlags = buildFlags(cmd),
                 buildManualTargets = buildManualTargets(cmd),
             )
-            else null
+        else null
 
     private fun isAnyGenerationFlagSet(cmd: CommandLine): Boolean =
         cmd.hasOption(TARGETS_SHORT_OPT) or
-            cmd.hasOption(JAVA_PATH_SHORT_OPT) or
-            cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
-            cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
-            cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
-            cmd.hasOption(BUILD_MANUAL_TARGETS_OPT)
+                cmd.hasOption(JAVA_PATH_SHORT_OPT) or
+                cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
+                cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
+                cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
+                cmd.hasOption(BUILD_MANUAL_TARGETS_OPT)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
@@ -180,7 +179,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
 
-    private fun buildManualTargets(cmd: CommandLine): Boolean? = cmd.getOptionValue(BUILD_MANUAL_TARGETS_OPT)?.toBoolean()
+    private fun buildManualTargets(cmd: CommandLine): Boolean = cmd.hasOption("-m")
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 

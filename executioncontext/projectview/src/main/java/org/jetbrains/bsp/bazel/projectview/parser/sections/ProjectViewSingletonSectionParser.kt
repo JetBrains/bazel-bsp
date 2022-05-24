@@ -19,7 +19,7 @@ import kotlin.io.path.Path
  * @param <T> type of parsed single value section
 </T> */
 abstract class ProjectViewSingletonSectionParser<V, T : ProjectViewSingletonSection<V>> protected constructor(
-        override val sectionName: String
+    override val sectionName: String
 ) : ProjectViewSectionParser<T>() {
 
     override fun parse(rawSections: ProjectViewRawSections): T? =
@@ -54,7 +54,7 @@ object ProjectViewBazelPathSectionParser :
 
 
 object ProjectViewDebuggerAddressSectionParser :
-        ProjectViewSingletonSectionParser<String, ProjectViewDebuggerAddressSection>(ProjectViewDebuggerAddressSection.SECTION_NAME) {
+    ProjectViewSingletonSectionParser<String, ProjectViewDebuggerAddressSection>(ProjectViewDebuggerAddressSection.SECTION_NAME) {
 
     override fun mapRawValue(rawValue: String): String = rawValue
 
