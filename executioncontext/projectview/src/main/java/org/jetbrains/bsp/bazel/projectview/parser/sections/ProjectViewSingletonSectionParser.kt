@@ -24,9 +24,9 @@ abstract class ProjectViewSingletonSectionParser<V, T : ProjectViewSingletonSect
 
     override fun parse(rawSections: ProjectViewRawSections): T? =
         rawSections.getLastSectionWithName(sectionName)
-                ?.let { parse(it) }
-                ?.get()
-                .also { log.debug("Parsed '$sectionName' section. Result:\n$it") }
+            ?.let { parse(it) }
+            ?.get()
+            .also { log.debug("Parsed '$sectionName' section. Result:\n$it") }
 
     override fun parse(sectionBody: String): T? =
         sectionBody.trim()
@@ -62,9 +62,8 @@ object ProjectViewDebuggerAddressSectionParser :
         ProjectViewDebuggerAddressSection(value)
 }
 
-
 object ProjectViewJavaPathSectionParser :
-        ProjectViewSingletonSectionParser<Path, ProjectViewJavaPathSection>(ProjectViewJavaPathSection.SECTION_NAME) {
+    ProjectViewSingletonSectionParser<Path, ProjectViewJavaPathSection>(ProjectViewJavaPathSection.SECTION_NAME) {
 
     override fun mapRawValue(rawValue: String): Path = Path(rawValue)
 
@@ -72,7 +71,7 @@ object ProjectViewJavaPathSectionParser :
 }
 
 object ProjectViewBuildManualTargetsSectionParser :
-        ProjectViewSingletonSectionParser<Boolean, ProjectViewBuildManualTargetsSection>(ProjectViewBuildManualTargetsSection.SECTION_NAME)
+    ProjectViewSingletonSectionParser<Boolean, ProjectViewBuildManualTargetsSection>(ProjectViewBuildManualTargetsSection.SECTION_NAME)
 {
 
     override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
