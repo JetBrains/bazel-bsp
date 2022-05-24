@@ -170,8 +170,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 new BuildTargetIdentifier("//target_without_main_class:library"),
                 new BuildTargetIdentifier("//target_without_args:binary"),
                 new BuildTargetIdentifier("//target_without_jvm_flags:binary")
-              //  new BuildTargetIdentifier("//manual_target_testing:binary")
-            ));
+//                new BuildTargetIdentifier("//manual_target_testing:binary")
+                ));
 
     ScalaMainClass exampleExampleMainClass =
         new ScalaMainClass("example.Example", List.of("arg1", "arg2"), List.of("-Xms2G -Xmx5G"));
@@ -371,7 +371,28 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             List.of(new BuildTargetIdentifier("//dep/deeper:deeper")),
             new BuildTargetCapabilities(true, false, false));
 
+    BuildTarget manualTargetScalaLibrary =
+        new BuildTarget(
+            new BuildTargetIdentifier("//manual_target:scala_library"),
+            List.of(),
+            List.of(Constants.SCALA),
+            List.of(),
+            new BuildTargetCapabilities(false, false, false));
+    manualTargetScalaLibrary.setData(scalaTarget);
+    manualTargetScalaLibrary.setDataKind(BuildTargetDataKind.SCALA);
+
+    BuildTarget manualTargetJavaLibrary =
+        new BuildTarget(
+            new BuildTargetIdentifier("//manual_target:java_library"),
+            List.of(),
+            List.of(Constants.JAVA),
+            List.of(),
+            new BuildTargetCapabilities(false, false, false));
+    manualTargetJavaLibrary.setData(new JvmBuildTarget("external/local_jdk/", "11"));
+    manualTargetJavaLibrary.setDataKind(BuildTargetDataKind.JVM);
+
     return new WorkspaceBuildTargetsResult(
-        List.of(exampleExampleTarget, depDepTarget, depDeeperExportTarget));
+        List.of(
+            exampleExampleTarget, depDepTarget, depDeeperExportTarget, manualTargetScalaLibrary,manualTargetJavaLibrary));
   }
 }

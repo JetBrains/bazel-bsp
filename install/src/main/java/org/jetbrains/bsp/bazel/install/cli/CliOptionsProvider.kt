@@ -99,6 +99,8 @@ class CliOptionsProvider(private val args: Array<String>) {
 
         val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
             .longOpt("build_manual_targets")
+            .desc(
+            "Add manual tag to omit wild cards with this tag. Compiling, testing and running can be done by explicitly mentioning.")
             .build()
         cliParserOptions.addOption(manualTargetsOption)
 
