@@ -25,8 +25,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-                    "Path to directory where bazel bsp server should be setup. "
-                            + "Current directory will be used by default."
+            "Path to directory where bazel bsp server should be setup. "
+                    + "Current directory will be used by default."
             )
             .build()
         cliParserOptions.addOption(workspaceRootDirectoryOption)
@@ -36,8 +36,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-                    "Path to project view file. " +
-                            "OR The path of the new project view file which will be generated using generation flags."
+            "Path to project view file. " +
+                    "OR The path of the new project view file which will be generated using generation flags."
             )
             .build()
         cliParserOptions.addOption(projectViewFilePathOption)
@@ -47,8 +47,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArgs()
             .argName("targets")
             .desc(
-                    "Add targets to the generated project view file, you can read more about it here:" +
-                            " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets."
+            "Add targets to the generated project view file, you can read more about it here:" +
+                    " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets."
             )
             .build()
         cliParserOptions.addOption(targetsOption)
@@ -58,8 +58,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArgs()
             .argName("flags")
             .desc(
-                    "Add build flags to the generated project view file, you can read more about it here:" +
-                            " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_flags."
+            "Add build flags to the generated project view file, you can read more about it here:" +
+                    " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_flags."
             )
             .build()
         cliParserOptions.addOption(buildFlagsOption)
@@ -69,8 +69,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-                    "Add bazel path to the generated project view file, you can read more about it here: " +
-                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path."
+            "Add bazel path to the generated project view file, you can read more about it here: " +
+                    "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path."
             )
             .build()
         cliParserOptions.addOption(bazelPathOption)
@@ -80,8 +80,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("address")
             .desc(
-                    "Add debugger address to the generated project view file, you can read more about it here: " +
-                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address."
+            "Add debugger address to the generated project view file, you can read more about it here: " +
+                    "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address."
             )
             .build()
         cliParserOptions.addOption(debuggerAddressOption)
@@ -91,16 +91,16 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-                    "Add java path to the generated project view file, you can read more about it here: " +
-                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path."
+            "Add java path to the generated project view file, you can read more about it here: " +
+                    "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path."
             )
             .build()
         cliParserOptions.addOption(javaPathOption)
 
         val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
-                .longOpt("build_manual_targets")
-                .desc("TODO")
-                .build()
+            .longOpt("build_manual_targets")
+            .desc("TODO")
+            .build()
         cliParserOptions.addOption(manualTargetsOption)
 
     }
@@ -152,12 +152,12 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
-                    javaPath = javaPath(cmd),
-                    bazelPath = bazelPath(cmd),
-                    debuggerAddress = debuggerAddress(cmd),
-                    targets = targets(cmd),
-                    buildFlags = buildFlags(cmd),
-                    buildManualTargets = buildManualTargets(cmd),
+                javaPath = javaPath(cmd),
+                bazelPath = bazelPath(cmd),
+                debuggerAddress = debuggerAddress(cmd),
+                targets = targets(cmd),
+                buildFlags = buildFlags(cmd),
+                buildManualTargets = buildManualTargets(cmd),
             )
             else null
 

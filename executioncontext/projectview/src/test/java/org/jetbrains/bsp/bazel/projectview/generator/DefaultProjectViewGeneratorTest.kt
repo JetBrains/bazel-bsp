@@ -190,12 +190,12 @@ class DefaultProjectViewGeneratorTest {
         fun `should return pretty string only with manual tag for project view only with manual tag`() {
             // given
             val projectView = ProjectView(
-                    targets = null,
-                    bazelPath = null,
-                    debuggerAddress = null,
-                    javaPath = null,
-                    buildFlags = null,
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
+                targets = null,
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = null,
+                buildFlags = null,
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             // when
@@ -203,10 +203,10 @@ class DefaultProjectViewGeneratorTest {
 
             // then
             val expectedGeneratedString =
-                    """
-                    |build_manual_targets: true
-                    |
-                    """.trimMargin()
+                """
+                |build_manual_targets: true
+                |
+                """.trimMargin()
             generatedString shouldBe expectedGeneratedString
         }
 
