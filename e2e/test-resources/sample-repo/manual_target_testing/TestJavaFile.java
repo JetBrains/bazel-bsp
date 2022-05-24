@@ -1,6 +1,5 @@
 package dep;
 
 public class TestJavaFile {
-    public static final String value = "value";
+  public static final String value = "value";
 }
-
