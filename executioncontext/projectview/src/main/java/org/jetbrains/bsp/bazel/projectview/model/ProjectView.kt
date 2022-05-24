@@ -46,15 +46,15 @@ data class ProjectView constructor(
 
         fun build(): Try<ProjectView> {
             log.debug(
-            "Building project view with"
-                    + " imports: {}"
-                    + " and (before combining with imported project views)"
-                    + " targets: {},"
-                    + " bazel path: {},"
-                    + " debugger address: {},"
-                    + " java path: {},"
-                    + " build flags: {}."
-                    + "build manual targets: {}",
+                "Building project view with"
+                        + " imports: {}"
+                        + " and (before combining with imported project views)"
+                        + " targets: {},"
+                        + " bazel path: {},"
+                        + " debugger address: {},"
+                        + " java path: {},"
+                        + " build flags: {}."
+                        + "build manual targets: {}",
                 imports,
                 targets,
                 bazelPath,
@@ -78,12 +78,12 @@ data class ProjectView constructor(
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
             val buildManualTargets = combineManualTargetsSection(importedProjectViews)
             log.debug(
-            "Building project view with combined"
-                    + " targets: {},"
-                    + " bazel path: {},"
-                    + " debugger address: {},"
-                    + " java path: {},"
-                    + "build manual targets {}.",
+                "Building project view with combined"
+                        + " targets: {},"
+                        + " bazel path: {},"
+                        + " debugger address: {},"
+                        + " java path: {},"
+                        + "build manual targets {}.",
                 targets,
                 bazelPath,
                 debuggerAddress,

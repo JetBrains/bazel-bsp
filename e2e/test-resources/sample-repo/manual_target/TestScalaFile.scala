@@ -1,4 +1,4 @@
-package manual_target_example
+package manual_target
 
 object HelloWorld {
   def main(args: Array[String]) {

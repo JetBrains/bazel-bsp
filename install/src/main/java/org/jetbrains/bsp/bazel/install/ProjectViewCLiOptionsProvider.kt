@@ -28,26 +28,26 @@ object ProjectViewCLiOptionsProvider {
     }
 
     private fun toProjectView(projectViewCliOptions: ProjectViewCliOptions?): ProjectView =
-        ProjectView(
-            javaPath = toJavaPathSection(projectViewCliOptions),
-            bazelPath = toBazelPathSection(projectViewCliOptions),
-            debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
-            targets = toTargetsSection(projectViewCliOptions),
-            buildFlags = toBuildFlagsSection(projectViewCliOptions),
-            buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
-        )
+            ProjectView(
+                javaPath = toJavaPathSection(projectViewCliOptions),
+                bazelPath = toBazelPathSection(projectViewCliOptions),
+                debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
+                targets = toTargetsSection(projectViewCliOptions),
+                buildFlags = toBuildFlagsSection(projectViewCliOptions),
+                buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
+            )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
-        projectViewCliOptions?.javaPath?.let(::ProjectViewJavaPathSection)
+            projectViewCliOptions?.javaPath?.let(::ProjectViewJavaPathSection)
 
     private fun toBazelPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelPathSection? =
-        projectViewCliOptions?.bazelPath?.let(::ProjectViewBazelPathSection)
+            projectViewCliOptions?.bazelPath?.let(::ProjectViewBazelPathSection)
 
     private fun toTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewTargetsSection? =
-        projectViewCliOptions?.targets?.let(::toTargetsSectionNotNull)
+            projectViewCliOptions?.targets?.let(::toTargetsSectionNotNull)
 
     private fun toBuildManualTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildManualTargetsSection? =
-        projectViewCliOptions?.buildManualTargets?.let(::ProjectViewBuildManualTargetsSection)
+            projectViewCliOptions?.buildManualTargets?.let(::ProjectViewBuildManualTargetsSection)
 
     private fun toTargetsSectionNotNull(targets: List<String>?): ProjectViewTargetsSection {
         val includedTargets = calculateIncludedTargets(targets)
@@ -57,19 +57,19 @@ object ProjectViewCLiOptionsProvider {
     }
 
     private fun calculateIncludedTargets(targets: List<String>?): List<BuildTargetIdentifier> =
-        targets.orEmpty()
-            .filterNot { it.startsWith(EXCLUDED_TARGET_PREFIX) }
-            .map(::BuildTargetIdentifier)
+            targets.orEmpty()
+                    .filterNot { it.startsWith(EXCLUDED_TARGET_PREFIX) }
+                    .map(::BuildTargetIdentifier)
 
     private fun calculateExcludedTargets(targets: List<String>?): List<BuildTargetIdentifier> =
-        targets.orEmpty()
-            .filter { it.startsWith(EXCLUDED_TARGET_PREFIX) }
-            .map { it.drop(1) }
-            .map(::BuildTargetIdentifier)
+            targets.orEmpty()
+                    .filter { it.startsWith(EXCLUDED_TARGET_PREFIX) }
+                    .map { it.drop(1) }
+                    .map(::BuildTargetIdentifier)
 
     private fun toDebuggerAddressSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDebuggerAddressSection? =
-        projectViewCliOptions?.debuggerAddress?.let(::ProjectViewDebuggerAddressSection)
+            projectViewCliOptions?.debuggerAddress?.let(::ProjectViewDebuggerAddressSection)
 
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
-        projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
+            projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
 }
