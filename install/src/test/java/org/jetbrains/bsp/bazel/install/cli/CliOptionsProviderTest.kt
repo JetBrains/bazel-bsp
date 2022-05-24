@@ -409,23 +409,23 @@ class CliOptionsProviderTest {
         @DisplayName("cliOptions.projectViewCliOptions.buildManualTargets test")
         inner class BuildManualTargetsTest {
 
-//            @Test
-//            fun `should return success if build manual targets are specified`() {
-//                // given
-//                //  val args = arrayOf("-m")
-//
-//                // when
-//                val provider = CliOptionsProvider.
-//                val cliOptionsTry = provider.getOptions()
-//
-//                // then
-//                cliOptionsTry.isSuccess shouldBe true
-//                val cliOptions = cliOptionsTry.get()
-//
-//                val expectedBuildManualTargets = true
-//                cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
-//            }
-//        }
+            @Test
+            fun `should return success if build manual targets are specified`() {
+                // given
+                val args = arrayOf("-m")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBuildManualTargets = true
+                cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
+            }
+        }
 
         @Test
         fun `should return success if all flags are specified`() {
