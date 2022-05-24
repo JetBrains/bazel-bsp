@@ -11,22 +11,10 @@ scala_library(
     deps = ["//dep:deeper-export"],
 )
 
-java_binary(
-    name = "java-dep",
-    srcs = glob(["*.java"]),
-    javacopts = [
-        "-Werror",
-        "-Xlint:all",
-    ],
-    main_class = "dep.JavaTest",
-    visibility = ["//visibility:public"],
-)
-
 java_library(
     name = "deeper-export",
     visibility = ["//visibility:public"],
     exports = [
         "//dep/deeper",
     ],
-
 )

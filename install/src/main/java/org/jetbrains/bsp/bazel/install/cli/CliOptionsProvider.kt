@@ -97,6 +97,12 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(javaPathOption)
 
+        val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
+                .longOpt("build_manual_targets")
+                .desc("TODO")
+                .build()
+        cliParserOptions.addOption(manualTargetsOption)
+
     }
 
     fun getOptions(): Try<CliOptions> {
