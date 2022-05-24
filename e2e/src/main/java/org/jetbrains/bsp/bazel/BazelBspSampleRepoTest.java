@@ -167,6 +167,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new ScalaMainClassesParams(
             List.of(
                 new BuildTargetIdentifier("//example:example"),
+                new BuildTargetIdentifier("//manual_target_testing:binary"),
                 new BuildTargetIdentifier("//target_without_main_class:library"),
                 new BuildTargetIdentifier("//target_without_args:binary"),
                 new BuildTargetIdentifier("//target_without_jvm_flags:binary")));
@@ -176,6 +177,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     ScalaMainClassesItem exampleExampleMainClasses =
         new ScalaMainClassesItem(
             new BuildTargetIdentifier("//example:example"), List.of(exampleExampleMainClass));
+
+    ScalaMainClass manualTargetsTestingLibraryMainClass =
+        new ScalaMainClass("example.Example", List.of(), List.of("-Xms2G -Xmx5G"));
+    ScalaMainClassesItem manualTargetsTestingLibraryMainClasses =
+        new ScalaMainClassesItem(
+            new BuildTargetIdentifier("//manual_target_testing:binary"),
+            List.of(manualTargetsTestingLibraryMainClass));
 
     ScalaMainClass withoutArgsBinaryMainClass =
         new ScalaMainClass("example.Example", List.of(), List.of("-Xms2G -Xmx5G"));
@@ -195,6 +203,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new ScalaMainClassesResult(
             List.of(
                 exampleExampleMainClasses,
+                manualTargetsTestingLibraryMainClasses,
                 withoutArgsBinaryMainClasses,
                 withoutJvmFlagsBinaryMainClasses));
 
