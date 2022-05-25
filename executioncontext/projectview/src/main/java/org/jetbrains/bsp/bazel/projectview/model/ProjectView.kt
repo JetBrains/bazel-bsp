@@ -54,7 +54,7 @@ data class ProjectView constructor(
                         + " debugger address: {},"
                         + " java path: {},"
                         + " build flags: {}."
-                        + "build manual targets: {}",
+                        + "build manual targets: {}.",
                 imports,
                 targets,
                 bazelPath,
@@ -83,7 +83,7 @@ data class ProjectView constructor(
                         + " bazel path: {},"
                         + " debugger address: {},"
                         + " java path: {},"
-                        + "build manual targets {}.",
+                        + " build manual targets {},",
                 targets,
                 bazelPath,
                 debuggerAddress,

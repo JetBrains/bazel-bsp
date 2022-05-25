@@ -34,6 +34,11 @@ data class WorkspaceContext(
      */
     val bazelPath: BazelPathSpec,
 
+    /**
+     * Manual targets for targets which user wants wild cards to be omitted.
+     *
+     * Obtained from `ProjectView` simply by mapping 'build_manual_targets' section.
+     */
     val buildManualTargets: BuildManualTargetsSpec,
 
     // TODO replace `BspInfo`

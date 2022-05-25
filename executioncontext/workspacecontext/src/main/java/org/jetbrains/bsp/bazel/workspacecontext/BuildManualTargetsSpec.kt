@@ -14,10 +14,10 @@ private val defaultBuildManualTargetsSpec = BuildManualTargetsSpec(
 
 internal object BuildManualTargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<BuildManualTargetsSpec> {
 
-    override fun map(projectView: ProjectView): Try<BuildManualTargetsSpec> {
-        return if (projectView.buildManualTargets == null) default()
+    override fun map(projectView: ProjectView): Try<BuildManualTargetsSpec> =
+        if (projectView.buildManualTargets == null) default()
         else Try.success(map(projectView.buildManualTargets!!))
-    }
+
 
     override fun default(): Try<BuildManualTargetsSpec> = Try.success(defaultBuildManualTargetsSpec)
 

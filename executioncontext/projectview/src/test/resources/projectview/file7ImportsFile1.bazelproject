@@ -16,4 +16,4 @@ build_flags:
     --build_flag7.2=value7.2
     --build_flag7.3=value7.3
 
-build_manual_targets: false
+build_manual_targets: true
