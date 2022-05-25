@@ -219,7 +219,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             // when
@@ -238,7 +238,7 @@ class DefaultProjectViewGeneratorTest {
 
                 build_flags:
                 
-                build_manual_targets: false
+                build_manual_targets: true
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -315,7 +315,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             // when
@@ -342,7 +342,7 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
-                build_manual_targets: false
+                build_manual_targets: true
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -380,7 +380,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             // when
@@ -409,7 +409,7 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
-                build_manual_targets: false
+                build_manual_targets: true
 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -443,7 +443,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             // when
@@ -472,7 +472,7 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
-                build_manual_targets: false
+                build_manual_targets: true
 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -489,7 +489,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             val parser = DefaultProjectViewParser()
@@ -508,7 +508,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -536,7 +536,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
 
             val parser = DefaultProjectViewParser()

@@ -75,5 +75,6 @@ object ProjectViewBuildManualTargetsSectionParser :
 {
 
     override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
+
     override fun createInstance(value: Boolean): ProjectViewBuildManualTargetsSection = ProjectViewBuildManualTargetsSection(value)
 }

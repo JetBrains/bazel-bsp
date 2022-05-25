@@ -36,8 +36,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-            "Path to project view file. " +
-                    "OR The path of the new project view file which will be generated using generation flags."
+                "Path to project view file. " +
+                        "OR The path of the new project view file which will be generated using generation flags."
             )
             .build()
         cliParserOptions.addOption(projectViewFilePathOption)
@@ -47,8 +47,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArgs()
             .argName("targets")
             .desc(
-            "Add targets to the generated project view file, you can read more about it here:" +
-                    " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets."
+                "Add targets to the generated project view file, you can read more about it here:" +
+                        " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets."
             )
             .build()
         cliParserOptions.addOption(targetsOption)
@@ -58,8 +58,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArgs()
             .argName("flags")
             .desc(
-            "Add build flags to the generated project view file, you can read more about it here:" +
-                    " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_flags."
+                "Add build flags to the generated project view file, you can read more about it here:" +
+                        " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_flags."
             )
             .build()
         cliParserOptions.addOption(buildFlagsOption)
@@ -69,8 +69,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-            "Add bazel path to the generated project view file, you can read more about it here: " +
-                    "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path."
+                "Add bazel path to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path."
             )
             .build()
         cliParserOptions.addOption(bazelPathOption)
@@ -80,8 +80,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("address")
             .desc(
-            "Add debugger address to the generated project view file, you can read more about it here: " +
-                    "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address."
+                "Add debugger address to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address."
             )
             .build()
         cliParserOptions.addOption(debuggerAddressOption)
@@ -91,8 +91,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-            "Add java path to the generated project view file, you can read more about it here: " +
-                    "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path."
+                "Add java path to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path."
             )
             .build()
         cliParserOptions.addOption(javaPathOption)
@@ -100,7 +100,8 @@ class CliOptionsProvider(private val args: Array<String>) {
         val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
             .longOpt("build_manual_targets")
             .desc(
-            "Add manual tag to omit wild cards with this tag. Compiling, testing and running can be done by explicitly mentioning.")
+                "Add java path to the generated project view file, you can read more about it here: " +
+                        "")
             .build()
         cliParserOptions.addOption(manualTargetsOption)
 
@@ -114,10 +115,10 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createCliOptions(cmd: CommandLine): CliOptions =
         CliOptions(
-            helpCliOptions = createHelpCliOptions(cmd),
-            workspaceRootDir = workspaceRootDir(cmd),
-            projectViewFilePath = projectViewFilePath(cmd),
-            projectViewCliOptions = createProjectViewCliOptions(cmd),
+                helpCliOptions = createHelpCliOptions(cmd),
+                workspaceRootDir = workspaceRootDir(cmd),
+                projectViewFilePath = projectViewFilePath(cmd),
+                projectViewCliOptions = createProjectViewCliOptions(cmd),
         )
 
     private fun workspaceRootDir(cmd: CommandLine): Path =
@@ -128,8 +129,8 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createHelpCliOptions(cmd: CommandLine): HelpCliOptions =
         HelpCliOptions(
-            isHelpOptionUsed = isHelpOptionUsed(cmd),
-            printHelp = ::printHelp,
+                isHelpOptionUsed = isHelpOptionUsed(cmd),
+                printHelp = ::printHelp,
         )
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
@@ -141,11 +142,11 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-            "If any generation flag (-b, -f, -j, -t, -x, -m) " +
-                    "is used, the installer will generate a new project view file with these sections. " +
-                    "If --project_view_file (-p) flag is used as well, the new project view file " +
-                    "will be created under this location (it will override the existing file if exists). " +
-                    "Otherwise the new file `projectview.bazelproject` will be created.",
+                "If any generation flag (-b, -f, -j, -t, -x, -m) " +
+                        "is used, the installer will generate a new project view file with these sections. " +
+                        "If --project_view_file (-p) flag is used as well, the new project view file " +
+                        "will be created under this location (it will override the existing file if exists). " +
+                        "Otherwise the new file `projectview.bazelproject` will be created.",
             true
         )
     }
@@ -153,12 +154,12 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
-                javaPath = javaPath(cmd),
-                bazelPath = bazelPath(cmd),
-                debuggerAddress = debuggerAddress(cmd),
-                targets = targets(cmd),
-                buildFlags = buildFlags(cmd),
-                buildManualTargets = buildManualTargets(cmd),
+                    javaPath = javaPath(cmd),
+                    bazelPath = bazelPath(cmd),
+                    debuggerAddress = debuggerAddress(cmd),
+                    targets = targets(cmd),
+                    buildFlags = buildFlags(cmd),
+                    buildManualTargets = buildManualTargets(cmd),
             )
         else null
 

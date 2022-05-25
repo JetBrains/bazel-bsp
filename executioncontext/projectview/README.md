@@ -250,3 +250,9 @@ _We are working on it, you can expect support for this section in future release
 _We are working on it, you can expect support for this section in future releases._
 
 ---
+
+#### build_manual_targets
+
+Build manual targets which will be used to build manual targets which contains tags= ["manual"] and excluded in wildcard
+target patterns.
+

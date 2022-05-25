@@ -281,7 +281,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag7.3=value7.3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -314,7 +314,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag8.3=value8.3",
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }

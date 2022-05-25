@@ -98,7 +98,7 @@ class ProjectViewBuilderTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
                     javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             // then
@@ -121,7 +121,7 @@ class ProjectViewBuilderTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -148,7 +148,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             // when
@@ -174,7 +174,7 @@ class ProjectViewBuilderTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -197,7 +197,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             // then
@@ -212,7 +212,7 @@ class ProjectViewBuilderTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -239,7 +239,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             // when
@@ -263,7 +263,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag2.1=value2.1", "--build_flag2.2=value2.2")
                     ),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             // then
@@ -298,7 +298,7 @@ class ProjectViewBuilderTest {
                         "--build_flag2.2=value2.2"
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -326,7 +326,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             val importedProjectViewTry2 =
@@ -414,7 +414,7 @@ class ProjectViewBuilderTest {
                         "--build_flag4.2=value4.2"
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -442,7 +442,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             val importedProjectViewTry2 =
@@ -468,7 +468,7 @@ class ProjectViewBuilderTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
                     javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag3.1=value3.1")),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 ).build()
 
             val importedProjectViewTry4 = ProjectView.Builder().build()
@@ -531,7 +531,7 @@ class ProjectViewBuilderTest {
                         "--build_flag4.2=value4.2"
                     )
                 ),
-                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
             )
             projectView shouldBe expectedProjectView
         }
