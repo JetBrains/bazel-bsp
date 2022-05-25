@@ -58,7 +58,7 @@ class BuildManualTargetsSpecMapperTest {
     inner class DefaultTest {
 
         @Test
-        fun `should return success and default spec with empty list`() {
+        fun `should return success and default spec with false`() {
             // given
             // when
             val buildManualTargetsTry = BuildManualTargetsSpecMapper.default()
