@@ -29,12 +29,12 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toProjectView(projectViewCliOptions: ProjectViewCliOptions?): ProjectView =
             ProjectView(
-                javaPath = toJavaPathSection(projectViewCliOptions),
-                bazelPath = toBazelPathSection(projectViewCliOptions),
-                debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
-                targets = toTargetsSection(projectViewCliOptions),
-                buildFlags = toBuildFlagsSection(projectViewCliOptions),
-                buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
+                    javaPath = toJavaPathSection(projectViewCliOptions),
+                    bazelPath = toBazelPathSection(projectViewCliOptions),
+                    debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
+                    targets = toTargetsSection(projectViewCliOptions),
+                    buildFlags = toBuildFlagsSection(projectViewCliOptions),
+                    buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =

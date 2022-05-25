@@ -25,8 +25,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArg()
             .argName("path")
             .desc(
-            "Path to directory where bazel bsp server should be setup. "
-                    + "Current directory will be used by default."
+                "Path to directory where bazel bsp server should be setup. "
+                        + "Current directory will be used by default."
             )
             .build()
         cliParserOptions.addOption(workspaceRootDirectoryOption)
@@ -181,7 +181,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
 
-    private fun buildManualTargets(cmd: CommandLine): Boolean = cmd.hasOption("-m")
+    private fun buildManualTargets(cmd: CommandLine): Boolean = cmd.hasOption(BUILD_MANUAL_TARGETS_OPT)
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
