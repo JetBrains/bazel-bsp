@@ -170,7 +170,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 new BuildTargetIdentifier("//target_without_main_class:library"),
                 new BuildTargetIdentifier("//target_without_args:binary"),
                 new BuildTargetIdentifier("//target_without_jvm_flags:binary")
-//                new BuildTargetIdentifier("//manual_target_testing:binary")
+                //                new BuildTargetIdentifier("//manual_target_testing:binary")
                 ));
 
     ScalaMainClass exampleExampleMainClass =
@@ -179,12 +179,12 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new ScalaMainClassesItem(
             new BuildTargetIdentifier("//example:example"), List.of(exampleExampleMainClass));
 
-//    ScalaMainClass manualTargetsTestingLibraryMainClass =
-//        new ScalaMainClass("example.Example", List.of(), List.of());
-//    ScalaMainClassesItem manualTargetsTestingLibraryMainClasses =
-//        new ScalaMainClassesItem(
-//            new BuildTargetIdentifier("//manual_target_testing:binary"),
-//            List.of(manualTargetsTestingLibraryMainClass));
+    //    ScalaMainClass manualTargetsTestingLibraryMainClass =
+    //        new ScalaMainClass("example.Example", List.of(), List.of());
+    //    ScalaMainClassesItem manualTargetsTestingLibraryMainClasses =
+    //        new ScalaMainClassesItem(
+    //            new BuildTargetIdentifier("//manual_target_testing:binary"),
+    //            List.of(manualTargetsTestingLibraryMainClass));
 
     ScalaMainClass withoutArgsBinaryMainClass =
         new ScalaMainClass("example.Example", List.of(), List.of("-Xms2G -Xmx5G"));
@@ -206,8 +206,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 exampleExampleMainClasses,
                 withoutArgsBinaryMainClasses,
                 withoutJvmFlagsBinaryMainClasses
-              //  manualTargetsTestingLibraryMainClasses
-            ));
+                //  manualTargetsTestingLibraryMainClasses
+                ));
 
     return new BazelBspTestScenarioStep(
         "Scala main classes",
@@ -393,6 +393,10 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     return new WorkspaceBuildTargetsResult(
         List.of(
-            exampleExampleTarget, depDepTarget, depDeeperExportTarget, manualTargetScalaLibrary,manualTargetJavaLibrary));
+            exampleExampleTarget,
+            depDepTarget,
+            depDeeperExportTarget,
+            manualTargetScalaLibrary,
+            manualTargetJavaLibrary));
   }
 }
