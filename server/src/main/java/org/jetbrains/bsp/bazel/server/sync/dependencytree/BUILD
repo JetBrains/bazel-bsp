@@ -1,8 +1,8 @@
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "dependencytree",
-    srcs = glob(["*.java"]),
+    srcs = glob(["*.kt"]),
     visibility = ["//visibility:public"],
     exports = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",

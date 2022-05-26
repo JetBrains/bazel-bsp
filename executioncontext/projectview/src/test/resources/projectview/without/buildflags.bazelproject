@@ -15,3 +15,5 @@ bazel_path: path/to/bazel
 debugger_address: 127.0.0.1:8000
 
 java_path: path/to/java
+
+import_depth: 0

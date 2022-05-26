@@ -74,3 +74,13 @@ object ProjectViewJavaPathSectionParser :
 
     override fun createInstance(value: Path): ProjectViewJavaPathSection = ProjectViewJavaPathSection(value)
 }
+
+
+object ProjectViewImportDepthSectionParser :
+    ProjectViewSingletonSectionParser<Int, ProjectViewImportDepthSection>(ProjectViewImportDepthSection.SECTION_NAME) {
+
+    override fun mapRawValue(rawValue: String): Int = rawValue.toInt()
+
+    override fun createInstance(value: Int): ProjectViewImportDepthSection =
+        ProjectViewImportDepthSection(value)
+}

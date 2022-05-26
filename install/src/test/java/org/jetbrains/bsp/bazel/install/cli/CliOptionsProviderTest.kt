@@ -349,6 +349,28 @@ class CliOptionsProviderTest {
         }
 
         @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.importDepth test")
+        inner class ImportDepthTest {
+
+            @Test
+            fun `should return success if import depth is specified`() {
+                // given
+                val args = arrayOf("-i", "1")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedImportDepth = 1
+                cliOptions.projectViewCliOptions?.importDepth shouldBe expectedImportDepth
+            }
+        }
+
+        @Nested
         @DisplayName("cliOptions.projectViewCliOptions.targets test")
         inner class TargetsTests {
 

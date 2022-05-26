@@ -29,7 +29,8 @@ object ProjectViewCLiOptionsProvider {
                     targets = toTargetsSection(projectViewCliOptions),
                     buildFlags = toBuildFlagsSection(projectViewCliOptions),
                     directories = toDirectoriesSection(projectViewCliOptions),
-                    deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions)
+                    deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions),
+                    importDepth = toImportDepthSection(projectViewCliOptions),
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
@@ -57,6 +58,9 @@ object ProjectViewCLiOptionsProvider {
 
         return ProjectViewDirectoriesSection(includedDirectories, excludedDirectories)
     }
+
+    private fun toImportDepthSection(projectViewCliOptions: ProjectViewCliOptions?):  ProjectViewImportDepthSection? =
+        projectViewCliOptions?.importDepth?.let(::ProjectViewImportDepthSection)
 
     private fun calculateIncludedValues(targets: List<String>): List<String> =
             targets.filterNot { it.startsWith(EXCLUDED_TARGET_PREFIX) }

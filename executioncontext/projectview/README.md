@@ -178,6 +178,25 @@ Targets will not be derived from directories.
 
 ---
 
+#### import_depth
+
+A numerical value that specifies how many levels of bazel targets dependencies should be imported as modules.
+Only the targets that are present in workspace are imported.
+
+You can use negative value to import all transitive dependencies.
+
+##### example:
+
+```
+import_depth: 1
+```
+
+##### default:
+
+The default value is 0, meaning that only root targets are imported
+
+---
+
 #### workspace_type
 
 _We are working on it, you can expect support for this section in future releases._

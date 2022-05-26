@@ -65,7 +65,8 @@ class ProjectViewBuilderTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFromDirectories = null
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -101,7 +102,8 @@ class ProjectViewBuilderTest {
                             ),
                             listOf(Path("excluded_dir1"))
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                    importDepth = ProjectViewImportDepthSection(0),
                 ).build()
 
             // then
@@ -130,7 +132,8 @@ class ProjectViewBuilderTest {
                         ),
                         listOf(Path("excluded_dir1"))
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(0),
             )
             projectView shouldBe expectedProjectView
         }
@@ -163,7 +166,8 @@ class ProjectViewBuilderTest {
                         ),
                         listOf(Path("excluded_dir1"))
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                    importDepth = ProjectViewImportDepthSection(0),
                 ).build()
 
             // when
@@ -195,7 +199,8 @@ class ProjectViewBuilderTest {
                         ),
                         listOf(Path("excluded_dir1"))
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(0),
             )
             projectView shouldBe expectedProjectView
         }
@@ -224,7 +229,8 @@ class ProjectViewBuilderTest {
                             ),
                             listOf(Path("excluded_dir1"))
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                    importDepth = ProjectViewImportDepthSection(0),
                 ).build()
 
             // then
@@ -245,7 +251,8 @@ class ProjectViewBuilderTest {
                         ),
                         listOf(Path("excluded_dir1"))
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(0),
             )
             projectView shouldBe expectedProjectView
         }
@@ -278,7 +285,8 @@ class ProjectViewBuilderTest {
                             ),
                             listOf(Path("excluded_dir1.1"))
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                    importDepth = ProjectViewImportDepthSection(1),
                 ).build()
 
             // when
@@ -308,7 +316,8 @@ class ProjectViewBuilderTest {
                             ),
                             listOf(Path("excluded_dir2.1"))
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                    importDepth = ProjectViewImportDepthSection(2),
                 ).build()
 
             // then
@@ -355,7 +364,8 @@ class ProjectViewBuilderTest {
                                 Path("excluded_dir2.1"),
                         )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                importDepth = ProjectViewImportDepthSection(2),
             )
             projectView shouldBe expectedProjectView
         }
@@ -392,7 +402,8 @@ class ProjectViewBuilderTest {
                                     Path("excluded_dir1.1")
                             )
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                    importDepth = ProjectViewImportDepthSection(1),
                 ).build()
 
             val importedProjectViewTry2 =
@@ -438,7 +449,8 @@ class ProjectViewBuilderTest {
                                     Path("excluded_dir3.1")
                             )
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                    importDepth = ProjectViewImportDepthSection(3),
                 ).build()
 
             // when
@@ -526,7 +538,8 @@ class ProjectViewBuilderTest {
                                 Path("excluded_dir4.1")
                         )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(3),
             )
             projectView shouldBe expectedProjectView
         }
@@ -563,7 +576,8 @@ class ProjectViewBuilderTest {
                                     Path("excluded_dir1.1")
                             )
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                    importDepth = ProjectViewImportDepthSection(1),
                 ).build()
 
             val importedProjectViewTry2 =
@@ -607,7 +621,8 @@ class ProjectViewBuilderTest {
                                     Path("excluded_dir3.1")
                             )
                     ),
-                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                    importDepth = ProjectViewImportDepthSection(3),
                 ).build()
 
             val importedProjectViewTry4 = ProjectView.Builder().build()
@@ -698,7 +713,8 @@ class ProjectViewBuilderTest {
                                 Path("excluded_dir4.1")
                         )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(3),
             )
             projectView shouldBe expectedProjectView
         }

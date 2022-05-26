@@ -33,3 +33,10 @@ data class ProjectViewBazelPathSection(override val value: Path) :
         const val SECTION_NAME = "bazel_path"
     }
 }
+
+data class ProjectViewImportDepthSection(override val value: Int) :
+    ProjectViewSingletonSection<Int>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "import_depth"
+    }
+}

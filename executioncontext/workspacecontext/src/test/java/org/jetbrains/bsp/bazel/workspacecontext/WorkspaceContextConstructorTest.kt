@@ -6,6 +6,7 @@ import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -58,7 +59,8 @@ class WorkspaceContextConstructorTest {
                             "--build_flag3=value3",
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel"))
+                    bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel")),
+                    importDepth = ProjectViewImportDepthSection(3)
                 ).build()
 
             // when
@@ -92,6 +94,9 @@ class WorkspaceContextConstructorTest {
 
             val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
+
+            val expectedImportDepthSpec = ImportDepthSpec(3)
+            workspaceContext.importDepth shouldBe expectedImportDepthSpec
         }
     }
 
@@ -113,7 +118,8 @@ class WorkspaceContextConstructorTest {
                 targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
                 bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
-                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
+                importDepth = ImportDepthSpec(0)
             )
             workspaceContext shouldBe expectedWorkspaceContext
         }

@@ -17,3 +17,5 @@ build_flags:
     --build_flag7.3=value7.3
 
 derive_targets_from_directories: false
+
+import_depth: 7

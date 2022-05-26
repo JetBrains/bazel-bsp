@@ -1,9 +1,9 @@
-load("//:junit5.bzl", "java_junit5_test")
+load("//:junit5.bzl", "kt_junit5_test")
 
-java_junit5_test(
+kt_junit5_test(
     name = "DependencyTreeTest",
     size = "small",
-    srcs = ["DependencyTreeTest.java"],
+    srcs = ["DependencyTreeTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.server.sync.dependencytree",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync/dependencytree",

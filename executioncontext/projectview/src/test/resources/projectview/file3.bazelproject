@@ -22,3 +22,5 @@ directories:
     -excluded_dir3.1
 
 derive_targets_from_directories: false
+
+import_depth: 3
