@@ -367,8 +367,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             List.of(Constants.SCALA),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
-    manualTargetScalaLibrary.setData(scalaTarget);
-    manualTargetScalaLibrary.setDataKind(BuildTargetDataKind.SCALA);
+   // manualTargetScalaLibrary.setData(scalaTarget);
+   // manualTargetScalaLibrary.setDataKind(BuildTargetDataKind.SCALA);
 
     BuildTarget manualTargetJavaLibrary =
         new BuildTarget(
@@ -377,8 +377,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             List.of(Constants.JAVA),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
-    manualTargetJavaLibrary.setData(new JvmBuildTarget("external/local_jdk/", "11"));
-    manualTargetJavaLibrary.setDataKind(BuildTargetDataKind.JVM);
+   // manualTargetJavaLibrary.setData(new JvmBuildTarget("external/local_jdk/", "11"));
+   // manualTargetJavaLibrary.setDataKind(BuildTargetDataKind.JVM);
 
     return new WorkspaceBuildTargetsResult(
         List.of(
