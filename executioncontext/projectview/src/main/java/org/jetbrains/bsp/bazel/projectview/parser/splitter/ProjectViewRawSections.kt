@@ -1,5 +1,4 @@
 package org.jetbrains.bsp.bazel.projectview.parser.splitter
-
 data class ProjectViewRawSection(val sectionName: String, val sectionBody: String)
 
 data class ProjectViewRawSections(private val sections: List<ProjectViewRawSection>) {
