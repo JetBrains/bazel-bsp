@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
-import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
@@ -213,6 +212,24 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             new BuildTargetIdentifier("//java_targets:java_library_exported"), List.of());
     javaTargetsJavaLibraryExportedSources.setRoots(List.of());
 
+    SourceItem manualTargetTestJavaFile =
+        new SourceItem(
+            "file://$WORKSPACE/manual_target/TestJavaFile.java", SourceItemKind.FILE, false);
+
+    SourcesItem manualTargetTestJavaFileSources =
+        new SourcesItem(
+            new BuildTargetIdentifier("//manual_targets:java_library"),
+            List.of(manualTargetTestJavaFile));
+
+    SourceItem manualTargetTestScalaFile =
+        new SourceItem(
+            "file://$WORKSPACE/manual_target/TestScalaFile.java", SourceItemKind.FILE, false);
+
+    SourcesItem manualTargetTestScalaFileSources =
+        new SourcesItem(
+            new BuildTargetIdentifier("//manual_targets:scala_library"),
+            List.of(manualTargetTestScalaFile));
+
     SourcesParams sourcesParams = new SourcesParams(getExpectedTargetIdentifiers());
 
     SourcesResult expectedSourcesResult =
@@ -229,7 +246,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 javaTargetsJavaLibrarySources,
                 javaTargetsSubpackageJavaLibrarySources,
                 bspWorkspaceRoot,
-                javaTargetsJavaLibraryExportedSources));
+                javaTargetsJavaLibraryExportedSources,
+                manualTargetTestJavaFileSources,
+                manualTargetTestScalaFileSources));
 
     return new BazelBspTestScenarioStep(
         "sources results",
@@ -284,6 +303,12 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new ResourcesItem(
             new BuildTargetIdentifier("//target_without_main_class:library"), List.of());
 
+    ResourcesItem manualTargetJavaLibrary =
+        new ResourcesItem(new BuildTargetIdentifier("//manual_targets:java_library"), List.of());
+
+    ResourcesItem manualTargetScalaLibrary =
+        new ResourcesItem(new BuildTargetIdentifier("//manual_targets:scala_library"), List.of());
+
     ResourcesResult expectedResourcesResult =
         new ResourcesResult(
             List.of(
@@ -298,7 +323,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 targetWithDependencyJavaBinary,
                 targetWithoutArgsBinary,
                 targetWithoutJvmFlagsBinary,
-                targetWithoutMainClassLibrary));
+                targetWithoutMainClassLibrary,
+                manualTargetJavaLibrary,
+                manualTargetScalaLibrary));
 
     ResourcesParams resourcesParams = new ResourcesParams(getExpectedTargetIdentifiers());
 
@@ -885,16 +912,16 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     BuildTarget manualTargetScalaLibrary =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_library"),
-            List.of(),
-            List.of(Constants.SCALA),
+            List.of("library"),
+            List.of("scala"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
     BuildTarget manualTargetJavaLibrary =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_library"),
-            List.of(),
-            List.of(Constants.JAVA),
+            List.of("library"),
+            List.of("java"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
