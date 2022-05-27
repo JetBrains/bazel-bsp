@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
+import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
@@ -881,6 +882,22 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     bspWorkspaceRoot.setDisplayName("bsp-workspace-root");
     bspWorkspaceRoot.setBaseDirectory("file://$WORKSPACE/");
 
+    BuildTarget manualTargetScalaLibrary =
+        new BuildTarget(
+            new BuildTargetIdentifier("//manual_target:scala_library"),
+            List.of(),
+            List.of(Constants.SCALA),
+            List.of(),
+            new BuildTargetCapabilities(false, false, false));
+
+    BuildTarget manualTargetJavaLibrary =
+        new BuildTarget(
+            new BuildTargetIdentifier("//manual_target:java_library"),
+            List.of(),
+            List.of(Constants.JAVA),
+            List.of(),
+            new BuildTargetCapabilities(false, false, false));
+
     return new WorkspaceBuildTargetsResult(
         List.of(
             javaTargetsJavaBinary,
@@ -894,6 +911,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             scalaTargetsScalaTest,
             targetWithResourcesJavaBinary,
             javaTargetsJavaLibraryExported,
-            bspWorkspaceRoot));
+            bspWorkspaceRoot,
+            manualTargetJavaLibrary,
+            manualTargetScalaLibrary));
   }
 }
