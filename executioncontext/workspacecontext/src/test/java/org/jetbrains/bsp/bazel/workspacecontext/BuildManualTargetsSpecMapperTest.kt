@@ -14,7 +14,7 @@ class BuildManualTargetsSpecMapperTest {
     inner class MapTest {
 
         @Test
-        fun `should return success with default spec if build manual targets are null`() {
+        fun `should return success with default spec if build manual targets is null`() {
             // given
             val projectView = ProjectView.Builder(buildManualTargets = null).build().get()
 

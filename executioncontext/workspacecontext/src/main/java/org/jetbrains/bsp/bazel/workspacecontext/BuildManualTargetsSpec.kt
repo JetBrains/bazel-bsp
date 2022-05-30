@@ -18,7 +18,6 @@ internal object BuildManualTargetsSpecMapper : ProjectViewToExecutionContextEnti
         if (projectView.buildManualTargets == null) default()
         else Try.success(map(projectView.buildManualTargets!!))
 
-
     override fun default(): Try<BuildManualTargetsSpec> = Try.success(defaultBuildManualTargetsSpec)
 
     private fun map(buildManualTargetsSection: ProjectViewBuildManualTargetsSection): BuildManualTargetsSpec =
