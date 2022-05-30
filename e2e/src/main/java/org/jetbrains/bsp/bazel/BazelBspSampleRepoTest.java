@@ -400,6 +400,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
+    BuildTarget manualTargetJavaTest =
+        new BuildTarget(
+            new BuildTargetIdentifier("//manual_target:java_test"),
+            List.of(),
+            List.of(Constants.JAVA),
+            List.of(),
+            new BuildTargetCapabilities(false, false, false));
     return new WorkspaceBuildTargetsResult(
         List.of(
             exampleExampleTarget,
@@ -409,6 +416,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             manualTargetJavaLibrary,
             manualTargetScalaBinary,
             manualTargetJavaBinary,
-            manualTargetScalaTest));
+            manualTargetScalaTest,
+            manualTargetJavaTest));
   }
 }
