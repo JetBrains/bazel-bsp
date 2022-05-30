@@ -1,4 +1,4 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", "scala_test")
 load("@rules_java//java:defs.bzl", "java_binary", "java_library")
 
 scala_library(
@@ -26,3 +26,10 @@ java_binary(
     main_class = "manual_target.TestJavaBinary",
     tags = ["manual"],
 )
+
+scala_test(
+    name = "scala_test",
+    srcs = glob(["*.scala"]),
+    main_class = "manual_target.ScalaTest",
+)
+

@@ -7,7 +7,6 @@ scala_library(
         "*.java",
         "*.scala",
     ]),
-    tags = ["manual"],
     visibility = ["//visibility:public"],
     deps = ["//dep:deeper-export"],
 )
@@ -25,7 +24,6 @@ java_binary(
 
 java_library(
     name = "deeper-export",
-    tags = ["manual"],
     visibility = ["//visibility:public"],
     exports = [
         "//dep/deeper",
