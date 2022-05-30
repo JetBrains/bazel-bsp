@@ -521,7 +521,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 javaTargetsJavaLibraryExported,
                 bspWorkspaceRoot,
                 manualTargetJavaLibrary,
-                manualTargetJavaLibrary));
+                manualTargetScalaLibrary));
 
     DependencySourcesParams dependencySourcesParams =
         new DependencySourcesParams(getExpectedTargetIdentifiers());
