@@ -497,6 +497,14 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     DependencySourcesItem bspWorkspaceRoot =
         new DependencySourcesItem(new BuildTargetIdentifier("bsp-workspace-root"), List.of());
 
+    DependencySourcesItem manualTargetJavaLibrary =
+        new DependencySourcesItem(
+            new BuildTargetIdentifier("//manual_target:java_library"), List.of());
+
+    DependencySourcesItem manualTargetScalaLibrary =
+        new DependencySourcesItem(
+            new BuildTargetIdentifier("manual_target:scala_library"), List.of());
+
     DependencySourcesResult expectedDependencies =
         new DependencySourcesResult(
             List.of(
@@ -511,7 +519,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 targetWithoutJvmFlagsBinary,
                 targetWithoutMainClassLibrary,
                 javaTargetsJavaLibraryExported,
-                bspWorkspaceRoot));
+                bspWorkspaceRoot,
+                manualTargetJavaLibrary,
+                manualTargetJavaLibrary));
 
     DependencySourcesParams dependencySourcesParams =
         new DependencySourcesParams(getExpectedTargetIdentifiers());

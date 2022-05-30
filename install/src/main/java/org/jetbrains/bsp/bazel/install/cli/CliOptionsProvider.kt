@@ -115,10 +115,10 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createCliOptions(cmd: CommandLine): CliOptions =
         CliOptions(
-                helpCliOptions = createHelpCliOptions(cmd),
-                workspaceRootDir = workspaceRootDir(cmd),
-                projectViewFilePath = projectViewFilePath(cmd),
-                projectViewCliOptions = createProjectViewCliOptions(cmd),
+            helpCliOptions = createHelpCliOptions(cmd),
+            workspaceRootDir = workspaceRootDir(cmd),
+            projectViewFilePath = projectViewFilePath(cmd),
+            projectViewCliOptions = createProjectViewCliOptions(cmd),
         )
 
     private fun workspaceRootDir(cmd: CommandLine): Path =
@@ -129,8 +129,8 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createHelpCliOptions(cmd: CommandLine): HelpCliOptions =
         HelpCliOptions(
-                isHelpOptionUsed = isHelpOptionUsed(cmd),
-                printHelp = ::printHelp,
+            isHelpOptionUsed = isHelpOptionUsed(cmd),
+            printHelp = ::printHelp,
         )
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
@@ -142,11 +142,11 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-                "If any generation flag (-b, -f, -j, -t, -x, -m) " +
-                        "is used, the installer will generate a new project view file with these sections. " +
-                        "If --project_view_file (-p) flag is used as well, the new project view file " +
-                        "will be created under this location (it will override the existing file if exists). " +
-                        "Otherwise the new file `projectview.bazelproject` will be created.",
+            "If any generation flag (-b, -f, -j, -t, -x, -m) " +
+                    "is used, the installer will generate a new project view file with these sections. " +
+                    "If --project_view_file (-p) flag is used as well, the new project view file " +
+                    "will be created under this location (it will override the existing file if exists). " +
+                    "Otherwise the new file `projectview.bazelproject` will be created.",
             true
         )
     }
@@ -154,12 +154,12 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
-                    javaPath = javaPath(cmd),
-                    bazelPath = bazelPath(cmd),
-                    debuggerAddress = debuggerAddress(cmd),
-                    targets = targets(cmd),
-                    buildFlags = buildFlags(cmd),
-                    buildManualTargets = buildManualTargets(cmd),
+                javaPath = javaPath(cmd),
+                bazelPath = bazelPath(cmd),
+                debuggerAddress = debuggerAddress(cmd),
+                targets = targets(cmd),
+                buildFlags = buildFlags(cmd),
+                buildManualTargets = buildManualTargets(cmd),
             )
         else null
 

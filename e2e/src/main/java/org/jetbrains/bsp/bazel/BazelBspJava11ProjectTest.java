@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
-import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
@@ -34,17 +33,21 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
   }
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
-    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "11");
+    //    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/",
+    // "11");
+    JvmBuildTarget exampleExampleJvmBuildTarget =
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/local_jdk/", "11");
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
             new BuildTargetIdentifier("//example:example"),
             ImmutableList.of(),
-            ImmutableList.of(Constants.JAVA),
+            ImmutableList.of("java"),
             ImmutableList.of(),
             new BuildTargetCapabilities(true, false, true));
     exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
     exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+    exampleExampleBuildTarget.setDisplayName("//example:example");
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
         new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
