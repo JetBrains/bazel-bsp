@@ -9,6 +9,8 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFlagSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import java.nio.file.Path
+import kotlin.io.path.pathString
 
 data class TargetsSpec(
     override val values: List<BuildTargetIdentifier>,
@@ -25,10 +27,10 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     private const val NAME = "targets"
 
     override fun map(projectView: ProjectView): Try<TargetsSpec> =
-            if (deriveTargetsFlags(projectView.deriveTargetsFlag!!))
-                deriveTargetsFlagTrue(projectView)
-            else
-                deriveTargetsFlagFalse(projectView)
+        if (deriveTargetsFlags(projectView))
+            deriveTargetsFlagTrue(projectView)
+        else
+            deriveTargetsFlagFalse(projectView)
 
     private fun deriveTargetsFlagTrue(projectView: ProjectView): Try<TargetsSpec> =
         when {
@@ -36,7 +38,7 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
             hasEmptyIncludedValuesAndEmptyExcludedValuesDirectories(projectView.directories!!) -> deriveTargetsFlagFalse(projectView)
             hasEmptyIncludedValuesAndNonEmptyExcludedValuesDirectories(projectView.directories!!) -> Try.failure(
                 ProjectViewToExecutionContextEntityMapperException(
-                    NAME, "'directories' sections have no included targets."
+                    NAME, "'directories' section has no included targets."
                 )
             )
             else -> Try.success(mapNotEmptyDerivedTargetSection(projectView.targets, projectView.directories!!))
@@ -64,8 +66,8 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     private fun hasEmptyIncludedValuesAndNonEmptyExcludedValuesDirectories(directoriesSection: ProjectViewDirectoriesSection): Boolean =
         directoriesSection.values.isEmpty() and directoriesSection.excludedValues.isNotEmpty()
 
-    private fun deriveTargetsFlags(deriveTargetsFlagSection: ProjectViewDeriveTargetsFlagSection): Boolean =
-        deriveTargetsFlagSection.value
+    private fun deriveTargetsFlags(projectView: ProjectView): Boolean =
+            projectView.deriveTargetsFlag?.value == true
 
     private fun mapNotEmptyNotDerivedTargetsSection(targetsSection: ProjectViewTargetsSection): TargetsSpec =
         TargetsSpec(targetsSection.values, targetsSection.excludedValues)
@@ -75,12 +77,15 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
         val directoriesExcludedValues = directoriesSection.excludedValues.map { mapDirectoryToTarget(it) }
 
         return TargetsSpec(
-                (targetsSection?.values ?: emptyList()) + directoriesValues,
-                (targetsSection?.excludedValues ?: emptyList()) + directoriesExcludedValues)
+                targetsSection?.values.orEmpty() + directoriesValues,
+                targetsSection?.excludedValues.orEmpty() + directoriesExcludedValues)
     }
 
-    private fun mapDirectoryToTarget(buildDirectoryIdentifier: BuildTargetIdentifier): BuildTargetIdentifier =
-            BuildTargetIdentifier("//" + buildDirectoryIdentifier.uri + "/...")
+    private fun mapDirectoryToTarget(buildDirectoryIdentifier: Path): BuildTargetIdentifier =
+            if(buildDirectoryIdentifier.pathString.last()=='/')
+                BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "...")
+            else
+                BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "/...")
 
     override fun default(): Try<TargetsSpec> = Try.success(defaultTargetsSpec)
 }

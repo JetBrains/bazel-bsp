@@ -74,5 +74,3 @@ object ProjectViewJavaPathSectionParser :
 
     override fun createInstance(value: Path): ProjectViewJavaPathSection = ProjectViewJavaPathSection(value)
 }
-
-

@@ -96,6 +96,28 @@ class CliOptionsProvider(private val args: Array<String>) {
             )
             .build()
         cliParserOptions.addOption(javaPathOption)
+
+        val directoriesOption = Option.builder(DIRECTORIES_SHORT_OPT)
+                .longOpt("directories")
+                .hasArg()
+                .argName("directories")
+                .desc(
+                        "Add directories to the generated project view file, you can read more about it here: " +
+                                "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
+                )
+                .build()
+        cliParserOptions.addOption(directoriesOption)
+
+        val deriveTargetsFlagOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
+                .longOpt("derive_targets_from_directories")
+                .hasArg()
+                .argName("derive_targets_from_directories")
+                .desc(
+                        "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
+                                "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
+                )
+                .build()
+        cliParserOptions.addOption(deriveTargetsFlagOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -133,7 +155,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-            "If any generation flag (-b, -f, -j, -t, -x) " +
+            "If any generation flag (-b, -f, -j, -t, -x, -r, -v) " +
                     "is used, the installer will generate a new project view file with these sections. " +
                     "If --project_view_file (-p) flag is used as well, the new project view file " +
                     "will be created under this location (it will override the existing file if exists). " +

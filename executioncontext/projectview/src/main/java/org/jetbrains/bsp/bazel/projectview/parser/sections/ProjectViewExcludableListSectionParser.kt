@@ -4,6 +4,8 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import java.nio.file.Path
+import kotlin.io.path.Path
 
 /**
  * Implementation of excludable list section parser.
@@ -71,11 +73,11 @@ object ProjectViewTargetsSectionParser :
 }
 
 object ProjectViewDirectoriesSectionParser :
-        ProjectViewExcludableListSectionParser<BuildTargetIdentifier, ProjectViewDirectoriesSection>(ProjectViewDirectoriesSection.SECTION_NAME) {
+        ProjectViewExcludableListSectionParser<Path, ProjectViewDirectoriesSection>(ProjectViewDirectoriesSection.SECTION_NAME) {
 
-    override fun mapRawValues(rawValue: String): BuildTargetIdentifier = BuildTargetIdentifier(rawValue)
+    override fun mapRawValues(rawValue: String): Path = Path(rawValue)
 
     override fun createInstance(
-            includedValues: List<BuildTargetIdentifier>, excludedValues: List<BuildTargetIdentifier>
+            includedValues: List<Path>, excludedValues: List<Path>
     ): ProjectViewDirectoriesSection = ProjectViewDirectoriesSection(includedValues, excludedValues)
 }

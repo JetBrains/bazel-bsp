@@ -31,6 +31,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -59,6 +61,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -87,6 +91,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -110,6 +116,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = null,
                 buildFlags = null,
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -133,6 +141,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -162,6 +172,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             // when
@@ -188,6 +200,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             // when
@@ -231,6 +245,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             // when
@@ -280,6 +296,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             // when
@@ -342,6 +360,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             // when
@@ -402,6 +422,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             // when
@@ -445,6 +467,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             val parser = DefaultProjectViewParser()
@@ -463,6 +487,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
+                    directories = null,
+                    deriveTargetsFlag = null
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -490,6 +516,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             val parser = DefaultProjectViewParser()
@@ -532,6 +560,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                    directories = null,
+                    deriveTargetsFlag = null
             )
 
             val parser = DefaultProjectViewParser()
