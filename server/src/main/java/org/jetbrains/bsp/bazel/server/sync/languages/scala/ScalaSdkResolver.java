@@ -22,7 +22,7 @@ public class ScalaSdkResolver {
       };
   private final BazelPathsResolver bazelPathsResolver;
   private final Pattern VERSION_PATTERN =
-      Pattern.compile("scala-(?:library|compiler|reflect)-(.*)\\.jar");
+      Pattern.compile("scala-(?:library|compiler|reflect)-([.\\d]+)\\.jar");
 
   public ScalaSdkResolver(BazelPathsResolver bazelPathsResolver) {
     this.bazelPathsResolver = bazelPathsResolver;
