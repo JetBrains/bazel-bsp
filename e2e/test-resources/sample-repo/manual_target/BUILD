@@ -38,4 +38,3 @@ java_test(
     srcs = glob(["*.java"]),
     main_class = "manual_target.JavaTest",
 )
-
