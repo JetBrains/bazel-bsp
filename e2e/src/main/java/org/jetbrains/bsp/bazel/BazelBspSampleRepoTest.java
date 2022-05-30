@@ -885,7 +885,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_library"),
             List.of(),
-            List.of(Constants.SCALA),
+            List.of("scala"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
@@ -893,7 +893,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_library"),
             List.of(),
-            List.of(Constants.JAVA),
+            List.of("java"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
@@ -901,7 +901,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_binary"),
             List.of(),
-            List.of(Constants.SCALA),
+            List.of("scala"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
@@ -909,7 +909,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_binary"),
             List.of(),
-            List.of(Constants.JAVA),
+            List.of("java"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
@@ -917,7 +917,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_test"),
             List.of(),
-            List.of(Constants.SCALA),
+            List.of("scala"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
 
@@ -925,7 +925,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_test"),
             List.of(),
-            List.of(Constants.JAVA),
+            List.of("java"),
             List.of(),
             new BuildTargetCapabilities(false, false, false));
     return new WorkspaceBuildTargetsResult(
@@ -941,6 +941,12 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
             scalaTargetsScalaTest,
             targetWithResourcesJavaBinary,
             javaTargetsJavaLibraryExported,
-            bspWorkspaceRoot));
+            bspWorkspaceRoot,
+            manualTargetScalaLibrary,
+            manualTargetJavaLibrary,
+            manualTargetScalaBinary,
+            manualTargetJavaBinary,
+            manualTargetScalaTest,
+            manualTargetJavaTest));
   }
 }
