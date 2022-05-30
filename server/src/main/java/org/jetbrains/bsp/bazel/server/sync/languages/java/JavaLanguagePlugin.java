@@ -13,6 +13,7 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.util.Map;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -116,7 +117,9 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
         javaModule.runtimeClasspath().map(URI::toString).asJava(),
         javaModule.jvmOps().asJava(),
         bazelInfo.getWorkspaceRoot().toString(),
-        environment);
+        Map.of());
+    // FIXME: figure out what we should pass here, because passing the environment
+    // of the *SERVER* makes little sense
   }
 
   public JavacOptionsItem toJavacOptionsItem(Module module, JavaModule javaModule) {
