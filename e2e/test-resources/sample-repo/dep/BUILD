@@ -9,6 +9,7 @@ scala_library(
     ]),
     visibility = ["//visibility:public"],
     deps = ["//dep:deeper-export"],
+    tags = ["manual"],
 )
 
 java_binary(
@@ -28,4 +29,5 @@ java_library(
     exports = [
     "//dep/deeper",
     ],
+    tags = ["manual"],
 )
