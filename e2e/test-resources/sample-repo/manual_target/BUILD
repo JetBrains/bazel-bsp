@@ -1,5 +1,5 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", "scala_binary")
-load("@rules_java//java:defs.bzl", "java_library", "java_binary")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library")
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
 
 scala_library(
     name = "scala_library",
@@ -23,6 +23,6 @@ scala_binary(
 java_binary(
     name = "java_binary",
     srcs = glob(["*.java"]),
-    main_class ="manual_target.TestJavaBinary",
+    main_class = "manual_target.TestJavaBinary",
     tags = ["manual"],
 )
