@@ -1,95 +1,54 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# bazel-skylib 0.8.0 released 2019.03.20 (https://github.com/bazelbuild/bazel-skylib/releases/tag/0.8.0)
-skylib_version = "1.0.2"
+skylib_version = "1.2.1"
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
     type = "tar.gz",
     url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(skylib_version, skylib_version),
 )
 
-# For bazel_bsp aspect
-http_archive(
-    name = "bazel_bsp",
-    strip_prefix = "bazel-bsp-09ef0c343c474bcad33a6a302dfd6a07cf37ea14",
-    url = "https://github.com/andrefmrocha/bazel-bsp/archive/09ef0c343c474bcad33a6a302dfd6a07cf37ea14.tar.gz",
-)
+rules_scala_version = "3dd5d8110d56cfc19722532866cbfc039a6a9612"
 
-# For rules_scala
 http_archive(
     name = "io_bazel_rules_scala",
-    strip_prefix = "rules_scala-d6186617cfe64cef2074b23ca58daac75fe40d42",
-    url = "https://github.com/andrefmrocha/rules_scala/archive/d6186617cfe64cef2074b23ca58daac75fe40d42.tar.gz",
+    sha256 = "d805d4c3e288f87909c0eba177facc2d945f1eeb67f4bd78e96afc51fa25e03c",
+    strip_prefix = "rules_scala-%s" % rules_scala_version,
+    type = "zip",
+    url = "https://github.com/bazelbuild/rules_scala/archive/%s.zip" % rules_scala_version,
 )
 
-load("@io_bazel_rules_scala//:version.bzl", "bazel_version")
+load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-bazel_version(name = "bazel_version")
+scala_config(scala_version = "2.12.15")
+
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+
+scala_repositories()
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
 
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
 
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+load("@io_bazel_rules_scala//testing:scalatest.bzl", "scalatest_repositories", "scalatest_toolchain")
 
-scala_repositories((
-    "2.12.8",
-    {
-        "scala_compiler": "f34e9119f45abd41e85b9e121ba19dd9288b3b4af7f7047e86dc70236708d170",
-        "scala_library": "321fb55685635c931eba4bc0d7668349da3f2c09aee2de93a70566066ff25c28",
-        "scala_reflect": "4d6405395c4599ce04cea08ba082339e3e42135de9aae2923c9f5367e957315a",
-    },
-))
+scalatest_repositories()
 
-protobuf_version = "31ebe2ac71400344a5db91ffc13c4ddfb7589f92"
+scalatest_toolchain()
 
-protobuf_version_sha256 = "0e8e32d44c9d4572975f43591b51cd3c77392661e4ded17fdfab81e8460344e8"
+load("@bazel_tools//tools/build_defs/repo:jvm.bzl", "jvm_maven_import_external")
 
-http_archive(
-    name = "com_google_protobuf",
-    sha256 = protobuf_version_sha256,
-    strip_prefix = "protobuf-%s" % protobuf_version,
-    url = "https://github.com/protocolbuffers/protobuf/archive/%s.tar.gz" % protobuf_version,
-)
-
-load("@io_bazel_rules_scala//scala:scala_maven_import_external.bzl", "scala_maven_import_external")
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "default_maven_server_urls", "default_scala_major_version", "scala_mvn_artifact")
-
-# Exp
-scala_maven_import_external(
-    name = "com_illicitonion_scalac_composite_reporter",
-    artifact = scala_mvn_artifact(
-        "com.illicitonion:scalac-composite-reporter:0.0.1",
-        default_scala_major_version(),
-    ),
-    artifact_sha256 = "9e3655fa282adbc6686805d9a745131f18819a15402b20d08fb39253f3b5a5aa",
-    licenses = ["notice"],
-    server_urls = default_maven_server_urls(),
-)
-
-# For guava
-http_archive(
-    name = "rules_jvm_external",
-    sha256 = "79c9850690d7614ecdb72d68394f994fef7534b292c4867ce5e7dec0aa7bdfad",
-    strip_prefix = "rules_jvm_external-2.8",
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/2.8.zip",
-)
-
-load("@io_bazel_rules_scala//specs2:specs2_junit.bzl", "specs2_junit_repositories")
-
-specs2_junit_repositories()
-
-load("@rules_jvm_external//:defs.bzl", "maven_install")
-
-maven_install(
-    name = "maven",
-    artifacts = [
-        "com.google.guava:guava:28.0-jre",
-    ],
+jvm_maven_import_external(
+    name = "guava",
+    artifact = "com.google.guava:guava:28.0-jre",
     fetch_sources = True,
-    repositories = [
+    server_urls = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
     ],

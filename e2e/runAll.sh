@@ -14,12 +14,11 @@ runTest() {
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
 
 runTest //e2e:BazelBspSampleRepoTest
-runTest //e2e:BazelBspActionGraphV1Test
-runTest //e2e:BazelBspActionGraphV2Test
-runTest //e2e:BazelBspJava8ProjectTest
-runTest //e2e:BazelBspJava11ProjectTest
-runTest //e2e:BazelBspCppProjectTest
-runTest //e2e:BazelBspEntireRepositoryImportTest
+#runTest //e2e:BazelBspActionGraphV1Test
+#runTest //e2e:BazelBspActionGraphV2Test
+#runTest //e2e:BazelBspJava8ProjectTest
+#runTest //e2e:BazelBspJava11ProjectTest
+#runTest //e2e:BazelBspCppProjectTest
 
 echo -e "${GREEN}==================================="
 echo -e "==================================="

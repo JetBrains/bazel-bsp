@@ -1,6 +1,7 @@
 workspace(name = "bazel_bsp")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ http_archive(
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
 
-scala_config()
+scala_config(scala_version = "2.13.6")
 
 # ----------------------------------------------------------------------------------------------------------------------
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
@@ -159,21 +160,21 @@ http_archive(
 # ======================================================================================================================
 # bazel_sonatype - for publish
 
-BAZEL_SONATYPE_TAG = "0.0.1"
-
-BAZEL_SONATYPE_SHA = "f7889b745694478a2d6a3618315a3e5f9bf1843aabfd7aa4429c4503ff39f397"
-
-http_archive(
-    name = "bazel_sonatype",
-    sha256 = BAZEL_SONATYPE_SHA,
-    strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
-    url = "https://github.com/JetBrains/bazel-sonatype/archive/{}.zip".format(BAZEL_SONATYPE_TAG),
-)
-
-# ----------------------------------------------------------------------------------------------------------------------
-load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
-
-sonatype_dependencies()
+#BAZEL_SONATYPE_TAG = "0.0.1"
+#
+#BAZEL_SONATYPE_SHA = "f7889b745694478a2d6a3618315a3e5f9bf1843aabfd7aa4429c4503ff39f397"
+#
+#http_archive(
+#    name = "bazel_sonatype",
+#    sha256 = BAZEL_SONATYPE_SHA,
+#    strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
+#    url = "https://github.com/JetBrains/bazel-sonatype/archive/{}.zip".format(BAZEL_SONATYPE_TAG),
+#)
+#
+## ----------------------------------------------------------------------------------------------------------------------
+#load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
+#
+#sonatype_dependencies()
 
 # ======================================================================================================================
 # junit5
@@ -190,6 +191,16 @@ junit_jupiter_java_repositories(
 
 junit_platform_java_repositories(
     version = JUNIT_PLATFORM_VERSION,
+)
+
+# ======================================================================================================================
+# the new testkit
+# todo: merge into the bsp repo?
+
+git_repository(
+    name = "testkit",
+    commit = "36bb3467d3df351780d0092dadfd9f3313787e8d",
+    remote = "https://github.com/agluszak/bsp-testkit2.git",
 )
 
 # ======================================================================================================================
