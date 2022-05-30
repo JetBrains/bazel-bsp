@@ -101,7 +101,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             .longOpt("build_manual_targets")
             .desc(
                 "Add java path to the generated project view file, you can read more about it here: " +
-                        "")
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_manual_targets.")
             .build()
         cliParserOptions.addOption(manualTargetsOption)
 
