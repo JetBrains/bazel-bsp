@@ -318,12 +318,12 @@ class TargetsSpecMapperTest {
                                 directories = ProjectViewDirectoriesSection(
                                         listOf(
                                                 Path("included_dir1"),
-                                                Path("included_dir1/"),
-                                                Path("included_dir1")
+                                                Path("included_dir2/"),
+                                                Path("included_dir3")
                                         ),
                                         listOf(
                                                 Path("excluded_dir1"),
-                                                Path("excluded_dir1"),
+                                                Path("excluded_dir2"),
                                         ),
                                 ),
                                 deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
@@ -340,12 +340,12 @@ class TargetsSpecMapperTest {
                         TargetsSpec(
                                 listOf(
                                         BuildTargetIdentifier("//included_dir1/..."),
-                                        BuildTargetIdentifier("//included_dir1/..."),
-                                        BuildTargetIdentifier("//included_dir1/..."),
+                                        BuildTargetIdentifier("//included_dir2/..."),
+                                        BuildTargetIdentifier("//included_dir3/..."),
                                 ),
                                 listOf(
                                         BuildTargetIdentifier("//excluded_dir1/..."),
-                                        BuildTargetIdentifier("//excluded_dir1/..."),
+                                        BuildTargetIdentifier("//excluded_dir2/..."),
                                 ),
                         )
                 targetsSpec shouldBe expectedTargets
@@ -370,12 +370,12 @@ class TargetsSpecMapperTest {
                                 directories = ProjectViewDirectoriesSection(
                                         listOf(
                                                 Path("included_dir1"),
-                                                Path("included_dir1/"),
-                                                Path("included_dir1")
+                                                Path("included_dir2/"),
+                                                Path("included_dir3")
                                         ),
                                         listOf(
                                                 Path("excluded_dir1"),
-                                                Path("excluded_dir1"),
+                                                Path("excluded_dir2"),
                                         ),
                                 ),
                                 deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
@@ -395,14 +395,59 @@ class TargetsSpecMapperTest {
                                         BuildTargetIdentifier("//included_target2"),
                                         BuildTargetIdentifier("//included_target3"),
                                         BuildTargetIdentifier("//included_dir1/..."),
-                                        BuildTargetIdentifier("//included_dir1/..."),
-                                        BuildTargetIdentifier("//included_dir1/..."),
+                                        BuildTargetIdentifier("//included_dir2/..."),
+                                        BuildTargetIdentifier("//included_dir3/..."),
                                 ),
                                 listOf(
                                         BuildTargetIdentifier("//excluded_target1"),
                                         BuildTargetIdentifier("//excluded_target2"),
                                         BuildTargetIdentifier("//excluded_dir1/..."),
+                                        BuildTargetIdentifier("//excluded_dir2/..."),
+                                ),
+                        )
+                targetsSpec shouldBe expectedTargets
+            }
+
+            @Test
+            fun `should return success for successful mapping with different directory cases`() {
+                // given
+                val projectView =
+                        ProjectView.Builder(
+                                targets = ProjectViewTargetsSection(
+                                        emptyList(),
+                                        emptyList()
+                                ),
+                                directories = ProjectViewDirectoriesSection(
+                                        listOf(
+                                                Path("included_dir1/"),
+                                                Path("included_dir2/"),
+                                                Path(".")
+                                        ),
+                                        listOf(
+                                                Path("excluded_dir1/"),
+                                                Path("excluded_dir2/"),
+                                        ),
+                                ),
+                                deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                        ).build().get()
+
+                // when
+                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+
+                // then
+                targetsSpecTry.isSuccess shouldBe true
+                val targetsSpec = targetsSpecTry.get()
+
+                val expectedTargets =
+                        TargetsSpec(
+                                listOf(
+                                        BuildTargetIdentifier("//included_dir1/..."),
+                                        BuildTargetIdentifier("//included_dir2/..."),
+                                        BuildTargetIdentifier("//./..."),
+                                ),
+                                listOf(
                                         BuildTargetIdentifier("//excluded_dir1/..."),
+                                        BuildTargetIdentifier("//excluded_dir2/..."),
                                 ),
                         )
                 targetsSpec shouldBe expectedTargets
