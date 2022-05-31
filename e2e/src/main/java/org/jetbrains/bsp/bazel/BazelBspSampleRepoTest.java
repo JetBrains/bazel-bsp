@@ -220,15 +220,17 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new SourcesItem(
             new BuildTargetIdentifier("//manual_targets:java_library"),
             List.of(manualTargetTestJavaFile));
+    manualTargetTestJavaFileSources.setRoots(List.of("file://$WORKSPACE/manual_target/"));
 
     SourceItem manualTargetTestScalaFile =
         new SourceItem(
-            "file://$WORKSPACE/manual_target/TestScalaFile.java", SourceItemKind.FILE, false);
+            "file://$WORKSPACE/manual_target/TestScalaFile.scala", SourceItemKind.FILE, false);
 
     SourcesItem manualTargetTestScalaFileSources =
         new SourcesItem(
             new BuildTargetIdentifier("//manual_targets:scala_library"),
             List.of(manualTargetTestScalaFile));
+    manualTargetTestScalaFileSources.setRoots(List.of("file://$WORKSPACE/manual_target/"));
 
     SourceItem manualTargetTestJavaTest =
         new SourceItem("file://$WORKSPACE/manual_target/JavaTest.java", SourceItemKind.FILE, false);
@@ -237,6 +239,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new SourcesItem(
             new BuildTargetIdentifier("//manual_targets:java_test"),
             List.of(manualTargetTestJavaTest));
+    manualTargetTestJavaTestSources.setRoots(List.of("file://$WORKSPACE/manual_target/"));
 
     SourceItem manualTargetTestScalaTest =
         new SourceItem(
@@ -246,6 +249,27 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
         new SourcesItem(
             new BuildTargetIdentifier("//manual_targets:scala_test"),
             List.of(manualTargetTestScalaTest));
+    manualTargetTestScalaTestSources.setRoots(List.of("file://$WORKSPACE/manual_target/"));
+
+    SourceItem manualTargetTestJavaBinary =
+        new SourceItem(
+            "file://$WORKSPACE/manual_target/TestJavaBinary.java", SourceItemKind.FILE, false);
+
+    SourcesItem manualTargetTestJavaBinarySources =
+        new SourcesItem(
+            new BuildTargetIdentifier("//manual_targets:java_binary"),
+            List.of(manualTargetTestJavaBinary));
+    manualTargetTestJavaBinarySources.setRoots(List.of("file://$WORKSPACE/manual_target/"));
+
+    SourceItem manualTargetTestScalaBinary =
+        new SourceItem(
+            "file://$WORKSPACE/manual_target/TestScalaBinary.scala", SourceItemKind.FILE, false);
+
+    SourcesItem manualTargetTestScalaBinarySources =
+        new SourcesItem(
+            new BuildTargetIdentifier("//manual_targets:scala_binary"),
+            List.of(manualTargetTestScalaBinary));
+    manualTargetTestScalaBinarySources.setRoots(List.of("file://$WORKSPACE/manual_target/"));
 
     SourcesParams sourcesParams = new SourcesParams(getExpectedTargetIdentifiers());
 
@@ -267,7 +291,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 manualTargetTestJavaFileSources,
                 manualTargetTestScalaFileSources,
                 manualTargetTestJavaTestSources,
-                manualTargetTestScalaTestSources));
+                manualTargetTestScalaTestSources,
+                manualTargetTestJavaBinarySources,
+                manualTargetTestScalaBinarySources));
 
     return new BazelBspTestScenarioStep(
         "sources results",
@@ -328,6 +354,12 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     ResourcesItem manualTargetScalaLibrary =
         new ResourcesItem(new BuildTargetIdentifier("//manual_targets:scala_library"), List.of());
 
+    ResourcesItem manualTargetJavaBinary =
+        new ResourcesItem(new BuildTargetIdentifier("//manual_targets:java_binary"), List.of());
+
+    ResourcesItem manualTargetScalaBinary =
+        new ResourcesItem(new BuildTargetIdentifier("//manual_targets:scala_binary"), List.of());
+
     ResourcesItem manualTargetJavaTest =
         new ResourcesItem(new BuildTargetIdentifier("//manual_targets:java_test"), List.of());
 
@@ -351,6 +383,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 targetWithoutMainClassLibrary,
                 manualTargetJavaLibrary,
                 manualTargetScalaLibrary,
+                manualTargetJavaBinary,
+                manualTargetScalaBinary,
                 manualTargetJavaTest,
                 manualTargetScalaTest));
 
@@ -526,18 +560,39 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     DependencySourcesItem manualTargetJavaLibrary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("//manual_target:java_library"), List.of());
+            new BuildTargetIdentifier("//manual_target:java_library"),
+            List.of(
+                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_library-src.jar"));
 
     DependencySourcesItem manualTargetScalaLibrary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("manual_target:scala_library"), List.of());
+            new BuildTargetIdentifier("manual_target:scala_library"),
+            List.of(
+                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_library-src.jar"));
+
+    DependencySourcesItem manualTargetJavaBinary =
+        new DependencySourcesItem(
+            new BuildTargetIdentifier("//manual_target:java_binary"),
+            List.of(
+                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_binary-src.jar"));
+
+    DependencySourcesItem manualTargetScalaBinary =
+        new DependencySourcesItem(
+            new BuildTargetIdentifier("manual_target:scala_binary"),
+            List.of(
+                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_binary-src.jar"));
 
     DependencySourcesItem manualTargetJavaTest =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("//manual_target:java_test"), List.of());
+            new BuildTargetIdentifier("//manual_target:java_test"),
+            List.of(
+                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_test-src.jar"));
 
     DependencySourcesItem manualTargetScalaTest =
-        new DependencySourcesItem(new BuildTargetIdentifier("manual_target:scala_test"), List.of());
+        new DependencySourcesItem(
+            new BuildTargetIdentifier("manual_target:scala_test"),
+            List.of(
+                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_test-src.jar"));
 
     DependencySourcesResult expectedDependencies =
         new DependencySourcesResult(
@@ -556,6 +611,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 bspWorkspaceRoot,
                 manualTargetJavaLibrary,
                 manualTargetScalaLibrary,
+                manualTargetJavaBinary,
+                manualTargetScalaBinary,
                 manualTargetJavaTest,
                 manualTargetScalaTest));
 
@@ -958,50 +1015,74 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
     BuildTarget manualTargetScalaLibrary =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_library"),
-            List.of(),
+            List.of("application"),
             List.of("scala"),
             List.of(),
-            new BuildTargetCapabilities(false, false, false));
+            new BuildTargetCapabilities(false, false, false, false));
+    manualTargetScalaLibrary.setDisplayName("//manual_target:scala_library");
+    manualTargetScalaLibrary.setBaseDirectory("file://$WORKSPACE/manual_target/");
+    manualTargetScalaLibrary.setDataKind("scala");
+    manualTargetScalaLibrary.setData(scalaBuildTarget);
 
     BuildTarget manualTargetJavaLibrary =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_library"),
-            List.of(),
+            List.of("application"),
             List.of("java"),
             List.of(),
-            new BuildTargetCapabilities(false, false, false));
+            new BuildTargetCapabilities(false, false, false, false));
+    manualTargetJavaLibrary.setDisplayName("//manual_target:java_library");
+    manualTargetJavaLibrary.setBaseDirectory("file://$WORKSPACE/manual_target/");
+    manualTargetJavaLibrary.setDataKind("jvm");
+    manualTargetJavaLibrary.setData(jvmBuildTarget);
 
     BuildTarget manualTargetScalaBinary =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_binary"),
-            List.of(),
+            List.of("application"),
             List.of("scala"),
             List.of(),
-            new BuildTargetCapabilities(false, false, false));
+            new BuildTargetCapabilities(false, false, false, false));
+    manualTargetScalaBinary.setDisplayName("//manual_target:scala_binary");
+    manualTargetScalaBinary.setBaseDirectory("file://$WORKSPACE/manual_target/");
+    manualTargetScalaBinary.setDataKind("scala");
+    manualTargetScalaBinary.setData(scalaBuildTarget);
 
     BuildTarget manualTargetJavaBinary =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_binary"),
-            List.of(),
+            List.of("application"),
             List.of("java"),
             List.of(),
-            new BuildTargetCapabilities(false, false, false));
+            new BuildTargetCapabilities(false, false, false, false));
+    manualTargetJavaBinary.setDisplayName("//manual_target:java_binary");
+    manualTargetJavaBinary.setBaseDirectory("file://$WORKSPACE/manual_target/");
+    manualTargetJavaBinary.setDataKind("jvm");
+    manualTargetJavaBinary.setData(jvmBuildTarget);
 
     BuildTarget manualTargetScalaTest =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:scala_test"),
-            List.of(),
+            List.of("test"),
             List.of("scala"),
             List.of(),
-            new BuildTargetCapabilities(false, false, false));
+            new BuildTargetCapabilities(false, false, false, false));
+    manualTargetScalaTest.setDisplayName("//manual_target:scala_test");
+    manualTargetScalaTest.setBaseDirectory("file://$WORKSPACE/manual_target/");
+    manualTargetScalaTest.setDataKind("scala");
+    manualTargetScalaTest.setData(scalaBuildTarget);
 
     BuildTarget manualTargetJavaTest =
         new BuildTarget(
             new BuildTargetIdentifier("//manual_target:java_test"),
-            List.of(),
+            List.of("test"),
             List.of("java"),
             List.of(),
-            new BuildTargetCapabilities(false, false, false));
+            new BuildTargetCapabilities(false, false, false, false));
+    manualTargetJavaTest.setDisplayName("//manual_target:java_test");
+    manualTargetJavaTest.setBaseDirectory("file://$WORKSPACE/manual_target/");
+    manualTargetJavaTest.setDataKind("jvm");
+    manualTargetJavaTest.setData(jvmBuildTarget);
 
     return new WorkspaceBuildTargetsResult(
         List.of(

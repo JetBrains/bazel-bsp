@@ -3,38 +3,46 @@ load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
 
 scala_library(
     name = "scala_library",
-    srcs = glob(["*.scala"]),
+    srcs = ["TestScalaFile.scala"],
     tags = ["manual"],
+    visibility = ["//visibility:public"],
 )
 
 java_library(
     name = "java_library",
-    srcs = glob(["*.java"]),
+    srcs = ["TestJavaFile.java"],
     tags = ["manual"],
+    visibility = ["//visibility:public"],
 )
 
 scala_binary(
     name = "scala_binary",
-    srcs = glob(["*.scala"]),
+    srcs = ["TestScalaBinary.scala"],
     main_class = "manual_target.TestScalaBinary",
     tags = ["manual"],
+    visibility = ["//visibility:public"],
 )
 
 java_binary(
     name = "java_binary",
-    srcs = glob(["*.java"]),
+    srcs = ["TestJavaBinary.java"],
     main_class = "manual_target.TestJavaBinary",
     tags = ["manual"],
+    visibility = ["//visibility:public"],
 )
 
 scala_test(
     name = "scala_test",
-    srcs = glob(["*.scala"]),
+    srcs = ["ScalaTest.scala"],
     main_class = "manual_target.ScalaTest",
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
 )
 
 java_test(
     name = "java_test",
-    srcs = glob(["*.java"]),
+    srcs = ["JavaTest.java"],
     main_class = "manual_target.JavaTest",
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
 )
