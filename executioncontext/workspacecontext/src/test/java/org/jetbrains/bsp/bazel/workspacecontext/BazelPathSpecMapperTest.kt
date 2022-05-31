@@ -80,7 +80,7 @@ class BazelPathSpecMapperTest {
             bazelPathSpecTry.isSuccess shouldBe true
             val bazelPathSpec = bazelPathSpecTry.get()
 
-            val expectedBazelPathSpec = BazelPathSpec(Path("/opt/twitter_mde/bin/bazel"))
+            val expectedBazelPathSpec = BazelPathSpec(Path("/usr/local/bin/bazel"))
             bazelPathSpec shouldBe expectedBazelPathSpec
         }
     }

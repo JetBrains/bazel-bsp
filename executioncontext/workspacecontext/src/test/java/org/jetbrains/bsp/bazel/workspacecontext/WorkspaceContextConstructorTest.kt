@@ -112,7 +112,7 @@ class WorkspaceContextConstructorTest {
             val expectedWorkspaceContext = WorkspaceContext(
                 targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
-                bazelPath = BazelPathSpec(Path("/opt/twitter_mde/bin/bazel")),
+                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             )
             workspaceContext shouldBe expectedWorkspaceContext
