@@ -98,25 +98,25 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(javaPathOption)
 
         val directoriesOption = Option.builder(DIRECTORIES_SHORT_OPT)
-                .longOpt("directories")
-                .hasArg()
-                .argName("directories")
-                .desc(
-                        "Add directories to the generated project view file, you can read more about it here: " +
-                                "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
-                )
-                .build()
+            .longOpt("directories")
+            .hasArgs()
+            .argName("directories")
+            .desc(
+                    "Add directories to the generated project view file, you can read more about it here: " +
+                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
+            )
+            .build()
         cliParserOptions.addOption(directoriesOption)
 
         val deriveTargetsFlagOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
-                .longOpt("derive_targets_from_directories")
-                .hasArg()
-                .argName("derive_targets_from_directories")
-                .desc(
-                        "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
-                                "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
-                )
-                .build()
+            .longOpt("derive_targets_from_directories")
+            .hasArg()
+            .argName("derive_targets")
+            .desc(
+                    "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
+                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
+            )
+            .build()
         cliParserOptions.addOption(deriveTargetsFlagOption)
     }
 
@@ -197,13 +197,13 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
 
-    private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
-
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
     private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
+
+    private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
 
     private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.getOptionValue(DERIVE_TARGETS_FLAG_SHORT_OPT).toBoolean()
 

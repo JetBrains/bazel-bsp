@@ -42,8 +42,8 @@ object ProjectViewCLiOptionsProvider {
             projectViewCliOptions?.targets?.let(::toTargetsSectionNotNull)
 
     private fun toTargetsSectionNotNull(targets: List<String>): ProjectViewTargetsSection {
-        val includedTargets = calculateIncludedValues(targets)
-        val excludedTargets = calculateExcludedValues(targets)
+        val includedTargets = calculateIncludedValues(targets).map(::BuildTargetIdentifier)
+        val excludedTargets = calculateExcludedValues(targets).map(::BuildTargetIdentifier)
 
         return ProjectViewTargetsSection(includedTargets, excludedTargets)
     }
@@ -52,29 +52,18 @@ object ProjectViewCLiOptionsProvider {
             projectViewCliOptions?.directories?.let(::toDirectoriesSectionNotNull)
 
     private fun toDirectoriesSectionNotNull(directories: List<String>): ProjectViewDirectoriesSection {
-        val includedDirectories = calculateIncludedDirs(directories)
-        val excludedDirectories = calculateExcludedDirs(directories)
+        val includedDirectories = calculateIncludedValues(directories).map(::Path)
+        val excludedDirectories = calculateExcludedValues(directories).map(::Path)
 
         return ProjectViewDirectoriesSection(includedDirectories, excludedDirectories)
     }
 
-    private fun calculateIncludedValues(targets: List<String>): List<BuildTargetIdentifier> =
+    private fun calculateIncludedValues(targets: List<String>): List<String> =
             targets.filterNot { it.startsWith(EXCLUDED_TARGET_PREFIX) }
-                    .map(::BuildTargetIdentifier)
 
-    private fun calculateExcludedValues(targets: List<String>): List<BuildTargetIdentifier> =
+    private fun calculateExcludedValues(targets: List<String>): List<String> =
             targets.filter { it.startsWith(EXCLUDED_TARGET_PREFIX) }
                     .map { it.drop(1) }
-                    .map(::BuildTargetIdentifier)
-
-    private fun calculateIncludedDirs(targets: List<String>): List<Path> =
-            targets.filterNot { it.startsWith(EXCLUDED_TARGET_PREFIX) }
-                    .map(::Path)
-
-    private fun calculateExcludedDirs(targets: List<String>): List<Path> =
-            targets.filter { it.startsWith(EXCLUDED_TARGET_PREFIX) }
-                    .map { it.drop(1) }
-                    .map(::Path)
 
     private fun toDebuggerAddressSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDebuggerAddressSection? =
             projectViewCliOptions?.debuggerAddress?.let(::ProjectViewDebuggerAddressSection)
