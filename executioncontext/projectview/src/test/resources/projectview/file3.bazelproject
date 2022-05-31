@@ -14,3 +14,11 @@ build_flags:
 
 
     --build_flag3.1=value3.1
+
+directories:
+
+    included_dir3.1
+
+    -excluded_dir3.1
+
+derive_targets_from_directories: false

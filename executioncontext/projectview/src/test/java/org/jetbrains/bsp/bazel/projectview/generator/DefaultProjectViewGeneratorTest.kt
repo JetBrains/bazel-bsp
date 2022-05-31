@@ -3,11 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.DisplayName
@@ -15,6 +11,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 class DefaultProjectViewGeneratorTest {
 
@@ -172,8 +169,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -192,6 +189,71 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
+        fun `should return pretty string only with directories for project view only with directories`() {
+            // given
+            val projectView = ProjectView(
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir1"),
+                                    Path("included_dir2"),
+                                    Path("included_dir3")
+                            ),
+                            listOf(
+                                    Path("excluded_dir1"),
+                                    Path("excluded_dir2")
+                            )
+                    ),
+                    deriveTargetsFlag = null
+            )
+
+            // when
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                """
+                directories:
+                    included_dir1
+                    included_dir2
+                    included_dir3
+                    -excluded_dir1
+                    -excluded_dir2
+
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
+        fun `should return pretty string only with derive_targets_from_directories for project view only with deriveTargetsFlag`() {
+            // given
+            val projectView = ProjectView(
+                    targets = null,
+                    bazelPath = null,
+                    debuggerAddress = null,
+                    javaPath = null,
+                    buildFlags = null,
+                    directories = null,
+                    deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+            )
+
+            // when
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                """
+                derive_targets_from_directories: true
+
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
@@ -200,8 +262,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -219,7 +281,11 @@ class DefaultProjectViewGeneratorTest {
                 java_path: /path/to/java
 
                 build_flags:
-
+                
+                directories:
+                
+                derive_targets_from_directories: true
+                
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -245,8 +311,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = null,
+                deriveTargetsFlag = null
             )
 
             // when
@@ -296,8 +362,18 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"),
+                                Path("included_dir2"),
+                                Path("included_dir3")
+                        ),
+                        listOf(
+                                Path("excluded_dir1"),
+                                Path("excluded_dir2")
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -324,6 +400,15 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
+                directories:
+                    included_dir1
+                    included_dir2
+                    included_dir3
+                    -excluded_dir1
+                    -excluded_dir2
+               
+                derive_targets_from_directories: true
+                
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
@@ -360,8 +445,18 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"),
+                                Path("included_dir2"),
+                                Path("included_dir3")
+                        ),
+                        listOf(
+                                Path("excluded_dir1"),
+                                Path("excluded_dir2")
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -390,6 +485,15 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
+                directories:
+                    included_dir1
+                    included_dir2
+                    included_dir3
+                    -excluded_dir1
+                    -excluded_dir2
+               
+                derive_targets_from_directories: true
+                
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -422,8 +526,18 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"),
+                                Path("included_dir2"),
+                                Path("included_dir3")
+                        ),
+                        listOf(
+                                Path("excluded_dir1"),
+                                Path("excluded_dir2")
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -452,6 +566,15 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
+                directories:
+                    included_dir1
+                    included_dir2
+                    included_dir3
+                    -excluded_dir1
+                    -excluded_dir2
+               
+                derive_targets_from_directories: true
+                
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -467,8 +590,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             val parser = DefaultProjectViewParser()
@@ -487,8 +610,8 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = null,
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -516,8 +639,8 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = null,
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             val parser = DefaultProjectViewParser()
@@ -560,8 +683,18 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"),
+                                Path("included_dir2"),
+                                Path("included_dir3")
+                        ),
+                        listOf(
+                                Path("excluded_dir1"),
+                                Path("excluded_dir2")
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             val parser = DefaultProjectViewParser()

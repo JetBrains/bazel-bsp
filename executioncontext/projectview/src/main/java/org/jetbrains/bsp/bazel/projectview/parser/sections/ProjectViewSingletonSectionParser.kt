@@ -58,13 +58,13 @@ object ProjectViewDebuggerAddressSectionParser :
         ProjectViewDebuggerAddressSection(value)
 }
 
-object ProjectViewDeriveTargetsFlagSectionParser :
-        ProjectViewSingletonSectionParser<Boolean, ProjectViewDeriveTargetsFlagSection>(ProjectViewDeriveTargetsFlagSection.SECTION_NAME) {
+object ProjectViewDeriveTargetsFromDirectoriesSectionParser :
+        ProjectViewSingletonSectionParser<Boolean, ProjectViewDeriveTargetsFromDirectoriesSection>(ProjectViewDeriveTargetsFromDirectoriesSection.SECTION_NAME) {
 
     override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
 
-    override fun createInstance(value: Boolean): ProjectViewDeriveTargetsFlagSection =
-            ProjectViewDeriveTargetsFlagSection(value)
+    override fun createInstance(value: Boolean): ProjectViewDeriveTargetsFromDirectoriesSection =
+            ProjectViewDeriveTargetsFromDirectoriesSection(value)
 }
 
 object ProjectViewJavaPathSectionParser :

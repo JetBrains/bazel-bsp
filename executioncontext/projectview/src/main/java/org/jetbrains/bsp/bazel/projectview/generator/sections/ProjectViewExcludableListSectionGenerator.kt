@@ -1,8 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.generator.sections
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import java.nio.file.Path
+import kotlin.io.path.pathString
 
 abstract class ProjectViewExcludableListSectionGenerator<V, in T : ProjectViewExcludableListSection<V>> :
     ProjectViewListSectionGenerator<V, T>() {
@@ -42,4 +45,10 @@ object ProjectViewTargetsSectionGenerator :
     ProjectViewExcludableListSectionGenerator<BuildTargetIdentifier, ProjectViewTargetsSection>() {
 
     override fun generatePrettyStringForValue(value: BuildTargetIdentifier): String = value.uri
+}
+
+object ProjectViewDirectoriesSectionGenerator :
+        ProjectViewExcludableListSectionGenerator<Path, ProjectViewDirectoriesSection>() {
+
+    override fun generatePrettyStringForValue(value: Path): String = value.pathString
 }

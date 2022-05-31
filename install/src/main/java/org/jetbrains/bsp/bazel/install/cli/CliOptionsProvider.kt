@@ -110,8 +110,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
         val deriveTargetsFlagOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
             .longOpt("derive_targets_from_directories")
-            .hasArg()
-            .argName("derive_targets")
             .desc(
                     "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
                             "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
@@ -173,7 +171,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 targets = targets(cmd),
                 buildFlags = buildFlags(cmd),
                 directories = directories(cmd),
-                deriveTargetsFlag = deriveTargetsFlag(cmd)
+                deriveTargetsFromDirectories = deriveTargetsFlag(cmd)
             )
         else null
 
@@ -205,7 +203,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
 
-    private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.getOptionValue(DERIVE_TARGETS_FLAG_SHORT_OPT).toBoolean()
+    private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT)
 
     companion object {
         private const val HELP_SHORT_OPT = "h"

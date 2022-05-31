@@ -15,3 +15,5 @@ build_flags:
     --build_flag7.1=value7.1
     --build_flag7.2=value7.2
     --build_flag7.3=value7.3
+
+derive_targets_from_directories: false

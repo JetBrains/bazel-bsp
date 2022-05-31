@@ -25,8 +25,8 @@ build_flags:
     --build_flag1.2=value1.2
 
 directories:
-  included_dir1
-  included_dir2
-  -excluded_dir1
+    included_dir1
+    included_dir2
+    -excluded_dir1
 
 derive_targets_from_directories: true

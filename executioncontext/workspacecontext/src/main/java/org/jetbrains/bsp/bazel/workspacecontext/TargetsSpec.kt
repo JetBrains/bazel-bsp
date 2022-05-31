@@ -6,7 +6,6 @@ import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextExcludableLi
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFlagSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import java.nio.file.Path
@@ -27,7 +26,7 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     private const val NAME = "targets"
 
     override fun map(projectView: ProjectView): Try<TargetsSpec> =
-        if (deriveTargetsFlags(projectView))
+        if (projectView.deriveTargetsFlag?.value == true)
             deriveTargetsFlagTrue(projectView)
         else
             deriveTargetsFlagFalse(projectView)
@@ -66,9 +65,6 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     private fun hasEmptyIncludedValuesAndNonEmptyExcludedValuesDirectories(directoriesSection: ProjectViewDirectoriesSection): Boolean =
         directoriesSection.values.isEmpty() and directoriesSection.excludedValues.isNotEmpty()
 
-    private fun deriveTargetsFlags(projectView: ProjectView): Boolean =
-            projectView.deriveTargetsFlag?.value == true
-
     private fun mapNotEmptyNotDerivedTargetsSection(targetsSection: ProjectViewTargetsSection): TargetsSpec =
         TargetsSpec(targetsSection.values, targetsSection.excludedValues)
 
@@ -82,10 +78,11 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     }
 
     private fun mapDirectoryToTarget(buildDirectoryIdentifier: Path): BuildTargetIdentifier =
-            if(buildDirectoryIdentifier.pathString.last()=='/')
-                BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "...")
-            else
-                BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "/...")
+        if (buildDirectoryIdentifier.pathString == ".")
+            BuildTargetIdentifier("//...")
+        else
+            BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "/...")
+
 
     override fun default(): Try<TargetsSpec> = Try.success(defaultTargetsSpec)
 }

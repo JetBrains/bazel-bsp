@@ -4,7 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFlagSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
@@ -129,7 +129,7 @@ class TargetsSpecMapperTest {
                 // given
                 val projectView = ProjectView.Builder(
                         targets = null,
-                        deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(false)).build().get()
+                        deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(false)).build().get()
 
                 // when
                 val targetsSpecTry = TargetsSpecMapper.map(projectView)
@@ -150,7 +150,7 @@ class TargetsSpecMapperTest {
                                 emptyList(),
                                 emptyList()
                         ),
-                        deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(false)
+                        deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build().get()
 
                 // when
@@ -175,7 +175,7 @@ class TargetsSpecMapperTest {
                                         BuildTargetIdentifier("//excluded_target2"),
                                 )
                         ),
-                        deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(false)
+                        deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build().get()
 
                 // when
@@ -203,7 +203,7 @@ class TargetsSpecMapperTest {
                                                 BuildTargetIdentifier("//excluded_target2"),
                                         ),
                                 ),
-                                deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(false)
+                                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                         ).build().get()
 
                 // when
@@ -238,7 +238,7 @@ class TargetsSpecMapperTest {
                 val projectView = ProjectView.Builder(
                         targets = null,
                         directories = null,
-                        deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)).build().get()
+                        deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)).build().get()
 
                 // when
                 val targetsSpecTry = TargetsSpecMapper.map(projectView)
@@ -263,7 +263,7 @@ class TargetsSpecMapperTest {
                                 emptyList(),
                                 emptyList()
                         ),
-                        deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                        deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build().get()
 
                 // when
@@ -294,7 +294,7 @@ class TargetsSpecMapperTest {
                                         Path("excluded_target1"),
                                         Path("excluded_target2"),)
                         ),
-                        deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                        deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build().get()
 
                 // when
@@ -326,7 +326,7 @@ class TargetsSpecMapperTest {
                                                 Path("excluded_dir2"),
                                         ),
                                 ),
-                                deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                         ).build().get()
 
                 // when
@@ -378,7 +378,7 @@ class TargetsSpecMapperTest {
                                                 Path("excluded_dir2"),
                                         ),
                                 ),
-                                deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                         ).build().get()
 
                 // when
@@ -428,7 +428,7 @@ class TargetsSpecMapperTest {
                                                 Path("excluded_dir2/"),
                                         ),
                                 ),
-                                deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                         ).build().get()
 
                 // when
@@ -443,7 +443,7 @@ class TargetsSpecMapperTest {
                                 listOf(
                                         BuildTargetIdentifier("//included_dir1/..."),
                                         BuildTargetIdentifier("//included_dir2/..."),
-                                        BuildTargetIdentifier("//./..."),
+                                        BuildTargetIdentifier("//..."),
                                 ),
                                 listOf(
                                         BuildTargetIdentifier("//excluded_dir1/..."),

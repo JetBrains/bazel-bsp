@@ -71,6 +71,6 @@ object ProjectViewCLiOptionsProvider {
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
             projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
 
-    private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFlagSection? =
-            projectViewCliOptions?.deriveTargetsFlag?.let(::ProjectViewDeriveTargetsFlagSection)
+    private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFromDirectoriesSection? =
+            projectViewCliOptions?.deriveTargetsFromDirectories?.let(::ProjectViewDeriveTargetsFromDirectoriesSection)
 }

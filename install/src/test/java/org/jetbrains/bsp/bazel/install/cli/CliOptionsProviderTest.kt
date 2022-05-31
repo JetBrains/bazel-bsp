@@ -442,8 +442,7 @@ class CliOptionsProviderTest {
             fun `should return success if deriveTargetsFlag is specified and true`() {
                 // given
                 val args = arrayOf(
-                        "-v",
-                        "true",
+                        "-v"
                 )
 
                 // when
@@ -454,26 +453,7 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                cliOptions.projectViewCliOptions?.deriveTargetsFlag shouldBe true
-            }
-
-            @Test
-            fun `should return success if deriveTargetsFlag is specified and false`() {
-                // given
-                val args = arrayOf(
-                        "-v",
-                        "false",
-                )
-
-                // when
-                val provider = CliOptionsProvider(args)
-                val cliOptionsTry = provider.getOptions()
-
-                // then
-                cliOptionsTry.isSuccess shouldBe true
-                val cliOptions = cliOptionsTry.get()
-
-                cliOptions.projectViewCliOptions?.deriveTargetsFlag shouldBe false
+                cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
             }
         }
 
@@ -505,8 +485,7 @@ class CliOptionsProviderTest {
                     "included_dir1",
                     "included_dir2",
                     "-excluded_dir3",
-                    "-v",
-                    "true",
+                    "-v"
             )
 
             // when
@@ -552,7 +531,7 @@ class CliOptionsProviderTest {
             )
             cliOptions.projectViewCliOptions?.directories shouldBe expectedDirs
 
-            cliOptions.projectViewCliOptions?.deriveTargetsFlag shouldBe true
+            cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
         }
 
         @Test

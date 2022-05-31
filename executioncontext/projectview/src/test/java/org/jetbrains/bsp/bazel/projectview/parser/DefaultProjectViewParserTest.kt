@@ -131,7 +131,7 @@ class DefaultProjectViewParserTest {
         @Test
         fun `should return empty directories section for file without directories section`() {
             // given
-            val projectViewFilePath = Path("/projectview/without/javapath.bazelproject")
+            val projectViewFilePath = Path("/projectview/without/directories.bazelproject")
 
             // when
             val projectViewTry = parser.parse(projectViewFilePath)
@@ -146,7 +146,7 @@ class DefaultProjectViewParserTest {
         @Test
         fun `should return empty derive_targets_from_directories section for file without derive_targets_from_directories section`() {
             // given
-            val projectViewFilePath = Path("/projectview/without/javapath.bazelproject")
+            val projectViewFilePath = Path("/projectview/without/derive_targets_from_directories.bazelproject")
 
             // when
             val projectViewTry = parser.parse(projectViewFilePath)
@@ -211,11 +211,14 @@ class DefaultProjectViewParserTest {
                 ),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
-                          Path("included_dir1"), Path("included_dir2")
+                        Path("included_dir1"),
+                        Path("included_dir2")
                     ),
-                    listOf(Path("excluded_dir1"))
+                    listOf(
+                        Path("excluded_dir1")
+                    )
                 ),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -256,13 +259,19 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
-                    directories = ProjectViewDirectoriesSection(
-                            listOf(
-                                    Path("included_dir1"), Path("included_dir2")
-                            ),
-                            listOf(Path("excluded_dir1"))
-                    ),
-                    deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                            Path("included_dir1"),
+                            Path("included_dir2"),
+                            Path("included_dir4.1"),
+                            Path("included_dir4.2")
+                        ),
+                        listOf(
+                            Path("excluded_dir1"),
+                            Path("excluded_dir4.1")
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -304,13 +313,16 @@ class DefaultProjectViewParserTest {
                         "--build_flag7.3=value7.3",
                     )
                 ),
-                    directories = ProjectViewDirectoriesSection(
-                            listOf(
-                                    Path("included_dir1"), Path("included_dir2")
-                            ),
-                            listOf(Path("excluded_dir1"))
-                    ),
-                    deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                            Path("included_dir1"),
+                            Path("included_dir2")
+                        ),
+                        listOf(
+                            Path("excluded_dir1")
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(false)
             )
             projectView shouldBe expectedProjectView
         }
@@ -343,8 +355,16 @@ class DefaultProjectViewParserTest {
                         "--build_flag8.3=value8.3",
                     )
                 ),
-                    directories = null,
-                    deriveTargetsFlag = null
+                directories = ProjectViewDirectoriesSection(
+                    listOf(
+                        Path("included_dir1"),
+                        Path("included_dir2")
+                    ),
+                    listOf(
+                        Path("excluded_dir1"),
+                    )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -389,13 +409,20 @@ class DefaultProjectViewParserTest {
                         "--build_flag5.2=value5.2",
                     )
                 ),
-                    directories = ProjectViewDirectoriesSection(
-                            listOf(
-                                    Path("included_dir1"), Path("included_dir2")
-                            ),
-                            listOf(Path("excluded_dir1"))
-                    ),
-                    deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                            Path("included_dir1"),
+                            Path("included_dir2"),
+                            Path("included_dir2.1"),
+                            Path("included_dir3.1")
+                        ),
+                        listOf(
+                            Path("excluded_dir1"),
+                            Path("excluded_dir2.1"),
+                            Path("excluded_dir3.1"),
+                        )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(false)
             )
             projectView shouldBe expectedProjectView
         }
@@ -442,13 +469,23 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
-                    directories = ProjectViewDirectoriesSection(
-                            listOf(
-                                    Path("included_dir1"), Path("included_dir2")
-                            ),
-                            listOf(Path("excluded_dir1"))
+                directories = ProjectViewDirectoriesSection(
+                    listOf(
+                        Path("included_dir2.1"),
+                        Path("included_dir3.1"),
+                        Path("included_dir1"),
+                        Path("included_dir2"),
+                        Path("included_dir4.1"),
+                        Path("included_dir4.2")
                     ),
-                    deriveTargetsFlag = ProjectViewDeriveTargetsFlagSection(true)
+                    listOf(
+                        Path("excluded_dir2.1"),
+                        Path("excluded_dir3.1"),
+                        Path("excluded_dir1"),
+                        Path("excluded_dir4.1"),
+                    )
+                ),
+                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }

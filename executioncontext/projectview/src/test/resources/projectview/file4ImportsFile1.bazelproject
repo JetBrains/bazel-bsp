@@ -9,3 +9,8 @@ build_flags:
     --build_flag4.1=value4.1
     --build_flag4.2=value4.2
     --build_flag4.3=value4.3
+
+directories:
+    included_dir4.1
+    included_dir4.2
+    -excluded_dir4.1

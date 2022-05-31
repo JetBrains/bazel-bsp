@@ -14,7 +14,7 @@ data class ProjectViewCliOptions internal constructor(
         val targets: List<String>?,
         val buildFlags: List<String>?,
         val directories: List<String>?,
-        val deriveTargetsFlag: Boolean?
+        val deriveTargetsFromDirectories: Boolean?
 )
 
 data class CliOptions internal constructor(
