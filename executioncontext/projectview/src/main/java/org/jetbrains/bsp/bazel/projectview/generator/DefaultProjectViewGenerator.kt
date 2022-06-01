@@ -19,6 +19,6 @@ object DefaultProjectViewGenerator : ProjectViewGenerator {
             ProjectViewJavaPathSectionGenerator.generatePrettyString(projectView.javaPath),
             ProjectViewBuildFlagsSectionGenerator.generatePrettyString(projectView.buildFlags),
             ProjectViewDirectoriesSectionGenerator.generatePrettyString(projectView.directories),
-            ProjectViewDeriveTargetsFromDirectoriesSectionGenerator.generatePrettyString(projectView.deriveTargetsFromDirectoriesSection)
+            ProjectViewDeriveTargetsFromDirectoriesSectionGenerator.generatePrettyString(projectView.deriveTargetsFromDirectories)
         ).joinToString(separator = "\n\n", postfix = "\n")
 }

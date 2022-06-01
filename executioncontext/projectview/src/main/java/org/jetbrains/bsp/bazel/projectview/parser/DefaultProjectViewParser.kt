@@ -43,7 +43,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
             javaPath = ProjectViewJavaPathSectionParser.parse(rawSections),
             buildFlags = ProjectViewBuildFlagsSectionParser.parse(rawSections),
             directories = ProjectViewDirectoriesSectionParser.parse(rawSections),
-            deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
+            deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
         ).build()
     }
 

@@ -26,7 +26,7 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     private const val NAME = "targets"
 
     override fun map(projectView: ProjectView): Try<TargetsSpec> =
-        if (projectView.deriveTargetsFromDirectoriesSection?.value == true)
+        if (projectView.deriveTargetsFromDirectories?.value == true)
             deriveTargetsFromDirectoriesSectionTrue(projectView)
         else
             deriveTargetsFromDirectoriesSectionFalse(projectView)

@@ -129,7 +129,7 @@ class TargetsSpecMapperTest {
                 // given
                 val projectView = ProjectView.Builder(
                         targets = null,
-                        deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(false)).build().get()
+                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)).build().get()
 
                 // when
                 val targetsSpecTry = TargetsSpecMapper.map(projectView)
@@ -150,7 +150,7 @@ class TargetsSpecMapperTest {
                                 emptyList(),
                                 emptyList()
                         ),
-                        deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build().get()
 
                 // when
@@ -175,7 +175,7 @@ class TargetsSpecMapperTest {
                                         BuildTargetIdentifier("//excluded_target2"),
                                 )
                         ),
-                        deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build().get()
 
                 // when
@@ -203,7 +203,7 @@ class TargetsSpecMapperTest {
                                                 BuildTargetIdentifier("//excluded_target2"),
                                         ),
                                 ),
-                                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                         ).build().get()
 
                 // when
@@ -238,7 +238,7 @@ class TargetsSpecMapperTest {
                 val projectView = ProjectView.Builder(
                         targets = null,
                         directories = null,
-                        deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)).build().get()
+                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)).build().get()
 
                 // when
                 val targetsSpecTry = TargetsSpecMapper.map(projectView)
@@ -263,7 +263,7 @@ class TargetsSpecMapperTest {
                                 emptyList(),
                                 emptyList()
                         ),
-                        deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build().get()
 
                 // when
@@ -294,7 +294,7 @@ class TargetsSpecMapperTest {
                                         Path("excluded_target1"),
                                         Path("excluded_target2"),)
                         ),
-                        deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build().get()
 
                 // when
@@ -326,7 +326,7 @@ class TargetsSpecMapperTest {
                                                 Path("excluded_dir2"),
                                         ),
                                 ),
-                                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                         ).build().get()
 
                 // when
@@ -378,7 +378,7 @@ class TargetsSpecMapperTest {
                                                 Path("excluded_dir2"),
                                         ),
                                 ),
-                                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                         ).build().get()
 
                 // when
@@ -428,7 +428,7 @@ class TargetsSpecMapperTest {
                                                 Path("excluded_dir2/"),
                                         ),
                                 ),
-                                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                         ).build().get()
 
                 // when

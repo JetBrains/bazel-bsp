@@ -155,7 +155,7 @@ class DefaultProjectViewParserTest {
             projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
 
-            projectView.deriveTargetsFromDirectoriesSection shouldBe null
+            projectView.deriveTargetsFromDirectories shouldBe null
         }
 
         @Test
@@ -177,7 +177,7 @@ class DefaultProjectViewParserTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFromDirectoriesSection = null
+                deriveTargetsFromDirectories = null
             )
 
             projectView shouldBe expectedProjectView
@@ -222,7 +222,7 @@ class DefaultProjectViewParserTest {
                         Path("excluded_dir1.1")
                     )
                 ),
-                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -275,7 +275,7 @@ class DefaultProjectViewParserTest {
                             Path("excluded_dir4.1")
                         )
                 ),
-                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -326,7 +326,7 @@ class DefaultProjectViewParserTest {
                             Path("excluded_dir1.1")
                         )
                 ),
-                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
             )
             projectView shouldBe expectedProjectView
         }
@@ -368,7 +368,7 @@ class DefaultProjectViewParserTest {
                         Path("excluded_dir8.1"),
                     )
                 ),
-                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -426,7 +426,7 @@ class DefaultProjectViewParserTest {
                             Path("excluded_dir3.1"),
                         )
                 ),
-                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
             )
             projectView shouldBe expectedProjectView
         }
@@ -489,7 +489,7 @@ class DefaultProjectViewParserTest {
                         Path("excluded_dir4.1"),
                     )
                 ),
-                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
