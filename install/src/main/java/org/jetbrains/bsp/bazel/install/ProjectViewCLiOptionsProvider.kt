@@ -29,7 +29,7 @@ object ProjectViewCLiOptionsProvider {
                     targets = toTargetsSection(projectViewCliOptions),
                     buildFlags = toBuildFlagsSection(projectViewCliOptions),
                     directories = toDirectoriesSection(projectViewCliOptions),
-                    deriveTargetsFlag = toDeriveTargetFlagSection(projectViewCliOptions)
+                    deriveTargetsFromDirectoriesSection = toDeriveTargetFlagSection(projectViewCliOptions)
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =

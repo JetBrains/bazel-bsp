@@ -108,14 +108,14 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(directoriesOption)
 
-        val deriveTargetsFlagOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
+        val deriveTargetsFromDirectoriesOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
             .longOpt("derive_targets_from_directories")
             .desc(
                     "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
                             "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
             )
             .build()
-        cliParserOptions.addOption(deriveTargetsFlagOption)
+        cliParserOptions.addOption(deriveTargetsFromDirectoriesOption)
     }
 
     fun getOptions(): Try<CliOptions> {

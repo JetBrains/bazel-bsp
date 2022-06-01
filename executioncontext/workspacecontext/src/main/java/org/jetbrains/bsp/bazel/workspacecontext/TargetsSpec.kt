@@ -26,15 +26,15 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
     private const val NAME = "targets"
 
     override fun map(projectView: ProjectView): Try<TargetsSpec> =
-        if (projectView.deriveTargetsFlag?.value == true)
-            deriveTargetsFlagTrue(projectView)
+        if (projectView.deriveTargetsFromDirectoriesSection?.value == true)
+            deriveTargetsFromDirectoriesSectionTrue(projectView)
         else
-            deriveTargetsFlagFalse(projectView)
+            deriveTargetsFromDirectoriesSectionFalse(projectView)
 
-    private fun deriveTargetsFlagTrue(projectView: ProjectView): Try<TargetsSpec> =
+    private fun deriveTargetsFromDirectoriesSectionTrue(projectView: ProjectView): Try<TargetsSpec> =
         when {
-            projectView.directories == null -> deriveTargetsFlagFalse(projectView)
-            hasEmptyIncludedValuesAndEmptyExcludedValuesDirectories(projectView.directories!!) -> deriveTargetsFlagFalse(projectView)
+            projectView.directories == null -> deriveTargetsFromDirectoriesSectionFalse(projectView)
+            hasEmptyIncludedValuesAndEmptyExcludedValuesDirectories(projectView.directories!!) -> deriveTargetsFromDirectoriesSectionFalse(projectView)
             hasEmptyIncludedValuesAndNonEmptyExcludedValuesDirectories(projectView.directories!!) -> Try.failure(
                 ProjectViewToExecutionContextEntityMapperException(
                     NAME, "'directories' section has no included targets."
@@ -43,7 +43,7 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
             else -> Try.success(mapNotEmptyDerivedTargetSection(projectView.targets, projectView.directories!!))
         }
 
-    private fun deriveTargetsFlagFalse(projectView: ProjectView): Try<TargetsSpec> =
+    private fun deriveTargetsFromDirectoriesSectionFalse(projectView: ProjectView): Try<TargetsSpec> =
         when {
             projectView.targets == null -> Try.success(defaultTargetsSpec)
             hasEmptyIncludedValuesAndEmptyExcludedValues(projectView.targets!!) -> Try.success(defaultTargetsSpec)

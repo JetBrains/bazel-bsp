@@ -439,7 +439,7 @@ class CliOptionsProviderTest {
         @DisplayName("cliOptions.projectViewCliOptions.deriveTargetsFlagOption test")
         inner class DeriveTargetsFlagOptionTest {
             @Test
-            fun `should return success if deriveTargetsFlag is specified and true`() {
+            fun `should return success if deriveTargetsFlag is specified`() {
                 // given
                 val args = arrayOf(
                         "-v"
@@ -454,6 +454,22 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
+            }
+
+            @Test
+            fun `should return success if deriveTargetsFlag is not specified`() {
+                // given
+                val args = emptyArray<String>()
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe null
             }
         }
 

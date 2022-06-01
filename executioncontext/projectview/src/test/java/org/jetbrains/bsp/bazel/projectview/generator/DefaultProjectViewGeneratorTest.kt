@@ -29,7 +29,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -59,7 +59,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -89,7 +89,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -114,7 +114,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -139,7 +139,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -170,7 +170,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -208,7 +208,7 @@ class DefaultProjectViewGeneratorTest {
                                     Path("excluded_dir2")
                             )
                     ),
-                    deriveTargetsFlag = null
+                    deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -229,7 +229,7 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
-        fun `should return pretty string only with derive_targets_from_directories for project view only with deriveTargetsFlag`() {
+        fun `should return pretty string only with derive_targets_from_directories for project view only with deriveTargetsFromDirectoriesSection`() {
             // given
             val projectView = ProjectView(
                     targets = null,
@@ -238,7 +238,7 @@ class DefaultProjectViewGeneratorTest {
                     javaPath = null,
                     buildFlags = null,
                     directories = null,
-                    deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                    deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -263,7 +263,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -312,7 +312,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 directories = null,
-                deriveTargetsFlag = null
+                deriveTargetsFromDirectoriesSection = null
             )
 
             // when
@@ -373,7 +373,7 @@ class DefaultProjectViewGeneratorTest {
                                 Path("excluded_dir2")
                         )
                 ),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -456,7 +456,7 @@ class DefaultProjectViewGeneratorTest {
                                 Path("excluded_dir2")
                         )
                 ),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -537,7 +537,7 @@ class DefaultProjectViewGeneratorTest {
                                 Path("excluded_dir2")
                         )
                 ),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             // when
@@ -591,7 +591,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             val parser = DefaultProjectViewParser()
@@ -611,7 +611,7 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -640,7 +640,7 @@ class DefaultProjectViewGeneratorTest {
                     )
                 ),
                 directories = null,
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             val parser = DefaultProjectViewParser()
@@ -694,7 +694,7 @@ class DefaultProjectViewGeneratorTest {
                                 Path("excluded_dir2")
                         )
                 ),
-                deriveTargetsFlag = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectoriesSection = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
 
             val parser = DefaultProjectViewParser()

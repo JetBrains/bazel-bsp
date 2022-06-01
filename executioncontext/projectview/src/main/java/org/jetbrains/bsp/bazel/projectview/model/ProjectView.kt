@@ -24,7 +24,7 @@ data class ProjectView constructor(
     /** directories included and excluded from the project  */
     val directories: ProjectViewDirectoriesSection?,
     /** if set to true, relevant project targets will be automatically derived from the `directories` */
-    val deriveTargetsFlag: ProjectViewDeriveTargetsFromDirectoriesSection?,
+    val deriveTargetsFromDirectoriesSection: ProjectViewDeriveTargetsFromDirectoriesSection?,
 ) {
 
     class Builder constructor(
@@ -35,7 +35,7 @@ data class ProjectView constructor(
         private val javaPath: ProjectViewJavaPathSection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
         private val directories: ProjectViewDirectoriesSection? = null,
-        private val deriveTargetsFlag: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
+        private val deriveTargetsFromDirectoriesSection: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
     ) {
 
         fun build(): Try<ProjectView> {
@@ -49,7 +49,7 @@ data class ProjectView constructor(
                         + " java path: {},"
                         + " build flags: {},"
                         + " directories: {},"
-                        + " deriveTargetsFlag: {}.",
+                        + " deriveTargetsFromDirectoriesSection: {}.",
                 imports,
                 targets,
                 bazelPath,
@@ -57,7 +57,7 @@ data class ProjectView constructor(
                 javaPath,
                 buildFlags,
                 directories,
-                deriveTargetsFlag
+                deriveTargetsFromDirectoriesSection
             )
 
             return Try.sequence(imports)
@@ -73,7 +73,7 @@ data class ProjectView constructor(
             val javaPath = combineJavaPathSection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
             val directories = combineDirectoriesSection(importedProjectViews)
-            val deriveTargetsFlag = combineDeriveTargetFlagSection(importedProjectViews)
+            val deriveTargetsFromDirectoriesSection = combineDeriveTargetFlagSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
@@ -87,9 +87,9 @@ data class ProjectView constructor(
                 debuggerAddress,
                 javaPath,
                 directories,
-                deriveTargetsFlag
+                deriveTargetsFromDirectoriesSection
             )
-            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags, directories, deriveTargetsFlag)
+            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags, directories, deriveTargetsFromDirectoriesSection)
         }
 
         private fun combineTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewTargetsSection? {
@@ -183,7 +183,7 @@ data class ProjectView constructor(
             javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
 
         private fun combineDeriveTargetFlagSection(importedProjectViews: List<ProjectView>): ProjectViewDeriveTargetsFromDirectoriesSection? =
-            deriveTargetsFlag ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::deriveTargetsFlag)
+            deriveTargetsFromDirectoriesSection ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::deriveTargetsFromDirectoriesSection)
 
         private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
             importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?

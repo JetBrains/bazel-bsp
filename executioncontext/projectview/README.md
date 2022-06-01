@@ -140,13 +140,41 @@ The server will deduct bazel path from `$PATH`
 
 #### directories
 
-_We are working on it, you can expect support for this section in future releases._
+A list of directories to be mapped into bazel targets.
+
+You can use negative directories to have server ignore certain directories (
+e.g. `-executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...`).
+
+##### example:
+
+```
+directories:
+  install/src/main/java/org/jetbrains/bsp/bazel/install
+  executioncontext/projectview/
+  -executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser
+```
+
+##### default:
+
+No directories included.
 
 ---
 
 #### derive_targets_from_directories
 
-_We are working on it, you can expect support for this section in future releases._
+A flag specifying if targets should be derived from list of directories in directories section.
+
+Flag is boolean value, so it can take either true or false. In the first case targets will be derived from directories, in the second they won't.
+
+##### example:
+
+```
+derive_targets_from_directories: true
+```
+
+##### default:
+
+Targets will not be derived from directories.
 
 ---
 
