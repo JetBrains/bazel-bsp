@@ -148,7 +148,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun printHelp() {
         val formatter = HelpFormatter()
-        formatter.width = 150
+        formatter.width = 160
         formatter.printHelp(
             INSTALLER_BINARY_NAME,
             null,
