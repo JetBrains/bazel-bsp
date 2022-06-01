@@ -3,11 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDebuggerAddressSectionParser
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewJavaPathSectionParser
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
 import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
@@ -46,6 +42,8 @@ open class DefaultProjectViewParser : ProjectViewParser {
             debuggerAddress = ProjectViewDebuggerAddressSectionParser.parse(rawSections),
             javaPath = ProjectViewJavaPathSectionParser.parse(rawSections),
             buildFlags = ProjectViewBuildFlagsSectionParser.parse(rawSections),
+            directories = ProjectViewDirectoriesSectionParser.parse(rawSections),
+            deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
         ).build()
     }
 

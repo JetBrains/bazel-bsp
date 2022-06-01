@@ -96,6 +96,26 @@ class CliOptionsProvider(private val args: Array<String>) {
             )
             .build()
         cliParserOptions.addOption(javaPathOption)
+
+        val directoriesOption = Option.builder(DIRECTORIES_SHORT_OPT)
+            .longOpt("directories")
+            .hasArgs()
+            .argName("directories")
+            .desc(
+                    "Add directories to the generated project view file, you can read more about it here: " +
+                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
+            )
+            .build()
+        cliParserOptions.addOption(directoriesOption)
+
+        val deriveTargetsFromDirectoriesOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
+            .longOpt("derive_targets_from_directories")
+            .desc(
+                    "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
+                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
+            )
+            .build()
+        cliParserOptions.addOption(deriveTargetsFromDirectoriesOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -128,12 +148,12 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun printHelp() {
         val formatter = HelpFormatter()
-        formatter.width = 150
+        formatter.width = 160
         formatter.printHelp(
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-            "If any generation flag (-b, -f, -j, -t, -x) " +
+            "If any generation flag (-b, -f, -j, -t, -x, -r, -v) " +
                     "is used, the installer will generate a new project view file with these sections. " +
                     "If --project_view_file (-p) flag is used as well, the new project view file " +
                     "will be created under this location (it will override the existing file if exists). " +
@@ -150,6 +170,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 debuggerAddress = debuggerAddress(cmd),
                 targets = targets(cmd),
                 buildFlags = buildFlags(cmd),
+                directories = directories(cmd),
+                deriveTargetsFromDirectories = deriveTargetsFlag(cmd)
             )
         else null
 
@@ -158,7 +180,9 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(JAVA_PATH_SHORT_OPT) or
                 cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
                 cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
-                cmd.hasOption(BUILD_FLAGS_SHORT_OPT)
+                cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
+                cmd.hasOption(DIRECTORIES_SHORT_OPT) or
+                cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
@@ -177,6 +201,10 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
 
+    private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
+
+    private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT)
+
     companion object {
         private const val HELP_SHORT_OPT = "h"
         private const val WORKSPACE_ROOT_DIR_SHORT_OPT = "d"
@@ -186,6 +214,8 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val BAZEL_PATH_SHORT_OPT = "b"
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
+        private const val DIRECTORIES_SHORT_OPT = "r"
+        private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }

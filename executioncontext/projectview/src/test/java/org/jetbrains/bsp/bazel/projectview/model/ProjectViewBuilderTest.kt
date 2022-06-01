@@ -3,16 +3,13 @@ package org.jetbrains.bsp.bazel.projectview.model
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 @DisplayName("ProjectView.Builder(..) tests")
 class ProjectViewBuilderTest {
@@ -67,6 +64,8 @@ class ProjectViewBuilderTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                directories = null,
+                deriveTargetsFromDirectories = null
             )
             projectView shouldBe expectedProjectView
         }
@@ -95,7 +94,14 @@ class ProjectViewBuilderTest {
                     bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
                     debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
                     javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
-                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2"))
+                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir1"), Path("included_dir2")
+                            ),
+                            listOf(Path("excluded_dir1"))
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build()
 
             // then
@@ -117,7 +123,14 @@ class ProjectViewBuilderTest {
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
                 debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2"))
+                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"), Path("included_dir2")
+                        ),
+                        listOf(Path("excluded_dir1"))
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -143,7 +156,14 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"), Path("included_dir2")
+                        ),
+                        listOf(Path("excluded_dir1"))
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build()
 
             // when
@@ -168,7 +188,14 @@ class ProjectViewBuilderTest {
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
                 debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2"))
+                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"), Path("included_dir2")
+                        ),
+                        listOf(Path("excluded_dir1"))
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -191,6 +218,13 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir1"), Path("included_dir2")
+                            ),
+                            listOf(Path("excluded_dir1"))
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build()
 
             // then
@@ -204,7 +238,14 @@ class ProjectViewBuilderTest {
                 bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
                 debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
-                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2"))
+                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1"), Path("included_dir2")
+                        ),
+                        listOf(Path("excluded_dir1"))
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -230,7 +271,14 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("imported/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir1.1"), Path("included_dir1.2")
+                            ),
+                            listOf(Path("excluded_dir1.1"))
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build()
 
             // when
@@ -253,7 +301,14 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag2.1=value2.1", "--build_flag2.2=value2.2")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir2.1"), Path("included_dir2.2")
+                            ),
+                            listOf(Path("excluded_dir2.1"))
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build()
 
             // then
@@ -287,7 +342,20 @@ class ProjectViewBuilderTest {
                         "--build_flag2.1=value2.1",
                         "--build_flag2.2=value2.2"
                     )
-                )
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1.1"),
+                                Path("included_dir1.2"),
+                                Path("included_dir2.1"),
+                                Path("included_dir2.2"),
+                        ),
+                        listOf(
+                                Path("excluded_dir1.1"),
+                                Path("excluded_dir2.1"),
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
             )
             projectView shouldBe expectedProjectView
         }
@@ -314,7 +382,17 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("imported1/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir1.1"),
+                                    Path("included_dir1.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir1.1")
+                            )
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build()
 
             val importedProjectViewTry2 =
@@ -323,7 +401,16 @@ class ProjectViewBuilderTest {
                         listOf(BuildTargetIdentifier("//included_target2.1")),
                         listOf(BuildTargetIdentifier("//excluded_target2.1"))
                     ),
-                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag2.1=value2.1"))
+                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag2.1=value2.1")),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir2.1"),
+                                    Path("included_dir2.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir2.1")
+                            )
+                    )
                 ).build()
 
             val importedProjectViewTry3 =
@@ -341,7 +428,17 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag3.1=value3.1")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir3.1"),
+                                    Path("included_dir3.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir3.1")
+                            )
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
                 ).build()
 
             // when
@@ -360,9 +457,18 @@ class ProjectViewBuilderTest {
                 ),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf("--build_flag4.1=value4.1", "--build_flag4.2=value4.2")
-                )
-            )
-                .build()
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir4.1"),
+                                Path("included_dir4.2")
+                        ),
+                        listOf(
+                                Path("excluded_dir4.1")
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+            ).build()
 
             // then
             projectViewTry.isSuccess shouldBe true
@@ -401,7 +507,26 @@ class ProjectViewBuilderTest {
                         "--build_flag4.1=value4.1",
                         "--build_flag4.2=value4.2"
                     )
-                )
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1.1"),
+                                Path("included_dir1.2"),
+                                Path("included_dir2.1"),
+                                Path("included_dir2.2"),
+                                Path("included_dir3.1"),
+                                Path("included_dir3.2"),
+                                Path("included_dir4.1"),
+                                Path("included_dir4.2")
+                        ),
+                        listOf(
+                                Path("excluded_dir1.1"),
+                                Path("excluded_dir2.1"),
+                                Path("excluded_dir3.1"),
+                                Path("excluded_dir4.1")
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }
@@ -428,7 +553,17 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("imported1/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir1.1"),
+                                    Path("included_dir1.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir1.1")
+                            )
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build()
 
             val importedProjectViewTry2 =
@@ -437,7 +572,16 @@ class ProjectViewBuilderTest {
                         listOf(BuildTargetIdentifier("//included_target2.1")),
                         listOf(BuildTargetIdentifier("//excluded_target2.1"))
                     ),
-                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag2.1=value2.1"))
+                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag2.1=value2.1")),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir2.1"),
+                                    Path("included_dir2.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir2.1")
+                            )
+                    )
                 ).build()
 
             val importedProjectViewTry3 =
@@ -454,6 +598,16 @@ class ProjectViewBuilderTest {
                     debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
                     javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag3.1=value3.1")),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir3.1"),
+                                    Path("included_dir3.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir3.1")
+                            )
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build()
 
             val importedProjectViewTry4 = ProjectView.Builder().build()
@@ -475,7 +629,17 @@ class ProjectViewBuilderTest {
                     ),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag4.1=value4.1", "--build_flag4.2=value4.2")
-                    )
+                    ),
+                    directories = ProjectViewDirectoriesSection(
+                            listOf(
+                                    Path("included_dir4.1"),
+                                    Path("included_dir4.2")
+                            ),
+                            listOf(
+                                    Path("excluded_dir4.1")
+                            )
+                    ),
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
                 ).build()
 
             // then
@@ -515,7 +679,26 @@ class ProjectViewBuilderTest {
                         "--build_flag4.1=value4.1",
                         "--build_flag4.2=value4.2"
                     )
-                )
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                                Path("included_dir1.1"),
+                                Path("included_dir1.2"),
+                                Path("included_dir2.1"),
+                                Path("included_dir2.2"),
+                                Path("included_dir3.1"),
+                                Path("included_dir3.2"),
+                                Path("included_dir4.1"),
+                                Path("included_dir4.2")
+                        ),
+                        listOf(
+                                Path("excluded_dir1.1"),
+                                Path("excluded_dir2.1"),
+                                Path("excluded_dir3.1"),
+                                Path("excluded_dir4.1")
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
             )
             projectView shouldBe expectedProjectView
         }

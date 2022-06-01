@@ -3,14 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.model
 import io.vavr.collection.Seq
 import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 
 /**
  * Representation of the project view file.
@@ -28,6 +21,10 @@ data class ProjectView constructor(
     val javaPath: ProjectViewJavaPathSection?,
     /** bazel flags added to all bazel command invocations  */
     val buildFlags: ProjectViewBuildFlagsSection?,
+    /** directories included and excluded from the project  */
+    val directories: ProjectViewDirectoriesSection?,
+    /** if set to true, relevant project targets will be automatically derived from the `directories` */
+    val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
 ) {
 
     class Builder constructor(
@@ -37,6 +34,8 @@ data class ProjectView constructor(
         private val debuggerAddress: ProjectViewDebuggerAddressSection? = null,
         private val javaPath: ProjectViewJavaPathSection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
+        private val directories: ProjectViewDirectoriesSection? = null,
+        private val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
     ) {
 
         fun build(): Try<ProjectView> {
@@ -48,13 +47,17 @@ data class ProjectView constructor(
                         + " bazel path: {},"
                         + " debugger address: {},"
                         + " java path: {},"
-                        + " build flags: {}.",
+                        + " build flags: {},"
+                        + " directories: {},"
+                        + " deriveTargetsFromDirectories: {}.",
                 imports,
                 targets,
                 bazelPath,
                 debuggerAddress,
                 javaPath,
-                buildFlags
+                buildFlags,
+                directories,
+                deriveTargetsFromDirectories
             )
 
             return Try.sequence(imports)
@@ -69,18 +72,24 @@ data class ProjectView constructor(
             val debuggerAddress = combineDebuggerAddressSection(importedProjectViews)
             val javaPath = combineJavaPathSection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
+            val directories = combineDirectoriesSection(importedProjectViews)
+            val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
                         + " bazel path: {},"
                         + " debugger address: {},"
-                        + " java path: {}.",
+                        + " java path: {},"
+                        + " directories: {},"
+                        + " deriveTargetsFlag: {}.",
                 targets,
                 bazelPath,
                 debuggerAddress,
-                javaPath
+                javaPath,
+                directories,
+                deriveTargetsFromDirectories
             )
-            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags)
+            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags, directories, deriveTargetsFromDirectories)
         }
 
         private fun combineTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewTargetsSection? {
@@ -112,6 +121,26 @@ data class ProjectView constructor(
             )
 
             return createInstanceOfListSectionOrNull(flags, ::ProjectViewBuildFlagsSection)
+        }
+
+        private fun combineDirectoriesSection(importedProjectViews: List<ProjectView>): ProjectViewDirectoriesSection? {
+            val includedTargets = combineListValuesWithImported(
+                    importedProjectViews,
+                    directories,
+                    ProjectView::directories,
+                    ProjectViewDirectoriesSection::values
+            )
+            val excludedTargets = combineListValuesWithImported(
+                    importedProjectViews,
+                    directories,
+                    ProjectView::directories,
+                    ProjectViewDirectoriesSection::excludedValues
+            )
+            return createInstanceOfExcludableListSectionOrNull(
+                    includedTargets,
+                    excludedTargets,
+                    ::ProjectViewDirectoriesSection
+            )
         }
 
         private fun <V, T : ProjectViewListSection<V>> combineListValuesWithImported(
@@ -153,6 +182,8 @@ data class ProjectView constructor(
         private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): ProjectViewJavaPathSection? =
             javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
 
+        private fun combineDeriveTargetFlagSection(importedProjectViews: List<ProjectView>): ProjectViewDeriveTargetsFromDirectoriesSection? =
+            deriveTargetsFromDirectories ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::deriveTargetsFromDirectories)
 
         private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
             importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?

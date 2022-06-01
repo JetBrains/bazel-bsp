@@ -23,3 +23,10 @@ build_flags:
     --build_flag1.1=value1.1
     # --legacy_build_flag=old_value
     --build_flag1.2=value1.2
+
+directories:
+    included_dir1.1
+    included_dir1.2
+    -excluded_dir1.1
+
+derive_targets_from_directories: true

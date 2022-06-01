@@ -16,3 +16,10 @@ build_flags:
     --build_flag8.1=value8.1
     --build_flag8.2=value8.2
     --build_flag8.3=value8.3
+
+directories:
+    included_dir8.1
+    included_dir8.2
+    -excluded_dir8.1
+
+derive_targets_from_directories: true

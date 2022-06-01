@@ -405,6 +405,74 @@ class CliOptionsProviderTest {
             }
         }
 
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.directoriesOption test")
+        inner class DirectoriesOptionTest {
+            @Test
+            fun `should return success if directories are specified`() {
+                // given
+                val args = arrayOf(
+                        "-r",
+                        "included_dir1",
+                        "included_dir2",
+                        "-excluded_dir3"
+                )
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedDirs = listOf(
+                        "included_dir1",
+                        "included_dir2",
+                        "-excluded_dir3",
+                )
+                cliOptions.projectViewCliOptions?.directories shouldBe expectedDirs
+            }
+        }
+
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.deriveTargetsFlagOption test")
+        inner class DeriveTargetsFlagOptionTest {
+            @Test
+            fun `should return success if deriveTargetsFlag is specified`() {
+                // given
+                val args = arrayOf(
+                        "-v"
+                )
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
+            }
+
+            @Test
+            fun `should return success if deriveTargetsFlag is not specified`() {
+                // given
+                val args = emptyArray<String>()
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe null
+            }
+        }
+
         @Test
         fun `should return success if all flags are specified`() {
             // given
@@ -428,7 +496,12 @@ class CliOptionsProviderTest {
                     "-f",
                     "--build_flag1=value1",
                     "--build_flag1=value2",
-                    "--build_flag1=value3"
+                    "--build_flag1=value3",
+                    "-r",
+                    "included_dir1",
+                    "included_dir2",
+                    "-excluded_dir3",
+                    "-v"
             )
 
             // when
@@ -466,6 +539,15 @@ class CliOptionsProviderTest {
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
+
+            val expectedDirs = listOf(
+                    "included_dir1",
+                    "included_dir2",
+                    "-excluded_dir3",
+            )
+            cliOptions.projectViewCliOptions?.directories shouldBe expectedDirs
+
+            cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
         }
 
         @Test
@@ -504,5 +586,6 @@ class CliOptionsProviderTest {
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
         }
+
     }
 }

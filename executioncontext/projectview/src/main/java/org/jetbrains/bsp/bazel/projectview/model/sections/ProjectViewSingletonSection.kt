@@ -20,6 +20,13 @@ data class ProjectViewDebuggerAddressSection(override val value: String) :
     }
 }
 
+data class ProjectViewDeriveTargetsFromDirectoriesSection(override val value: Boolean) :
+        ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "derive_targets_from_directories"
+    }
+}
+
 data class ProjectViewBazelPathSection(override val value: Path) :
     ProjectViewSingletonSection<Path>(SECTION_NAME) {
     companion object {
