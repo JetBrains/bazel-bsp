@@ -560,52 +560,40 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     DependencySourcesItem manualTargetJavaLibrary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("//manual_target:java_library"),
-            List.of(
-                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_library-src.jar"));
+            new BuildTargetIdentifier("//manual_target:java_library"), List.of());
 
     DependencySourcesItem manualTargetScalaLibrary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("manual_target:scala_library"),
-            List.of(
-                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_library-src.jar"));
+            new BuildTargetIdentifier("manual_target:scala_library"), List.of());
 
     DependencySourcesItem manualTargetJavaBinary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("//manual_target:java_binary"),
-            List.of(
-                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_binary-src.jar"));
+            new BuildTargetIdentifier("//manual_target:java_binary"), List.of());
 
     DependencySourcesItem manualTargetScalaBinary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("manual_target:scala_binary"),
-            List.of(
-                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_binary-src.jar"));
+            new BuildTargetIdentifier("manual_target:scala_binary"), List.of());
 
     DependencySourcesItem manualTargetJavaTest =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("//manual_target:java_test"),
-            List.of(
-                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_test-src.jar"));
+            new BuildTargetIdentifier("//manual_target:java_test"), List.of());
 
     DependencySourcesItem manualTargetScalaTest =
         new DependencySourcesItem(
             new BuildTargetIdentifier("manual_target:scala_test"),
             List.of(
-                "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_test-src.jar"
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9-src.jar",
-//                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9-src.jar"
-            ));
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9-src.jar",
+                "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9-src.jar"));
 
     DependencySourcesResult expectedDependencies =
         new DependencySourcesResult(
@@ -745,7 +733,6 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_library"),
                     List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_library.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
@@ -753,15 +740,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:java_library"),
-                    List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_library.jar"),
+                    List.of(),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_binary"),
                     List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_binary.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
@@ -769,37 +754,33 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:java_binary"),
-                    List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_binary.jar"),
+                    List.of(),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_test"),
                     List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_test.jar"
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9.jar",
-//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9.jar"
-                    ),
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9.jar"),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:java_test"),
-                    List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_test.jar"),
+                    List.of(),
                     List.of(),
                     "$WORKSPACE",
                     Map.of())));
@@ -913,7 +894,6 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_library"),
                     List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_library.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
@@ -921,15 +901,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:java_library"),
-                    List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_library.jar"),
+                    List.of(),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_binary"),
                     List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_binary.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
@@ -937,15 +915,13 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:java_binary"),
-                    List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_binary.jar"),
+                    List.of(),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_test"),
                     List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/scala_test.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
@@ -965,8 +941,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:java_test"),
-                    List.of(
-                        "file://$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/manual_target/java_test.jar"),
+                    List.of(),
                     List.of(),
                     "$WORKSPACE",
                     Map.of())));
