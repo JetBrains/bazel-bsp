@@ -203,7 +203,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
                 cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
-                cmd.hasOption(BUILD_MANUAL_TARGETS_OPT)
+                cmd.hasOption(BUILD_MANUAL_TARGETS_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
                 cmd.hasOption(DIRECTORIES_SHORT_OPT) or
                 cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT) or

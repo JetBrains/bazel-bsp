@@ -57,18 +57,18 @@ data class ProjectView constructor(
         fun build(): Try<ProjectView> {
             log.debug(
                 "Building project view with"
-                        + " imports: {}"
-                        + " and (before combining with imported project views)"
-                        + " targets: {},"
-                        + " bazel path: {},"
-                        + " debugger address: {},"
-                        + " java path: {},"
-                        + " build flags: {}."
-                        + "build manual targets: {}.",
-                        + " build flags: {},"
-                        + " directories: {},"
-                        + " deriveTargetsFromDirectories: {}."
-                        + " import depth: {}.",
+                    + " imports: {}"
+                    + " and (before combining with imported project views)"
+                    + " targets: {},"
+                    + " bazel path: {},"
+                    + " debugger address: {},"
+                    + " java path: {},"
+                    + " build flags: {}."
+                    + "build manual targets: {},"
+                    +" build flags: {},"
+                    + " directories: {},"
+                    + " deriveTargetsFromDirectories: {}."
+                    + " import depth: {}.",
                 imports,
                 targets,
                 bazelPath,
@@ -104,7 +104,7 @@ data class ProjectView constructor(
                         + " bazel path: {},"
                         + " debugger address: {},"
                         + " java path: {},"
-                        + " build manual targets {},",
+                        + " build manual targets {},"
                         + " java path: {},"
                         + " directories: {},"
                         + " deriveTargetsFlag: {}."
@@ -113,7 +113,7 @@ data class ProjectView constructor(
                 bazelPath,
                 debuggerAddress,
                 javaPath,
-                buildManualTargets
+                buildManualTargets,
                 javaPath,
                 directories,
                 deriveTargetsFromDirectories,

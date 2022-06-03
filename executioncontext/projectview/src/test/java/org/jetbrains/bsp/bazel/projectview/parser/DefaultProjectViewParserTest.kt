@@ -252,7 +252,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
-                ),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
                         Path("included_dir1.1"),
@@ -305,7 +304,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
-                ),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                             Path("included_dir1.1"),
@@ -362,7 +360,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                ),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                             Path("included_dir1.1"),
@@ -407,7 +404,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                ),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
                         Path("included_dir8.1"),
@@ -464,7 +460,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
-                ),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                             Path("included_dir1.1"),
@@ -527,7 +522,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
-                ),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
                         Path("included_dir2.1"),

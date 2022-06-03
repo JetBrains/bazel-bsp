@@ -557,8 +557,7 @@ class CliOptionsProviderTest {
                     "--build_flag1=value1",
                     "--build_flag1=value2",
                     "--build_flag1=value3",
-                    "-m"
-                    "--build_flag1=value3",
+                    "-m",
                     "-r",
                     "included_dir1",
                     "included_dir2",

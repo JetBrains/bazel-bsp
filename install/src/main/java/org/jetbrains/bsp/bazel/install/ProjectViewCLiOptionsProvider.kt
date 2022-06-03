@@ -6,12 +6,7 @@ import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.ProjectViewCliOptions
 import org.jetbrains.bsp.bazel.projectview.generator.DefaultProjectViewGenerator
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 
 
 import java.nio.file.Path
@@ -53,9 +48,7 @@ object ProjectViewCLiOptionsProvider {
     private fun toBuildManualTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildManualTargetsSection? =
             projectViewCliOptions?.buildManualTargets?.let(::ProjectViewBuildManualTargetsSection)
 
-    private fun toTargetsSectionNotNull(targets: List<String>?): ProjectViewTargetsSection {
-        val includedTargets = calculateIncludedTargets(targets)
-        val excludedTargets = calculateExcludedTargets(targets)
+
     private fun toTargetsSectionNotNull(targets: List<String>): ProjectViewTargetsSection {
         val includedTargets = calculateIncludedValues(targets).map(::BuildTargetIdentifier)
         val excludedTargets = calculateExcludedValues(targets).map(::BuildTargetIdentifier)

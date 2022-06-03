@@ -104,7 +104,6 @@ class ProjectViewBuilderTest {
                     javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                    buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1"), Path("included_dir2")
@@ -136,7 +135,6 @@ class ProjectViewBuilderTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"), Path("included_dir2")
@@ -172,7 +170,6 @@ class ProjectViewBuilderTest {
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                    ),
                     directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"), Path("included_dir2")
@@ -181,7 +178,8 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(0),
-                ).build()
+                )
+            .build()
 
             // when
             val projectViewTry = ProjectView.Builder(imports = listOf(importedProjectViewTry)).build()
@@ -207,7 +205,6 @@ class ProjectViewBuilderTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"), Path("included_dir2")
@@ -238,6 +235,7 @@ class ProjectViewBuilderTest {
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1"), Path("included_dir2")
@@ -246,7 +244,7 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(0),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(true),
+
                 ).build()
 
             // then
@@ -262,7 +260,6 @@ class ProjectViewBuilderTest {
                 javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"), Path("included_dir2")
@@ -298,7 +295,6 @@ class ProjectViewBuilderTest {
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                    ),
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1.1"), Path("included_dir1.2")
@@ -307,7 +303,8 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(1),
-                ).build()
+
+            ).build()
 
             // when
             val projectViewTry =
@@ -331,7 +328,6 @@ class ProjectViewBuilderTest {
                         listOf("--build_flag2.1=value2.1", "--build_flag2.2=value2.2")
                     ),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                    ),
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir2.1"), Path("included_dir2.2")
@@ -340,7 +336,8 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(2),
-                ).build()
+
+            ).build()
 
             // then
             projectViewTry.isSuccess shouldBe true
@@ -375,7 +372,6 @@ class ProjectViewBuilderTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                ),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1.1"),
@@ -418,7 +414,6 @@ class ProjectViewBuilderTest {
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                    ),
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1.1"),
@@ -547,7 +542,7 @@ class ProjectViewBuilderTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                ),
+
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1.1"),
@@ -596,7 +591,7 @@ class ProjectViewBuilderTest {
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                    ),
+
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1.1"),
@@ -727,7 +722,7 @@ class ProjectViewBuilderTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
-                ),
+
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1.1"),

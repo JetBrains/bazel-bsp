@@ -119,8 +119,7 @@ class WorkspaceContextConstructorTest {
                 buildFlags = BuildFlagsSpec(emptyList()),
                 bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
-                buildManualTargets = BuildManualTargetsSpec(false)
-                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
+                buildManualTargets = BuildManualTargetsSpec(false),
                 importDepth = ImportDepthSpec(0)
             )
             workspaceContext shouldBe expectedWorkspaceContext

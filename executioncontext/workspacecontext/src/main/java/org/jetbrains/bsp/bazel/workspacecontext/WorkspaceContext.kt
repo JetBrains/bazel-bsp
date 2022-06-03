@@ -86,25 +86,28 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
                 }
             }
         }
-        override fun constructDefault(): Try<WorkspaceContext> =
-                TargetsSpecMapper.default().flatMap { targetsSpec ->
-                    BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
-                        BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
-                            DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
-                                BuildManualTargetsSpecMapper.default().flatMap { buildManualTargetsSpec ->
-                                    ImportDepthSpecMapper.default().map { importDepthSpec ->
-                                        WorkspaceContext(
-                                                targets = targetsSpec,
-                                                buildFlags = buildFlagsSpec,
-                                                bazelPath = bazelPathSpec,
-                                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                                buildManualTargets = buildManualTargetsSpec,
-                                                importDepth = importDepthSpec
-                                        )
-                                    }
+
+    }
+
+    override fun constructDefault(): Try<WorkspaceContext> =
+            TargetsSpecMapper.default().flatMap { targetsSpec ->
+                BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
+                    BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
+                        DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
+                            BuildManualTargetsSpecMapper.default().flatMap { buildManualTargetsSpec ->
+                                ImportDepthSpecMapper.default().map { importDepthSpec ->
+                                    WorkspaceContext(
+                                            targets = targetsSpec,
+                                            buildFlags = buildFlagsSpec,
+                                            bazelPath = bazelPathSpec,
+                                            dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                            buildManualTargets = buildManualTargetsSpec,
+                                            importDepth = importDepthSpec,
+                                    )
                                 }
                             }
                         }
                     }
                 }
-    }
+            }
+}

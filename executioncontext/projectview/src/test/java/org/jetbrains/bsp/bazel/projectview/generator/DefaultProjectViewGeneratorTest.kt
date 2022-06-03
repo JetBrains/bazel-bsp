@@ -215,6 +215,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = null,
                     javaPath = null,
                     buildFlags = null,
+                    buildManualTargets = null,
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1"),
@@ -256,6 +257,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = null,
                     javaPath = null,
                     buildFlags = null,
+                    buildManualTargets = null,
                     directories = null,
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = null,
@@ -282,6 +284,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = ProjectViewImportDepthSection(3),
@@ -309,6 +312,9 @@ class DefaultProjectViewGeneratorTest {
                 javaPath = null,
                 buildFlags = null,
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
             )
 
             // when
