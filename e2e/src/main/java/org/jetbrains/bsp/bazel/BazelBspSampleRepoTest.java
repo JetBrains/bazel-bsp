@@ -564,7 +564,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     DependencySourcesItem manualTargetScalaLibrary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("manual_target:scala_library"), List.of());
+            new BuildTargetIdentifier("//manual_target:scala_library"), List.of());
 
     DependencySourcesItem manualTargetJavaBinary =
         new DependencySourcesItem(
@@ -572,7 +572,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     DependencySourcesItem manualTargetScalaBinary =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("manual_target:scala_binary"), List.of());
+            new BuildTargetIdentifier("//manual_target:scala_binary"), List.of());
 
     DependencySourcesItem manualTargetJavaTest =
         new DependencySourcesItem(
@@ -580,7 +580,7 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
 
     DependencySourcesItem manualTargetScalaTest =
         new DependencySourcesItem(
-            new BuildTargetIdentifier("manual_target:scala_test"),
+            new BuildTargetIdentifier("//manual_target:scala_test"),
             List.of(
                 "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9-src.jar",
                 "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9-src.jar",
