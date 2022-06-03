@@ -7,6 +7,8 @@
 ### Features 🎉
 - Directories and derive_targets_from_directories sections are now available in project view files.
   | [#247](https://github.com/JetBrains/bazel-bsp/pull/247)
+- Dependent targets can be imported as modules based on `import_depth` project view parameter
+  | [#248](https://github.com/JetBrains/bazel-bsp/pull/248)
 
 ## [2.1.0] - 11.05.2022
 

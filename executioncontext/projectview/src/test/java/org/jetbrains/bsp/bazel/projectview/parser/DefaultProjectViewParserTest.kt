@@ -99,6 +99,21 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
+        fun `should return null import depth for file without import depth section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/importdepth.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.importDepth shouldBe null
+        }
+
+        @Test
         fun `should return empty java path section for file without java path section`() {
             // given
             val projectViewFilePath = Path("/projectview/without/javapath.bazelproject")
@@ -177,7 +192,8 @@ class DefaultProjectViewParserTest {
                 javaPath = null,
                 buildFlags = null,
                 directories = null,
-                deriveTargetsFromDirectories = null
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -222,7 +238,8 @@ class DefaultProjectViewParserTest {
                         Path("excluded_dir1.1")
                     )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(1),
             )
             projectView shouldBe expectedProjectView
         }
@@ -275,7 +292,8 @@ class DefaultProjectViewParserTest {
                             Path("excluded_dir4.1")
                         )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(1),
             )
             projectView shouldBe expectedProjectView
         }
@@ -326,7 +344,8 @@ class DefaultProjectViewParserTest {
                             Path("excluded_dir1.1")
                         )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                importDepth = ProjectViewImportDepthSection(7),
             )
             projectView shouldBe expectedProjectView
         }
@@ -368,7 +387,8 @@ class DefaultProjectViewParserTest {
                         Path("excluded_dir8.1"),
                     )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(8),
             )
             projectView shouldBe expectedProjectView
         }
@@ -426,7 +446,8 @@ class DefaultProjectViewParserTest {
                             Path("excluded_dir3.1"),
                         )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                importDepth = ProjectViewImportDepthSection(3),
             )
             projectView shouldBe expectedProjectView
         }
@@ -489,7 +510,8 @@ class DefaultProjectViewParserTest {
                         Path("excluded_dir4.1"),
                     )
                 ),
-                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(1),
             )
             projectView shouldBe expectedProjectView
         }

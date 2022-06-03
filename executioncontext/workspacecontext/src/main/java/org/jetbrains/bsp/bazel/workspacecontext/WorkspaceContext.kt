@@ -41,6 +41,13 @@ data class WorkspaceContext(
      * Deducted from working directory.
      */
     val dotBazelBspDirPath: DotBazelBspDirPathSpec,
+
+    /**
+     * Parameter determining targets importing depth
+     *
+     * Obtained from `ProjectView` simply by mapping `import_depth` section.
+     */
+    val importDepth: ImportDepthSpec,
 ) : ExecutionContext()
 
 
@@ -55,13 +62,16 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
         return TargetsSpecMapper.map(projectView).flatMap { targetsSpec ->
             BuildFlagsSpecMapper.map(projectView).flatMap { buildFlagsSpec ->
                 BazelPathSpecMapper.map(projectView).flatMap { bazelPathSpec ->
-                    DotBazelBspDirPathSpecMapper.map(projectView).map { dotBazelBspDirPathSpec ->
-                        WorkspaceContext(
-                            targets = targetsSpec,
-                            buildFlags = buildFlagsSpec,
-                            bazelPath = bazelPathSpec,
-                            dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                        )
+                    DotBazelBspDirPathSpecMapper.map(projectView).flatMap { dotBazelBspDirPathSpec ->
+                        ImportDepthSpecMapper.map(projectView).map { importDepthSpec ->
+                            WorkspaceContext(
+                                targets = targetsSpec,
+                                buildFlags = buildFlagsSpec,
+                                bazelPath = bazelPathSpec,
+                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                importDepth = importDepthSpec,
+                            )
+                        }
                     }
                 }
             }
@@ -72,13 +82,16 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
         TargetsSpecMapper.default().flatMap { targetsSpec ->
             BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
                 BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
-                    DotBazelBspDirPathSpecMapper.default().map { dotBazelBspDirPathSpec ->
-                        WorkspaceContext(
-                            targets = targetsSpec,
-                            buildFlags = buildFlagsSpec,
-                            bazelPath = bazelPathSpec,
-                            dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                        )
+                    DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
+                        ImportDepthSpecMapper.default().map { importDepthSpec ->
+                            WorkspaceContext(
+                                targets = targetsSpec,
+                                buildFlags = buildFlagsSpec,
+                                bazelPath = bazelPathSpec,
+                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                importDepth = importDepthSpec
+                            )
+                        }
                     }
                 }
             }
