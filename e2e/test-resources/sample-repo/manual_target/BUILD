@@ -42,7 +42,7 @@ scala_test(
 java_test(
     name = "java_test",
     srcs = ["JavaTest.java"],
-    main_class = "manual_target.JavaTest",
+    test_class = "manual_target.JavaTest",
     tags = ["manual"],
     visibility = ["//visibility:public"],
 )
