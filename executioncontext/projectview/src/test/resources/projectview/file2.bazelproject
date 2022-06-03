@@ -5,3 +5,7 @@ targets:
 build_flags:
     --build_flag2.1=value2.1
     --build_flag2.2=value2.2
+
+directories:
+    included_dir2.1
+    -excluded_dir2.1

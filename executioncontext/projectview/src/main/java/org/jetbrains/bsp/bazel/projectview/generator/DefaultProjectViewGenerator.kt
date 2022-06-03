@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewDebugge
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewJavaPathSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFlagsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildManualTargetsSectionGenerator
+import org.jetbrains.bsp.bazel.projectview.generator.sections.*
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
 import java.nio.file.Path
@@ -24,5 +25,8 @@ object DefaultProjectViewGenerator : ProjectViewGenerator {
             ProjectViewJavaPathSectionGenerator.generatePrettyString(projectView.javaPath),
             ProjectViewBuildFlagsSectionGenerator.generatePrettyString(projectView.buildFlags),
             ProjectViewBuildManualTargetsSectionGenerator.generatePrettyString(projectView.buildManualTargets),
+            ProjectViewDirectoriesSectionGenerator.generatePrettyString(projectView.directories),
+            ProjectViewDeriveTargetsFromDirectoriesSectionGenerator.generatePrettyString(projectView.deriveTargetsFromDirectories),
+            ProjectViewImportDepthSectionGenerator.generatePrettyString(projectView.importDepth),
         ).joinToString(separator = "\n\n", postfix = "\n")
 }

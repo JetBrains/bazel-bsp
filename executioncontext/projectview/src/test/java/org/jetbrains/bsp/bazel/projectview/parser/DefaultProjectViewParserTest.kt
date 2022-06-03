@@ -9,6 +9,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAdd
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -104,6 +105,21 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
+        fun `should return null import depth for file without import depth section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/importdepth.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.importDepth shouldBe null
+        }
+
+        @Test
         fun `should return empty java path section for file without java path section`() {
             // given
             val projectViewFilePath = Path("/projectview/without/javapath.bazelproject")
@@ -149,6 +165,36 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
+        fun `should return empty directories section for file without directories section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/directories.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.directories shouldBe null
+        }
+
+        @Test
+        fun `should return empty derive_targets_from_directories section for file without derive_targets_from_directories section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/derive_targets_from_directories.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.deriveTargetsFromDirectories shouldBe null
+        }
+
+        @Test
         fun `should parse empty file`() {
             // given
             val projectViewFilePath = Path("/projectview/empty.bazelproject")
@@ -167,6 +213,9 @@ class DefaultProjectViewParserTest {
                 javaPath = null,
                 buildFlags = null,
                 buildManualTargets = null,
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -187,8 +236,12 @@ class DefaultProjectViewParserTest {
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
                     listOf(
-                        BuildTargetIdentifier("//included_target1.1"), BuildTargetIdentifier("//included_target1.2")
-                    ), listOf(BuildTargetIdentifier("//excluded_target1.1"))
+                        BuildTargetIdentifier("//included_target1.1"),
+                        BuildTargetIdentifier("//included_target1.2")
+                    ),
+                    listOf(
+                        BuildTargetIdentifier("//excluded_target1.1")
+                    )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
                 debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
@@ -199,6 +252,18 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                ),
+                directories = ProjectViewDirectoriesSection(
+                    listOf(
+                        Path("included_dir1.1"),
+                        Path("included_dir1.2")
+                    ),
+                    listOf(
+                        Path("excluded_dir1.1")
+                    )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(1),
             )
             projectView shouldBe expectedProjectView
         }
@@ -240,6 +305,21 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                            Path("included_dir1.1"),
+                            Path("included_dir1.2"),
+                            Path("included_dir4.1"),
+                            Path("included_dir4.2")
+                        ),
+                        listOf(
+                            Path("excluded_dir1.1"),
+                            Path("excluded_dir4.1")
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(1),
             )
             projectView shouldBe expectedProjectView
         }
@@ -282,6 +362,18 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                            Path("included_dir1.1"),
+                            Path("included_dir1.2")
+                        ),
+                        listOf(
+                            Path("excluded_dir1.1")
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                importDepth = ProjectViewImportDepthSection(7),
             )
             projectView shouldBe expectedProjectView
         }
@@ -315,6 +407,18 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
+                ),
+                directories = ProjectViewDirectoriesSection(
+                    listOf(
+                        Path("included_dir8.1"),
+                        Path("included_dir8.2")
+                    ),
+                    listOf(
+                        Path("excluded_dir8.1"),
+                    )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(8),
             )
             projectView shouldBe expectedProjectView
         }
@@ -360,6 +464,22 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                ),
+                directories = ProjectViewDirectoriesSection(
+                        listOf(
+                            Path("included_dir1.1"),
+                            Path("included_dir1.2"),
+                            Path("included_dir2.1"),
+                            Path("included_dir3.1")
+                        ),
+                        listOf(
+                            Path("excluded_dir1.1"),
+                            Path("excluded_dir2.1"),
+                            Path("excluded_dir3.1"),
+                        )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
+                importDepth = ProjectViewImportDepthSection(3),
             )
             projectView shouldBe expectedProjectView
         }
@@ -407,6 +527,25 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
+                ),
+                directories = ProjectViewDirectoriesSection(
+                    listOf(
+                        Path("included_dir2.1"),
+                        Path("included_dir3.1"),
+                        Path("included_dir1.1"),
+                        Path("included_dir1.2"),
+                        Path("included_dir4.1"),
+                        Path("included_dir4.2")
+                    ),
+                    listOf(
+                        Path("excluded_dir2.1"),
+                        Path("excluded_dir3.1"),
+                        Path("excluded_dir1.1"),
+                        Path("excluded_dir4.1"),
+                    )
+                ),
+                deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
+                importDepth = ProjectViewImportDepthSection(1),
             )
             projectView shouldBe expectedProjectView
         }

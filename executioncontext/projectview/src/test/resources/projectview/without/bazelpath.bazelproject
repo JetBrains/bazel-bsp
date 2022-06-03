@@ -19,3 +19,5 @@ build_flags:
     --build_flag1.2=value1.2
 
 build_manual_targets: false
+
+import_depth: 0

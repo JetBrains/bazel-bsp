@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.thrift;
 
 import ch.epfl.scala.bsp4j.BuildTarget;
+import io.vavr.collection.HashSet;
 import io.vavr.collection.Set;
 import java.net.URI;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
@@ -19,8 +20,8 @@ public class ThriftLanguagePlugin extends LanguagePlugin<ThriftModule> {
 
   @Override
   public Set<URI> dependencySources(TargetInfo targetInfo, DependencyTree dependencyTree) {
-    return dependencyTree
-        .transitiveDependenciesWithoutRootTargets(targetInfo.getId())
+    return HashSet.ofAll(
+            dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.getId()))
         .filter(this::isThriftLibrary)
         .flatMap(TargetInfo::getSourcesList)
         .map(bazelPathsResolver::resolveUri);

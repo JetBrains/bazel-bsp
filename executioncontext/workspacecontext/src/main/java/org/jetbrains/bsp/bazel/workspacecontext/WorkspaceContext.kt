@@ -48,6 +48,13 @@ data class WorkspaceContext(
      * Deducted from working directory.
      */
     val dotBazelBspDirPath: DotBazelBspDirPathSpec,
+
+    /**
+     * Parameter determining targets importing depth
+     *
+     * Obtained from `ProjectView` simply by mapping `import_depth` section.
+     */
+    val importDepth: ImportDepthSpec,
 ) : ExecutionContext()
 
 
@@ -63,36 +70,41 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
             BuildFlagsSpecMapper.map(projectView).flatMap { buildFlagsSpec ->
                 BazelPathSpecMapper.map(projectView).flatMap { bazelPathSpec ->
                     DotBazelBspDirPathSpecMapper.map(projectView).flatMap { dotBazelBspDirPathSpec ->
-                        BuildManualTargetsSpecMapper.map(projectView).map{buildManualTargetsSpec ->
-                            WorkspaceContext(
-                                targets = targetsSpec,
-                                buildFlags = buildFlagsSpec,
-                                bazelPath = bazelPathSpec,
-                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                buildManualTargets = buildManualTargetsSpec,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-    override fun constructDefault(): Try<WorkspaceContext> =
-        TargetsSpecMapper.default().flatMap { targetsSpec ->
-            BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
-                BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
-                    DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
-                        BuildManualTargetsSpecMapper.default().map { buildManualTargetsSpec ->
-                            WorkspaceContext(
-                                targets = targetsSpec,
-                                buildFlags = buildFlagsSpec,
-                                bazelPath = bazelPathSpec,
-                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                buildManualTargets = buildManualTargetsSpec,
-                            )
+                        BuildManualTargetsSpecMapper.map(projectView).flatMap { buildManualTargetsSpec ->
+                            ImportDepthSpecMapper.map(projectView).map { importDepthSpec ->
+                                WorkspaceContext(
+                                        targets = targetsSpec,
+                                        buildFlags = buildFlagsSpec,
+                                        bazelPath = bazelPathSpec,
+                                        dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                        buildManualTargets = buildManualTargetsSpec,
+                                        importDepth = importDepthSpec,
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+        override fun constructDefault(): Try<WorkspaceContext> =
+                TargetsSpecMapper.default().flatMap { targetsSpec ->
+                    BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
+                        BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
+                            DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
+                                BuildManualTargetsSpecMapper.default().flatMap { buildManualTargetsSpec ->
+                                    ImportDepthSpecMapper.default().map { importDepthSpec ->
+                                        WorkspaceContext(
+                                                targets = targetsSpec,
+                                                buildFlags = buildFlagsSpec,
+                                                bazelPath = bazelPathSpec,
+                                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                                buildManualTargets = buildManualTargetsSpec,
+                                                importDepth = importDepthSpec
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
     }
-}

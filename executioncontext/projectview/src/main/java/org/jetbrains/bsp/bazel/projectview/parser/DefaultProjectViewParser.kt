@@ -9,6 +9,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSec
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManualTargetsSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
 import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
@@ -48,6 +49,9 @@ open class DefaultProjectViewParser : ProjectViewParser {
             javaPath = ProjectViewJavaPathSectionParser.parse(rawSections),
             buildFlags = ProjectViewBuildFlagsSectionParser.parse(rawSections),
             buildManualTargets = ProjectViewBuildManualTargetsSectionParser.parse(rawSections),
+            directories = ProjectViewDirectoriesSectionParser.parse(rawSections),
+            deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
+            importDepth = ProjectViewImportDepthSectionParser.parse(rawSections),
         ).build()
     }
 

@@ -1,11 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import io.vavr.collection.Array;
-import io.vavr.collection.HashMap;
-import io.vavr.collection.HashSet;
-import io.vavr.collection.Map;
-import io.vavr.collection.Seq;
-import io.vavr.collection.Set;
+import io.vavr.collection.*;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.nio.file.Path;
@@ -40,8 +35,8 @@ public class BazelProjectMapper {
   public Project createProject(
       Map<String, TargetInfo> targets, Set<String> rootTargets, WorkspaceContext workspaceContext) {
     languagePluginsService.prepareSync(targets.values());
-    var dependencyTree = new DependencyTree(targets, rootTargets);
-    var targetsToImport = selectTargetsToImport(rootTargets, targets);
+    var dependencyTree = new DependencyTree(rootTargets.toJavaSet(), targets.toJavaMap());
+    var targetsToImport = selectTargetsToImport(workspaceContext, rootTargets, dependencyTree);
     var modulesFromBazel = createModules(targetsToImport, dependencyTree);
     var workspaceRoot = bazelPathsResolver.workspaceRoot();
     var syntheticModules =
@@ -51,11 +46,16 @@ public class BazelProjectMapper {
     return new Project(workspaceRoot, allModules, sourceToTarget);
   }
 
-  // When we will be implementing transitive import (configurable through project view),
-  // here we will implement the logic to include more targets than the root ones.
   private Seq<TargetInfo> selectTargetsToImport(
-      Set<String> rootTargets, Map<String, TargetInfo> targets) {
-    return rootTargets.iterator().flatMap(targets::get).toArray();
+      WorkspaceContext workspaceContext, Set<String> rootTargets, DependencyTree tree) {
+    return List.ofAll(
+            tree.allTargetsAtDepth(
+                workspaceContext.getImportDepth().getValue(), rootTargets.toJavaSet()))
+        .filter(this::isWorkspaceTarget);
+  }
+
+  private boolean isWorkspaceTarget(TargetInfo target) {
+    return target.getId().startsWith("//");
   }
 
   private Seq<Module> createModules(

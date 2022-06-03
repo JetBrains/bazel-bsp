@@ -13,6 +13,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManual
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
 
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 
 /**
  * Representation of the project view file.
@@ -32,6 +33,12 @@ data class ProjectView constructor(
     val buildFlags: ProjectViewBuildFlagsSection?,
     /** flag for building manual targets. */
     val buildManualTargets: ProjectViewBuildManualTargetsSection?,
+    /** directories included and excluded from the project  */
+    val directories: ProjectViewDirectoriesSection?,
+    /** if set to true, relevant project targets will be automatically derived from the `directories` */
+    val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
+    /** level of depth for importing inherited targets */
+    val importDepth: ProjectViewImportDepthSection?,
 ) {
 
     class Builder constructor(
@@ -42,6 +49,9 @@ data class ProjectView constructor(
         private val javaPath: ProjectViewJavaPathSection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
         private val buildManualTargets: ProjectViewBuildManualTargetsSection? = null,
+        private val directories: ProjectViewDirectoriesSection? = null,
+        private val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
+        private val importDepth: ProjectViewImportDepthSection? = null,
     ) {
 
         fun build(): Try<ProjectView> {
@@ -55,6 +65,10 @@ data class ProjectView constructor(
                         + " java path: {},"
                         + " build flags: {}."
                         + "build manual targets: {}.",
+                        + " build flags: {},"
+                        + " directories: {},"
+                        + " deriveTargetsFromDirectories: {}."
+                        + " import depth: {}.",
                 imports,
                 targets,
                 bazelPath,
@@ -62,6 +76,10 @@ data class ProjectView constructor(
                 javaPath,
                 buildFlags,
                 buildManualTargets,
+                buildFlags,
+                directories,
+                deriveTargetsFromDirectories,
+                importDepth,
             )
 
             return Try.sequence(imports)
@@ -77,6 +95,9 @@ data class ProjectView constructor(
             val javaPath = combineJavaPathSection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
             val buildManualTargets = combineManualTargetsSection(importedProjectViews)
+            val directories = combineDirectoriesSection(importedProjectViews)
+            val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
+            val importDepth = combineImportDepthSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
@@ -84,13 +105,21 @@ data class ProjectView constructor(
                         + " debugger address: {},"
                         + " java path: {},"
                         + " build manual targets {},",
+                        + " java path: {},"
+                        + " directories: {},"
+                        + " deriveTargetsFlag: {}."
+                        + " import depth: {}.",
                 targets,
                 bazelPath,
                 debuggerAddress,
                 javaPath,
                 buildManualTargets
+                javaPath,
+                directories,
+                deriveTargetsFromDirectories,
+                importDepth,
             )
-            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags, buildManualTargets)
+            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags,buildManualTargets, directories, deriveTargetsFromDirectories, importDepth)
         }
 
         private fun combineTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewTargetsSection? {
@@ -122,6 +151,26 @@ data class ProjectView constructor(
             )
 
             return createInstanceOfListSectionOrNull(flags, ::ProjectViewBuildFlagsSection)
+        }
+
+        private fun combineDirectoriesSection(importedProjectViews: List<ProjectView>): ProjectViewDirectoriesSection? {
+            val includedTargets = combineListValuesWithImported(
+                    importedProjectViews,
+                    directories,
+                    ProjectView::directories,
+                    ProjectViewDirectoriesSection::values
+            )
+            val excludedTargets = combineListValuesWithImported(
+                    importedProjectViews,
+                    directories,
+                    ProjectView::directories,
+                    ProjectViewDirectoriesSection::excludedValues
+            )
+            return createInstanceOfExcludableListSectionOrNull(
+                    includedTargets,
+                    excludedTargets,
+                    ::ProjectViewDirectoriesSection
+            )
         }
 
         private fun <V, T : ProjectViewListSection<V>> combineListValuesWithImported(
@@ -166,6 +215,11 @@ data class ProjectView constructor(
         private fun combineManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewBuildManualTargetsSection? =
             buildManualTargets
                 ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
+        private fun combineDeriveTargetFlagSection(importedProjectViews: List<ProjectView>): ProjectViewDeriveTargetsFromDirectoriesSection? =
+            deriveTargetsFromDirectories ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::deriveTargetsFromDirectories)
+
+        private fun combineImportDepthSection(importedProjectViews: List<ProjectView>): ProjectViewImportDepthSection? =
+            importDepth ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::importDepth)
 
         private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
             importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?
