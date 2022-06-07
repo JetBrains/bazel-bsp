@@ -747,7 +747,9 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                     Map.of()),
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_test"),
-                    List.of(),
+                    List.of(
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
@@ -895,35 +897,8 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                 new JvmEnvironmentItem(
                     new BuildTargetIdentifier("//manual_target:scala_test"),
                     List.of(
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9.jar",
-                        //
-                        // "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9.jar"
-                        ),
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
                     "$WORKSPACE",
                     Map.of()),
