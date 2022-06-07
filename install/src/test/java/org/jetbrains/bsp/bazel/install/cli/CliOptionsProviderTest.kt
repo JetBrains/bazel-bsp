@@ -447,6 +447,7 @@ class CliOptionsProviderTest {
                 val expectedBuildManualTargets = true
                 cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
             }
+
         }
 
         @Test
@@ -463,6 +464,7 @@ class CliOptionsProviderTest {
             val cliOptions = cliOptionsTry.get()
 
             cliOptions.projectViewCliOptions?.buildManualTargets shouldBe null
+
         }
 
         @Nested

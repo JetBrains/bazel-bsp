@@ -100,15 +100,15 @@ data class ProjectView constructor(
             val importDepth = combineImportDepthSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
-                        + " targets: {},"
-                        + " bazel path: {},"
-                        + " debugger address: {},"
-                        + " java path: {},"
-                        + " build manual targets {},"
-                        + " java path: {},"
-                        + " directories: {},"
-                        + " deriveTargetsFlag: {}."
-                        + " import depth: {}.",
+                            + " targets: {},"
+                            + " bazel path: {},"
+                            + " debugger address: {},"
+                            + " java path: {},"
+                            + " build manual targets {},"
+                            + " java path: {},"
+                            + " directories: {},"
+                            + " deriveTargetsFlag: {}."
+                            + " import depth: {}.",
                 targets,
                 bazelPath,
                 debuggerAddress,
@@ -215,6 +215,7 @@ data class ProjectView constructor(
         private fun combineManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewBuildManualTargetsSection? =
             buildManualTargets
                 ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
+
         private fun combineDeriveTargetFlagSection(importedProjectViews: List<ProjectView>): ProjectViewDeriveTargetsFromDirectoriesSection? =
             deriveTargetsFromDirectories ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::deriveTargetsFromDirectories)
 

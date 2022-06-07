@@ -791,7 +791,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
-                buildManualTargets = null,
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"),
