@@ -35,7 +35,7 @@ data class WorkspaceContext(
     val bazelPath: BazelPathSpec,
 
     /**
-     * Should be used to build targets with ["manual"] tag.
+     * If true targets with `manual` tag will be built
      *
      * Obtained from `ProjectView` simply by mapping 'build_manual_targets' section.
      */
