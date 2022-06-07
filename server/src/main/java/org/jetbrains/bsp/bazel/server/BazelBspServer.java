@@ -59,11 +59,16 @@ public class BazelBspServer {
     this.compilationManager = serverContainer.compilationManager;
     this.bazelRunner = serverContainer.bazelRunner;
 
-    var bspProjectMapper = new BspProjectMapper(serverContainer.languagePluginsService);
+    var bspProjectMapper =
+        new BspProjectMapper(serverContainer.languagePluginsService, workspaceContextProvider);
     var projectSyncService =
         new ProjectSyncService(bspProjectMapper, serverContainer.projectProvider);
     var executeService =
-        new ExecuteService(compilationManager, serverContainer.projectProvider, bazelRunner);
+        new ExecuteService(
+            compilationManager,
+            serverContainer.projectProvider,
+            bazelRunner,
+            workspaceContextProvider);
     var cppBuildServerService = new CppBuildServerService();
     var serverLifetime = new BazelBspServerLifetime();
     var bspRequestsRunner = new BspRequestsRunner(serverLifetime);

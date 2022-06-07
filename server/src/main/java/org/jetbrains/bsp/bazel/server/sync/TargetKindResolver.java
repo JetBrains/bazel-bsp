@@ -29,6 +29,8 @@ public class TargetKindResolver {
             .orElse(NO_IDE);
     if (targetInfo.getTagsList().contains("no-ide")) {
       return tag.add(Tag.NO_IDE);
+    } else if (targetInfo.getTagsList().contains("manual")) {
+      return tag.add(Tag.MANUAL);
     }
     return tag;
   }

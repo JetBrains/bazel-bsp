@@ -7,6 +7,8 @@ import org.jetbrains.bsp.bazel.install.cli.ProjectViewCliOptions
 import org.jetbrains.bsp.bazel.projectview.generator.DefaultProjectViewGenerator
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
+
+
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -31,6 +33,7 @@ object ProjectViewCLiOptionsProvider {
                     directories = toDirectoriesSection(projectViewCliOptions),
                     deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions),
                     importDepth = toImportDepthSection(projectViewCliOptions),
+                    buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
             )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
@@ -41,6 +44,10 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewTargetsSection? =
             projectViewCliOptions?.targets?.let(::toTargetsSectionNotNull)
+
+    private fun toBuildManualTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildManualTargetsSection? =
+            projectViewCliOptions?.buildManualTargets?.let(::ProjectViewBuildManualTargetsSection)
+
 
     private fun toTargetsSectionNotNull(targets: List<String>): ProjectViewTargetsSection {
         val includedTargets = calculateIncludedValues(targets).map(::BuildTargetIdentifier)

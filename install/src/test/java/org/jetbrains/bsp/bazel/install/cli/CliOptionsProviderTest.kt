@@ -428,6 +428,46 @@ class CliOptionsProviderTest {
         }
 
         @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.buildManualTargets test")
+        inner class BuildManualTargetsTest {
+
+            @Test
+            fun `should return success if build manual targets are specified`() {
+                // given
+                val args = arrayOf("-m")
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedBuildManualTargets = true
+                cliOptions.projectViewCliOptions?.buildManualTargets shouldBe expectedBuildManualTargets
+            }
+
+        }
+
+        @Test
+        fun `should return null if build manual targets are not specified`() {
+            // given
+            val args = arrayOf<String>()
+
+            // when
+            val provider = CliOptionsProvider(args)
+            val cliOptionsTry = provider.getOptions()
+
+            // then
+            cliOptionsTry.isSuccess shouldBe true
+            val cliOptions = cliOptionsTry.get()
+
+            cliOptions.projectViewCliOptions?.buildManualTargets shouldBe null
+
+        }
+
+        @Nested
         @DisplayName("cliOptions.projectViewCliOptions.directoriesOption test")
         inner class DirectoriesOptionTest {
             @Test
@@ -519,6 +559,7 @@ class CliOptionsProviderTest {
                     "--build_flag1=value1",
                     "--build_flag1=value2",
                     "--build_flag1=value3",
+                    "-m",
                     "-r",
                     "included_dir1",
                     "included_dir2",
@@ -557,10 +598,13 @@ class CliOptionsProviderTest {
                     "//included_target3",
                     "-//excluded_target2",
             )
+
             cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
+
+            cliOptions.projectViewCliOptions?.buildManualTargets shouldBe true
 
             val expectedDirs = listOf(
                     "included_dir1",

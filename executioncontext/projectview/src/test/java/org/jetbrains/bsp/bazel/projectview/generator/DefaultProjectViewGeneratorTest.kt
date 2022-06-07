@@ -3,6 +3,12 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
@@ -28,6 +34,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -59,6 +66,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -90,6 +98,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -116,6 +125,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -142,6 +152,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -174,6 +185,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -203,6 +215,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = null,
                     javaPath = null,
                     buildFlags = null,
+                    buildManualTargets = null,
                     directories = ProjectViewDirectoriesSection(
                             listOf(
                                     Path("included_dir1"),
@@ -244,6 +257,7 @@ class DefaultProjectViewGeneratorTest {
                     debuggerAddress = null,
                     javaPath = null,
                     buildFlags = null,
+                    buildManualTargets = null,
                     directories = null,
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = null,
@@ -270,6 +284,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = ProjectViewImportDepthSection(3),
@@ -288,6 +303,33 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
+        fun `should return pretty string only with manual tag for project view only with manual tag`() {
+            // given
+            val projectView = ProjectView(
+                targets = null,
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = null,
+                buildFlags = null,
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
+            )
+
+            // when
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                """
+                |build_manual_targets: true
+                |
+                """.trimMargin()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
@@ -296,6 +338,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
@@ -316,6 +359,8 @@ class DefaultProjectViewGeneratorTest {
                 java_path: /path/to/java
 
                 build_flags:
+                
+                build_manual_targets: true
                 
                 directories:
                 
@@ -348,6 +393,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null
@@ -400,6 +446,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"),
@@ -438,6 +485,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+
+                build_manual_targets: true
 
                 directories:
                     included_dir1
@@ -486,6 +535,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"),
@@ -526,6 +576,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+
+                build_manual_targets: true
 
                 directories:
                     included_dir1
@@ -570,6 +622,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"),
@@ -611,6 +664,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag2=value2
                     --build_flag3=value3
 
+                build_manual_targets: true
+
                 directories:
                     included_dir1
                     included_dir2
@@ -637,6 +692,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
@@ -658,6 +714,7 @@ class DefaultProjectViewGeneratorTest {
                 debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
                 javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
                 buildFlags = null,
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
@@ -688,6 +745,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = null,
@@ -733,6 +791,7 @@ class DefaultProjectViewGeneratorTest {
                         "--build_flag3=value3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                                 Path("included_dir1"),

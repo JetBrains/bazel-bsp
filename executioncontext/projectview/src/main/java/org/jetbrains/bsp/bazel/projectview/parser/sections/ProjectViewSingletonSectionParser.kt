@@ -1,6 +1,11 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import java.nio.file.Path
@@ -73,6 +78,15 @@ object ProjectViewJavaPathSectionParser :
     override fun mapRawValue(rawValue: String): Path = Path(rawValue)
 
     override fun createInstance(value: Path): ProjectViewJavaPathSection = ProjectViewJavaPathSection(value)
+}
+
+object ProjectViewBuildManualTargetsSectionParser :
+    ProjectViewSingletonSectionParser<Boolean, ProjectViewBuildManualTargetsSection>(ProjectViewBuildManualTargetsSection.SECTION_NAME)
+{
+
+    override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
+
+    override fun createInstance(value: Boolean): ProjectViewBuildManualTargetsSection = ProjectViewBuildManualTargetsSection(value)
 }
 
 

@@ -24,6 +24,8 @@ build_flags:
     # --legacy_build_flag=old_value
     --build_flag1.2=value1.2
 
+build_manual_targets: false
+
 directories:
     included_dir1.1
     included_dir1.2

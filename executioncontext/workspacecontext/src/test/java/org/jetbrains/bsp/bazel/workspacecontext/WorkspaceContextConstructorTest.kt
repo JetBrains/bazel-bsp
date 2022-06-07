@@ -4,10 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -60,6 +57,7 @@ class WorkspaceContextConstructorTest {
                         )
                     ),
                     bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel")),
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(false) ,
                     importDepth = ProjectViewImportDepthSection(3)
                 ).build()
 
@@ -95,6 +93,9 @@ class WorkspaceContextConstructorTest {
             val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
 
+            val expectedBuildManualTargetsSpec = BuildManualTargetsSpec(false)
+            workspaceContext.buildManualTargets shouldBe expectedBuildManualTargetsSpec
+
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
         }
@@ -119,6 +120,7 @@ class WorkspaceContextConstructorTest {
                 buildFlags = BuildFlagsSpec(emptyList()),
                 bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
+                buildManualTargets = BuildManualTargetsSpec(false),
                 importDepth = ImportDepthSpec(0)
             )
             workspaceContext shouldBe expectedWorkspaceContext

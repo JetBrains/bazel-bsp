@@ -34,6 +34,13 @@ data class WorkspaceContext(
      */
     val bazelPath: BazelPathSpec,
 
+    /**
+     * If true targets with `manual` tag will be built
+     *
+     * Obtained from `ProjectView` simply by mapping 'build_manual_targets' section.
+     */
+    val buildManualTargets: BuildManualTargetsSpec,
+
     // TODO replace `BspInfo`
     /**
      * Path to the `.bazelbsp` dir in the project root
@@ -63,37 +70,44 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
             BuildFlagsSpecMapper.map(projectView).flatMap { buildFlagsSpec ->
                 BazelPathSpecMapper.map(projectView).flatMap { bazelPathSpec ->
                     DotBazelBspDirPathSpecMapper.map(projectView).flatMap { dotBazelBspDirPathSpec ->
-                        ImportDepthSpecMapper.map(projectView).map { importDepthSpec ->
-                            WorkspaceContext(
-                                targets = targetsSpec,
-                                buildFlags = buildFlagsSpec,
-                                bazelPath = bazelPathSpec,
-                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                importDepth = importDepthSpec,
-                            )
+                        BuildManualTargetsSpecMapper.map(projectView).flatMap { buildManualTargetsSpec ->
+                            ImportDepthSpecMapper.map(projectView).map { importDepthSpec ->
+                                WorkspaceContext(
+                                        targets = targetsSpec,
+                                        buildFlags = buildFlagsSpec,
+                                        bazelPath = bazelPathSpec,
+                                        dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                        buildManualTargets = buildManualTargetsSpec,
+                                        importDepth = importDepthSpec,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+
     }
 
     override fun constructDefault(): Try<WorkspaceContext> =
-        TargetsSpecMapper.default().flatMap { targetsSpec ->
-            BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
-                BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
-                    DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
-                        ImportDepthSpecMapper.default().map { importDepthSpec ->
-                            WorkspaceContext(
-                                targets = targetsSpec,
-                                buildFlags = buildFlagsSpec,
-                                bazelPath = bazelPathSpec,
-                                dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                importDepth = importDepthSpec
-                            )
+            TargetsSpecMapper.default().flatMap { targetsSpec ->
+                BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
+                    BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
+                        DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
+                            BuildManualTargetsSpecMapper.default().flatMap { buildManualTargetsSpec ->
+                                ImportDepthSpecMapper.default().map { importDepthSpec ->
+                                    WorkspaceContext(
+                                            targets = targetsSpec,
+                                            buildFlags = buildFlagsSpec,
+                                            bazelPath = bazelPathSpec,
+                                            dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                            buildManualTargets = buildManualTargetsSpec,
+                                            importDepth = importDepthSpec,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
 }

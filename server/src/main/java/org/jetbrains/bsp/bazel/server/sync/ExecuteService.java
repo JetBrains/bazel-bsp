@@ -23,20 +23,24 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class ExecuteService {
 
   private final BazelBspCompilationManager compilationManager;
   private final ProjectProvider projectProvider;
   private final BazelRunner bazelRunner;
+  private final WorkspaceContextProvider workspaceContextProvider;
 
   public ExecuteService(
       BazelBspCompilationManager compilationManager,
       ProjectProvider projectProvider,
-      BazelRunner bazelRunner) {
+      BazelRunner bazelRunner,
+      WorkspaceContextProvider workspaceContextProvider) {
     this.compilationManager = compilationManager;
     this.projectProvider = projectProvider;
     this.bazelRunner = bazelRunner;
+    this.workspaceContextProvider = workspaceContextProvider;
   }
 
   public CompileResult compile(CompileParams params) {
@@ -117,6 +121,11 @@ public class ExecuteService {
   }
 
   private boolean isBuildable(Module m) {
-    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD);
+    return !m.isSynthetic() && !m.tags().contains(Tag.NO_BUILD) && isBuildableIfManual(m);
+  }
+
+  private boolean isBuildableIfManual(Module m) {
+    return !m.tags().contains(Tag.MANUAL)
+        || workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
   }
 }

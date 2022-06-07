@@ -54,13 +54,18 @@ import org.jetbrains.bsp.bazel.server.sync.model.Language;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.server.sync.model.Tag;
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
 
 public class BspProjectMapper {
 
   private final LanguagePluginsService languagePluginsService;
+  private final WorkspaceContextProvider workspaceContextProvider;
 
-  public BspProjectMapper(LanguagePluginsService languagePluginsService) {
+  public BspProjectMapper(
+      LanguagePluginsService languagePluginsService,
+      WorkspaceContextProvider workspaceContextProvider) {
     this.languagePluginsService = languagePluginsService;
+    this.workspaceContextProvider = workspaceContextProvider;
   }
 
   public InitializeBuildResult initializeServer(Seq<Language> supportedLanguages) {
@@ -107,10 +112,15 @@ public class BspProjectMapper {
   }
 
   private BuildTargetCapabilities inferCapabilities(Module module) {
-    var canCompile = !module.tags().contains(Tag.NO_BUILD);
-    var canTest = module.tags().contains(Tag.TEST);
-    var canRun = module.tags().contains(Tag.APPLICATION);
+    var canCompile = !module.tags().contains(Tag.NO_BUILD) && isBuildableIfManual(module);
+    var canTest = module.tags().contains(Tag.TEST) && !module.tags().contains(Tag.MANUAL);
+    var canRun = module.tags().contains(Tag.APPLICATION) && !module.tags().contains(Tag.MANUAL);
     return new BuildTargetCapabilities(canCompile, canTest, canRun);
+  }
+
+  private boolean isBuildableIfManual(Module module) {
+    return !module.tags().contains(Tag.MANUAL)
+        || workspaceContextProvider.currentWorkspaceContext().getBuildManualTargets().getValue();
   }
 
   private void applyLanguageData(Module module, BuildTarget buildTarget) {

@@ -9,12 +9,11 @@ interface WorkspaceContextProvider {
     fun currentWorkspaceContext(): WorkspaceContext
 }
 
-
 class DefaultWorkspaceContextProvider(private val projectViewPath: Path?) : WorkspaceContextProvider {
 
     override fun currentWorkspaceContext(): WorkspaceContext =
         when (projectViewPath) {
-            // we rally need to think about exceptions / try
+            // we really need to think about exceptions / try
             null -> WorkspaceContextConstructor.constructDefault().get()
             else -> parseProjectViewAndConstructWorkspaceContext(projectViewPath).get()
         }

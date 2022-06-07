@@ -3,6 +3,12 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -144,6 +150,21 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
+        fun `should return empty build manual targets section for file without build manual targets section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/build_manual_targets.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.buildManualTargets shouldBe null
+        }
+
+        @Test
         fun `should return empty directories section for file without directories section`() {
             // given
             val projectViewFilePath = Path("/projectview/without/directories.bazelproject")
@@ -191,6 +212,7 @@ class DefaultProjectViewParserTest {
                 debuggerAddress = null,
                 javaPath = null,
                 buildFlags = null,
+                buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
@@ -229,6 +251,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
                         Path("included_dir1.1"),
@@ -280,6 +303,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                             Path("included_dir1.1"),
@@ -335,6 +359,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag7.3=value7.3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                             Path("included_dir1.1"),
@@ -378,6 +403,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag8.3=value8.3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
                         Path("included_dir8.1"),
@@ -433,6 +459,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag5.2=value5.2",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
                         listOf(
                             Path("included_dir1.1"),
@@ -494,6 +521,7 @@ class DefaultProjectViewParserTest {
                         "--build_flag4.3=value4.3",
                     )
                 ),
+                buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
                     listOf(
                         Path("included_dir2.1"),

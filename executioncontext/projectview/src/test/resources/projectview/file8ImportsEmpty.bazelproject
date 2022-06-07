@@ -17,6 +17,9 @@ build_flags:
     --build_flag8.2=value8.2
     --build_flag8.3=value8.3
 
+build_manual_targets: true
+
+
 directories:
     included_dir8.1
     included_dir8.2

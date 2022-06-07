@@ -13,6 +13,9 @@ object BazelFlag {
   @JvmStatic fun aspect(name: String) =
       arg("aspects", name)
 
+  @JvmStatic fun buildManualTests(): String =
+          flag("build_manual_tests")
+
   @JvmStatic fun repositoryOverride(repositoryName: String, path: String): String =
     arg("override_repository", "$repositoryName=$path")
 

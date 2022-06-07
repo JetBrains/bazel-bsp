@@ -2,8 +2,7 @@ not_parsed_section1:
     not_parsed1.1
     not_parsed2.2
 
-not_parsed_section2: not_parsed2.1
-
+ not_parsed_section2: not_parsed2.1
 
 targets:
     //included_target1.1
@@ -12,12 +11,10 @@ targets:
 
 bazel_path: path/to/bazel
 
+java_path: path/to/java
+
 debugger_address: 127.0.0.1:8000
 
 build_flags:
     --build_flag1.1=value1.1
     --build_flag1.2=value1.2
-
-build_manual_targets: false
-
-import_depth: 0

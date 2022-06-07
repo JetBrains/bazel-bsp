@@ -97,6 +97,15 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(javaPathOption)
 
+        val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
+            .longOpt("build_manual_targets")
+            .desc(
+                "Add build manual target to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_manual_targets.")
+            .build()
+        cliParserOptions.addOption(manualTargetsOption)
+
+
         val directoriesOption = Option.builder(DIRECTORIES_SHORT_OPT)
             .longOpt("directories")
             .hasArgs()
@@ -164,7 +173,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-            "If any generation flag (-b, -f, -j, -t, -x, -r, -v, -i) " +
+            "If any generation flag (-b, -f, -j, -t, -x,-m ,-r, -v, -i) " +
                     "is used, the installer will generate a new project view file with these sections. " +
                     "If --project_view_file (-p) flag is used as well, the new project view file " +
                     "will be created under this location (it will override the existing file if exists). " +
@@ -181,6 +190,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 debuggerAddress = debuggerAddress(cmd),
                 targets = targets(cmd),
                 buildFlags = buildFlags(cmd),
+                buildManualTargets = buildManualTargets(cmd),
                 directories = directories(cmd),
                 deriveTargetsFromDirectories = deriveTargetsFlag(cmd),
                 importDepth = importDepth(cmd),
@@ -192,6 +202,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(JAVA_PATH_SHORT_OPT) or
                 cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
                 cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
+                cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
+                cmd.hasOption(BUILD_MANUAL_TARGETS_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
                 cmd.hasOption(DIRECTORIES_SHORT_OPT) or
                 cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT) or
@@ -207,6 +219,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             ?.let(Path::normalize)
 
     private fun debuggerAddress(cmd: CommandLine): String? = cmd.getOptionValue(DEBUGGER_ADDRESS_SHORT_OPT)
+
+    private fun buildManualTargets(cmd: CommandLine): Boolean = cmd.hasOption(BUILD_MANUAL_TARGETS_OPT)
 
     private fun importDepth(cmd: CommandLine): Int? = cmd.getOptionValue(IMPORT_DEPTH_SHORT_OPT)?.toInt()
 
@@ -229,6 +243,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val BAZEL_PATH_SHORT_OPT = "b"
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
+        private const val BUILD_MANUAL_TARGETS_OPT = "m"
         private const val DIRECTORIES_SHORT_OPT = "r"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"

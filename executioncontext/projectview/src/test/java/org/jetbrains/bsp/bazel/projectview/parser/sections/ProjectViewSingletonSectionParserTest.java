@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
@@ -24,7 +25,10 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
 
   public static Stream<Arguments> data() {
     return Stream.of(
-        bazelPathSectionArguments(), debuggerAddressSectionArguments(), javaPathSectionArguments());
+        bazelPathSectionArguments(),
+        debuggerAddressSectionArguments(),
+        javaPathSectionArguments(),
+        buildManualTargetsSectionArguments());
   }
 
   private static Arguments bazelPathSectionArguments() {
@@ -48,6 +52,21 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
         (Function<String, ProjectViewDebuggerAddressSection>)
             ProjectViewDebuggerAddressSection::new;
     var elementMapper = (Function<String, String>) x -> x;
+
+    var sectionConstructor =
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+    var sectionName = parser.getSectionName();
+
+    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
+  }
+
+  private static Arguments buildManualTargetsSectionArguments() {
+    var parser = ProjectViewBuildManualTargetsSectionParser.INSTANCE;
+    var rawValueConstructor = (Function<String, String>) (seed) -> "false";
+    var sectionMapper =
+        (Function<Boolean, ProjectViewBuildManualTargetsSection>)
+            ProjectViewBuildManualTargetsSection::new;
+    var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
 
     var sectionConstructor =
         createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
