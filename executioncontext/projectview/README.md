@@ -300,6 +300,5 @@ _We are working on it, you can expect support for this section in future release
 
 #### build_manual_targets
 
-Used to build manual targets which contains tags= ["manual"] and excluded in wildcard
-target patterns.
-
+Targets with ["manual"] tag are excluded in wildcard target patterns and not build, run or tested unless explicitly
+asked. build_manual_targets is used to build targets which contains this tag.
