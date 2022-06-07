@@ -716,49 +716,50 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
                     "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:scala_library"),
-                    List.of(
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:java_library"),
-                    List.of(),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:scala_binary"),
-                    List.of(
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:java_binary"),
-                    List.of(),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:scala_test"),
-                    List.of(
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:java_test"),
-                    List.of(),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of())));
+                    Map.of())
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:scala_library"),
+//                    List.of(
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:java_library"),
+//                    List.of(),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:scala_binary"),
+//                    List.of(
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:java_binary"),
+//                    List.of(),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:scala_test"),
+//                    List.of(
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:java_test"),
+//                    List.of(),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of())
+            ));
 
     return new BazelBspTestScenarioStep(
         "jvm run environment results",
@@ -865,49 +866,50 @@ public class BazelBspSampleRepoTest extends BazelBspTestBaseScenario {
                         "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
                     List.of(),
                     "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:scala_library"),
-                    List.of(
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:java_library"),
-                    List.of(),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:scala_binary"),
-                    List.of(
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:java_binary"),
-                    List.of(),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:scala_test"),
-                    List.of(
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of()),
-                new JvmEnvironmentItem(
-                    new BuildTargetIdentifier("//manual_target:java_test"),
-                    List.of(),
-                    List.of(),
-                    "$WORKSPACE",
-                    Map.of())));
+                    Map.of())
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:scala_library"),
+//                    List.of(
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:java_library"),
+//                    List.of(),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:scala_binary"),
+//                    List.of(
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:java_binary"),
+//                    List.of(),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:scala_test"),
+//                    List.of(
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+//                        "file://$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of()),
+//                new JvmEnvironmentItem(
+//                    new BuildTargetIdentifier("//manual_target:java_test"),
+//                    List.of(),
+//                    List.of(),
+//                    "$WORKSPACE",
+//                    Map.of())
+            ));
 
     return new BazelBspTestScenarioStep(
         "jvm test environment results",
