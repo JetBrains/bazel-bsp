@@ -13,5 +13,6 @@ kt_jvm_library(
     deps = [
         "@maven//:commons_cli_commons_cli",
         "@maven//:io_vavr_vavr",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_cli_0_3_4",
     ],
 )

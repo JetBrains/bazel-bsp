@@ -225,6 +225,7 @@ maven_install(
         "com.fasterxml.jackson.core:jackson-databind:2.13.2.2",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2",
         "io.vavr:vavr-jackson:0.10.3",
+        "org.jetbrains.kotlinx:kotlinx-cli:0.3.4"
     ],
     fetch_sources = True,
     repositories = [
