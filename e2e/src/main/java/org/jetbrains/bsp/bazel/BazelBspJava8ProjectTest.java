@@ -11,7 +11,6 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
-
 public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "java-8-project";
@@ -44,18 +43,15 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
-            new BuildTargetIdentifier("//example:example"),
-            ImmutableList.of("application"),
-            ImmutableList.of("java"),
+            new BuildTargetIdentifier("bsp-workspace-root"),
             ImmutableList.of(),
-            new BuildTargetCapabilities(true, false, true));
+            ImmutableList.of(),
+            ImmutableList.of(),
+            new BuildTargetCapabilities(false, false, false, false));
     exampleExampleBuildTarget.setDisplayName("bsp-workspace-root");
     exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/");
-    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    exampleExampleBuildTarget.setDataKind("jvm");
-   exampleExampleBuildTarget.setDependencies(List.of());
-
-
+    //exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+    //exampleExampleBuildTarget.setDataKind("jvm");
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
         new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
