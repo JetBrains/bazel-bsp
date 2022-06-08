@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
-import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
@@ -11,7 +10,7 @@ import java.time.Duration;
 import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
-import org.jetbrains.bsp.bazel.commons.Constants;
+
 
 public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
 
@@ -46,12 +45,17 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
             new BuildTargetIdentifier("//example:example"),
-            ImmutableList.of(),
-            ImmutableList.of(Constants.JAVA),
+            ImmutableList.of("application"),
+            ImmutableList.of("java"),
             ImmutableList.of(),
             new BuildTargetCapabilities(true, false, true));
+    exampleExampleBuildTarget.setDisplayName("bsp-workspace-root");
+    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/");
     exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+    exampleExampleBuildTarget.setDataKind("jvm");
+   exampleExampleBuildTarget.setDependencies(List.of());
+
+
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
         new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
