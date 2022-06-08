@@ -38,13 +38,15 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
-            new BuildTargetIdentifier("//example:example"),
+            new BuildTargetIdentifier("bsp-workspace-root"),
+            ImmutableList.of("application"),
+            ImmutableList.of("java"),
             ImmutableList.of(),
-            ImmutableList.of(Constants.JAVA),
-            ImmutableList.of(),
-            new BuildTargetCapabilities(true, false, true));
-    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+            new BuildTargetCapabilities(true, false, true, false));
+    exampleExampleBuildTarget.setDisplayName("bsp-workspace-root");
+    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE");
+    // exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+    // exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
         new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));

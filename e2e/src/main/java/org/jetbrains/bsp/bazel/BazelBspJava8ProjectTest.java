@@ -50,8 +50,8 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
             new BuildTargetCapabilities(false, false, false, false));
     exampleExampleBuildTarget.setDisplayName("bsp-workspace-root");
     exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/");
-    //exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    //exampleExampleBuildTarget.setDataKind("jvm");
+    // exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+    // exampleExampleBuildTarget.setDataKind("jvm");
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
         new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
