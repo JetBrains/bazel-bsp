@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
-import org.jetbrains.bsp.bazel.commons.Constants;
 
 public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
