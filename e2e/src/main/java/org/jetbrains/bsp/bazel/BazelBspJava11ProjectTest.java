@@ -34,22 +34,33 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
   }
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
-    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "11");
+    JvmBuildTarget exampleExampleJvmBuildTarget = new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk11_macos/", "11");
+
+    BuildTarget rootBuildTarget =
+        new BuildTarget(
+            new BuildTargetIdentifier("bsp-workspace-root"),
+            ImmutableList.of(),
+            ImmutableList.of(),
+            ImmutableList.of(),
+            new BuildTargetCapabilities(false, false, false, false));
+    rootBuildTarget.setDisplayName("bsp-workspace-root");
+    rootBuildTarget.setBaseDirectory("file://$WORKSPACE/");
 
     BuildTarget exampleExampleBuildTarget =
         new BuildTarget(
-            new BuildTargetIdentifier("bsp-workspace-root"),
+            new BuildTargetIdentifier("//example:example"),
             ImmutableList.of("application"),
             ImmutableList.of("java"),
             ImmutableList.of(),
             new BuildTargetCapabilities(true, false, true, false));
-    exampleExampleBuildTarget.setDisplayName("bsp-workspace-root");
-    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE");
-    // exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    // exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+    exampleExampleBuildTarget.setDisplayName("//example:example");
+    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/example/");
+    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
-        new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
+        new WorkspaceBuildTargetsResult(
+            ImmutableList.of(rootBuildTarget, exampleExampleBuildTarget));
 
     return new BazelBspTestScenarioStep(
         "java-11-project workspace build targets",

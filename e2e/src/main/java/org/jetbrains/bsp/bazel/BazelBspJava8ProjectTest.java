@@ -41,20 +41,18 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
     // expected number.
     var exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "11");
 
-    BuildTarget exampleExampleBuildTarget =
+    BuildTarget rootBuildTarget =
         new BuildTarget(
             new BuildTargetIdentifier("bsp-workspace-root"),
             ImmutableList.of(),
             ImmutableList.of(),
             ImmutableList.of(),
             new BuildTargetCapabilities(false, false, false, false));
-    exampleExampleBuildTarget.setDisplayName("bsp-workspace-root");
-    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/");
-    // exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    // exampleExampleBuildTarget.setDataKind("jvm");
+    rootBuildTarget.setDisplayName("bsp-workspace-root");
+    rootBuildTarget.setBaseDirectory("file://$WORKSPACE/");
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
-        new WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget));
+        new WorkspaceBuildTargetsResult(ImmutableList.of(rootBuildTarget));
 
     return new BazelBspTestScenarioStep(
         "java-8-project workspace build targets",
