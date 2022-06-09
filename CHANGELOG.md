@@ -5,11 +5,19 @@
 ## [Unreleased]
 
 ### Features 🎉
-- Directories and derive_targets_from_directories sections are now available in project view files.
+
+- Project view supports `build_manual_targets` - now it is possible to build targets with `manual` tag.
+  | [#243](https://github.com/JetBrains/bazel-bsp/pull/243)
+- `directories` and `derive_targets_from_directories` sections are now available in project view files.
   | [#247](https://github.com/JetBrains/bazel-bsp/pull/247)
-- Dependent targets can be imported as modules based on `import_depth` project view parameter
+- Dependent targets can be imported as modules based on `import_depth` project view parameter.
   | [#248](https://github.com/JetBrains/bazel-bsp/pull/248)
 
+### Changes 🔄
+
+- Scala version regex has been fixed.
+  | [#249](https://github.com/JetBrains/bazel-bsp/pull/249)
+  
 ## [2.1.0] - 11.05.2022
 
 ### Features 🎉
