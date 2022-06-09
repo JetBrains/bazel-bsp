@@ -14,6 +14,5 @@ kt_jvm_library(
     deps = [
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:io_vavr_vavr",
-        "@maven//:org_apache_commons_commons_collections4",
     ],
 )
