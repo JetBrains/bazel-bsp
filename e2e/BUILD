@@ -38,11 +38,11 @@ sh_binary(
 )
 
 sh_binary(
-    name = "BazelBspJava11ProjectTest",
+    name = "RemoteJdkTest",
     srcs = ["runTest.sh"],
     args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspJava11ProjectTest",
-        "e2e/test-resources/java-11-project",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:RemoteJdkTest",
+        "e2e/test-resources/remote-jdk-project",
     ],
 )
 

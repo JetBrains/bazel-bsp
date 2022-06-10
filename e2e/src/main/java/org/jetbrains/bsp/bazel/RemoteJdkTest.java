@@ -12,18 +12,18 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
-public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
+public class RemoteJdkTest extends BazelBspTestBaseScenario {
 
-  private static final String REPO_NAME = "java-11-project";
+  private static final String REPO_NAME = "remote-jdk-project";
 
-  public BazelBspJava11ProjectTest() {
+  public RemoteJdkTest() {
     super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    BazelBspJava11ProjectTest test = new BazelBspJava11ProjectTest();
+    RemoteJdkTest test = new RemoteJdkTest();
     test.executeScenario();
   }
 
@@ -34,7 +34,7 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
     JvmBuildTarget exampleExampleJvmBuildTarget =
-        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk11_linux/", "11");
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk_macos/", "11");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(
@@ -46,24 +46,24 @@ public class BazelBspJava11ProjectTest extends BazelBspTestBaseScenario {
     rootBuildTarget.setDisplayName("bsp-workspace-root");
     rootBuildTarget.setBaseDirectory("file://$WORKSPACE/");
 
-    BuildTarget exampleExampleBuildTarget =
-        new BuildTarget(
-            new BuildTargetIdentifier("//example:example"),
-            ImmutableList.of("application"),
-            ImmutableList.of("java"),
-            ImmutableList.of(),
-            new BuildTargetCapabilities(true, false, true, false));
-    exampleExampleBuildTarget.setDisplayName("//example:example");
-    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/example/");
-    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+//    BuildTarget exampleExampleBuildTarget =
+//        new BuildTarget(
+//            new BuildTargetIdentifier("//example:example"),
+//            ImmutableList.of("application"),
+//            ImmutableList.of("java"),
+//            ImmutableList.of(),
+//            new BuildTargetCapabilities(true, false, true, false));
+//    exampleExampleBuildTarget.setDisplayName("//example:example");
+//    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/example/");
+//    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+//    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
         new WorkspaceBuildTargetsResult(
-            ImmutableList.of(rootBuildTarget, exampleExampleBuildTarget));
+            ImmutableList.of(rootBuildTarget));
 
     return new BazelBspTestScenarioStep(
-        "java-11-project workspace build targets",
+        "remote-jdk-project workspace build targets",
         () -> testClient.testWorkspaceTargets(Duration.ofSeconds(30), workspaceBuildTargetsResult));
   }
 }

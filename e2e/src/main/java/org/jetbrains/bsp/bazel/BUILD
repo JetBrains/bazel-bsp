@@ -51,8 +51,8 @@ java_binary(
 )
 
 java_binary(
-    name = "BazelBspJava11ProjectTest",
-    srcs = ["BazelBspJava11ProjectTest.java"],
+    name = "RemoteJdkTest",
+    srcs = ["RemoteJdkTest.java"],
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [

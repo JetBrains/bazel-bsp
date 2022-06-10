@@ -39,7 +39,7 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
     // from heuristics.
     // We should figure out a way to enforce bazel to download runtime jdk that matches
     // expected number.
-    var exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "11");
+    var exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "8");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(
