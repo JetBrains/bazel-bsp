@@ -41,7 +41,7 @@ public class LocalJdkTest extends BazelBspTestBaseScenario {
     // We should figure out a way to enforce bazel to download runtime jdk that matches
     // expected number.
     var exampleExampleJvmBuildTarget =
-        new JvmBuildTarget("file://$BAZEL_CACHE/external/local_jdk/", "8");
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/local_jdk/", "17");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(

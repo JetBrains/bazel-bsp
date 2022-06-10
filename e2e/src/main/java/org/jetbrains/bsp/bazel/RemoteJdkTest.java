@@ -34,7 +34,7 @@ public class RemoteJdkTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
     JvmBuildTarget exampleExampleJvmBuildTarget =
-        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk11_linux/", "11");
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk11_macos/", "11");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(
