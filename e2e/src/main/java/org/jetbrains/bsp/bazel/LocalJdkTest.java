@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel;
 
 import ch.epfl.scala.bsp4j.BuildTarget;
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities;
+import ch.epfl.scala.bsp4j.BuildTargetDataKind;
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
@@ -39,7 +40,8 @@ public class LocalJdkTest extends BazelBspTestBaseScenario {
     // from heuristics.
     // We should figure out a way to enforce bazel to download runtime jdk that matches
     // expected number.
-    var exampleExampleJvmBuildTarget = new JvmBuildTarget("external/local_jdk/", "8");
+    var exampleExampleJvmBuildTarget =
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/local_jdk/", "17");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(
@@ -51,8 +53,21 @@ public class LocalJdkTest extends BazelBspTestBaseScenario {
     rootBuildTarget.setDisplayName("bsp-workspace-root");
     rootBuildTarget.setBaseDirectory("file://$WORKSPACE/");
 
+    BuildTarget exampleExampleBuildTarget =
+        new BuildTarget(
+            new BuildTargetIdentifier("//example:example"),
+            ImmutableList.of("application"),
+            ImmutableList.of("java"),
+            ImmutableList.of(),
+            new BuildTargetCapabilities(true, false, true, false));
+    exampleExampleBuildTarget.setDisplayName("//example:example");
+    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/example/");
+    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
-        new WorkspaceBuildTargetsResult(ImmutableList.of(rootBuildTarget));
+        new WorkspaceBuildTargetsResult(
+            ImmutableList.of(rootBuildTarget, exampleExampleBuildTarget));
 
     return new BazelBspTestScenarioStep(
         "local-jdk-project workspace build targets",

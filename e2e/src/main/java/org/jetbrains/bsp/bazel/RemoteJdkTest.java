@@ -34,7 +34,7 @@ public class RemoteJdkTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
     JvmBuildTarget exampleExampleJvmBuildTarget =
-        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk_linux/", "11");
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/remote_jdk_linux/", "11");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(
@@ -46,21 +46,20 @@ public class RemoteJdkTest extends BazelBspTestBaseScenario {
     rootBuildTarget.setDisplayName("bsp-workspace-root");
     rootBuildTarget.setBaseDirectory("file://$WORKSPACE/");
 
-//    BuildTarget exampleExampleBuildTarget =
-//        new BuildTarget(
-//            new BuildTargetIdentifier("//example:example"),
-//            ImmutableList.of("application"),
-//            ImmutableList.of("java"),
-//            ImmutableList.of(),
-//            new BuildTargetCapabilities(true, false, true, false));
-//    exampleExampleBuildTarget.setDisplayName("//example:example");
-//    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/example/");
-//    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
-//    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
+    //    BuildTarget exampleExampleBuildTarget =
+    //        new BuildTarget(
+    //            new BuildTargetIdentifier("//example:example"),
+    //            ImmutableList.of("application"),
+    //            ImmutableList.of("java"),
+    //            ImmutableList.of(),
+    //            new BuildTargetCapabilities(true, false, true, false));
+    //    exampleExampleBuildTarget.setDisplayName("//example:example");
+    //    exampleExampleBuildTarget.setBaseDirectory("file://$WORKSPACE/example/");
+    //    exampleExampleBuildTarget.setData(exampleExampleJvmBuildTarget);
+    //    exampleExampleBuildTarget.setDataKind(BuildTargetDataKind.JVM);
 
     WorkspaceBuildTargetsResult workspaceBuildTargetsResult =
-        new WorkspaceBuildTargetsResult(
-            ImmutableList.of(rootBuildTarget));
+        new WorkspaceBuildTargetsResult(ImmutableList.of(rootBuildTarget));
 
     return new BazelBspTestScenarioStep(
         "remote-jdk-project workspace build targets",
