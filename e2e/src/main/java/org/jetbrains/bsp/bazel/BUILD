@@ -38,8 +38,8 @@ java_binary(
 )
 
 java_binary(
-    name = "BazelBspJava8ProjectTest",
-    srcs = ["BazelBspJava8ProjectTest.java"],
+    name = "LocalJdkTest",
+    srcs = ["LocalJdkTest.java"],
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [

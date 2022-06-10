@@ -11,18 +11,18 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
-public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
+public class LocalJdkTest extends BazelBspTestBaseScenario {
 
-  private static final String REPO_NAME = "java-8-project";
+  private static final String REPO_NAME = "local-jdk-project";
 
-  public BazelBspJava8ProjectTest() {
+  public LocalJdkTest() {
     super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    BazelBspJava8ProjectTest test = new BazelBspJava8ProjectTest();
+    LocalJdkTest test = new LocalJdkTest();
     test.executeScenario();
   }
 
@@ -55,7 +55,7 @@ public class BazelBspJava8ProjectTest extends BazelBspTestBaseScenario {
         new WorkspaceBuildTargetsResult(ImmutableList.of(rootBuildTarget));
 
     return new BazelBspTestScenarioStep(
-        "java-8-project workspace build targets",
+        "local-jdk-project workspace build targets",
         () -> testClient.testWorkspaceTargets(Duration.ofSeconds(30), workspaceBuildTargetsResult));
   }
 }

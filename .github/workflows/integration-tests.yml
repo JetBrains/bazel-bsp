@@ -82,7 +82,7 @@ jobs:
 #      - name: Run test
 #        run: bazel run //e2e:BazelBspActionGraphV2Test
 #
-  java-8-project-test:
+  local-jdk-test:
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -99,9 +99,9 @@ jobs:
           path: ~/.cache/bazel
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.sha }}
       - name: Run test
-        run: bazel run //e2e:BazelBspJava8ProjectTest
+        run: bazel run //e2e:LocalJdkTest
 
-  remotejdk-test:
+  remote-jdk-test:
     runs-on: ubuntu-latest
     needs: setup
     steps:
