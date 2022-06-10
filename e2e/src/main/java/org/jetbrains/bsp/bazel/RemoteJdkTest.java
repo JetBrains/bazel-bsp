@@ -64,6 +64,7 @@ public class RemoteJdkTest extends BazelBspTestBaseScenario {
 
     return new BazelBspTestScenarioStep(
         "remote-jdk-project workspace build targets",
-        () -> testClient.testWorkspaceTargets(Duration.ofSeconds(300), workspaceBuildTargetsResult));
+        () ->
+            testClient.testWorkspaceTargets(Duration.ofSeconds(300), workspaceBuildTargetsResult));
   }
 }
