@@ -6,6 +6,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
@@ -13,16 +14,26 @@ import org.jetbrains.bsp.bazel.server.sync.model.Label;
 public class BazelPathsResolver {
   private final BazelInfo bazelInfo;
 
+  private final ConcurrentHashMap<Path, URI> uris = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<FileLocation, Path> paths = new ConcurrentHashMap<>();
+
   public BazelPathsResolver(BazelInfo bazelInfo) {
     this.bazelInfo = bazelInfo;
   }
 
+  public URI resolveUri(Path path) {
+    return uris.computeIfAbsent(path, Path::toUri);
+  }
+
   public URI workspaceRoot() {
-    return bazelInfo.getWorkspaceRoot().toAbsolutePath().toUri();
+    return resolveUri(bazelInfo.getWorkspaceRoot().toAbsolutePath());
   }
 
   public Seq<URI> resolveUris(java.util.List<FileLocation> fileLocations) {
-    return fileLocations.stream().map(this::resolve).map(Path::toUri).collect(Array.collector());
+    return fileLocations.stream()
+        .map(this::resolve)
+        .map(this::resolveUri)
+        .collect(Array.collector());
   }
 
   public Seq<Path> resolvePaths(java.util.List<FileLocation> fileLocations) {
@@ -30,10 +41,14 @@ public class BazelPathsResolver {
   }
 
   public URI resolveUri(FileLocation fileLocation) {
-    return resolve(fileLocation).toUri();
+    return resolveUri(resolve(fileLocation));
   }
 
   public Path resolve(FileLocation fileLocation) {
+    return paths.computeIfAbsent(fileLocation, this::doResolve);
+  }
+
+  private Path doResolve(FileLocation fileLocation) {
     if (isAbsolute(fileLocation)) {
       return resolveAbsolute(fileLocation);
     } else if (isMainWorkspaceSource(fileLocation)) {
@@ -67,9 +82,9 @@ public class BazelPathsResolver {
     return fileLocation.getIsSource() && !fileLocation.getIsExternal();
   }
 
-  public Path labelToDirectory(Label label) {
+  public URI labelToDirectoryUri(Label label) {
     var relativePath = extractRelativePath(label.getValue());
-    return bazelInfo.getWorkspaceRoot().resolve(relativePath);
+    return resolveUri(bazelInfo.getWorkspaceRoot().resolve(relativePath));
   }
 
   private String extractRelativePath(String label) {
