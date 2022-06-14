@@ -38,8 +38,8 @@ java_binary(
 )
 
 java_binary(
-    name = "LocalJdkTest",
-    srcs = ["LocalJdkTest.java"],
+    name = "BazelBspLocalJdkTest",
+    srcs = ["BazelBspLocalJdkTest.java"],
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [
@@ -51,8 +51,8 @@ java_binary(
 )
 
 java_binary(
-    name = "RemoteJdkTest",
-    srcs = ["RemoteJdkTest.java"],
+    name = "BazelBspRemoteJdkTest",
+    srcs = ["BazelBspRemoteJdkTest.java"],
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [

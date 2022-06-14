@@ -12,18 +12,18 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
-public class RemoteJdkTest extends BazelBspTestBaseScenario {
+public class BazelBspRemoteJdkTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "remote-jdk-project";
 
-  public RemoteJdkTest() {
+  public BazelBspRemoteJdkTest() {
     super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    RemoteJdkTest test = new RemoteJdkTest();
+    BazelBspRemoteJdkTest test = new BazelBspRemoteJdkTest();
     test.executeScenario();
   }
 
@@ -34,7 +34,7 @@ public class RemoteJdkTest extends BazelBspTestBaseScenario {
 
   private BazelBspTestScenarioStep workspaceBuildTargets() {
     JvmBuildTarget exampleExampleJvmBuildTarget =
-        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk11_linux/", "11");
+        new JvmBuildTarget("file://$BAZEL_CACHE/external/remotejdk11_macos/", "11");
 
     BuildTarget rootBuildTarget =
         new BuildTarget(

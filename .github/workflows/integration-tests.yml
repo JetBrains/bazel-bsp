@@ -99,7 +99,7 @@ jobs:
           path: ~/.cache/bazel
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.sha }}
       - name: Run test
-        run: bazel run //e2e:LocalJdkTest
+        run: bazel run //e2e:BazelBspLocalJdkTest
 
   remote-jdk-test:
     runs-on: ubuntu-latest
@@ -118,7 +118,7 @@ jobs:
           path: ~/.cache/bazel
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.sha }}
       - name: Run test
-        run: bazel run //e2e:RemoteJdkTest
+        run: bazel run //e2e:BazelBspRemoteJdkTest
 
 #  cpp-project-test:
 #    runs-on: ubuntu-latest

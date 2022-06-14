@@ -12,18 +12,18 @@ import java.util.List;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 
-public class LocalJdkTest extends BazelBspTestBaseScenario {
+public class BazelBspLocalJdkTest extends BazelBspTestBaseScenario {
 
   private static final String REPO_NAME = "local-jdk-project";
 
-  public LocalJdkTest() {
+  public BazelBspLocalJdkTest() {
     super(REPO_NAME);
   }
 
   // we cannot use `bazel test ...` because test runner blocks bazel daemon,
   // but testing server needs it for queries and etc
   public static void main(String[] args) {
-    LocalJdkTest test = new LocalJdkTest();
+    BazelBspLocalJdkTest test = new BazelBspLocalJdkTest();
     test.executeScenario();
   }
 

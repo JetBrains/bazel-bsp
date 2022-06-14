@@ -29,19 +29,19 @@ sh_binary(
 )
 
 sh_binary(
-    name = "LocalJdkTest",
+    name = "BazelBspLocalJdkTest",
     srcs = ["runTest.sh"],
     args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:LocalJdkTest",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspLocalJdkTest",
         "e2e/test-resources/local-jdk-project",
     ],
 )
 
 sh_binary(
-    name = "RemoteJdkTest",
+    name = "BazelBspRemoteJdkTest",
     srcs = ["runTest.sh"],
     args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:RemoteJdkTest",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspRemoteJdkTest",
         "e2e/test-resources/remote-jdk-project",
     ],
 )
