@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel
 
 import ch.epfl.scala.bsp4j.*
-import com.google.common.collect.ImmutableList
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
@@ -9,7 +8,6 @@ import java.time.Duration
 class BazelBspLocalJdkTest : BazelBspTestBaseScenario(REPO_NAME) {
 
     override fun getScenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
-
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
 
         val exampleExampleJvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/local_jdk/", "17")
