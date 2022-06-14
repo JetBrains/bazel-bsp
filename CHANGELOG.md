@@ -17,6 +17,8 @@
 
 - Scala version regex has been fixed.
   | [#249](https://github.com/JetBrains/bazel-bsp/pull/249)
+- e2e test for local jdk and remote jdk
+  | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
   
 ## [2.1.0] - 11.05.2022
 

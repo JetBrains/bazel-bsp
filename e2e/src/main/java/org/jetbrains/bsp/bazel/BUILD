@@ -1,4 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_binary")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
 
 java_binary(
     name = "BazelBspSampleRepoTest",
@@ -37,9 +38,10 @@ java_binary(
     ],
 )
 
-java_binary(
-    name = "BazelBspJava8ProjectTest",
-    srcs = ["BazelBspJava8ProjectTest.java"],
+kt_jvm_binary(
+    name = "BazelBspLocalJdkTest",
+    srcs = ["BazelBspLocalJdkTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspLocalJdkTest",
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [
@@ -50,9 +52,10 @@ java_binary(
     ],
 )
 
-java_binary(
-    name = "BazelBspJava11ProjectTest",
-    srcs = ["BazelBspJava11ProjectTest.java"],
+kt_jvm_binary(
+    name = "BazelBspRemoteJdkTest",
+    srcs = ["BazelBspRemoteJdkTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspRemoteJdkTest",
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [

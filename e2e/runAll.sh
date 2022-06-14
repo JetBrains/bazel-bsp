@@ -16,8 +16,8 @@ cd "$BUILD_WORKSPACE_DIRECTORY" || exit
 runTest //e2e:BazelBspSampleRepoTest
 #runTest //e2e:BazelBspActionGraphV1Test
 #runTest //e2e:BazelBspActionGraphV2Test
-#runTest //e2e:BazelBspJava8ProjectTest
-#runTest //e2e:BazelBspJava11ProjectTest
+#runTest //e2e:BazelBspLocalJdkTest
+#runTest //e2e:BazelBspRemoteJdkTest
 #runTest //e2e:BazelBspCppProjectTest
 
 echo -e "${GREEN}==================================="
