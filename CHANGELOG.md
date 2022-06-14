@@ -5,10 +5,16 @@
 ## [Unreleased]
 
 ### Features 🎉
+
 - Directories and derive_targets_from_directories sections are now available in project view files.
   | [#247](https://github.com/JetBrains/bazel-bsp/pull/247)
 - Dependent targets can be imported as modules based on `import_depth` project view parameter
   | [#248](https://github.com/JetBrains/bazel-bsp/pull/248)
+
+### Changes 🔄
+
+- e2e test for local jdk and remote jdk
+  | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
 
 ## [2.1.0] - 11.05.2022
 
@@ -22,8 +28,6 @@
 
 ### Changes 🔄
 
-- e2e test for local jdk and remote jdk
-  | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
 - Support for detecting jdk through runtime_jdk poperty; infer jdk
   | [#241](https://github.com/JetBrains/bazel-bsp/pull/241)
 - New project view parser without default file.
