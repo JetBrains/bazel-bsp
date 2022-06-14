@@ -11,7 +11,7 @@ class BazelBspRemoteJdkTest : BazelBspTestBaseScenario(REPO_NAME) {
     override fun getScenarioSteps(): List<BazelBspTestScenarioStep> = ImmutableList.of(workspaceBuildTargets())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
-        val exampleExampleJvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/remotejdk11_linux/", "11")
+        val exampleExampleJvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/remotejdk11_macos/", "11")
         val rootBuildTarget = BuildTarget(
                 BuildTargetIdentifier("bsp-workspace-root"),
                 ImmutableList.of(),

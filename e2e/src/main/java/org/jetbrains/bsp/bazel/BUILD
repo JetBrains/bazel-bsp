@@ -40,8 +40,8 @@ java_binary(
 
 kt_jvm_binary(
     name = "BazelBspLocalJdkTest",
-    main_class = "org.jetbrains.bsp.bazel.BazelBspLocalJdkTest",
     srcs = ["BazelBspLocalJdkTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspLocalJdkTest",
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [
@@ -54,8 +54,8 @@ kt_jvm_binary(
 
 kt_jvm_binary(
     name = "BazelBspRemoteJdkTest",
-    main_class = "org.jetbrains.bsp.bazel.BazelBspRemoteJdkTest",
     srcs = ["BazelBspRemoteJdkTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspRemoteJdkTest",
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [
