@@ -8,33 +8,34 @@ import java.time.Duration
 
 class BazelBspRemoteJdkTest : BazelBspTestBaseScenario(REPO_NAME) {
 
-    override fun getScenarioSteps(): List<BazelBspTestScenarioStep> = ImmutableList.of(workspaceBuildTargets())
+    override fun getScenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
         val exampleExampleJvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/remotejdk11_linux/", "11")
         val rootBuildTarget = BuildTarget(
                 BuildTargetIdentifier("bsp-workspace-root"),
-                ImmutableList.of(),
-                ImmutableList.of(),
-                ImmutableList.of(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
                 BuildTargetCapabilities(false, false, false, false))
         rootBuildTarget.displayName = "bsp-workspace-root"
         rootBuildTarget.baseDirectory = "file://\$WORKSPACE/"
+
         val exampleExampleBuildTarget = BuildTarget(
                 BuildTargetIdentifier("//example:example"),
-                ImmutableList.of("application"),
-                ImmutableList.of("java"),
-                ImmutableList.of(),
+                listOf("application"),
+                listOf("java"),
+                emptyList(),
                 BuildTargetCapabilities(true, false, true, false))
         exampleExampleBuildTarget.displayName = "//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = exampleExampleJvmBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.JVM
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-                ImmutableList.of(rootBuildTarget, exampleExampleBuildTarget))
+                listOf(rootBuildTarget, exampleExampleBuildTarget))
         return BazelBspTestScenarioStep(
                 "remote-jdk-project workspace build targets"
-        ) { testClient.testWorkspaceTargets(Duration.ofSeconds(60), workspaceBuildTargetsResult) }
+        ) { testClient.testWorkspaceTargets(Duration.ofSeconds(30), workspaceBuildTargetsResult) }
     }
 
     companion object {
