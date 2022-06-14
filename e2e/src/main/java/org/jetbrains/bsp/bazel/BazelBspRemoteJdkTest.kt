@@ -8,6 +8,7 @@ import java.time.Duration
 class BazelBspRemoteJdkTest : BazelBspTestBaseScenario(REPO_NAME) {
 
     override fun getScenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
+
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
         val exampleExampleJvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/remotejdk11_linux/", "11")
         val rootBuildTarget = BuildTarget(
