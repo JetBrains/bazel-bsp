@@ -22,6 +22,8 @@
 
 ### Changes 🔄
 
+- e2e test for local jdk and remote jdk
+  | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
 - Support for detecting jdk through runtime_jdk poperty; infer jdk
   | [#241](https://github.com/JetBrains/bazel-bsp/pull/241)
 - New project view parser without default file.
