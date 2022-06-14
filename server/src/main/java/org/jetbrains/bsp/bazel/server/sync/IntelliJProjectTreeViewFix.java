@@ -10,7 +10,6 @@ import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
@@ -21,6 +20,13 @@ import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext;
 
 public class IntelliJProjectTreeViewFix {
+
+  private final BazelPathsResolver bazelPathsResolver;
+
+  public IntelliJProjectTreeViewFix(BazelPathsResolver bazelPathsResolver) {
+    this.bazelPathsResolver = bazelPathsResolver;
+  }
+
   public Seq<Module> createModules(
       URI workspaceRoot, Seq<Module> modules, WorkspaceContext workspaceContext) {
     if (isFullWorkspaceImport(workspaceContext)) {
@@ -92,7 +98,7 @@ public class IntelliJProjectTreeViewFix {
         .map(s -> stripPrefixes(s, "//"))
         .map(root::resolve)
         .filter(Files::exists)
-        .map(Path::toUri)
+        .map(bazelPathsResolver::resolveUri)
         .map(URI::toString)
         .toArray();
   }
