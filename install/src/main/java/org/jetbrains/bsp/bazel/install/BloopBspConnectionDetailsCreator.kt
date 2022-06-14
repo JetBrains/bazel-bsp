@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.install
 import ch.epfl.scala.bsp4j.BspConnectionDetails
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
-import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
+import java.lang.IllegalArgumentException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -11,11 +11,11 @@ import java.nio.file.Path
 class BloopBspConnectionDetailsCreator(bazelBspPath: Path) {
     private val coursierDestination = bazelBspPath.resolve("cs")
 
-    private fun downloadCoursier(): Try<Void> {
-        return if (Files.isRegularFile(coursierDestination) && Files.isExecutable(coursierDestination)) {
+    private fun downloadCoursier(): Try<Void> =
+        if (Files.isRegularFile(coursierDestination) && Files.isExecutable(coursierDestination)) {
             Try.success(null)
         } else if (Files.exists(coursierDestination)) {
-            Try.failure(java.lang.IllegalArgumentException("file already exists: $coursierDestination"))
+            Try.failure(IllegalArgumentException("file already exists: $coursierDestination, but was not executable"))
         } else {
             val url = System.getenv("FASTPASS_COURSIER_URL") ?: "https://git.io/coursier-cli"
             Try.run {
@@ -26,7 +26,6 @@ class BloopBspConnectionDetailsCreator(bazelBspPath: Path) {
                 coursierDestination.toFile().setExecutable(true)
             }
         }
-    }
 
     fun create(): Try<BspConnectionDetails> =
         downloadCoursier().map {

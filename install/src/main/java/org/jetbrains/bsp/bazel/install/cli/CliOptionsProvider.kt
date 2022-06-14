@@ -162,8 +162,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             workspaceRootDir = workspaceRootDir(cmd),
             projectViewFilePath = projectViewFilePath(cmd),
             projectViewCliOptions = createProjectViewCliOptions(cmd),
-            useBloop = useBloop(cmd),
-            projectName = projectName(cmd)
+            bloopCliOptions = createBloopCliOptions(cmd),
         )
 
     private fun workspaceRootDir(cmd: CommandLine): Path =
@@ -199,6 +198,12 @@ class CliOptionsProvider(private val args: Array<String>) {
             true
         )
     }
+
+    private fun createBloopCliOptions(cmd: CommandLine): BloopCliOptions =
+        BloopCliOptions(
+            useBloop = useBloop(cmd),
+            projectName = projectName(cmd)
+        )
 
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))

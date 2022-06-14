@@ -17,7 +17,7 @@ object Install {
 
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
             cliOptions.helpCliOptions.printHelp()
-        } else if (cliOptions.useBloop) {
+        } else if (cliOptions.bloopCliOptions.useBloop) {
             createBloopEnvironmentAndInstallBloopBspServer(cliOptions)
                 .onSuccess { printInCaseOfSuccess(cliOptions) }
                 .onFailure(::printFailureReasonAndExit1)

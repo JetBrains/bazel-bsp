@@ -19,11 +19,15 @@ data class ProjectViewCliOptions internal constructor(
         val importDepth: Int?,
 )
 
+data class BloopCliOptions internal constructor(
+        val useBloop: Boolean,
+        val projectName: String?
+)
+
 data class CliOptions internal constructor(
         val helpCliOptions: HelpCliOptions,
         val workspaceRootDir: Path,
         val projectViewFilePath: Path?,
         val projectViewCliOptions: ProjectViewCliOptions?,
-        val useBloop: Boolean,
-        val projectName: String?
+        val bloopCliOptions: BloopCliOptions,
 )
