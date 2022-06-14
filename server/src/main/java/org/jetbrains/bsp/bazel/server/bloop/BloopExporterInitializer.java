@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server;
+package org.jetbrains.bsp.bazel.server.bloop;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.control.Option;

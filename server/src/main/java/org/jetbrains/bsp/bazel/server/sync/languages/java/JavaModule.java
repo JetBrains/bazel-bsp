@@ -7,8 +7,19 @@ import java.net.URI;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
+import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule;
 
 public class JavaModule implements LanguageData {
+  public static Option<JavaModule> fromLanguageData(LanguageData languageData) {
+    if (languageData instanceof JavaModule) {
+      return Option.of((JavaModule) languageData);
+    } else if (languageData instanceof ScalaModule) {
+      return ((ScalaModule) languageData).javaModule();
+    } else {
+      return Option.none();
+    }
+  }
+
   private final Jdk jdk;
 
   private final Option<Jdk> runtimeJdk;
