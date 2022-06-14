@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.jetbrains.bsp.bazel.server.sync.model.Label;
 
 public class BloopProjectWriter {
   private final Path bloopRoot;
@@ -17,13 +16,13 @@ public class BloopProjectWriter {
     this.bloopRoot = bloopRoot;
   }
 
-  private String safeFileName(Label label) {
-    return Naming.safeName(label).replace('/', '.');
+  private String safeFileName(String projectName) {
+    return projectName.replace('/', '.');
   }
 
-  public Path write(Config.Project bloopProject, Label label) {
+  public Path write(Config.Project bloopProject) {
     var configFile = new Config.File(Config.File$.MODULE$.LatestVersion(), bloopProject);
-    var outputPath = bloopRoot.resolve(safeFileName(label) + ".config.json");
+    var outputPath = bloopRoot.resolve(safeFileName(bloopProject.name()) + ".config.json");
     if (outputPath.toFile().exists()) {
       var configString = ConfigCodecs.toStr(configFile);
       var hasher = Hashing.sha256();

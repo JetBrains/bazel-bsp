@@ -36,14 +36,9 @@ class BspProjectExporter {
         .iterator()
         .map(
             mod ->
-                new BspModuleExporter(
-                        project,
-                        mod,
-                        bloopRoot,
-                        bloopProjectWriter,
-                        classpathRewriter,
-                        sourceSetRewriter)
+                new BspModuleExporter(project, mod, bloopRoot, classpathRewriter, sourceSetRewriter)
                     .export())
+        .map(bloopProjectWriter::write)
         .toSet();
   }
 

@@ -31,7 +31,6 @@ class BspModuleExporter {
   private final Project project;
   private final Module module;
   private final Path bloopRoot;
-  private final BloopProjectWriter bloopProjectWriter;
   private final ClasspathRewriter classpathRewriter;
   private final SourceSetRewriter sourceSetRewriter;
   private final List<String> extraJvmOptions;
@@ -40,22 +39,20 @@ class BspModuleExporter {
       Project project,
       Module module,
       Path bloopRoot,
-      BloopProjectWriter bloopProjectWriter,
       ClasspathRewriter classpathRewriter,
       SourceSetRewriter sourceSetRewriter) {
     this.project = project;
     this.module = module;
     this.bloopRoot = bloopRoot;
-    this.bloopProjectWriter = bloopProjectWriter;
     this.classpathRewriter = classpathRewriter;
     this.sourceSetRewriter = sourceSetRewriter;
     this.extraJvmOptions =
         List.of("-Duser.dir=" + Paths.get(project.workspaceRoot()).toAbsolutePath());
   }
 
-  public Path export() {
+  public Config.Project export() {
     if (module.tags().contains(Tag.NO_BUILD)) {
-      return bloopProjectWriter.write(createNoBuildModule(), module.label());
+      return createNoBuildModule();
     }
 
     String name = Naming.safeName(module.label());
@@ -105,7 +102,7 @@ class BspModuleExporter {
             scala.Option.apply(resolution),
             scala.Option.apply(toList(tags)));
 
-    return bloopProjectWriter.write(bloopProject, module.label());
+    return bloopProject;
   }
 
   private Config.Project createNoBuildModule() {

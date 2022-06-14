@@ -2,8 +2,6 @@ package org.jetbrains.bsp.bazel.server.bloop;
 
 import com.google.common.io.BaseEncoding;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 
