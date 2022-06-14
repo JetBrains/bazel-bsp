@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.server.sync;
 import io.vavr.collection.*;
 import io.vavr.control.Option;
 import java.net.URI;
-import java.nio.file.Path;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
@@ -72,7 +71,7 @@ public class BazelProjectMapper {
     var directDependencies = resolveDirectDependencies(target);
     var languages = inferLanguages(target);
     var tags = targetKindResolver.resolveTags(target);
-    var baseDirectory = bazelPathsResolver.labelToDirectory(label).toUri();
+    var baseDirectory = bazelPathsResolver.labelToDirectoryUri(label);
     var sourceSet = resolveSourceSet(target);
     var resources = resolveResources(target);
 
@@ -115,7 +114,9 @@ public class BazelProjectMapper {
   private SourceSet resolveSourceSet(TargetInfo target) {
     var sources = HashSet.ofAll(target.getSourcesList()).map(bazelPathsResolver::resolve);
     var sourceRoots = sources.map(SourceRootGuesser::getSourcesRoot);
-    return new SourceSet(sources.map(Path::toUri), sourceRoots.map(Path::toUri));
+    return new SourceSet(
+        sources.map(bazelPathsResolver::resolveUri),
+        sourceRoots.map(bazelPathsResolver::resolveUri));
   }
 
   private Set<URI> resolveResources(TargetInfo target) {
@@ -125,7 +126,7 @@ public class BazelProjectMapper {
   // TODO make this feature configurable with flag in project view file
   private Seq<Module> createSyntheticModules(
       Seq<Module> modulesFromBazel, URI workspaceRoot, WorkspaceContext workspaceContext) {
-    return new IntelliJProjectTreeViewFix()
+    return new IntelliJProjectTreeViewFix(bazelPathsResolver)
         .createModules(workspaceRoot, modulesFromBazel, workspaceContext);
   }
 

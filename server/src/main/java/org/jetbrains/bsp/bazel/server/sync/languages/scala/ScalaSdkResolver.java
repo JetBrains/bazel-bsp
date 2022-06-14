@@ -50,7 +50,12 @@ public class ScalaSdkResolver {
     }
     var version = maybeVersions.distinct().sorted().last();
     var binaryVersion = toBinaryVersion(version);
-    var sdk = new ScalaSdk("org.scala-lang", version, binaryVersion, compilerJars.map(Path::toUri));
+    var sdk =
+        new ScalaSdk(
+            "org.scala-lang",
+            version,
+            binaryVersion,
+            compilerJars.map(bazelPathsResolver::resolveUri));
     return Option.some(sdk);
   }
 
