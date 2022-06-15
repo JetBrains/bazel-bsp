@@ -78,7 +78,8 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
     return new BazelBspTestScenarioStep(
         "cpp options",
         () ->
-            getTestClient().testCppOptions(
-                Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult));
+            getTestClient()
+                    .testCppOptions(
+                            Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult));
   }
 }
