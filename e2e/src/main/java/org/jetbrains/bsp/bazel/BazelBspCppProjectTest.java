@@ -31,7 +31,6 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
     test.executeScenario();
   }
 
-
   @Override
   protected List<BazelBspTestScenarioStep> scenarioSteps() {
     return ImmutableList.of(compareWorkspaceTargetsResults(), cppOptions());
@@ -57,8 +56,8 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
     return new BazelBspTestScenarioStep(
         "cpp project",
         () ->
-            getTestClient().testWorkspaceTargets(
-                Duration.ofSeconds(20), expectedWorkspaceBuildTargetsResult));
+            getTestClient()
+                .testWorkspaceTargets(Duration.ofSeconds(20), expectedWorkspaceBuildTargetsResult));
   }
 
   private BazelBspTestScenarioStep cppOptions() {
@@ -79,7 +78,7 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
         "cpp options",
         () ->
             getTestClient()
-                    .testCppOptions(
-                            Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult));
+                .testCppOptions(
+                    Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult));
   }
 }
