@@ -6,8 +6,8 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
 import java.util.stream.Collectors
 
- class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
-    override fun getScenarioSteps(): List<BazelBspTestScenarioStep> =
+  class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
+    override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
         listOf(
             resolveProject(),
             compareWorkspaceTargetsResults(),
