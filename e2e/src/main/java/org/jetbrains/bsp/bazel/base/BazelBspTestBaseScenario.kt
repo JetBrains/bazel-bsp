@@ -10,12 +10,11 @@ import java.util.stream.Collectors
 import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario(repoName: String?) {
-    @JvmField
-    protected val testClient: BazelTestClient
 
-    private fun getTestingRepoPath(repoName: String?): Path = Path.of(WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName)
+    protected val testClient: BazelTestClient = createClient(repoName)
 
-    private fun createClient(workspacePath: Path): BazelTestClient {
+    private fun createClient(repoName: String?): BazelTestClient {
+        val workspacePath = Path.of(WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName)
         LOGGER.info("Workspace path: {}", workspacePath)
         LOGGER.info("Creating TestClient...")
         // TODO: capabilities should be configurable
@@ -40,13 +39,13 @@ abstract class BazelBspTestBaseScenario(repoName: String?) {
         exitProcess(FAIL_EXIT_CODE)
     }
 
-    private fun executeScenarioSteps(): Boolean = scenarioSteps.stream()
+    private fun executeScenarioSteps(): Boolean = scenarioSteps().stream()
             .map { it.executeAndReturnResult() }
             .collect(Collectors.toList())
             .stream()
             .allMatch { it }
 
-    protected abstract val scenarioSteps: List<BazelBspTestScenarioStep>
+    protected abstract fun scenarioSteps(): List<BazelBspTestScenarioStep>
 
     companion object {
         private const val BSP_VERSION = "2.0.0"
@@ -57,10 +56,5 @@ abstract class BazelBspTestBaseScenario(repoName: String?) {
         private const val FAIL_EXIT_CODE = 1
         private const val TEST_RESOURCES_DIR = "e2e/test-resources"
         private val WORKSPACE_DIR = System.getenv("BUILD_WORKSPACE_DIRECTORY")
-    }
-
-    init {
-        val workspacePath = getTestingRepoPath(repoName)
-        testClient = createClient(workspacePath)
     }
 }
