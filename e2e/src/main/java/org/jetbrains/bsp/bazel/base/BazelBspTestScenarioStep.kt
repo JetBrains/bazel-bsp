@@ -9,8 +9,8 @@ class BazelBspTestScenarioStep(private val testName: String, private val testkit
     fun executeAndReturnResult(): Boolean {
         LOGGER.info( "Executing \"$testName\"..." )
         return Try.run(testkitCall)
-            .onSuccess { LOGGER.info("Step \"{}\" executed correctly!", testName) }
-            .onFailure { LOGGER.error("Step \"{}\" execution failed!", testName, it) }
+            .onSuccess { LOGGER.info("Step \"$testName\" executed correctly!") }
+            .onFailure { LOGGER.error("Step \"$testName\" \"$it\" execution failed!") }
             .map { true }
             .getOrElse(false)
     }

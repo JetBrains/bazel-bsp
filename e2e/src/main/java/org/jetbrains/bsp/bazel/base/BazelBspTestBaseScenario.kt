@@ -14,7 +14,7 @@ abstract class BazelBspTestBaseScenario(private val repoName: String?) {
 
     private fun createClient(): BazelTestClient {
         val workspacePath = Path.of(WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName)
-        LOGGER.info("Workspace path: { \"$workspacePath\"}")
+        LOGGER.info("Workspace path: $workspacePath")
         LOGGER.info("Creating TestClient...")
         // TODO: capabilities should be configurable
         val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
@@ -31,7 +31,7 @@ abstract class BazelBspTestBaseScenario(private val repoName: String?) {
             LOGGER.info("Test passed!")
             exitProcess(SUCCESS_EXIT_CODE)
         }
-        LOGGER.fatal("Test failed :(")
+        LOGGER.fatal("Test failed :( ")
         exitProcess(FAIL_EXIT_CODE)
     }
 
