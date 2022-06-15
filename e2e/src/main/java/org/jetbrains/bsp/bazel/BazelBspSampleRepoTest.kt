@@ -4,7 +4,6 @@ import ch.epfl.scala.bsp4j.*
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
-import java.util.Map
 import java.util.stream.Collectors
 
 class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
@@ -514,7 +513,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//java_targets:java_library"),
@@ -523,7 +522,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_with_dependency:java_binary"),
@@ -534,7 +533,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//java_targets/subpackage:java_library"),
@@ -543,7 +542,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//scala_targets:scala_binary"),
@@ -554,7 +553,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//scala_targets:scala_test"),
@@ -577,7 +576,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_with_resources:java_binary"),
@@ -586,7 +585,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_without_args:binary"),
@@ -597,7 +596,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_without_jvm_flags:binary"),
@@ -608,7 +607,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_without_main_class:library"),
@@ -619,7 +618,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 )
             )
         )
@@ -640,7 +639,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//java_targets:java_library"),
@@ -649,7 +648,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_with_dependency:java_binary"),
@@ -660,7 +659,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//java_targets/subpackage:java_library"),
@@ -669,7 +668,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//scala_targets:scala_binary"),
@@ -680,7 +679,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//scala_targets:scala_test"),
@@ -703,7 +702,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_with_resources:java_binary"),
@@ -712,7 +711,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_without_args:binary"),
@@ -723,7 +722,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_without_jvm_flags:binary"),
@@ -734,7 +733,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//target_without_main_class:library"),
@@ -745,7 +744,7 @@ class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
                     ),
                     listOf(),
                     "\$WORKSPACE",
-                    Map.of()
+                    mapOf()
                 )
             )
         )
