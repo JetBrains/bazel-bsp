@@ -41,7 +41,7 @@ abstract class BazelBspTestBaseScenario(repoName: String?) {
     }
 
     private fun executeScenarioSteps(): Boolean = scenarioSteps.stream()
-            .map { obj: BazelBspTestScenarioStep -> obj.executeAndReturnResult() }
+            .map { it.executeAndReturnResult() }
             .collect(Collectors.toList())
             .stream()
             .allMatch { it }
