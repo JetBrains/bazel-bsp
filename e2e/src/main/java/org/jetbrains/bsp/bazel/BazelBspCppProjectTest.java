@@ -12,6 +12,7 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario;
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -31,6 +32,7 @@ public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
     test.executeScenario();
   }
 
+  @NotNull
   @Override
   protected List<BazelBspTestScenarioStep> scenarioSteps() {
     return ImmutableList.of(compareWorkspaceTargetsResults(), cppOptions());
