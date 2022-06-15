@@ -7,7 +7,7 @@ import java.time.Duration
 
 class BazelBspLocalJdkTest : BazelBspTestBaseScenario(REPO_NAME) {
 
-    override fun getScenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
+    override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
         val exampleExampleJvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/local_jdk/", "17")
