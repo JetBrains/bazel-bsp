@@ -10,7 +10,7 @@ class BazelBspTestScenarioStep(private val testName: String, private val testkit
         LOGGER.info( "Executing \"$testName\"..." )
         return Try.run(testkitCall)
             .onSuccess { LOGGER.info("Step \"$testName\" executed correctly!") }
-            .onFailure  { LOGGER.error("Step \"$testName\" execution failed!", it) }
+            .onFailure { LOGGER.error("Step \"$testName\" execution failed!", it) }
             .map { true }
             .getOrElse(false)
     }

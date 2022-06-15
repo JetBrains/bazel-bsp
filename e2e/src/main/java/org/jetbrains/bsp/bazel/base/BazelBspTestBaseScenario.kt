@@ -27,7 +27,10 @@ abstract class BazelBspTestBaseScenario(private val repoName: String?) {
     }
 
     fun executeScenario() {
-        if (executeScenarioSteps()) {
+        LOGGER.info("Running scenario...")
+        val scenarioStepsExecutionResult = executeScenarioSteps()
+        LOGGER.info("Running scenario done.")
+        if (scenarioStepsExecutionResult) {
             LOGGER.info("Test passed!")
             exitProcess(SUCCESS_EXIT_CODE)
         }
