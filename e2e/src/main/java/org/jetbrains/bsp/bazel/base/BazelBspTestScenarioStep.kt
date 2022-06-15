@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger
 
 class BazelBspTestScenarioStep(private val testName: String, private val testkitCall: CheckedRunnable) {
     fun executeAndReturnResult(): Boolean {
-        LOGGER.info("Executing \"{}\"...", testName)
+        LOGGER.info( "Executing \"$testName\"..." )
         return Try.run(testkitCall)
             .onSuccess { LOGGER.info("Step \"{}\" executed correctly!", testName) }
             .onFailure { LOGGER.error("Step \"{}\" execution failed!", testName, it) }

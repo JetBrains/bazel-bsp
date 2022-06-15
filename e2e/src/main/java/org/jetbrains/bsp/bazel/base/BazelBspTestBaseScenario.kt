@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.jetbrains.bsp.testkit.client.bazel.BazelTestClient
 import java.nio.file.Path
-import java.util.stream.Collectors
 import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario(private val repoName: String?) {
@@ -15,7 +14,7 @@ abstract class BazelBspTestBaseScenario(private val repoName: String?) {
 
     private fun createClient(): BazelTestClient {
         val workspacePath = Path.of(WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName)
-        LOGGER.info("Workspace path: {}", workspacePath)
+        LOGGER.info("Workspace path: { \"$workspacePath\"}")
         LOGGER.info("Creating TestClient...")
         // TODO: capabilities should be configurable
         val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
@@ -28,8 +27,6 @@ abstract class BazelBspTestBaseScenario(private val repoName: String?) {
     }
 
     fun executeScenario() {
-        LOGGER.info("Running scenario...")
-        LOGGER.info("Running scenario done.")
         if (executeScenarioSteps()) {
             LOGGER.info("Test passed!")
             exitProcess(SUCCESS_EXIT_CODE)
