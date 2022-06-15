@@ -29,9 +29,8 @@ abstract class BazelBspTestBaseScenario(repoName: String?) {
 
     fun executeScenario() {
         LOGGER.info("Running scenario...")
-        val scenarioStepsExecutionResult = executeScenarioSteps()
         LOGGER.info("Running scenario done.")
-        if (scenarioStepsExecutionResult) {
+        if (executeScenarioSteps()) {
             LOGGER.info("Test passed!")
             exitProcess(SUCCESS_EXIT_CODE)
         }
@@ -39,11 +38,9 @@ abstract class BazelBspTestBaseScenario(repoName: String?) {
         exitProcess(FAIL_EXIT_CODE)
     }
 
-    private fun executeScenarioSteps(): Boolean = scenarioSteps().stream()
+    private fun executeScenarioSteps(): Boolean = scenarioSteps()
             .map { it.executeAndReturnResult() }
-            .collect(Collectors.toList())
-            .stream()
-            .allMatch { it }
+            .all { it }
 
     protected abstract fun scenarioSteps(): List<BazelBspTestScenarioStep>
 
