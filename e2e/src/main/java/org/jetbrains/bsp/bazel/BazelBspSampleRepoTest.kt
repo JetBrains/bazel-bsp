@@ -352,11 +352,11 @@ import java.util.stream.Collectors
     //  See: https://github.com/JetBrains/bazel-bsp/issues/96
     private fun scalaTestClasses(): BazelBspTestScenarioStep {
         val scalaTestClassesParams = ScalaTestClassesParams(expectedTargetIdentifiers)
-        val scalaTagetsScalaTest = ScalaTestClassesItem(
+        val scalaTargetsScalaTest = ScalaTestClassesItem(
             BuildTargetIdentifier("//scala_targets:scala_test"),
             listOf("io.bazel.rulesscala.scala_test.Runner")
         )
-        val expectedScalaTestClassesResult = ScalaTestClassesResult(listOf(scalaTagetsScalaTest))
+        val expectedScalaTestClassesResult = ScalaTestClassesResult(listOf(scalaTargetsScalaTest))
         return BazelBspTestScenarioStep(
             "Scala test classes"
         ) {
@@ -752,7 +752,7 @@ import java.util.stream.Collectors
 
     private val expectedTargetIdentifiers: List<BuildTargetIdentifier>
         get() = expectedWorkspaceBuildTargetsResult.targets.stream()
-            .map { obj: BuildTarget -> obj.id }
+            .map { it.id }
             .collect(Collectors.toList())
     private val expectedWorkspaceBuildTargetsResult: WorkspaceBuildTargetsResult
         get() {
@@ -1002,9 +1002,6 @@ import java.util.stream.Collectors
         // we cannot use `bazel test ...` because test runner blocks bazel daemon,
         // but testing server needs it for queries and etc
         @JvmStatic
-        fun main(args: Array<String>) {
-            val test = BazelBspSampleRepoTest()
-            test.executeScenario()
-        }
+        fun main(args: Array<String>) = BazelBspSampleRepoTest().executeScenario()
     }
 }
