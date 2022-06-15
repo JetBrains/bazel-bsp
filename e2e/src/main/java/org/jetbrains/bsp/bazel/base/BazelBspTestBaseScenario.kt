@@ -9,11 +9,11 @@ import java.nio.file.Path
 import java.util.stream.Collectors
 import kotlin.system.exitProcess
 
-abstract class BazelBspTestBaseScenario(repoName: String?) {
+abstract class BazelBspTestBaseScenario(private val repoName: String?) {
 
-    protected val testClient: BazelTestClient = createClient(repoName)
+    protected val testClient: BazelTestClient = createClient()
 
-    private fun createClient(repoName: String?): BazelTestClient {
+    private fun createClient(): BazelTestClient {
         val workspacePath = Path.of(WORKSPACE_DIR, TEST_RESOURCES_DIR, repoName)
         LOGGER.info("Workspace path: {}", workspacePath)
         LOGGER.info("Creating TestClient...")
