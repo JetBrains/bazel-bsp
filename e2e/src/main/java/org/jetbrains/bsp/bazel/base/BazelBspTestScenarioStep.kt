@@ -1,23 +1,22 @@
 package org.jetbrains.bsp.bazel.base
 
-import io.vavr.CheckedRunnable
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
-class BazelBspTestScenarioStep(private val testName: String, private val testkitCall: CheckedRunnable) {
+class BazelBspTestScenarioStep(private val testName: String, private val testkitCall: () -> Unit) {
     fun executeAndReturnResult(): Boolean {
-        LOGGER.info( "Executing \"$testName\"..." )
-        return Try.run(testkitCall)
-            .onSuccess { LOGGER.info("Step \"$testName\" executed correctly!") }
-            .onFailure { LOGGER.error("Step \"$testName\" execution failed!", it) }
-            .map { true }
-            .getOrElse(false)
+        log.info("Executing \"$testName\"...")
+
+        return try {
+            testkitCall()
+            log.info("Step \"$testName\" successful!")
+            true
+        } catch (e: Exception) {
+            log.error("Step \"$testName\" failed!", e)
+            false
+        }
     }
 
     companion object {
-        private val LOGGER: Logger = LogManager.getLogger(
-            BazelBspTestScenarioStep::class.java
-        )
+        private val log = LogManager.getLogger(BazelBspTestScenarioStep::class.java)
     }
 }

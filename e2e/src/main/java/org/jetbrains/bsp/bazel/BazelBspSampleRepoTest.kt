@@ -1,12 +1,50 @@
 package org.jetbrains.bsp.bazel
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildTarget
+import ch.epfl.scala.bsp4j.BuildTargetCapabilities
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import ch.epfl.scala.bsp4j.DependencySourcesItem
+import ch.epfl.scala.bsp4j.DependencySourcesParams
+import ch.epfl.scala.bsp4j.DependencySourcesResult
+import ch.epfl.scala.bsp4j.InverseSourcesParams
+import ch.epfl.scala.bsp4j.InverseSourcesResult
+import ch.epfl.scala.bsp4j.JvmBuildTarget
+import ch.epfl.scala.bsp4j.JvmEnvironmentItem
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
+import ch.epfl.scala.bsp4j.ResourcesItem
+import ch.epfl.scala.bsp4j.ResourcesParams
+import ch.epfl.scala.bsp4j.ResourcesResult
+import ch.epfl.scala.bsp4j.ScalaBuildTarget
+import ch.epfl.scala.bsp4j.ScalaMainClass
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem
+import ch.epfl.scala.bsp4j.ScalaMainClassesParams
+import ch.epfl.scala.bsp4j.ScalaMainClassesResult
+import ch.epfl.scala.bsp4j.ScalaPlatform
+import ch.epfl.scala.bsp4j.ScalaTestClassesItem
+import ch.epfl.scala.bsp4j.ScalaTestClassesParams
+import ch.epfl.scala.bsp4j.ScalaTestClassesResult
+import ch.epfl.scala.bsp4j.SourceItem
+import ch.epfl.scala.bsp4j.SourceItemKind
+import ch.epfl.scala.bsp4j.SourcesItem
+import ch.epfl.scala.bsp4j.SourcesParams
+import ch.epfl.scala.bsp4j.SourcesResult
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
-import java.util.stream.Collectors
 
-  class BazelBspSampleRepoTest : BazelBspTestBaseScenario(REPO_NAME) {
+object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
+
+    // TODO: https://youtrack.jetbrains.com/issue/BAZEL-95
+    @JvmStatic
+    fun main(args: Array<String>) = executeScenario()
+
+    override fun repoName(): String = "sample-repo"
+
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
         listOf(
             resolveProject(),
@@ -31,16 +69,12 @@ import java.util.stream.Collectors
         )
 
     private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
-            "resolve project"
-        ) { testClient.testResolveProject(Duration.ofMinutes(2)) }
+        "resolve project"
+    ) { testClient.testResolveProject(Duration.ofMinutes(2)) }
 
     private fun compareWorkspaceTargetsResults(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
-            "compare workspace targets results"
-        ) {
-            testClient.testWorkspaceTargets(
-                Duration.ofSeconds(30), expectedWorkspaceBuildTargetsResult
-            )
-        }
+        "compare workspace targets results"
+    ) { testClient.testWorkspaceTargets(Duration.ofSeconds(30), expectedWorkspaceBuildTargetsResult()) }
 
     private fun sourcesResults(): BazelBspTestScenarioStep {
         val targetWithoutJvmFlagsExampleScala = SourceItem(
@@ -51,6 +85,7 @@ import java.util.stream.Collectors
             listOf(targetWithoutJvmFlagsExampleScala)
         )
         targetWithoutJvmFlagsSources.roots = listOf("file://\$WORKSPACE/target_without_jvm_flags/")
+
         val targetWithoutArgsExampleScala = SourceItem(
             "file://\$WORKSPACE/target_without_args/Example.scala", SourceItemKind.FILE, false
         )
@@ -59,6 +94,7 @@ import java.util.stream.Collectors
             listOf(targetWithoutArgsExampleScala)
         )
         targetWithoutArgsSources.roots = listOf("file://\$WORKSPACE/target_without_args/")
+
         val targetWithoutMainClassExampleScala = SourceItem(
             "file://\$WORKSPACE/target_without_main_class/Example.scala",
             SourceItemKind.FILE,
@@ -68,8 +104,8 @@ import java.util.stream.Collectors
             BuildTargetIdentifier("//target_without_main_class:library"),
             listOf(targetWithoutMainClassExampleScala)
         )
-        targetWithoutMainClassSources.roots =
-            listOf("file://\$WORKSPACE/target_without_main_class/")
+        targetWithoutMainClassSources.roots = listOf("file://\$WORKSPACE/target_without_main_class/")
+
         val targetWithResourcesJavaBinaryJava = SourceItem(
             "file://\$WORKSPACE/target_with_resources/JavaBinary.java", SourceItemKind.FILE, false
         )
@@ -78,6 +114,7 @@ import java.util.stream.Collectors
             listOf(targetWithResourcesJavaBinaryJava)
         )
         targetWithResourcesSources.roots = listOf("file://\$WORKSPACE/target_with_resources/")
+
         val targetWithDependencyJavaBinaryJava = SourceItem(
             "file://\$WORKSPACE/target_with_dependency/JavaBinary.java", SourceItemKind.FILE, false
         )
@@ -86,6 +123,7 @@ import java.util.stream.Collectors
             listOf(targetWithDependencyJavaBinaryJava)
         )
         targetWithDependencySources.roots = listOf("file://\$WORKSPACE/target_with_dependency/")
+
         val scalaTargetsScalaBinaryScala = SourceItem(
             "file://\$WORKSPACE/scala_targets/ScalaBinary.scala", SourceItemKind.FILE, false
         )
@@ -94,6 +132,7 @@ import java.util.stream.Collectors
             listOf(scalaTargetsScalaBinaryScala)
         )
         scalaTargetsScalaBinarySources.roots = listOf("file://\$WORKSPACE/scala_targets/")
+
         val scalaTargetsScalaTestScala = SourceItem(
             "file://\$WORKSPACE/scala_targets/ScalaTest.scala", SourceItemKind.FILE, false
         )
@@ -102,6 +141,7 @@ import java.util.stream.Collectors
             listOf(scalaTargetsScalaTestScala)
         )
         scalaTargetsScalaTestSources.roots = listOf("file://\$WORKSPACE/scala_targets/")
+
         val javaTargetsJavaBinaryJava = SourceItem(
             "file://\$WORKSPACE/java_targets/JavaBinary.java", SourceItemKind.FILE, false
         )
@@ -110,6 +150,7 @@ import java.util.stream.Collectors
             listOf(javaTargetsJavaBinaryJava)
         )
         javaTargetsJavaBinarySources.roots = listOf("file://\$WORKSPACE/java_targets/")
+
         val javaTargetsJavaLibraryJava = SourceItem(
             "file://\$WORKSPACE/java_targets/JavaLibrary.java", SourceItemKind.FILE, false
         )
@@ -118,6 +159,7 @@ import java.util.stream.Collectors
             listOf(javaTargetsJavaLibraryJava)
         )
         javaTargetsJavaLibrarySources.roots = listOf("file://\$WORKSPACE/java_targets/")
+
         val javaTargetsSubpackageJavaLibraryJava = SourceItem(
             "file://\$WORKSPACE/java_targets/subpackage/JavaLibrary2.java",
             SourceItemKind.FILE,
@@ -127,14 +169,16 @@ import java.util.stream.Collectors
             BuildTargetIdentifier("//java_targets/subpackage:java_library"),
             listOf(javaTargetsSubpackageJavaLibraryJava)
         )
-        javaTargetsSubpackageJavaLibrarySources.roots =
-            listOf("file://\$WORKSPACE/java_targets/subpackage/")
+        javaTargetsSubpackageJavaLibrarySources.roots = listOf("file://\$WORKSPACE/java_targets/subpackage/")
+
         val bspWorkspaceRoot = SourcesItem(BuildTargetIdentifier("bsp-workspace-root"), emptyList())
         bspWorkspaceRoot.roots = emptyList()
+
         val javaTargetsJavaLibraryExportedSources = SourcesItem(
             BuildTargetIdentifier("//java_targets:java_library_exported"), emptyList()
         )
         javaTargetsJavaLibraryExportedSources.roots = emptyList()
+
         val manualTargetTestJavaFile = SourceItem(
             "file://\$WORKSPACE/manual_target/TestJavaFile.java", SourceItemKind.FILE, false
         )
@@ -143,6 +187,7 @@ import java.util.stream.Collectors
             listOf(manualTargetTestJavaFile)
         )
         manualTargetTestJavaFileSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+
         val manualTargetTestScalaFile = SourceItem(
             "file://\$WORKSPACE/manual_target/TestScalaFile.scala", SourceItemKind.FILE, false
         )
@@ -151,6 +196,7 @@ import java.util.stream.Collectors
             listOf(manualTargetTestScalaFile)
         )
         manualTargetTestScalaFileSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+
         val manualTargetTestJavaTest =
             SourceItem("file://\$WORKSPACE/manual_target/JavaTest.java", SourceItemKind.FILE, false)
         val manualTargetTestJavaTestSources = SourcesItem(
@@ -158,6 +204,7 @@ import java.util.stream.Collectors
             listOf(manualTargetTestJavaTest)
         )
         manualTargetTestJavaTestSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+
         val manualTargetTestScalaTest = SourceItem(
             "file://\$WORKSPACE/manual_target/ScalaTest.scala", SourceItemKind.FILE, false
         )
@@ -166,6 +213,7 @@ import java.util.stream.Collectors
             listOf(manualTargetTestScalaTest)
         )
         manualTargetTestScalaTestSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+
         val manualTargetTestJavaBinary = SourceItem(
             "file://\$WORKSPACE/manual_target/TestJavaBinary.java", SourceItemKind.FILE, false
         )
@@ -174,6 +222,7 @@ import java.util.stream.Collectors
             listOf(manualTargetTestJavaBinary)
         )
         manualTargetTestJavaBinarySources.roots = listOf("file://\$WORKSPACE/manual_target/")
+
         val manualTargetTestScalaBinary = SourceItem(
             "file://\$WORKSPACE/manual_target/TestScalaBinary.scala", SourceItemKind.FILE, false
         )
@@ -182,7 +231,8 @@ import java.util.stream.Collectors
             listOf(manualTargetTestScalaBinary)
         )
         manualTargetTestScalaBinarySources.roots = listOf("file://\$WORKSPACE/manual_target/")
-        val sourcesParams = SourcesParams(expectedTargetIdentifiers)
+
+        val sourcesParams = SourcesParams(expectedTargetIdentifiers())
         val expectedSourcesResult = SourcesResult(
             listOf(
                 targetWithoutArgsSources,
@@ -205,9 +255,9 @@ import java.util.stream.Collectors
                 manualTargetTestScalaTestSources
             )
         )
-        return BazelBspTestScenarioStep(
-            "sources results"
-        ) { testClient.testSources(Duration.ofSeconds(30), sourcesParams, expectedSourcesResult) }
+        return BazelBspTestScenarioStep("sources results") {
+            testClient.testSources(Duration.ofSeconds(30), sourcesParams, expectedSourcesResult)
+        }
     }
 
     private fun resourcesResults(): BazelBspTestScenarioStep {
@@ -253,11 +303,12 @@ import java.util.stream.Collectors
         val manualTargetJavaBinary =
             ResourcesItem(BuildTargetIdentifier("//manual_target:java_binary"), emptyList())
         val manualTargetScalaBinary =
-            ResourcesItem(BuildTargetIdentifier("//manual_target:scala_binary"),emptyList())
+            ResourcesItem(BuildTargetIdentifier("//manual_target:scala_binary"), emptyList())
         val manualTargetJavaTest =
             ResourcesItem(BuildTargetIdentifier("//manual_target:java_test"), emptyList())
         val manualTargetScalaTest =
             ResourcesItem(BuildTargetIdentifier("//manual_target:scala_test"), emptyList())
+
         val expectedResourcesResult = ResourcesResult(
             listOf(
                 bspWorkspaceRoot,
@@ -280,13 +331,11 @@ import java.util.stream.Collectors
                 manualTargetScalaTest
             )
         )
-        val resourcesParams = ResourcesParams(expectedTargetIdentifiers)
+        val resourcesParams = ResourcesParams(expectedTargetIdentifiers())
         return BazelBspTestScenarioStep(
             "resources results"
         ) {
-            testClient.testResources(
-                Duration.ofSeconds(30), resourcesParams, expectedResourcesResult
-            )
+            testClient.testResources(Duration.ofSeconds(30), resourcesParams, expectedResourcesResult)
         }
     }
 
@@ -307,7 +356,7 @@ import java.util.stream.Collectors
     // FIXME: Is it even correct? Here when queried for *all* targets we return only the ones that
     //   are actually Scala ones. It kinda makes sense, but it seems to be inconsistent.
     private fun scalaMainClasses(): BazelBspTestScenarioStep {
-        val scalaMainClassesParams = ScalaMainClassesParams(expectedTargetIdentifiers)
+        val scalaMainClassesParams = ScalaMainClassesParams(expectedTargetIdentifiers())
         val scalaTargetsScalaBinary = ScalaMainClassesItem(
             BuildTargetIdentifier("//scala_targets:scala_binary"),
             listOf(
@@ -351,7 +400,7 @@ import java.util.stream.Collectors
     // https://github.com/bazelbuild/rules_scala/tree/9b85affa2e08a350a4315882b602eda55b262356/examples/testing/multi_frameworks_toolchain
     //  See: https://github.com/JetBrains/bazel-bsp/issues/96
     private fun scalaTestClasses(): BazelBspTestScenarioStep {
-        val scalaTestClassesParams = ScalaTestClassesParams(expectedTargetIdentifiers)
+        val scalaTestClassesParams = ScalaTestClassesParams(expectedTargetIdentifiers())
         val scalaTargetsScalaTest = ScalaTestClassesItem(
             BuildTargetIdentifier("//scala_targets:scala_test"),
             listOf("io.bazel.rulesscala.scala_test.Runner")
@@ -443,7 +492,7 @@ import java.util.stream.Collectors
             )
         )
         val javaTargetsJavaLibraryExported = DependencySourcesItem(
-            BuildTargetIdentifier("//java_targets:java_library_exported"),emptyList()
+            BuildTargetIdentifier("//java_targets:java_library_exported"), emptyList()
         )
         val bspWorkspaceRoot = DependencySourcesItem(BuildTargetIdentifier("bsp-workspace-root"), emptyList())
         val manualTargetJavaLibrary = DependencySourcesItem(
@@ -486,7 +535,7 @@ import java.util.stream.Collectors
                 manualTargetScalaTest
             )
         )
-        val dependencySourcesParams = DependencySourcesParams(expectedTargetIdentifiers)
+        val dependencySourcesParams = DependencySourcesParams(expectedTargetIdentifiers())
         return BazelBspTestScenarioStep(
             "dependency sources results"
         ) {
@@ -500,7 +549,7 @@ import java.util.stream.Collectors
     // FIXME: Working directory is not an URI???
     // FIXME: Should this return only targets which are runnable?
     private fun jvmRunEnvironment(): BazelBspTestScenarioStep {
-        val params = JvmRunEnvironmentParams(expectedTargetIdentifiers)
+        val params = JvmRunEnvironmentParams(expectedTargetIdentifiers())
         val expectedResult = JvmRunEnvironmentResult(
             listOf(
                 JvmEnvironmentItem(
@@ -626,7 +675,7 @@ import java.util.stream.Collectors
 
     // FIXME: Should this return only targets that are actually testable?
     private fun jvmTestEnvironment(): BazelBspTestScenarioStep {
-        val params = JvmTestEnvironmentParams(expectedTargetIdentifiers)
+        val params = JvmTestEnvironmentParams(expectedTargetIdentifiers())
         val expectedResult = JvmTestEnvironmentResult(
             listOf(
                 JvmEnvironmentItem(
@@ -750,258 +799,273 @@ import java.util.stream.Collectors
         ) { testClient.testJvmTestEnvironment(Duration.ofSeconds(30), params, expectedResult) }
     }
 
-    private val expectedTargetIdentifiers: List<BuildTargetIdentifier>
-        get() = expectedWorkspaceBuildTargetsResult.targets.stream()
+    private fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =
+        expectedWorkspaceBuildTargetsResult()
+            .targets
             .map { it.id }
-            .collect(Collectors.toList())
-    private val expectedWorkspaceBuildTargetsResult: WorkspaceBuildTargetsResult
-        get() {
-            val jvmBuildTarget = JvmBuildTarget("file://\$BAZEL_CACHE/external/remotejdk11_\$OS/", "11")
-            val javaTargetsJavaBinary = BuildTarget(
-                BuildTargetIdentifier("//java_targets:java_binary"),
-                listOf("application"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, true, false)
+
+    private fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
+        val jvmBuildTarget = JvmBuildTarget(
+            "file://\$BAZEL_CACHE/external/remotejdk11_\$OS/",
+            "11"
+        )
+
+        val javaTargetsJavaBinary = BuildTarget(
+            BuildTargetIdentifier("//java_targets:java_binary"),
+            listOf("application"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, true, false)
+        )
+        javaTargetsJavaBinary.displayName = "//java_targets:java_binary"
+        javaTargetsJavaBinary.baseDirectory = "file://\$WORKSPACE/java_targets/"
+        javaTargetsJavaBinary.dataKind = "jvm"
+        javaTargetsJavaBinary.data = jvmBuildTarget
+
+        val scalaBuildTarget = ScalaBuildTarget(
+            "org.scala-lang",
+            "2.12.14",
+            "2.12",
+            ScalaPlatform.JVM,
+            listOf(
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.14.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
             )
-            javaTargetsJavaBinary.displayName = "//java_targets:java_binary"
-            javaTargetsJavaBinary.baseDirectory = "file://\$WORKSPACE/java_targets/"
-            javaTargetsJavaBinary.dataKind = "jvm"
-            javaTargetsJavaBinary.data = jvmBuildTarget
-            val scalaBuildTarget = ScalaBuildTarget(
-                "org.scala-lang",
-                "2.12.14",
-                "2.12",
-                ScalaPlatform.JVM,
-                listOf(
-                    "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.14.jar",
-                    "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                    "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
-                )
-            )
-            scalaBuildTarget.jvmBuildTarget = jvmBuildTarget
-            val scalaTargetsScalaBinary = BuildTarget(
-                BuildTargetIdentifier("//scala_targets:scala_binary"),
-                listOf("application"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, true, false)
-            )
-            scalaTargetsScalaBinary.displayName = "//scala_targets:scala_binary"
-            scalaTargetsScalaBinary.baseDirectory = "file://\$WORKSPACE/scala_targets/"
-            scalaTargetsScalaBinary.dataKind = "scala"
-            scalaTargetsScalaBinary.data = scalaBuildTarget
-            val javaTargetsSubpackageSubpackage = BuildTarget(
-                BuildTargetIdentifier("//java_targets/subpackage:java_library"),
-                listOf("library"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, false, false)
-            )
-            javaTargetsSubpackageSubpackage.displayName = "//java_targets/subpackage:java_library"
-            javaTargetsSubpackageSubpackage.baseDirectory = "file://\$WORKSPACE/java_targets/subpackage/"
-            javaTargetsSubpackageSubpackage.dataKind = "jvm"
-            javaTargetsSubpackageSubpackage.data = jvmBuildTarget
-            val javaTargetsJavaLibrary = BuildTarget(
-                BuildTargetIdentifier("//java_targets:java_library"),
-                listOf("library"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, false, false)
-            )
-            javaTargetsJavaLibrary.displayName = "//java_targets:java_library"
-            javaTargetsJavaLibrary.baseDirectory = "file://\$WORKSPACE/java_targets/"
-            javaTargetsJavaLibrary.dataKind = "jvm"
-            javaTargetsJavaLibrary.data = jvmBuildTarget
-            val targetWithoutJvmFlagsBinary = BuildTarget(
-                BuildTargetIdentifier("//target_without_jvm_flags:binary"),
-                listOf("application"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, true, false)
-            )
-            targetWithoutJvmFlagsBinary.displayName = "//target_without_jvm_flags:binary"
-            targetWithoutJvmFlagsBinary.baseDirectory = "file://\$WORKSPACE/target_without_jvm_flags/"
-            targetWithoutJvmFlagsBinary.dataKind = "scala"
-            targetWithoutJvmFlagsBinary.data = scalaBuildTarget
-            val targetWithoutMainClassLibrary = BuildTarget(
-                BuildTargetIdentifier("//target_without_main_class:library"),
-                listOf("library"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, false, false)
-            )
-            targetWithoutMainClassLibrary.displayName = "//target_without_main_class:library"
-            targetWithoutMainClassLibrary.baseDirectory = "file://\$WORKSPACE/target_without_main_class/"
-            targetWithoutMainClassLibrary.dataKind = "scala"
-            targetWithoutMainClassLibrary.data = scalaBuildTarget
-            val targetWithoutArgsBinary = BuildTarget(
-                BuildTargetIdentifier("//target_without_args:binary"),
-                listOf("application"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, true, false)
-            )
-            targetWithoutArgsBinary.displayName = "//target_without_args:binary"
-            targetWithoutArgsBinary.baseDirectory = "file://\$WORKSPACE/target_without_args/"
-            targetWithoutArgsBinary.dataKind = "scala"
-            targetWithoutArgsBinary.data = scalaBuildTarget
-            val targetWithDependencyJavaBinary = BuildTarget(
-                BuildTargetIdentifier("//target_with_dependency:java_binary"),
-                listOf("application"),
-                listOf("java"),
-                listOf(
-                    BuildTargetIdentifier("//java_targets:java_library_exported"),
-                    BuildTargetIdentifier("@guava//:guava"),
-                    BuildTargetIdentifier("//java_targets/subpackage:java_library")
-                ),
-                BuildTargetCapabilities(true, false, true, false)
-            )
-            targetWithDependencyJavaBinary.displayName = "//target_with_dependency:java_binary"
-            targetWithDependencyJavaBinary.baseDirectory = "file://\$WORKSPACE/target_with_dependency/"
-            targetWithDependencyJavaBinary.dataKind = "jvm"
-            targetWithDependencyJavaBinary.data = jvmBuildTarget
-            val scalaTargetsScalaTest = BuildTarget(
-                BuildTargetIdentifier("//scala_targets:scala_test"),
-                listOf("test"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(true, true, false, false)
-            )
-            scalaTargetsScalaTest.displayName = "//scala_targets:scala_test"
-            scalaTargetsScalaTest.baseDirectory = "file://\$WORKSPACE/scala_targets/"
-            scalaTargetsScalaTest.dataKind = "scala"
-            scalaTargetsScalaTest.data = scalaBuildTarget
-            val targetWithResourcesJavaBinary = BuildTarget(
-                BuildTargetIdentifier("//target_with_resources:java_binary"),
-                listOf("application"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(true, false, true, false)
-            )
-            targetWithResourcesJavaBinary.displayName = "//target_with_resources:java_binary"
-            targetWithResourcesJavaBinary.baseDirectory = "file://\$WORKSPACE/target_with_resources/"
-            targetWithResourcesJavaBinary.dataKind = "jvm"
-            targetWithResourcesJavaBinary.data = jvmBuildTarget
-            val javaTargetsJavaLibraryExported = BuildTarget(
+        )
+        scalaBuildTarget.jvmBuildTarget = jvmBuildTarget
+
+        val scalaTargetsScalaBinary = BuildTarget(
+            BuildTargetIdentifier("//scala_targets:scala_binary"),
+            listOf("application"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, true, false)
+        )
+        scalaTargetsScalaBinary.displayName = "//scala_targets:scala_binary"
+        scalaTargetsScalaBinary.baseDirectory = "file://\$WORKSPACE/scala_targets/"
+        scalaTargetsScalaBinary.dataKind = "scala"
+        scalaTargetsScalaBinary.data = scalaBuildTarget
+
+        val javaTargetsSubpackageSubpackage = BuildTarget(
+            BuildTargetIdentifier("//java_targets/subpackage:java_library"),
+            listOf("library"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, false, false)
+        )
+        javaTargetsSubpackageSubpackage.displayName = "//java_targets/subpackage:java_library"
+        javaTargetsSubpackageSubpackage.baseDirectory = "file://\$WORKSPACE/java_targets/subpackage/"
+        javaTargetsSubpackageSubpackage.dataKind = "jvm"
+        javaTargetsSubpackageSubpackage.data = jvmBuildTarget
+
+        val javaTargetsJavaLibrary = BuildTarget(
+            BuildTargetIdentifier("//java_targets:java_library"),
+            listOf("library"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, false, false)
+        )
+        javaTargetsJavaLibrary.displayName = "//java_targets:java_library"
+        javaTargetsJavaLibrary.baseDirectory = "file://\$WORKSPACE/java_targets/"
+        javaTargetsJavaLibrary.dataKind = "jvm"
+        javaTargetsJavaLibrary.data = jvmBuildTarget
+
+        val targetWithoutJvmFlagsBinary = BuildTarget(
+            BuildTargetIdentifier("//target_without_jvm_flags:binary"),
+            listOf("application"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, true, false)
+        )
+        targetWithoutJvmFlagsBinary.displayName = "//target_without_jvm_flags:binary"
+        targetWithoutJvmFlagsBinary.baseDirectory = "file://\$WORKSPACE/target_without_jvm_flags/"
+        targetWithoutJvmFlagsBinary.dataKind = "scala"
+        targetWithoutJvmFlagsBinary.data = scalaBuildTarget
+
+        val targetWithoutMainClassLibrary = BuildTarget(
+            BuildTargetIdentifier("//target_without_main_class:library"),
+            listOf("library"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, false, false)
+        )
+        targetWithoutMainClassLibrary.displayName = "//target_without_main_class:library"
+        targetWithoutMainClassLibrary.baseDirectory = "file://\$WORKSPACE/target_without_main_class/"
+        targetWithoutMainClassLibrary.dataKind = "scala"
+        targetWithoutMainClassLibrary.data = scalaBuildTarget
+
+        val targetWithoutArgsBinary = BuildTarget(
+            BuildTargetIdentifier("//target_without_args:binary"),
+            listOf("application"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, true, false)
+        )
+        targetWithoutArgsBinary.displayName = "//target_without_args:binary"
+        targetWithoutArgsBinary.baseDirectory = "file://\$WORKSPACE/target_without_args/"
+        targetWithoutArgsBinary.dataKind = "scala"
+        targetWithoutArgsBinary.data = scalaBuildTarget
+
+        val targetWithDependencyJavaBinary = BuildTarget(
+            BuildTargetIdentifier("//target_with_dependency:java_binary"),
+            listOf("application"),
+            listOf("java"),
+            listOf(
                 BuildTargetIdentifier("//java_targets:java_library_exported"),
-                listOf("library"),
-                emptyList(),
-                listOf(BuildTargetIdentifier("//java_targets/subpackage:java_library")),
-                BuildTargetCapabilities(true, false, false, false)
-            )
-            javaTargetsJavaLibraryExported.displayName = "//java_targets:java_library_exported"
-            javaTargetsJavaLibraryExported.baseDirectory = "file://\$WORKSPACE/java_targets/"
-            val bspWorkspaceRoot = BuildTarget(
-                BuildTargetIdentifier("bsp-workspace-root"),
-                emptyList(),
-                emptyList(),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            bspWorkspaceRoot.displayName = "bsp-workspace-root"
-            bspWorkspaceRoot.baseDirectory = "file://\$WORKSPACE/"
-            val manualScalaBuildTarget = ScalaBuildTarget(
-                "org.scala-lang",
-                "2.12.14",
-                "2.12",
-                ScalaPlatform.JVM,
-                listOf(
-                    "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.14.jar",
-                    "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                    "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
-                )
-            )
-            val manualTargetScalaLibrary = BuildTarget(
-                BuildTargetIdentifier("//manual_target:scala_library"),
-                listOf("library"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            manualTargetScalaLibrary.displayName = "//manual_target:scala_library"
-            manualTargetScalaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
-            manualTargetScalaLibrary.dataKind = "scala"
-            manualTargetScalaLibrary.data = manualScalaBuildTarget
-            val manualTargetJavaLibrary = BuildTarget(
-                BuildTargetIdentifier("//manual_target:java_library"),
-                listOf("library"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            manualTargetJavaLibrary.displayName = "//manual_target:java_library"
-            manualTargetJavaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
-            val manualTargetScalaBinary = BuildTarget(
-                BuildTargetIdentifier("//manual_target:scala_binary"),
-                listOf("application"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            manualTargetScalaBinary.displayName = "//manual_target:scala_binary"
-            manualTargetScalaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
-            manualTargetScalaBinary.dataKind = "scala"
-            manualTargetScalaBinary.data = manualScalaBuildTarget
-            val manualTargetJavaBinary = BuildTarget(
-                BuildTargetIdentifier("//manual_target:java_binary"),
-                listOf("application"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            manualTargetJavaBinary.displayName = "//manual_target:java_binary"
-            manualTargetJavaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
-            val manualTargetScalaTest = BuildTarget(
-                BuildTargetIdentifier("//manual_target:scala_test"),
-                listOf("test"),
-                listOf("scala"),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            manualTargetScalaTest.displayName = "//manual_target:scala_test"
-            manualTargetScalaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
-            manualTargetScalaTest.dataKind = "scala"
-            manualTargetScalaTest.data = manualScalaBuildTarget
-            val manualTargetJavaTest = BuildTarget(
-                BuildTargetIdentifier("//manual_target:java_test"),
-                listOf("test"),
-                listOf("java"),
-                emptyList(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-            manualTargetJavaTest.displayName = "//manual_target:java_test"
-            manualTargetJavaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
-            return WorkspaceBuildTargetsResult(
-                listOf(
-                    javaTargetsJavaBinary,
-                    scalaTargetsScalaBinary,
-                    javaTargetsSubpackageSubpackage,
-                    javaTargetsJavaLibrary,
-                    targetWithoutJvmFlagsBinary,
-                    targetWithoutMainClassLibrary,
-                    targetWithoutArgsBinary,
-                    targetWithDependencyJavaBinary,
-                    scalaTargetsScalaTest,
-                    targetWithResourcesJavaBinary,
-                    javaTargetsJavaLibraryExported,
-                    bspWorkspaceRoot,
-                    manualTargetJavaLibrary,
-                    manualTargetScalaLibrary,
-                    manualTargetJavaBinary,
-                    manualTargetScalaBinary,
-                    manualTargetJavaTest,
-                    manualTargetScalaTest
-                )
-            )
-        }
+                BuildTargetIdentifier("@guava//:guava"),
+                BuildTargetIdentifier("//java_targets/subpackage:java_library")
+            ),
+            BuildTargetCapabilities(true, false, true, false)
+        )
+        targetWithDependencyJavaBinary.displayName = "//target_with_dependency:java_binary"
+        targetWithDependencyJavaBinary.baseDirectory = "file://\$WORKSPACE/target_with_dependency/"
+        targetWithDependencyJavaBinary.dataKind = "jvm"
+        targetWithDependencyJavaBinary.data = jvmBuildTarget
 
-    companion object {
-        private const val REPO_NAME = "sample-repo"
+        val scalaTargetsScalaTest = BuildTarget(
+            BuildTargetIdentifier("//scala_targets:scala_test"),
+            listOf("test"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(true, true, false, false)
+        )
+        scalaTargetsScalaTest.displayName = "//scala_targets:scala_test"
+        scalaTargetsScalaTest.baseDirectory = "file://\$WORKSPACE/scala_targets/"
+        scalaTargetsScalaTest.dataKind = "scala"
+        scalaTargetsScalaTest.data = scalaBuildTarget
 
-        // we cannot use `bazel test ...` because test runner blocks bazel daemon,
-        // but testing server needs it for queries and etc
-        @JvmStatic
-        fun main(args: Array<String>) = BazelBspSampleRepoTest().executeScenario()
+        val targetWithResourcesJavaBinary = BuildTarget(
+            BuildTargetIdentifier("//target_with_resources:java_binary"),
+            listOf("application"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(true, false, true, false)
+        )
+        targetWithResourcesJavaBinary.displayName = "//target_with_resources:java_binary"
+        targetWithResourcesJavaBinary.baseDirectory = "file://\$WORKSPACE/target_with_resources/"
+        targetWithResourcesJavaBinary.dataKind = "jvm"
+        targetWithResourcesJavaBinary.data = jvmBuildTarget
+
+        val javaTargetsJavaLibraryExported = BuildTarget(
+            BuildTargetIdentifier("//java_targets:java_library_exported"),
+            listOf("library"),
+            emptyList(),
+            listOf(BuildTargetIdentifier("//java_targets/subpackage:java_library")),
+            BuildTargetCapabilities(true, false, false, false)
+        )
+        javaTargetsJavaLibraryExported.displayName = "//java_targets:java_library_exported"
+        javaTargetsJavaLibraryExported.baseDirectory = "file://\$WORKSPACE/java_targets/"
+
+        val bspWorkspaceRoot = BuildTarget(
+            BuildTargetIdentifier("bsp-workspace-root"),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        bspWorkspaceRoot.displayName = "bsp-workspace-root"
+        bspWorkspaceRoot.baseDirectory = "file://\$WORKSPACE/"
+
+        val manualScalaBuildTarget = ScalaBuildTarget(
+            "org.scala-lang",
+            "2.12.14",
+            "2.12",
+            ScalaPlatform.JVM,
+            listOf(
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.14.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
+            )
+        )
+
+        val manualTargetScalaLibrary = BuildTarget(
+            BuildTargetIdentifier("//manual_target:scala_library"),
+            listOf("library"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        manualTargetScalaLibrary.displayName = "//manual_target:scala_library"
+        manualTargetScalaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
+        manualTargetScalaLibrary.dataKind = "scala"
+        manualTargetScalaLibrary.data = manualScalaBuildTarget
+
+        val manualTargetJavaLibrary = BuildTarget(
+            BuildTargetIdentifier("//manual_target:java_library"),
+            listOf("library"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        manualTargetJavaLibrary.displayName = "//manual_target:java_library"
+        manualTargetJavaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
+
+        val manualTargetScalaBinary = BuildTarget(
+            BuildTargetIdentifier("//manual_target:scala_binary"),
+            listOf("application"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        manualTargetScalaBinary.displayName = "//manual_target:scala_binary"
+        manualTargetScalaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
+        manualTargetScalaBinary.dataKind = "scala"
+        manualTargetScalaBinary.data = manualScalaBuildTarget
+
+        val manualTargetJavaBinary = BuildTarget(
+            BuildTargetIdentifier("//manual_target:java_binary"),
+            listOf("application"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        manualTargetJavaBinary.displayName = "//manual_target:java_binary"
+        manualTargetJavaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
+
+        val manualTargetScalaTest = BuildTarget(
+            BuildTargetIdentifier("//manual_target:scala_test"),
+            listOf("test"),
+            listOf("scala"),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        manualTargetScalaTest.displayName = "//manual_target:scala_test"
+        manualTargetScalaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
+        manualTargetScalaTest.dataKind = "scala"
+        manualTargetScalaTest.data = manualScalaBuildTarget
+
+        val manualTargetJavaTest = BuildTarget(
+            BuildTargetIdentifier("//manual_target:java_test"),
+            listOf("test"),
+            listOf("java"),
+            emptyList(),
+            BuildTargetCapabilities(false, false, false, false)
+        )
+        manualTargetJavaTest.displayName = "//manual_target:java_test"
+        manualTargetJavaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
+
+        return WorkspaceBuildTargetsResult(
+            listOf(
+                javaTargetsJavaBinary,
+                scalaTargetsScalaBinary,
+                javaTargetsSubpackageSubpackage,
+                javaTargetsJavaLibrary,
+                targetWithoutJvmFlagsBinary,
+                targetWithoutMainClassLibrary,
+                targetWithoutArgsBinary,
+                targetWithDependencyJavaBinary,
+                scalaTargetsScalaTest,
+                targetWithResourcesJavaBinary,
+                javaTargetsJavaLibraryExported,
+                bspWorkspaceRoot,
+                manualTargetJavaLibrary,
+                manualTargetScalaLibrary,
+                manualTargetJavaBinary,
+                manualTargetScalaBinary,
+                manualTargetJavaTest,
+                manualTargetScalaTest
+            )
+        )
     }
 }
