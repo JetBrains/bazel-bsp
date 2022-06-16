@@ -160,21 +160,21 @@ http_archive(
 # ======================================================================================================================
 # bazel_sonatype - for publish
 
-#BAZEL_SONATYPE_TAG = "0.0.1"
-#
-#BAZEL_SONATYPE_SHA = "f7889b745694478a2d6a3618315a3e5f9bf1843aabfd7aa4429c4503ff39f397"
-#
-#http_archive(
-#    name = "bazel_sonatype",
-#    sha256 = BAZEL_SONATYPE_SHA,
-#    strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
-#    url = "https://github.com/JetBrains/bazel-sonatype/archive/{}.zip".format(BAZEL_SONATYPE_TAG),
-#)
-#
-## ----------------------------------------------------------------------------------------------------------------------
-#load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
-#
-#sonatype_dependencies()
+BAZEL_SONATYPE_TAG = "1.0.0"
+
+BAZEL_SONATYPE_SHA = "781682e41963e0b874e439cc558d9ea8c80bffb9f1b8b76f5e388a27a3fc8417"
+
+http_archive(
+    name = "bazel_sonatype",
+    sha256 = BAZEL_SONATYPE_SHA,
+    strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/{}.zip".format(BAZEL_SONATYPE_TAG),
+)
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
+
+sonatype_dependencies()
 
 # ======================================================================================================================
 # junit5
