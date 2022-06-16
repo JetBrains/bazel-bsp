@@ -11,7 +11,6 @@ kt_jvm_binary(
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -25,7 +24,6 @@ kt_jvm_binary(
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -39,7 +37,6 @@ kt_jvm_binary(
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -52,6 +49,5 @@ java_binary(
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
     ],
 )
