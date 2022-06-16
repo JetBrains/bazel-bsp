@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel;
 
-public class BazelBspCppProjectTest { }
+public class BazelBspCppProjectTest {}
 
-//public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
+// public class BazelBspCppProjectTest extends BazelBspTestBaseScenario {
 //
 //  private static final String REPO_NAME = "cpp-project";
 //
@@ -43,7 +43,8 @@ public class BazelBspCppProjectTest { }
 //        "cpp project",
 //        () ->
 //            getTestClient()
-//                .testWorkspaceTargets(Duration.ofSeconds(20), expectedWorkspaceBuildTargetsResult));
+//                .testWorkspaceTargets(Duration.ofSeconds(20),
+// expectedWorkspaceBuildTargetsResult));
 //  }
 //
 //  private BazelBspTestScenarioStep cppOptions() {
@@ -67,4 +68,4 @@ public class BazelBspCppProjectTest { }
 //                .testCppOptions(
 //                    Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult));
 //  }
-//}
+// }
