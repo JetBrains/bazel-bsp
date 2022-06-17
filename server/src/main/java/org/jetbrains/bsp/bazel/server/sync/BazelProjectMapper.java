@@ -93,7 +93,7 @@ public class BazelProjectMapper {
         languageData);
   }
 
-  private Seq<Label> resolveDirectDependencies(TargetInfo target) {
+  private Seq<Label>resolveDirectDependencies(TargetInfo target) {
     return target.getDependenciesList().stream()
         .map(dep -> Label.from(dep.getId()))
         .collect(Array.collector());
