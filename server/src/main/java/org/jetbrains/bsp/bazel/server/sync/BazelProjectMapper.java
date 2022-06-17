@@ -144,6 +144,6 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target){
-    return HashMap.ofAll(target.getEnvironmentMap());
+    return HashMap.ofAll(target.getEnvMap());
   }
 }

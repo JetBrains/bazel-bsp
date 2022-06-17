@@ -117,7 +117,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
         javaModule.runtimeClasspath().map(URI::toString).asJava(),
         javaModule.jvmOps().asJava(),
         bazelInfo.getWorkspaceRoot().toString(),
-        Map.of());
+        module.getEnvironment());
     // FIXME: figure out what we should pass here, because passing the environment
     // of the *SERVER* makes little sense
   }

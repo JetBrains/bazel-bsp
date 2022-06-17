@@ -142,6 +142,7 @@ public class IntelliJProjectTreeViewFix {
         resources,
         HashSet.empty(),
         Option.none(),
-        Collections.emptyMap());
+        Collections.emptyMap()
+    );
   }
 }

@@ -494,7 +494,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_target_info = java_target_info,
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
-        environment = rule_attrs.env,
+        env = rule_attrs.env,
         env_inherit = rule_attrs.env_inherit,
     )
 
