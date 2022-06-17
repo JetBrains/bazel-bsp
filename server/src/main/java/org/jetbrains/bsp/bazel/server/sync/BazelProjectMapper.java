@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
+import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
 import io.vavr.collection.*;
 import io.vavr.control.Option;
 import java.net.URI;
@@ -80,6 +81,7 @@ public class BazelProjectMapper {
 
     var sourceDependencies = languagePlugin.dependencySources(target, dependencyTree);
 
+
     return new Module(
         label,
         false,
@@ -139,4 +141,8 @@ public class BazelProjectMapper {
         });
     return HashMap.ofAll(output);
   }
+
+//  private Set<JvmEnvironmentItem> environmentItem(TargetInfo target){
+//    return target.
+//  }
 }
