@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
-import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
 import io.vavr.collection.*;
 import io.vavr.control.Option;
 import java.net.URI;
@@ -80,7 +79,7 @@ public class BazelProjectMapper {
     var languageData = (Option<LanguageData>) languagePlugin.resolveModule(target);
 
     var sourceDependencies = languagePlugin.dependencySources(target, dependencyTree);
-
+//    var environment = environmentItem(target);
 
     return new Module(
         label,
@@ -92,7 +91,9 @@ public class BazelProjectMapper {
         sourceSet,
         resources,
         sourceDependencies,
-        languageData);
+        languageData
+//        environment
+    );
   }
 
   private Seq<Label> resolveDirectDependencies(TargetInfo target) {
@@ -142,7 +143,7 @@ public class BazelProjectMapper {
     return HashMap.ofAll(output);
   }
 
-//  private Set<JvmEnvironmentItem> environmentItem(TargetInfo target){
-//    return target.
+//  private Map<String, String> environmentItem(TargetInfo target){
+//    return target.getEnvironmentMap()
 //  }
 }

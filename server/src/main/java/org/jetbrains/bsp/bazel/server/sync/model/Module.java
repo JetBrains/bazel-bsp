@@ -1,10 +1,12 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
+import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
@@ -20,6 +22,7 @@ public class Module {
   private final Set<URI> resources;
   private final Set<URI> sourceDependencies;
   private final Option<LanguageData> languageData;
+//  private final Map<String, String> environment;
 
   public Module(
       @JsonProperty("label") Label label,
@@ -31,7 +34,9 @@ public class Module {
       @JsonProperty("sourceSet") SourceSet sourceSet,
       @JsonProperty("resources") Set<URI> resources,
       @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
-      @JsonProperty("languageData") Option<LanguageData> languageData) {
+      @JsonProperty("languageData") Option<LanguageData> languageData
+//      @JsonProperty("environement") Map<String, String>  environment
+  ) {
     this.label = label;
     this.isSynthetic = isSynthetic;
     this.directDependencies = directDependencies;
@@ -42,6 +47,7 @@ public class Module {
     this.resources = resources;
     this.sourceDependencies = sourceDependencies;
     this.languageData = languageData;
+//    this.environment = environment;
   }
 
   public Label label() {
@@ -85,6 +91,8 @@ public class Module {
     return languageData;
   }
 
+//  public Map<String, String>  getEnvironment() {return environment;}
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -99,7 +107,9 @@ public class Module {
         && sourceSet.equals(module.sourceSet)
         && resources.equals(module.resources)
         && sourceDependencies.equals(module.sourceDependencies)
-        && languageData.equals(module.languageData);
+        && languageData.equals(module.languageData)
+//        && environment.equals(module.environment)
+            ;
   }
 
   @Override
