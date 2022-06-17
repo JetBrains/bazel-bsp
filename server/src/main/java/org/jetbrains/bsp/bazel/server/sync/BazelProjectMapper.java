@@ -143,6 +143,6 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target){
-    return target.getEnvironmentMap()
+    return target.getEnvironmentMap().entrySet().stream()
   }
 }
