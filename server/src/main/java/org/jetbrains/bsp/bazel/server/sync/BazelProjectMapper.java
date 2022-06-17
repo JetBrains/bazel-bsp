@@ -79,7 +79,7 @@ public class BazelProjectMapper {
     var languageData = (Option<LanguageData>) languagePlugin.resolveModule(target);
 
     var sourceDependencies = languagePlugin.dependencySources(target, dependencyTree);
-//    var environment = environmentItem(target);
+    var environment = environmentItem(target);
 
     return new Module(
         label,
@@ -91,9 +91,8 @@ public class BazelProjectMapper {
         sourceSet,
         resources,
         sourceDependencies,
-        languageData
-//        environment
-    );
+        languageData,
+        environment);
   }
 
   private Seq<Label> resolveDirectDependencies(TargetInfo target) {
@@ -143,7 +142,7 @@ public class BazelProjectMapper {
     return HashMap.ofAll(output);
   }
 
-//  private Map<String, String> environmentItem(TargetInfo target){
-//    return target.getEnvironmentMap()
-//  }
+  private Map<String, String> environmentItem(TargetInfo target){
+    return target.getEnvironmentMap()
+  }
 }

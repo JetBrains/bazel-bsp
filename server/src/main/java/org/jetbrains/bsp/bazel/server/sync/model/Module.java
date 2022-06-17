@@ -22,7 +22,7 @@ public class Module {
   private final Set<URI> resources;
   private final Set<URI> sourceDependencies;
   private final Option<LanguageData> languageData;
-//  private final Map<String, String> environment;
+  private final Map<String, String> environment;
 
   public Module(
       @JsonProperty("label") Label label,
@@ -34,8 +34,8 @@ public class Module {
       @JsonProperty("sourceSet") SourceSet sourceSet,
       @JsonProperty("resources") Set<URI> resources,
       @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
-      @JsonProperty("languageData") Option<LanguageData> languageData
-//      @JsonProperty("environement") Map<String, String>  environment
+      @JsonProperty("languageData") Option<LanguageData> languageData,
+      @JsonProperty("environement") Map<String, String>  environment
   ) {
     this.label = label;
     this.isSynthetic = isSynthetic;
@@ -47,7 +47,7 @@ public class Module {
     this.resources = resources;
     this.sourceDependencies = sourceDependencies;
     this.languageData = languageData;
-//    this.environment = environment;
+    this.environment = environment;
   }
 
   public Label label() {
@@ -91,7 +91,7 @@ public class Module {
     return languageData;
   }
 
-//  public Map<String, String>  getEnvironment() {return environment;}
+  public Map<String, String>  getEnvironment() {return environment;}
 
   @Override
   public boolean equals(Object o) {
@@ -108,8 +108,7 @@ public class Module {
         && resources.equals(module.resources)
         && sourceDependencies.equals(module.sourceDependencies)
         && languageData.equals(module.languageData)
-//        && environment.equals(module.environment)
-            ;
+        && environment.equals(module.environment);
   }
 
   @Override
@@ -124,7 +123,8 @@ public class Module {
         sourceSet,
         resources,
         sourceDependencies,
-        languageData);
+        languageData,
+        environment);
   }
 
   @Override
@@ -140,6 +140,7 @@ public class Module {
         Format.entry("sourceSet", sourceSet),
         Format.entry("resources", Format.iterableShort(resources)),
         Format.entry("sourceDependencies", Format.iterable(sourceDependencies)),
-        Format.entry("languageData", languageData));
+        Format.entry("languageData", languageData),
+        Format.entry("environment", environment));
   }
 }
