@@ -35,7 +35,7 @@ public class Module {
       @JsonProperty("resources") Set<URI> resources,
       @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
       @JsonProperty("languageData") Option<LanguageData> languageData,
-      @JsonProperty("environement") Map<String, String>  environment
+      @JsonProperty("environment") Map<String, String>  environment
   ) {
     this.label = label;
     this.isSynthetic = isSynthetic;
@@ -124,7 +124,8 @@ public class Module {
         resources,
         sourceDependencies,
         languageData,
-        environment);
+        environment
+    );
   }
 
   @Override
@@ -141,6 +142,7 @@ public class Module {
         Format.entry("resources", Format.iterableShort(resources)),
         Format.entry("sourceDependencies", Format.iterable(sourceDependencies)),
         Format.entry("languageData", languageData),
-        Format.entry("environment", environment));
+        Format.entry("environment", environment)
+    );
   }
 }

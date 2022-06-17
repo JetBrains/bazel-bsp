@@ -92,7 +92,8 @@ public class BazelProjectMapper {
         resources,
         sourceDependencies,
         languageData,
-        environment);
+        environment
+    );
   }
 
   private Seq<Label> resolveDirectDependencies(TargetInfo target) {
