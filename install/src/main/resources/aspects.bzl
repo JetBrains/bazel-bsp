@@ -482,8 +482,8 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
 
-    print (rule_attrs.env)
-    print (rule_attrs.env_inherit)
+    print(rule_attrs.env)
+    print(rule_attrs.env_inherit)
 
     result = dict(
         id = str(target.label),
