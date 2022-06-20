@@ -34,7 +34,7 @@ public class Module {
       @JsonProperty("resources") Set<URI> resources,
       @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
       @JsonProperty("languageData") Option<LanguageData> languageData,
-      @JsonProperty("environment") Map<String, String>  environment) {
+      @JsonProperty("environment") Map<String, String> environment) {
     this.label = label;
     this.isSynthetic = isSynthetic;
     this.directDependencies = directDependencies;
@@ -89,7 +89,7 @@ public class Module {
     return languageData;
   }
 
-  public Map<String, String>  getEnvironment() {
+  public Map<String, String> getEnvironment() {
     return environment;
   }
 
