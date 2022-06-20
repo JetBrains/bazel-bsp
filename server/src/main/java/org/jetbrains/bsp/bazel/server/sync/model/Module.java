@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
-import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
@@ -35,8 +34,7 @@ public class Module {
       @JsonProperty("resources") Set<URI> resources,
       @JsonProperty("sourceDependencies") Set<URI> sourceDependencies,
       @JsonProperty("languageData") Option<LanguageData> languageData,
-      @JsonProperty("environment") Map<String, String>  environment
-  ) {
+      @JsonProperty("environment") Map<String, String>  environment) {
     this.label = label;
     this.isSynthetic = isSynthetic;
     this.directDependencies = directDependencies;
@@ -91,7 +89,9 @@ public class Module {
     return languageData;
   }
 
-  public Map<String, String>  getEnvironment() {return environment;}
+  public Map<String, String>  getEnvironment() {
+    return environment;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -124,8 +124,7 @@ public class Module {
         resources,
         sourceDependencies,
         languageData,
-        environment
-    );
+        environment);
   }
 
   @Override
@@ -142,7 +141,6 @@ public class Module {
         Format.entry("resources", Format.iterableShort(resources)),
         Format.entry("sourceDependencies", Format.iterable(sourceDependencies)),
         Format.entry("languageData", languageData),
-        Format.entry("environment", environment)
-    );
+        Format.entry("environment", environment));
   }
 }

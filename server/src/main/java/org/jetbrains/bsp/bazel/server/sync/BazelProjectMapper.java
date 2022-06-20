@@ -92,8 +92,7 @@ public class BazelProjectMapper {
         resources,
         sourceDependencies,
         languageData,
-        environment
-    );
+        environment);
   }
 
   private Seq<Label> resolveDirectDependencies(TargetInfo target) {
@@ -143,7 +142,7 @@ public class BazelProjectMapper {
     return HashMap.ofAll(output);
   }
 
-  private Map<String, String> environmentItem(TargetInfo target){
+  private Map<String, String> environmentItem(TargetInfo target) {
     return HashMap.ofAll(target.getEnvMap());
   }
 }
