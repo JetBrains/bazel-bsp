@@ -143,6 +143,11 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target) {
-    return HashMap.ofAll(target.getEnvMap());
+    if(target.containsEnvInherit("80")){
+      return HashMap.ofAll(target.getEnvInheritMap());
+    }
+    else {
+      return HashMap.ofAll(target.getEnvMap());
+    }
   }
 }
