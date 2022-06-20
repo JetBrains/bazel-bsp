@@ -117,8 +117,6 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
         javaModule.jvmOps().asJava(),
         bazelInfo.getWorkspaceRoot().toString(),
         module.getEnvironment());
-    // FIXME: figure out what we should pass here, because passing the environment
-    // of the *SERVER* makes little sense
   }
 
   public JavacOptionsItem toJavacOptionsItem(Module module, JavaModule javaModule) {
