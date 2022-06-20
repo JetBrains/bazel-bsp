@@ -10,6 +10,7 @@ import io.vavr.control.Option;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.Collections;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk;
@@ -67,7 +68,8 @@ public class ProjectStorageTest {
                                     List.empty(),
                                     List.empty(),
                                     List.empty(),
-                                    List.empty())))))),
+                                    List.empty())))),
+                                    Collections.emptyMap())),
             HashMap.of(URI.create("file:///root/project/Lib.java"), Label.from("file:///root")));
 
     storage.store(project);
