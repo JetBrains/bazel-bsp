@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bloop;
 
 import com.google.common.collect.Maps;
+import io.vavr.PartialFunction;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.Set;
@@ -9,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
+import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 
@@ -31,12 +33,35 @@ class BspProjectExporter {
     ClasspathRewriter classpathRewriter = buildClassPathRewriter();
     SourceSetRewriter sourceSetRewriter = new SourceSetRewriter(IGNORED_SOURCES);
 
+    var anyScalaModule =
+        project
+            .modules()
+            .collect(
+                new PartialFunction<Module, ScalaModule>() {
+                  @Override
+                  public ScalaModule apply(Module module) {
+                    return ScalaModule.fromLanguageData(module.languageData()).get();
+                  }
+
+                  @Override
+                  public boolean isDefinedAt(Module value) {
+                    return ScalaModule.fromLanguageData(value.languageData()).isDefined();
+                  }
+                })
+            .headOption();
+
     return project
         .modules()
         .iterator()
         .map(
             mod ->
-                new BspModuleExporter(project, mod, bloopRoot, classpathRewriter, sourceSetRewriter)
+                new BspModuleExporter(
+                        project,
+                        mod,
+                        bloopRoot,
+                        classpathRewriter,
+                        sourceSetRewriter,
+                        anyScalaModule)
                     .export())
         .map(bloopProjectWriter::write)
         .toSet();
@@ -47,7 +72,7 @@ class BspProjectExporter {
     for (var mod : project.modules()) {
       var moduleOutput = classesOutputForModule(mod, bloopRoot);
       for (var ld : mod.languageData()) {
-        for (var art : artifactFromLanguageData(ld)) {
+        for (var art : artifactsFromLanguageData(ld)) {
           localArtifactsBuilder.put(art, moduleOutput);
         }
       }
@@ -56,8 +81,11 @@ class BspProjectExporter {
     return new ClasspathRewriter(HashMap.ofAll(localArtifactsBuilder));
   }
 
-  private Set<URI> artifactFromLanguageData(LanguageData languageData) {
-    return JavaModule.fromLanguageData(languageData).map(JavaModule::mainOutput).toSet();
+  private Set<URI> artifactsFromLanguageData(LanguageData languageData) {
+    return JavaModule.fromLanguageData(languageData)
+        .iterator()
+        .flatMap(JavaModule::getAllOutputs)
+        .toSet();
   }
 
   private URI classesOutputForModule(Module mod, Path bloopRoot) {

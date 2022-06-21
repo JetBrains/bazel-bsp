@@ -34,13 +34,15 @@ class BspModuleExporter {
   private final ClasspathRewriter classpathRewriter;
   private final SourceSetRewriter sourceSetRewriter;
   private final List<String> extraJvmOptions;
+  private final Option<ScalaModule> defaultScalaModule;
 
   public BspModuleExporter(
       Project project,
       Module module,
       Path bloopRoot,
       ClasspathRewriter classpathRewriter,
-      SourceSetRewriter sourceSetRewriter) {
+      SourceSetRewriter sourceSetRewriter,
+      Option<ScalaModule> defaultScalaModule) {
     this.project = project;
     this.module = module;
     this.bloopRoot = bloopRoot;
@@ -48,6 +50,7 @@ class BspModuleExporter {
     this.sourceSetRewriter = sourceSetRewriter;
     this.extraJvmOptions =
         List.of("-Duser.dir=" + Paths.get(project.workspaceRoot()).toAbsolutePath());
+    this.defaultScalaModule = defaultScalaModule;
   }
 
   public Config.Project export() {
@@ -173,22 +176,24 @@ class BspModuleExporter {
 
   private Option<Config.Scala> createScalaConfig(LanguageData data) {
     if (!(data instanceof ScalaModule)) {
-      return Option.none();
+      return defaultScalaModule.map(this::createScalaConfig);
     }
 
     var scalaMod = (ScalaModule) data;
-    var config =
-        new Config.Scala(
-            scalaMod.sdk().organization(),
-            "scala-compiler",
-            scalaMod.sdk().version(),
-            toList(scalaMod.scalacOpts()),
-            toList(scalaMod.sdk().compilerJars().map(Paths::get)),
-            scala.Option.empty(),
-            scala.Some.apply(
-                Config.CompileSetup$.MODULE$.apply(
-                    Config.Mixed$.MODULE$, true, false, false, true, true)));
-    return Option.some(config);
+    return Option.of(createScalaConfig(scalaMod));
+  }
+
+  private Config.Scala createScalaConfig(ScalaModule scalaModule) {
+    return new Config.Scala(
+        scalaModule.sdk().organization(),
+        "scala-compiler",
+        scalaModule.sdk().version(),
+        toList(scalaModule.scalacOpts()),
+        toList(scalaModule.sdk().compilerJars().map(Paths::get)),
+        scala.Option.empty(),
+        scala.Some.apply(
+            Config.CompileSetup$.MODULE$.apply(
+                Config.Mixed$.MODULE$, true, false, false, true, true)));
   }
 
   private Option<Config.Platform> createPlatform(LanguageData languageData) {

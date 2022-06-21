@@ -9,6 +9,13 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule;
 
 public class ScalaModule implements LanguageData {
+  public static Option<ScalaModule> fromLanguageData(Option<LanguageData> languageData) {
+    if (languageData.isEmpty()) {
+      return Option.none();
+    }
+    return fromLanguageData(languageData.get());
+  }
+
   public static Option<ScalaModule> fromLanguageData(LanguageData languageData) {
     if (languageData instanceof ScalaModule) {
       return Option.of((ScalaModule) languageData);
