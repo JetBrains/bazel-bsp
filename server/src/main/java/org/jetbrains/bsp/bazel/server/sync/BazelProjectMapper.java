@@ -79,7 +79,7 @@ public class BazelProjectMapper {
     var languageData = (Option<LanguageData>) languagePlugin.resolveModule(target);
 
     var sourceDependencies = languagePlugin.dependencySources(target, dependencyTree);
-    var environment = (java.util.Map<String, String>) environmentItem(target);
+    var environment = environmentItem(target);
 
     return new Module(
         label,
@@ -143,10 +143,12 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target) {
-    if (target.containsEnvInherit("80")) {
-      return HashMap.ofAll(target.getEnvInheritMap());
-    } else {
-      return HashMap.ofAll(target.getEnvMap());
-    }
+    var envMap = target.getEnvMap();
+    var envInherit = target.getEnvInheritMap();
+
+    System.getenv(envMap.toString());
+    System.getenv(envInherit.toString());
+
+    return envMap.putAll(envInherit);
   }
 }

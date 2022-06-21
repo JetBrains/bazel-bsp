@@ -5,7 +5,7 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
-import java.util.Map;
+import io.vavr.collection.Map;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
