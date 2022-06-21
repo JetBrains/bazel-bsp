@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import io.vavr.control.Option;
 import java.io.IOException;
 import java.net.URI;
@@ -69,7 +70,7 @@ public class ProjectStorageTest {
                                     List.empty(),
                                     List.empty(),
                                     List.empty())))),
-                    Collections.emptyMap())),
+                        HashMap.empty())),
             HashMap.of(URI.create("file:///root/project/Lib.java"), Label.from("file:///root")));
 
     storage.store(project);

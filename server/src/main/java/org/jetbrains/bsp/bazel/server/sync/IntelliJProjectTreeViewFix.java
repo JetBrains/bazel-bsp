@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync;
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
 import io.vavr.collection.Array;
+import io.vavr.collection.HashMap;
 import io.vavr.collection.HashSet;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet;
@@ -142,6 +144,6 @@ public class IntelliJProjectTreeViewFix {
         resources,
         HashSet.empty(),
         Option.none(),
-        Collections.emptyMap());
+        HashMap.empty());
   }
 }
