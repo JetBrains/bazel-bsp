@@ -144,11 +144,11 @@ public class BazelProjectMapper {
 
   private Map<String, String> environmentItem(TargetInfo target) {
     var envMap = target.getEnvMap();
-    var envInherit = target.getEnvInherit(80);
+    var envInherit = target.getEnvInheritList();
 
-    var envMapSys = System.getenv();
-    var envInheritSys = System.getenv(envInherit);
-
-    return envMapSys.putAll(envInheritSys);
+//    var envMapSys = System.getenv();
+//    var envInheritSys = System.getenv();
+//    return envInherit.stream().collect(Col)
+//      return envMap.putAll();
   }
 }
