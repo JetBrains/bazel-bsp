@@ -1,11 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
-import io.vavr.collection.Map;
 import java.util.Objects;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
