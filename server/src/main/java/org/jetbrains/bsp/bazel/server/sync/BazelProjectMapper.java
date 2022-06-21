@@ -145,7 +145,7 @@ public class BazelProjectMapper {
 
   private Map<String, String> environmentItem(TargetInfo target) {
     var output =
-            target.getEnvInheritList().stream().collect(Collectors.toMap(x -> x, System::getenv));
+        target.getEnvInheritList().stream().collect(Collectors.toMap(x -> x, System::getenv));
     return (Map<String, String>) output;
   }
 }
