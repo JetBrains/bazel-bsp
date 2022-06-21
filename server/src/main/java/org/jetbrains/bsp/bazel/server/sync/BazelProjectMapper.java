@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync;
 import io.vavr.collection.*;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
@@ -143,12 +144,7 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target) {
-    var envMap = target.getEnvMap();
-    var envInherit = target.getEnvInheritList();
-
-//    var envMapSys = System.getenv();
-//    var envInheritSys = System.getenv();
-//    return envInherit.stream().collect(Col)
-//      return envMap.putAll();
+    var output = target.getEnvInheritList().stream().collect(Collectors.toMap(x -> x, System::getenv));
+    return (Map<String, String>) output;
   }
 }
