@@ -146,9 +146,9 @@ public class BazelProjectMapper {
     var envMap = target.getEnvMap();
     var envInherit = target.getEnvInherit(80);
 
-    System.getenv(envMap.toString());
-    System.getenv(envInherit);
+    var envMapSys = System.getenv();
+    var envInheritSys = System.getenv(envInherit);
 
-    return envMap.putAll(envInherit);
+    return envMapSys.putAll(envInheritSys);
   }
 }

@@ -70,7 +70,7 @@ public class ProjectStorageTest {
                                     List.empty(),
                                     List.empty(),
                                     List.empty())))),
-                        HashMap.empty())),
+                    HashMap.empty())),
             HashMap.of(URI.create("file:///root/project/Lib.java"), Label.from("file:///root")));
 
     storage.store(project);
