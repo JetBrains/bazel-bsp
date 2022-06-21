@@ -483,12 +483,12 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
 
     env = dict()
-    if hasattr(rule_attrs, "env") :
-      env = rule_attrs.env
+    if hasattr(rule_attrs, "env"):
+        env = rule_attrs.env
 
     env_inherit = dict()
-    if hasattr(rule_attrs, "env_inherit") :
-      env_inherit = rule_attrs.env_inherit
+    if hasattr(rule_attrs, "env_inherit"):
+        env_inherit = rule_attrs.env_inherit
 
     print(rule_attrs.env)
     print(rule_attrs.env_inherit)
