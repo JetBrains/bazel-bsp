@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
-import io.vavr.control.Option
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import java.net.URI
@@ -11,9 +10,9 @@ class JdkResolver(
     private val jdkVersionResolver: JdkVersionResolver
 ) {
 
-  fun resolve(targets: List<TargetInfo>): Jdk? {
+  fun resolve(targets: Sequence<TargetInfo>): Jdk? {
     val allCandidates = targets.mapNotNull { resolveJdkData(it) }.distinct().map { JdkCandidate(it) }
-    if (allCandidates.isEmpty()) return null
+    if (allCandidates.none()) return null
     val latestVersion = candidatesWithLatestVersion(allCandidates)
     val complete = allCandidates.filter { it.isComplete }
     val latestVersionAndComplete = latestVersion.filter { it.isComplete }
@@ -30,19 +29,19 @@ class JdkResolver(
     return resolveJdkData(target)?.let { JdkCandidate(it).asJdk() }
   }
 
-  private fun candidatesWithLatestVersion(candidates: List<JdkCandidate>): List<JdkCandidate> =
+  private fun candidatesWithLatestVersion(candidates: Sequence<JdkCandidate>): Sequence<JdkCandidate> =
       findLatestVersion(candidates)
         ?.let { version -> candidates.filter { it.version == version } }
         .orEmpty()
         .sortedBy { it.javaHome.toString() } // for predictable results
 
-  private fun findLatestVersion(candidates: List<JdkCandidate>): String? =
+  private fun findLatestVersion(candidates: Sequence<JdkCandidate>): String? =
       candidates.mapNotNull { it.version }.maxByOrNull { Integer.parseInt(it) }
 
-  private fun pickCandidateFromJvmRuntime(candidates: List<JdkCandidate>) =
+  private fun pickCandidateFromJvmRuntime(candidates: Sequence<JdkCandidate>) =
       candidates.find { it.isRuntime }
 
-  private fun pickAnyCandidate(candidates: List<JdkCandidate>): JdkCandidate? =
+  private fun pickAnyCandidate(candidates: Sequence<JdkCandidate>): JdkCandidate? =
       candidates.firstOrNull()
 
   private fun resolveJdkData(targetInfo: TargetInfo): JdkCandidateData? {
@@ -75,7 +74,7 @@ class JdkResolver(
     val javaHome by data::javaHome
     val isRuntime by data::isRuntime
     val isComplete = javaHome != null && version != null
-    fun asJdk(): Jdk? = version?.let { Jdk(it, Option.of(javaHome)) }
+    fun asJdk(): Jdk? = version?.let { Jdk(it, javaHome) }
   }
 
   private data class JdkCandidateData(

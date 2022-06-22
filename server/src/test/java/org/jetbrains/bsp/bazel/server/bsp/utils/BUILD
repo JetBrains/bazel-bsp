@@ -1,9 +1,9 @@
-load("//:junit5.bzl", "java_junit5_test")
+load("//:junit5.bzl", "java_junit5_test", "kt_junit5_test")
 
-java_junit5_test(
+kt_junit5_test(
     name = "SourceRootGuesserTest",
     size = "small",
-    srcs = ["SourceRootGuesserTest.java"],
+    srcs = ["SourceRootGuesserTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.server.bsp.utils",
     deps = [
         "//commons",

@@ -7,11 +7,9 @@ kt_jvm_library(
     exports = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",
         "@com_google_protobuf//:protobuf_java",
-        "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",
         "@com_google_protobuf//:protobuf_java",
-        "@maven//:io_vavr_vavr",
     ],
 )

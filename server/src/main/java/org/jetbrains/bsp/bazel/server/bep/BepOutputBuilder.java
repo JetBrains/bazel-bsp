@@ -32,12 +32,6 @@ class BepOutputBuilder {
   }
 
   public BepOutput build() {
-    return new BepOutput(
-        io.vavr.collection.HashMap.ofAll(
-            outputGroups.entrySet().stream(),
-            Map.Entry::getKey,
-            e -> io.vavr.collection.HashSet.ofAll(e.getValue())),
-        io.vavr.collection.HashMap.ofAll(fileSets),
-        io.vavr.collection.HashSet.ofAll(rootTargets));
+    return new BepOutput(outputGroups, fileSets, rootTargets);
   }
 }

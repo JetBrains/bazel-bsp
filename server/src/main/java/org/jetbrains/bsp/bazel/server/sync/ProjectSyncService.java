@@ -38,7 +38,7 @@ public class ProjectSyncService {
   }
 
   public InitializeBuildResult initialize() {
-    return bspMapper.initializeServer(Language.all());
+    return bspMapper.initializeServer(Language.Companion.all());
   }
 
   // We might consider doing the actual project reload in this endpoint

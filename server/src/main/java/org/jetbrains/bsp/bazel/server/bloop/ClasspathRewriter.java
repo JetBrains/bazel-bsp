@@ -1,24 +1,25 @@
 package org.jetbrains.bsp.bazel.server.bloop;
 
-import io.vavr.collection.Map;
-import io.vavr.collection.Seq;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-class ClasspathRewriter {
+public class ClasspathRewriter {
+
   private final Map<URI, URI> localArtifacts;
 
   public ClasspathRewriter(Map<URI, URI> localArtifacts) {
     this.localArtifacts = localArtifacts;
   }
 
-  public Seq<Path> rewrite(Seq<URI> input) {
-    return input
-        .iterator()
-        .map(p -> this.localArtifacts.getOrElse(p, p))
+  public List<Path> rewrite(List<URI> input) {
+    return input.stream()
+        .map(p -> this.localArtifacts.getOrDefault(p, p))
         .distinct()
         .map(Paths::get)
-        .toArray();
+        .collect(Collectors.toList());
   }
 }

@@ -2,8 +2,6 @@ package org.jetbrains.bsp.bazel.server.sync.languages
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.vavr.collection.HashSet
-import io.vavr.collection.Set
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
@@ -15,7 +13,6 @@ import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.junit.jupiter.api.*
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -46,7 +43,7 @@ class LanguagePluginServiceTest {
         @Test
         fun `should return JavaLanguagePlugin for Java Language`() {
             // given
-            val languages: Set<Language> = HashSet.of(Language.JAVA)
+            val languages: Set<Language> = hashSetOf(Language.JAVA)
 
             // when
             val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
@@ -58,7 +55,7 @@ class LanguagePluginServiceTest {
         @Test
         fun `should return JavaLanguagePlugin for Kotlin Language`() {
             // given
-            val languages: Set<Language> = HashSet.of(Language.KOTLIN)
+            val languages: Set<Language> = hashSetOf(Language.KOTLIN)
 
             // when
             val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
@@ -70,7 +67,7 @@ class LanguagePluginServiceTest {
         @Test
         fun `should return ScalaLanguagePlugin for Scala Language`() {
             // given
-            val languages: Set<Language> = HashSet.of(Language.SCALA)
+            val languages: Set<Language> = hashSetOf(Language.SCALA)
 
             // when
             val plugin = languagePluginsService.getPlugin(languages) as? ScalaLanguagePlugin
@@ -82,7 +79,7 @@ class LanguagePluginServiceTest {
         @Test
         fun `should return EmptyLanguagePlugin for no Language`() {
             // given
-            val languages: Set<Language> = HashSet.of()
+            val languages: Set<Language> = hashSetOf()
 
             // when
             val plugin = languagePluginsService.getPlugin(languages) as? EmptyLanguagePlugin
@@ -94,7 +91,7 @@ class LanguagePluginServiceTest {
         @Test
         fun `should return ThriftLanguagePlugin for Thrift Language`() {
             // given
-            val languages: Set<Language> = HashSet.of(Language.THRIFT)
+            val languages: Set<Language> = hashSetOf(Language.THRIFT)
 
             // when
             val plugin = languagePluginsService.getPlugin(languages) as? ThriftLanguagePlugin
@@ -115,18 +112,13 @@ class LanguagePluginServiceTest {
             tmpRepo = createTempDirectory()
         }
 
-        private fun createFileAndWrite(dirString: String, filename: String, content: String): Path? {
-            try {
-                val dirPath = tmpRepo.resolve(dirString)
-                Files.createDirectories(dirPath)
-                val filePath = dirPath.resolve(filename)
-                Files.createFile(filePath)
-                File(filePath.toUri()).writeText(content)
-                return filePath
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            return null
+        private fun createFileAndWrite(dirString: String, filename: String, content: String): Path {
+            val dirPath = tmpRepo.resolve(dirString)
+            Files.createDirectories(dirPath)
+            val filePath = dirPath.resolve(filename)
+            Files.createFile(filePath)
+            File(filePath.toUri()).writeText(content)
+            return filePath
         }
 
         @AfterEach
@@ -150,10 +142,10 @@ class LanguagePluginServiceTest {
                 |            }
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.JAVA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldBe tmpRepo
@@ -166,10 +158,10 @@ class LanguagePluginServiceTest {
             val filename = "JavaPackageTest.java"
             val content = ""
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.JAVA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldNotBe tmpRepo
@@ -191,10 +183,10 @@ class LanguagePluginServiceTest {
                 |}
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.JAVA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldNotBe tmpRepo
@@ -216,10 +208,10 @@ class LanguagePluginServiceTest {
                 |            }
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.SCALA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldBe tmpRepo
@@ -241,10 +233,10 @@ class LanguagePluginServiceTest {
                 |}
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.SCALA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldBe tmpRepo
@@ -269,10 +261,10 @@ class LanguagePluginServiceTest {
                 |}
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.SCALA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldBe tmpRepo
@@ -285,10 +277,10 @@ class LanguagePluginServiceTest {
             val filename = "ScalaPackageTest.java"
             val content = ""
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.SCALA))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldNotBe tmpRepo
@@ -308,10 +300,10 @@ class LanguagePluginServiceTest {
                 |}
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.KOTLIN))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.KOTLIN))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldBe tmpRepo
@@ -324,10 +316,10 @@ class LanguagePluginServiceTest {
             val filename = "KotlinPackageTest.kt"
             val content = ""
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.KOTLIN))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.KOTLIN))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldNotBe tmpRepo
@@ -345,13 +337,13 @@ class LanguagePluginServiceTest {
                 """.trimMargin()
 
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of())
+            val plugin = languagePluginsService.getPlugin(hashSetOf())
 
             // when
             val result = plugin.calculateSourceRoot(filePath)
 
             // then
-            result.isEmpty shouldBe true
+            result shouldBe null
         }
 
         @Test
@@ -382,10 +374,10 @@ class LanguagePluginServiceTest {
                 |}
                 """.trimMargin()
             val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(HashSet.of(Language.THRIFT))
+            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.THRIFT))
 
             // when
-            val result = plugin.calculateSourceRoot(filePath).get()
+            val result = plugin.calculateSourceRoot(filePath)
 
             // then
             result shouldNotBe null
