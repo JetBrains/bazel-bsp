@@ -29,10 +29,3 @@ java_library(
         "@maven//:org_scala_lang_scala_library",
     ],
 )
-
-java_binary(
-    name = "bsp-run",
-    main_class = "org.jetbrains.bsp.bazel.server.ServerInitializer",
-    visibility = ["//server:__subpackages__"],
-    runtime_deps = ["//server/src/main/java/org/jetbrains/bsp/bazel/server"],
-)

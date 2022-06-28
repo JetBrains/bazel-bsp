@@ -12,8 +12,7 @@ private data class WorkspaceSettings(
 )
 
 private data class ProjectSettings(
-    val targets: List<String>?,
-    val projectName: String?
+    val targets: List<String>?
 )
 
 class BloopEnvironmentCreator(
@@ -35,8 +34,7 @@ class BloopEnvironmentCreator(
 
     private fun createProjectSettings(bazelBspPath: Path): Try<Void> {
         val projectSettings = ProjectSettings(
-            cliOptions.projectViewCliOptions?.targets,
-            cliOptions.bloopCliOptions.projectName
+            cliOptions.projectViewCliOptions?.targets
         )
         val settingsFile = bazelBspPath.resolve("project.settings.json")
         return writeJsonToFile(settingsFile, projectSettings)

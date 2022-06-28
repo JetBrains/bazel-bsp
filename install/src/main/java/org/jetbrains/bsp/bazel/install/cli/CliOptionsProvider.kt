@@ -139,15 +139,9 @@ class CliOptionsProvider(private val args: Array<String>) {
         
         val useBloopOption = Option.builder(USE_BLOOP_SHORT_OPT)
             .longOpt("use_bloop")
+            .desc("Use bloop as the BSP server rather than bazel-bsp.")
             .build()
         cliParserOptions.addOption(useBloopOption)
-
-        val projectNameOption = Option.builder(PROJECT_NAME_SHORT_OPT)
-            .longOpt("project_name")
-            .hasArg()
-            .argName("name")
-            .build()
-        cliParserOptions.addOption(projectNameOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -181,8 +175,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun useBloop(cmd: CommandLine): Boolean = cmd.hasOption(USE_BLOOP_SHORT_OPT)
 
-    private fun projectName(cmd: CommandLine): String? = cmd.getOptionValue(PROJECT_NAME_SHORT_OPT)
-
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 160
@@ -200,10 +192,7 @@ class CliOptionsProvider(private val args: Array<String>) {
     }
 
     private fun createBloopCliOptions(cmd: CommandLine): BloopCliOptions =
-        BloopCliOptions(
-            useBloop = useBloop(cmd),
-            projectName = projectName(cmd)
-        )
+        BloopCliOptions(useBloop = useBloop(cmd))
 
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
@@ -271,7 +260,6 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
         private const val USE_BLOOP_SHORT_OPT = "u"
-        private const val PROJECT_NAME_SHORT_OPT = "n"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }

@@ -49,6 +49,7 @@ class BspModuleExporterTest {
                             Array.empty(),
                             Array.empty(),
                             baseDirectory.toUri(),
+                            Array.empty(),
                             Option.none(),
                             Array.empty(),
                             Array.empty(),
@@ -72,7 +73,8 @@ class BspModuleExporterTest {
             bspModule,
             bloopRoot,
             classPathRewriter,
-            soureSetRewriter
+            soureSetRewriter,
+            Option.none()
         )
         val ret = exporter.export()
 

@@ -14,15 +14,12 @@ import scala.collection.immutable.List;
 
 class ReGlobber {
   public static ReGlobbed reGlob(URI baseDirectory, SourceSet sourceSet) {
-    scala.collection.immutable.List<Path> sources;
     var sourceGlobs = reGlobImpl(baseDirectory, sourceSet.sources());
     if (sourceGlobs.isDefined()) {
-      sources = emptyList();
+      return new ReGlobbed(sourceGlobs, emptyList());
     } else {
-      sources = toList(sourceSet.sources().map(Paths::get));
+      return new ReGlobbed(sourceGlobs, toList(sourceSet.sources().map(Paths::get)));
     }
-
-    return new ReGlobbed(sourceGlobs, sources);
   }
 
   private static Option<List<Config.SourcesGlobs>> reGlobImpl(URI baseDirectory, Set<URI> sources) {

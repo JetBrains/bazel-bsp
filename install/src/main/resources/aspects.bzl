@@ -421,7 +421,7 @@ def _get_forwarded_deps(target, ctx):
     return []
 
 def _bsp_target_info_aspect_impl(target, ctx):
-    if target.label.name.endswith('.semanticdb'):
+    if target.label.name.endswith(".semanticdb"):
         return []
 
     rule_attrs = ctx.rule.attr

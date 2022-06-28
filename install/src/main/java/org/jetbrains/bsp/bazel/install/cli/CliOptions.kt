@@ -20,8 +20,7 @@ data class ProjectViewCliOptions internal constructor(
 )
 
 data class BloopCliOptions internal constructor(
-        val useBloop: Boolean,
-        val projectName: String?
+        val useBloop: Boolean
 )
 
 data class CliOptions internal constructor(

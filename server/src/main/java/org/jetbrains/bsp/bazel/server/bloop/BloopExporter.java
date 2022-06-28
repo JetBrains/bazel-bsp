@@ -51,7 +51,7 @@ class BloopExporter {
     var client = new BloopBuildClient(System.out);
     initializeClient(serverContainer, client);
 
-    Project project = projectProvider.refreshAndGet();
+    var project = projectProvider.refreshAndGet();
 
     var failedTargets = client.getFailedTargets();
     var failedTransitiveTargets =
