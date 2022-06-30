@@ -14,12 +14,14 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Map;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
+import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
@@ -113,6 +115,11 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     JvmBuildTarget jvmBuildTarget = toJvmBuildTarget(javaModule);
     buildTarget.setDataKind(BuildTargetDataKind.JVM);
     buildTarget.setData(jvmBuildTarget);
+  }
+
+  @Override
+  public Option<Path> calculateSourceRoot(Path source) {
+    return JVMLanguagePluginParser.calculateJVMSourceRoot(source, false);
   }
 
   public JvmBuildTarget toJvmBuildTarget(JavaModule javaModule) {

@@ -5,9 +5,9 @@ import io.vavr.control.Option;
 import java.net.URI;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
-import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData;
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService;
 import org.jetbrains.bsp.bazel.server.sync.model.Label;
 import org.jetbrains.bsp.bazel.server.sync.model.Language;
@@ -72,11 +72,12 @@ public class BazelProjectMapper {
     var languages = inferLanguages(target);
     var tags = targetKindResolver.resolveTags(target);
     var baseDirectory = bazelPathsResolver.labelToDirectoryUri(label);
-    var sourceSet = resolveSourceSet(target);
-    var resources = resolveResources(target);
 
     var languagePlugin = languagePluginsService.getPlugin(languages);
     var languageData = (Option<LanguageData>) languagePlugin.resolveModule(target);
+
+    var sourceSet = resolveSourceSet(target, languagePlugin);
+    var resources = resolveResources(target);
 
     var sourceDependencies = languagePlugin.dependencySources(target, dependencyTree);
 
@@ -115,9 +116,10 @@ public class BazelProjectMapper {
     return language.getExtensions().exists(ext -> file.getRelativePath().endsWith(ext));
   }
 
-  private SourceSet resolveSourceSet(TargetInfo target) {
+  private SourceSet resolveSourceSet(TargetInfo target, LanguagePlugin<?> languagePlugin) {
     var sources = HashSet.ofAll(target.getSourcesList()).map(bazelPathsResolver::resolve);
-    var sourceRoots = sources.map(SourceRootGuesser::getSourcesRoot);
+    var sourceRoots = sources.flatMap(languagePlugin::calculateSourceRoot);
+
     return new SourceSet(
         sources.map(bazelPathsResolver::resolveUri),
         sourceRoots.map(bazelPathsResolver::resolveUri));
