@@ -62,6 +62,7 @@ public class ProjectStorageTest {
                                     List.empty(),
                                     List.empty(),
                                     URI.create("file:///tmp/out"),
+                                    List.empty(),
                                     Option.none(),
                                     List.empty(),
                                     List.empty(),

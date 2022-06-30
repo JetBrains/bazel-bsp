@@ -65,6 +65,44 @@ bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src
 cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:<your version> -M org.jetbrains.bsp.bazel.install.Install
 ```
 
+### Using Bloop
+
+By default Bazel BSP runs as a BSP server and invokes Bazel to compile, test and run targets. 
+This provides the most accurate build results at the expense of  
+compile/test/run latency.  Bazel BSP can optionally be configured to use [Bloop](https://scalacenter.github.io/bloop/) 
+as the BSP server instead. Bloop provides a much lower latency with the trade-off that the Bloop model
+may not perfectly represent the Bazel configuration.
+
+#### Installing with Bloop
+
+The instructions above will work in Bloop mode as well, simply pass ``--use_bloop`` as an installation option.
+However, when using Bloop mode Bazel BSP can also install itself outside the source root directory.  This can
+be useful in large shared repositories where it's undesirable to keep the Bazel BSP projects inside the 
+repository itself.
+
+In the examples below, we'll use ``~/src/my-repo`` as the "repository root" and ``~/bazel-bsp-projects`` as the 
+"Bazel BSP project root", however both can be any directory.
+
+To install Bazel BSP outside the repository root:
+
+1) Change directories into the repository root: ``cd ~/src/my-repo``
+2) Invoke the Bazel BSP installer as described above (via Coursier or run the installer JAR directly), passing in:
+   1) ``--use_bloop``
+   2) ``-d ~/bazel-bsp-projects/my-repo-project``
+   
+For example, using Coursier:
+
+```shell
+cd ~/src/my-repository
+cs launch org.jetbrains.bsp:bazel-bsp:2.1.0 -M org.jetbrains.bsp.bazel.install.Install \
+  --use_bloop \
+  -t //my-targets/... \
+  -d ~/bazel-bsp-projects/my-targets-project 
+```
+
+This will create a set of BSP and Bloop projects in ``~/bazel-bsp-projects/my-targets-project`` which can then be opened 
+in IntelliJ or any other IDE that supports BSP.  
+
 ## Project Views
 
 In order to work on huge monorepos you might want to specify directories and targets to work on. To address this issue,

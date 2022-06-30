@@ -4,8 +4,10 @@ import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.util.regex.Pattern;
 
 public class IdeClasspathResolver {
+  private static final Pattern JAR_PATTERN = Pattern.compile("-[hi]jar\\.jar$");
 
   private final Set<String> runtimeJars;
   private final Set<String> runtimeMavenJarSuffixes;
@@ -22,7 +24,7 @@ public class IdeClasspathResolver {
   }
 
   private String findRuntimeEquivalent(String compileJar) {
-    var runtimeJar = compileJar.replaceAll("-[hi]jar\\.jar$", ".jar");
+    var runtimeJar = JAR_PATTERN.matcher(compileJar).replaceAll(".jar");
     if (runtimeJars.contains(runtimeJar)) {
       return runtimeJar;
     }

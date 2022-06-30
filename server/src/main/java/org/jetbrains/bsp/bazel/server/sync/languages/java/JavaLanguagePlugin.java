@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
 import io.vavr.collection.Array;
 import io.vavr.collection.HashSet;
+import io.vavr.collection.Iterator;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
@@ -51,6 +52,14 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     var javacOpts = Array.ofAll(javaTargetInfo.getJavacOptsList());
     var jvmOpts = Array.ofAll(javaTargetInfo.getJvmFlagsList());
     var mainOutput = bazelPathsResolver.resolveUri(javaTargetInfo.getJars(0).getBinaryJars(0));
+    var allOutputs =
+        Iterator.ofAll(javaTargetInfo.getJarsList())
+            .flatMap(
+                ti ->
+                    Iterator.ofAll(ti.getInterfaceJarsList())
+                        .concat(Iterator.ofAll(ti.getBinaryJarsList())))
+            .map(bazelPathsResolver::resolveUri)
+            .toArray();
     var mainClass = getMainClass(javaTargetInfo);
     var args = Array.ofAll(javaTargetInfo.getArgsList());
     var runtimeClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getRuntimeClasspathList());
@@ -66,6 +75,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
             javacOpts,
             jvmOpts,
             mainOutput,
+            allOutputs,
             mainClass,
             args,
             runtimeClasspath,

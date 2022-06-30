@@ -100,6 +100,10 @@ public class BazelProjectMapper {
   }
 
   private Set<Language> inferLanguages(TargetInfo target) {
+    if (target.getKind().equals("scala_binary")) {
+      return HashSet.of(Language.SCALA);
+    }
+
     return target.getSourcesList().stream()
         .flatMap(
             source ->
