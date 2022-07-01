@@ -1,7 +1,7 @@
-load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("@rules_java//java:defs.bzl", "java_library")
 
 java_library(
-    name = "server",
+    name = "common",
     srcs = glob(["*.java"]),
     visibility = ["//server:__subpackages__"],
     deps = [
@@ -10,13 +10,11 @@ java_library(
         "//executioncontext/workspacecontext",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bloop",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/common",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "@io_bazel//src/main/protobuf:build_java_proto",
@@ -30,11 +28,4 @@ java_library(
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
         "@maven//:org_scala_lang_scala_library",
     ],
-)
-
-java_binary(
-    name = "bsp-run",
-    main_class = "org.jetbrains.bsp.bazel.server.ServerInitializer",
-    visibility = ["//server:__subpackages__"],
-    runtime_deps = ["//server/src/main/java/org/jetbrains/bsp/bazel/server"],
 )

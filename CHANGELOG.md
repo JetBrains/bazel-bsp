@@ -6,6 +6,8 @@
 
 ### Features 🎉
 
+- Server can be used with bloop (`--use_bloop` flag).
+  | [#246](https://github.com/JetBrains/bazel-bsp/pull/246)
 - Project view supports `build_manual_targets` - now it is possible to build targets with `manual` tag.
   | [#243](https://github.com/JetBrains/bazel-bsp/pull/243)
 - `directories` and `derive_targets_from_directories` sections are now available in project view files.
@@ -15,6 +17,10 @@
 
 ### Changes 🔄
 
+- Packages are parsed in order to determine source roots.
+  | [#258](https://github.com/JetBrains/bazel-bsp/pull/258)
+- BazelPathsResolver caches uris and paths (preformance improvement).
+  | [#256](https://github.com/JetBrains/bazel-bsp/pull/256)
 - Scala version regex has been fixed.
   | [#249](https://github.com/JetBrains/bazel-bsp/pull/249)
 - e2e test for local jdk and remote jdk

@@ -9,15 +9,19 @@ import ch.epfl.scala.bsp4j.JvmBuildTarget;
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem;
 import io.vavr.collection.Array;
 import io.vavr.collection.HashSet;
+import io.vavr.collection.Iterator;
 import io.vavr.collection.Seq;
 import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.Map;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver;
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree;
+import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser;
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin;
 import org.jetbrains.bsp.bazel.server.sync.model.Module;
 
@@ -50,6 +54,14 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     var javacOpts = Array.ofAll(javaTargetInfo.getJavacOptsList());
     var jvmOpts = Array.ofAll(javaTargetInfo.getJvmFlagsList());
     var mainOutput = bazelPathsResolver.resolveUri(javaTargetInfo.getJars(0).getBinaryJars(0));
+    var allOutputs =
+        Iterator.ofAll(javaTargetInfo.getJarsList())
+            .flatMap(
+                ti ->
+                    Iterator.ofAll(ti.getInterfaceJarsList())
+                        .concat(Iterator.ofAll(ti.getBinaryJarsList())))
+            .map(bazelPathsResolver::resolveUri)
+            .toArray();
     var mainClass = getMainClass(javaTargetInfo);
     var args = Array.ofAll(javaTargetInfo.getArgsList());
     var runtimeClasspath = bazelPathsResolver.resolveUris(javaTargetInfo.getRuntimeClasspathList());
@@ -65,6 +77,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
             javacOpts,
             jvmOpts,
             mainOutput,
+            allOutputs,
             mainClass,
             args,
             runtimeClasspath,
@@ -102,6 +115,11 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
     JvmBuildTarget jvmBuildTarget = toJvmBuildTarget(javaModule);
     buildTarget.setDataKind(BuildTargetDataKind.JVM);
     buildTarget.setData(jvmBuildTarget);
+  }
+
+  @Override
+  public Option<Path> calculateSourceRoot(Path source) {
+    return JVMLanguagePluginParser.calculateJVMSourceRoot(source, false);
   }
 
   public JvmBuildTarget toJvmBuildTarget(JavaModule javaModule) {

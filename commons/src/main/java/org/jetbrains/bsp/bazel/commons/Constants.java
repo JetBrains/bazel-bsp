@@ -22,6 +22,9 @@ public class Constants {
   public static final String DOT_BSP_DIR_NAME = ".bsp";
   public static final String BAZELBSP_JSON_FILE_NAME = "bazelbsp.json";
   public static final String SERVER_CLASS_NAME = "org.jetbrains.bsp.bazel.server.ServerInitializer";
+  public static final String BLOOP_BOOTSTRAP_CLASS_NAME =
+      "org.jetbrains.bsp.bazel.server.bloop.BloopExporterInitializer";
+  public static final String BLOOP_SETTINGS_JSON_FILE_NAME = "bloop.settings.json";
   public static final String CLASSPATH_FLAG = "-classpath";
   public static final String BAZELBSP_TRACE_JSON_FILE_NAME = "bazelbsp.trace.json";
 }

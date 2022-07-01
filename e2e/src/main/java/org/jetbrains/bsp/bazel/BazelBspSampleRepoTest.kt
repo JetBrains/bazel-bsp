@@ -84,7 +84,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//target_without_jvm_flags:binary"),
             listOf(targetWithoutJvmFlagsExampleScala)
         )
-        targetWithoutJvmFlagsSources.roots = listOf("file://\$WORKSPACE/target_without_jvm_flags/")
+        targetWithoutJvmFlagsSources.roots = listOf("file://\$WORKSPACE/")
 
         val targetWithoutArgsExampleScala = SourceItem(
             "file://\$WORKSPACE/target_without_args/Example.scala", SourceItemKind.FILE, false
@@ -93,7 +93,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//target_without_args:binary"),
             listOf(targetWithoutArgsExampleScala)
         )
-        targetWithoutArgsSources.roots = listOf("file://\$WORKSPACE/target_without_args/")
+        targetWithoutArgsSources.roots = listOf("file://\$WORKSPACE/")
 
         val targetWithoutMainClassExampleScala = SourceItem(
             "file://\$WORKSPACE/target_without_main_class/Example.scala",
@@ -104,7 +104,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//target_without_main_class:library"),
             listOf(targetWithoutMainClassExampleScala)
         )
-        targetWithoutMainClassSources.roots = listOf("file://\$WORKSPACE/target_without_main_class/")
+        targetWithoutMainClassSources.roots = listOf("file://\$WORKSPACE/")
 
         val targetWithResourcesJavaBinaryJava = SourceItem(
             "file://\$WORKSPACE/target_with_resources/JavaBinary.java", SourceItemKind.FILE, false
@@ -113,7 +113,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//target_with_resources:java_binary"),
             listOf(targetWithResourcesJavaBinaryJava)
         )
-        targetWithResourcesSources.roots = listOf("file://\$WORKSPACE/target_with_resources/")
+        targetWithResourcesSources.roots = listOf("file://\$WORKSPACE/")
 
         val targetWithDependencyJavaBinaryJava = SourceItem(
             "file://\$WORKSPACE/target_with_dependency/JavaBinary.java", SourceItemKind.FILE, false
@@ -122,7 +122,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//target_with_dependency:java_binary"),
             listOf(targetWithDependencyJavaBinaryJava)
         )
-        targetWithDependencySources.roots = listOf("file://\$WORKSPACE/target_with_dependency/")
+        targetWithDependencySources.roots = listOf("file://\$WORKSPACE/")
 
         val scalaTargetsScalaBinaryScala = SourceItem(
             "file://\$WORKSPACE/scala_targets/ScalaBinary.scala", SourceItemKind.FILE, false
@@ -131,7 +131,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//scala_targets:scala_binary"),
             listOf(scalaTargetsScalaBinaryScala)
         )
-        scalaTargetsScalaBinarySources.roots = listOf("file://\$WORKSPACE/scala_targets/")
+        scalaTargetsScalaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
         val scalaTargetsScalaTestScala = SourceItem(
             "file://\$WORKSPACE/scala_targets/ScalaTest.scala", SourceItemKind.FILE, false
@@ -140,7 +140,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//scala_targets:scala_test"),
             listOf(scalaTargetsScalaTestScala)
         )
-        scalaTargetsScalaTestSources.roots = listOf("file://\$WORKSPACE/scala_targets/")
+        scalaTargetsScalaTestSources.roots = listOf("file://\$WORKSPACE/")
 
         val javaTargetsJavaBinaryJava = SourceItem(
             "file://\$WORKSPACE/java_targets/JavaBinary.java", SourceItemKind.FILE, false
@@ -149,7 +149,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//java_targets:java_binary"),
             listOf(javaTargetsJavaBinaryJava)
         )
-        javaTargetsJavaBinarySources.roots = listOf("file://\$WORKSPACE/java_targets/")
+        javaTargetsJavaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
         val javaTargetsJavaLibraryJava = SourceItem(
             "file://\$WORKSPACE/java_targets/JavaLibrary.java", SourceItemKind.FILE, false
@@ -158,7 +158,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//java_targets:java_library"),
             listOf(javaTargetsJavaLibraryJava)
         )
-        javaTargetsJavaLibrarySources.roots = listOf("file://\$WORKSPACE/java_targets/")
+        javaTargetsJavaLibrarySources.roots = listOf("file://\$WORKSPACE/")
 
         val javaTargetsSubpackageJavaLibraryJava = SourceItem(
             "file://\$WORKSPACE/java_targets/subpackage/JavaLibrary2.java",
@@ -169,10 +169,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//java_targets/subpackage:java_library"),
             listOf(javaTargetsSubpackageJavaLibraryJava)
         )
-        javaTargetsSubpackageJavaLibrarySources.roots = listOf("file://\$WORKSPACE/java_targets/subpackage/")
-
-        val bspWorkspaceRoot = SourcesItem(BuildTargetIdentifier("bsp-workspace-root"), emptyList())
-        bspWorkspaceRoot.roots = emptyList()
+        javaTargetsSubpackageJavaLibrarySources.roots = listOf("file://\$WORKSPACE/")
 
         val javaTargetsJavaLibraryExportedSources = SourcesItem(
             BuildTargetIdentifier("//java_targets:java_library_exported"), emptyList()
@@ -186,7 +183,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:java_library"),
             listOf(manualTargetTestJavaFile)
         )
-        manualTargetTestJavaFileSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+        manualTargetTestJavaFileSources.roots = listOf("file://\$WORKSPACE/")
 
         val manualTargetTestScalaFile = SourceItem(
             "file://\$WORKSPACE/manual_target/TestScalaFile.scala", SourceItemKind.FILE, false
@@ -195,7 +192,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:scala_library"),
             listOf(manualTargetTestScalaFile)
         )
-        manualTargetTestScalaFileSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+        manualTargetTestScalaFileSources.roots = listOf("file://\$WORKSPACE/")
 
         val manualTargetTestJavaTest =
             SourceItem("file://\$WORKSPACE/manual_target/JavaTest.java", SourceItemKind.FILE, false)
@@ -203,7 +200,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:java_test"),
             listOf(manualTargetTestJavaTest)
         )
-        manualTargetTestJavaTestSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+        manualTargetTestJavaTestSources.roots = listOf("file://\$WORKSPACE/")
 
         val manualTargetTestScalaTest = SourceItem(
             "file://\$WORKSPACE/manual_target/ScalaTest.scala", SourceItemKind.FILE, false
@@ -212,7 +209,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:scala_test"),
             listOf(manualTargetTestScalaTest)
         )
-        manualTargetTestScalaTestSources.roots = listOf("file://\$WORKSPACE/manual_target/")
+        manualTargetTestScalaTestSources.roots = listOf("file://\$WORKSPACE/")
 
         val manualTargetTestJavaBinary = SourceItem(
             "file://\$WORKSPACE/manual_target/TestJavaBinary.java", SourceItemKind.FILE, false
@@ -221,7 +218,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:java_binary"),
             listOf(manualTargetTestJavaBinary)
         )
-        manualTargetTestJavaBinarySources.roots = listOf("file://\$WORKSPACE/manual_target/")
+        manualTargetTestJavaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
         val manualTargetTestScalaBinary = SourceItem(
             "file://\$WORKSPACE/manual_target/TestScalaBinary.scala", SourceItemKind.FILE, false
@@ -230,7 +227,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:scala_binary"),
             listOf(manualTargetTestScalaBinary)
         )
-        manualTargetTestScalaBinarySources.roots = listOf("file://\$WORKSPACE/manual_target/")
+        manualTargetTestScalaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
         val sourcesParams = SourcesParams(expectedTargetIdentifiers())
         val expectedSourcesResult = SourcesResult(
@@ -245,7 +242,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 javaTargetsJavaBinarySources,
                 javaTargetsJavaLibrarySources,
                 javaTargetsSubpackageJavaLibrarySources,
-                bspWorkspaceRoot,
                 javaTargetsJavaLibraryExportedSources,
                 manualTargetTestJavaFileSources,
                 manualTargetTestScalaFileSources,
@@ -261,9 +257,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     }
 
     private fun resourcesResults(): BazelBspTestScenarioStep {
-        val bspWorkspaceRoot = ResourcesItem(
-            BuildTargetIdentifier("bsp-workspace-root"), listOf("file://\$WORKSPACE/")
-        )
         val targetWithResources = ResourcesItem(
             BuildTargetIdentifier("//target_with_resources:java_binary"),
             listOf(
@@ -311,7 +304,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
         val expectedResourcesResult = ResourcesResult(
             listOf(
-                bspWorkspaceRoot,
                 targetWithResources,
                 javaTargetsSubpackageJavaLibrary,
                 javaTargetsJavaBinary,
@@ -494,7 +486,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val javaTargetsJavaLibraryExported = DependencySourcesItem(
             BuildTargetIdentifier("//java_targets:java_library_exported"), emptyList()
         )
-        val bspWorkspaceRoot = DependencySourcesItem(BuildTargetIdentifier("bsp-workspace-root"), emptyList())
         val manualTargetJavaLibrary = DependencySourcesItem(
             BuildTargetIdentifier("//manual_target:java_library"), emptyList()
         )
@@ -526,7 +517,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 targetWithoutJvmFlagsBinary,
                 targetWithoutMainClassLibrary,
                 javaTargetsJavaLibraryExported,
-                bspWorkspaceRoot,
                 manualTargetJavaLibrary,
                 manualTargetScalaLibrary,
                 manualTargetJavaBinary,
@@ -957,16 +947,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         javaTargetsJavaLibraryExported.displayName = "//java_targets:java_library_exported"
         javaTargetsJavaLibraryExported.baseDirectory = "file://\$WORKSPACE/java_targets/"
 
-        val bspWorkspaceRoot = BuildTarget(
-            BuildTargetIdentifier("bsp-workspace-root"),
-            emptyList(),
-            emptyList(),
-            emptyList(),
-            BuildTargetCapabilities(false, false, false, false)
-        )
-        bspWorkspaceRoot.displayName = "bsp-workspace-root"
-        bspWorkspaceRoot.baseDirectory = "file://\$WORKSPACE/"
-
         val manualScalaBuildTarget = ScalaBuildTarget(
             "org.scala-lang",
             "2.12.14",
@@ -1058,7 +1038,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 scalaTargetsScalaTest,
                 targetWithResourcesJavaBinary,
                 javaTargetsJavaLibraryExported,
-                bspWorkspaceRoot,
                 manualTargetJavaLibrary,
                 manualTargetScalaLibrary,
                 manualTargetJavaBinary,

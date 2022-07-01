@@ -37,9 +37,7 @@ class BazelRunner private constructor(
   fun commandBuilder(): BazelRunnerCommandBuilder = BazelRunnerCommandBuilder(this)
 
   fun runBazelCommandBes(command: String, flags: List<String>, arguments: List<String>): BazelProcess {
-    fun besFlags() = listOf(
-        "--bes_backend=grpc://localhost:${besBackendPort!!}",
-        "--build_event_publish_all_actions")
+    fun besFlags() = listOf("--bes_backend=grpc://localhost:${besBackendPort!!}")
 
     return runBazelCommand(command, flags = besFlags() + flags, arguments)
   }

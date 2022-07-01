@@ -21,16 +21,6 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
             "11"
         )
 
-        val rootBuildTarget = BuildTarget(
-            BuildTargetIdentifier("bsp-workspace-root"),
-            emptyList(),
-            emptyList(),
-            emptyList(),
-            BuildTargetCapabilities(false, false, false, false)
-        )
-        rootBuildTarget.displayName = "bsp-workspace-root"
-        rootBuildTarget.baseDirectory = "file://\$WORKSPACE/"
-
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("//example:example"),
             listOf("application"),
@@ -44,7 +34,7 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.JVM
 
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-            listOf(rootBuildTarget, exampleExampleBuildTarget)
+            listOf(exampleExampleBuildTarget)
         )
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
