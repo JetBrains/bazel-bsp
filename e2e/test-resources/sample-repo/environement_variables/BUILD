@@ -1,8 +1,9 @@
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 java_library(
-    name = "java_library",
+    name = "java_binary",
     srcs = ["JavaEnv.java"],
+    main_class = "environment_variables.JavaEnv",
     env = {"foo1": "foo2"},
     visibility = ["//visibility:public"],
 )
@@ -10,7 +11,8 @@ java_library(
 java_test(
     name = "java_test",
     srcs = ["JavaTest.java"],
-    env_inherit = ["foo3"],
+    env = {"foo3": "foo4"},
+    env_inherit = ["foo5"],
     test_class = "environment_target.JavaTest",
     visibility = ["//visibility:public"],
 )

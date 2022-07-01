@@ -231,7 +231,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
         val environmentVariablesJavaLibrary = SourceItem("file://\$WORKSPACE/environment_variables/JavaEnv.java", SourceItemKind.FILE, false)
         val environmentVariablesJavaLibrarySources = SourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_library"),
+            BuildTargetIdentifier("//environment_variables:java_binary"),
             listOf(environmentVariablesJavaLibrary)
         )
 
@@ -316,7 +316,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val manualTargetScalaTest =
             ResourcesItem(BuildTargetIdentifier("//manual_target:scala_test"), emptyList())
         val environmentVariablesJavaLibrary =
-            ResourcesItem(BuildTargetIdentifier("//environment_variables:java_library"), emptyList())
+            ResourcesItem(BuildTargetIdentifier("//environment_variables:java_binary"), emptyList())
         val environmentVariablesJavaTest =
             ResourcesItem(BuildTargetIdentifier("//environment_variables:java_test"), emptyList())
 
@@ -525,7 +525,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:scala_test"), emptyList()
         )
         val environmentVariablesJavaLibrary = DependencySourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_library"), emptyList()
+            BuildTargetIdentifier("//environment_variables:java_binary"), emptyList()
         )
         val environmentVariablesJavaTest = DependencySourcesItem(
             BuildTargetIdentifier("//environment_variables:java_test"), emptyList()
@@ -683,6 +683,24 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
+                ),
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("//environment_variables:java_binary"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ),
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("//environment_variables:java_test"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
                 )
             )
         )
@@ -809,7 +827,25 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                )
+                ),
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("//environment_variables:java_binary"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ),
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("//environment_variables:java_test"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ),
             )
         )
         return BazelBspTestScenarioStep(
@@ -1054,13 +1090,13 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         manualTargetJavaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
 
         val environmentVariablesJavaLibrary = BuildTarget(
-            BuildTargetIdentifier("//environment_variables:java_library"),
-            listOf("library"),
+            BuildTargetIdentifier("//environment_variables:java_binary"),
+            listOf("application"),
             listOf("java"),
             emptyList(),
             BuildTargetCapabilities(true, false, false, false)
         )
-        environmentVariablesJavaLibrary.displayName = "//environment_variables:java_library"
+        environmentVariablesJavaLibrary.displayName = "//environment_variables:java_binary"
         environmentVariablesJavaLibrary.baseDirectory = "file://\$WORKSPACE/environment_variables/"
         environmentVariablesJavaLibrary.dataKind = "jvm"
         environmentVariablesJavaLibrary.data = jvmBuildTarget
