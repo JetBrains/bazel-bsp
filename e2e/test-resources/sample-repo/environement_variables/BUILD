@@ -3,8 +3,8 @@ load("@rules_java//java:defs.bzl", "java_library", "java_test")
 java_library(
     name = "java_binary",
     srcs = ["JavaEnv.java"],
-    main_class = "environment_variables.JavaEnv",
     env = {"foo1": "foo2"},
+    main_class = "environment_variables.JavaEnv",
     visibility = ["//visibility:public"],
 )
 
