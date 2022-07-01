@@ -10,7 +10,7 @@ java_library(
 java_test(
     name = "java_test",
     srcs = ["JavaTest.java"],
-    test_class = "environment_target.JavaTest",
     env_inherit = ["foo3"],
+    test_class = "environment_target.JavaTest",
     visibility = ["//visibility:public"],
 )
