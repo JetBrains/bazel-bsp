@@ -4,3 +4,4 @@ java_library(
     name = "java_library",
     srcs = ["JavaEnv.java"],
     visibility = ["//visibility:public"],
+)
