@@ -59,7 +59,8 @@ class BspModuleExporterTest {
                         )
                     )
                 )
-            )
+            ),
+            HashMap.empty()
         )
         val project = Project(
             baseDirectory.toUri(),
@@ -67,13 +68,13 @@ class BspModuleExporterTest {
             HashMap.empty()
         )
         val classPathRewriter = ClasspathRewriter(HashMap.empty())
-        val soureSetRewriter = SourceSetRewriter(HashSet.empty())
+        val sourceSetRewriter = SourceSetRewriter(HashSet.empty())
         val exporter = BspModuleExporter(
             project,
             bspModule,
             bloopRoot,
             classPathRewriter,
-            soureSetRewriter,
+            sourceSetRewriter,
             Option.none()
         )
         val ret = exporter.export()
