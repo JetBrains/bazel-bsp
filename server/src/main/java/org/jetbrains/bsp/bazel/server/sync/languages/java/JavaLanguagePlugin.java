@@ -15,7 +15,6 @@ import io.vavr.collection.Set;
 import io.vavr.control.Option;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Map;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo;
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo;
