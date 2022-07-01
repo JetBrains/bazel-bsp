@@ -116,7 +116,7 @@ public class JavaLanguagePlugin extends LanguagePlugin<JavaModule> {
         javaModule.runtimeClasspath().map(URI::toString).asJava(),
         javaModule.jvmOps().asJava(),
         bazelInfo.getWorkspaceRoot().toString(),
-        module.getEnvironment().toJavaMap());
+        module.getEnvironmentVariables().toJavaMap());
   }
 
   public JavacOptionsItem toJavacOptionsItem(Module module, JavaModule javaModule) {
