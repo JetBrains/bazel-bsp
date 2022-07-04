@@ -150,13 +150,12 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target) {
-    var output = targetInfoToMapofStrings(target);
-    var result = Stream.of(output)
-        .collect(Collectors.toMap(x -> target.getId(), x -> target.getId()));
-    return HashMap.ofAll(result);
+    var output = targetInfoToMapOfStrings(target);
+    var targetEnv = target.getEnvMap();
+    return output.merge((Map<? extends String, ? extends String>) targetEnv);
   }
 
-  private static Map<String, String> targetInfoToMapofStrings(TargetInfo targetInfo) {
+  private static Map<String, String> targetInfoToMapOfStrings(TargetInfo targetInfo) {
     return HashMap.ofAll(targetInfo.getEnvInheritList().stream().collect(Collectors.toMap(x -> x, System::getenv)));
   }
 }

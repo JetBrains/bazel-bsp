@@ -691,7 +691,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf()
+                    System.getenv()
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//environment_variables:java_test"),
