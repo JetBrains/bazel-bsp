@@ -1,6 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_test")
 
-java_library(
+java_binary(
     name = "java_binary",
     srcs = ["JavaEnv.java"],
     env = {
@@ -19,9 +19,9 @@ java_test(
         "foo4": "val4",
     },
     env_inherit = [
-        "foo1",
-        "foo2",
+        "foo3",
+        "foo4",
     ],
-    test_class = "environment_target.JavaTest",
+    test_class = "environment_variables.JavaTest",
     visibility = ["//visibility:public"],
 )

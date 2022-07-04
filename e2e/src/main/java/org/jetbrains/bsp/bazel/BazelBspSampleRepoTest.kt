@@ -234,12 +234,14 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//environment_variables:java_binary"),
             listOf(environmentVariablesJavaLibrary)
         )
+        environmentVariablesJavaLibrarySources.roots = listOf("file://\$WORKSPACE/")
 
         val environmentVariablesJavaTest = SourceItem("file://\$WORKSPACE/environment_variables/JavaTest.java", SourceItemKind.FILE, false)
         val environmentVariablesJavaTestSources = SourcesItem(
             BuildTargetIdentifier("//environment_variables:java_test"),
             listOf(environmentVariablesJavaTest)
         )
+        environmentVariablesJavaTestSources.roots = listOf("file://\$WORKSPACE/")
 
         val sourcesParams = SourcesParams(expectedTargetIdentifiers())
         val expectedSourcesResult = SourcesResult(
@@ -1094,7 +1096,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             listOf("application"),
             listOf("java"),
             emptyList(),
-            BuildTargetCapabilities(true, false, false, false)
+            BuildTargetCapabilities(true, false, true, false)
         )
         environmentVariablesJavaLibrary.displayName = "//environment_variables:java_binary"
         environmentVariablesJavaLibrary.baseDirectory = "file://\$WORKSPACE/environment_variables/"
@@ -1103,7 +1105,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
         val environmentVariablesJavaTest = BuildTarget(
             BuildTargetIdentifier("//environment_variables:java_test"),
-            listOf("library"),
+            listOf("test"),
             listOf("java"),
             emptyList(),
             BuildTargetCapabilities(true, true, false, false)
