@@ -526,8 +526,11 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val manualTargetScalaTest = DependencySourcesItem(
             BuildTargetIdentifier("//manual_target:scala_test"), emptyList()
         )
-        val environmentVariablesJavaLibrary = DependencySourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_binary"), emptyList()
+        val environmentVariablesJavaBinary = DependencySourcesItem(
+            BuildTargetIdentifier("//environment_variables:java_binary"),
+            listOf(
+                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar"
+            )
         )
         val environmentVariablesJavaTest = DependencySourcesItem(
             BuildTargetIdentifier("//environment_variables:java_test"), emptyList()
@@ -551,7 +554,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 manualTargetScalaBinary,
                 manualTargetJavaTest,
                 manualTargetScalaTest,
-                environmentVariablesJavaLibrary,
+                environmentVariablesJavaBinary,
                 environmentVariablesJavaTest
             )
         )
