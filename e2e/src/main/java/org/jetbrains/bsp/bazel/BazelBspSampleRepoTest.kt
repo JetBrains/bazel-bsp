@@ -529,7 +529,13 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val environmentVariablesJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//environment_variables:java_binary"),
             listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar",
+                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar"
+            )
+        )
+        val environmentVariablesJavaTest = DependencySourcesItem(
+            BuildTargetIdentifier("//environment_variables:java_test"),
+            listOf(
+                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar",
                 "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javactic/javactic_2.12-3.2.9-src.jar",
                 "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest/javatest_2.12-3.2.9-src.jar",
                 "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_compatible/javatest-compatible-3.2.9-src.jar",
@@ -542,12 +548,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_matchers_core/javatest-matchers-core_2.12-3.2.9-src.jar",
                 "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_mustmatchers/javatest-mustmatchers_2.12-3.2.9-src.jar",
                 "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_shouldmatchers/javatest-shouldmatchers_2.12-3.2.9-src.jar"
-            )
-        )
-        val environmentVariablesJavaTest = DependencySourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_test"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
             )
         )
         val expectedDependencies = DependencySourcesResult(
