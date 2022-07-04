@@ -156,6 +156,7 @@ public class BazelProjectMapper {
   }
 
   private static Map<String, String> targetInfoToMapOfStrings(TargetInfo targetInfo) {
-    return HashMap.ofAll(targetInfo.getEnvInheritList().stream().collect(Collectors.toMap(x -> x, System::getenv)));
+    return HashMap.ofAll(
+        targetInfo.getEnvInheritList().stream().collect(Collectors.toMap(x -> x, System::getenv)));
   }
 }

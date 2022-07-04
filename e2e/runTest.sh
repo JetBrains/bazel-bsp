@@ -15,6 +15,8 @@ TEST_TARGET="$1"
 # second argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
 TEST_PROJECT_PATH="$2"
 
+export env = "foo1 : foo2"
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
