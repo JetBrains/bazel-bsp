@@ -691,7 +691,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf()
+                    hashMapOf("foo1" to "foo2")
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//environment_variables:java_test"),
@@ -700,7 +700,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf()
+                    hashMapOf("foo1" to "foo2")
                 )
             )
         )
@@ -835,7 +835,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf()
+                    hashMapOf("foo1" to "foo2")
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//environment_variables:java_test"),
@@ -844,7 +844,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf()
+                    hashMapOf("foo1" to "foo2")
                 ),
             )
         )
