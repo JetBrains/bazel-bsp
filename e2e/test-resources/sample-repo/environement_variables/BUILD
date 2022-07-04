@@ -16,11 +16,11 @@ java_test(
     srcs = ["JavaTest.java"],
     env = {
         "foo3": "val3",
-        "foo4": "val5",
+        "foo4": "val4",
     },
     env_inherit = [
-        "foo5",
-        "foo6",
+        "foo1",
+        "foo2",
     ],
     test_class = "environment_target.JavaTest",
     visibility = ["//visibility:public"],
