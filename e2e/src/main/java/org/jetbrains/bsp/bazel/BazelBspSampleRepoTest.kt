@@ -530,18 +530,18 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//environment_variables:java_binary"),
             listOf(
                 "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9-src.jar"
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javactic/javactic_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest/javatest_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_compatible/javatest-compatible-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_core/javatest-core_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_featurespec/javatest-featurespec_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_flatspec/javatest-flatspec_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_freespec/javatest-freespec_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_funspec/javatest-funspec_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_funsuite/javatest-funsuite_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_matchers_core/javatest-matchers-core_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_mustmatchers/javatest-mustmatchers_2.12-3.2.9-src.jar",
+                "file://\$BAZEL_CACHE/external/io_bazel_rules_java_javatest_shouldmatchers/javatest-shouldmatchers_2.12-3.2.9-src.jar"
             )
         )
         val environmentVariablesJavaTest = DependencySourcesItem(
