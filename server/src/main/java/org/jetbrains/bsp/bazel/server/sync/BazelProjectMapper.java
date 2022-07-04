@@ -152,7 +152,7 @@ public class BazelProjectMapper {
   private Map<String, String> environmentItem(TargetInfo target) {
     var output = targetInfoToMapOfStrings(target);
     var targetEnv = target.getEnvMap();
-    return output.merge((Map<? extends String, ? extends String>) targetEnv);
+    return output.merge(HashMap.ofAll(targetEnv));
   }
 
   private static Map<String, String> targetInfoToMapOfStrings(TargetInfo targetInfo) {
