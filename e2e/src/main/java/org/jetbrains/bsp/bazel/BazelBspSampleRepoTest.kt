@@ -533,7 +533,10 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             )
         )
         val environmentVariablesJavaTest = DependencySourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_test"), emptyList()
+            BuildTargetIdentifier("//environment_variables:java_test"),
+            listOf(
+                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
+            )
         )
         val expectedDependencies = DependencySourcesResult(
             listOf(
