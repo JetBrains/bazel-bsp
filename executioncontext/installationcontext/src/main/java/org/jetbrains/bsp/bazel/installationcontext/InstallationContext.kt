@@ -10,10 +10,11 @@ data class InstallationContext(
     val javaPath: InstallationContextJavaPathEntity,
     val debuggerAddress: InstallationContextDebuggerAddressEntity?,
     val projectViewFilePath: Path?,
+    val bazelWorkspaceRootDir: Path,
 ) : ExecutionContext()
 
 
-class InstallationContextConstructor(private val projectViewFilePath: Path?) :
+class InstallationContextConstructor(private val projectViewFilePath: Path?, private val bazelWorkspaceRootDir: Path) :
     ExecutionContextConstructor<InstallationContext> {
 
     override fun construct(projectView: ProjectView): Try<InstallationContext> =
@@ -32,7 +33,8 @@ class InstallationContextConstructor(private val projectViewFilePath: Path?) :
     ): InstallationContext = InstallationContext(
         javaPath = javaPathEntity,
         debuggerAddress = debuggerAddressEntity,
-        projectViewFilePath = projectViewFilePath
+        projectViewFilePath = projectViewFilePath,
+        bazelWorkspaceRootDir = bazelWorkspaceRootDir,
     )
 
     override fun constructDefault(): Try<InstallationContext> =
@@ -41,7 +43,8 @@ class InstallationContextConstructor(private val projectViewFilePath: Path?) :
                 InstallationContext(
                     javaPath = javaPathSpec,
                     debuggerAddress = debuggerAddressSpec,
-                    projectViewFilePath = projectViewFilePath
+                    projectViewFilePath = projectViewFilePath,
+                    bazelWorkspaceRootDir= bazelWorkspaceRootDir
                 )
             }
         }
