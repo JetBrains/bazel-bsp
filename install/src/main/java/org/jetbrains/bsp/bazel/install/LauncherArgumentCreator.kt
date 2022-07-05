@@ -31,4 +31,6 @@ class LauncherArgumentCreator(private val installationContext: InstallationConte
 
     fun projectViewFilePathArgv(): String? = installationContext.projectViewFilePath?.toString()
 
+    fun bazelWorkspaceRootDir(): String = installationContext.bazelWorkspaceRootDir.toString()
+
 }

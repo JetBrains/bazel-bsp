@@ -62,7 +62,7 @@ class BloopEnvironmentCreator(
                 it,
                 launcherArgumentCreator.debuggerConnectionArgv(),
                 Constants.BLOOP_BOOTSTRAP_CLASS_NAME,
-                pwd.toString(),
+                launcherArgumentCreator.bazelWorkspaceRootDir(),
                 launcherArgumentCreator.projectViewFilePathArgv()
             )
         }
