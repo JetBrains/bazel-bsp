@@ -28,6 +28,7 @@ class BspConnectionDetailsCreator(private val installationContext: InstallationC
                 it,
                 launcherArgumentCreator.debuggerConnectionArgv(),
                 Constants.SERVER_CLASS_NAME,
+
                 launcherArgumentCreator.projectViewFilePathArgv(),
             )
         }

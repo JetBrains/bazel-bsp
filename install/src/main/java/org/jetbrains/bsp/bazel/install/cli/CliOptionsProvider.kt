@@ -202,7 +202,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         )
 
     private fun bazelWorkspaceRootDir(cmd: CommandLine): Path =
-        getOptionValueAndMapToAbsolutePath(cmd, BAZEL_WORKSPACE_ROOT_DIR_OPT) ?: calculateCurrentAbsoluteDirectory()
+        getOptionValueAndMapToAbsolutePath(cmd, BAZEL_WORKSPACE_ROOT_DIR_OPT) ?: workspaceRootDir(cmd)
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
 
