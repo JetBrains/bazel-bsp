@@ -150,9 +150,9 @@ public class BazelProjectMapper {
   }
 
   private Map<String, String> environmentItem(TargetInfo target) {
-    var output = targetInfoToMapOfStrings(target);
+    var inheritedEnvs = targetInfoToMapOfStrings(target);
     var targetEnv = target.getEnvMap();
-    return output.merge(HashMap.ofAll(targetEnv));
+    return inheritedEnvs.merge(HashMap.ofAll(targetEnv));
   }
 
   private static Map<String, String> targetInfoToMapOfStrings(TargetInfo targetInfo) {

@@ -15,8 +15,8 @@ java_test(
     name = "java_test",
     srcs = ["JavaTest.java"],
     env = {
-        "foo3": "val3",
-        "foo4": "val4",
+        "foo1": "val1",
+        "foo2": "val2",
     },
     env_inherit = [
         "foo3",
