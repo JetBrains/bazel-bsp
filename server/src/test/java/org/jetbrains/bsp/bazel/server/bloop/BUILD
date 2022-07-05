@@ -7,8 +7,6 @@ kt_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.server.bloop",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bloop",
-        "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
 )
 
@@ -19,8 +17,6 @@ kt_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.server.bloop",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bloop",
-        "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
 )
 
@@ -31,8 +27,6 @@ kt_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.server.bloop",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bloop",
-        "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
 )
 
@@ -43,7 +37,5 @@ kt_junit5_test(
     test_package = "org.jetbrains.bsp.bazel.server.bloop",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bloop",
-        "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
 )
