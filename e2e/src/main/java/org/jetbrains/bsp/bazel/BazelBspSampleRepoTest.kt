@@ -410,78 +410,45 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     private fun dependencySourcesResults(): BazelBspTestScenarioStep {
         val javaTargetsJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//java_targets:java_binary"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/java_binary-src.jar"
-            )
+            emptyList()
         )
         val javaTargetsJavaLibrary = DependencySourcesItem(
             BuildTargetIdentifier("//java_targets:java_library"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/libjava_library-src.jar"
-            )
+            emptyList()
         )
         val targetWithDependencyJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//target_with_dependency:java_binary"),
             listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/libjava_library_exported-src.jar",
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/subpackage/libjava_library-src.jar",
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_with_dependency/java_binary-src.jar",
                 "file://\$BAZEL_CACHE/external/guava/guava-28.0-jre-src.jar"
             )
         )
         val javaTargetsSubpackageJavaLibrary = DependencySourcesItem(
             BuildTargetIdentifier("//java_targets/subpackage:java_library"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/subpackage/libjava_library-src.jar"
-            )
+            emptyList()
         )
         val scalaTargetsScalaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//scala_targets:scala_binary"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/scala_targets/scala_binary-src.jar"
-            )
+            emptyList()
         )
         val scalaTargetsScalaTest = DependencySourcesItem(
             BuildTargetIdentifier("//scala_targets:scala_test"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/scala_targets/scala_test-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9-src.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9-src.jar"
-            )
+            emptyList()
         )
         val targetWithResourcesJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//target_with_resources:java_binary"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_with_resources/java_binary-src.jar"
-            )
+            emptyList()
         )
         val targetWithoutArgsBinary = DependencySourcesItem(
             BuildTargetIdentifier("//target_without_args:binary"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_args/binary-src.jar"
-            )
+            emptyList()
         )
         val targetWithoutJvmFlagsBinary = DependencySourcesItem(
             BuildTargetIdentifier("//target_without_jvm_flags:binary"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_jvm_flags/binary-src.jar"
-            )
+            emptyList()
         )
         val targetWithoutMainClassLibrary = DependencySourcesItem(
             BuildTargetIdentifier("//target_without_main_class:library"),
-            listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_main_class/library-src.jar"
-            )
+            emptyList()
         )
         val javaTargetsJavaLibraryExported = DependencySourcesItem(
             BuildTargetIdentifier("//java_targets:java_library_exported"), emptyList()
