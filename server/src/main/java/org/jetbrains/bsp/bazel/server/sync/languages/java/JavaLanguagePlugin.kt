@@ -1,8 +1,13 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildTarget
+import ch.epfl.scala.bsp4j.BuildTargetDataKind
+import ch.epfl.scala.bsp4j.JavacOptionsItem
+import ch.epfl.scala.bsp4j.JvmBuildTarget
+import ch.epfl.scala.bsp4j.JvmEnvironmentItem
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.*
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree

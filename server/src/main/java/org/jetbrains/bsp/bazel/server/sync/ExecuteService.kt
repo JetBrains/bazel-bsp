@@ -1,6 +1,14 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import ch.epfl.scala.bsp4j.CleanCacheParams
+import ch.epfl.scala.bsp4j.CleanCacheResult
+import ch.epfl.scala.bsp4j.CompileParams
+import ch.epfl.scala.bsp4j.CompileResult
+import ch.epfl.scala.bsp4j.RunParams
+import ch.epfl.scala.bsp4j.RunResult
+import ch.epfl.scala.bsp4j.TestParams
+import ch.epfl.scala.bsp4j.TestResult
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode

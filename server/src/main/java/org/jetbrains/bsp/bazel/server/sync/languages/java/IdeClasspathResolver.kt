@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import java.net.URI
-import java.util.regex.Pattern
 
 class IdeClasspathResolver(runtimeClasspath: Sequence<URI>, compileClasspath: Sequence<URI>) {
     private val runtimeJars: Set<String>
