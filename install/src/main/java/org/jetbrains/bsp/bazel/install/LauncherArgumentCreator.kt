@@ -30,4 +30,5 @@ class LauncherArgumentCreator(private val installationContext: InstallationConte
             ?.let { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=$it" }
 
     fun projectViewFilePathArgv(): String? = installationContext.projectViewFilePath?.toString()
+
 }
