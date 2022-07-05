@@ -90,7 +90,7 @@ public class BspRequestsRunner {
   }
 
   private <T> CompletableFuture<T> success(String methodName, T response) {
-    LOGGER.info("{} call finishing with response: {}", methodName, response);
+    LOGGER.info("{} call finishing successfully", methodName);
     return CompletableFuture.completedFuture(response);
   }
 
