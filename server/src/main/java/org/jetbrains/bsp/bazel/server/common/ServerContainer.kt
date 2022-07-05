@@ -52,7 +52,7 @@ class ServerContainer internal constructor(
                 workspaceContextProvider, bspClientLogger, bazelInfo.workspaceRoot
             )
             val compilationManager = BazelBspCompilationManager(bazelRunner)
-            val aspectsResolver = InternalAspectsResolver(bazelInfo, bspInfo)
+            val aspectsResolver = InternalAspectsResolver(bspInfo)
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)
             val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
