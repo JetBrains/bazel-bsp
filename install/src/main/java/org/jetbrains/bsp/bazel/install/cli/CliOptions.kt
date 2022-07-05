@@ -29,5 +29,5 @@ data class CliOptions internal constructor(
         val projectViewFilePath: Path?,
         val projectViewCliOptions: ProjectViewCliOptions?,
         val bloopCliOptions: BloopCliOptions,
-        val bazelWorkspaceRootDir: Path?,
+        val bazelWorkspaceRootDir: Path,
 )

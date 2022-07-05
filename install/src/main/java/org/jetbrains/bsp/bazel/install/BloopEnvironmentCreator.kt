@@ -21,6 +21,7 @@ class BloopEnvironmentCreator(
 ) : EnvironmentCreator(cliOptions.workspaceRootDir) {
 
     private val projectRootDir = cliOptions.workspaceRootDir
+    private val bazelWorkspaceRootDir = cliOptions.bazelWorkspaceRootDir
     private val launcherArgumentCreator = LauncherArgumentCreator(installationContext)
 
     override fun create(): Try<Void> = createDotBazelBsp()
