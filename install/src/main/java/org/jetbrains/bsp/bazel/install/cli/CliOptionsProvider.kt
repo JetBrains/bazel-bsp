@@ -142,6 +142,12 @@ class CliOptionsProvider(private val args: Array<String>) {
             .desc("Use bloop as the BSP server rather than bazel-bsp.")
             .build()
         cliParserOptions.addOption(useBloopOption)
+
+        val bazelWorkspaceRootDirOption = Option.builder(BAZEL_WORKSPACE_ROOT_DIR_OPT)
+            .longOpt("bazel workspace root dir")
+            .desc("Path to directory where workspace is located.")
+            .build()
+        cliParserOptions.addOption(bazelWorkspaceRootDirOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -157,6 +163,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             projectViewFilePath = projectViewFilePath(cmd),
             projectViewCliOptions = createProjectViewCliOptions(cmd),
             bloopCliOptions = createBloopCliOptions(cmd),
+            bazelWorkspaceRootDir = bazelWorkspaceRootDir(cmd),
         )
 
     private fun workspaceRootDir(cmd: CommandLine): Path =
@@ -170,6 +177,9 @@ class CliOptionsProvider(private val args: Array<String>) {
             isHelpOptionUsed = isHelpOptionUsed(cmd),
             printHelp = ::printHelp,
         )
+
+    private fun bazelWorkspaceRootDir(cmd: CommandLine): Path =
+        getOptionValueAndMapToAbsolutePath(cmd, BAZEL_WORKSPACE_ROOT_DIR_OPT) ?: calculateCurrentAbsoluteDirectory()
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
 
@@ -260,6 +270,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
         private const val USE_BLOOP_SHORT_OPT = "u"
+        private const val  BAZEL_WORKSPACE_ROOT_DIR_OPT ="w"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }
