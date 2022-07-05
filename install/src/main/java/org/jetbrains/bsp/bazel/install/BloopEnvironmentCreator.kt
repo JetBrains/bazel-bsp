@@ -54,7 +54,6 @@ class BloopEnvironmentCreator(
 
 
     private fun refreshProjectArgs(): Try<List<String>> {
-        val pwd = Paths.get("").toAbsolutePath()
         return launcherArgumentCreator.classpathArgv().map {
             listOfNotNull(
                 launcherArgumentCreator.javaBinaryArgv(),
