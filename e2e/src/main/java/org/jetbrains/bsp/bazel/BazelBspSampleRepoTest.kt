@@ -229,12 +229,12 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         )
         manualTargetTestScalaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
-        val environmentVariablesJavaLibrary = SourceItem("file://\$WORKSPACE/environment_variables/JavaEnv.java", SourceItemKind.FILE, false)
-        val environmentVariablesJavaLibrarySources = SourcesItem(
+        val environmentVariablesJavaBinary = SourceItem("file://\$WORKSPACE/environment_variables/JavaEnv.java", SourceItemKind.FILE, false)
+        val environmentVariablesJavaBinarySources = SourcesItem(
             BuildTargetIdentifier("//environment_variables:java_binary"),
-            listOf(environmentVariablesJavaLibrary)
+            listOf(environmentVariablesJavaBinary)
         )
-        environmentVariablesJavaLibrarySources.roots = listOf("file://\$WORKSPACE/")
+        environmentVariablesJavaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
         val environmentVariablesJavaTest = SourceItem("file://\$WORKSPACE/environment_variables/JavaTest.java", SourceItemKind.FILE, false)
         val environmentVariablesJavaTestSources = SourcesItem(
@@ -263,7 +263,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 manualTargetTestScalaBinarySources,
                 manualTargetTestJavaTestSources,
                 manualTargetTestScalaTestSources,
-                environmentVariablesJavaLibrarySources,
+                environmentVariablesJavaBinarySources,
                 environmentVariablesJavaTestSources
             )
         )
@@ -317,7 +317,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             ResourcesItem(BuildTargetIdentifier("//manual_target:java_test"), emptyList())
         val manualTargetScalaTest =
             ResourcesItem(BuildTargetIdentifier("//manual_target:scala_test"), emptyList())
-        val environmentVariablesJavaLibrary =
+        val environmentVariablesJavaBinary =
             ResourcesItem(BuildTargetIdentifier("//environment_variables:java_binary"), emptyList())
         val environmentVariablesJavaTest =
             ResourcesItem(BuildTargetIdentifier("//environment_variables:java_test"), emptyList())
@@ -341,7 +341,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 manualTargetScalaBinary,
                 manualTargetJavaTest,
                 manualTargetScalaTest,
-                environmentVariablesJavaLibrary,
+                environmentVariablesJavaBinary,
                 environmentVariablesJavaTest
             )
         )
