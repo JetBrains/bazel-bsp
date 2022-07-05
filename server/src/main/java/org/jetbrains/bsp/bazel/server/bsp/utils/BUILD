@@ -12,7 +12,6 @@ kt_jvm_library(
         "//commons",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
     ],
 )
