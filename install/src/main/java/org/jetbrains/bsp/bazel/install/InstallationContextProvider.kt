@@ -12,11 +12,11 @@ object InstallationContextProvider {
     private const val DEFAULT_GENERATED_PROJECT_VIEW_FILE_NAME = "projectview.bazelproject"
 
     fun parseProjectViewOrGenerateAndSaveAndCreateInstallationContext(cliOptions: CliOptions): Try<InstallationContext> =
-        if (cliOptions.projectViewCliOptions == null) parseProjectViewAndCreateInstallationContext(cliOptions.projectViewFilePath)
+        if (cliOptions.projectViewCliOptions == null) parseProjectViewAndCreateInstallationContext(cliOptions.projectViewFilePath, cliOptions.bazelWorkspaceRootDir)
         else generateAndSaveProjectViewAndCreateInstallationContext(cliOptions)
 
-    private fun parseProjectViewAndCreateInstallationContext(projectViewFilePath: Path?): Try<InstallationContext> {
-        val defaultInstallationContextProvider = DefaultInstallationContextProvider(projectViewFilePath)
+    private fun parseProjectViewAndCreateInstallationContext(projectViewFilePath: Path?, bazelWorkspaceRootDir: Path): Try<InstallationContext> {
+        val defaultInstallationContextProvider = DefaultInstallationContextProvider(projectViewFilePath, bazelWorkspaceRootDir)
 
         return defaultInstallationContextProvider.currentInstallationContext()
     }
@@ -26,7 +26,7 @@ object InstallationContextProvider {
         val projectViewTry =
             ProjectViewCLiOptionsProvider.generateProjectViewAndSave(cliOptions, generatedProjectViewFilePath)
 
-        val installationContextConstructor = InstallationContextConstructor(generatedProjectViewFilePath)
+        val installationContextConstructor = InstallationContextConstructor(generatedProjectViewFilePath, cliOptions.bazelWorkspaceRootDir)
         return installationContextConstructor.construct(projectViewTry)
     }
 
