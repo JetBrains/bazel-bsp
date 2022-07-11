@@ -17,6 +17,7 @@ data class Module(
     @param:JsonProperty("resources") val resources: Set<URI>,
     @param:JsonProperty("sourceDependencies") val sourceDependencies: Set<URI>,
     @param:JsonProperty("languageData") val languageData: LanguageData?,
+    @param:JsonProperty("environmentVariables") val environmentVariables: Map<String, String>
 ) {
 
     override fun toString(): String = Format.`object`(
@@ -50,6 +51,7 @@ data class Module(
                 sourceDependencies.stream()
             )
         ),
-        Format.entry("languageData", languageData)
+        Format.entry("languageData", languageData),
+        Format.entry("environmentVariables", environmentVariables)
     )
 }
