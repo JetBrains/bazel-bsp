@@ -26,6 +26,10 @@
 - e2e test for local jdk and remote jdk
   | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
   
+### Fixes 🛠️
+- CLI project view generator now supports `--excluded-targets` and `--excluded-directories` instead of excluded `-` prefix.
+  | [#267](https://github.com/JetBrains/bazel-bsp/pull/267)
+
 ## [2.1.0] - 11.05.2022
 
 ### Features 🎉
