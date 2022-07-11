@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages
 
 import ch.epfl.scala.bsp4j.BuildTarget
-import io.vavr.control.Option
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import java.net.URI

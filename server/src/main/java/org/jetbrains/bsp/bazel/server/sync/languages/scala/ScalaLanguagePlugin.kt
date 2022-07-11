@@ -1,6 +1,13 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildTarget
+import ch.epfl.scala.bsp4j.BuildTargetDataKind
+import ch.epfl.scala.bsp4j.ScalaBuildTarget
+import ch.epfl.scala.bsp4j.ScalaMainClass
+import ch.epfl.scala.bsp4j.ScalaMainClassesItem
+import ch.epfl.scala.bsp4j.ScalaPlatform
+import ch.epfl.scala.bsp4j.ScalaTestClassesItem
+import ch.epfl.scala.bsp4j.ScalacOptionsItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings

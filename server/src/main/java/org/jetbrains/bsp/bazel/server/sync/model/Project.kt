@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.jetbrains.bsp.bazel.commons.Format
 import java.net.URI
 

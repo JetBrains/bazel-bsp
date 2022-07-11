@@ -17,8 +17,6 @@ java_junit5_test(
     srcs = ["InternalAspectsResolverTest.java"],
     test_package = "org.jetbrains.bsp.bazel.server.bsp.utils",
     deps = [
-        "//bazelrunner",
-        "//commons",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
     ],

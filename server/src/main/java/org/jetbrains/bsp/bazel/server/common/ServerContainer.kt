@@ -11,7 +11,13 @@ import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
-import org.jetbrains.bsp.bazel.server.sync.*
+import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
+import org.jetbrains.bsp.bazel.server.sync.FileProjectStorage
+import org.jetbrains.bsp.bazel.server.sync.ProjectProvider
+import org.jetbrains.bsp.bazel.server.sync.ProjectResolver
+import org.jetbrains.bsp.bazel.server.sync.ProjectStorage
+import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
@@ -52,7 +58,7 @@ class ServerContainer internal constructor(
                 workspaceContextProvider, bspClientLogger, bazelInfo.workspaceRoot
             )
             val compilationManager = BazelBspCompilationManager(bazelRunner)
-            val aspectsResolver = InternalAspectsResolver(bazelInfo, bspInfo)
+            val aspectsResolver = InternalAspectsResolver(bspInfo)
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)
             val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())

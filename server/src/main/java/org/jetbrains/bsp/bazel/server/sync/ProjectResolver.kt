@@ -1,10 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import com.google.protobuf.TextFormat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
@@ -16,9 +17,6 @@ import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.function.Function
-import java.util.stream.Collector
-import java.util.stream.Collectors
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(

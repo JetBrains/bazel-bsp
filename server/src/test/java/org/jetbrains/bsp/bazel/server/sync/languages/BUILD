@@ -8,6 +8,5 @@ kt_junit5_test(
     deps = [
         "//bazelrunner",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
-        "@maven//:io_vavr_vavr",
     ],
 )
