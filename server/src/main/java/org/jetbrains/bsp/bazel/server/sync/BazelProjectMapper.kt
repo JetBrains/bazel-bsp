@@ -139,11 +139,10 @@ class BazelProjectMapper(
     private fun environmentItem(target: TargetInfo): Map<String, String> {
         val inheritedEnvs = collectInheritedEnvs(target)
         val targetEnv = target.envMap
-        return inheritedEnvs.toMap(targetEnv)
+        return inheritedEnvs + targetEnv
     }
 
-    private fun collectInheritedEnvs(targetInfo: TargetInfo): Map<String, String> {
-        return targetInfo.envInheritList.associateWith { System.getenv(it)}
-    }
+    private fun collectInheritedEnvs(targetInfo: TargetInfo): Map<String, String> =
+         targetInfo.envInheritList.associateWith { System.getenv(it)}
 
 }
