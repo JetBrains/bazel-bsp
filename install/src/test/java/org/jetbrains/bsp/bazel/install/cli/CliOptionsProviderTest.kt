@@ -380,10 +380,8 @@ class CliOptionsProviderTest {
                 val args = arrayOf(
                         "-t",
                         "//included_target1",
-                        "-//excluded_target1",
                         "//included_target2",
                         "//included_target3",
-                        "-//excluded_target2",
                 )
 
                 // when
@@ -396,12 +394,39 @@ class CliOptionsProviderTest {
 
                 val expectedTargets = listOf(
                         "//included_target1",
-                        "-//excluded_target1",
                         "//included_target2",
                         "//included_target3",
-                        "-//excluded_target2",
                 )
                 cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
+            }
+        }
+
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.excludedTargets test")
+        inner class ExcludedTargetsTests {
+
+            @Test
+            fun `should return success if excluded targets are specified`() {
+                // given
+                val args = arrayOf(
+                    "--excluded-targets",
+                    "//excluded_target1",
+                    "//excluded_target2",
+                )
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedTargets = listOf(
+                    "//excluded_target1",
+                    "//excluded_target2",
+                )
+                cliOptions.projectViewCliOptions?.excludedTargets shouldBe expectedTargets
             }
         }
 
@@ -477,7 +502,6 @@ class CliOptionsProviderTest {
                         "-r",
                         "included_dir1",
                         "included_dir2",
-                        "-excluded_dir3"
                 )
 
                 // when
@@ -491,9 +515,38 @@ class CliOptionsProviderTest {
                 val expectedDirs = listOf(
                         "included_dir1",
                         "included_dir2",
-                        "-excluded_dir3",
                 )
                 cliOptions.projectViewCliOptions?.directories shouldBe expectedDirs
+            }
+        }
+
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.excludedDirectories test")
+        inner class ExcludedDirectoriesTest {
+            @Test
+            fun `should return success if excluded directories are specified`() {
+                // given
+                val args = arrayOf(
+                    "--excluded-directories",
+                    "excluded_dir1",
+                    "excluded_dir2",
+                    "excluded_dir3",
+                )
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                val expectedDirs = listOf(
+                    "excluded_dir1",
+                    "excluded_dir2",
+                    "excluded_dir3",
+                )
+                cliOptions.projectViewCliOptions?.excludedDirectories shouldBe expectedDirs
             }
         }
 
@@ -551,10 +604,11 @@ class CliOptionsProviderTest {
                     "host:8000",
                     "-t",
                     "//included_target1",
-                    "-//excluded_target1",
                     "//included_target2",
                     "//included_target3",
-                    "-//excluded_target2",
+                    "--excluded-targets",
+                    "//excluded_target1",
+                    "//excluded_target2",
                     "-f",
                     "--build_flag1=value1",
                     "--build_flag1=value2",
@@ -563,7 +617,8 @@ class CliOptionsProviderTest {
                     "-r",
                     "included_dir1",
                     "included_dir2",
-                    "-excluded_dir3",
+                    "--excluded-directories",
+                    "excluded_dir1",
                     "-v"
             )
 
@@ -593,13 +648,16 @@ class CliOptionsProviderTest {
 
             val expectedTargets = listOf(
                     "//included_target1",
-                    "-//excluded_target1",
                     "//included_target2",
                     "//included_target3",
-                    "-//excluded_target2",
             )
-
             cliOptions.projectViewCliOptions?.targets shouldBe expectedTargets
+
+            val expectedExcludedTargets = listOf(
+                    "//excluded_target1",
+                    "//excluded_target2",
+            )
+            cliOptions.projectViewCliOptions?.excludedTargets shouldBe expectedExcludedTargets
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
@@ -609,9 +667,13 @@ class CliOptionsProviderTest {
             val expectedDirs = listOf(
                     "included_dir1",
                     "included_dir2",
-                    "-excluded_dir3",
             )
             cliOptions.projectViewCliOptions?.directories shouldBe expectedDirs
+
+            val expectedExcludedDirs = listOf(
+                    "excluded_dir1",
+            )
+            cliOptions.projectViewCliOptions?.excludedDirectories shouldBe expectedExcludedDirs
 
             cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
         }
