@@ -1,8 +1,12 @@
-load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("@rules_java//java:defs.bzl", "java_binary")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "server",
-    srcs = glob(["*.java"]),
+    srcs = glob([
+        "**/*.java",
+        "**/*.kt",
+    ]),
     visibility = ["//server:__subpackages__"],
     deps = [
         "//bazelrunner",
@@ -24,7 +28,6 @@ java_library(
         "@maven//:ch_epfl_scala_bloop_config_2_13",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_guava_guava",
-        "@maven//:io_vavr_vavr",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",

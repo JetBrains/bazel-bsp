@@ -9,9 +9,8 @@ class JdkVersionResolver {
   fun resolve(path: Path): Int? =
       versions.computeIfAbsent(path.toRealPath()) { resolveJavaVersion(it) }
 
-  private fun resolveJavaVersion(path: Path): Int? {
-    return readFromReleaseFile(path) ?: readByRunningJavaBinary(path)
-  }
+  private fun resolveJavaVersion(path: Path): Int? =
+    readFromReleaseFile(path) ?: readByRunningJavaBinary(path)
 
   private fun readFromReleaseFile(path: Path): Int? {
     val releasePath = path.resolve("release")
