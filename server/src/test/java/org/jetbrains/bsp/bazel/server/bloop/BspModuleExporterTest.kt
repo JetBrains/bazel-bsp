@@ -48,9 +48,10 @@ class BspModuleExporterTest {
                     emptyList(),
                     listOf(baseDirectory.resolve("cp1").toUri()),
                     emptyList(),
-                    emptyList()
+                    emptyList(),
                 )
-            )
+            ),
+            hashMapOf()
         )
         val project = Project(
             baseDirectory.toUri(), listOf(bspModule), emptyMap()
