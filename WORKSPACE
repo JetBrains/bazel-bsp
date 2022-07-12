@@ -111,7 +111,6 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(GOOGLEAPIS_TAG),
 )
 
-
 # ======================================================================================================================
 # rules_proto
 
@@ -130,7 +129,9 @@ http_archive(
 
 # ----------------------------------------------------------------------------------------------------------------------
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
 rules_proto_dependencies()
+
 rules_proto_toolchains()
 
 # ======================================================================================================================
