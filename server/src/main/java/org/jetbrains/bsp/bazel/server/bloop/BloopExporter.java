@@ -12,13 +12,13 @@ import ch.epfl.scala.bsp4j.TaskProgressParams;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import com.google.common.collect.Sets;
 import io.grpc.ServerBuilder;
-import io.vavr.collection.HashSet;
-import io.vavr.collection.Set;
-import io.vavr.control.Option;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.jetbrains.bsp.bazel.server.common.ServerContainer;
@@ -43,38 +43,39 @@ class BloopExporter {
   public void export() throws BazelExportFailedException {
     var serverContainer =
         ServerContainer.create(
-            bspInfo,
-            workspaceContextProvider,
-            Option.of(this.workspaceRoot),
-            Option.of(new NoopProjectStorage()));
-    var projectProvider = serverContainer.projectProvider;
+            bspInfo, workspaceContextProvider, this.workspaceRoot, new NoopProjectStorage());
+    var projectProvider = serverContainer.getProjectProvider();
     var client = new BloopBuildClient(System.out);
     initializeClient(serverContainer, client);
 
     var project = projectProvider.refreshAndGet();
-
+    var toFilter =
+        project.getModules().stream()
+            .map(m -> new BuildTargetIdentifier(m.getLabel().getValue()))
+            .collect(Collectors.toList());
     var failedTargets = client.getFailedTargets();
     var failedTransitiveTargets =
-        failedTargets.removeAll(
-            project.modules().map(m -> new BuildTargetIdentifier(m.label().getValue())));
+        failedTargets.stream().filter(toFilter::contains).collect(Collectors.toSet());
 
-    if (failedTransitiveTargets.nonEmpty()) {
+    if (!failedTransitiveTargets.isEmpty()) {
       throw new BazelExportFailedException(failedTransitiveTargets);
     }
 
-    serverContainer.bspClientLogger.timed(
-        "Exporting to bloop",
-        () -> {
-          var bloopPath = bspInfo.bspProjectRoot().resolve(".bloop");
-          var writtenFiles = new BspProjectExporter(project, bloopPath).export();
-          cleanUpBloopDirectory(writtenFiles, bloopPath);
-        });
+    serverContainer
+        .getBspClientLogger()
+        .timed(
+            "Exporting to bloop",
+            () -> {
+              var bloopPath = bspInfo.bspProjectRoot().resolve(".bloop");
+              var writtenFiles = new BspProjectExporter(project, bloopPath).export();
+              cleanUpBloopDirectory(writtenFiles, bloopPath);
+            });
   }
 
   private void initializeClient(ServerContainer serverContainer, BloopBuildClient client) {
-    serverContainer.bspClientLogger.initialize(client);
-    var bepServer = new BepServer(client, new DiagnosticsService(serverContainer.bazelInfo));
-    serverContainer.compilationManager.setBepServer(bepServer);
+    serverContainer.getBspClientLogger().initialize(client);
+    var bepServer = new BepServer(client, new DiagnosticsService(serverContainer.getBazelInfo()));
+    serverContainer.getCompilationManager().setBepServer(bepServer);
 
     var grpcServer = ServerBuilder.forPort(0).addService(bepServer).build();
     try {
@@ -82,18 +83,15 @@ class BloopExporter {
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
-    serverContainer.bazelRunner.setBesBackendPort(grpcServer.getPort());
+    serverContainer.getBazelRunner().setBesBackendPort(grpcServer.getPort());
   }
 
   private void cleanUpBloopDirectory(Set<Path> expected, Path bloopRoot) {
-    try (var listResult = Files.list(bloopRoot)) {
-      var existingFiles =
-          listResult
-              .filter(name -> name.toString().endsWith(".config.json"))
-              .collect(HashSet.collector());
-
-      var extraFiles = existingFiles.diff(expected);
-      extraFiles.forEach(p -> p.toFile().delete());
+    try {
+      Files.list(bloopRoot)
+          .filter(name -> name.toString().endsWith(".config.json"))
+          .filter(p -> !expected.contains(p))
+          .forEach(p -> p.toFile().delete());
     } catch (Exception e) {
       // it's fine
     }
@@ -121,7 +119,7 @@ class BloopExporter {
     }
 
     public Set<BuildTargetIdentifier> getFailedTargets() {
-      return HashSet.ofAll(failedTargets);
+      return new HashSet<>(failedTargets);
     }
 
     @Override
@@ -156,8 +154,8 @@ class BloopExporter {
   private static final class NoopProjectStorage implements ProjectStorage {
 
     @Override
-    public Option<Project> load() {
-      return Option.none();
+    public Project load() {
+      return null;
     }
 
     @Override

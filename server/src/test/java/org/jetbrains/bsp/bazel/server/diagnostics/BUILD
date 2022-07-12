@@ -8,6 +8,5 @@ kt_junit5_test(
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "@maven//:ch_epfl_scala_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
 )

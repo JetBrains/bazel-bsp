@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.install
 import ch.epfl.scala.bsp4j.BspConnectionDetails
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
-import java.lang.IllegalArgumentException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path

@@ -220,6 +220,7 @@ maven_install(
         "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.17.2",
         "org.apache.logging.log4j:log4j-core:2.17.2",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2",
         "org.junit.jupiter:junit-jupiter:5.8.2",
         "com.fasterxml.jackson.core:jackson-databind:2.13.3",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3",
