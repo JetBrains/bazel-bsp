@@ -1,24 +1,23 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.jetbrains.bsp.bazel.commons.Format
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import java.net.URI
 
 data class JavaModule(
-    @param:JsonProperty("jdk") val jdk: Jdk,
-    @param:JsonProperty("runtimeJdk") val runtimeJdk: Jdk?,
-    @param:JsonProperty("javacOpts") val javacOpts: List<String>,
-    @param:JsonProperty("jvmOps") val jvmOps: List<String>,
-    @param:JsonProperty("mainOutput") val mainOutput: URI,
-    @param:JsonProperty("allOutput") val allOutputs: List<URI>,
-    @param:JsonProperty("mainClass") val mainClass: String?,
-    @param:JsonProperty("args") val args: List<String>,
-    @param:JsonProperty("runtimeClasspath") val runtimeClasspath: List<URI>,
-    @param:JsonProperty("compileClasspath") val compileClasspath: List<URI>,
-    @param:JsonProperty("sourcesClasspath") val sourcesClasspath: List<URI>,
-    @param:JsonProperty("ideClasspath") val ideClasspath: List<URI>
+    val jdk: Jdk,
+    val runtimeJdk: Jdk?,
+    val javacOpts: List<String>,
+    val jvmOps: List<String>,
+    val mainOutput: URI,
+    val allOutputs: List<URI>,
+    val mainClass: String?,
+    val args: List<String>,
+    val runtimeClasspath: List<URI>,
+    val compileClasspath: List<URI>,
+    val sourcesClasspath: List<URI>,
+    val ideClasspath: List<URI>
 ) : LanguageData {
 
     override fun toString(): String {
