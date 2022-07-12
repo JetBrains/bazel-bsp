@@ -20,7 +20,7 @@ class InstallationContextConstructorTest {
     fun beforeEach() {
         // given
         this.installationContextConstructor =
-            InstallationContextConstructor(Path("/path/to/projectview.bazelproject"), Path("/path/to/bazel.workspacerootdir"))
+            InstallationContextConstructor(Path("/path/to/projectview.bazelproject"), Path("/path/to/bazel/workspace"))
     }
 
     @Nested
