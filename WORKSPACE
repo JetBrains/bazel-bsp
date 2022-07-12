@@ -226,6 +226,7 @@ maven_install(
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.8",
+        "com.google.protobuf:protobuf-java:3.21.2",
     ],
     fetch_sources = True,
     repositories = [
