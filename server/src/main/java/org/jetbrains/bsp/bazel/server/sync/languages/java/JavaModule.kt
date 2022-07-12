@@ -4,6 +4,11 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import java.net.URI
 
+data class Jdk(
+    val version: String,
+    val javaHome: URI?
+)
+
 data class JavaModule(
     val jdk: Jdk,
     val runtimeJdk: Jdk?,
