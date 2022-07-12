@@ -536,7 +536,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//environment_variables:java_test"),
             listOf(
                 "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar",
-                "file://\$BAZEL_CACHE/home/runner/.cache/bazel/_bazel_runner/bb693d034199da54feca72855cf2a05d/execroot/__main__/external/remote_java_tools/java_tools/Runner_deploy.jar"
+                "file://\$BAZEL_CACHE/external/remote_java_tools/java_tools/Runner_deploy.jar"
             )
         )
         val expectedDependencies = DependencySourcesResult(
