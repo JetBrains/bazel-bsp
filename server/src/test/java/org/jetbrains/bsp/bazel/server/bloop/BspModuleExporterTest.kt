@@ -78,8 +78,8 @@ class BspModuleExporterTest {
             baseDirectory.toScalaList().toOption(),
             emptyScalaList(),
             scalaListOf(baseDirectory.resolve("cp1")),
-            bloopRoot.resolve("z_73CA8EDE4AC5"),
-            bloopRoot.resolve("z_73CA8EDE4AC5/classes"),
+            bloopRoot.resolve("z_A4E40351C939"),
+            bloopRoot.resolve("z_A4E40351C939/classes"),
             emptyScalaList<Path>().toOption(),
             Config.Scala(
                 "scala",
