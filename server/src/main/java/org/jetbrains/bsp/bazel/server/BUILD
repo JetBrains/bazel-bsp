@@ -23,12 +23,9 @@ kt_jvm_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/common",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
-        "@io_bazel//src/main/protobuf:build_java_proto",
-        "@io_bazel//third_party/grpc:grpc-jar",
         "@maven//:ch_epfl_scala_bloop_config_2_13",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
-        "@maven//:org_scala_lang_scala_library",
     ],
 )
 
