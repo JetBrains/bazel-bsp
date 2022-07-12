@@ -849,7 +849,8 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//environment_variables:java_test"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test.jar"
+                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test.jar",
+                        "file://\$BAZEL_CACHE/external/remote_java_tools/java_tools/Runner_deploy.jar"
                     ),
                     emptyList(),
                     "\$WORKSPACE",
