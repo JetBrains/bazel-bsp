@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync.model
 
-import org.jetbrains.bsp.bazel.commons.Format
 import java.net.URI
 
 /** Project is the internal model of the project. Bazel/Aspect Model -> Project -> BSP Model  */
@@ -16,8 +15,4 @@ data class Project(
 
     fun findTargetBySource(documentUri: URI): Label? =
         sourceToTarget[documentUri]
-
-    override fun toString(): String {
-        return Format.`object`("Project", Format.entry("workspaceRoot", workspaceRoot))
-    }
 }
