@@ -22,9 +22,9 @@ http_archive(
 # ======================================================================================================================
 # kotlin
 
-IO_BAZEL_KOTLIN_RULES_TAG = "v1.5.0"
+IO_BAZEL_KOTLIN_RULES_TAG = "v1.6.0"
 
-IO_BAZEL_KOTLIN_RULES_SHA = "12d22a3d9cbcf00f2e2d8f0683ba87d3823cb8c7f6837568dd7e48846e023307"
+IO_BAZEL_KOTLIN_RULES_SHA = "a57591404423a52bd6b18ebba7979e8cd2243534736c5c94d35c89718ea38f94"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
