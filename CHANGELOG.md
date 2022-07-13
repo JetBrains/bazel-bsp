@@ -25,6 +25,8 @@
   | [#249](https://github.com/JetBrains/bazel-bsp/pull/249)
 - e2e test for local jdk and remote jdk
   | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
+- JvmEnvironmentItem is set using env from target
+  | [#260](https://github.com/JetBrains/bazel-bsp/pull/260)
   
 ## [2.1.0] - 11.05.2022
 
