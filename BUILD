@@ -34,9 +34,9 @@ setup_intellij_project(
 generate_indexes(
     name = "indexes",
     deps = [
-#        "//foo",
-#        "//bar",
         "//install",
+        "//commons/src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//install/src/main/java/org/jetbrains/bsp/bazel/install" # 'indexes' tool does not catch 'exports' correctly
     ],
 )
 
