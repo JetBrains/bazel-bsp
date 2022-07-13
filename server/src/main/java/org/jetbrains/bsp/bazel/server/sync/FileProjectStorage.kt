@@ -8,36 +8,34 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
-class FileProjectStorage(private val path: Path, private val logger: BspClientLogger) :
+class FileProjectStorage(private val path: Path) :
     ProjectStorage {
 
     private val mapper = jacksonObjectMapper()
 
-    constructor(bspInfo: BspInfo, logger: BspClientLogger) : this(
-        bspInfo.bazelBspDir().resolve("project-cache.json"), logger
-    )
+    constructor(bspInfo: BspInfo) : this(bspInfo.bazelBspDir().resolve("project-cache.json"))
 
     override fun load(): Project? = path.takeIf(Files::exists)?.let { read() }
 
-    private fun read(): Project = logger.timed<Project>(
+    private fun read(): Project = BspClientLogger.timed<Project>(
         "Loading project from local cache"
     ) {
         try {
             return@timed mapper.readValue(path.toFile(), Project::class.java)
         } catch (e: IOException) {
             // TODO figure out why this error is otherwise not propagated to bsp client
-            logger.error(e.toString())
+            BspClientLogger.error(e.toString())
             throw RuntimeException(e)
         }
     }
 
-    override fun store(project: Project) = logger.timed(
+    override fun store(project: Project) = BspClientLogger.timed(
         "Saving project to local cache"
     ) {
         try {
             mapper.writeValue(path.toFile(), project)
         } catch (e: IOException) {
-            logger.error(e.toString())
+            BspClientLogger.error(e.toString())
             throw RuntimeException(e)
         }
     }

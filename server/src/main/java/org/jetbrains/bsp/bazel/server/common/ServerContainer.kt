@@ -6,7 +6,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner.Companion.inCwd
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner.Companion.of
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
@@ -30,7 +29,6 @@ import java.nio.file.Path
 
 class ServerContainer internal constructor(
     val projectProvider: ProjectProvider,
-    val bspClientLogger: BspClientLogger,
     val bazelInfo: BazelInfo,
     val bazelRunner: BazelRunner,
     val compilationManager: BazelBspCompilationManager,
@@ -44,19 +42,12 @@ class ServerContainer internal constructor(
             workspaceRoot: Path?,
             projectStorage: ProjectStorage?
         ): ServerContainer {
-            val bspClientLogger = BspClientLogger()
             val bazelInfoStorage = BazelInfoStorage(bspInfo)
             val bazelDataResolver = workspaceRoot?.let { root: Path ->
-                BazelInfoResolver(
-                    of(workspaceContextProvider, bspClientLogger, root), bazelInfoStorage
-                )
-            } ?: BazelInfoResolver(
-                inCwd(workspaceContextProvider, bspClientLogger), bazelInfoStorage
-            )
+                BazelInfoResolver(of(workspaceContextProvider, root), bazelInfoStorage)
+            } ?: BazelInfoResolver(inCwd(workspaceContextProvider), bazelInfoStorage)
             val bazelInfo = bazelDataResolver.resolveBazelInfo()
-            val bazelRunner = of(
-                workspaceContextProvider, bspClientLogger, bazelInfo.workspaceRoot
-            )
+            val bazelRunner = of(workspaceContextProvider, bazelInfo.workspaceRoot)
             val compilationManager = BazelBspCompilationManager(bazelRunner)
             val aspectsResolver = InternalAspectsResolver(bspInfo)
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)
@@ -76,13 +67,11 @@ class ServerContainer internal constructor(
                 bazelBspAspectsManager,
                 workspaceContextProvider,
                 bazelProjectMapper,
-                bspClientLogger
             )
-            val finalProjectStorage = projectStorage ?: FileProjectStorage(bspInfo, bspClientLogger)
+            val finalProjectStorage = projectStorage ?: FileProjectStorage(bspInfo)
             val projectProvider = ProjectProvider(projectResolver, finalProjectStorage)
             return ServerContainer(
                 projectProvider,
-                bspClientLogger,
                 bazelInfo,
                 bazelRunner,
                 compilationManager,

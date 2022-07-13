@@ -29,12 +29,10 @@ class BazelBspServer(
     private val bazelInfo: BazelInfo
     private val bspServerApi: BspServerApi
     private val compilationManager: BazelBspCompilationManager
-    private val bspClientLogger: BspClientLogger
 
     init {
         val serverContainer =
             ServerContainer.create(bspInfo, workspaceContextProvider, workspaceRoot, null)
-        bspClientLogger = serverContainer.bspClientLogger
         bazelInfo = serverContainer.bazelInfo
         compilationManager = serverContainer.compilationManager
         bazelRunner = serverContainer.bazelRunner
@@ -68,7 +66,7 @@ class BazelBspServer(
             .setExecutorService(bspIntegrationData.executor).create()
         bspIntegrationData.launcher = launcher
         val client = launcher.remoteProxy
-        bspClientLogger.initialize(client)
+        BspClientLogger.initialize(client)
         val bepServer = BepServer(client, DiagnosticsService(bazelInfo))
         compilationManager.setBepServer(bepServer)
         bspIntegrationData.server = ServerBuilder.forPort(0).addService(bepServer).build()

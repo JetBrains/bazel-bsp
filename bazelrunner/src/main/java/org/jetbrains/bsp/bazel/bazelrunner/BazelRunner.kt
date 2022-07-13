@@ -8,7 +8,6 @@ import java.nio.file.Path
 
 class BazelRunner private constructor(
     private val workspaceContextProvider: WorkspaceContextProvider,
-    private val bspClientLogger: BspClientLogger,
     private val workspaceRoot: Path?,
 ) {
 
@@ -18,17 +17,16 @@ class BazelRunner private constructor(
     // This is runner without workspace path. It is used to determine workspace
     // path and create a fully functional runner.
     @JvmStatic
-    fun inCwd(workspaceContextProvider: WorkspaceContextProvider, bspClientLogger: BspClientLogger): BazelRunner {
-      return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot = null)
+    fun inCwd(workspaceContextProvider: WorkspaceContextProvider): BazelRunner {
+      return BazelRunner(workspaceContextProvider, workspaceRoot = null)
     }
 
     @JvmStatic
     fun of(
         workspaceContextProvider: WorkspaceContextProvider,
-        bspClientLogger: BspClientLogger,
         workspaceRoot: Path?,
     ): BazelRunner {
-      return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot)
+      return BazelRunner(workspaceContextProvider, workspaceRoot)
     }
   }
 
@@ -50,13 +48,13 @@ class BazelRunner private constructor(
     val processBuilder = ProcessBuilder(processArgs)
     workspaceRoot?.let { processBuilder.directory(it.toFile()) }
     val process = processBuilder.start()
-    return BazelProcess(process, bspClientLogger)
+    return BazelProcess(process)
   }
 
   private fun logInvocation(processArgs: List<String>) {
     "Invoking: ${processArgs.joinToString(" ")}"
         .also { LOGGER.info(it) }
-        .also { bspClientLogger.message(it) }
+        .also { BspClientLogger.message(it) }
   }
 
   private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelPath.value.toString()

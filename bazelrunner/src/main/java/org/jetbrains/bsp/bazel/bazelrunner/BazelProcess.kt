@@ -9,11 +9,10 @@ import java.time.Duration
 
 class BazelProcess internal constructor(
     private val process: Process,
-    private val logger: BspClientLogger
 ) {
 
   fun waitAndGetResult(): BazelProcessResult {
-    val outputProcessor = AsyncOutputProcessor(process, logger::message, LOGGER::info)
+    val outputProcessor = AsyncOutputProcessor(process, BspClientLogger::message, LOGGER::info)
     val stopwatch = Stopwatch.start()
 
     val exitCode = outputProcessor.waitForExit()
@@ -22,8 +21,9 @@ class BazelProcess internal constructor(
     return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
   }
 
+  // TODO, can we use .timed somehow?
   private fun logCompletion(exitCode: Int, duration: Duration) {
-    logger.message("Command completed in %s (exit code %d)", Format.duration(duration), exitCode)
+    BspClientLogger.message("Command completed in ${Format.duration(duration)} (exit code $exitCode)")
   }
 
   companion object {

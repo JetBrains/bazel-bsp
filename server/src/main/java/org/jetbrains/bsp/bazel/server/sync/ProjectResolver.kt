@@ -23,26 +23,29 @@ class ProjectResolver(
     private val bazelBspAspectsManager: BazelBspAspectsManager,
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bazelProjectMapper: BazelProjectMapper,
-    private val logger: BspClientLogger
 ) {
     fun resolve(): Project {
-        val workspaceContext = logger.timed(
+        val workspaceContext = BspClientLogger.timed(
             "Reading project view adn creating workspace context",
             workspaceContextProvider::currentWorkspaceContext
         )
-        val bepOutput = logger.timed<BepOutput>(
-            "Building project with aspect"
-        ) { buildProjectWithAspect(workspaceContext) }
-        val aspectOutputs = logger.timed<Set<URI>>(
-            "Reading aspect output paths"
-        ) { bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
+        val bepOutput = BspClientLogger.timed("Building project with aspect") {
+            buildProjectWithAspect(workspaceContext)
+        }
+        val aspectOutputs = BspClientLogger.timed("Reading aspect output paths") {
+            bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP)
+        }
         val rootTargets = bepOutput.rootTargets()
-        val targets = logger.timed<Map<String, TargetInfo>>(
-            "Parsing aspect outputs"
-        ) { readTargetMapFromAspectOutputs(aspectOutputs) }
-        return logger.timed<Project>(
-            "Mapping to internal model"
-        ) { bazelProjectMapper.createProject(targets, rootTargets, workspaceContext) }
+        val targets = BspClientLogger.timed("Parsing aspect outputs") {
+            readTargetMapFromAspectOutputs(aspectOutputs)
+        }
+        return BspClientLogger.timed("Mapping to internal model") {
+            bazelProjectMapper.createProject(
+                targets,
+                rootTargets,
+                workspaceContext
+            )
+        }
     }
 
     private fun buildProjectWithAspect(workspaceContext: WorkspaceContext): BepOutput =

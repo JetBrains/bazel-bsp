@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
@@ -24,7 +23,7 @@ class ProjectStorageTest {
     fun `should store and load project`() {
         val path = createTempPath("project-cache-test.json")
         Files.deleteIfExists(path)
-        val storage = FileProjectStorage(path, BspClientLogger())
+        val storage = FileProjectStorage(path)
         val empty = storage.load()
         empty shouldBe null
         val scalaModule = ScalaModule(

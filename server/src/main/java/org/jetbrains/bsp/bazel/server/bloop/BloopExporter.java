@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.jetbrains.bsp.bazel.server.common.ServerContainer;
@@ -61,19 +62,20 @@ class BloopExporter {
       throw new BazelExportFailedException(failedTransitiveTargets);
     }
 
-    serverContainer
-        .getBspClientLogger()
+    BspClientLogger.INSTANCE
         .timed(
             "Exporting to bloop",
             () -> {
               var bloopPath = bspInfo.bspProjectRoot().resolve(".bloop");
               var writtenFiles = new BspProjectExporter(project, bloopPath).export();
               cleanUpBloopDirectory(writtenFiles, bloopPath);
+              // TODO needed since it's java
+              return null;
             });
   }
 
   private void initializeClient(ServerContainer serverContainer, BloopBuildClient client) {
-    serverContainer.getBspClientLogger().initialize(client);
+    BspClientLogger.INSTANCE.initialize(client);
     var bepServer = new BepServer(client, new DiagnosticsService(serverContainer.getBazelInfo()));
     serverContainer.getCompilationManager().setBepServer(bepServer);
 
