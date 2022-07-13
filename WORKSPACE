@@ -209,6 +209,34 @@ git_repository(
 # maven
 
 load("@rules_jvm_external//:defs.bzl", "maven_install")
+# ================================================
+
+http_archive(
+    name = "rules_intellij",
+    sha256 = "ceeee65201c2deed111719afbf015a3582c52967910775e1fee4bd9afeb70648",
+    strip_prefix = "rules_idea-dce01a6a6053dda3adfe100a108743977564b812",
+    url = "https://github.com/flarebuild/rules_idea/archive/dce01a6a6053dda3adfe100a108743977564b812.zip"
+)
+
+load("@rules_intellij//intellij:repositories.bzl", "rules_intellij_repositories")
+rules_intellij_repositories()
+
+load("@rules_intellij//intellij:repositories.bzl",
+  "RULES_INTELLIJ_JAVA_ARTIFACTS",
+   "RULES_INTELLIJ_JAVA_OVERRIDE_TARGETS")
+
+# GRPC
+load(
+    "@io_grpc_grpc_java//:repositories.bzl",
+    "IO_GRPC_GRPC_JAVA_ARTIFACTS",
+    "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS",
+    "grpc_java_repositories",
+)
+
+
+overrides = {}
+overrides.update(IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS)
+overrides.update(RULES_INTELLIJ_JAVA_OVERRIDE_TARGETS)
 
 maven_install(
     artifacts = [
@@ -220,17 +248,51 @@ maven_install(
         "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.17.2",
         "org.apache.logging.log4j:log4j-core:2.17.2",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2",
         "org.junit.jupiter:junit-jupiter:5.8.2",
         "com.fasterxml.jackson.core:jackson-databind:2.13.3",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3",
         "io.vavr:vavr-jackson:0.10.3",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.8",
-    ],
+    ] + RULES_INTELLIJ_JAVA_ARTIFACTS + IO_GRPC_GRPC_JAVA_ARTIFACTS, # I needed to add it manually, because rules_intellij_deps_repositories seems not to work
     fetch_sources = True,
     repositories = [
         "https://maven.google.com",
         "https://repo.maven.apache.org/maven2",
     ],
+    generate_compat_repositories = True,
+    override_targets = overrides
 )
+
+
+load("@rules_intellij//intellij:deps_repositories.bzl", "rules_intellij_deps_repositories")
+rules_intellij_deps_repositories()
+
+load("@rules_intellij//intellij:toolchains.bzl", "rules_intellij_deps_toolchains")
+rules_intellij_deps_toolchains()
+
+load("@rules_intellij//intellij:intellij.bzl", "intellij")
+intellij(
+    name = "idea_ultimate",
+    version = "2021.2.3",
+    sha256 = "89ad86c940ab1cc7dc13882cd705919830ccfb02814789c0f9389fff26af1ad1",
+    type = "ideaIU",
+    plugins = {
+        "indexing-shared-ultimate:intellij.indexing.shared:212.5457.6": "d0dc4254cd961669722febeda81ee6fd480b938efb21a79559b51f8b58500ea6",
+        "indexing-shared:intellij.indexing.shared.core": "",
+    },
+)
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "bazel_2022.02.23.0.0-api-version-212",
+    urls = [ "https://plugins.jetbrains.com/plugin/download?rel=true&updateId=161082", ],
+    sha256 = "6d91e41cb934f1d9cb1fe07acd9ce4f077d66bd4460e2223cc901229b7b558f0",
+)
+
+register_toolchains("//:project")
+register_toolchains("//:ide")
+
+
