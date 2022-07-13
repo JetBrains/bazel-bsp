@@ -62,16 +62,15 @@ class BloopExporter {
       throw new BazelExportFailedException(failedTransitiveTargets);
     }
 
-    BspClientLogger.INSTANCE
-        .timed(
-            "Exporting to bloop",
-            () -> {
-              var bloopPath = bspInfo.bspProjectRoot().resolve(".bloop");
-              var writtenFiles = new BspProjectExporter(project, bloopPath).export();
-              cleanUpBloopDirectory(writtenFiles, bloopPath);
-              // TODO needed since it's java
-              return null;
-            });
+    BspClientLogger.INSTANCE.timed(
+        "Exporting to bloop",
+        () -> {
+          var bloopPath = bspInfo.bspProjectRoot().resolve(".bloop");
+          var writtenFiles = new BspProjectExporter(project, bloopPath).export();
+          cleanUpBloopDirectory(writtenFiles, bloopPath);
+          // TODO needed since it's java
+          return null;
+        });
   }
 
   private void initializeClient(ServerContainer serverContainer, BloopBuildClient client) {
