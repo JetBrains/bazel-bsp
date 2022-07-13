@@ -72,7 +72,7 @@ class BazelProjectMapper(
         val languagePlugin = languagePluginsService.getPlugin(languages)
         val sourceSet = resolveSourceSet(target, languagePlugin)
         val resources = resolveResources(target)
-        val languageData = languagePlugin.resolveModule(target)
+        val languageData = languagePlugin.resolveModule(target, dependencyTree)
         val sourceDependencies = languagePlugin.dependencySources(target, dependencyTree)
         return Module(
             label = label,

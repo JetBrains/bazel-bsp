@@ -31,8 +31,11 @@ class JavaLanguagePlugin(
         jdk = jdkResolver.resolve(targets)
     }
 
-    override fun resolveModule(targetInfo: TargetInfo): JavaModule? =
-        targetInfo.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo?.run {
+    override fun resolveModule(
+        targetInfo: TargetInfo,
+        dependencyTree: DependencyTree
+    ): JavaModule? =
+        targetInfoIfPresent(targetInfo)?.run {
             val mainOutput = bazelPathsResolver.resolveUri(getJars(0).getBinaryJars(0))
             val allOutputs = jarsList.flatMap {
                 it.interfaceJarsList + it.binaryJarsList
@@ -41,9 +44,13 @@ class JavaLanguagePlugin(
             val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList)
             val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList)
             val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList)
-            val ideClasspath = resolveIdeClasspath(
-                runtimeClasspath.asSequence(), compileClasspath.asSequence()
-            )
+            val ideClasspath = getFilteredClassPaths(targetInfo.id, dependencyTree).let {
+                (filteredRuntimeClasspath, filteredCompileClasspath) ->
+                resolveIdeClasspath(
+                    (runtimeClasspath - filteredRuntimeClasspath).asSequence(),
+                    (compileClasspath - filteredCompileClasspath).asSequence()
+                )
+            }
             val runtimeJdk = jdkResolver.resolveJdk(targetInfo)
 
             JavaModule(
@@ -65,6 +72,9 @@ class JavaLanguagePlugin(
 
     override fun calculateSourceRoot(source: Path): Path =
         JVMLanguagePluginParser.calculateJVMSourceRoot(source)
+
+    private fun targetInfoIfPresent(targetInfo: TargetInfo) =
+        targetInfo.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo
 
     private fun getMainClass(javaTargetInfo: JavaTargetInfo): String? =
         javaTargetInfo.mainClass.takeUnless { javaTargetInfo.mainClass.isBlank() }
@@ -90,6 +100,19 @@ class JavaLanguagePlugin(
             ?.jarsOrBuilderList
             ?.flatMap(JvmOutputsOrBuilder::getSourceJarsList)
             .orEmpty()
+
+    private fun getFilteredClassPaths(targetInfoId: String, dependencyTree: DependencyTree)
+            : Pair<Set<URI>, Set<URI>> {
+        val rootTargetDependencies =
+            dependencyTree.transitiveRootTargetDependencies(targetInfoId)
+                .mapNotNull(::targetInfoIfPresent)
+        return Pair(
+            rootTargetDependencies.flatMap { it.runtimeClasspathList }
+                .map(bazelPathsResolver::resolveUri).toSet(),
+            rootTargetDependencies.flatMap { it.compileClasspathList }
+                .map(bazelPathsResolver::resolveUri).toSet()
+        )
+    }
 
     private fun TargetInfo.getJavaTargetInfoOrNull(): JavaTargetInfo? =
         this.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo

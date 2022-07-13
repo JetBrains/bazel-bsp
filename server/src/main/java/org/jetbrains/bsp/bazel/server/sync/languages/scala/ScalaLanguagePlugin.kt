@@ -33,14 +33,18 @@ class ScalaLanguagePlugin(
         scalaSdk = ScalaSdkResolver(bazelPathsResolver).resolve(targets)
     }
 
-    override fun resolveModule(targetInfo: BspTargetInfo.TargetInfo): ScalaModule? {
+    override fun resolveModule(
+        targetInfo: BspTargetInfo.TargetInfo,
+        dependencyTree: DependencyTree)
+    : ScalaModule? {
         if (!targetInfo.hasScalaTargetInfo()) {
             return null
         }
         val scalaTargetInfo = targetInfo.scalaTargetInfo
         val sdk = getScalaSdk()
         val scalacOpts = scalaTargetInfo.scalacOptsList
-        return ScalaModule(sdk, scalacOpts, javaLanguagePlugin.resolveModule(targetInfo))
+        val javaModule = javaLanguagePlugin.resolveModule(targetInfo, dependencyTree)
+        return ScalaModule(sdk, scalacOpts, javaModule)
     }
 
     private fun getScalaSdk(): ScalaSdk =

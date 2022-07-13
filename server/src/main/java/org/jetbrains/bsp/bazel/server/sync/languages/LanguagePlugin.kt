@@ -10,7 +10,7 @@ abstract class LanguagePlugin<T : LanguageData> {
 
     open fun calculateSourceRoot(source: Path): Path? = null
     open fun prepareSync(targets: Sequence<BspTargetInfo.TargetInfo>) {}
-    open fun resolveModule(targetInfo: BspTargetInfo.TargetInfo): T? = null
+    open fun resolveModule(targetInfo: BspTargetInfo.TargetInfo, dependencyTree: DependencyTree): T? = null
 
     open fun dependencySources(
         targetInfo: BspTargetInfo.TargetInfo, dependencyTree: DependencyTree
