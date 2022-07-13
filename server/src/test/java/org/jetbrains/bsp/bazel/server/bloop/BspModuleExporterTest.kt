@@ -22,8 +22,10 @@ class BspModuleExporterTest {
     fun `export bsp library module`() {
         val baseDirectory = Paths.get("base/").toAbsolutePath()
         val bloopRoot = baseDirectory.resolve("bloop/").toAbsolutePath()
+        val moduleLabel = Label("//my/target")
+
         val bspModule = Module(
-            Label("//my/target"),
+            moduleLabel,
             false,
             listOf(Label("dep1")),
             hashSetOf(Language.SCALA),
@@ -61,7 +63,7 @@ class BspModuleExporterTest {
             project, bspModule, bloopRoot, classPathRewriter, soureSetRewriter, null
         )
         val ret = exporter.export()
-
+        val out = bloopRoot.resolve(Naming.compilerOutputNameFor(moduleLabel))
         ret shouldBe Config.Project(
             "my/target",
             baseDirectory,
@@ -78,8 +80,8 @@ class BspModuleExporterTest {
             baseDirectory.toScalaList().toOption(),
             emptyScalaList(),
             scalaListOf(baseDirectory.resolve("cp1")),
-            bloopRoot.resolve("z_73CA8EDE4AC5"),
-            bloopRoot.resolve("z_73CA8EDE4AC5/classes"),
+            out,
+            out.resolve("classes"),
             emptyScalaList<Path>().toOption(),
             Config.Scala(
                 "scala",
