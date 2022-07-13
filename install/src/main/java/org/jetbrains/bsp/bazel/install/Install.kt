@@ -56,12 +56,6 @@ object Install {
         return environmentCreator.create()
     }
 
-    private fun createEnvironmentOutside(details: BspConnectionDetails, cliOptions: CliOptions): Try<Void> {
-        val environmentCreator = BazelBspEnvironmentCreator(cliOptions.bazelWorkspaceRootDir, details)
-
-        return environmentCreator.create()
-    }
-
     private fun printInCaseOfSuccess(cliOptions: CliOptions) {
         val absoluteDirWhereServerWasInstalledIn = cliOptions.workspaceRootDir.toAbsolutePath().normalize()
         println("Bazel BSP server installed in '$absoluteDirWhereServerWasInstalledIn'.")
