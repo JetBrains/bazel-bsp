@@ -431,12 +431,10 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
     private fun dependencySourcesResults(): BazelBspTestScenarioStep {
         val javaTargetsJavaBinary = DependencySourcesItem(
-            BuildTargetIdentifier("//java_targets:java_binary"),
-            emptyList()
+            BuildTargetIdentifier("//java_targets:java_binary"), emptyList()
         )
         val javaTargetsJavaLibrary = DependencySourcesItem(
-            BuildTargetIdentifier("//java_targets:java_library"),
-            emptyList()
+            BuildTargetIdentifier("//java_targets:java_library"), emptyList()
         )
         val targetWithDependencyJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//target_with_dependency:java_binary"),
@@ -445,32 +443,25 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             )
         )
         val javaTargetsSubpackageJavaLibrary = DependencySourcesItem(
-            BuildTargetIdentifier("//java_targets/subpackage:java_library"),
-            emptyList()
+            BuildTargetIdentifier("//java_targets/subpackage:java_library"), emptyList()
         )
         val scalaTargetsScalaBinary = DependencySourcesItem(
-            BuildTargetIdentifier("//scala_targets:scala_binary"),
-            emptyList()
+            BuildTargetIdentifier("//scala_targets:scala_binary"), emptyList()
         )
         val scalaTargetsScalaTest = DependencySourcesItem(
-            BuildTargetIdentifier("//scala_targets:scala_test"),
-            emptyList()
+            BuildTargetIdentifier("//scala_targets:scala_test"), emptyList()
         )
         val targetWithResourcesJavaBinary = DependencySourcesItem(
-            BuildTargetIdentifier("//target_with_resources:java_binary"),
-            emptyList()
+            BuildTargetIdentifier("//target_with_resources:java_binary"), emptyList()
         )
         val targetWithoutArgsBinary = DependencySourcesItem(
-            BuildTargetIdentifier("//target_without_args:binary"),
-            emptyList()
+            BuildTargetIdentifier("//target_without_args:binary"), emptyList()
         )
         val targetWithoutJvmFlagsBinary = DependencySourcesItem(
-            BuildTargetIdentifier("//target_without_jvm_flags:binary"),
-            emptyList()
+            BuildTargetIdentifier("//target_without_jvm_flags:binary"), emptyList()
         )
         val targetWithoutMainClassLibrary = DependencySourcesItem(
-            BuildTargetIdentifier("//target_without_main_class:library"),
-            emptyList()
+            BuildTargetIdentifier("//target_without_main_class:library"), emptyList()
         )
         val javaTargetsJavaLibraryExported = DependencySourcesItem(
             BuildTargetIdentifier("//java_targets:java_library_exported"), emptyList()
@@ -494,16 +485,10 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("//manual_target:scala_test"), emptyList()
         )
         val environmentVariablesJavaBinary = DependencySourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_binary"),
-            listOf(
-             //   "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar"
-            )
+            BuildTargetIdentifier("//environment_variables:java_binary"), emptyList()
         )
         val environmentVariablesJavaTest = DependencySourcesItem(
-            BuildTargetIdentifier("//environment_variables:java_test"),
-            listOf(
-             //   "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
-            )
+            BuildTargetIdentifier("//environment_variables:java_test"), emptyList()
         )
         val expectedDependencies = DependencySourcesResult(
             listOf(
