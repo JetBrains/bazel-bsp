@@ -38,7 +38,7 @@ object ServerInitializer {
             )
             val workspaceContextProvider = getWorkspaceContextProvider(args)
             val bspIntegrationData = BspIntegrationData(stdout, stdin, executor, traceWriter)
-            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, null)
+            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspaceRoot = null)
             bspServer.startServer(bspIntegrationData)
             val server = bspIntegrationData.server.start()
             bspServer.setBesBackendPort(server.port)
