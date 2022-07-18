@@ -30,6 +30,10 @@
   | [#249](https://github.com/JetBrains/bazel-bsp/pull/249)
 - e2e test for local jdk and remote jdk
   | [#253](https://github.com/JetBrains/bazel-bsp/pull/253)
+- Dependency sources are now filtered if they belong to other root target
+  | [#265](https://github.com/JetBrains/bazel-bsp/pull/265)
+- JvmEnvironmentItem is set using env from target
+  | [#260](https://github.com/JetBrains/bazel-bsp/pull/260)
   
 ### Fixes 🛠️
 - CLI project view generator now supports `--excluded-targets` and `--excluded-directories` instead of excluded `-` prefix.

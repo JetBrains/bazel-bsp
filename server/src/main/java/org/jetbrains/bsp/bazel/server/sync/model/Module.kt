@@ -15,4 +15,5 @@ data class Module(
     val resources: Set<URI>,
     val sourceDependencies: Set<URI>,
     val languageData: LanguageData?,
+    val environmentVariables: Map<String, String>
 )

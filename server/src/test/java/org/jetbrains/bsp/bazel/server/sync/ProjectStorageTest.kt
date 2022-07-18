@@ -58,10 +58,10 @@ class ProjectStorageTest {
                     ),
                     emptySet(),
                     emptySet(),
-                    scalaModule
-
+                    scalaModule,
+                    hashMapOf()
                 )
-            ), mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root"))
+            ), mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
         )
         storage.store(project)
         val loaded = storage.load()

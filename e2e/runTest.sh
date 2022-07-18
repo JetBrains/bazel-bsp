@@ -15,6 +15,7 @@ TEST_TARGET="$1"
 # second argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
 TEST_PROJECT_PATH="$2"
 
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
@@ -52,7 +53,7 @@ echo -e "-----------------------------------\n"
 
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
 
-bazel run "$TEST_TARGET"
+foo1=invalid_val1 foo2=invalid_val2 foo3=val3 foo4=val4 bazel run "$TEST_TARGET"
 EXECUTION_CODE=$?
 
 if [ $EXECUTION_CODE -ne 0 ]; then

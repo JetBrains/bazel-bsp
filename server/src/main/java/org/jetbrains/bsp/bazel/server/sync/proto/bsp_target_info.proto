@@ -64,6 +64,8 @@ message TargetInfo {
   repeated Dependency dependencies = 40;
   repeated FileLocation sources = 50;
   repeated FileLocation resources = 60;
+  map <string, string> env = 70;
+  repeated string env_inherit = 80;
   JavaTargetInfo java_target_info = 1000;
   JavaToolchainInfo java_toolchain_info = 2000;
   JavaRuntimeInfo java_runtime_info = 3000;

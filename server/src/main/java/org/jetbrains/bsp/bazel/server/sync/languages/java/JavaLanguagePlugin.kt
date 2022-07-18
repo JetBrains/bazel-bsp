@@ -112,7 +112,7 @@ class JavaLanguagePlugin(
             javaModule.runtimeClasspath.map { obj: URI -> obj.toString() }.toList(),
             javaModule.jvmOps.toList(),
             bazelInfo.workspaceRoot.toString(),
-            mapOf()
+            module.environmentVariables
         )
     // FIXME: figure out what we should pass here, because passing the environment
     // of the *SERVER* makes little sense
