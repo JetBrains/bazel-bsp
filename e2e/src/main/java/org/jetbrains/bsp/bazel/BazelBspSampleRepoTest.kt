@@ -496,13 +496,13 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val environmentVariablesJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//environment_variables:java_binary"),
             listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar"
+             //   "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary-src.jar"
             )
         )
         val environmentVariablesJavaTest = DependencySourcesItem(
             BuildTargetIdentifier("//environment_variables:java_test"),
             listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
+             //   "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
             )
         )
         val expectedDependencies = DependencySourcesResult(
