@@ -441,7 +441,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val targetWithDependencyJavaBinary = DependencySourcesItem(
             BuildTargetIdentifier("//target_with_dependency:java_binary"),
             listOf(
-                "file://\$BAZEL_CACHE/external/guava/guava-28.0-jre-src.jar"
+               // "file://\$BAZEL_CACHE/external/guava/guava-28.0-jre-src.jar"
             )
         )
         val javaTargetsSubpackageJavaLibrary = DependencySourcesItem(
@@ -502,7 +502,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         val environmentVariablesJavaTest = DependencySourcesItem(
             BuildTargetIdentifier("//environment_variables:java_test"),
             listOf(
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
+               // "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test-src.jar"
             )
         )
         val expectedDependencies = DependencySourcesResult(
