@@ -22,7 +22,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.nio.file.Path
 
 class BazelBspServer(
-    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, workspaceRoot: Path?
+    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, workspaceRoot: Path
 ) {
     private val bazelRunner: BazelRunner
     private val bazelInfo: BazelInfo
