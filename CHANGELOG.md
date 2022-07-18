@@ -18,6 +18,10 @@
 
 ### Changes 🔄
 
+- Added cache of targets info in incremental syncs.
+  | [#273](https://github.com/JetBrains/bazel-bsp/pull/273)
+- Dependency sources are now filtered if they belong to other root target
+  | [#265](https://github.com/JetBrains/bazel-bsp/pull/265)
 - Packages are parsed in order to determine source roots.
   | [#258](https://github.com/JetBrains/bazel-bsp/pull/258)
 - BazelPathsResolver caches uris and paths (preformance improvement).
