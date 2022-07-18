@@ -6,7 +6,9 @@ import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JvmBuildTarget
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
@@ -76,9 +78,21 @@ class JavaLanguagePlugin(
     override fun dependencySources(
         targetInfo: TargetInfo, dependencyTree: DependencyTree
     ): Set<URI> =
-        targetInfo.takeIf(TargetInfo::hasJavaTargetInfo)?.run {
-            javaTargetInfo.sourceClasspathList.map(bazelPathsResolver::resolveUri).toSet()
+        targetInfo.getJavaTargetInfoOrNull()?.run {
+            dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+                .flatMap(::getSourceJars)
+                .map(bazelPathsResolver::resolveUri)
+                .toSet()
         }.orEmpty()
+
+    private fun getSourceJars(targetInfo: TargetInfo): List<FileLocation> =
+        targetInfo.getJavaTargetInfoOrNull()
+            ?.jarsOrBuilderList
+            ?.flatMap(JvmOutputsOrBuilder::getSourceJarsList)
+            .orEmpty()
+
+    private fun TargetInfo.getJavaTargetInfoOrNull(): JavaTargetInfo? =
+        this.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo
 
     override fun applyModuleData(moduleData: JavaModule, buildTarget: BuildTarget) {
         val jvmBuildTarget = toJvmBuildTarget(moduleData)

@@ -10,7 +10,5 @@ java_library(
         "//executioncontext/workspacecontext",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
-        "@io_bazel//src/main/protobuf:build_java_proto",
-        "@io_bazel//third_party/grpc:grpc-jar",
     ],
 )

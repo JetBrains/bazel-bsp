@@ -22,9 +22,9 @@ http_archive(
 # ======================================================================================================================
 # kotlin
 
-IO_BAZEL_KOTLIN_RULES_TAG = "v1.5.0"
+IO_BAZEL_KOTLIN_RULES_TAG = "v1.6.0"
 
-IO_BAZEL_KOTLIN_RULES_SHA = "12d22a3d9cbcf00f2e2d8f0683ba87d3823cb8c7f6837568dd7e48846e023307"
+IO_BAZEL_KOTLIN_RULES_SHA = "a57591404423a52bd6b18ebba7979e8cd2243534736c5c94d35c89718ea38f94"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.1.0"
+IO_BAZEL_TAG = "5.2.0"
 
-IO_BAZEL_SHA = "a394a99cae2d28179e1afca5f5e867fe36143478b81ccb5713d003dd827cc0fe"
+IO_BAZEL_SHA = "ea71b81f54b4d2af0fc2067c495421e4b3e0f5231e75c930b6e40799fec187e9"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.1.0"
+GOOGLEAPIS_TAG = "5.2.0"
 
-GOOGLEAPIS_SHA = "a394a99cae2d28179e1afca5f5e867fe36143478b81ccb5713d003dd827cc0fe"
+GOOGLEAPIS_SHA = "ea71b81f54b4d2af0fc2067c495421e4b3e0f5231e75c930b6e40799fec187e9"
 
 http_archive(
     name = "googleapis",
@@ -112,50 +112,27 @@ http_archive(
 )
 
 # ======================================================================================================================
-# rules_python - required by com_google_protobuf
+# rules_proto
 
-RULES_PYTHON_TAG = "0.8.0"
+RULES_PROTO_TAG = "4.0.0-3.20.0"
 
-RULES_PYTHON_SHA = "9fcf91dbcc31fde6d1edb15f117246d912c33c36f44cf681976bd886538deba6"
-
-http_archive(
-    name = "rules_python",
-    sha256 = RULES_PYTHON_SHA,
-    strip_prefix = "rules_python-{}".format(RULES_PYTHON_TAG),
-    url = "https://github.com/bazelbuild/rules_python/archive/{}.tar.gz".format(RULES_PYTHON_TAG),
-)
-
-# ======================================================================================================================
-# zlib - required by com_google_protobuf
-
-ZLIB_TAG = "1.2.12"
-
-ZLIB_SHA = "91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
+RULES_PROTO_SHA = "e017528fd1c91c5a33f15493e3a398181a9e821a804eb7ff5acdd1d2d6c2b18d"
 
 http_archive(
-    name = "zlib",
-    build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
-    sha256 = ZLIB_SHA,
-    strip_prefix = "zlib-{}".format(ZLIB_TAG),
+    name = "rules_proto",
+    sha256 = RULES_PROTO_SHA,
+    strip_prefix = "rules_proto-{}".format(RULES_PROTO_TAG),
     urls = [
-        "http://mirror.tensorflow.org/zlib.net/zlib-{}.tar.gz".format(ZLIB_TAG),
-        "https://zlib.net/zlib-{}.tar.gz".format(ZLIB_TAG),
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/{}.tar.gz".format(RULES_PROTO_TAG),
     ],
 )
 
-# ======================================================================================================================
-# com_google_protobuf - for :protobuf_java
+# ----------------------------------------------------------------------------------------------------------------------
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
-COM_GOOGLE_PROTOBUF_TAG = "3.19.4"
+rules_proto_dependencies()
 
-COM_GOOGLE_PROTOBUF_SHA = "3bd7828aa5af4b13b99c191e8b1e884ebfa9ad371b0ce264605d347f135d2568"
-
-http_archive(
-    name = "com_google_protobuf",
-    sha256 = COM_GOOGLE_PROTOBUF_SHA,
-    strip_prefix = "protobuf-{}".format(COM_GOOGLE_PROTOBUF_TAG),
-    url = "https://github.com/protocolbuffers/protobuf/archive/v{}.tar.gz".format(COM_GOOGLE_PROTOBUF_TAG),
-)
+rules_proto_toolchains()
 
 # ======================================================================================================================
 # bazel_sonatype - for publish
@@ -218,15 +195,16 @@ maven_install(
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
         "io.vavr:vavr:0.10.4",
-        "org.apache.logging.log4j:log4j-api:2.17.2",
-        "org.apache.logging.log4j:log4j-core:2.17.2",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2",
+        "org.apache.logging.log4j:log4j-api:2.18.0",
+        "org.apache.logging.log4j:log4j-core:2.18.0",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3",
         "org.junit.jupiter:junit-jupiter:5.8.2",
         "com.fasterxml.jackson.core:jackson-databind:2.13.3",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3",
-        "io.vavr:vavr-jackson:0.10.3",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.8",
+        "com.google.protobuf:protobuf-java:3.21.2",
+        "io.grpc:grpc-stub:1.47.0",
     ],
     fetch_sources = True,
     repositories = [

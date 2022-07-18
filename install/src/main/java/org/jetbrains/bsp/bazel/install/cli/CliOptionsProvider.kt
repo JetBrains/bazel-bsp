@@ -53,6 +53,17 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(targetsOption)
 
+        val excludedTargetsOption = Option.builder()
+            .longOpt(EXCLUDED_TARGETS_LONG_OPT)
+            .hasArgs()
+            .argName("excluded targets")
+            .desc(
+                "Add excluded targets to the generated project view file, you can read more about it here:" +
+                        " https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#targets."
+            )
+            .build()
+        cliParserOptions.addOption(excludedTargetsOption)
+
         val buildFlagsOption = Option.builder(BUILD_FLAGS_SHORT_OPT)
             .longOpt("build_flags")
             .hasArgs()
@@ -101,7 +112,8 @@ class CliOptionsProvider(private val args: Array<String>) {
             .longOpt("build_manual_targets")
             .desc(
                 "Add build manual target to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_manual_targets.")
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_manual_targets."
+            )
             .build()
         cliParserOptions.addOption(manualTargetsOption)
 
@@ -111,17 +123,28 @@ class CliOptionsProvider(private val args: Array<String>) {
             .hasArgs()
             .argName("directories")
             .desc(
-                    "Add directories to the generated project view file, you can read more about it here: " +
-                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
+                "Add directories to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
             )
             .build()
         cliParserOptions.addOption(directoriesOption)
 
+        val excludedDirectoriesOption = Option.builder()
+            .longOpt(EXCLUDED_DIRECTORIES_LONG_OPT)
+            .hasArgs()
+            .argName("excluded directories")
+            .desc(
+                "Add excluded directories to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#directories."
+            )
+            .build()
+        cliParserOptions.addOption(excludedDirectoriesOption)
+
         val deriveTargetsFromDirectoriesOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
             .longOpt("derive_targets_from_directories")
             .desc(
-                    "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
-                            "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
+                "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
             )
             .build()
         cliParserOptions.addOption(deriveTargetsFromDirectoriesOption)
@@ -136,7 +159,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             )
             .build()
         cliParserOptions.addOption(importDepthOption)
-        
+
         val useBloopOption = Option.builder(USE_BLOOP_SHORT_OPT)
             .longOpt("use_bloop")
             .desc("Use bloop as the BSP server rather than bazel-bsp.")
@@ -201,9 +224,11 @@ class CliOptionsProvider(private val args: Array<String>) {
                 bazelPath = bazelPath(cmd),
                 debuggerAddress = debuggerAddress(cmd),
                 targets = targets(cmd),
+                excludedTargets = excludedTargets(cmd),
                 buildFlags = buildFlags(cmd),
                 buildManualTargets = buildManualTargets(cmd),
                 directories = directories(cmd),
+                excludedDirectories = excludedDirectories(cmd),
                 deriveTargetsFromDirectories = deriveTargetsFlag(cmd),
                 importDepth = importDepth(cmd),
             )
@@ -211,6 +236,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun isAnyGenerationFlagSet(cmd: CommandLine): Boolean =
         cmd.hasOption(TARGETS_SHORT_OPT) or
+                cmd.hasOption(EXCLUDED_TARGETS_LONG_OPT) or
                 cmd.hasOption(JAVA_PATH_SHORT_OPT) or
                 cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
                 cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
@@ -218,6 +244,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(BUILD_MANUAL_TARGETS_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
                 cmd.hasOption(DIRECTORIES_SHORT_OPT) or
+                cmd.hasOption(EXCLUDED_DIRECTORIES_LONG_OPT) or
                 cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT) or
                 cmd.hasOption(IMPORT_DEPTH_SHORT_OPT)
 
@@ -238,11 +265,15 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
+    private fun excludedTargets(cmd: CommandLine): List<String>? = cmd.getOptionValues(EXCLUDED_TARGETS_LONG_OPT)?.toList()
+
     private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
     private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
 
     private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
+
+    private fun excludedDirectories(cmd: CommandLine): List<String>? = cmd.getOptionValues(EXCLUDED_DIRECTORIES_LONG_OPT)?.toList()
 
     private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT)
 
@@ -251,12 +282,14 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val WORKSPACE_ROOT_DIR_SHORT_OPT = "d"
         private const val PROJECT_VIEW_FILE_PATH_SHORT_OPT = "p"
         private const val TARGETS_SHORT_OPT = "t"
+        private const val EXCLUDED_TARGETS_LONG_OPT = "excluded-targets"
         private const val BUILD_FLAGS_SHORT_OPT = "f"
         private const val BAZEL_PATH_SHORT_OPT = "b"
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
         private const val BUILD_MANUAL_TARGETS_OPT = "m"
         private const val DIRECTORIES_SHORT_OPT = "r"
+        private const val EXCLUDED_DIRECTORIES_LONG_OPT = "excluded-directories"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
         private const val USE_BLOOP_SHORT_OPT = "u"
