@@ -6,7 +6,6 @@ java_library(
     visibility = ["//server:__subpackages__"],
     deps = [
         "//bazelrunner",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/services",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "@io_bazel//third_party/grpc:grpc-jar",
         "@maven//:ch_epfl_scala_bsp4j",

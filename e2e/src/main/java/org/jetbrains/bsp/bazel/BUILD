@@ -1,4 +1,3 @@
-load("@rules_java//java:defs.bzl", "java_binary")
 load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
 
 kt_jvm_binary(
@@ -40,9 +39,10 @@ kt_jvm_binary(
     ],
 )
 
-java_binary(
+kt_jvm_binary(
     name = "BazelBspCppProjectTest",
-    srcs = ["BazelBspCppProjectTest.java"],
+    srcs = ["BazelBspCppProjectTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspCppProjectTest",
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [

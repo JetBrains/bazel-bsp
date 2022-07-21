@@ -13,7 +13,6 @@ import org.jetbrains.bsp.bazel.server.bsp.BspRequestsRunner
 import org.jetbrains.bsp.bazel.server.bsp.BspServerApi
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
-import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService
 import org.jetbrains.bsp.bazel.server.common.ServerContainer
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper
@@ -49,16 +48,13 @@ class BazelBspServer(
             bazelRunner,
             workspaceContextProvider
         )
-        val cppBuildServerService = CppBuildServerService()
         val serverLifetime = BazelBspServerLifetime()
         val bspRequestsRunner = BspRequestsRunner(serverLifetime)
         bspServerApi = BspServerApi(
             serverLifetime,
             bspRequestsRunner,
             projectSyncService,
-            executeService,
-            cppBuildServerService
-        )
+            executeService)
     }
 
     fun startServer(bspIntegrationData: BspIntegrationData) {

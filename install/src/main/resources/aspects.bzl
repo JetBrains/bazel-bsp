@@ -488,6 +488,10 @@ def _bsp_target_info_aspect_impl(target, ctx):
     scala_target_info = extract_scala_info(target, ctx, output_groups)
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
+    cpp_target_info = extract_cpp_target_info(target, ctx)
+
+    # TODO retrieve cpp compiler info and use it
+    cpp_compiler_info = _fetch_cpp_compiler(target, ctx)
 
     result = dict(
         id = str(target.label),
@@ -501,6 +505,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_target_info = java_target_info,
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
+        cpp_target_info = cpp_target_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )
@@ -578,7 +583,7 @@ def _print_fields(fields):
     separator = ","
     print(separator.join(fields))
 
-def _get_cpp_target_info(target, ctx):
+def extract_cpp_target_info(target, ctx):
     if CcInfo not in target:
         return []
 
@@ -591,15 +596,15 @@ def _get_cpp_target_info(target, ctx):
     if hasattr(ctx.rule.attr, "linkshared"):
         linkshared = ctx.rule.attr.linkshared
 
-    _print_fields(copts)
-    _print_fields(defines)
-    _print_fields(linkopts)
-    print(linkshared)
-
-    return []
+    return create_struct(
+        copts = copts,
+        defines = defines,
+        linkopts = linkopts,
+        linkshared = linkshared,
+    )
 
 get_cpp_target_info = aspect(
-    implementation = _get_cpp_target_info,
+    implementation = extract_cpp_target_info,
     fragments = ["cpp"],
     required_aspect_providers = [[CcInfo]],
 )

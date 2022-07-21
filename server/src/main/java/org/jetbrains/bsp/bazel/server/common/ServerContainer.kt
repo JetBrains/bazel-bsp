@@ -58,7 +58,7 @@ class ServerContainer internal constructor(
             val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
             val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
             val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
-            val cppLanguagePlugin = CppLanguagePlugin()
+            val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
             val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
             val languagePluginsService = LanguagePluginsService(
                 scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin

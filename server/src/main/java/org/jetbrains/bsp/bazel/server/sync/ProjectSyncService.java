@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync;
 
+import ch.epfl.scala.bsp4j.CppOptionsParams;
+import ch.epfl.scala.bsp4j.CppOptionsResult;
 import ch.epfl.scala.bsp4j.DependencyModulesParams;
 import ch.epfl.scala.bsp4j.DependencyModulesResult;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
@@ -88,6 +90,11 @@ public class ProjectSyncService {
   public JavacOptionsResult buildTargetJavacOptions(JavacOptionsParams params) {
     var project = projectProvider.get();
     return bspMapper.buildTargetJavacOptions(project, params);
+  }
+
+  public CppOptionsResult buildTargetCppOptions(CppOptionsParams params) {
+    var project = projectProvider.get();
+    return bspMapper.buildTargetCppOptions(project, params);
   }
 
   public ScalacOptionsResult buildTargetScalacOptions(ScalacOptionsParams params) {

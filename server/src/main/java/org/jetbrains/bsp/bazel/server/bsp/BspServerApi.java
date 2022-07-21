@@ -40,10 +40,10 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import java.util.concurrent.CompletableFuture;
-import org.jetbrains.bsp.bazel.server.bsp.services.CppBuildServerService;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+
+import java.util.concurrent.CompletableFuture;
 
 public class BspServerApi
     implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
@@ -52,19 +52,16 @@ public class BspServerApi
   private final BspRequestsRunner runner;
   private final ProjectSyncService projectSyncService;
   private final ExecuteService executeService;
-  private final CppBuildServerService cppBuildServerService;
 
   public BspServerApi(
       BazelBspServerLifetime serverLifetime,
       BspRequestsRunner runner,
       ProjectSyncService projectSyncService,
-      ExecuteService executeService,
-      CppBuildServerService cppBuildServerService) {
+      ExecuteService executeService) {
     this.serverLifetime = serverLifetime;
     this.runner = runner;
     this.projectSyncService = projectSyncService;
     this.executeService = executeService;
-    this.cppBuildServerService = cppBuildServerService;
   }
 
   @Override
@@ -189,9 +186,7 @@ public class BspServerApi
   @Override
   public CompletableFuture<CppOptionsResult> buildTargetCppOptions(CppOptionsParams params) {
     return runner.handleRequest(
-        "buildTargetCppOptions",
-        cppOptionsParams -> cppBuildServerService.buildTargetCppOptions(),
-        params);
+        "buildTargetCppOptions", projectSyncService::buildTargetCppOptions, params);
   }
 
   @Override
