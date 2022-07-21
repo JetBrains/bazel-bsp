@@ -13,7 +13,7 @@ fi
 TEST_TARGET="$1"
 
 # second argument (optional) of the script should be a path to the directory with tested project (relative to the project root)
-TEST_PROJECT_PATH="$2"
+TEST_PROJECT_PATH=$(realpath "$BUILD_WORKSPACE_DIRECTORY/$2")
 
 
 GREEN='\033[0;32m'
@@ -34,6 +34,9 @@ if [ $EXECUTION_CODE -ne 0 ]; then
   exit 1
 fi
 
+TEST_BSP_WORKSPACE_ROOT=$BUILD_WORKSPACE_DIRECTORY/bazel-integration-tests
+mkdir -p $TEST_BSP_WORKSPACE_ROOT
+BSP_ROOT=$(mktemp -d "$TEST_BSP_WORKSPACE_ROOT/XXXXXXX")
 bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
 echo "Building done."
 
@@ -45,15 +48,15 @@ rm -r .bsp/ > /dev/null 2>&1
 rm -r .bazelbsp/ > /dev/null 2>&1
 echo "Cleaning project directory done!"
 
-echo "Installing BSP..."
-$bsp_path || exit
+echo "Installing BSP... for $TEST_PROJECT_PATH"
+"$bsp_path" -d $BSP_ROOT -w $TEST_PROJECT_PATH || exit
 echo "Installing done."
 echo "Environment has been prepared!"
 echo -e "-----------------------------------\n"
 
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
 
-foo1=invalid_val1 foo2=invalid_val2 foo3=val3 foo4=val4 bazel run "$TEST_TARGET"
+foo1=invalid_val1 foo2=invalid_val2 foo3=val3 foo4=val4 BSP_WORKSPACE="$BSP_ROOT" BAZEL_WORKSPACE="$BUILD_WORKSPACE_DIRECTORY" bazel run "$TEST_TARGET"
 EXECUTION_CODE=$?
 
 if [ $EXECUTION_CODE -ne 0 ]; then

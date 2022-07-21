@@ -93,7 +93,7 @@ class InstallationContextConstructorTest {
                 javaPath = InstallationContextJavaPathEntity(Path("/path/to/java/bin/java")),
                 debuggerAddress = null,
                 projectViewFilePath = Path("/path/to/projectview.bazelproject"),
-                bazelWorkspaceRootDir = Path("/path/to/bazel.workspacerootdir")
+                bazelWorkspaceRootDir = Path("/path/to/bazel/workspace")
             )
             installationContext shouldBe expectedInstallationContext
         }

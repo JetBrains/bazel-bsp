@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.InitializeBuildParams
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.testkit.client.bazel.BazelTestClient
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario {
@@ -13,7 +14,8 @@ abstract class BazelBspTestBaseScenario {
 
     private fun createClient(): BazelTestClient {
         val workspaceDir = System.getenv("BUILD_WORKSPACE_DIRECTORY")
-        val testRepoWorkspaceDir = Path.of(workspaceDir, TEST_RESOURCES_DIR, repoName())
+        val bazelWorkspace = Path.of(workspaceDir, TEST_RESOURCES_DIR, repoName())
+        val testRepoWorkspaceDir = System.getenv("BSP_WORKSPACE").let { Paths.get(it) }
 
         log.info("Testing repo workspace path: $testRepoWorkspaceDir")
         log.info("Creating TestClient...")
@@ -27,7 +29,7 @@ abstract class BazelBspTestBaseScenario {
             testRepoWorkspaceDir.toString(),
             capabilities
         )
-        return BazelTestClient(testRepoWorkspaceDir, initializeBuildParams)
+        return BazelTestClient(bazelWorkspace, initializeBuildParams)
             .also { log.info("Created TestClient done.") }
     }
 

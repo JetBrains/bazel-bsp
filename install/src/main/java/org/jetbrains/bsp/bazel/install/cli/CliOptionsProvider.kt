@@ -167,7 +167,8 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(useBloopOption)
 
         val bazelWorkspaceRootDirOption = Option.builder(BAZEL_WORKSPACE_ROOT_DIR_OPT)
-            .longOpt("bazel workspace root dir")
+            .longOpt("bazel_workspace")
+            .hasArg()
             .desc("Path to directory where workspace is located.")
             .build()
         cliParserOptions.addOption(bazelWorkspaceRootDirOption)
