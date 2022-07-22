@@ -570,15 +570,9 @@ def extract_cpp_target_info(target, ctx):
     if CcInfo not in target:
         return None
 
-    #TODO: Get copts from semantics
-    copts = getattr(ctx.rule.attr, "copts", [])
-    defines = getattr(ctx.rule.attr, "defines", [])
-    link_opts = getattr(ctx.rule.attr, "linkopts", [])
-    link_shared = getattr(ctx.rule.attr, "linkshared", False)
-
     return create_struct(
-        copts = copts,
-        defines = defines,
-        link_opts = link_opts,
-        link_shared = link_shared,
+        copts = getattr(ctx.rule.attr, "copts", []),
+        defines = getattr(ctx.rule.attr, "defines", []),
+        link_opts = getattr(ctx.rule.attr, "linkopts", []),
+        link_shared = getattr(ctx.rule.attr, "linkshared", False),
     )
