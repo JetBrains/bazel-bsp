@@ -16,17 +16,18 @@ import java.net.URI
 class CppLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<CppModule>() {
 
     override fun resolveModule(targetInfo: TargetInfo): CppModule? {
-        return targetInfo.takeIf(TargetInfo::hasCppTargetInfo)?.cppTargetInfo?.run {
+        return targetInfo.getCppTargetInfoOrNull()?.run {
             CppModule(
-                listOf(targetInfo.cppTargetInfo.copts),
-                listOf(targetInfo.cppTargetInfo.defines),
-                listOf(targetInfo.cppTargetInfo.linkopts),
-                targetInfo.cppTargetInfo.linkshared
+                copts = targetInfo.cppTargetInfo.coptsList ,
+                defines = targetInfo.cppTargetInfo.definesList,
+                linkOpts = targetInfo.cppTargetInfo.linkOptsList,
+                linkShared = targetInfo.cppTargetInfo.linkShared
             )
         }
     }
 
     override fun applyModuleData(moduleData: CppModule, buildTarget: BuildTarget) {
+        // TODO retrieve real information about cpp compiler
         val cppBuildTarget = CppBuildTarget(null, "compiler", "/bin/gcc", "/bin/gcc")
         buildTarget.data = cppBuildTarget
         buildTarget.dataKind = BuildTargetDataKind.CPP

@@ -58,10 +58,10 @@ message ScalaToolchainInfo {
 }
 
 message CppTargetInfo {
-  string copts = 1;
-  string defines = 2;
-  string linkopts = 3;
-  bool linkshared = 4;
+  repeated string copts = 1;
+  repeated string defines = 2;
+  repeated string link_opts = 3;
+  bool link_shared = 4;
 }
 
 message TargetInfo {

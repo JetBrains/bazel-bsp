@@ -34,6 +34,8 @@
   | [#265](https://github.com/JetBrains/bazel-bsp/pull/265)
 - JvmEnvironmentItem is set using env from target
   | [#260](https://github.com/JetBrains/bazel-bsp/pull/260)
+- Server has undergone basic changes leading to the ability to work with CPP language.
+  | [#277](https://github.com/JetBrains/bazel-bsp/pull/277)
   
 ### Fixes 🛠️
 - CLI project view generator now supports `--excluded-targets` and `--excluded-directories` instead of excluded `-` prefix.

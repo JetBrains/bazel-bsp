@@ -490,9 +490,6 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
     cpp_target_info = extract_cpp_target_info(target, ctx)
 
-    # TODO retrieve cpp compiler info and use it
-    cpp_compiler_info = _fetch_cpp_compiler(target, ctx)
-
     result = dict(
         id = str(target.label),
         kind = ctx.rule.kind,
@@ -540,20 +537,6 @@ bsp_target_info_aspect = aspect(
     attr_aspects = ALL_DEPS,
 )
 
-def _fetch_cpp_compiler(target, ctx):
-    if cc_common.CcToolchainInfo in target:
-        toolchain_info = target[cc_common.CcToolchainInfo]
-        print(toolchain_info.compiler)
-        print(toolchain_info.compiler_executable)
-    return []
-
-fetch_cpp_compiler = aspect(
-    implementation = _fetch_cpp_compiler,
-    fragments = ["cpp"],
-    attr_aspects = ["_cc_toolchain"],
-    required_aspect_providers = [[CcInfo]],
-)
-
 def _fetch_java_target_version(target, ctx):
     print(target[java_common.JavaToolchainInfo].target_version)
     return []
@@ -585,26 +568,17 @@ def _print_fields(fields):
 
 def extract_cpp_target_info(target, ctx):
     if CcInfo not in target:
-        return []
+        return None
 
     #TODO: Get copts from semantics
-    copts = _get_target_info(ctx, "copts")
-    defines = _get_target_info(ctx, "defines")
-    linkopts = _get_target_info(ctx, "linkopts")
-
-    linkshared = False
-    if hasattr(ctx.rule.attr, "linkshared"):
-        linkshared = ctx.rule.attr.linkshared
+    copts = getattr(ctx.rule.attr, "copts", [])
+    defines = getattr(ctx.rule.attr, "defines", [])
+    link_opts = getattr(ctx.rule.attr, "linkopts", [])
+    link_shared = getattr(ctx.rule.attr, "linkshared", False)
 
     return create_struct(
         copts = copts,
         defines = defines,
-        linkopts = linkopts,
-        linkshared = linkshared,
+        link_opts = link_opts,
+        link_shared = link_shared,
     )
-
-get_cpp_target_info = aspect(
-    implementation = extract_cpp_target_info,
-    fragments = ["cpp"],
-    required_aspect_providers = [[CcInfo]],
-)
