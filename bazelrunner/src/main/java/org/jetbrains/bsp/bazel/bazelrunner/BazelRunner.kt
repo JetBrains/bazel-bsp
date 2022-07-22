@@ -9,7 +9,7 @@ import java.nio.file.Path
 class BazelRunner private constructor(
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientLogger: BspClientLogger,
-    private val workspaceRoot: Path?,
+    val workspaceRoot: Path?,
 ) {
 
   companion object {
