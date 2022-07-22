@@ -229,14 +229,16 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         )
         manualTargetTestScalaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
-        val environmentVariablesJavaBinary = SourceItem("file://\$WORKSPACE/environment_variables/JavaEnv.java", SourceItemKind.FILE, false)
+        val environmentVariablesJavaBinary =
+            SourceItem("file://\$WORKSPACE/environment_variables/JavaEnv.java", SourceItemKind.FILE, false)
         val environmentVariablesJavaBinarySources = SourcesItem(
             BuildTargetIdentifier("//environment_variables:java_binary"),
             listOf(environmentVariablesJavaBinary)
         )
         environmentVariablesJavaBinarySources.roots = listOf("file://\$WORKSPACE/")
 
-        val environmentVariablesJavaTest = SourceItem("file://\$WORKSPACE/environment_variables/JavaTest.java", SourceItemKind.FILE, false)
+        val environmentVariablesJavaTest =
+            SourceItem("file://\$WORKSPACE/environment_variables/JavaTest.java", SourceItemKind.FILE, false)
         val environmentVariablesJavaTestSources = SourcesItem(
             BuildTargetIdentifier("//environment_variables:java_test"),
             listOf(environmentVariablesJavaTest)
@@ -651,7 +653,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf("foo1" to "val1" , "foo2" to "val2")
+                    mapOf("foo1" to "val1", "foo2" to "val2")
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//environment_variables:java_test"),
@@ -661,7 +663,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf("foo1" to "val1" , "foo2" to "val2", "foo3" to "val3", "foo4" to "val4")
+                    mapOf("foo1" to "val1", "foo2" to "val2", "foo3" to "val3", "foo4" to "val4")
                 )
             )
         )
@@ -796,7 +798,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf("foo1" to "val1" , "foo2" to "val2")
+                    mapOf("foo1" to "val1", "foo2" to "val2")
                 ),
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("//environment_variables:java_test"),
@@ -806,7 +808,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     ),
                     emptyList(),
                     "\$WORKSPACE",
-                    mapOf("foo1" to "val1" , "foo2" to "val2", "foo3" to "val3", "foo4" to "val4")
+                    mapOf("foo1" to "val1", "foo2" to "val2", "foo3" to "val3", "foo4" to "val4")
                 ),
             )
         )

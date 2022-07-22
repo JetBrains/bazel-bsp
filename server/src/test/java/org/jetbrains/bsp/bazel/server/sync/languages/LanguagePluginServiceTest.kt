@@ -33,7 +33,7 @@ class LanguagePluginServiceTest {
         val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
         val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
         val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
-        val cppLanguagePlugin = CppLanguagePlugin()
+        val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
         val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
         languagePluginsService = LanguagePluginsService(
             scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin
@@ -75,6 +75,18 @@ class LanguagePluginServiceTest {
 
             // when
             val plugin = languagePluginsService.getPlugin(languages) as? ScalaLanguagePlugin
+
+            // then
+            plugin shouldNotBe null
+        }
+
+        @Test
+        fun `should return CppLanguagePlugin for Cpp Language`() {
+            // given
+            val languages: Set<Language> = hashSetOf(Language.CPP)
+
+            // when
+            val plugin = languagePluginsService.getPlugin(languages) as? CppLanguagePlugin
 
             // then
             plugin shouldNotBe null

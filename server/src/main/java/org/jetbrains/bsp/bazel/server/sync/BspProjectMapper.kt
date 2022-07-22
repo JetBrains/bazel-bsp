@@ -5,6 +5,9 @@ import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.CompileProvider
+import ch.epfl.scala.bsp4j.CppOptionsItem
+import ch.epfl.scala.bsp4j.CppOptionsParams
+import ch.epfl.scala.bsp4j.CppOptionsResult
 import ch.epfl.scala.bsp4j.DependencySourcesItem
 import ch.epfl.scala.bsp4j.DependencySourcesParams
 import ch.epfl.scala.bsp4j.DependencySourcesResult
@@ -50,6 +53,7 @@ class BspProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
     private val workspaceContextProvider: WorkspaceContextProvider
 ) {
+
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {
         val languageNames = supportedLanguages.map { obj: Language -> obj.id }
         val capabilities = BuildServerCapabilities().apply {
@@ -220,12 +224,21 @@ class BspProjectMapper(
         return JavacOptionsResult(items)
     }
 
+    fun buildTargetCppOptions(project: Project, params: CppOptionsParams): CppOptionsResult {
+        val modules = BspMappings.getModules(project, params.targets)
+        val items = modules.mapNotNull(::extractCppOptionsItem)
+        return CppOptionsResult(items)
+    }
+
+    private fun extractCppOptionsItem(module: Module): CppOptionsItem? =
+        languagePluginsService.extractCppModule(module)?.let {
+            languagePluginsService.cppLanguagePlugin.toCppOptionsItem(module, it)
+        }
+
+
     private fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
         languagePluginsService.extractJavaModule(module)?.let {
-            languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(
-                module,
-                it
-            )
+            languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(module, it)
         }
 
     fun buildTargetScalacOptions(

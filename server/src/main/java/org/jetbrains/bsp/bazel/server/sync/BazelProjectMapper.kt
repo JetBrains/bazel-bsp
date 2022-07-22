@@ -5,23 +5,14 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
-import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Project
-import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.server.sync.model.*
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.net.URI
-import java.util.stream.Collector
-import java.util.stream.Collectors
 
 class BazelProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
@@ -143,6 +134,6 @@ class BazelProjectMapper(
     }
 
     private fun collectInheritedEnvs(targetInfo: TargetInfo): Map<String, String> =
-         targetInfo.envInheritList.associateWith { System.getenv(it)}
+        targetInfo.envInheritList.associateWith { System.getenv(it) }
 
 }

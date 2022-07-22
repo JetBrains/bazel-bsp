@@ -7,10 +7,8 @@ enum class Language(
 ) {
     SCALA("scala", hashSetOf(".scala")),
     JAVA("java", hashSetOf(".java")),
-    KOTLIN("kotlin", hashSetOf(".kt"),
-        hashSetOf(JAVA.id)),  // TODO https://youtrack.jetbrains.com/issue/BAZEL-25
-
-    // CPP("cpp", hashSetOf(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
+    KOTLIN("kotlin", hashSetOf(".kt"), hashSetOf(JAVA.id)),
+    CPP("cpp", hashSetOf(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
     THRIFT("thrift", hashSetOf(".thrift"));
 
     val allNames: Set<String> = dependentNames + id

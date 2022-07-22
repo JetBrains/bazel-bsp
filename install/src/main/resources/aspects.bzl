@@ -488,6 +488,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     scala_target_info = extract_scala_info(target, ctx, output_groups)
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
+    cpp_target_info = extract_cpp_target_info(target, ctx)
 
     result = dict(
         id = str(target.label),
@@ -501,6 +502,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_target_info = java_target_info,
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
+        cpp_target_info = cpp_target_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )
@@ -535,20 +537,6 @@ bsp_target_info_aspect = aspect(
     attr_aspects = ALL_DEPS,
 )
 
-def _fetch_cpp_compiler(target, ctx):
-    if cc_common.CcToolchainInfo in target:
-        toolchain_info = target[cc_common.CcToolchainInfo]
-        print(toolchain_info.compiler)
-        print(toolchain_info.compiler_executable)
-    return []
-
-fetch_cpp_compiler = aspect(
-    implementation = _fetch_cpp_compiler,
-    fragments = ["cpp"],
-    attr_aspects = ["_cc_toolchain"],
-    required_aspect_providers = [[CcInfo]],
-)
-
 def _fetch_java_target_version(target, ctx):
     print(target[java_common.JavaToolchainInfo].target_version)
     return []
@@ -578,28 +566,13 @@ def _print_fields(fields):
     separator = ","
     print(separator.join(fields))
 
-def _get_cpp_target_info(target, ctx):
+def extract_cpp_target_info(target, ctx):
     if CcInfo not in target:
-        return []
+        return None
 
-    #TODO: Get copts from semantics
-    copts = _get_target_info(ctx, "copts")
-    defines = _get_target_info(ctx, "defines")
-    linkopts = _get_target_info(ctx, "linkopts")
-
-    linkshared = False
-    if hasattr(ctx.rule.attr, "linkshared"):
-        linkshared = ctx.rule.attr.linkshared
-
-    _print_fields(copts)
-    _print_fields(defines)
-    _print_fields(linkopts)
-    print(linkshared)
-
-    return []
-
-get_cpp_target_info = aspect(
-    implementation = _get_cpp_target_info,
-    fragments = ["cpp"],
-    required_aspect_providers = [[CcInfo]],
-)
+    return create_struct(
+        copts = getattr(ctx.rule.attr, "copts", []),
+        defines = getattr(ctx.rule.attr, "defines", []),
+        link_opts = getattr(ctx.rule.attr, "linkopts", []),
+        link_shared = getattr(ctx.rule.attr, "linkshared", False),
+    )
