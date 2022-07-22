@@ -25,7 +25,7 @@ class BazelInfoResolver(
 
     fun extract(name: String): String =
         outputMap[name]
-            ?: throw RuntimeException("Failed to resolve ${name} from bazel info in ${bazelRunner.workspaceRoot}. Bazel Info output:\n${bazelProcessResult.stdout}\n"))
+            ?: throw RuntimeException("Failed to resolve ${name} from bazel info in ${bazelRunner.workspaceRoot}. Bazel Info output:\n${bazelProcessResult.stdout}\n")
 
     return BasicBazelInfo(
         execRoot = extract("execution_root"),
