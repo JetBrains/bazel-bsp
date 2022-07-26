@@ -2,8 +2,16 @@
 # Changelog
 
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
-
 ## [Unreleased]
+
+### Features 🎉
+
+### Changes 🔄
+
+### Fixes 🛠️
+
+
+## [2.2.0] - 27.07.2022
 
 ### Features 🎉
 
@@ -232,7 +240,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.1.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.2.0...HEAD
+
+[2.2.0]: https://github.com/JetBrains/bazel-bsp/compare/2.1.0...2.2.0
 
 [2.1.0]: https://github.com/JetBrains/bazel-bsp/compare/2.0.0...2.1.0
 
