@@ -21,6 +21,7 @@ class BloopEnvironmentCreator(
 ) : EnvironmentCreator(cliOptions.workspaceRootDir) {
 
     private val projectRootDir = cliOptions.workspaceRootDir
+    private val bazelWorkspaceRootDir = cliOptions.bazelWorkspaceRootDir
     private val launcherArgumentCreator = LauncherArgumentCreator(installationContext)
 
     override fun create(): Try<Void> = createDotBazelBsp()
@@ -53,7 +54,6 @@ class BloopEnvironmentCreator(
 
 
     private fun refreshProjectArgs(): Try<List<String>> {
-        val pwd = Paths.get("").toAbsolutePath()
         return launcherArgumentCreator.classpathArgv().map {
             listOfNotNull(
                 launcherArgumentCreator.javaBinaryArgv(),
@@ -61,7 +61,7 @@ class BloopEnvironmentCreator(
                 it,
                 launcherArgumentCreator.debuggerConnectionArgv(),
                 Constants.BLOOP_BOOTSTRAP_CLASS_NAME,
-                pwd.toString(),
+                launcherArgumentCreator.bazelWorkspaceRootDir(),
                 launcherArgumentCreator.projectViewFilePathArgv()
             )
         }

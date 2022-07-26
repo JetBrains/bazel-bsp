@@ -20,7 +20,7 @@ class InstallationContextConstructorTest {
     fun beforeEach() {
         // given
         this.installationContextConstructor =
-            InstallationContextConstructor(Path("/path/to/projectview.bazelproject"))
+            InstallationContextConstructor(Path("/path/to/projectview.bazelproject"), Path("/path/to/bazel/workspace"))
     }
 
     @Nested
@@ -93,6 +93,7 @@ class InstallationContextConstructorTest {
                 javaPath = InstallationContextJavaPathEntity(Path("/path/to/java/bin/java")),
                 debuggerAddress = null,
                 projectViewFilePath = Path("/path/to/projectview.bazelproject"),
+                bazelWorkspaceRootDir = Path("/path/to/bazel/workspace")
             )
             installationContext shouldBe expectedInstallationContext
         }

@@ -6,7 +6,7 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
 
 class BspConnectionDetailsCreator(private val installationContext: InstallationContext) {
-    private val launcherArgumentCreator = LauncherArgumentCreator(installationContext);
+    private val launcherArgumentCreator = LauncherArgumentCreator(installationContext)
 
     fun create(): Try<BspConnectionDetails> =
         calculateArgv()
@@ -28,6 +28,7 @@ class BspConnectionDetailsCreator(private val installationContext: InstallationC
                 it,
                 launcherArgumentCreator.debuggerConnectionArgv(),
                 Constants.SERVER_CLASS_NAME,
+                launcherArgumentCreator.bazelWorkspaceRootDir(),
                 launcherArgumentCreator.projectViewFilePathArgv(),
             )
         }

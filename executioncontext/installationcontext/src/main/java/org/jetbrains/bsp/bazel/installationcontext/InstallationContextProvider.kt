@@ -10,9 +10,9 @@ interface InstallationContextProvider {
 }
 
 
-class DefaultInstallationContextProvider(private val projectViewPath: Path?) : InstallationContextProvider {
+class DefaultInstallationContextProvider(private val projectViewPath: Path?, private val bazelWorkspaceRootDir:Path) : InstallationContextProvider {
 
-    private val installationContextConstructor = InstallationContextConstructor(projectViewPath)
+    private val installationContextConstructor = InstallationContextConstructor(projectViewPath, bazelWorkspaceRootDir)
 
     override fun currentInstallationContext(): Try<InstallationContext> =
         when (projectViewPath) {

@@ -12,15 +12,19 @@ import java.nio.file.StandardOpenOption
 import java.util.concurrent.Executors
 import kotlin.system.exitProcess
 
+data class CliArgs(val bazelWorkspaceRoot: String?, val projectViewPath: String?)
+
 object ServerInitializer {
     @JvmStatic
     fun main(args: Array<String>) {
-        if (args.size > 1) {
+        val cliArgs = if (args.size > 2) {
             System.err.printf(
                 "Expected optional path to project view file; got too many args: %s%n",
                 args.contentToString()
             )
             exitProcess(1)
+        } else {
+            CliArgs(args.elementAtOrNull(0), args.elementAtOrNull(1))
         }
         var hasErrors = false
         val stdout = System.out
@@ -36,9 +40,12 @@ object ServerInitializer {
                     traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
                 )
             )
-            val workspaceContextProvider = getWorkspaceContextProvider(args)
+            val workspaceContextProvider = getWorkspaceContextProvider(cliArgs.projectViewPath)
             val bspIntegrationData = BspIntegrationData(stdout, stdin, executor, traceWriter)
-            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, null)
+            val bspServer = BazelBspServer(
+                bspInfo, workspaceContextProvider,
+                cliArgs.bazelWorkspaceRoot?.let { Paths.get(it) }
+            )
             bspServer.startServer(bspIntegrationData)
             val server = bspIntegrationData.server.start()
             bspServer.setBesBackendPort(server.port)
@@ -55,8 +62,8 @@ object ServerInitializer {
         }
     }
 
-    private fun getWorkspaceContextProvider(args: Array<String>): WorkspaceContextProvider {
-        val projectViewPath = args.firstOrNull()?.let(Paths::get)
+    private fun getWorkspaceContextProvider(args: String?): WorkspaceContextProvider {
+        val projectViewPath = args?.let { Paths.get(it) }
         return DefaultWorkspaceContextProvider(projectViewPath)
     }
 }

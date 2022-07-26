@@ -15,6 +15,7 @@
   | [#247](https://github.com/JetBrains/bazel-bsp/pull/247)
 - Dependent targets can be imported as modules based on `import_depth` project view parameter.
   | [#248](https://github.com/JetBrains/bazel-bsp/pull/248)
+- BSP can be installed in a separate directory. `-w` flag sets Bazel workspace, `-d` sets the BSP installation root
 
 ### Changes 🔄
 
