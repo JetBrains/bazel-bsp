@@ -95,6 +95,7 @@ For example, using Coursier:
 ```shell
 cd ~/src/my-repository
 cs launch org.jetbrains.bsp:bazel-bsp:2.2.0 -M org.jetbrains.bsp.bazel.install.Install \
+  -- \
   --use_bloop \
   -t //my-targets/... \
   -d ~/bazel-bsp-projects/my-targets-project 
