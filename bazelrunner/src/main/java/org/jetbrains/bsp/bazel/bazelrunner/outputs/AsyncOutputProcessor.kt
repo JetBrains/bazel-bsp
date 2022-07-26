@@ -7,7 +7,6 @@ import java.io.InputStreamReader
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AsyncOutputProcessor(
@@ -16,7 +15,6 @@ class AsyncOutputProcessor(
 ) {
   private val executorService = Executors.newCachedThreadPool()
   private val runningProcessors = mutableListOf<Future<*>>()
-  private val isRunning = AtomicBoolean(true)
 
   val stdoutCollector = OutputCollector()
   val stderrCollector = OutputCollector()
@@ -36,11 +34,7 @@ class AsyncOutputProcessor(
             val line = reader.readLine() ?: return@Runnable
             if (line == prevLine) continue
             prevLine = line
-            if (isRunning.get()) {
-              handlers.forEach { it.onNextLine(line) }
-            } else {
-              break
-            }
+            handlers.forEach { it.onNextLine(line) }
           }
         }
       } catch (e: IOException) {
@@ -59,13 +53,8 @@ class AsyncOutputProcessor(
   }
 
   private fun shutdown() {
-    isRunning.set(false)
     runningProcessors.forEach {
-      try {
-        it.get(500, TimeUnit.MILLISECONDS)
-      } catch (_: TimeoutException) {
-        // it's cool
-      }
+      it.get(1, TimeUnit.MINUTES) // Output handles should not be _that_ heavy
     }
     executorService.shutdown()
   }
