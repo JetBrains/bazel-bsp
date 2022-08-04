@@ -95,7 +95,7 @@ class BspModuleExporter(
         val classesDir = out.resolve("classes")
         val resources = module.resources
         return Project(
-            module.label.toString(),
+            module.label.value,
             Paths.get(module.baseDirectory),
             Option.apply(Paths.get(project.workspaceRoot)),
             ScalaInterop.emptyList(),

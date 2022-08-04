@@ -11,7 +11,7 @@ class Naming {
   public static String compilerOutputNameFor(Label label) {
     try {
       var digest = MessageDigest.getInstance("MD5");
-      digest.update(label.toString().getBytes(StandardCharsets.UTF_8));
+      digest.update(label.getValue().getBytes(StandardCharsets.UTF_8));
       return "z_" + BaseEncoding.base16().encode(digest.digest()).substring(0, 12);
     } catch (Exception e) {
       throw new RuntimeException(e);
