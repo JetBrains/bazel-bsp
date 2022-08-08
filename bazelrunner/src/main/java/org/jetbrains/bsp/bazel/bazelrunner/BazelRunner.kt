@@ -15,6 +15,7 @@ class BazelRunner private constructor(
   companion object {
     private val LOGGER = LogManager.getLogger(BazelRunner::class.java)
 
+    // TODO: can we remove this logic?
     // This is runner without workspace path. It is used to determine workspace
     // path and create a fully functional runner.
     @JvmStatic

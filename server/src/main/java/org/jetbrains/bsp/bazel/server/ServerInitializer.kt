@@ -10,9 +10,10 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.concurrent.Executors
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
-data class CliArgs(val bazelWorkspaceRoot: String?, val projectViewPath: String?)
+data class CliArgs(val bazelWorkspaceRoot: String, val projectViewPath: String?)
 
 object ServerInitializer {
     @JvmStatic
@@ -24,7 +25,7 @@ object ServerInitializer {
             )
             exitProcess(1)
         } else {
-            CliArgs(args.elementAtOrNull(0), args.elementAtOrNull(1))
+            CliArgs(args.elementAt(0), args.elementAtOrNull(1))
         }
         var hasErrors = false
         val stdout = System.out
@@ -42,10 +43,7 @@ object ServerInitializer {
             )
             val workspaceContextProvider = getWorkspaceContextProvider(cliArgs.projectViewPath)
             val bspIntegrationData = BspIntegrationData(stdout, stdin, executor, traceWriter)
-            val bspServer = BazelBspServer(
-                bspInfo, workspaceContextProvider,
-                cliArgs.bazelWorkspaceRoot?.let { Paths.get(it) }
-            )
+            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot))
             bspServer.startServer(bspIntegrationData)
             val server = bspIntegrationData.server.start()
             bspServer.setBesBackendPort(server.port)
