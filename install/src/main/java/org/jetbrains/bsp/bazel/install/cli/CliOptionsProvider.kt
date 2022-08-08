@@ -169,7 +169,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         val bazelWorkspaceRootDirOption = Option.builder(BAZEL_WORKSPACE_ROOT_DIR_OPT)
             .longOpt("bazel-workspace")
             .hasArg()
-            .desc("Add path to Bazel project's root directory. By default, it is the same as -$BAZEL_PATH_SHORT_OPT")
+            .desc("Add path to Bazel project's root directory. By default, it is the same as --directory (-d)")
             .build()
         cliParserOptions.addOption(bazelWorkspaceRootDirOption)
     }
