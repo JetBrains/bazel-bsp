@@ -69,8 +69,7 @@ class DependencyTree(
                 allTargetsAtDepth(depth - 1, searched + idsToTargetInfo(targets), directDependenciesIds(targets))
 
     fun transitiveDependenciesWithoutRootTargets(targetId: String): Set<TargetInfo> =
-            idToTargetInfo[targetId]?.let { setOf(it) }.orEmpty()
-                    .flatMap(::getDependencies)
+            idToTargetInfo[targetId]?.let(::getDependencies).orEmpty()
                     .filter(::isNotARootTarget)
                     .flatMap(::collectTransitiveDependenciesAndAddTarget).toSet()
 

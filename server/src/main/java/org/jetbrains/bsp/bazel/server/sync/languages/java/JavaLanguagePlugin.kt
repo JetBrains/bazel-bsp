@@ -87,7 +87,7 @@ class JavaLanguagePlugin(
 
     private fun getSourceJars(targetInfo: TargetInfo): List<FileLocation> =
         targetInfo.getJavaTargetInfoOrNull()
-            ?.jarsOrBuilderList
+            ?.run {  jarsOrBuilderList + generatedJarsList }
             ?.flatMap(JvmOutputsOrBuilder::getSourceJarsList)
             .orEmpty()
 
