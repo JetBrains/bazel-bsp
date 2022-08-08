@@ -19,7 +19,7 @@ class ProjectResolver(
 ) {
     fun resolve(): Project {
         val workspaceContext = logger.timed(
-            "Reading project view adn creating workspace context",
+            "Reading project view and creating workspace context",
             workspaceContextProvider::currentWorkspaceContext
         )
         val bepOutput = logger.timed<BepOutput>(
