@@ -32,7 +32,7 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 2. Run in the directory where Bazel BSP should be installed:
 
 ```
-cs launch org.jetbrains.bsp:bazel-bsp:2.2.0 -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:2.2.1 -M org.jetbrains.bsp.bazel.install.Install
 ```
 
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
@@ -87,16 +87,16 @@ To install Bazel BSP outside the repository root:
 
 1) Change directories into the repository root: ``cd ~/src/my-repo``
 2) Invoke the Bazel BSP installer as described above (via Coursier or run the installer JAR directly), passing in:
-   1) ``--use_bloop``
+   1) ``--use-bloop``
    2) ``-d ~/bazel-bsp-projects/my-repo-project``
    
 For example, using Coursier:
 
 ```shell
 cd ~/src/my-repository
-cs launch org.jetbrains.bsp:bazel-bsp:2.2.0 -M org.jetbrains.bsp.bazel.install.Install \
+cs launch org.jetbrains.bsp:bazel-bsp:2.2.1 -M org.jetbrains.bsp.bazel.install.Install \
   -- \
-  --use_bloop \
+  --use-bloop \
   -t //my-targets/... \
   -d ~/bazel-bsp-projects/my-targets-project 
 ```
