@@ -9,9 +9,9 @@
 ### Changes 🔄
 
 ### Fixes 🛠️
+
 - Workspace root is always used as a bazel directory.
   | [#284](https://github.com/JetBrains/bazel-bsp/pull/284)
-
 - Kebab case in the installer flags & help typo fix & log typo fix.
   | [#283](https://github.com/JetBrains/bazel-bsp/pull/283)
 
