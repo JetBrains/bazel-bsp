@@ -2,18 +2,22 @@
 # Changelog
 
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
+
+
 ## [Unreleased]
 
-### Features 🎉
-
-### Changes 🔄
+## [2.2.1] - 09.08.2022
 
 ### Fixes 🛠️
 
+- Adding generated jars to source jars list.
+  | [#285](https://github.com/JetBrains/bazel-bsp/pull/285)
 - Workspace root is always used as a bazel directory.
   | [#284](https://github.com/JetBrains/bazel-bsp/pull/284)
 - Kebab case in the installer flags & help typo fix & log typo fix.
   | [#283](https://github.com/JetBrains/bazel-bsp/pull/283)
+- Don't use `Label.toString` now that it's no longer overriden.
+  | [#282](https://github.com/JetBrains/bazel-bsp/pull/282)
 
 ## [2.2.0] - 27.07.2022
 
@@ -244,7 +248,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.2.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.2.1...HEAD
+
+[2.2.1]: https://github.com/JetBrains/bazel-bsp/compare/2.2.0...2.2.1
 
 [2.2.0]: https://github.com/JetBrains/bazel-bsp/compare/2.1.0...2.2.0
 
