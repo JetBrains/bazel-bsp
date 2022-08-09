@@ -15,13 +15,6 @@ class BazelRunner private constructor(
   companion object {
     private val LOGGER = LogManager.getLogger(BazelRunner::class.java)
 
-    // This is runner without workspace path. It is used to determine workspace
-    // path and create a fully functional runner.
-    @JvmStatic
-    fun inCwd(workspaceContextProvider: WorkspaceContextProvider, bspClientLogger: BspClientLogger): BazelRunner {
-      return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot = null)
-    }
-
     @JvmStatic
     fun of(
         workspaceContextProvider: WorkspaceContextProvider,

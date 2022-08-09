@@ -4,8 +4,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner.Companion.inCwd
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner.Companion.of
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
@@ -21,7 +19,6 @@ import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.nio.file.Path
-import java.nio.file.Paths
 
 class ServerContainer internal constructor(
     val projectProvider: ProjectProvider,
@@ -36,22 +33,20 @@ class ServerContainer internal constructor(
         fun create(
             bspInfo: BspInfo,
             workspaceContextProvider: WorkspaceContextProvider,
-            workspaceRoot: Path?,
+            workspaceRoot: Path,
             projectStorage: ProjectStorage?
         ): ServerContainer {
             val bspClientLogger = BspClientLogger()
             val bazelInfoStorage = BazelInfoStorage(bspInfo)
-            val bazelDataResolver = workspaceRoot?.let { root: Path ->
+            val bazelDataResolver =
                 BazelInfoResolver(
-                    of(workspaceContextProvider, bspClientLogger, workspaceRoot), bazelInfoStorage
+                    BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot),
+                    bazelInfoStorage
                 )
-            } ?: BazelInfoResolver(
-                inCwd(workspaceContextProvider, bspClientLogger), bazelInfoStorage
-            )
             val bazelInfo = bazelDataResolver.resolveBazelInfo()
 
-            val bazelRunner = of(
-                workspaceContextProvider, bspClientLogger, workspaceRoot
+            val bazelRunner = BazelRunner.of(
+                workspaceContextProvider, bspClientLogger, bazelInfo.workspaceRoot
             )
             val compilationManager = BazelBspCompilationManager(bazelRunner)
             val aspectsResolver = InternalAspectsResolver(bspInfo)
