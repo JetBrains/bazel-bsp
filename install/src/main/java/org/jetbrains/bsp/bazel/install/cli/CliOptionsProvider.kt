@@ -32,7 +32,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(workspaceRootDirectoryOption)
 
         val projectViewFilePathOption = Option.builder(PROJECT_VIEW_FILE_PATH_SHORT_OPT)
-            .longOpt("project_view_file")
+            .longOpt("project-view-file")
             .hasArg()
             .argName("path")
             .desc(
@@ -65,7 +65,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(excludedTargetsOption)
 
         val buildFlagsOption = Option.builder(BUILD_FLAGS_SHORT_OPT)
-            .longOpt("build_flags")
+            .longOpt("build-flags")
             .hasArgs()
             .argName("flags")
             .desc(
@@ -76,7 +76,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(buildFlagsOption)
 
         val bazelPathOption = Option.builder(BAZEL_PATH_SHORT_OPT)
-            .longOpt("bazel_path")
+            .longOpt("bazel-path")
             .hasArg()
             .argName("path")
             .desc(
@@ -87,7 +87,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(bazelPathOption)
 
         val debuggerAddressOption = Option.builder(DEBUGGER_ADDRESS_SHORT_OPT)
-            .longOpt("debugger_address")
+            .longOpt("debugger-address")
             .hasArg()
             .argName("address")
             .desc(
@@ -98,7 +98,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(debuggerAddressOption)
 
         val javaPathOption = Option.builder(JAVA_PATH_SHORT_OPT)
-            .longOpt("java_path")
+            .longOpt("java-path")
             .hasArg()
             .argName("path")
             .desc(
@@ -109,7 +109,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(javaPathOption)
 
         val manualTargetsOption = Option.builder(BUILD_MANUAL_TARGETS_OPT)
-            .longOpt("build_manual_targets")
+            .longOpt("build-manual-targets")
             .desc(
                 "Add build manual target to the generated project view file, you can read more about it here: " +
                         "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#build_manual_targets."
@@ -141,7 +141,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(excludedDirectoriesOption)
 
         val deriveTargetsFromDirectoriesOption = Option.builder(DERIVE_TARGETS_FLAG_SHORT_OPT)
-            .longOpt("derive_targets_from_directories")
+            .longOpt("derive-targets-from-directories")
             .desc(
                 "Add derive_targets_from_directories to the generated project view file, you can read more about it here: " +
                         "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#derive_targets_from_directories."
@@ -150,7 +150,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(deriveTargetsFromDirectoriesOption)
 
         val importDepthOption = Option.builder(IMPORT_DEPTH_SHORT_OPT)
-            .longOpt("import_depth")
+            .longOpt("import-depth")
             .hasArg()
             .argName("value")
             .desc(
@@ -161,15 +161,15 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(importDepthOption)
 
         val useBloopOption = Option.builder(USE_BLOOP_SHORT_OPT)
-            .longOpt("use_bloop")
+            .longOpt("use-bloop")
             .desc("Use bloop as the BSP server rather than bazel-bsp.")
             .build()
         cliParserOptions.addOption(useBloopOption)
 
         val bazelWorkspaceRootDirOption = Option.builder(BAZEL_WORKSPACE_ROOT_DIR_OPT)
-            .longOpt("bazel_workspace")
+            .longOpt("bazel-workspace")
             .hasArg()
-            .desc("Add path to Bazel project's root directory. By default, it is the same as -$BAZEL_PATH_SHORT_OPT")
+            .desc("Add path to Bazel project's root directory. By default, it is the same as --directory (-d)")
             .build()
         cliParserOptions.addOption(bazelWorkspaceRootDirOption)
     }

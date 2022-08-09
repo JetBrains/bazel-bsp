@@ -10,6 +10,8 @@
 
 ### Fixes 🛠️
 
+- Kebab case in the installer flags & help typo fix & log typo fix.
+  | [#283](https://github.com/JetBrains/bazel-bsp/pull/283)
 
 ## [2.2.0] - 27.07.2022
 
