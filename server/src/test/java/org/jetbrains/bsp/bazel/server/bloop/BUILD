@@ -1,6 +1,16 @@
 load("//:junit5.bzl", "kt_junit5_test")
 
 kt_junit5_test(
+    name = "BloopExporterTests",
+    size = "small",
+    srcs = ["BloopExporterTest.kt"],
+    test_package = "org.jetbrains.bsp.bazel.server.bloop",
+    deps = [
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/bloop",
+    ],
+)
+
+kt_junit5_test(
     name = "BspModuleExporterTest",
     size = "small",
     srcs = ["BspModuleExporterTest.kt"],
