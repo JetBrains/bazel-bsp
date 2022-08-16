@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
@@ -32,6 +33,19 @@ class BloopExporter {
   private final BspInfo bspInfo;
   private final WorkspaceContextProvider workspaceContextProvider;
   private final Path workspaceRoot;
+
+  static void validateNoFailedExternalTargets(
+      Set<BuildTargetIdentifier> projectTargets, Set<BuildTargetIdentifier> failedTargets)
+      throws BazelExportFailedException {
+    var failedExternalTargets =
+        failedTargets.stream()
+            .filter(Predicate.not(projectTargets::contains))
+            .collect(Collectors.toSet());
+
+    if (!failedExternalTargets.isEmpty()) {
+      throw new BazelExportFailedException(failedExternalTargets);
+    }
+  }
 
   public BloopExporter(
       BspInfo bspInfo, Path workspaceRoot, WorkspaceContextProvider workspaceContextProvider) {
@@ -49,17 +63,12 @@ class BloopExporter {
     initializeClient(serverContainer, client);
 
     var project = projectProvider.refreshAndGet();
-    var toFilter =
+    var projectTargets =
         project.getModules().stream()
             .map(m -> new BuildTargetIdentifier(m.getLabel().getValue()))
-            .collect(Collectors.toList());
-    var failedTargets = client.getFailedTargets();
-    var failedTransitiveTargets =
-        failedTargets.stream().filter(toFilter::contains).collect(Collectors.toSet());
+            .collect(Collectors.toSet());
 
-    if (!failedTransitiveTargets.isEmpty()) {
-      throw new BazelExportFailedException(failedTransitiveTargets);
-    }
+    validateNoFailedExternalTargets(projectTargets, client.getFailedTargets());
 
     serverContainer
         .getBspClientLogger()

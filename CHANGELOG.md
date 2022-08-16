@@ -6,6 +6,11 @@
 
 ## [Unreleased]
 
+### Fixes 🛠️
+
+- Fix transitive target failure check in bloop export
+  | [#287](https://github.com/JetBrains/bazel-bsp/pull/287)
+
 ## [2.2.1] - 09.08.2022
 
 ### Fixes 🛠️
