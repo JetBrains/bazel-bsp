@@ -13,16 +13,16 @@ public class BspClientLogger {
   private static final Duration LOG_OPERATION_THRESHOLD = Duration.ofMillis(100);
   private BuildClient bspClient;
 
-  public void error(String errorMessage) {
-    log(MessageType.ERROR, errorMessage);
+  public void error(String errorMessage, String originId) {
+    log(MessageType.ERROR, errorMessage, originId);
   }
 
   public void message(String format, Object... args) {
-    message(String.format(format, args));
+    log(MessageType.LOG, String.format(format, args), null);
   }
 
-  public void message(String message) {
-    log(MessageType.LOG, message);
+  public void message(String message, String originId) {
+    log(MessageType.LOG, message, originId);
   }
 
   public void warn(String format, Object... args) {
@@ -30,31 +30,34 @@ public class BspClientLogger {
   }
 
   public void warn(String message) {
-    log(MessageType.WARNING, message);
+    log(MessageType.WARNING, message, null);
   }
 
-  private void log(MessageType messageType, String message) {
+  private void log(MessageType messageType, String message, String originId) {
     if (bspClient == null) return;
 
     if (!message.trim().isEmpty()) {
       var params = new LogMessageParams(messageType, message);
+      params.setOriginId(originId);
       bspClient.onBuildLogMessage(params);
     }
   }
 
-  public <T> T timed(String description, Supplier<T> supplier) {
+  public <T> T timed(String description, String originId, Supplier<T> supplier) {
     var sw = Stopwatch.start();
     T result = supplier.get();
     var duration = sw.stop();
     if (duration.compareTo(LOG_OPERATION_THRESHOLD) >= 0) {
-      message("%s completed in %s", description, Format.duration(duration));
+      message(
+          String.format("%s completed in %s", description, Format.duration(duration)), originId);
     }
     return result;
   }
 
-  public void timed(String description, Runnable runnable) {
+  public void timed(String description, String originId, Runnable runnable) {
     timed(
         description,
+        originId,
         () -> {
           runnable.run();
           return null;

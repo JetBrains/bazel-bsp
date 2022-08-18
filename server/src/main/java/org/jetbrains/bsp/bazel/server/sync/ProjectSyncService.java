@@ -103,12 +103,12 @@ public class ProjectSyncService {
   }
 
   public ScalaTestClassesResult buildTargetScalaTestClasses(ScalaTestClassesParams params) {
-    var project = projectProvider.get();
+    var project = projectProvider.get(params.getOriginId());
     return bspMapper.buildTargetScalaTestClasses(project, params);
   }
 
   public ScalaMainClassesResult buildTargetScalaMainClasses(ScalaMainClassesParams params) {
-    var project = projectProvider.get();
+    var project = projectProvider.get(params.getOriginId());
     return bspMapper.buildTargetScalaMainClasses(project, params);
   }
 

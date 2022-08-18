@@ -9,19 +9,22 @@ class ProjectProvider(
 
     @Synchronized
     fun refreshAndGet(): Project =
-        loadFromBazel()
+        loadFromBazel(null)
 
     @Synchronized
-    fun get(): Project = project ?: loadFromDisk() ?: loadFromBazel()
+    fun get(): Project = project ?: loadFromDisk(null) ?: loadFromBazel(null)
 
-    private fun loadFromBazel() = projectResolver.resolve().also {
+    @Synchronized
+    fun get(originId: String?): Project = project ?: loadFromDisk(originId) ?: loadFromBazel(originId)
+
+    private fun loadFromBazel(originId: String?) = projectResolver.resolve(originId).also {
         project = it
-        storeOnDisk()
+        storeOnDisk(originId)
     }
 
-    private fun loadFromDisk() = projectStorage.load()?.also {
+    private fun loadFromDisk(originId: String?) = projectStorage.load(originId)?.also {
         project = it
     }
 
-    private fun storeOnDisk() = projectStorage.store(project)
+    private fun storeOnDisk(originId: String?) = projectStorage.store(project, originId)
 }

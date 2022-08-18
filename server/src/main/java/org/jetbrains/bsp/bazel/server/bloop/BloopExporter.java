@@ -74,6 +74,7 @@ class BloopExporter {
         .getBspClientLogger()
         .timed(
             "Exporting to bloop",
+            null,
             () -> {
               var bloopPath = bspInfo.bspProjectRoot().resolve(".bloop");
               var writtenFiles = new BspProjectExporter(project, bloopPath).export();
@@ -163,11 +164,11 @@ class BloopExporter {
   private static final class NoopProjectStorage implements ProjectStorage {
 
     @Override
-    public Project load() {
+    public Project load(String originId) {
       return null;
     }
 
     @Override
-    public void store(Project project) {}
+    public void store(Project project, String originId) {}
   }
 }

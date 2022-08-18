@@ -1,6 +1,9 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import io.kotest.matchers.shouldBe
+import java.io.IOException
+import java.net.URI
+import java.nio.file.Files
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk
@@ -14,9 +17,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.utils.dope.DopeTemp.createTempPath
 import org.junit.jupiter.api.Test
-import java.io.IOException
-import java.net.URI
-import java.nio.file.Files
 
 class ProjectStorageTest {
     @Test
@@ -25,7 +25,7 @@ class ProjectStorageTest {
         val path = createTempPath("project-cache-test.json")
         Files.deleteIfExists(path)
         val storage = FileProjectStorage(path, BspClientLogger())
-        val empty = storage.load()
+        val empty = storage.load(null)
         empty shouldBe null
         val scalaModule = ScalaModule(
             ScalaSdk("org.scala", "2.12.3", "2.12", emptyList()), emptyList(), JavaModule(
@@ -44,7 +44,8 @@ class ProjectStorageTest {
             )
         )
         val project = Project(
-            URI.create("file:///root"), listOf(
+            URI.create("file:///root"),
+            listOf(
                 Module(
                     Label("//project:project"),
                     false,
@@ -61,10 +62,11 @@ class ProjectStorageTest {
                     scalaModule,
                     hashMapOf()
                 )
-            ), mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
+            ),
+            mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
         )
-        storage.store(project)
-        val loaded = storage.load()
+        storage.store(project, null)
+        val loaded = storage.load(null)
         loaded shouldBe project
     }
 }
