@@ -25,7 +25,7 @@ class ProjectStorageTest {
         val path = createTempPath("project-cache-test.json")
         Files.deleteIfExists(path)
         val storage = FileProjectStorage(path, BspClientLogger())
-        val empty = storage.load(null)
+        val empty = storage.load()
         empty shouldBe null
         val scalaModule = ScalaModule(
             ScalaSdk("org.scala", "2.12.3", "2.12", emptyList()), emptyList(), JavaModule(
@@ -65,8 +65,8 @@ class ProjectStorageTest {
             ),
             mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
         )
-        storage.store(project, null)
-        val loaded = storage.load(null)
+        storage.store(project)
+        val loaded = storage.load()
         loaded shouldBe project
     }
 }

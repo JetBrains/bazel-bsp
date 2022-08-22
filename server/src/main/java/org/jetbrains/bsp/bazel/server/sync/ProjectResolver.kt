@@ -17,33 +17,32 @@ class ProjectResolver(
     private val logger: BspClientLogger,
     private val targetInfoReader: TargetInfoReader
 ) {
-    fun resolve(originId: String?): Project {
+    fun resolve(): Project {
+
         val workspaceContext = logger.timed(
             "Reading project view and creating workspace context",
-            originId,
             workspaceContextProvider::currentWorkspaceContext
         )
         val bepOutput = logger.timed<BepOutput>(
-            "Building project with aspect", originId
-        ) { buildProjectWithAspect(workspaceContext, originId) }
+            "Building project with aspect"
+        ) { buildProjectWithAspect(workspaceContext) }
         val aspectOutputs = logger.timed<Set<URI>>(
-            "Reading aspect output paths", originId
+            "Reading aspect output paths"
         ) { bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
         val rootTargets = bepOutput.rootTargets()
         val targets = logger.timed<Map<String, TargetInfo>>(
-            "Parsing aspect outputs", originId
+            "Parsing aspect outputs"
         ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
         return logger.timed<Project>(
-            "Mapping to internal model", originId
+            "Mapping to internal model"
         ) { bazelProjectMapper.createProject(targets, rootTargets, workspaceContext) }
     }
 
-    private fun buildProjectWithAspect(workspaceContext: WorkspaceContext, originId: String?): BepOutput =
+    private fun buildProjectWithAspect(workspaceContext: WorkspaceContext): BepOutput =
         bazelBspAspectsManager.fetchFilesFromOutputGroups(
             workspaceContext.targets,
             ASPECT_NAME,
-            listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP),
-            originId
+            listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP)
         )
 
 

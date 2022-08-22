@@ -44,7 +44,7 @@ class BazelRunner private constructor(
         command: String,
         flags: List<String>,
         arguments: List<String>,
-        originId: String?
+        originId: String? = null
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
 
@@ -59,7 +59,7 @@ class BazelRunner private constructor(
     private fun logInvocation(processArgs: List<String>, originId: String?) {
         "Invoking: ${processArgs.joinToString(" ")}"
             .also { LOGGER.info(it) }
-            .also { bspClientLogger.message(it, originId) }
+            .also { bspClientLogger.withOriginId(originId).message(it) }
     }
 
     private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelPath.value.toString()

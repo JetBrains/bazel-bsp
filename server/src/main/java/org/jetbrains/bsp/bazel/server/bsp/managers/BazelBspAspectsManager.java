@@ -21,7 +21,7 @@ public class BazelBspAspectsManager {
   }
 
   public BepOutput fetchFilesFromOutputGroups(
-      TargetsSpec targetSpecs, String aspect, List<String> outputGroups, String originId) {
+      TargetsSpec targetSpecs, String aspect, List<String> outputGroups) {
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
             targetSpecs,
@@ -33,7 +33,7 @@ public class BazelBspAspectsManager {
                 BazelFlag.keepGoing(),
                 BazelFlag.color(true),
                 BazelFlag.buildManualTests()),
-            originId);
+            null);
     return result.bepOutput();
   }
 }

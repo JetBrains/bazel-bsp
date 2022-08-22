@@ -14,7 +14,6 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -29,13 +28,13 @@ class ExecuteService(
     private val workspaceContextProvider: WorkspaceContextProvider
 ) {
     fun compile(params: CompileParams): CompileResult {
-        val targets = selectTargets(params.targets, params.originId)
+        val targets = selectTargets(params.targets)
         val result = build(targets, params.originId)
         return CompileResult(result.statusCode).apply { originId = params.originId }
     }
 
     fun test(params: TestParams): TestResult {
-        val targets = selectTargets(params.targets, params.originId)
+        val targets = selectTargets(params.targets)
         var result = build(targets, params.originId)
         if (result.isNotSuccess) {
             return TestResult(result.statusCode)
@@ -47,7 +46,7 @@ class ExecuteService(
     }
 
     fun run(params: RunParams): RunResult {
-        val targets = selectTargets(listOf(params.target), params.originId)
+        val targets = selectTargets(listOf(params.target))
         if (targets.isEmpty()) {
             throw ResponseErrorException(
                 ResponseError(
@@ -70,7 +69,7 @@ class ExecuteService(
 
     fun clean(params: CleanCacheParams?): CleanCacheResult {
         val bazelResult =
-            bazelRunner.commandBuilder().clean().executeBazelBesCommand(null).waitAndGetResult()
+            bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult()
         return CleanCacheResult(bazelResult.stdout, true)
     }
 
@@ -78,13 +77,12 @@ class ExecuteService(
         val targetsSpec = TargetsSpec(bspIds, emptyList())
         return compilationManager.buildTargetsWithBep(
             targetsSpec,
-            io.vavr.collection.Array.of(BazelFlag.color(true)),
             originId
         ).processResult()
     }
 
-    private fun selectTargets(targets: List<BuildTargetIdentifier>, originId: String): List<BuildTargetIdentifier> {
-        val project = projectProvider.get(originId)
+    private fun selectTargets(targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {
+        val project = projectProvider.get()
         val modules: Set<Module> = BspMappings.getModules(project, targets)
         val modulesToBuild = modules.filter { m: Module -> isBuildable(m) }
         return modulesToBuild.map(::toBspId)

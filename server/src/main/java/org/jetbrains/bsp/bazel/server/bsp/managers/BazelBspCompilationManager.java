@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
+import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -12,6 +13,10 @@ public class BazelBspCompilationManager {
 
   public BazelBspCompilationManager(BazelRunner bazelRunner) {
     this.bazelRunner = bazelRunner;
+  }
+
+  public BepBuildResult buildTargetsWithBep(TargetsSpec targetSpecs, String originId) {
+    return buildTargetsWithBep(targetSpecs, List.empty(), originId);
   }
 
   public BepBuildResult buildTargetsWithBep(

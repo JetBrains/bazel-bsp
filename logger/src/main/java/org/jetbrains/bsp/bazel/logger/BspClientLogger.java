@@ -12,17 +12,25 @@ public class BspClientLogger {
 
   private static final Duration LOG_OPERATION_THRESHOLD = Duration.ofMillis(100);
   private BuildClient bspClient;
+  private String originId;
 
-  public void error(String errorMessage, String originId) {
-    log(MessageType.ERROR, errorMessage, originId);
+  public BspClientLogger withOriginId(String originId) {
+    BspClientLogger bspClientLogger = new BspClientLogger();
+    bspClientLogger.originId = originId;
+    bspClientLogger.bspClient = bspClient;
+    return bspClientLogger;
+  }
+
+  public void error(String errorMessage) {
+    log(MessageType.ERROR, errorMessage);
   }
 
   public void message(String format, Object... args) {
-    log(MessageType.LOG, String.format(format, args), null);
+    message(String.format(format, args));
   }
 
-  public void message(String message, String originId) {
-    log(MessageType.LOG, message, originId);
+  public void message(String message) {
+    log(MessageType.LOG, message);
   }
 
   public void warn(String format, Object... args) {
@@ -30,10 +38,10 @@ public class BspClientLogger {
   }
 
   public void warn(String message) {
-    log(MessageType.WARNING, message, null);
+    log(MessageType.WARNING, message);
   }
 
-  private void log(MessageType messageType, String message, String originId) {
+  private void log(MessageType messageType, String message) {
     if (bspClient == null) return;
 
     if (!message.trim().isEmpty()) {
@@ -43,21 +51,19 @@ public class BspClientLogger {
     }
   }
 
-  public <T> T timed(String description, String originId, Supplier<T> supplier) {
+  public <T> T timed(String description, Supplier<T> supplier) {
     var sw = Stopwatch.start();
     T result = supplier.get();
     var duration = sw.stop();
     if (duration.compareTo(LOG_OPERATION_THRESHOLD) >= 0) {
-      message(
-          String.format("%s completed in %s", description, Format.duration(duration)), originId);
+      message("%s completed in %s", description, Format.duration(duration));
     }
     return result;
   }
 
-  public void timed(String description, String originId, Runnable runnable) {
+  public void timed(String description, Runnable runnable) {
     timed(
         description,
-        originId,
         () -> {
           runnable.run();
           return null;

@@ -14,7 +14,7 @@ class BazelProcess internal constructor(
 ) {
 
     fun waitAndGetResult(): BazelProcessResult {
-        val outputProcessor = AsyncOutputProcessor(process, { logger.message(it, originId) }, LOGGER::info)
+        val outputProcessor = AsyncOutputProcessor(process, logger.withOriginId(originId)::message, LOGGER::info)
         val stopwatch = Stopwatch.start()
 
         val exitCode = outputProcessor.waitForExit()
@@ -24,7 +24,8 @@ class BazelProcess internal constructor(
     }
 
     private fun logCompletion(exitCode: Int, duration: Duration) {
-        logger.message("Command completed in %s (exit code %d)".format(Format.duration(duration), exitCode), originId)
+        logger.withOriginId(originId)
+            .message("Command completed in %s (exit code %d)", Format.duration(duration), exitCode)
     }
 
     companion object {
