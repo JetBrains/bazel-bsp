@@ -29,20 +29,20 @@ class ExecuteService(
 ) {
     fun compile(params: CompileParams): CompileResult {
         val targets = selectTargets(params.targets)
-        val result = build(targets)
-        return CompileResult(result.statusCode)
+        val result = build(targets, params.originId)
+        return CompileResult(result.statusCode).apply { originId = params.originId }
     }
 
     fun test(params: TestParams): TestResult {
         val targets = selectTargets(params.targets)
-        var result = build(targets)
+        var result = build(targets, params.originId)
         if (result.isNotSuccess) {
             return TestResult(result.statusCode)
         }
         result = bazelRunner.commandBuilder().test().withTargets(
             targets.map(BspMappings::toBspUri)
-        ).withArguments(params.arguments).executeBazelBesCommand().waitAndGetResult()
-        return TestResult(result.statusCode)
+        ).withArguments(params.arguments).executeBazelBesCommand(params.originId).waitAndGetResult()
+        return TestResult(result.statusCode).apply { originId = originId }
     }
 
     fun run(params: RunParams): RunResult {
@@ -57,14 +57,14 @@ class ExecuteService(
             )
         }
         val bspId = targets.single()
-        val result = build(targets)
+        val result = build(targets, params.originId)
         if (result.isNotSuccess) {
             return RunResult(result.statusCode)
         }
         val bazelProcessResult =
             bazelRunner.commandBuilder().run().withArgument(BspMappings.toBspUri(bspId))
-                .withArguments(params.arguments).executeBazelBesCommand().waitAndGetResult()
-        return RunResult(bazelProcessResult.statusCode)
+                .withArguments(params.arguments).executeBazelBesCommand(params.originId).waitAndGetResult()
+        return RunResult(bazelProcessResult.statusCode).apply { originId = originId }
     }
 
     fun clean(params: CleanCacheParams?): CleanCacheResult {
@@ -73,9 +73,12 @@ class ExecuteService(
         return CleanCacheResult(bazelResult.stdout, true)
     }
 
-    private fun build(bspIds: List<BuildTargetIdentifier>): BazelProcessResult {
+    private fun build(bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targetsSpec = TargetsSpec(bspIds, emptyList())
-        return compilationManager.buildTargetsWithBep(targetsSpec).processResult()
+        return compilationManager.buildTargetsWithBep(
+            targetsSpec,
+            originId
+        ).processResult()
     }
 
     private fun selectTargets(targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {

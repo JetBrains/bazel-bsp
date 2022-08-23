@@ -12,6 +12,14 @@ public class BspClientLogger {
 
   private static final Duration LOG_OPERATION_THRESHOLD = Duration.ofMillis(100);
   private BuildClient bspClient;
+  private String originId;
+
+  public BspClientLogger withOriginId(String originId) {
+    BspClientLogger bspClientLogger = new BspClientLogger();
+    bspClientLogger.originId = originId;
+    bspClientLogger.bspClient = bspClient;
+    return bspClientLogger;
+  }
 
   public void error(String errorMessage) {
     log(MessageType.ERROR, errorMessage);
@@ -38,6 +46,7 @@ public class BspClientLogger {
 
     if (!message.trim().isEmpty()) {
       var params = new LogMessageParams(messageType, message);
+      params.setOriginId(originId);
       bspClient.onBuildLogMessage(params);
     }
   }

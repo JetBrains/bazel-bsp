@@ -15,18 +15,19 @@ public class BazelBspCompilationManager {
     this.bazelRunner = bazelRunner;
   }
 
-  public BepBuildResult buildTargetsWithBep(TargetsSpec targetSpecs) {
-    return buildTargetsWithBep(targetSpecs, List.empty());
+  public BepBuildResult buildTargetsWithBep(TargetsSpec targetSpecs, String originId) {
+    return buildTargetsWithBep(targetSpecs, List.empty(), originId);
   }
 
-  public BepBuildResult buildTargetsWithBep(TargetsSpec targetSpecs, Seq<String> extraFlags) {
+  public BepBuildResult buildTargetsWithBep(
+      TargetsSpec targetSpecs, Seq<String> extraFlags, String originId) {
     var result =
         bazelRunner
             .commandBuilder()
             .build()
             .withFlags(extraFlags.asJava())
             .withTargets(targetSpecs)
-            .executeBazelBesCommand()
+            .executeBazelBesCommand(originId)
             .waitAndGetResult();
     return new BepBuildResult(result, bepServer.getBepOutput());
   }

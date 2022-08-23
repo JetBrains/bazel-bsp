@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import java.net.URI
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
@@ -7,7 +8,6 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.net.URI
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -18,6 +18,7 @@ class ProjectResolver(
     private val targetInfoReader: TargetInfoReader
 ) {
     fun resolve(): Project {
+
         val workspaceContext = logger.timed(
             "Reading project view and creating workspace context",
             workspaceContextProvider::currentWorkspaceContext

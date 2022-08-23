@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
-import org.jetbrains.bsp.bazel.server.sync.model.Project
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
+import org.jetbrains.bsp.bazel.server.sync.model.Project
 
 class FileProjectStorage(private val path: Path, private val logger: BspClientLogger) :
     ProjectStorage {
