@@ -6,9 +6,14 @@
 
 ## [Unreleased]
 
+### Changes 🔄
+
+- Pass originId into server responses.
+  | [#289](https://github.com/JetBrains/bazel-bsp/pull/289)
+
 ### Fixes 🛠️
 
-- Fix transitive target failure check in bloop export
+- Fix transitive target failure check in bloop export.
   | [#287](https://github.com/JetBrains/bazel-bsp/pull/287)
 
 ## [2.2.1] - 09.08.2022
