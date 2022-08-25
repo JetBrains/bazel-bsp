@@ -139,8 +139,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private String extractOriginIdFromOptions(String optionsDescription) {
     Pattern pattern = Pattern.compile("(?<=ORIGINID=)(.*?)(?=')");
     Matcher matcher = pattern.matcher(optionsDescription);
-    if (matcher.find())
-    {
+    if (matcher.find()) {
       return matcher.group();
     }
     return null;
@@ -173,7 +172,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processDiagnosticText(String stdErrText, String targetLabel) {
-    var events = diagnosticsService.extractDiagnostics(stdErrText, targetLabel, startedEvents.getFirst().getValue());
+    var events =
+        diagnosticsService.extractDiagnostics(
+            stdErrText, targetLabel, startedEvents.getFirst().getValue());
     events.forEach(bspClient::onBuildPublishDiagnostics);
   }
 
