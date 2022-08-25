@@ -10,6 +10,8 @@
 
 - Pass originId into server responses.
   | [#289](https://github.com/JetBrains/bazel-bsp/pull/289)
+- Pass originId into diagnostics.
+  | [#291](https://github.com/JetBrains/bazel-bsp/pull/291)
 
 ### Fixes 🛠️
 
