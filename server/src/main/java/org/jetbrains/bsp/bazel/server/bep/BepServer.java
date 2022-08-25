@@ -17,8 +17,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -31,7 +35,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private final BuildClient bspClient;
 
-  private final Deque<TaskId> startedEventTaskIds = new ArrayDeque<>();
+  private final Deque<Map.Entry<TaskId, String>> startedEvents = new ArrayDeque<>();
   private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
@@ -88,11 +92,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
     bepOutputBuilder = new BepOutputBuilder();
     TaskId taskId = new TaskId(buildStarted.getUuid());
+    String originId = extractOriginIdFromOptions(buildStarted.getOptionsDescription());
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
 
     bspClient.onBuildTaskStart(startParams);
-    startedEventTaskIds.push(taskId);
+    startedEvents.push(new AbstractMap.SimpleEntry<>(taskId, originId));
   }
 
   private void processFinishedEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -102,18 +107,18 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void consumeFinishedEvent(BuildEventStreamProtos.BuildFinished buildFinished) {
-    if (startedEventTaskIds.isEmpty()) {
+    if (startedEvents.isEmpty()) {
       LOGGER.debug("No start event id was found.");
       return;
     }
 
-    if (startedEventTaskIds.size() > 1) {
+    if (startedEvents.size() > 1) {
       LOGGER.debug("More than 1 start event was found");
       return;
     }
 
     StatusCode exitCode = ExitCodeMapper.mapExitCode(buildFinished.getExitCode().getCode());
-    TaskFinishParams finishParams = new TaskFinishParams(startedEventTaskIds.pop(), exitCode);
+    TaskFinishParams finishParams = new TaskFinishParams(startedEvents.pop().getKey(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
 
     bspClient.onBuildTaskFinish(finishParams);
@@ -129,6 +134,15 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     if (event.getId().hasActionCompleted()) {
       consumeActionCompletedEvent(event);
     }
+  }
+
+  private String extractOriginIdFromOptions(String optionsDescription) {
+    Pattern pattern = Pattern.compile("(?<=ORIGINID=)(.*?)(?=')");
+    Matcher matcher = pattern.matcher(optionsDescription);
+    if (matcher.find()) {
+      return matcher.group();
+    }
+    return null;
   }
 
   private void consumeActionCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
@@ -158,7 +172,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void processDiagnosticText(String stdErrText, String targetLabel) {
-    var events = diagnosticsService.extractDiagnostics(stdErrText, targetLabel);
+    var events =
+        diagnosticsService.extractDiagnostics(
+            stdErrText, targetLabel, startedEvents.getFirst().getValue());
     events.forEach(bspClient::onBuildPublishDiagnostics);
   }
 
