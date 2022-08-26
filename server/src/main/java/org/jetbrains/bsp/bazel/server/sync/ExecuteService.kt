@@ -73,7 +73,7 @@ class ExecuteService(
         return CleanCacheResult(bazelResult.stdout, true)
     }
 
-    private fun build(bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
+    private fun build(bspIds: List<BuildTargetIdentifier>, originId: String?): BazelProcessResult {
         val targetsSpec = TargetsSpec(bspIds, emptyList())
         return compilationManager.buildTargetsWithBep(
             targetsSpec,
