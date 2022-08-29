@@ -15,7 +15,7 @@ class BazelProcess internal constructor(
     private val originId: String?
 ) {
 
-  fun waitAndGetResult(ensureAllOutputRead: Boolean = true): BazelProcessResult {
+    fun waitAndGetResult(ensureAllOutputRead: Boolean = false): BazelProcessResult {
         val stopwatch = Stopwatch.start()
         val outputProcessor: OutputProcessor =
           if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
