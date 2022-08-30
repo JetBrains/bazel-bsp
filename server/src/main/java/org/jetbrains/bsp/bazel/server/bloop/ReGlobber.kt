@@ -27,10 +27,10 @@ object ReGlobber {
             return basePath
         }
 
-        val maxPrefixLen = paths.minOf { it.nameCount }
+        val maxPrefixLen = paths.minOf { it.nameCount } - 1
         val prefix = mutableListOf<String>()
 
-        for (n in 0..maxPrefixLen) {
+        for (n in 0 until maxPrefixLen) {
             val prefixPart = paths[0].getName(n)
             if (paths.all { it.getName(n) == prefixPart }) {
                 prefix.add(prefixPart.toString())
