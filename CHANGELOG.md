@@ -8,13 +8,18 @@
 
 ### Changes 🔄
 
-- Pass originId into server responses.
-  | [#289](https://github.com/JetBrains/bazel-bsp/pull/289)
+- Add async and sync output processors.
+  | [#288](https://github.com/JetBrains/bazel-bsp/pull/288)
 - Pass originId into diagnostics.
   | [#291](https://github.com/JetBrains/bazel-bsp/pull/291)
+- Pass originId into server responses.
+  | [#289](https://github.com/JetBrains/bazel-bsp/pull/289)
 
 ### Fixes 🛠️
 
+- `JVMLanguagePluginParser.calculateJVMSourceRoot` does not throw 
+  an exception for package longer than the path.
+  | [#294](https://github.com/JetBrains/bazel-bsp/pull/294)
 - Fix transitive target failure check in bloop export.
   | [#287](https://github.com/JetBrains/bazel-bsp/pull/287)
 
