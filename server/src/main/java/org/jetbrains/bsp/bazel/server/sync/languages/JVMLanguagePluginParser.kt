@@ -13,9 +13,10 @@ object JVMLanguagePluginParser {
         val sourcePackage =
             findPackage(source, multipleLines) ?: return SourceRootGuesser.getSourcesRoot(source)
         val sourcePackagePath = Paths.get(sourcePackage.replace(".", "/"))
-        return Paths.get("/").resolve(
-            source.subpath(0, source.nameCount - sourcePackagePath.nameCount - 1)
-        )
+        val sourceRootEndIndex = source.nameCount - sourcePackagePath.nameCount - 1
+
+        return if (sourceRootEndIndex < 0) source.parent
+        else Paths.get("/").resolve(source.subpath(0, sourceRootEndIndex))
     }
 
     private fun findPackage(source: Path, multipleLines: Boolean): String? {
