@@ -12,7 +12,7 @@ class BazelInfoResolver(
   }
 
   private fun bazelInfoFromBazel(): BazelInfo {
-    val processResult = bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult()
+    val processResult = bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult(true)
     return parseBazelInfo(processResult).also { storage.store(it) }
   }
 

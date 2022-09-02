@@ -3,6 +3,8 @@ package org.jetbrains.bsp.bazel.bazelrunner
 import java.time.Duration
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor
+import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputProcessor
+import org.jetbrains.bsp.bazel.bazelrunner.outputs.SyncOutputProcessor
 import org.jetbrains.bsp.bazel.commons.Format
 import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -13,9 +15,11 @@ class BazelProcess internal constructor(
     private val originId: String?
 ) {
 
-    fun waitAndGetResult(): BazelProcessResult {
-        val outputProcessor = AsyncOutputProcessor(process, logger.withOriginId(originId)::message, LOGGER::info)
+    fun waitAndGetResult(ensureAllOutputRead: Boolean = false): BazelProcessResult {
         val stopwatch = Stopwatch.start()
+        val outputProcessor: OutputProcessor =
+          if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
+          else AsyncOutputProcessor(process, logger::message, LOGGER::info)
 
         val exitCode = outputProcessor.waitForExit()
         val duration = stopwatch.stop()

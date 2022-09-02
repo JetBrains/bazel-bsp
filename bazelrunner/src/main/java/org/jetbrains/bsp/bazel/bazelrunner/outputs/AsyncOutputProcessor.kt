@@ -1,61 +1,27 @@
 package org.jetbrains.bsp.bazel.bazelrunner.outputs
 
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AsyncOutputProcessor(
-  private val process: Process,
+  process: Process,
   vararg loggers: OutputHandler
-) {
-  private val executorService = Executors.newCachedThreadPool()
-  private val runningProcessors = mutableListOf<Future<*>>()
+) : OutputProcessor(process, *loggers) {
 
-  val stdoutCollector = OutputCollector()
-  val stderrCollector = OutputCollector()
+  private val isRunning = AtomicBoolean(true)
 
-  init {
-    start(process.inputStream, stdoutCollector, *loggers)
-    start(process.errorStream, stderrCollector, *loggers)
-  }
+  override fun isRunning(): Boolean = isRunning.get()
 
-  private fun start(inputStream: InputStream, vararg handlers: OutputHandler) {
-    val runnable = Runnable {
+  override fun shutdown() {
+    isRunning.set(false)
+    runningProcessors.forEach {
       try {
-        BufferedReader(InputStreamReader(inputStream)).use { reader ->
-          var prevLine: String? = null
-
-          while (!Thread.currentThread().isInterrupted) {
-            val line = reader.readLine() ?: return@Runnable
-            if (line == prevLine) continue
-            prevLine = line
-            handlers.forEach { it.onNextLine(line) }
-          }
-        }
-      } catch (e: IOException) {
-        if (Thread.currentThread().isInterrupted) return@Runnable
-        throw RuntimeException(e)
+        it.get(500, TimeUnit.MILLISECONDS) // Output handles should not be _that_ heavy
+      } catch (_: TimeoutException) {
+        // ignore it
       }
     }
-
-    executorService.submit(runnable).also { runningProcessors.add(it) }
-  }
-
-  fun waitForExit(): Int {
-    val exitCode = process.waitFor()
-    shutdown()
-    return exitCode
-  }
-
-  private fun shutdown() {
-    runningProcessors.forEach {
-      it.get(1, TimeUnit.MINUTES) // Output handles should not be _that_ heavy
-    }
-    executorService.shutdown()
+    super.shutdown()
   }
 }

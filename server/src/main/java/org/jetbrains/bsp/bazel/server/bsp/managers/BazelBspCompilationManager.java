@@ -28,7 +28,7 @@ public class BazelBspCompilationManager {
             .withFlags(extraFlags.asJava())
             .withTargets(targetSpecs)
             .executeBazelBesCommand(originId)
-            .waitAndGetResult();
+            .waitAndGetResult(false);
     return new BepBuildResult(result, bepServer.getBepOutput());
   }
 
