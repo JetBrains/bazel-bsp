@@ -26,7 +26,7 @@ object BspMappings {
 
     fun toBspUri(uri: URI): String = uri.toString()
 
-    fun toBspUri(uri: BuildTargetIdentifier): String = uri.toString()
+    fun toBspUri(uri: BuildTargetIdentifier): String = uri.uri
 
     fun getModules(project: Project, targets: List<BuildTargetIdentifier>): Set<Module> =
         toLabels(targets).mapNotNull(project::findModule).toSet()
