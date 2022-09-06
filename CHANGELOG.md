@@ -17,6 +17,8 @@
 
 ### Fixes 🛠️
 
+- `BuildTargetIdentifier` mapping uses `.uri` instead of `.toString`.
+  | [#295](https://github.com/JetBrains/bazel-bsp/pull/295)
 - `JVMLanguagePluginParser.calculateJVMSourceRoot` does not throw 
   an exception for package longer than the path.
   | [#294](https://github.com/JetBrains/bazel-bsp/pull/294)
