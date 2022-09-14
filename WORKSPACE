@@ -8,9 +8,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "4.2"
+RULES_JVM_EXTERNAL_TAG = "4.3"
 
-RULES_JVM_EXTERNAL_SHA = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca"
+RULES_JVM_EXTERNAL_SHA = "6274687f6fc5783b589f56a2f1ed60de3ce1f99bc4e8f9edef3de43bdf7c6e74"
 
 http_archive(
     name = "rules_jvm_external",
@@ -44,9 +44,9 @@ register_toolchains("//:kotlin_toolchain")
 # ======================================================================================================================
 # bazel_skylib - starlark functions
 
-BAZEL_SKYLIB_TAG = "1.2.1"
+BAZEL_SKYLIB_TAG = "1.3.0"
 
-BAZEL_SKYLIB_SHA = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728"
+BAZEL_SKYLIB_SHA = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506"
 
 http_archive(
     name = "bazel_skylib",
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.2.0"
+IO_BAZEL_TAG = "5.3.0"
 
-IO_BAZEL_SHA = "ea71b81f54b4d2af0fc2067c495421e4b3e0f5231e75c930b6e40799fec187e9"
+IO_BAZEL_SHA = "e91f47cf1bd0a30cac2d9f581b9587ad45509b737daf73b540aed9956ca3b5ab"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.2.0"
+GOOGLEAPIS_TAG = "5.3.0"
 
-GOOGLEAPIS_SHA = "ea71b81f54b4d2af0fc2067c495421e4b3e0f5231e75c930b6e40799fec187e9"
+GOOGLEAPIS_SHA = "e91f47cf1bd0a30cac2d9f581b9587ad45509b737daf73b540aed9956ca3b5ab"
 
 http_archive(
     name = "googleapis",
@@ -201,12 +201,12 @@ maven_install(
         "org.apache.logging.log4j:log4j-core:2.18.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
         "org.junit.jupiter:junit-jupiter:5.8.2",
-        "com.fasterxml.jackson.core:jackson-databind:2.13.3",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3",
+        "com.fasterxml.jackson.core:jackson-databind:2.13.4",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.8",
         "com.google.protobuf:protobuf-java:3.21.5",
-        "io.grpc:grpc-stub:1.48.1",
+        "io.grpc:grpc-stub:1.49.0",
     ],
     fetch_sources = True,
     repositories = [
