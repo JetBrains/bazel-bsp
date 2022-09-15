@@ -1,4 +1,4 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary", "kt_jvm_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
     name = "server",
@@ -25,11 +25,4 @@ kt_jvm_library(
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
     ],
-)
-
-kt_jvm_binary(
-    name = "bsp-run",
-    main_class = "org.jetbrains.bsp.bazel.server.ServerInitializer",
-    visibility = ["//server:__subpackages__"],
-    runtime_deps = ["//server/src/main/java/org/jetbrains/bsp/bazel/server"],
 )
