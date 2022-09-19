@@ -15,12 +15,30 @@ class ThriftLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) :
     override fun dependencySources(
         targetInfo: BspTargetInfo.TargetInfo,
         dependencyTree: DependencyTree
-    ): Set<URI> =
-        dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+    ): Set<URI> {
+        val transitiveSourceDeps = dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
             .filter(::isThriftLibrary)
             .flatMap(BspTargetInfo.TargetInfo::getSourcesList)
             .map(bazelPathsResolver::resolveUri)
             .toHashSet()
+
+        val directSourceDeps = sourcesFromJavaTargetInfo(targetInfo)
+
+        return transitiveSourceDeps + directSourceDeps
+    }
+
+    private fun sourcesFromJavaTargetInfo(targetInfo: BspTargetInfo.TargetInfo): HashSet<URI> =
+        if (targetInfo.hasJavaTargetInfo()) {
+            targetInfo
+                .javaTargetInfo
+                .jarsList
+                .flatMap { it.sourceJarsList }
+                .map(bazelPathsResolver::resolveUri)
+                .toHashSet()
+        } else {
+            HashSet()
+        }
+
 
     private fun isThriftLibrary(target: BspTargetInfo.TargetInfo): Boolean =
         target.kind == THRIFT_LIBRARY_RULE_NAME
