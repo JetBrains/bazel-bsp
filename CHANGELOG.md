@@ -24,6 +24,8 @@
   | [#294](https://github.com/JetBrains/bazel-bsp/pull/294)
 - Fix transitive target failure check in bloop export.
   | [#287](https://github.com/JetBrains/bazel-bsp/pull/287)
+- Use direct source dependencies for thrift targets if present.
+  | [#298](https://github.com/JetBrains/bazel-bsp/pull/298)
 
 ## [2.2.1] - 09.08.2022
 
