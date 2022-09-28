@@ -525,7 +525,6 @@ class DiagnosticsServiceTest {
     }
 
     private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams>? {
-        val bazelInfo = BasicBazelInfo("", workspacePath)
-        return DiagnosticsService(bazelInfo).extractDiagnostics(output, buildTarget, null)
+        return DiagnosticsService(workspacePath).extractDiagnostics(output, buildTarget, null)
     }
 }

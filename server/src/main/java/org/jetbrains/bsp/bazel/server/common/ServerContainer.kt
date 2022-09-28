@@ -18,7 +18,6 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.nio.file.Path
 
 class ServerContainer internal constructor(
     val projectProvider: ProjectProvider,
@@ -31,24 +30,21 @@ class ServerContainer internal constructor(
     companion object {
         @JvmStatic
         fun create(
-            bspInfo: BspInfo,
-            workspaceContextProvider: WorkspaceContextProvider,
-            workspaceRoot: Path,
-            projectStorage: ProjectStorage?
+                bspInfo: BspInfo,
+                workspaceContextProvider: WorkspaceContextProvider,
+                projectStorage: ProjectStorage?,
+                bspClientLogger: BspClientLogger,
+                bazelRunner: BazelRunner,
+                compilationManager: BazelBspCompilationManager
         ): ServerContainer {
-            val bspClientLogger = BspClientLogger()
             val bazelInfoStorage = BazelInfoStorage(bspInfo)
             val bazelDataResolver =
                 BazelInfoResolver(
-                    BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot),
+                    bazelRunner,
                     bazelInfoStorage
                 )
             val bazelInfo = bazelDataResolver.resolveBazelInfo()
 
-            val bazelRunner = BazelRunner.of(
-                workspaceContextProvider, bspClientLogger, bazelInfo.workspaceRoot
-            )
-            val compilationManager = BazelBspCompilationManager(bazelRunner)
             val aspectsResolver = InternalAspectsResolver(bspInfo)
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)

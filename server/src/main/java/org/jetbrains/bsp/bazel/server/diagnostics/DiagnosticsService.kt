@@ -2,11 +2,12 @@ package org.jetbrains.bsp.bazel.server.diagnostics
 
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import java.nio.file.Path
 
-class DiagnosticsService(bazelInfo: BazelInfo) {
+class DiagnosticsService(workspaceRoot: Path) {
 
     private val parser = DiagnosticsParser()
-    private val mapper = DiagnosticBspMapper(bazelInfo)
+    private val mapper = DiagnosticBspMapper(workspaceRoot)
 
     fun extractDiagnostics(
         bazelOutput: String,

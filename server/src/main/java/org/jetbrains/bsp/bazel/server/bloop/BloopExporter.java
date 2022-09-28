@@ -20,8 +20,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.common.ServerContainer;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectStorage;
@@ -55,9 +58,17 @@ class BloopExporter {
   }
 
   public void export() throws BazelExportFailedException {
+    var bspClientLogger = new BspClientLogger();
+    var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
+    var compilationManager = new BazelBspCompilationManager(bazelRunner);
     var serverContainer =
         ServerContainer.create(
-            bspInfo, workspaceContextProvider, this.workspaceRoot, new NoopProjectStorage());
+            bspInfo,
+            workspaceContextProvider,
+            new NoopProjectStorage(),
+            bspClientLogger,
+            bazelRunner,
+            compilationManager);
     var projectProvider = serverContainer.getProjectProvider();
     var client = new BloopBuildClient(System.out);
     initializeClient(serverContainer, client);
@@ -83,7 +94,9 @@ class BloopExporter {
 
   private void initializeClient(ServerContainer serverContainer, BloopBuildClient client) {
     serverContainer.getBspClientLogger().initialize(client);
-    var bepServer = new BepServer(client, new DiagnosticsService(serverContainer.getBazelInfo()));
+    var bepServer =
+        new BepServer(
+            client, new DiagnosticsService(serverContainer.getBazelInfo().getWorkspaceRoot()));
     serverContainer.getCompilationManager().setBepServer(bepServer);
 
     var grpcServer = ServerBuilder.forPort(0).addService(bepServer).build();

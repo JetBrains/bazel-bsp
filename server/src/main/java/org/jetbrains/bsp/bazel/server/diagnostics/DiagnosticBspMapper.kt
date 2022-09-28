@@ -9,8 +9,9 @@ import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import java.nio.file.Paths
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import java.nio.file.Path
 
-class DiagnosticBspMapper(private val bazelInfo: BazelInfo) {
+class DiagnosticBspMapper(private val workspaceRoot: Path) {
 
     fun createDiagnostics(diagnostics: List<Diagnostic>, originId: String?): List<PublishDiagnosticsParams> {
         return diagnostics
@@ -39,7 +40,7 @@ class DiagnosticBspMapper(private val bazelInfo: BazelInfo) {
     private fun toAbsoluteUri(rawFileLocation: String): String {
         var path = Paths.get(rawFileLocation)
         if (!path.isAbsolute) {
-            path = bazelInfo.workspaceRoot.resolve(path)
+            path = workspaceRoot.resolve(path)
         }
         return path.toUri().toString()
     }

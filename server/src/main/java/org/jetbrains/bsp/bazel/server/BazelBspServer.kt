@@ -3,14 +3,10 @@ package org.jetbrains.bsp.bazel.server
 import ch.epfl.scala.bsp4j.BuildClient
 import io.grpc.ServerBuilder
 import org.eclipse.lsp4j.jsonrpc.Launcher
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bep.BepServer
-import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime
-import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
-import org.jetbrains.bsp.bazel.server.bsp.BspRequestsRunner
-import org.jetbrains.bsp.bazel.server.bsp.BspServerApi
+import org.jetbrains.bsp.bazel.server.bsp.*
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.common.ServerContainer
@@ -22,39 +18,41 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.nio.file.Path
 
 class BazelBspServer(
-    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, workspaceRoot: Path
+    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, val workspaceRoot: Path
 ) {
     private val bazelRunner: BazelRunner
-    private val bazelInfo: BazelInfo
-    private val bspServerApi: BspServerApi
     private val compilationManager: BazelBspCompilationManager
-    private val bspClientLogger: BspClientLogger
+    private val bspServerApi: BspServerApi
+    private val bspClientLogger: BspClientLogger= BspClientLogger()
 
     init {
+        bazelRunner = BazelRunner.of(workspaceContextProvider, this.bspClientLogger, workspaceRoot)
+        compilationManager = BazelBspCompilationManager(bazelRunner)
+        bspServerApi = BspServerApi{bspServerData(bspInfo, workspaceContextProvider)}
+    }
+
+    private fun bspServerData(bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider): BazelServices {
         val serverContainer =
-            ServerContainer.create(bspInfo, workspaceContextProvider, workspaceRoot, null)
-        bspClientLogger = serverContainer.bspClientLogger
-        bazelInfo = serverContainer.bazelInfo
-        compilationManager = serverContainer.compilationManager
-        bazelRunner = serverContainer.bazelRunner
+                ServerContainer.create(bspInfo, workspaceContextProvider, null, BspClientLogger(), bazelRunner, compilationManager)
+
         val bspProjectMapper = BspProjectMapper(
-            serverContainer.languagePluginsService, workspaceContextProvider
+                serverContainer.languagePluginsService, workspaceContextProvider
         )
         val projectSyncService =
-            ProjectSyncService(bspProjectMapper, serverContainer.projectProvider)
+                ProjectSyncService(bspProjectMapper, serverContainer.projectProvider)
         val executeService = ExecuteService(
-            compilationManager,
-            serverContainer.projectProvider,
-            bazelRunner,
-            workspaceContextProvider
+                compilationManager,
+                serverContainer.projectProvider,
+                bazelRunner,
+                workspaceContextProvider
         )
         val serverLifetime = BazelBspServerLifetime()
         val bspRequestsRunner = BspRequestsRunner(serverLifetime)
-        bspServerApi = BspServerApi(
-            serverLifetime,
-            bspRequestsRunner,
-            projectSyncService,
-            executeService)
+        return BazelServices(
+                serverLifetime,
+                bspRequestsRunner,
+                projectSyncService,
+                executeService)
     }
 
     fun startServer(bspIntegrationData: BspIntegrationData) {
@@ -65,7 +63,7 @@ class BazelBspServer(
         bspIntegrationData.launcher = launcher
         val client = launcher.remoteProxy
         bspClientLogger.initialize(client)
-        val bepServer = BepServer(client, DiagnosticsService(bazelInfo))
+        val bepServer = BepServer(client, DiagnosticsService(workspaceRoot))
         compilationManager.setBepServer(bepServer)
         bspIntegrationData.server = ServerBuilder.forPort(0).addService(bepServer).build()
     }
