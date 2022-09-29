@@ -8,7 +8,10 @@
   _You can download a formatter for Intellij [here](https://plugins.jetbrains.com/plugin/8527-google-java-format)._ \
   **NOTE: there might be a problem with imports order - static imports have to before other imports. You can change it
   in the IntelliJ settings.**
-
+- Alternatively, you can run:
+  ```
+    cs launch com.google.googlejavaformat:google-java-format:<version> -- -r @<(git diff --name-only master| grep "[.]java")
+  ```
 - `io.vavr` provides great collection / control types - use them!
 - `null` is bad, if something may be nullable / may not exist use `io.vavr.control.Option`.
 - use `io.vavr.collection.List` instead of `java.util.List` - it allows using `.map` without `.stream()`...
