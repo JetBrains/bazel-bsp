@@ -41,31 +41,36 @@ import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 
 public class BspServerApi
     implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
 
-  private final BazelBspServerLifetime serverLifetime;
-  private final BspRequestsRunner runner;
-  private final ProjectSyncService projectSyncService;
-  private final ExecuteService executeService;
+  private final Supplier<BazelServices> bazelServicesBuilder;
+  private BazelBspServerLifetime serverLifetime = null;
+  private BspRequestsRunner runner = null;
+  private ProjectSyncService projectSyncService = null;
+  private ExecuteService executeService = null;
 
-  public BspServerApi(
-      BazelBspServerLifetime serverLifetime,
-      BspRequestsRunner runner,
-      ProjectSyncService projectSyncService,
-      ExecuteService executeService) {
-    this.serverLifetime = serverLifetime;
-    this.runner = runner;
-    this.projectSyncService = projectSyncService;
-    this.executeService = executeService;
+  public BspServerApi(Supplier<BazelServices> bazelServicesBuilder) {
+    this.bazelServicesBuilder = bazelServicesBuilder;
+  }
+
+  void init() {
+    var serverContainer = this.bazelServicesBuilder.get();
+
+    this.serverLifetime = serverContainer.getServerLifetime();
+    this.runner = serverContainer.getBspRequestsRunner();
+    this.projectSyncService = serverContainer.getProjectSyncService();
+    this.executeService = serverContainer.getExecuteService();
   }
 
   @Override
   public CompletableFuture<InitializeBuildResult> buildInitialize(
       InitializeBuildParams initializeBuildParams) {
+    init();
     return runner.handleRequest(
         "buildInitialize", projectSyncService::initialize, runner::serverIsNotFinished);
   }

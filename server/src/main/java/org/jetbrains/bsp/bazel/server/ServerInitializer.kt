@@ -50,7 +50,7 @@ object ServerInitializer {
             bspIntegrationData.launcher.startListening()
             server.awaitTermination()
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.printStackTrace(System.err)
             hasErrors = true
         } finally {
             executor.shutdown()
