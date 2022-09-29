@@ -48,7 +48,7 @@ class ExecuteService(
             .withFlags(listOf("--test_output=all"))
             .executeBazelBesCommand(params.originId)
             .waitAndGetResult(true)
-        JUnitTestParser(bspClientTestNotifier).processTestOutputWithJUnit(result)
+        JUnitTestParser(bspClientTestNotifier).processTestOutputWithJUnit5(result)
         return TestResult(result.statusCode).apply {
             originId = originId
             data = result

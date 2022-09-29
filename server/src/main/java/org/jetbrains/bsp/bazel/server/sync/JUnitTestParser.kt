@@ -19,7 +19,7 @@ private data class TestOutputLine(
   val taskId: TaskId?
 )
 
-private data class StartedTestingTarget(
+private data class StartedBuildTarget(
   val uri: String,
   val taskId: TaskId
 )
@@ -27,24 +27,23 @@ private data class StartedTestingTarget(
 class JUnitTestParser(
   private val bspClientTestNotifier: BspClientTestNotifier
 ) {
-  fun processTestOutputWithJUnit(testResult: BazelProcessResult) {
+  fun processTestOutputWithJUnit5(testResult: BazelProcessResult) {
     val startedSuites: Stack<TestOutputLine> = Stack()
-    var currentTestTarget: StartedTestingTarget? = null
+    var startedBuildTarget: StartedBuildTarget? = null
     var previousOutputLine: TestOutputLine? = null
 
     testResult.stdoutLines.forEach {
-      if (currentTestTarget == null) {
-        currentTestTarget = beginTesting(it)
+      if (startedBuildTarget == null) {
+        startedBuildTarget = checkLineForTestingBeginning(it)
       } else {
-        val currentLineMatcher = testLinePattern.matcher(it)
         val testingEndedMatcher = testingEndedPattern.matcher(it)
-        val currentOutputLine = getCurrentOutputLine(currentLineMatcher)
+        val currentOutputLine = getCurrentOutputLine(it)
         if (currentOutputLine != null) {
           processPreviousOutputLine(previousOutputLine, currentOutputLine, startedSuites)
           previousOutputLine = currentOutputLine
         } else if (testingEndedMatcher.find()) {
-          processTestingEndingLine(startedSuites, previousOutputLine, testingEndedMatcher, currentTestTarget)
-          currentTestTarget = null
+          processTestingEndingLine(startedSuites, previousOutputLine, testingEndedMatcher, startedBuildTarget)
+          startedBuildTarget = null
         }
       }
     }
@@ -54,14 +53,14 @@ class JUnitTestParser(
     startedSuites: Stack<TestOutputLine>,
     previousOutputLine: TestOutputLine?,
     testingEndedMatcher: Matcher,
-    currentTestTarget: StartedTestingTarget?
+    startedBuildTarget: StartedBuildTarget?
   ) {
     startAndFinishTest(startedSuites, previousOutputLine!!)
     while (startedSuites.isNotEmpty()) {
       finishTopmostSuite(startedSuites)
     }
     val time = testingEndedMatcher.group("time").toLongOrNull() ?: 0
-    endTesting(currentTestTarget!!, time)
+    endTesting(startedBuildTarget!!, time)
   }
 
   private fun processPreviousOutputLine(
@@ -74,36 +73,49 @@ class JUnitTestParser(
         startSuite(startedSuites, previousOutputLine)
       } else {
         startAndFinishTest(startedSuites, previousOutputLine)
-        while (startedSuites.isNotEmpty() && startedSuites.peek().indent >= currentOutputLine.indent) {
-          finishTopmostSuite(startedSuites)
-        }
+        removeAllFinishedSuites(startedSuites, currentOutputLine)
       }
     }
   }
 
-  private fun getCurrentOutputLine(currentLineMatcher: Matcher) = if (currentLineMatcher.find()) {
-    TestOutputLine(
-      currentLineMatcher.group("name"),
-      currentLineMatcher.group("result") == "✔",
-      currentLineMatcher.group("message"),
-      currentLineMatcher.start("name"),
-      null
-    )
-  } else {
-    null
-  }
-
-  private fun beginTesting(line: String): StartedTestingTarget? {
-    val testingStartMatcher = testingStartPattern.matcher(line)
-    if (testingStartMatcher.find()) {
-      val currentTestTarget = StartedTestingTarget(testingStartMatcher.group("target"), TaskId(testUUID()))
-      bspClientTestNotifier.beginTestTarget(BuildTargetIdentifier(currentTestTarget.uri), currentTestTarget.taskId)
-      return currentTestTarget
+  private fun removeAllFinishedSuites(
+    startedSuites: Stack<TestOutputLine>,
+    currentOutputLine: TestOutputLine
+  ) {
+    while (startedSuites.isNotEmpty() && startedSuites.peek().indent >= currentOutputLine.indent) {
+      finishTopmostSuite(startedSuites)
     }
-    return null
   }
 
-  private fun endTesting(testTarget: StartedTestingTarget, millis: Long) {
+  private fun getCurrentOutputLine(line: String): TestOutputLine? {
+    val currentLineMatcher = testLinePattern.matcher(line)
+    return if (currentLineMatcher.find()) {
+      TestOutputLine(
+        currentLineMatcher.group("name"),
+        currentLineMatcher.group("result") == "✔",
+        currentLineMatcher.group("message"),
+        currentLineMatcher.start("name"),
+        null
+      )
+    } else {
+      null
+    }
+  }
+
+  private fun checkLineForTestingBeginning(line: String): StartedBuildTarget? {
+    val testingStartMatcher = testingStartPattern.matcher(line)
+    return if (testingStartMatcher.find())
+      StartedBuildTarget(testingStartMatcher.group("target"), TaskId(testUUID())).also { 
+        beginTesting(it)
+      }
+    else null
+  }
+  
+  private fun beginTesting(startedBuildTarget: StartedBuildTarget) {
+    bspClientTestNotifier.beginTestTarget(BuildTargetIdentifier(startedBuildTarget.uri), startedBuildTarget.taskId)
+  }
+
+  private fun endTesting(testTarget: StartedBuildTarget, millis: Long) {
     val report = TestReport(BuildTargetIdentifier(testTarget.uri), 0, 0, 0, 0, 0)
     report.time = millis
     bspClientTestNotifier.endTestTarget(report, testTarget.taskId)

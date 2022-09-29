@@ -14,7 +14,7 @@ import ch.epfl.scala.bsp4j.TestStatus
 import ch.epfl.scala.bsp4j.TestTask
 
 class BspClientTestNotifier {
-  private var bspClient: BuildClient? = null
+  private lateinit var bspClient: BuildClient
   private var originId: String? = null
 
   fun withOriginId(originId: String?): BspClientTestNotifier {
@@ -37,7 +37,20 @@ class BspClientTestNotifier {
     taskStartParams.dataKind = TaskDataKind.TEST_START
     taskStartParams.data = testStart
     if (isSuite) taskStartParams.message = "<S>" else taskStartParams.message = "<T>"
-    bspClient!!.onBuildTaskStart(taskStartParams)
+    bspClient.onBuildTaskStart(taskStartParams)
+  }
+
+  /**
+   * Notifies the client about finishing a test suite. Synonymous to:
+   * ```
+   * finishTest(true, displayName, taskId, TestStatus.PASSED, "")
+   * ```
+   *
+   * @param displayName display name of the finished test suite
+   * @param taskId      TaskId if the finished test suite
+   */
+  fun finishTestSuite(displayName: String?, taskId: TaskId?) {
+    finishTest(true, displayName, taskId, TestStatus.PASSED, "")
   }
 
   /**
@@ -57,7 +70,7 @@ class BspClientTestNotifier {
     taskFinishParams.dataKind = TaskDataKind.TEST_FINISH
     taskFinishParams.data = testFinish
     if (isSuite) taskFinishParams.message = "<S>" else taskFinishParams.message = "<T>"
-    bspClient!!.onBuildTaskFinish(taskFinishParams)
+    bspClient.onBuildTaskFinish(taskFinishParams)
   }
 
   /**
@@ -71,7 +84,7 @@ class BspClientTestNotifier {
     val taskStartParams = TaskStartParams(taskId)
     taskStartParams.dataKind = TaskDataKind.TEST_TASK
     taskStartParams.data = testingBegin
-    bspClient!!.onBuildTaskStart(taskStartParams)
+    bspClient.onBuildTaskStart(taskStartParams)
   }
 
   /**
@@ -84,23 +97,10 @@ class BspClientTestNotifier {
     val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
     taskFinishParams.dataKind = TaskDataKind.TEST_REPORT
     taskFinishParams.data = testReport
-    bspClient!!.onBuildTaskFinish(taskFinishParams)
+    bspClient.onBuildTaskFinish(taskFinishParams)
   }
 
-  /**
-   * Notifies the client about finishing a test suite. Synonymous to:
-   * ```
-   * finishTest(true, displayName, taskId, TestStatus.PASSED, "")
-   * ```
-   *
-   * @param displayName display name of the finished test suite
-   * @param taskId      TaskId if the finished test suite
-   */
-  fun finishTestSuite(displayName: String?, taskId: TaskId?) {
-    finishTest(true, displayName, taskId, TestStatus.PASSED, "")
-  }
-
-  fun initialize(buildClient: BuildClient?) {
+  fun initialize(buildClient: BuildClient) {
     bspClient = buildClient
   }
 }
