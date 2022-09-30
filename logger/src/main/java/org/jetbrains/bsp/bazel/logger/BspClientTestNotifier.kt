@@ -36,7 +36,7 @@ class BspClientTestNotifier {
     val taskStartParams = TaskStartParams(taskId)
     taskStartParams.dataKind = TaskDataKind.TEST_START
     taskStartParams.data = testStart
-    if (isSuite) taskStartParams.message = "<S>" else taskStartParams.message = "<T>"
+    taskStartParams.message = if (isSuite) SUITE_TAG else TEST_TAG
     bspClient.onBuildTaskStart(taskStartParams)
   }
 
@@ -69,7 +69,7 @@ class BspClientTestNotifier {
     val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
     taskFinishParams.dataKind = TaskDataKind.TEST_FINISH
     taskFinishParams.data = testFinish
-    if (isSuite) taskFinishParams.message = "<S>" else taskFinishParams.message = "<T>"
+    taskFinishParams.message = if (isSuite) SUITE_TAG else TEST_TAG
     bspClient.onBuildTaskFinish(taskFinishParams)
   }
 
@@ -102,5 +102,10 @@ class BspClientTestNotifier {
 
   fun initialize(buildClient: BuildClient) {
     bspClient = buildClient
+  }
+
+  companion object {
+    const val SUITE_TAG = "<S>"
+    const val TEST_TAG = "<T>"
   }
 }

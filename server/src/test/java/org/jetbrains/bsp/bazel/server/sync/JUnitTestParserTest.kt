@@ -7,11 +7,62 @@ import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputCollector
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.*
 
 class JUnitTestParserTest {
-  private val outputString = """
+
+  @Test
+  fun `should finish all started tests`() {
+    bspClient.startedSuiteStack.empty() shouldBe true
+  }
+
+  @Test
+  fun `should conduct correct number of tests`() {
+    bspClient.conductedTests.size shouldBeExactly 18
+  }
+
+  @Test
+  fun `should conduct correct number of suites`() {
+    bspClient.conductedSuites.size shouldBeExactly 4
+  }
+
+  @Test
+  fun `should fail one test`() {
+    val failed = bspClient.conductedTests.filter { it.status == TestStatus.FAILED }
+    failed.size shouldBeExactly 1
+    failed.firstOrNull()?.name shouldBe "should return ScalaLanguagePlugin for Scala Language()"
+  }
+
+  @Test
+  fun `should parse nested tests correctly`() {
+    bspClient.getParentByName("should really work()", false) shouldBe "An inner inner test"
+    bspClient.getParentByName("An inner inner test", true) shouldBe "Tests for the method shouldGetPlugin"
+    bspClient.getParentByName("Tests for the method shouldGetPlugin", true) shouldBe "LanguagePluginServiceTest"
+    bspClient.getParentByName("LanguagePluginServiceTest", true) shouldBe null
+  }
+
+  @Test
+  fun `should distinguish similarly-named tests and suites`() {
+    bspClient.conductedTests.count { it.name == "Tests for the method shouldGetPlugin" } shouldBeExactly 1
+    bspClient.conductedSuites.count { it.name == "Tests for the method shouldGetPlugin" } shouldBeExactly 1
+  }
+
+  @Test
+  fun `should parse tests with trimmed name`() {
+    bspClient.conductedTests.count {
+      it.name == "should return CppLanguagePlugin for Cpp Languahgfdhgusdhgfihdfhgosihdfgoisdfogih..."
+    } shouldBeExactly 1
+  }
+
+  @Test
+  fun `should detect testing duration`() {
+    bspClient.duration shouldBeExactly 382
+  }
+
+  companion object {
+    private val outputString = """
     |Invoking: /opt/homebrew/bin/bazel build --bes_backend=grpc://localhost:60052 --define=ORIGINID=test-a9896735-e16b-49f0-b013-7d337213422e -- //server/src/test/java/org/jetbrains/bsp/bazel/server/sync/languages:LanguagePluginServiceTest
     |Loading: 
     |Loading: 0 packages loaded
@@ -86,67 +137,22 @@ class JUnitTestParserTest {
     |Executed 0 out of 1 test: 1 test passes.
     |Command completed in 236ms (exit code 0)""".trimMargin()
 
-  private val bazelProcessResult: BazelProcessResult
-  private val jUnitTestParser: JUnitTestParser
-  private val bspClient: MockBspClient
+    private lateinit var bazelProcessResult: BazelProcessResult
+    private lateinit var jUnitTestParser: JUnitTestParser
+    private lateinit var bspClient: MockBspClient
 
-  init {
-    val collector = OutputCollector()
-    outputString.lines().forEach { collector.onNextLine(it) }
-    bazelProcessResult = BazelProcessResult(collector, OutputCollector(), 0)
-    val testNotifier = BspClientTestNotifier()
-    bspClient = MockBspClient()
-    testNotifier.initialize(bspClient)
-    jUnitTestParser = JUnitTestParser(testNotifier)
-    jUnitTestParser.processTestOutputWithJUnit(bazelProcessResult)
-  }
-
-  @Test
-  fun `should finish all started tests`() {
-    bspClient.startedSuiteStack.empty() shouldBe true
-  }
-
-  @Test
-  fun `should conduct correct number of tests`() {
-    bspClient.conductedTests.size shouldBeExactly 18
-  }
-
-  @Test
-  fun `should conduct correct number of suites`() {
-    bspClient.conductedSuites.size shouldBeExactly 4
-  }
-
-  @Test
-  fun `should fail one test`() {
-    val failed = bspClient.conductedTests.filter { it.status == TestStatus.FAILED }
-    failed.size shouldBeExactly 1
-    failed.firstOrNull()?.name shouldBe "should return ScalaLanguagePlugin for Scala Language()"
-  }
-
-  @Test
-  fun `should parse nested tests correctly`() {
-    bspClient.getParentByName("should really work()", false) shouldBe "An inner inner test"
-    bspClient.getParentByName("An inner inner test", true) shouldBe "Tests for the method shouldGetPlugin"
-    bspClient.getParentByName("Tests for the method shouldGetPlugin", true) shouldBe "LanguagePluginServiceTest"
-    bspClient.getParentByName("LanguagePluginServiceTest", true) shouldBe null
-  }
-
-  @Test
-  fun `should distinguish similarly-named tests and suites`() {
-    bspClient.conductedTests.count { it.name == "Tests for the method shouldGetPlugin" } shouldBeExactly 1
-    bspClient.conductedSuites.count { it.name == "Tests for the method shouldGetPlugin" } shouldBeExactly 1
-  }
-
-  @Test
-  fun `should parse tests with trimmed name`() {
-    bspClient.conductedTests.count {
-      it.name == "should return CppLanguagePlugin for Cpp Languahgfdhgusdhgfihdfhgosihdfgoisdfogih..."
-    } shouldBeExactly 1
-  }
-
-  @Test
-  fun `should detect testing duration`() {
-    bspClient.duration shouldBeExactly 382
+    @JvmStatic
+    @BeforeAll
+    fun init() {
+      val collector = OutputCollector()
+      outputString.lines().forEach { collector.onNextLine(it) }
+      bazelProcessResult = BazelProcessResult(collector, OutputCollector(), 0)
+      val testNotifier = BspClientTestNotifier()
+      bspClient = MockBspClient()
+      testNotifier.initialize(bspClient)
+      jUnitTestParser = JUnitTestParser(testNotifier)
+      jUnitTestParser.processTestOutputWithJUnit5(bazelProcessResult)
+    }
   }
 }
 
@@ -182,7 +188,7 @@ private class MockBspClient : BuildClient {
     when (params?.dataKind) {
       TaskDataKind.TEST_START -> {
         val testStart = params.data as? TestStart
-        val isSuite = params.message.take(3) == "<S>"
+        val isSuite = params.message.startsWith(BspClientTestNotifier.SUITE_TAG)
         val displayName = testStart?.displayName
         if (isSuite) startedSuiteStack.push(displayName)
         else startedTest = displayName
@@ -201,7 +207,7 @@ private class MockBspClient : BuildClient {
     when (params?.dataKind) {
       TaskDataKind.TEST_FINISH -> {
         val testFinish = params.data as TestFinish
-        val isSuite = params.message.take(3) == "<S>"
+        val isSuite = params.message.startsWith(BspClientTestNotifier.SUITE_TAG)
         val displayName = testFinish.displayName
         if (isSuite && displayName == stackPeekOrNull(startedSuiteStack)) {
           stackPopOrNull(startedSuiteStack)

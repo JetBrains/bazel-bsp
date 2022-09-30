@@ -14,6 +14,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
@@ -45,7 +46,7 @@ class ExecuteService(
         result = bazelRunner.commandBuilder().test()
             .withTargets(targetsSpec)
             .withArguments(params.arguments)
-            .withFlags(listOf("--test_output=all"))
+            .withFlags(listOf(BazelFlag.testOutputAll()))
             .executeBazelBesCommand(params.originId)
             .waitAndGetResult(true)
         JUnitTestParser(bspClientTestNotifier).processTestOutputWithJUnit5(result)

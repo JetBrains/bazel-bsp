@@ -19,6 +19,9 @@ object BazelFlag {
   @JvmStatic fun repositoryOverride(repositoryName: String, path: String): String =
     arg("override_repository", "$repositoryName=$path")
 
+  @JvmStatic fun testOutputAll(): String =
+    arg("test_output", "all")
+
   private fun arg(name: String, value: String) =
       String.format("--%s=%s", name, value)
 
