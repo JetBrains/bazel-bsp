@@ -36,10 +36,10 @@ class ServerContainer internal constructor(
                 workspaceContextProvider: WorkspaceContextProvider,
                 projectStorage: ProjectStorage?,
                 bspClientLogger: BspClientLogger,
+                bspClientTestNotifier: BspClientTestNotifier,
                 bazelRunner: BazelRunner,
                 compilationManager: BazelBspCompilationManager
         ): ServerContainer {
-            val bspClientTestNotifier = BspClientTestNotifier()
             val bazelInfoStorage = BazelInfoStorage(bspInfo)
             val bazelDataResolver =
                 BazelInfoResolver(

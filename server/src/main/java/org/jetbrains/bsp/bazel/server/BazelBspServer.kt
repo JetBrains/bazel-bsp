@@ -25,7 +25,7 @@ class BazelBspServer(
     private val compilationManager: BazelBspCompilationManager
     private val bspServerApi: BspServerApi
     private val bspClientLogger: BspClientLogger = BspClientLogger()
-    private lateinit var bspClientTestNotifier: BspClientTestNotifier
+    private val bspClientTestNotifier: BspClientTestNotifier = BspClientTestNotifier()
 
     init {
         bazelRunner = BazelRunner.of(workspaceContextProvider, this.bspClientLogger, workspaceRoot)
@@ -34,10 +34,16 @@ class BazelBspServer(
     }
 
     private fun bspServerData(bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider): BazelServices {
-        val serverContainer =
-                ServerContainer.create(bspInfo, workspaceContextProvider, null, BspClientLogger(), bazelRunner, compilationManager)
+        val serverContainer = ServerContainer.create(
+                bspInfo,
+                workspaceContextProvider,
+                null,
+                bspClientLogger,
+                bspClientTestNotifier,
+                bazelRunner,
+                compilationManager
+        )
 
-        bspClientTestNotifier = serverContainer.bspClientTestNotifier
         val bspProjectMapper = BspProjectMapper(
                 serverContainer.languagePluginsService, workspaceContextProvider
         )

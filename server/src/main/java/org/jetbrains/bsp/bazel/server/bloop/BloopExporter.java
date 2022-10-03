@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
+import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
@@ -59,6 +60,7 @@ class BloopExporter {
 
   public void export() throws BazelExportFailedException {
     var bspClientLogger = new BspClientLogger();
+    var bspClientTestNotifier = new BspClientTestNotifier();
     var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
     var compilationManager = new BazelBspCompilationManager(bazelRunner);
     var serverContainer =
@@ -67,6 +69,7 @@ class BloopExporter {
             workspaceContextProvider,
             new NoopProjectStorage(),
             bspClientLogger,
+            bspClientTestNotifier,
             bazelRunner,
             compilationManager);
     var projectProvider = serverContainer.getProjectProvider();
