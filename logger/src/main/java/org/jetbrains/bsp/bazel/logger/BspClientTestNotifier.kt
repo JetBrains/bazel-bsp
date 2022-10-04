@@ -105,7 +105,7 @@ class BspClientTestNotifier {
   }
 
   companion object {
-    const val SUITE_TAG = "<S>"
-    const val TEST_TAG = "<T>"
+    private const val SUITE_TAG = "<S>"
+    private const val TEST_TAG = "<T>"
   }
 }

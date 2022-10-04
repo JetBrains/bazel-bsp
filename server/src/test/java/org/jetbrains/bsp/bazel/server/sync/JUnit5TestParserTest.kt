@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class JUnitTestParserTest {
+class JUnit5TestParserTest {
 
   @Test
   fun `should finish all started tests`() {
@@ -138,7 +138,7 @@ class JUnitTestParserTest {
     |Command completed in 236ms (exit code 0)""".trimMargin()
 
     private lateinit var bazelProcessResult: BazelProcessResult
-    private lateinit var jUnitTestParser: JUnitTestParser
+    private lateinit var jUnit5TestParser: JUnit5TestParser
     private lateinit var bspClient: MockBspClient
 
     @JvmStatic
@@ -150,8 +150,8 @@ class JUnitTestParserTest {
       val testNotifier = BspClientTestNotifier()
       bspClient = MockBspClient()
       testNotifier.initialize(bspClient)
-      jUnitTestParser = JUnitTestParser(testNotifier)
-      jUnitTestParser.processTestOutputWithJUnit5(bazelProcessResult)
+      jUnit5TestParser = JUnit5TestParser(testNotifier)
+      jUnit5TestParser.processTestOutput(bazelProcessResult)
     }
   }
 }
@@ -188,7 +188,7 @@ private class MockBspClient : BuildClient {
     when (params?.dataKind) {
       TaskDataKind.TEST_START -> {
         val testStart = params.data as? TestStart
-        val isSuite = params.message.startsWith(BspClientTestNotifier.SUITE_TAG)
+        val isSuite = params.message.startsWith("<S>")
         val displayName = testStart?.displayName
         if (isSuite) startedSuiteStack.push(displayName)
         else startedTest = displayName
@@ -207,7 +207,7 @@ private class MockBspClient : BuildClient {
     when (params?.dataKind) {
       TaskDataKind.TEST_FINISH -> {
         val testFinish = params.data as TestFinish
-        val isSuite = params.message.startsWith(BspClientTestNotifier.SUITE_TAG)
+        val isSuite = params.message.startsWith("<S>")
         val displayName = testFinish.displayName
         if (isSuite && displayName == stackPeekOrNull(startedSuiteStack)) {
           stackPopOrNull(startedSuiteStack)

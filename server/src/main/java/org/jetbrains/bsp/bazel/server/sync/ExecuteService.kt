@@ -46,10 +46,10 @@ class ExecuteService(
         result = bazelRunner.commandBuilder().test()
             .withTargets(targetsSpec)
             .withArguments(params.arguments)
-            .withFlags(listOf(BazelFlag.testOutputAll()))
+            .withFlag(BazelFlag.testOutputAll())
             .executeBazelBesCommand(params.originId)
             .waitAndGetResult(true)
-        JUnitTestParser(bspClientTestNotifier).processTestOutputWithJUnit5(result)
+        JUnit5TestParser(bspClientTestNotifier).processTestOutput(result)
         return TestResult(result.statusCode).apply {
             originId = originId
             data = result

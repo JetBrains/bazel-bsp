@@ -13,13 +13,11 @@ kt_junit5_test(
 )
 
 kt_junit5_test(
-    name = "JUnitTestParserTest",
+    name = "JUnit5TestParserTest",
     size = "small",
-    srcs = ["JUnitTestParserTest.kt"],
+    srcs = ["JUnit5TestParserTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.server.sync",
     deps = [
-        "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
-        "//utils:dope",
     ],
 )

@@ -24,10 +24,10 @@ private data class StartedBuildTarget(
   val taskId: TaskId
 )
 
-class JUnitTestParser(
+class JUnit5TestParser(
   private val bspClientTestNotifier: BspClientTestNotifier
 ) {
-  fun processTestOutputWithJUnit5(testResult: BazelProcessResult) {
+  fun processTestOutput(testResult: BazelProcessResult) {
     val startedSuites: Stack<TestOutputLine> = Stack()
     var startedBuildTarget: StartedBuildTarget? = null
     var previousOutputLine: TestOutputLine? = null

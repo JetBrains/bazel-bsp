@@ -14,6 +14,8 @@
   | [#291](https://github.com/JetBrains/bazel-bsp/pull/291)
 - Pass originId into server responses.
   | [#289](https://github.com/JetBrains/bazel-bsp/pull/289)
+- Send notifications to client while JUnit5 testing.
+  | [#299](https://github.com/JetBrains/bazel-bsp/pull/299)
 
 ### Fixes 🛠️
 
