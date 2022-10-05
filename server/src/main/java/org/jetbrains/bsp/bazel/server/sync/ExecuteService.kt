@@ -14,6 +14,8 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
+import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -25,7 +27,8 @@ class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
     private val projectProvider: ProjectProvider,
     private val bazelRunner: BazelRunner,
-    private val workspaceContextProvider: WorkspaceContextProvider
+    private val workspaceContextProvider: WorkspaceContextProvider,
+    private val bspClientTestNotifier: BspClientTestNotifier
 ) {
     fun compile(params: CompileParams): CompileResult {
         val targets = selectTargets(params.targets)
@@ -39,10 +42,18 @@ class ExecuteService(
         if (result.isNotSuccess) {
             return TestResult(result.statusCode)
         }
-        result = bazelRunner.commandBuilder().test().withTargets(
-            targets.map(BspMappings::toBspUri)
-        ).withArguments(params.arguments).executeBazelBesCommand(params.originId).waitAndGetResult()
-        return TestResult(result.statusCode).apply { originId = originId }
+        val targetsSpec = TargetsSpec(targets, emptyList())
+        result = bazelRunner.commandBuilder().test()
+            .withTargets(targetsSpec)
+            .withArguments(params.arguments)
+            .withFlag(BazelFlag.testOutputAll())
+            .executeBazelBesCommand(params.originId)
+            .waitAndGetResult(true)
+        JUnit5TestParser(bspClientTestNotifier).processTestOutput(result)
+        return TestResult(result.statusCode).apply {
+            originId = originId
+            data = result
+        }
     }
 
     fun run(params: RunParams): RunResult {
