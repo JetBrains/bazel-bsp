@@ -1,10 +1,14 @@
-
 # Changelog
 
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 
 ## [Unreleased]
+
+### Features 🎉
+
+- Send notifications to client while JUnit5 testing.
+  | [#299](https://github.com/JetBrains/bazel-bsp/pull/299)
 
 ### Changes 🔄
 
@@ -14,8 +18,6 @@
   | [#291](https://github.com/JetBrains/bazel-bsp/pull/291)
 - Pass originId into server responses.
   | [#289](https://github.com/JetBrains/bazel-bsp/pull/289)
-- Send notifications to client while JUnit5 testing.
-  | [#299](https://github.com/JetBrains/bazel-bsp/pull/299)
 
 ### Fixes 🛠️
 
@@ -28,6 +30,8 @@
   | [#287](https://github.com/JetBrains/bazel-bsp/pull/287)
 - Use direct source dependencies for thrift targets if present.
   | [#298](https://github.com/JetBrains/bazel-bsp/pull/298)
+- Postpone bazel info.
+  | [#300](https://github.com/JetBrains/bazel-bsp/pull/300)
 
 ## [2.2.1] - 09.08.2022
 
