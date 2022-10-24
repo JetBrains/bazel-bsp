@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+## [2.3.0] - 26.10.2022
+
 ### Features 🎉
 
 - Send notifications to client while JUnit5 testing.
@@ -275,7 +277,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.2.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.3.0...HEAD
+
+[2.3.0]: https://github.com/JetBrains/bazel-bsp/compare/2.2.1...2.3.0
 
 [2.2.1]: https://github.com/JetBrains/bazel-bsp/compare/2.2.0...2.2.1
 

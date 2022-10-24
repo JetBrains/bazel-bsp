@@ -31,8 +31,8 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 1. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
 2. Run in the directory where Bazel BSP should be installed:
 
-```
-cs launch org.jetbrains.bsp:bazel-bsp:2.2.1 -M org.jetbrains.bsp.bazel.install.Install
+```shell
+cs launch org.jetbrains.bsp:bazel-bsp:2.3.0 -M org.jetbrains.bsp.bazel.install.Install
 ```
 
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
@@ -54,14 +54,14 @@ Might be useful during development
    the `server/src/main/java/org/jetbrains/bsp/bazel/BUILD` file
 4. Publish a new version:
 
-```
+```shell
 bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
 ```
 
 7. Enter directory where Bazel BSP should be installed
 8. Install your version:
 
-```
+```shell
 cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:<your version> -M org.jetbrains.bsp.bazel.install.Install
 ```
 
@@ -94,7 +94,7 @@ For example, using Coursier:
 
 ```shell
 cd ~/src/my-repository
-cs launch org.jetbrains.bsp:bazel-bsp:2.2.1 -M org.jetbrains.bsp.bazel.install.Install \
+cs launch org.jetbrains.bsp:bazel-bsp:2.3.0 -M org.jetbrains.bsp.bazel.install.Install \
   -- \
   --use-bloop \
   -t //my-targets/... \
