@@ -89,14 +89,21 @@ class BazelProjectMapper(
         target.dependenciesList.map { Label(it.id) }
 
     private fun inferLanguages(target: TargetInfo): Set<Language> =
-        target.sourcesList.flatMap { source: FileLocation ->
-            Language.all().filter { isLanguageFile(source, it) }
-        }.toHashSet()
+        if (target.sourcesList.isEmpty()) {
+            Language.all().filter { isBinaryTargetOfLanguage(target.kind, it) }.toHashSet()
+        } else {
+            target.sourcesList.flatMap { source: FileLocation ->
+                Language.all().filter { isLanguageFile(source, it) }
+            }.toHashSet()
+        }
 
     private fun isLanguageFile(file: FileLocation, language: Language): Boolean =
         language.extensions.any {
             file.relativePath.endsWith(it)
         }
+
+    private fun isBinaryTargetOfLanguage(kind: String, language: Language): Boolean =
+        language.binary_targets.contains(kind)
 
     private fun resolveSourceSet(target: TargetInfo, languagePlugin: LanguagePlugin<*>): SourceSet {
         val sources = target.sourcesList.asSequence().map(bazelPathsResolver::resolve)

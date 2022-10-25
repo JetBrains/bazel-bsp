@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+- Correctly determine language type for JVM binary targets.
+  | [#306](https://github.com/JetBrains/bazel-bsp/pull/306)
+
 ## [2.3.0] - 26.10.2022
 
 ### Features 🎉
