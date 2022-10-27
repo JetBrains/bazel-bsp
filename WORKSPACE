@@ -137,15 +137,15 @@ rules_proto_toolchains()
 # ======================================================================================================================
 # bazel_sonatype - for publish
 
-BAZEL_SONATYPE_TAG = "1.0.0"
+BAZEL_SONATYPE_TAG = "1.1.1"
 
-BAZEL_SONATYPE_SHA = "781682e41963e0b874e439cc558d9ea8c80bffb9f1b8b76f5e388a27a3fc8417"
+BAZEL_SONATYPE_SHA = "6d1bc7da15dae958274df944eb46e9757e14187cda6decd66fc1aeeb1ea21758"
 
 http_archive(
     name = "bazel_sonatype",
     sha256 = BAZEL_SONATYPE_SHA,
     strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
-    url = "https://github.com/JetBrains/bazel-sonatype/archive/{}.zip".format(BAZEL_SONATYPE_TAG),
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/v{}.zip".format(BAZEL_SONATYPE_TAG),
 )
 
 # --------------------------------------------------------------------------------------------------------------------
