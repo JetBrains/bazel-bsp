@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+### Fixes 🛠️
+
 - Correctly determine language type for JVM binary targets.
   | [#306](https://github.com/JetBrains/bazel-bsp/pull/306)
 

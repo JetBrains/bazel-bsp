@@ -8,9 +8,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "4.4.2"
+RULES_JVM_EXTERNAL_TAG = "4.5"
 
-RULES_JVM_EXTERNAL_SHA = "735602f50813eb2ea93ca3f5e43b1959bd80b213b836a07a62a29d757670b77b"
+RULES_JVM_EXTERNAL_SHA = "b17d7388feb9bfa7f2fa09031b32707df529f26c91ab9e5d909eb1676badd9a6"
 
 http_archive(
     name = "rules_jvm_external",
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.3.1"
+IO_BAZEL_TAG = "5.3.2"
 
-IO_BAZEL_SHA = "dc8a714864babc091b98c719c2efcec35db1641218f0ee1e70892755230e10db"
+IO_BAZEL_SHA = "a3fc942e8d67f06767f88469f79b6f456f853a293026b4b46e7b22526b036796"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.3.1"
+GOOGLEAPIS_TAG = "5.3.2"
 
-GOOGLEAPIS_SHA = "dc8a714864babc091b98c719c2efcec35db1641218f0ee1e70892755230e10db"
+GOOGLEAPIS_SHA = "a3fc942e8d67f06767f88469f79b6f456f853a293026b4b46e7b22526b036796"
 
 http_archive(
     name = "googleapis",
@@ -200,13 +200,13 @@ maven_install(
         "org.apache.logging.log4j:log4j-api:2.19.0",
         "org.apache.logging.log4j:log4j-core:2.19.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
-        "org.junit.jupiter:junit-jupiter:5.8.2",
-        "com.fasterxml.jackson.core:jackson-databind:2.13.4",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4",
+        "org.junit.jupiter:junit-jupiter:5.9.1",
+        "com.fasterxml.jackson.core:jackson-databind:2.14.0",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.8",
-        "com.google.protobuf:protobuf-java:3.21.7",
-        "io.grpc:grpc-stub:1.49.2",
+        "com.google.protobuf:protobuf-java:3.21.9",
+        "io.grpc:grpc-stub:1.50.2",
     ],
     fetch_sources = True,
     repositories = [
