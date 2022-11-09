@@ -18,10 +18,9 @@ data class CliArgs(val bazelWorkspaceRoot: String, val projectViewPath: String?)
 object ServerInitializer {
     @JvmStatic
     fun main(args: Array<String>) {
-        val cliArgs = if (args.size > 2) {
+        val cliArgs = if (args.size > 2 || args.isEmpty()) {
             System.err.printf(
-                "Expected optional path to project view file; got too many args: %s%n",
-                args.contentToString()
+                "Usage: <bazel workspace root> [project view path]%n"
             )
             exitProcess(1)
         } else {
