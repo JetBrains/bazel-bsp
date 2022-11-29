@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bloop
 
-import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
@@ -37,15 +37,15 @@ internal class BspProjectExporter(private val project: Project, private val bloo
     private fun buildClassPathRewriter(): ClasspathRewriter {
         val localArtifactsBuilder = project.modules.flatMap {
             val moduleOutput = classesOutputForModule(it, bloopRoot)
-            it.languageData?.let(::artifactsFromLanguageData)?.map { uri ->
+            artifactsFromLanguageData(it).map { uri ->
                 uri to moduleOutput
-            }.orEmpty()
+            }
         }.toMap()
         return ClasspathRewriter(localArtifactsBuilder)
     }
 
-    private fun artifactsFromLanguageData(languageData: LanguageData): Set<URI> {
-        return JavaModule.fromLanguageData(languageData)
+    private fun artifactsFromLanguageData(module: Module): Set<URI> {
+        return module.javaModule
             ?.let(JavaModule::allOutputs)
             ?.toSet().orEmpty()
     }

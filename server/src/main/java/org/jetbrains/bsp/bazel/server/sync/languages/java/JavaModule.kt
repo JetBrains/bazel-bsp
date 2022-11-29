@@ -22,14 +22,4 @@ data class JavaModule(
     val compileClasspath: List<URI>,
     val sourcesClasspath: List<URI>,
     val ideClasspath: List<URI>
-) : LanguageData {
-
-    companion object {
-        @JvmStatic
-        fun fromLanguageData(languageData: LanguageData?): JavaModule? = when (languageData) {
-            is JavaModule -> languageData
-            is ScalaModule -> languageData.javaModule
-            else -> null
-        }
-    }
-}
+) : LanguageData
