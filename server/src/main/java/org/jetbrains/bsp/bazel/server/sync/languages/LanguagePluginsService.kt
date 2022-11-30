@@ -4,9 +4,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -33,15 +31,6 @@ class LanguagePluginsService(
             languages.contains(Language.CPP) -> cppLanguagePlugin
             languages.contains(Language.THRIFT) -> thriftLanguagePlugin
             else -> emptyLanguagePlugin
-        }
-
-    fun extractJavaModule(module: Module): JavaModule? =
-        module.languageData?.let {
-            when (it) {
-                is JavaModule -> it
-                is ScalaModule -> it.javaModule
-                else -> null
-            }
         }
 
     fun extractCppModule(module: Module): CppModule? =

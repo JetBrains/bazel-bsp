@@ -8,7 +8,7 @@ import org.jetbrains.bsp.bazel.server.bloop.ScalaInterop.toScalaList
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
-import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule.Companion.fromLanguageData
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -49,8 +49,7 @@ class BspModuleExporter(
         val dependencies =
             module.directDependencies.filter(::isIncludedDependency).map(Naming::safeName)
         val compileClassPath =
-            module.languageData?.let(::extractCompileClassPathFromLanguage).orEmpty()
-                .let(classpathRewriter::rewrite)
+            extractCompileClassPathFromLanguage(module).let(classpathRewriter::rewrite)
         val out = bloopRoot.resolve(
             Naming.compilerOutputNameFor(
                 module.label
@@ -59,8 +58,8 @@ class BspModuleExporter(
         val classesDir = out.resolve("classes")
         val resources = module.resources.map(SourceRootGuesser::getSourcesRoot).toSet()
         val scalaMod = module.languageData?.let(::createScalaConfig)
-        val javaMod = module.languageData?.let(::createJavaConfig)
-        val platform = module.languageData?.let(::createPlatform)
+        val javaMod = createJavaConfig(module)
+        val platform = createPlatform(module)
         val resolution = createResolution()
         val testFramework = createTestFramework()
         val tags = toBloopTags(module.tags)
@@ -116,8 +115,8 @@ class BspModuleExporter(
         )
     }
 
-    private fun extractCompileClassPathFromLanguage(languageData: LanguageData): List<URI> =
-        fromLanguageData(languageData)?.let(JavaModule::compileClasspath).orEmpty()
+    private fun extractCompileClassPathFromLanguage(module: Module): List<URI> =
+        module.javaModule?.let(JavaModule::compileClasspath).orEmpty()
 
     private fun isIncludedDependency(label: Label): Boolean = project.findModule(label) != null
 
@@ -138,8 +137,8 @@ class BspModuleExporter(
         hashSetOf("library")
     }
 
-    private fun createJavaConfig(languageData: LanguageData): Java? =
-        fromLanguageData(languageData)?.let {
+    private fun createJavaConfig(module: Module): Java? =
+        module.javaModule?.let {
             Java(sanitizeJavacOpts(it.javacOpts).toScalaList())
         }
 
@@ -164,8 +163,8 @@ class BspModuleExporter(
         )
     )
 
-    private fun createPlatform(languageData: LanguageData): Platform? =
-        fromLanguageData(languageData)?.run {
+    private fun createPlatform(module: Module): Platform? =
+        module.javaModule?.run {
             val runtimeJdk = runtimeJdk ?: jdk
             val jvmConfig = JvmConfig(
                 runtimeJdk.javaHome?.let(Paths::get).toOption(),

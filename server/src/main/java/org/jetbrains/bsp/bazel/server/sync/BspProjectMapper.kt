@@ -41,6 +41,7 @@ import ch.epfl.scala.bsp4j.TestProvider
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -211,11 +212,8 @@ class BspProjectMapper(
     }
 
     private fun extractJvmEnvironmentItem(module: Module): JvmEnvironmentItem? =
-        languagePluginsService.extractJavaModule(module)?.let {
-            languagePluginsService.javaLanguagePlugin.toJvmEnvironmentItem(
-                module,
-                it
-            )
+        module.javaModule?.let {
+            languagePluginsService.javaLanguagePlugin.toJvmEnvironmentItem(module, it)
         }
 
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams): JavacOptionsResult {
@@ -237,7 +235,7 @@ class BspProjectMapper(
 
 
     private fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
-        languagePluginsService.extractJavaModule(module)?.let {
+        module.javaModule?.let {
             languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(module, it)
         }
 
