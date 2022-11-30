@@ -1,37 +1,3 @@
-def _scala_compiler_classpath_impl(target, ctx):
-    files = depset()
-    if hasattr(ctx.rule.attr, "jars"):
-        for target in ctx.rule.attr.jars:
-            files = depset(transitive = [files, target.files])
-
-    compiler_classpath_file = ctx.actions.declare_file("%s.textproto" % target.label.name)
-    ctx.actions.write(compiler_classpath_file, struct(files = [file.path for file in files.to_list()]).to_proto())
-
-    return [
-        OutputGroupInfo(scala_compiler_classpath_files = [compiler_classpath_file]),
-    ]
-
-scala_compiler_classpath_aspect = aspect(
-    implementation = _scala_compiler_classpath_impl,
-)
-
-def _java_runtime_classpath_impl(target, ctx):
-    files = depset()
-    if JavaInfo in target:
-        java_info = target[JavaInfo]
-        files = java_info.compilation_info.runtime_classpath if java_info.compilation_info else java_info.transitive_runtime_jars
-
-    output_file = ctx.actions.declare_file("%s-runtime_classpath.textproto" % target.label.name)
-    ctx.actions.write(output_file, struct(files = [file.path for file in files.to_list()]).to_proto())
-
-    return [
-        OutputGroupInfo(java_runtime_classpath_files = [output_file]),
-    ]
-
-java_runtime_classpath_aspect = aspect(
-    implementation = _java_runtime_classpath_impl,
-)
-
 def filter(f, xs):
     return [x for x in xs if f(x)]
 
@@ -331,6 +297,17 @@ def extract_java_runtime(target, ctx, dep_targets):
     else:
         return None, dict()
 
+def extract_cpp_target_info(target, ctx):
+    if CcInfo not in target:
+        return None
+
+    return create_struct(
+        copts = getattr(ctx.rule.attr, "copts", []),
+        defines = getattr(ctx.rule.attr, "defines", []),
+        link_opts = getattr(ctx.rule.attr, "linkopts", []),
+        link_shared = getattr(ctx.rule.attr, "linkshared", False),
+    )
+
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
     aspect_ids = None
@@ -536,43 +513,3 @@ bsp_target_info_aspect = aspect(
     required_aspect_providers = [[JavaInfo]],
     attr_aspects = ALL_DEPS,
 )
-
-def _fetch_java_target_version(target, ctx):
-    print(target[java_common.JavaToolchainInfo].target_version)
-    return []
-
-fetch_java_target_version = aspect(
-    implementation = _fetch_java_target_version,
-    attr_aspects = ["_java_toolchain"],
-)
-
-def _fetch_java_target_home(target, ctx):
-    print(target[java_common.JavaRuntimeInfo].java_home)
-    return []
-
-fetch_java_target_home = aspect(
-    implementation = _fetch_java_target_home,
-    attr_aspects = ["_java_toolchain"],
-)
-
-def _get_target_info(ctx, field_name):
-    fields = getattr(ctx.rule.attr, field_name, [])
-    fields = [ctx.expand_location(field) for field in fields]
-    fields = [ctx.expand_make_variables(field_name, field, {}) for field in fields]
-
-    return fields
-
-def _print_fields(fields):
-    separator = ","
-    print(separator.join(fields))
-
-def extract_cpp_target_info(target, ctx):
-    if CcInfo not in target:
-        return None
-
-    return create_struct(
-        copts = getattr(ctx.rule.attr, "copts", []),
-        defines = getattr(ctx.rule.attr, "defines", []),
-        link_opts = getattr(ctx.rule.attr, "linkopts", []),
-        link_shared = getattr(ctx.rule.attr, "linkshared", False),
-    )
