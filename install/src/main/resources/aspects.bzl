@@ -297,6 +297,17 @@ def extract_java_runtime(target, ctx, dep_targets):
     else:
         return None, dict()
 
+def extract_cpp_target_info(target, ctx):
+    if CcInfo not in target:
+        return None
+
+    return create_struct(
+        copts = getattr(ctx.rule.attr, "copts", []),
+        defines = getattr(ctx.rule.attr, "defines", []),
+        link_opts = getattr(ctx.rule.attr, "linkopts", []),
+        link_shared = getattr(ctx.rule.attr, "linkshared", False),
+    )
+
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
     aspect_ids = None
