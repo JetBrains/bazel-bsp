@@ -5,7 +5,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
@@ -16,6 +15,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.JvmLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
@@ -23,7 +23,6 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 class ServerContainer internal constructor(
   val projectProvider: ProjectProvider,
   val bspClientLogger: BspClientLogger,
-  val bspClientTestNotifier: BspClientTestNotifier,
   val bazelInfo: BazelInfo,
   val bazelRunner: BazelRunner,
   val compilationManager: BazelBspCompilationManager,
@@ -36,7 +35,6 @@ class ServerContainer internal constructor(
                 workspaceContextProvider: WorkspaceContextProvider,
                 projectStorage: ProjectStorage?,
                 bspClientLogger: BspClientLogger,
-                bspClientTestNotifier: BspClientTestNotifier,
                 bazelRunner: BazelRunner,
                 compilationManager: BazelBspCompilationManager
         ): ServerContainer {
@@ -55,9 +53,14 @@ class ServerContainer internal constructor(
             val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
             val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
             val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
+            val jvmLanguagePlugin = JvmLanguagePlugin()
             val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
             val languagePluginsService = LanguagePluginsService(
-                scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin
+                    scalaLanguagePlugin,
+                    javaLanguagePlugin,
+                    cppLanguagePlugin,
+                    jvmLanguagePlugin,
+                    thriftLanguagePlugin,
             )
             val targetKindResolver = TargetKindResolver()
             val bazelProjectMapper =
@@ -75,7 +78,6 @@ class ServerContainer internal constructor(
             return ServerContainer(
                 projectProvider,
                 bspClientLogger,
-                bspClientTestNotifier,
                 bazelInfo,
                 bazelRunner,
                 compilationManager,

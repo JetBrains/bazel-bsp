@@ -60,7 +60,6 @@ class BloopExporter {
 
   public void export() throws BazelExportFailedException {
     var bspClientLogger = new BspClientLogger();
-    var bspClientTestNotifier = new BspClientTestNotifier();
     var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
     var compilationManager = new BazelBspCompilationManager(bazelRunner);
     var serverContainer =
@@ -69,7 +68,6 @@ class BloopExporter {
             workspaceContextProvider,
             new NoopProjectStorage(),
             bspClientLogger,
-            bspClientTestNotifier,
             bazelRunner,
             compilationManager);
     var projectProvider = serverContainer.getProjectProvider();

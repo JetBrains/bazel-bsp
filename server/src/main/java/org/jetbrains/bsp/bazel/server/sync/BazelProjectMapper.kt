@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
@@ -22,12 +23,13 @@ class BazelProjectMapper(
     fun createProject(
         targets: Map<String, TargetInfo>,
         rootTargets: Set<String>,
-        workspaceContext: WorkspaceContext
+        workspaceContext: WorkspaceContext,
+        logger: BspClientLogger
     ): Project {
         languagePluginsService.prepareSync(targets.values.asSequence())
         val dependencyTree = DependencyTree(rootTargets, targets)
         val targetsToImport = selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
-        val modulesFromBazel = createModules(targetsToImport, dependencyTree)
+        val modulesFromBazel = createModules(targetsToImport, dependencyTree, logger)
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
         val syntheticModules =
             createSyntheticModules(modulesFromBazel, workspaceRoot, workspaceContext)
@@ -46,12 +48,13 @@ class BazelProjectMapper(
     private fun isWorkspaceTarget(target: TargetInfo): Boolean = target.id.startsWith("//")
 
     private fun createModules(
-        targetsToImport: Sequence<TargetInfo>, dependencyTree: DependencyTree
+        targetsToImport: Sequence<TargetInfo>, dependencyTree: DependencyTree, logger: BspClientLogger
     ): Sequence<Module> = runBlocking {
         targetsToImport.asFlow()
             .map { createModule(it, dependencyTree) }
             .filterNot { it.tags.contains(Tag.NO_IDE) }
             .toList()
+            .let { languagePluginsService.postProcessModules(it) }
             .asSequence()
     }
 

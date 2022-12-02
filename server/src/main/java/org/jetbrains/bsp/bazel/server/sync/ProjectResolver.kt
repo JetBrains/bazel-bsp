@@ -35,7 +35,7 @@ class ProjectResolver(
         ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
         return logger.timed<Project>(
             "Mapping to internal model"
-        ) { bazelProjectMapper.createProject(targets, rootTargets, workspaceContext) }
+        ) { bazelProjectMapper.createProject(targets, rootTargets, workspaceContext, logger) }
     }
 
     private fun buildProjectWithAspect(workspaceContext: WorkspaceContext): BepOutput =

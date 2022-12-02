@@ -4,6 +4,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.JvmLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -13,15 +14,25 @@ class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,
     val javaLanguagePlugin: JavaLanguagePlugin,
     val cppLanguagePlugin: CppLanguagePlugin,
+    jvmLanguagePlugin: JvmLanguagePlugin,
     private val thriftLanguagePlugin: ThriftLanguagePlugin
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
+    private val allPlugins = listOf(
+            scalaLanguagePlugin,
+            javaLanguagePlugin,
+            cppLanguagePlugin,
+            thriftLanguagePlugin,
+            jvmLanguagePlugin,
+    )
+
     fun prepareSync(targetInfos: Sequence<BspTargetInfo.TargetInfo>) {
-        scalaLanguagePlugin.prepareSync(targetInfos)
-        javaLanguagePlugin.prepareSync(targetInfos)
-        cppLanguagePlugin.prepareSync(targetInfos)
-        thriftLanguagePlugin.prepareSync(targetInfos)
+        allPlugins.forEach { it.prepareSync(targetInfos) }
+    }
+
+    fun postProcessModules(modules: List<Module>): List<Module> {
+        return allPlugins.fold(modules) { modules, plugin -> plugin.postProcessModules(modules) }
     }
 
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =

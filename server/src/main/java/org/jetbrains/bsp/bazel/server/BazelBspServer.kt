@@ -39,7 +39,6 @@ class BazelBspServer(
                 workspaceContextProvider,
                 null,
                 bspClientLogger,
-                bspClientTestNotifier,
                 bazelRunner,
                 compilationManager
         )
