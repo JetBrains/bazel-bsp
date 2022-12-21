@@ -80,4 +80,29 @@ class JVMLanguagePluginParserTest {
         // then
         calculatedSourceRoot shouldBe sourceDir
     }
+
+    @Test
+    fun `should return source dir for package name not matching the dir`() {
+        // given
+
+        val fileContent = """
+            |package com.example
+            |
+            |public class Test {
+            |}
+            |
+        """.trimMargin()
+
+        val sourceRoot = DopeTemp.createTempPath("path/to/source/")
+        val sourceDir = Files.createDirectories(sourceRoot.resolve("dir1/dir2/dir3/"))
+
+        val sourceFile = Files.createFile(sourceDir.resolve("File.java"))
+        sourceFile.writeText(fileContent)
+
+        // when
+        val calculatedSourceRoot = JVMLanguagePluginParser.calculateJVMSourceRoot(sourceFile)
+
+        // then
+        calculatedSourceRoot shouldBe sourceDir
+    }
 }
