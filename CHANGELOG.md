@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+## [2.3.1] - 21.12.2022
+
 ### Fixes 🛠️
 
 - Correctly handle java files with package names not corresponding to file paths
@@ -284,7 +286,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.3.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.3.1...HEAD
+
+[2.3.1]: https://github.com/JetBrains/bazel-bsp/compare/2.3.0...2.3.1
 
 [2.3.0]: https://github.com/JetBrains/bazel-bsp/compare/2.2.1...2.3.0
 
