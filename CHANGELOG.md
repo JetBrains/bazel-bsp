@@ -7,6 +7,8 @@
 
 ### Fixes 🛠️
 
+- Correctly handle java files with package names not corresponding to file paths
+  | [#312](https://github.com/JetBrains/bazel-bsp/pull/312)
 - Correctly determine language type for JVM binary targets.
   | [#306](https://github.com/JetBrains/bazel-bsp/pull/306)
 

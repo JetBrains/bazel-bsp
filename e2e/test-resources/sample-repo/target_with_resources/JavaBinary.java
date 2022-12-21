@@ -1,4 +1,4 @@
-package target_with_dependency;
+package target_with_resources;
 
 public class JavaBinary {
   public static void main(String[] args) {

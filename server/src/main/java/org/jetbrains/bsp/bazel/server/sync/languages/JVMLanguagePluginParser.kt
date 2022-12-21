@@ -15,7 +15,7 @@ object JVMLanguagePluginParser {
         val sourcePackagePath = Paths.get(sourcePackage.replace(".", "/"))
         val sourceRootEndIndex = source.nameCount - sourcePackagePath.nameCount - 1
 
-        return if (sourceRootEndIndex < 0) source.parent
+        return if (!source.parent.endsWith(sourcePackagePath)) source.parent
         else Paths.get("/").resolve(source.subpath(0, sourceRootEndIndex))
     }
 

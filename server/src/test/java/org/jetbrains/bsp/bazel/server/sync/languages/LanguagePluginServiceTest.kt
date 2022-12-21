@@ -206,7 +206,7 @@ class LanguagePluginServiceTest {
 
             // then
             result shouldNotBe tmpRepo
-            result shouldBe tmpRepo.resolve("org")
+            result shouldBe tmpRepo.resolve(dirString)
         }
 
         @Test
