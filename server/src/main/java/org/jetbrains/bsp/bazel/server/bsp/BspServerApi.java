@@ -8,6 +8,8 @@ import ch.epfl.scala.bsp4j.CompileResult;
 import ch.epfl.scala.bsp4j.CppBuildServer;
 import ch.epfl.scala.bsp4j.CppOptionsParams;
 import ch.epfl.scala.bsp4j.CppOptionsResult;
+import ch.epfl.scala.bsp4j.DebugSessionAddress;
+import ch.epfl.scala.bsp4j.DebugSessionParams;
 import ch.epfl.scala.bsp4j.DependencyModulesParams;
 import ch.epfl.scala.bsp4j.DependencyModulesResult;
 import ch.epfl.scala.bsp4j.DependencySourcesParams;
@@ -24,6 +26,8 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
+import ch.epfl.scala.bsp4j.OutputPathsParams;
+import ch.epfl.scala.bsp4j.OutputPathsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
@@ -157,6 +161,19 @@ public class BspServerApi
       DependencyModulesParams params) {
     return runner.handleRequest(
         "buildTargetDependencyModules", projectSyncService::buildTargetDependencyModules, params);
+  }
+
+  @Override
+  public CompletableFuture<DebugSessionAddress> debugSessionStart(DebugSessionParams params) {
+    // TODO: https://youtrack.jetbrains.com/issue/BAZEL-239
+    return CompletableFuture.failedFuture(new Exception("This endpoint is not implemented yet"));
+  }
+
+  @Override
+  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(
+      OutputPathsParams outputPathsParams) {
+    // TODO: https://youtrack.jetbrains.com/issue/BAZEL-240
+    return CompletableFuture.failedFuture(new Exception("This endpoint is not implemented yet"));
   }
 
   @Override
