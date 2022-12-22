@@ -9,6 +9,9 @@ import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario {
+    val targetPrefix = Runtime.getRuntime().exec("bazel version").inputStream.bufferedReader().readText()
+            .let {"""(?<=Build label: )\d+(?=[0-9.]+)""".toRegex().find(it)!!.value.toInt() }
+            .let { if(it < 6) "" else "@" }
 
     protected val testClient = createClient()
 

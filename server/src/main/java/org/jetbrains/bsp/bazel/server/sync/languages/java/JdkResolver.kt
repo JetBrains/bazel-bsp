@@ -59,14 +59,9 @@ class JdkResolver(
           null
     val javaHome = javaHomeFile?.let { bazelPathsResolver.resolveUri(it) }
 
-    val version =
-        if (targetInfo.hasJavaToolchainInfo())
-          targetInfo.javaToolchainInfo.sourceVersion
-        else
-          null
-
+    val version = null
     return JdkCandidateData(hasRuntimeJavaHome, javaHome, version)
-        .takeIf { javaHome != null || version != null }
+        .takeIf { javaHome != null }
   }
 
   private inner class JdkCandidate(private val data: JdkCandidateData) {

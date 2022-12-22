@@ -61,14 +61,15 @@ class ServerContainer internal constructor(
             )
             val targetKindResolver = TargetKindResolver()
             val bazelProjectMapper =
-                BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver)
+                BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver, bazelInfo)
             val targetInfoReader = TargetInfoReader()
             val projectResolver = ProjectResolver(
                 bazelBspAspectsManager,
                 workspaceContextProvider,
                 bazelProjectMapper,
                 bspClientLogger,
-                targetInfoReader
+                targetInfoReader,
+                bazelInfo
             )
             val finalProjectStorage = projectStorage ?: FileProjectStorage(bspInfo, bspClientLogger)
             val projectProvider = ProjectProvider(projectResolver, finalProjectStorage)

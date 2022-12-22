@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
@@ -28,7 +29,7 @@ class LanguagePluginServiceTest {
 
     @BeforeEach
     fun beforeEach() {
-        val bazelInfo = BasicBazelInfo("", Paths.get(""))
+        val bazelInfo = BasicBazelInfo("", Paths.get(""), BazelRelease("6.0.0"))
         val bazelPathsResolver = BazelPathsResolver(bazelInfo)
         val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
         val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)

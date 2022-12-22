@@ -272,11 +272,15 @@ def extract_java_toolchain(target, ctx, dep_targets):
     else:
         return None, dict()
 
+JAVA_RUNTIME_TOOLCHAIN_TYPE = "@bazel_tools//tools/jdk:runtime_toolchain_type"
+
 def extract_java_runtime(target, ctx, dep_targets):
     runtime = None
 
-    if java_common.JavaRuntimeInfo in target:
+    if java_common.JavaRuntimeInfo in target:  # Bazel 5.4.0 way
         runtime = target[java_common.JavaRuntimeInfo]
+    elif JAVA_RUNTIME_TOOLCHAIN_TYPE in ctx.toolchains:  # Bazel 6.0.0 way
+        runtime = ctx.toolchains[JAVA_RUNTIME_TOOLCHAIN_TYPE].java_runtime
     else:
         runtime_jdk = getattr(ctx.rule.attr, "runtime_jdk", None)
         if runtime_jdk and java_common.JavaRuntimeInfo in runtime_jdk:
@@ -512,4 +516,5 @@ bsp_target_info_aspect = aspect(
     implementation = _bsp_target_info_aspect_impl,
     required_aspect_providers = [[JavaInfo]],
     attr_aspects = ALL_DEPS,
+    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE],
 )
