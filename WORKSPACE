@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.3.2"
+IO_BAZEL_TAG = "5.4.0"
 
-IO_BAZEL_SHA = "a3fc942e8d67f06767f88469f79b6f456f853a293026b4b46e7b22526b036796"
+IO_BAZEL_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.3.2"
+GOOGLEAPIS_TAG = "5.4.0"
 
-GOOGLEAPIS_SHA = "a3fc942e8d67f06767f88469f79b6f456f853a293026b4b46e7b22526b036796"
+GOOGLEAPIS_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
 
 http_archive(
     name = "googleapis",
@@ -201,12 +201,12 @@ maven_install(
         "org.apache.logging.log4j:log4j-core:2.19.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
         "org.junit.jupiter:junit-jupiter:5.9.1",
-        "com.fasterxml.jackson.core:jackson-databind:2.14.0",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0",
+        "com.fasterxml.jackson.core:jackson-databind:2.14.1",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.8",
-        "com.google.protobuf:protobuf-java:3.21.9",
-        "io.grpc:grpc-stub:1.50.2",
+        "com.google.protobuf:protobuf-java:3.21.12",
+        "io.grpc:grpc-stub:1.51.1",
     ],
     fetch_sources = True,
     repositories = [
