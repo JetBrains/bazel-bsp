@@ -17,6 +17,7 @@ runTest //e2e:BazelBspSampleRepoTest
 runTest //e2e:BazelBspLocalJdkTest
 runTest //e2e:BazelBspRemoteJdkTest
 #runTest //e2e:BazelBspCppProjectTest
+runTest //e2e:BazelBspPythonProjectTest
 
 echo -e "${GREEN}==================================="
 echo -e "==================================="

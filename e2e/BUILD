@@ -56,6 +56,15 @@ sh_binary(
 )
 
 sh_binary(
+    name = "BazelBspPythonProjectTest",
+    srcs = ["runTest.sh"],
+    args = [
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspPythonProjectTest",
+        "e2e/test-resources/python-project",
+    ],
+)
+
+sh_binary(
     name = "BazelBspEntireRepositoryImportTest",
     srcs = ["runTest.sh"],
     args = [

@@ -44,10 +44,11 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class BspServerApi
     implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
@@ -137,6 +138,12 @@ public class BspServerApi
   }
 
   @Override
+  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(OutputPathsParams outputPathsParams) {
+    //TODO
+    return null;
+  }
+
+  @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams params) {
     return runner.handleRequest("buildTargetCompile", executeService::compile, params);
   }
@@ -149,6 +156,12 @@ public class BspServerApi
   @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams params) {
     return runner.handleRequest("buildTargetRun", executeService::run, params);
+  }
+
+  @Override
+  public CompletableFuture<DebugSessionAddress> debugSessionStart(DebugSessionParams debugSessionParams) {
+    //TODO
+    return null;
   }
 
   @Override
