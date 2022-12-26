@@ -513,3 +513,12 @@ bsp_target_info_aspect = aspect(
     required_aspect_providers = [[JavaInfo]],
     attr_aspects = ALL_DEPS,
 )
+
+def extract_python_info(target, ctx):
+    if PyRuntimeInfo not in target:
+        return None
+
+   return create_struct(
+        interpreter = target[PyRuntimeInfo].interpreter,
+        version = target[PyRuntimeInfo].python_version,
+   )

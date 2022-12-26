@@ -64,6 +64,13 @@ message CppTargetInfo {
   bool link_shared = 4;
 }
 
+message PythonInfo {
+  string interpreter = 1; // target[PyRuntimeInfo].interpreter
+  string version = 2; // target[PyRuntimeInfo].python_ version
+  //  interpreter_options?
+  // interpreter_path?  -- mają to py_runtime
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
