@@ -16,14 +16,14 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
 
-        val examplePythonBuildTarget = PythonBuildTarget("PY3", null)
+        val examplePythonBuildTarget = PythonBuildTarget("PY3", "bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh")
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("//example:example"),
             listOf("application"),
             listOf("python"),
             emptyList(),
-            BuildTargetCapabilities(true, false, true)
+            BuildTargetCapabilities(true, false, true, false)
         )
         exampleExampleBuildTarget.displayName = "//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
