@@ -521,6 +521,6 @@ def extract_python_target_info(target, ctx):
         return None
 
     return create_struct(
-        interpreter = target[PyRuntimeInfo].interpreter,
+        interpreter = target[PyRuntimeInfo].interpreter.path,
         version = target[PyRuntimeInfo].python_version,
     )
