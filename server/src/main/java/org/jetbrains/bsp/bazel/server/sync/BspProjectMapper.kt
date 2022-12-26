@@ -8,6 +8,13 @@ import ch.epfl.scala.bsp4j.CompileProvider
 import ch.epfl.scala.bsp4j.CppOptionsItem
 import ch.epfl.scala.bsp4j.CppOptionsParams
 import ch.epfl.scala.bsp4j.CppOptionsResult
+
+// are all needed?
+import ch.epfl.scala.bsp4j.PythonBuildTarget
+import ch.epfl.scala.bsp4j.PythonOptionsItem
+import ch.epfl.scala.bsp4j.PythonOptionsParams
+import ch.epfl.scala.bsp4j.PythonOptionsResult
+
 import ch.epfl.scala.bsp4j.DependencySourcesItem
 import ch.epfl.scala.bsp4j.DependencySourcesParams
 import ch.epfl.scala.bsp4j.DependencySourcesResult
@@ -231,6 +238,17 @@ class BspProjectMapper(
     private fun extractCppOptionsItem(module: Module): CppOptionsItem? =
         languagePluginsService.extractCppModule(module)?.let {
             languagePluginsService.cppLanguagePlugin.toCppOptionsItem(module, it)
+        }
+
+    fun buildTargetPythonOptions(project: Project, params: PythonOptionsParams): PythonOptionsResult {
+        val modules = BspMappings.getModules(project, params.targets)
+        val items = modules.mapNotNull(::extractPythonOptionsItem)
+        return PythonOptionsResult(items)
+    }
+
+    private fun extractPythonOptionsItem(module: Module): PythonOptionsItem? =
+        languagePluginsService.extractPythonModule(module)?.let {
+            languagePluginsService.pythonLanguagePlugin.toPythonOptionsItem(module, it)
         }
 
 

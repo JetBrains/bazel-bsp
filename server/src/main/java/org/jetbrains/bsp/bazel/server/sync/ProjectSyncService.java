@@ -15,6 +15,8 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
+import ch.epfl.scala.bsp4j.PythonOptionsParams;
+import ch.epfl.scala.bsp4j.PythonOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -26,8 +28,9 @@ import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourcesParams;
 import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import java.util.Collections;
 import org.jetbrains.bsp.bazel.server.sync.model.Language;
+
+import java.util.Collections;
 
 /** A facade for all project sync related methods */
 public class ProjectSyncService {
@@ -95,6 +98,13 @@ public class ProjectSyncService {
   public CppOptionsResult buildTargetCppOptions(CppOptionsParams params) {
     var project = projectProvider.get();
     return bspMapper.buildTargetCppOptions(project, params);
+  }
+
+  // maybe buildTarget and optionsItem are not necessary? For what?
+  // how to think about Python's build target?
+  public PythonOptionsResult buildTargetPythonOptions(PythonOptionsParams params) {
+    var project = projectProvider.get();
+    return bspMapper.buildTargetPythonOptions(project, params);
   }
 
   public ScalacOptionsResult buildTargetScalacOptions(ScalacOptionsParams params) {

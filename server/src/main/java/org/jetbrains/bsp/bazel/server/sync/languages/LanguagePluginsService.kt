@@ -13,6 +13,7 @@ class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,
     val javaLanguagePlugin: JavaLanguagePlugin,
     val cppLanguagePlugin: CppLanguagePlugin,
+    val pythonLanguagePlugin: PythonLanguagePlugin,
     private val thriftLanguagePlugin: ThriftLanguagePlugin
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
