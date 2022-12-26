@@ -64,7 +64,7 @@ message CppTargetInfo {
   bool link_shared = 4;
 }
 
-message PythonInfo {
+message PythonTargetInfo {
   string interpreter = 1; // target[PyRuntimeInfo].interpreter
   string version = 2; // target[PyRuntimeInfo].python_ version
   //  interpreter_options?
@@ -86,5 +86,5 @@ message TargetInfo {
   ScalaTargetInfo scala_target_info = 4000;
   ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
-  PythonInfo python_info = 7000;
+  PythonTargetInfo python_target_info = 7000;
 }

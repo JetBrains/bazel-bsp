@@ -466,6 +466,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
     cpp_target_info = extract_cpp_target_info(target, ctx)
+    python_target_info = extract_python_target_info(target, ctx)
 
     result = dict(
         id = str(target.label),
@@ -480,6 +481,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
         cpp_target_info = cpp_target_info,
+        python_target_info = python_target_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )
@@ -514,11 +516,11 @@ bsp_target_info_aspect = aspect(
     attr_aspects = ALL_DEPS,
 )
 
-def extract_python_info(target, ctx):
+def extract_python_target_info(target, ctx):
     if PyRuntimeInfo not in target:
         return None
 
-   return create_struct(
+    return create_struct(
         interpreter = target[PyRuntimeInfo].interpreter,
         version = target[PyRuntimeInfo].python_version,
-   )
+    )

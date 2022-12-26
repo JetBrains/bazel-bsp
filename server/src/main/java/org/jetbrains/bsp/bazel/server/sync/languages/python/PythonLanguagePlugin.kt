@@ -15,7 +15,7 @@ class PythonLanguagePlugin(
 ) : LanguagePlugin<PythonModule>() {
 
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
-        targetInfo.takeIf(TargetInfo::hasPythonInfo)?.pythonInfo?.run {
+        targetInfo.takeIf(TargetInfo::hasPythonTargetInfo)?.pythonTargetInfo?.run {
             PythonModule(
                 // probably needs to have its type changed to filelocation
                 interpreter,
