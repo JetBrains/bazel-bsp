@@ -12,14 +12,14 @@ data class Jdk(
 data class JavaModule(
     val jdk: Jdk,
     val runtimeJdk: Jdk?,
-    val javacOpts: List<String>, //
-    val jvmOps: List<String>, //
-    val mainOutput: URI, // target?
+    val javacOpts: List<String>,
+    val jvmOps: List<String>,
+    val mainOutput: URI,
     val allOutputs: List<URI>,
     val mainClass: String?,
     val args: List<String>,
-    val runtimeClasspath: List<URI>, //
-    val compileClasspath: List<URI>, //
-    val sourcesClasspath: List<URI>, // ?? class directory probably
+    val runtimeClasspath: List<URI>,
+    val compileClasspath: List<URI>,
+    val sourcesClasspath: List<URI>,
     val ideClasspath: List<URI>
 ) : LanguageData

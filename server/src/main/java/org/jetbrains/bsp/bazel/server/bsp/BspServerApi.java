@@ -141,12 +141,6 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(OutputPathsParams outputPathsParams) {
-    //TODO
-    return null;
-  }
-
-  @Override
   public CompletableFuture<CompileResult> buildTargetCompile(CompileParams params) {
     return runner.handleRequest("buildTargetCompile", executeService::compile, params);
   }
@@ -159,12 +153,6 @@ public class BspServerApi
   @Override
   public CompletableFuture<RunResult> buildTargetRun(RunParams params) {
     return runner.handleRequest("buildTargetRun", executeService::run, params);
-  }
-
-  @Override
-  public CompletableFuture<DebugSessionAddress> debugSessionStart(DebugSessionParams debugSessionParams) {
-    //TODO
-    return null;
   }
 
   @Override

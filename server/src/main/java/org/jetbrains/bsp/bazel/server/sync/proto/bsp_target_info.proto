@@ -86,4 +86,5 @@ message TargetInfo {
   ScalaTargetInfo scala_target_info = 4000;
   ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
+  PythonInfo python_info = 7000;
 }

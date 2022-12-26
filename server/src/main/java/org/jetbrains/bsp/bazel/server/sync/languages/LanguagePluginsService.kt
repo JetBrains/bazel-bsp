@@ -4,6 +4,8 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -13,8 +15,8 @@ class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,
     val javaLanguagePlugin: JavaLanguagePlugin,
     val cppLanguagePlugin: CppLanguagePlugin,
-    val pythonLanguagePlugin: PythonLanguagePlugin,
-    private val thriftLanguagePlugin: ThriftLanguagePlugin
+    private val thriftLanguagePlugin: ThriftLanguagePlugin,
+    val pythonLanguagePlugin: PythonLanguagePlugin
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
@@ -23,6 +25,7 @@ class LanguagePluginsService(
         javaLanguagePlugin.prepareSync(targetInfos)
         cppLanguagePlugin.prepareSync(targetInfos)
         thriftLanguagePlugin.prepareSync(targetInfos)
+        pythonLanguagePlugin.prepareSync(targetInfos)
     }
 
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
@@ -31,6 +34,7 @@ class LanguagePluginsService(
             (languages.contains(Language.JAVA) || languages.contains(Language.KOTLIN)) -> javaLanguagePlugin
             languages.contains(Language.CPP) -> cppLanguagePlugin
             languages.contains(Language.THRIFT) -> thriftLanguagePlugin
+            languages.contains(Language.PYTHON) -> pythonLanguagePlugin
             else -> emptyLanguagePlugin
         }
 
@@ -38,6 +42,14 @@ class LanguagePluginsService(
         module.languageData?.let {
             when(it) {
                 is CppModule -> it
+                else -> null
+            }
+        }
+
+    fun extractPythonModule(module: Module): PythonModule? =
+        module.languageData?.let {
+            when (it) {
+                is PythonModule -> it
                 else -> null
             }
         }
