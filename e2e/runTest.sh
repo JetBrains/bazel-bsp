@@ -30,7 +30,7 @@ cd "$BUILD_WORKSPACE_DIRECTORY" || exit
 bazel build //server/src/main/java/org/jetbrains/bsp/bazel:bsp-install
 EXECUTION_CODE=$?
 if [ $EXECUTION_CODE -ne 0 ]; then
-  echo -e "${RED}building failed :("
+  echo -e "${RED}building failed :(${NC}"
   exit 1
 fi
 
@@ -60,7 +60,7 @@ foo1=invalid_val1 foo2=invalid_val2 foo3=val3 foo4=val4 BSP_WORKSPACE="$BSP_ROOT
 EXECUTION_CODE=$?
 
 if [ $EXECUTION_CODE -ne 0 ]; then
-  echo -e "${RED}'$TEST_TARGET' test failed :("
+  echo -e "${RED}'$TEST_TARGET' test failed :(${NC}"
   exit 1
 fi
 

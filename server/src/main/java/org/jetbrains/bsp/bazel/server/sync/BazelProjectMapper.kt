@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
@@ -17,7 +18,8 @@ import java.net.URI
 class BazelProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
     private val bazelPathsResolver: BazelPathsResolver,
-    private val targetKindResolver: TargetKindResolver
+    private val targetKindResolver: TargetKindResolver,
+    private val bazelInfo: BazelInfo
 ) {
     fun createProject(
         targets: Map<String, TargetInfo>,
@@ -42,8 +44,7 @@ class BazelProjectMapper(
         workspaceContext.importDepth.value, rootTargets
     ).asSequence().filter(::isWorkspaceTarget)
 
-
-    private fun isWorkspaceTarget(target: TargetInfo): Boolean = target.id.startsWith("//")
+    private fun isWorkspaceTarget(target: TargetInfo): Boolean = target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix())
 
     private fun createModules(
         targetsToImport: Sequence<TargetInfo>, dependencyTree: DependencyTree

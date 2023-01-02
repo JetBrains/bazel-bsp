@@ -55,7 +55,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     }
 
     private fun extractRelativePath(label: String): String {
-        val prefix = "//"
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
         require(label.startsWith(prefix)) {
             String.format(
                 "%s didn't start with %s", label, prefix

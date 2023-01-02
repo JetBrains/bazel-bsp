@@ -22,7 +22,10 @@ class Naming {
     var labelName = label.getValue();
     if (labelName.startsWith("//")) {
       labelName = labelName.substring(2);
+    } else if (labelName.startsWith("@//")) {
+      labelName = labelName.substring(3);
     }
+
     return labelName;
   }
 }

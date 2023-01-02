@@ -4,6 +4,8 @@
 
 
 ## [Unreleased]
+- Support Bazel 6.0.0
+  | [#318](https://github.com/JetBrains/bazel-bsp/pull/318)
 
 ## [2.3.1] - 21.12.2022
 

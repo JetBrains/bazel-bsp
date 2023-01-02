@@ -27,13 +27,13 @@ object BazelBspLocalJdkTest : BazelBspTestBaseScenario() {
         )
 
         val exampleExampleBuildTarget = BuildTarget(
-            BuildTargetIdentifier("//example:example"),
+            BuildTargetIdentifier("$targetPrefix//example:example"),
             listOf("application"),
             listOf("java"),
             emptyList(),
             BuildTargetCapabilities(true, false, true, false)
         )
-        exampleExampleBuildTarget.displayName = "//example:example"
+        exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = exampleExampleJvmBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.JVM
