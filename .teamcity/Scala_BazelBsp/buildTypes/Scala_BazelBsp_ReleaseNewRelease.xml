@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>[release] new release!</name>
+  <description />
+  <settings>
+    <options>
+      <option name="artifactRules" value="" />
+    </options>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_1" name="" type="simpleRunner">
+        <parameters>
+          <param name="plugin.docker.imageId" value="gcr.io/cloud-marketplace-containers/google/bazel" />
+          <param name="plugin.docker.imagePlatform" value="linux" />
+          <param name="plugin.docker.pull.enabled" value="true" />
+          <param name="script.content"><![CDATA[set -ex
+apt-get update
+apt-get install -y python3-pip
+pip3 install lxml
+cd "/usr/local/lib/bazel/bin" && curl -fLO https://releases.bazel.build/6.0.0/release/bazel-6.0.0-linux-x86_64 && chmod +x bazel-6.0.0-linux-x86_64 && cd -
+echo %env.GPG_SECRET% | base64 -di | gpg --import
+bazel run --stamp \
+  --define "maven_user=%jetbrains.sonatype.access.token.username%" \
+  --define "maven_password=%jetbrains.sonatype.access.token.password%" \
+  //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="Scala_BazelBsp_BazelBspVcs" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers>
+      <build-trigger id="TRIGGER_1" type="vcsTrigger">
+        <parameters>
+          <param name="branchFilter" value="+:&lt;default&gt;" />
+          <param name="enableQueueOptimization" value="true" />
+          <param name="quietPeriodMode" value="DO_NOT_USE" />
+          <param name="triggerRules" value="+:comment=^\[release\]:**" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <cleanup />
+  </settings>
+</build-type>
+
