@@ -11,7 +11,7 @@ open class BuildBuildType(name: String, moduleLabel: String) : BaseConfiguration
             this.scriptContent = """bazel build $moduleLabel"""
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
-            dockerImage = "andrefmrocha/bazelisk"
+            dockerImage = "cbills/build-runner"
         }
     }
 )
