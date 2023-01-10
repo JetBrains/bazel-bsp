@@ -11,7 +11,7 @@ open class UnitTestsBuildType(moduleLabel: String) : BaseConfiguration.BaseBuild
             this.scriptContent = """bazel test --test_output=errors $moduleLabel"""
             this.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             this.dockerPull = true
-            this.dockerImage = "andrefmrocha/bazelisk"
+            this.dockerImage = "cbills/build-runner"
         }
     }
 )

@@ -11,7 +11,7 @@ open class BazelBspE2ETestsBuildType(testLabel: String) : BaseConfiguration.Base
             this.scriptContent = """bazel run $testLabel"""
             this.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             this.dockerPull = true
-            this.dockerImage = "andrefmrocha/bazelisk"
+            this.dockerImage = "cbills/build-runner"
         }
     }
 )
