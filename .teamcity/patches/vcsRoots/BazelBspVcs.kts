@@ -25,7 +25,7 @@ changeVcsRoot(RelativeId("BazelBspVcs")) {
     (this as GitVcsRoot).apply {
         branchSpec = """
             -:team-city
-            +|refs/heads/(*)
+            +:refs/heads/(*)
         """.trimIndent()
     }
 
