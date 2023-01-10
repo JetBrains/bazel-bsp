@@ -12,6 +12,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
+
   <repositories>
     <repository>
       <id>jetbrains-all</id>
