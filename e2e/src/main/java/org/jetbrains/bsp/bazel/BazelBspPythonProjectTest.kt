@@ -30,8 +30,19 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         exampleExampleBuildTarget.data = examplePythonBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
+        val bspWorkspaceRootExampleBuildTarget =
+            BuildTarget(
+                BuildTargetIdentifier("bsp-workspace-root"),
+                listOf(),
+                listOf(),
+                listOf(),
+                BuildTargetCapabilities(false, false, false, false)
+            )
+        bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
+        bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
+
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-            listOf(exampleExampleBuildTarget)
+            listOf(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget)
         )
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
