@@ -193,7 +193,6 @@ maven_install(
     artifacts = [
         "com.google.code.gson:gson:2.8.9",
         "com.google.guava:guava:31.0.1-jre",
-        "ch.epfl.scala:bsp4j:2.1.0-M3",
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
         "io.vavr:vavr:0.10.4",
@@ -207,10 +206,12 @@ maven_install(
         "org.scala-lang:scala-library:2.13.8",
         "com.google.protobuf:protobuf-java:3.21.12",
         "io.grpc:grpc-stub:1.51.1",
+        "com.github.zpp-This-is-fine:build-server-protocol:90ee7a591443df55530e45869cf049f0e6f23150",
     ],
     fetch_sources = True,
     repositories = [
         "https://maven.google.com",
         "https://repo.maven.apache.org/maven2",
+        "https://jitpack.io",
     ],
 )
