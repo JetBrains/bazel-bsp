@@ -16,11 +16,14 @@ class PythonLanguagePlugin(
 
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
         targetInfo.takeIf(TargetInfo::hasPythonTargetInfo)?.pythonTargetInfo?.run {
+
             PythonModule(
-                // probably needs to have its type changed to filelocation
-                interpreter,
-                version
+                main,
+                bazelPathsResolver.resolveUris(importsList),
+                "",
+                ""
             )
+
         }
 
 

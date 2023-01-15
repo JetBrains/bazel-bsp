@@ -469,6 +469,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
     cpp_target_info = extract_cpp_target_info(target, ctx)
     python_target_info = extract_python_target_info(target, ctx)
+    python_runtime_info = extract_python_runtime_info(target, ctx)
 
     print(python_target_info)
 
@@ -486,6 +487,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_runtime_info = java_runtime_info,
         cpp_target_info = cpp_target_info,
         python_target_info = python_target_info,
+        python_runtime_info = python_runtime_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )
@@ -521,6 +523,18 @@ bsp_target_info_aspect = aspect(
 )
 
 def extract_python_target_info(target, ctx):
+    if PyInfo not in target:
+        return None
+
+    imports = target[PyInfo].imports
+    main = getattr(ctx.rule.attr, "main", None)
+
+    return create_struct(
+        main = main,
+        imports = map(file_location, imports.to_list()),
+    )
+
+def extract_python_runtime_info(target, ctx):
     if PyRuntimeInfo not in target:
         return None
 
