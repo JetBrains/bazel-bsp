@@ -5,12 +5,12 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
 
-object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
+object BazelBspPythonLibraryProjectTest : BazelBspTestBaseScenario() {
 
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "python-project"
+    override fun repoName(): String = "python-library-project"
 
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
 
@@ -19,13 +19,13 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         val examplePythonBuildTarget = PythonBuildTarget("PY3", "bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh")
 
         val exampleExampleBuildTarget = BuildTarget(
-            BuildTargetIdentifier("//example:example"),
+            BuildTargetIdentifier("//example:example_library"),
             listOf("application"),
             listOf("python"),
             emptyList(),
             BuildTargetCapabilities(true, false, true, false)
         )
-        exampleExampleBuildTarget.displayName = "//example:example"
+        exampleExampleBuildTarget.displayName = "//example:example_library"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = examplePythonBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.PYTHON
@@ -42,7 +42,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
 
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-            listOf(exampleExampleBuildTarget/*, bspWorkspaceRootExampleBuildTarget*/)
+            listOf(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget)
         )
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
