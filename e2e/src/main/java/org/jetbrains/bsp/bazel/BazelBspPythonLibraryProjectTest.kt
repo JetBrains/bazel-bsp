@@ -19,13 +19,13 @@ object BazelBspPythonLibraryProjectTest : BazelBspTestBaseScenario() {
         val examplePythonBuildTarget = PythonBuildTarget("PY3", "bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh")
 
         val exampleExampleBuildTarget = BuildTarget(
-            BuildTargetIdentifier("//example:example_library"),
+            BuildTargetIdentifier("//example:example"),
             listOf("application"),
             listOf("python"),
-            emptyList(),
+            listOf(BuildTargetIdentifier("//lib:calculators")),
             BuildTargetCapabilities(true, false, true, false)
         )
-        exampleExampleBuildTarget.displayName = "//example:example_library"
+        exampleExampleBuildTarget.displayName = "//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = examplePythonBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.PYTHON

@@ -42,7 +42,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
 
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-            listOf(exampleExampleBuildTarget/*, bspWorkspaceRootExampleBuildTarget*/)
+            listOf(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget)
         )
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
