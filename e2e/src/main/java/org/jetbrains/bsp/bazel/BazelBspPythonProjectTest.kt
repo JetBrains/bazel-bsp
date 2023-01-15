@@ -16,19 +16,32 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
 
-        val examplePythonBuildTarget = PythonBuildTarget("PY3", "bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh")
+        val examplePythonBuildTarget =
+            PythonBuildTarget("PY3", "bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh")
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("//example:example"),
             listOf("application"),
             listOf("python"),
-            emptyList(),
+            listOf(BuildTargetIdentifier("//lib:calculators")),
             BuildTargetCapabilities(true, false, true, false)
         )
         exampleExampleBuildTarget.displayName = "//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = examplePythonBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.PYTHON
+
+        val exampleExampleLibBuildTarget = BuildTarget(
+            BuildTargetIdentifier("//lib:calculators"),
+            listOf("library"),
+            listOf("python"),
+            listOf(),
+            BuildTargetCapabilities(true, false, false, false)
+        )
+        exampleExampleLibBuildTarget.displayName = "//lib:calculators"
+        exampleExampleLibBuildTarget.baseDirectory = "file://\$WORKSPACE/lib/"
+//        exampleExampleLibBuildTarget.data = examplePythonBuildTarget
+        exampleExampleLibBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
         val bspWorkspaceRootExampleBuildTarget =
             BuildTarget(
@@ -42,7 +55,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
 
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-            listOf(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget)
+            listOf(bspWorkspaceRootExampleBuildTarget, exampleExampleBuildTarget, exampleExampleLibBuildTarget)
         )
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(

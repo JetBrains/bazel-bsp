@@ -4,5 +4,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 
 data class PythonModule(
     val interpreter: String,
-    val version: String) : LanguageData
+    val version: String
+) : LanguageData
+
 
