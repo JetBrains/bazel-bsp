@@ -15,13 +15,13 @@ class PythonLanguagePlugin(
 ) : LanguagePlugin<PythonModule>() {
 
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
-        targetInfo.takeIf(TargetInfo::hasPythonTargetInfo)?.pythonTargetInfo?.run {
+        targetInfo.takeIf(TargetInfo::hasPythonTargetInfo)?.run {
 
             PythonModule(
-                main,
-                bazelPathsResolver.resolveUris(importsList),
-                "",
-                ""
+                pythonTargetInfo.main,
+                bazelPathsResolver.resolveUris(pythonTargetInfo.importsList),
+                pythonRuntimeInfo.interpreter.takeUnless(String::isNullOrEmpty),
+                pythonRuntimeInfo.version.takeUnless(String::isNullOrEmpty)
             )
 
         }
