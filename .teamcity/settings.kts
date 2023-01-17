@@ -4,7 +4,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
-version = "2021.2"
+version = "2022.10"
 
 project {
     vcsRoot(BaseConfiguration.BazelBspVcs)
