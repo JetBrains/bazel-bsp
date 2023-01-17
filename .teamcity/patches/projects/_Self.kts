@@ -11,5 +11,5 @@ accordingly, and delete the patch script.
 */
 changeProject(DslContext.projectId) {
     expectBuildTypesOrder()
-    buildTypesOrderIds = arrayListOf(RelativeId("FormatBuildifier"), RelativeId("FormatGoogleJavaFormat"), RelativeId("BuildBuildTheProject"), RelativeId("UnitTestsUnitTests"), RelativeId("E2eTestsE2eBazelBspCppProjectTestTest"), RelativeId("E2eTestsE2eBazelBspLocalJdkTestTest"), RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTest"), RelativeId("E2eTestsE2eBazelBspSampleRepoTestTest"), RelativeId("ReleaseNewRelease"), RelativeId("PipelineResults"))
+    buildTypesOrderIds = arrayListOf(RelativeId("FormatBuildifier"), RelativeId("FormatGoogleJavaFormat"), RelativeId("BuildBuildTheProject"), RelativeId("UnitTestsUnitTests"), RelativeId("E2eTestsE2eBazelBspSampleRepoTestTest"), RelativeId("E2eTestsE2eBazelBspLocalJdkTestTest"), RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTest"), RelativeId("E2eTestsE2eBazelBspCppProjectTestTest"), RelativeId("ReleaseNewRelease"), RelativeId("PipelineResults"))
 }
