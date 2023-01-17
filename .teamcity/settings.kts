@@ -16,31 +16,26 @@ project {
         }
 
         buildType(Build.BuildTheProject, options = {
-            onDependencyFailure = FailureAction.CANCEL
+            onDependencyFailure = FailureAction.IGNORE
             onDependencyCancel = FailureAction.CANCEL
         })
 
         buildType(UnitTests.UnitTests, options = {
-            onDependencyFailure = FailureAction.CANCEL
+            onDependencyFailure = FailureAction.IGNORE
             onDependencyCancel = FailureAction.CANCEL
         })
 
         parallel(options = {
-            onDependencyFailure = FailureAction.CANCEL
+            onDependencyFailure = FailureAction.IGNORE
             onDependencyCancel = FailureAction.CANCEL
 
         }) {
             buildType(E2eTests.SampleRepoE2ETest)
 
-            buildType(E2eTests.ActionGraphV1E2ETest)
-            buildType(E2eTests.ActionGraphV2E2ETest)
+            buildType(E2eTests.BazelBspLocalJdkTest)
+            buildType(E2eTests.BazelBspRemoteJdkTest)
 
-            buildType(E2eTests.Java8ProjectE2ETest)
-            buildType(E2eTests.Java11ProjectE2ETest)
-
-            // buildType(E2eTests.CppProjectE2ETest)
-
-            buildType(E2eTests.EntireRepositoryImportE2ETest)
+            buildType(E2eTests.CppProjectE2ETest)
         }
 
         buildType(ResultsAggregator)
