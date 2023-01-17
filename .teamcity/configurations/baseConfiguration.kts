@@ -25,5 +25,8 @@ object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp"
     url = "https://github.com/JetBrains/bazel-bsp.git"
     branch = "master"
-    branchSpec = "refs/heads/(*)"
+    branchSpec =  """
+            +:refs/heads/*
+            -:refs/heads/team*city
+        """.trimIndent()
 })
