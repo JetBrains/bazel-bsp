@@ -65,11 +65,6 @@ message CppTargetInfo {
 }
 
 message PythonTargetInfo {
-  string main = 1;
-  repeated FileLocation imports = 2;
-}
-
-message PythonRuntimeInfo {
   string interpreter = 1;
   string version = 2;
 }
@@ -90,5 +85,4 @@ message TargetInfo {
   ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
   PythonTargetInfo python_target_info = 7000;
-  PythonRuntimeInfo python_runtime_info = 8000;
 }
