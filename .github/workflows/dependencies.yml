@@ -4,11 +4,15 @@ name: Update dependencies
 on:
   workflow_dispatch:
   schedule:
-   - cron: '0 4 * * 6'
+    - cron: '0 4 * * 6'
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   bazel-steward:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: VirtusLab/bazel-steward@v0.0.9
+      - uses: VirtusLab/bazel-steward@v0.0.10
