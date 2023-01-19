@@ -22,9 +22,9 @@ http_archive(
 # ======================================================================================================================
 # kotlin
 
-IO_BAZEL_KOTLIN_RULES_TAG = "v1.7.0"
+IO_BAZEL_KOTLIN_RULES_TAG = "v1.7.1"
 
-IO_BAZEL_KOTLIN_RULES_SHA = "15afe2d727f0dba572e0ce58f1dac20aec1441422ca65f7c3f7671b47fd483bf"
+IO_BAZEL_KOTLIN_RULES_SHA = "fd92a98bd8a8f0e1cdcb490b93f5acef1f1727ed992571232d33de42395ca9b3"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.4.0"
+IO_BAZEL_TAG = "6.0.0"
 
-IO_BAZEL_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+IO_BAZEL_SHA = "fcd4ef7485d5fc968767b92f2d099e93a54ae9657047ba8f7e910216eb2b8e16"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.4.0"
+GOOGLEAPIS_TAG = "6.0.0"
 
-GOOGLEAPIS_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+GOOGLEAPIS_SHA = "fcd4ef7485d5fc968767b92f2d099e93a54ae9657047ba8f7e910216eb2b8e16"
 
 http_archive(
     name = "googleapis",
@@ -207,6 +207,7 @@ maven_install(
         "org.scala-lang:scala-library:2.13.8",
         "com.google.protobuf:protobuf-java:3.21.12",
         "io.grpc:grpc-stub:1.51.1",
+        "io.grpc:grpc-api:1.52.1",
     ],
     fetch_sources = True,
     repositories = [
