@@ -207,6 +207,10 @@ maven_install(
         "org.scala-lang:scala-library:2.13.8",
         "com.google.protobuf:protobuf-java:3.21.12",
         "io.grpc:grpc-stub:1.51.1",
+        "io.arrow-kt:arrow-core:1.0.0",
+        "io.arrow-kt:arrow-meta:1.0.0",
+        "io.arrow-kt:arrow-fx-coroutines:1.0.0",
+        "org.apache.commons:commons-configuration2:2.3"
     ],
     fetch_sources = True,
     repositories = [
