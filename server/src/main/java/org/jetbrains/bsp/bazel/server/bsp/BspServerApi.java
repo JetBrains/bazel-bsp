@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp;
 
+import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
@@ -173,6 +174,11 @@ public class BspServerApi
   public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(OutputPathsParams params) {
     return runner.handleRequest(
         "buildTargetOutputPaths", projectSyncService::buildTargetOutputPaths, params);
+  }
+
+  @Override
+  public void onConnectWithClient(BuildClient buildClient) {
+    BuildServer.super.onConnectWithClient(buildClient);
   }
 
   @Override

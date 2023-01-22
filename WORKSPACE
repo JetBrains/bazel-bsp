@@ -193,7 +193,7 @@ maven_install(
     artifacts = [
         "com.google.code.gson:gson:2.8.9",
         "com.google.guava:guava:31.0.1-jre",
-        "ch.epfl.scala:bsp4j:2.1.0-M3",
+        "ch.epfl.scala:bsp4j:2.1.0-M4",
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
         "io.vavr:vavr:0.10.4",
