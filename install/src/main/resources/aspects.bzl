@@ -453,14 +453,12 @@ def _bsp_target_info_aspect_impl(target, ctx):
         for f in t.files.to_list()
         if f.is_source
     ]
-    print(sources)
 
     resources = [
         file_location(f)
         for t in getattr(ctx.rule.attr, "resources", [])
         for f in t.files.to_list()
     ]
-    print(target)
 
     java_target_info = extract_java_info(target, ctx, output_groups) if not "manual" in rule_attrs.tags else None
     scala_toolchain_info = extract_scala_toolchain_info(target, ctx, output_groups) if not "manual" in rule_attrs.tags else None
@@ -469,8 +467,6 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
     cpp_target_info = extract_cpp_target_info(target, ctx)
     python_target_info = extract_python_target_info(target, ctx)
-
-    print(python_target_info)
 
     result = dict(
         id = str(target.label),
@@ -521,10 +517,15 @@ bsp_target_info_aspect = aspect(
 )
 
 def extract_python_target_info(target, ctx):
-    if PyRuntimeInfo not in target:
+    if PyInfo not in target:
         return None
 
+    if PyRuntimeInfo in target:
+        provider = target[PyRuntimeInfo]
+    else:
+        provider = None
+
     return create_struct(
-        interpreter = target[PyRuntimeInfo].interpreter.path,
-        version = target[PyRuntimeInfo].python_version,
+        interpreter = file_location(getattr(provider, "interpreter", None)),
+        version = getattr(provider, "python_version", None)
     )
