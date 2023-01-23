@@ -9,20 +9,16 @@ import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Module
-import java.net.URI
 
 class PythonLanguagePlugin(
     private val bazelPathsResolver: BazelPathsResolver
 ) : LanguagePlugin<PythonModule>() {
 
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
-        targetInfo.pythonTargetInfo?.run {
+        targetInfo?.pythonTargetInfo?.run {
 
-            val interpreterURI = interpreter?.let {
-                it.takeUnless { it.relativePath.isNullOrEmpty() }?.let { f -> bazelPathsResolver.resolveUri(f) }
-            }
             PythonModule(
-                interpreterURI,
+                interpreter.takeUnless(String::isNullOrEmpty),
                 version.takeUnless(String::isNullOrEmpty)
             )
 
@@ -31,8 +27,7 @@ class PythonLanguagePlugin(
 
     override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
         buildTarget.dataKind = BuildTargetDataKind.PYTHON
-        val interpreter = moduleData.interpreter?.let { obj: URI -> obj.toString() }
-        buildTarget.data = PythonBuildTarget(moduleData.version, interpreter)
+        buildTarget.data = PythonBuildTarget(moduleData.version, moduleData.interpreter)
     }
 
     fun toPythonOptionsItem(module: Module, pythonModule: PythonModule): PythonOptionsItem =
