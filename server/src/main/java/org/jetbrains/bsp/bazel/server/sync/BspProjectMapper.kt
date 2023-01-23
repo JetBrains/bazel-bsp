@@ -22,6 +22,11 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
+import ch.epfl.scala.bsp4j.OutputPathsParams
+import ch.epfl.scala.bsp4j.OutputPathItem
+import ch.epfl.scala.bsp4j.OutputPathsItem
+import ch.epfl.scala.bsp4j.OutputPathItemKind
+import ch.epfl.scala.bsp4j.OutputPathsResult
 import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
@@ -61,6 +66,7 @@ class BspProjectMapper(
             compileProvider = CompileProvider(languageNames)
             runProvider = RunProvider(languageNames)
             testProvider = TestProvider(languageNames)
+            outputPathsProvider = true
             dependencySourcesProvider = true
             inverseSourcesProvider = true
             resourcesProvider = true
@@ -116,6 +122,24 @@ class BspProjectMapper(
     }
 
     fun sources(project: Project, sourcesParams: SourcesParams): SourcesResult {
+        fun toSourcesItem(module: Module): SourcesItem {
+            val sourceSet = module.sourceSet
+            val sourceItems = sourceSet.sources.map { source: URI ->
+                SourceItem(
+                    BspMappings.toBspUri(source),
+                    SourceItemKind.FILE,
+                    false
+                )
+            }
+            val sourceRoots = sourceSet.sourceRoots.map(BspMappings::toBspUri)
+            val sourcesItem = SourcesItem(BspMappings.toBspId(module), sourceItems)
+            sourcesItem.roots = sourceRoots
+            return sourcesItem
+        }
+
+        fun emptySourcesItem(label: Label): SourcesItem =
+            SourcesItem(BspMappings.toBspId(label), emptyList())
+
         // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
         // we need a use case with some generated files and then figure out how to handle it
         val labels = BspMappings.toLabels(sourcesParams.targets)
@@ -125,25 +149,17 @@ class BspProjectMapper(
         return SourcesResult(sourcesItems)
     }
 
-    private fun toSourcesItem(module: Module): SourcesItem {
-        val sourceSet = module.sourceSet
-        val sourceItems = sourceSet.sources.map { source: URI ->
-            SourceItem(
-                BspMappings.toBspUri(source),
-                SourceItemKind.FILE,
-                false
-            )
-        }
-        val sourceRoots = sourceSet.sourceRoots.map(BspMappings::toBspUri)
-        val sourcesItem = SourcesItem(BspMappings.toBspId(module), sourceItems)
-        sourcesItem.roots = sourceRoots
-        return sourcesItem
-    }
-
-    private fun emptySourcesItem(label: Label): SourcesItem =
-        SourcesItem(BspMappings.toBspId(label), emptyList())
 
     fun resources(project: Project, resourcesParams: ResourcesParams): ResourcesResult {
+        fun toResourcesItem(module: Module): ResourcesItem {
+            val resources = module.resources.map(BspMappings::toBspUri)
+            return ResourcesItem(BspMappings.toBspId(module), resources)
+        }
+
+        fun emptyResourcesItem(label: Label): ResourcesItem {
+            return ResourcesItem(BspMappings.toBspId(label), emptyList())
+        }
+
         val labels = BspMappings.toLabels(resourcesParams.targets)
         val resourcesItems = labels.map { label: Label ->
             project.findModule(label)?.let(::toResourcesItem) ?: emptyResourcesItem(label)
@@ -151,39 +167,45 @@ class BspProjectMapper(
         return ResourcesResult(resourcesItems)
     }
 
-    private fun toResourcesItem(module: Module): ResourcesItem {
-        val resources = module.resources.map(BspMappings::toBspUri)
-        return ResourcesItem(BspMappings.toBspId(module), resources)
-    }
-
-    private fun emptyResourcesItem(label: Label): ResourcesItem {
-        return ResourcesItem(BspMappings.toBspId(label), emptyList())
-    }
 
     fun inverseSources(
         project: Project, inverseSourcesParams: InverseSourcesParams
     ): InverseSourcesResult {
         val documentUri = BspMappings.toUri(inverseSourcesParams.textDocument)
-        val targets =
-            project.findTargetBySource(documentUri)?.let { listOf(BspMappings.toBspId(it)) }
-                .orEmpty()
+        val targets = project.findTargetBySource(documentUri)
+            ?.let { listOf(BspMappings.toBspId(it)) }
+            .orEmpty()
         return InverseSourcesResult(targets)
     }
 
     fun dependencySources(
         project: Project, dependencySourcesParams: DependencySourcesParams
     ): DependencySourcesResult {
-        val labels = dependencySourcesParams.targets.map { Label(it.uri) }.toSet()
-        val items = labels.map { label: Label -> getDependencySourcesItem(project, label) }
+        fun getDependencySourcesItem(label: Label): DependencySourcesItem {
+            val sources = project
+                .findModule(label)?.let { module ->
+                    module.sourceDependencies.map(BspMappings::toBspUri)
+                }.orEmpty()
+            return DependencySourcesItem(BspMappings.toBspId(label), sources)
+        }
+
+        val labels = BspMappings.toLabels(dependencySourcesParams.targets)
+        val items = labels.map(::getDependencySourcesItem)
         return DependencySourcesResult(items)
     }
 
-    private fun getDependencySourcesItem(project: Project, label: Label): DependencySourcesItem {
-        val sources = project
-            .findModule(label)?.let { module: Module ->
-                module.sourceDependencies.map(BspMappings::toBspUri)
+
+    fun outputPaths(project: Project, params: OutputPathsParams): OutputPathsResult {
+        fun getItem(label: Label): OutputPathsItem {
+            val items = project.findModule(label)?.let { module ->
+                module.outputs.map { OutputPathItem(BspMappings.toBspUri(it), OutputPathItemKind.DIRECTORY) }
             }.orEmpty()
-        return DependencySourcesItem(BspMappings.toBspId(label), sources)
+            return OutputPathsItem(BspMappings.toBspId(label), items)
+        }
+
+        val labels = BspMappings.toLabels(params.targets)
+        val items = labels.map(::getItem)
+        return OutputPathsResult(items)
     }
 
     fun jvmRunEnvironment(
@@ -205,39 +227,39 @@ class BspProjectMapper(
     private fun getJvmEnvironmentItems(
         project: Project, targets: List<BuildTargetIdentifier>
     ): List<JvmEnvironmentItem> {
+        fun extractJvmEnvironmentItem(module: Module): JvmEnvironmentItem? =
+            module.javaModule?.let {
+                languagePluginsService.javaLanguagePlugin.toJvmEnvironmentItem(module, it)
+            }
+
         val labels = BspMappings.toLabels(targets)
         return labels.mapNotNull { label: Label ->
             project.findModule(label)?.let(::extractJvmEnvironmentItem)
         }
     }
 
-    private fun extractJvmEnvironmentItem(module: Module): JvmEnvironmentItem? =
-        module.javaModule?.let {
-            languagePluginsService.javaLanguagePlugin.toJvmEnvironmentItem(module, it)
-        }
-
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams): JavacOptionsResult {
+        fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
+            module.javaModule?.let {
+                languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(module, it)
+            }
+
         val modules = BspMappings.getModules(project, params.targets)
         val items = modules.mapNotNull(::extractJavacOptionsItem)
         return JavacOptionsResult(items)
     }
 
     fun buildTargetCppOptions(project: Project, params: CppOptionsParams): CppOptionsResult {
+        fun extractCppOptionsItem(module: Module): CppOptionsItem? =
+            languagePluginsService.extractCppModule(module)?.let {
+                languagePluginsService.cppLanguagePlugin.toCppOptionsItem(module, it)
+            }
+
         val modules = BspMappings.getModules(project, params.targets)
         val items = modules.mapNotNull(::extractCppOptionsItem)
         return CppOptionsResult(items)
     }
 
-    private fun extractCppOptionsItem(module: Module): CppOptionsItem? =
-        languagePluginsService.extractCppModule(module)?.let {
-            languagePluginsService.cppLanguagePlugin.toCppOptionsItem(module, it)
-        }
-
-
-    private fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
-        module.javaModule?.let {
-            languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(module, it)
-        }
 
     fun buildTargetScalacOptions(
         project: Project,
@@ -255,8 +277,7 @@ class BspProjectMapper(
     ): ScalaTestClassesResult {
         val modules = BspMappings.getModules(project, params.targets)
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
-        val items =
-            modules.mapNotNull(scalaLanguagePlugin::toScalaTestClassesItem)
+        val items = modules.mapNotNull(scalaLanguagePlugin::toScalaTestClassesItem)
         return ScalaTestClassesResult(items)
     }
 
@@ -265,8 +286,7 @@ class BspProjectMapper(
     ): ScalaMainClassesResult {
         val modules = BspMappings.getModules(project, params.targets)
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
-        val items =
-            modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
+        val items = modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
         return ScalaMainClassesResult(items)
     }
 }

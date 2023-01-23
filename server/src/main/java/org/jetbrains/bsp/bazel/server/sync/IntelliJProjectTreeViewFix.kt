@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
@@ -9,29 +10,54 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.toPath
 
-class IntelliJProjectTreeViewFix(private val bazelPathsResolver: BazelPathsResolver) {
+class IntelliJProjectTreeViewFix(
+    private val bazelPathsResolver: BazelPathsResolver,
+    private val bazelInfo: BazelInfo
+) {
 
     fun createModules(
-        workspaceRoot: URI, modules: Sequence<Module>, workspaceContext: WorkspaceContext
-    ): Sequence<Module> = if (isFullWorkspaceImport(workspaceContext)) {
-        createWorkspaceRootModule(workspaceRoot, modules)
-    } else {
-        createMultipleModules(workspaceContext, workspaceRoot, modules)
+        workspaceRoot: URI,
+        modules: Sequence<Module>,
+        workspaceContext: WorkspaceContext
+    ): Sequence<Module> {
+        return if (isFullWorkspaceImport(workspaceContext, workspaceRoot)) {
+            createWorkspaceRootModule(workspaceRoot, modules)
+        } else {
+            createMultipleModules(workspaceContext, workspaceRoot, modules)
+        }
     }
 
-    private fun isFullWorkspaceImport(workspaceContext: WorkspaceContext): Boolean =
-        importTargetSpecs(workspaceContext).any { it.startsWith("//...") }
+    private fun isFullWorkspaceImport(workspaceContext: WorkspaceContext, workspaceRoot: URI): Boolean {
+        return importTargetSpecs(workspaceContext).any { it.startsWith("//...") } ||
+            workspaceContext.dotBazelBspDirPath.value.parent.toUri() == workspaceRoot
+    }
 
     private fun createWorkspaceRootModule(
         workspaceRoot: URI, modules: Sequence<Module>
     ): Sequence<Module> {
+        val excludeDirs = computeSymlinksToExclude(workspaceRoot)
+
         val existingRootDirectories = resolveExistingRootDirectories(modules)
         if (existingRootDirectories.contains(workspaceRoot)) {
-            return emptySequence()
+            return modules.map {
+                if (it.sourceSet.sourceRoots.contains(workspaceRoot)) {
+                  it.copy(outputs = it.outputs + excludeDirs)
+                } else it
+            }
         }
-        val rootModule: Module = syntheticModule("bsp-workspace-root", workspaceRoot)
-        return sequenceOf(rootModule)
+        val rootModule = syntheticModule("bsp-workspace-root", workspaceRoot, excludeDirs)
+        return modules + sequenceOf(rootModule)
+    }
+
+    private fun computeSymlinksToExclude(workspaceRoot: URI): Set<URI> {
+        val execRootSymlinkName = Path(bazelInfo.execRoot).name.replace("[^A-Za-z0-9]".toRegex(), "-")
+        return listOf("out", "testlogs", "bin", execRootSymlinkName).map { name ->
+            workspaceRoot.toPath().resolve("bazel-${name}").toUri()
+        }.toSet()
     }
 
     private fun createMultipleModules(
@@ -40,7 +66,7 @@ class IntelliJProjectTreeViewFix(private val bazelPathsResolver: BazelPathsResol
         val existingRootDirectories = resolveExistingRootDirectories(modules)
         val expectedRootDirs = resolveExpectedRootDirs(workspaceContext, workspaceRoot)
         val workspaceRootPath = Paths.get(workspaceRoot)
-        return expectedRootDirs.mapNotNull { root: URI ->
+        return modules + expectedRootDirs.mapNotNull { root: URI ->
             if (existingRootDirectories.contains(root)) {
                 return@mapNotNull null
             }
@@ -94,20 +120,21 @@ class IntelliJProjectTreeViewFix(private val bazelPathsResolver: BazelPathsResol
     private fun importTargetSpecs(workspaceContext: WorkspaceContext): Sequence<String> =
         workspaceContext.targets.values.map(BuildTargetIdentifier::getUri).asSequence()
 
-    private fun syntheticModule(moduleName: String, baseDirectory: URI): Module {
+    private fun syntheticModule(moduleName: String, baseDirectory: URI, outputs: Set<URI> = emptySet()): Module {
         val resources = hashSetOf(baseDirectory)
         return Module(
-            Label(moduleName),
-            true,
-            emptyList(),
-            emptySet(),
-            hashSetOf(Tag.NO_BUILD),
-            baseDirectory,
-            SourceSet(emptySet(), emptySet()),
-            resources,
-            emptySet(),
-            null,
-            hashMapOf()
+            label = Label(moduleName),
+            isSynthetic = true,
+            directDependencies = emptyList(),
+            languages = emptySet(),
+            tags = hashSetOf(Tag.NO_BUILD),
+            baseDirectory = baseDirectory,
+            sourceSet = SourceSet(emptySet(), emptySet()),
+            resources = resources,
+            outputs = outputs,
+            sourceDependencies = emptySet(),
+            languageData = null,
+            environmentVariables = hashMapOf()
         )
     }
 }

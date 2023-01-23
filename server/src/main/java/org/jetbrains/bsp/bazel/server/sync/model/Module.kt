@@ -13,6 +13,7 @@ data class Module(
     val baseDirectory: URI,
     val sourceSet: SourceSet,
     val resources: Set<URI>,
+    val outputs: Set<URI>,
     val sourceDependencies: Set<URI>,
     val languageData: LanguageData?,
     val environmentVariables: Map<String, String>
