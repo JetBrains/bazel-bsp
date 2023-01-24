@@ -13,6 +13,9 @@ import java.nio.file.Paths
 import kotlin.io.path.Path
 import kotlin.io.path.name
 import kotlin.io.path.toPath
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.isSymbolicLink
+import kotlin.io.path.readSymbolicLink
 
 class IntelliJProjectTreeViewFix(
     private val bazelPathsResolver: BazelPathsResolver,
@@ -33,7 +36,7 @@ class IntelliJProjectTreeViewFix(
 
     private fun isFullWorkspaceImport(workspaceContext: WorkspaceContext, workspaceRoot: URI): Boolean {
         return importTargetSpecs(workspaceContext).any { it.startsWith("//...") } ||
-            workspaceContext.dotBazelBspDirPath.value.parent.toUri() == workspaceRoot
+                workspaceContext.dotBazelBspDirPath.value.parent.toUri() == workspaceRoot
     }
 
     private fun createWorkspaceRootModule(
@@ -45,7 +48,7 @@ class IntelliJProjectTreeViewFix(
         if (existingRootDirectories.contains(workspaceRoot)) {
             return modules.map {
                 if (it.sourceSet.sourceRoots.contains(workspaceRoot)) {
-                  it.copy(outputs = it.outputs + excludeDirs)
+                    it.copy(outputs = it.outputs + excludeDirs)
                 } else it
             }
         }
@@ -54,9 +57,29 @@ class IntelliJProjectTreeViewFix(
     }
 
     private fun computeSymlinksToExclude(workspaceRoot: URI): Set<URI> {
-        val execRootSymlinkName = Path(bazelInfo.execRoot).name.replace("[^A-Za-z0-9]".toRegex(), "-")
-        return listOf("out", "testlogs", "bin", execRootSymlinkName).map { name ->
-            workspaceRoot.toPath().resolve("bazel-${name}").toUri()
+        val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
+        val execRoot = Path(bazelInfo.execRoot)
+        val execRootSymlinkNames = execRoot.name.let { name ->
+            // newer bazel versions put workspace name as last component of exec root
+            // still, the symlink to this directory is in form of bazel-<sanitized-workspace-name>
+            // it seems to not accept '_' as a character, and it is replaced with '-'
+            //
+            // In older bazel versions, the exec root directory is named __main__ and I am using
+            // less efficient heuristic: finding all bazel-* files that are symlinks that point to
+            // exec root
+            if (name != "__main__") {
+                setOf("bazel-" + name.replace("[^A-Za-z0-9]".toRegex(), "-"))
+            } else {
+                workspaceRoot.toPath()
+                    .listDirectoryEntries("bazel-*")
+                    .filterNot { it.name in stableSymlinkNames }
+                    .filter { it.isSymbolicLink() && it.readSymbolicLink() == execRoot }
+                    .map { it.name }
+            }
+        }
+
+        return (stableSymlinkNames + execRootSymlinkNames).map { name ->
+            workspaceRoot.toPath().resolve(name).toUri()
         }.toSet()
     }
 
