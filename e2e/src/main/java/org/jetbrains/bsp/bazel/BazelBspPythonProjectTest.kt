@@ -16,11 +16,25 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
 
+        val bspWorkspaceRootExampleBuildTarget =
+            BuildTarget(
+                BuildTargetIdentifier("bsp-workspace-root"),
+                listOf(),
+                listOf(),
+                listOf(),
+                BuildTargetCapabilities(false, false, false, false)
+            )
+        bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
+        bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
+
         val examplePythonBuildTarget =
             PythonBuildTarget(
                 "PY3",
                 "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh"
             )
+
+        val examplePythonLibBuildTarget =
+            PythonBuildTarget(null, null)
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("//example:example"),
@@ -34,9 +48,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         exampleExampleBuildTarget.data = examplePythonBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
-        val examplePythonLibBuildTarget =
-            PythonBuildTarget(null, null)
-
         val exampleExampleLibBuildTarget = BuildTarget(
             BuildTargetIdentifier("//lib:example_library"),
             listOf("library"),
@@ -49,9 +60,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         exampleExampleLibBuildTarget.data = examplePythonLibBuildTarget
         exampleExampleLibBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
-
-        val examplePythonTestBuildTarget =
-            PythonBuildTarget("PY3", "bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh")
         val exampleExampleTestBuildTarget = BuildTarget(
             BuildTargetIdentifier("//test:test"),
             listOf("test"),
@@ -61,23 +69,16 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         )
         exampleExampleTestBuildTarget.displayName = "//test:test"
         exampleExampleTestBuildTarget.baseDirectory = "file://\$WORKSPACE/test/"
-        exampleExampleTestBuildTarget.data = examplePythonTestBuildTarget
+        exampleExampleTestBuildTarget.data = examplePythonBuildTarget
         exampleExampleTestBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
-
-        val bspWorkspaceRootExampleBuildTarget =
-            BuildTarget(
-                BuildTargetIdentifier("bsp-workspace-root"),
-                listOf(),
-                listOf(),
-                listOf(),
-                BuildTargetCapabilities(false, false, false, false)
-            )
-        bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
-        bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
-
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
-            listOf(bspWorkspaceRootExampleBuildTarget, exampleExampleBuildTarget, exampleExampleLibBuildTarget, exampleExampleTestBuildTarget)
+            listOf(
+                bspWorkspaceRootExampleBuildTarget,
+                exampleExampleBuildTarget,
+                exampleExampleLibBuildTarget,
+                exampleExampleTestBuildTarget
+            )
         )
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
