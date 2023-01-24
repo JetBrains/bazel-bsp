@@ -170,10 +170,9 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(
-      OutputPathsParams params) {
+  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(OutputPathsParams params) {
     return runner.handleRequest(
-            "buildTargetOutputPaths", projectSyncService::buildTargetOutputPaths, params);
+        "buildTargetOutputPaths", projectSyncService::buildTargetOutputPaths, params);
   }
 
   @Override

@@ -15,8 +15,8 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
-import ch.epfl.scala.bsp4j.OutputPathsResult;
 import ch.epfl.scala.bsp4j.OutputPathsParams;
+import ch.epfl.scala.bsp4j.OutputPathsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -125,5 +125,4 @@ public class ProjectSyncService {
   public DependencyModulesResult buildTargetDependencyModules(DependencyModulesParams params) {
     return new DependencyModulesResult(Collections.emptyList());
   }
-
 }
