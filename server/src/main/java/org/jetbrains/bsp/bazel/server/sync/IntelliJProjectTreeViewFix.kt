@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
@@ -9,29 +10,77 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.toPath
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.isSymbolicLink
+import kotlin.io.path.readSymbolicLink
 
-class IntelliJProjectTreeViewFix(private val bazelPathsResolver: BazelPathsResolver) {
+class IntelliJProjectTreeViewFix(
+    private val bazelPathsResolver: BazelPathsResolver,
+    private val bazelInfo: BazelInfo
+) {
 
     fun createModules(
-        workspaceRoot: URI, modules: Sequence<Module>, workspaceContext: WorkspaceContext
-    ): Sequence<Module> = if (isFullWorkspaceImport(workspaceContext)) {
-        createWorkspaceRootModule(workspaceRoot, modules)
-    } else {
-        createMultipleModules(workspaceContext, workspaceRoot, modules)
+        workspaceRoot: URI,
+        modules: Sequence<Module>,
+        workspaceContext: WorkspaceContext
+    ): Sequence<Module> {
+        return if (isFullWorkspaceImport(workspaceContext, workspaceRoot)) {
+            createWorkspaceRootModule(workspaceRoot, modules)
+        } else {
+            createMultipleModules(workspaceContext, workspaceRoot, modules)
+        }
     }
 
-    private fun isFullWorkspaceImport(workspaceContext: WorkspaceContext): Boolean =
-        importTargetSpecs(workspaceContext).any { it.startsWith("//...") }
+    private fun isFullWorkspaceImport(workspaceContext: WorkspaceContext, workspaceRoot: URI): Boolean {
+        return importTargetSpecs(workspaceContext).any { it.startsWith("//...") || it.startsWith("@//...") } ||
+                workspaceContext.dotBazelBspDirPath.value.parent.toUri() == workspaceRoot
+    }
 
     private fun createWorkspaceRootModule(
         workspaceRoot: URI, modules: Sequence<Module>
     ): Sequence<Module> {
+        val excludeDirs = computeSymlinksToExclude(workspaceRoot)
+
         val existingRootDirectories = resolveExistingRootDirectories(modules)
         if (existingRootDirectories.contains(workspaceRoot)) {
-            return emptySequence()
+            return modules.map {
+                if (it.sourceSet.sourceRoots.contains(workspaceRoot)) {
+                    it.copy(outputs = it.outputs + excludeDirs)
+                } else it
+            }
         }
-        val rootModule: Module = syntheticModule("bsp-workspace-root", workspaceRoot)
-        return sequenceOf(rootModule)
+        val rootModule = syntheticModule("bsp-workspace-root", workspaceRoot, excludeDirs)
+        return modules + sequenceOf(rootModule)
+    }
+
+    private fun computeSymlinksToExclude(workspaceRoot: URI): Set<URI> {
+        val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
+        val execRoot = Path(bazelInfo.execRoot)
+        val execRootSymlinkNames = execRoot.name.let { name ->
+            // newer bazel versions put workspace name as last component of exec root
+            // still, the symlink to this directory is in form of bazel-<sanitized-workspace-name>
+            // it seems to not accept '_' as a character, and it is replaced with '-'
+            //
+            // In older bazel versions, the exec root directory is named __main__ and I am using
+            // less efficient heuristic: finding all bazel-* files that are symlinks that point to
+            // exec root
+            if (name != "__main__") {
+                setOf("bazel-" + name.replace("[^A-Za-z0-9]".toRegex(), "-"))
+            } else {
+                workspaceRoot.toPath()
+                    .listDirectoryEntries("bazel-*")
+                    .filterNot { it.name in stableSymlinkNames }
+                    .filter { it.isSymbolicLink() && it.readSymbolicLink() == execRoot }
+                    .map { it.name }
+            }
+        }
+
+        return (stableSymlinkNames + execRootSymlinkNames).map { name ->
+            workspaceRoot.toPath().resolve(name).toUri()
+        }.toSet()
     }
 
     private fun createMultipleModules(
@@ -40,7 +89,7 @@ class IntelliJProjectTreeViewFix(private val bazelPathsResolver: BazelPathsResol
         val existingRootDirectories = resolveExistingRootDirectories(modules)
         val expectedRootDirs = resolveExpectedRootDirs(workspaceContext, workspaceRoot)
         val workspaceRootPath = Paths.get(workspaceRoot)
-        return expectedRootDirs.mapNotNull { root: URI ->
+        return modules + expectedRootDirs.mapNotNull { root: URI ->
             if (existingRootDirectories.contains(root)) {
                 return@mapNotNull null
             }
@@ -94,20 +143,21 @@ class IntelliJProjectTreeViewFix(private val bazelPathsResolver: BazelPathsResol
     private fun importTargetSpecs(workspaceContext: WorkspaceContext): Sequence<String> =
         workspaceContext.targets.values.map(BuildTargetIdentifier::getUri).asSequence()
 
-    private fun syntheticModule(moduleName: String, baseDirectory: URI): Module {
+    private fun syntheticModule(moduleName: String, baseDirectory: URI, outputs: Set<URI> = emptySet()): Module {
         val resources = hashSetOf(baseDirectory)
         return Module(
-            Label(moduleName),
-            true,
-            emptyList(),
-            emptySet(),
-            hashSetOf(Tag.NO_BUILD),
-            baseDirectory,
-            SourceSet(emptySet(), emptySet()),
-            resources,
-            emptySet(),
-            null,
-            hashMapOf()
+            label = Label(moduleName),
+            isSynthetic = true,
+            directDependencies = emptyList(),
+            languages = emptySet(),
+            tags = hashSetOf(Tag.NO_BUILD),
+            baseDirectory = baseDirectory,
+            sourceSet = SourceSet(emptySet(), emptySet()),
+            resources = resources,
+            outputs = outputs,
+            sourceDependencies = emptySet(),
+            languageData = null,
+            environmentVariables = hashMapOf()
         )
     }
 }

@@ -170,10 +170,9 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(
-      OutputPathsParams outputPathsParams) {
-    // TODO: https://youtrack.jetbrains.com/issue/BAZEL-240
-    return CompletableFuture.failedFuture(new Exception("This endpoint is not implemented yet"));
+  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(OutputPathsParams params) {
+    return runner.handleRequest(
+        "buildTargetOutputPaths", projectSyncService::buildTargetOutputPaths, params);
   }
 
   @Override
