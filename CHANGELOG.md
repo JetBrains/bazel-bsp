@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [2.4.0] - 2.01.2023
+
+### Features 🎉
+
+- Support Bazel 6.0.0
+  | [#318](https://github.com/JetBrains/bazel-bsp/pull/318)
+
 ## [2.3.1] - 21.12.2022
 
 ### Fixes 🛠️
@@ -286,7 +293,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.3.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.4.0...HEAD
+
+[2.4.0]: https://github.com/JetBrains/bazel-bsp/compare/2.3.1...2.4.0
 
 [2.3.1]: https://github.com/JetBrains/bazel-bsp/compare/2.3.0...2.3.1
 

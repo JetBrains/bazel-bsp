@@ -30,13 +30,13 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
 
         val exampleExampleBuildTarget =
             BuildTarget(
-                BuildTargetIdentifier("//example:example"),
+                BuildTargetIdentifier("$targetPrefix//example:example"),
                 ImmutableList.of("application"),
                 ImmutableList.of(Constants.CPP),
                 ImmutableList.of(BuildTargetIdentifier("@com_google_googletest//:gtest_main")),
                 BuildTargetCapabilities(true, false, true)
             )
-        exampleExampleBuildTarget.displayName = "//example:example"
+        exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = exampleExampleCppBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.CPP
@@ -61,11 +61,11 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
 
     private fun cppOptions(): BazelBspTestScenarioStep {
         val cppOptionsParams =
-            CppOptionsParams(ImmutableList.of(BuildTargetIdentifier("//example:example")))
+            CppOptionsParams(ImmutableList.of(BuildTargetIdentifier("$targetPrefix//example:example")))
 
         val exampleExampleCppOptionsItem =
             CppOptionsItem(
-                BuildTargetIdentifier("//example:example"),
+                BuildTargetIdentifier("$targetPrefix//example:example"),
                 ImmutableList.of("-Iexternal/gtest/include"),
                 ImmutableList.of("BOOST_FALLTHROUGH"),
                 ImmutableList.of("-pthread")

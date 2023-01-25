@@ -59,18 +59,12 @@ class JdkResolver(
           null
     val javaHome = javaHomeFile?.let { bazelPathsResolver.resolveUri(it) }
 
-    val version =
-        if (targetInfo.hasJavaToolchainInfo())
-          targetInfo.javaToolchainInfo.sourceVersion
-        else
-          null
-
-    return JdkCandidateData(hasRuntimeJavaHome, javaHome, version)
-        .takeIf { javaHome != null || version != null }
+    return JdkCandidateData(hasRuntimeJavaHome, javaHome)
+        .takeIf { javaHome != null }
   }
 
   private inner class JdkCandidate(private val data: JdkCandidateData) {
-    val version = data.version ?: data.javaHome?.let { jdkVersionResolver.resolve(it.toPath()) }?.toString()
+    val version = data.javaHome?.let { jdkVersionResolver.resolve(it.toPath()) }?.toString()
     val javaHome by data::javaHome
     val isRuntime by data::isRuntime
     val isComplete = javaHome != null && version != null
@@ -80,7 +74,6 @@ class JdkResolver(
   private data class JdkCandidateData(
       val isRuntime: Boolean,
       val javaHome: URI?,
-      val version: String?
   )
 
 }

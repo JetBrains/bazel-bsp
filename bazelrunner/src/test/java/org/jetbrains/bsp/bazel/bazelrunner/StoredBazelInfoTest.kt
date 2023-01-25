@@ -17,7 +17,9 @@ class ProjectStorageTest {
 
     val bazelInfo = BasicBazelInfo(
         "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b/execroot/bazel_bsp",
-        Paths.get("/Users/user/workspace/bazel-bsp"))
+        Paths.get("/Users/user/workspace/bazel-bsp"),
+        BazelRelease("6.0.0"))
+
 
     storage.store(bazelInfo)
     val loaded = storage.load()
