@@ -35,7 +35,7 @@ class IntelliJProjectTreeViewFix(
     }
 
     private fun isFullWorkspaceImport(workspaceContext: WorkspaceContext, workspaceRoot: URI): Boolean {
-        return importTargetSpecs(workspaceContext).any { it.startsWith("//...") } ||
+        return importTargetSpecs(workspaceContext).any { it.startsWith("//...") || it.startsWith("@//...") } ||
                 workspaceContext.dotBazelBspDirPath.value.parent.toUri() == workspaceRoot
     }
 
