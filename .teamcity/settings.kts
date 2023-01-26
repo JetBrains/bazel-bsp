@@ -2,6 +2,7 @@ import configurations.*
 import jetbrains.buildServer.configs.kotlin.v10.toExtId
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 version = "2022.10"
@@ -99,6 +100,21 @@ object ResultsAggregator : BuildType({
                     token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
                 }
             }
+        }
+        notifications {
+            notifierSettings = slackNotifier {
+                connection = "PROJECT_EXT_486"
+                sendTo = "#bazel-build"
+                messageFormat = verboseMessageFormat {
+                    addBranch = true
+                    addChanges = true
+                    addStatusText = true
+                    maximumNumberOfChanges = 10
+                }
+            }
+            branchFilter = "+:refs/head/build-pipeline-test"
+            buildFailed = true
+            buildFinishedSuccessfully = true
         }
     }
 })
