@@ -72,7 +72,7 @@ public class BspRequestsRunner {
           failure(
               methodName,
               new ResponseError(
-                  ResponseErrorCode.serverErrorEnd, "Server has already shutdown!", false)));
+                  ResponseErrorCode.serverNotInitialized, "Server has already shutdown!", false)));
     } else {
       return Option.none();
     }

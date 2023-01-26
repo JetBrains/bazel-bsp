@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+### Features 🎉
+
+- Add mainClasses parameters to JvmEnvironmentItem
+  | [#309](https://github.com/JetBrains/bazel-bsp/pull/309)
+
 ## [2.4.0] - 2.01.2023
 
 ### Features 🎉
