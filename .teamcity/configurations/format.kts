@@ -2,6 +2,8 @@ package configurations
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureConditions
+
 
 open class FormatBuildType(name: String, scriptName: String, scriptContent: String, dockerImage: String) :
     BaseConfiguration.BaseBuildType(
@@ -15,6 +17,7 @@ open class FormatBuildType(name: String, scriptName: String, scriptContent: Stri
                 this.dockerImage = dockerImage
             }
         },
+        failureConditions = { }
     )
 
 object JavaFormat : FormatBuildType(

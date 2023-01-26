@@ -65,6 +65,18 @@ project {
             branchFilter = "+:<default>"
         }
     }
+
+    buildTypesOrderIds = arrayListOf(RelativeId("FormatBuildifier"),
+        RelativeId("FormatGoogleJavaFormat"),
+        RelativeId("BuildBuildTheProject"),
+        RelativeId("UnitTestsUnitTests"),
+        RelativeId("E2eTestsE2eBazelBspSampleRepoTestTest"),
+        RelativeId("E2eTestsE2eBazelBspLocalJdkTestTest"),
+        RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTest"),
+        RelativeId("E2eTestsE2eBazelBspCppProjectTestTest"),
+        RelativeId("ReleaseNewRelease"),
+        RelativeId("PipelineResults"))
+
 }
 
 object ResultsAggregator : BuildType({
@@ -76,16 +88,5 @@ object ResultsAggregator : BuildType({
     vcs {
         root(BaseConfiguration.BazelBspVcs)
         showDependenciesChanges = true
-    }
-
-    features {
-        commitStatusPublisher {
-            publisher = github {
-                githubUrl = "https://api.github.com"
-                authType = personalToken {
-                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
-                }
-            }
-        }
     }
 })

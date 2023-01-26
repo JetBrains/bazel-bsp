@@ -23,7 +23,8 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
             dockerPull = true
             dockerImage = "gcr.io/cloud-marketplace-containers/google/bazel"
         }
-    }
+    },
+    failureConditions = {}
 )
 
 object Release : ReleaseBuildType(
