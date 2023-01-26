@@ -13,8 +13,10 @@ open class BuildBuildType(name: String, moduleLabel: String) : BaseConfiguration
             dockerPull = true
             dockerImage = "cbills/build-runner"
         }
-    }
+    },
+    failureConditions = { }
 )
+
 
 object BuildTheProject : BuildBuildType(
     name = "build the project",
