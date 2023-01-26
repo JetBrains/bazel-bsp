@@ -28,5 +28,6 @@ object BazelBspVcs : GitVcsRoot({
     branchSpec =  """
             +:refs/heads/*
             -:refs/heads/team*city
+            -:refs/heads/team*city*local
         """.trimIndent()
 })
