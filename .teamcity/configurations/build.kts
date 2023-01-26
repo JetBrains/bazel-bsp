@@ -14,7 +14,7 @@ open class BuildBuildType(name: String, moduleLabel: String) : BaseConfiguration
             dockerImage = "cbills/build-runner"
         }
     },
-    failureConditions = { }
+    failureConditions = { },
 )
 
 

@@ -24,7 +24,21 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
             dockerImage = "gcr.io/cloud-marketplace-containers/google/bazel"
         }
     },
-    failureConditions = {}
+    failureConditions = {},
+    notifications = {
+        notifierSettings = slackNotifier {
+            connection = "PROJECT_EXT_486"
+            sendTo = "#bazel-build"
+            messageFormat = verboseMessageFormat {
+                addBranch = true
+                addChanges = true
+                addStatusText = true
+                maximumNumberOfChanges = 10
+            }
+        }
+        buildFailed = true
+        buildFinishedSuccessfully = true
+    },
 )
 
 object Release : ReleaseBuildType(

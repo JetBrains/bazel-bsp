@@ -16,7 +16,8 @@ open class BazelBspE2ETestsBuildType(testLabel: String, failureConditions: Failu
             this.dockerImage = "cbills/build-runner"
         }
     },
-    failureConditions = failureConditions
+    failureConditions = failureConditions,
+    notifications = { }
 )
 
 object SampleRepoE2ETest : BazelBspE2ETestsBuildType(
