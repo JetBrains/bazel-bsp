@@ -17,6 +17,7 @@ class BazelInfoStorage(private val path: Path) {
       try {
         mapper.readValue(path.toFile(), BasicBazelInfo::class.java)
       } catch (e: Exception) {
+        println("XD2 -> $e")
         null
       }
 
@@ -24,6 +25,7 @@ class BazelInfoStorage(private val path: Path) {
       try {
         mapper.writeValue(path.toFile(), bazelInfo)
       } catch (e: IOException) {
+        println("XD1 -> $e")
         LOGGER.error("Could not store bazel info", e)
       }
 
