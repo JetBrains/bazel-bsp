@@ -112,7 +112,6 @@ object ResultsAggregator : BuildType({
                     maximumNumberOfChanges = 10
                 }
             }
-            branchFilter = "+:refs/heads/build-pipeline-test"
             buildFailed = true
             buildFinishedSuccessfully = true
         }
