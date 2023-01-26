@@ -5,7 +5,7 @@ import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
-class ProjectStorageTest {
+class StoredBazelInfoTest {
 
   @Test
   fun `should return null for not existing bazel info cache`() {

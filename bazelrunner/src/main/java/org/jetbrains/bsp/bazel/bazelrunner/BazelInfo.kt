@@ -13,10 +13,6 @@ data class BazelRelease(
   val major: Int
 ) {
 
-//  val major: Int by lazy {
-//    """(?<=release )\d+(?=[0-9.]*)""".toRegex().find(versionString)?.value?.toInt()!!
-//  }
-
   fun mainRepositoryReferencePrefix() = when(major) {
     in 0..3 -> throw RuntimeException("Unsupported Bazel version, use Bazel 4 or newer")
     in 4..5 -> "//"
@@ -25,8 +21,8 @@ data class BazelRelease(
 
   companion object {
     fun fromReleaseString(versionString: String): BazelRelease {
-      val a = """(?<=release )\d+(?=[0-9.]*)""".toRegex().find(versionString)?.value?.toInt()!!
-      return BazelRelease(a)
+      val major = """(?<=release )\d+(?=[0-9.]*)""".toRegex().find(versionString)?.value?.toInt()!!
+      return BazelRelease(major)
     }
   }
 }
