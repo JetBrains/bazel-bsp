@@ -14,14 +14,17 @@ open class BaseBuildType(
     steps: BuildSteps.() -> Unit,
     failureConditions: FailureConditions.() -> Unit,
     artifactRules: String = "" ,
-    notifications: Notifications.() -> Unit = {}
+    notifications: (Notifications.() -> Unit)? = null
 ) : BuildType({
     id(name.toExtId())
     this.name = name
     this.artifactRules = artifactRules
     this.steps(steps)
     this.failureConditions(failureConditions)
-    this.features.notifications(notifications)
+
+    if (notifications != null) {
+        this.features.notifications(notifications)
+    }
 
     vcs {
         root(BazelBspVcs)

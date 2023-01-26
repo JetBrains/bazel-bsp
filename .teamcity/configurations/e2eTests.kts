@@ -17,7 +17,6 @@ open class BazelBspE2ETestsBuildType(testLabel: String, failureConditions: Failu
         }
     },
     failureConditions = failureConditions,
-    notifications = { }
 )
 
 object SampleRepoE2ETest : BazelBspE2ETestsBuildType(
