@@ -57,6 +57,7 @@ class DopeFilesTest {
             // when
             val writeResult = DopeFiles.writeText(filePath, "test content")
 
+            println(writeResult)
             // then
             writeResult.isFailure shouldBe true
             writeResult.cause::class shouldBe AccessDeniedException::class
