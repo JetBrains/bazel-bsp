@@ -17,17 +17,17 @@ project {
         }
 
         buildType(Build.BuildTheProject, options = {
-            onDependencyFailure = FailureAction.IGNORE
+            onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
 
         buildType(UnitTests.UnitTests, options = {
-            onDependencyFailure = FailureAction.IGNORE
+            onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
 
         parallel(options = {
-            onDependencyFailure = FailureAction.IGNORE
+            onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
 
         }) {
