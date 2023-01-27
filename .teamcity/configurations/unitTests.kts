@@ -14,13 +14,7 @@ open class UnitTestsBuildType(moduleLabel: String) : BaseConfiguration.BaseBuild
             this.dockerImage = "cbills/build-runner"
         }
     },
-    failureConditions = {
-
-        check(nonZeroExitCode == true) {
-            "Unexpected option value: nonZeroExitCode = $nonZeroExitCode"
-        }
-        nonZeroExitCode = false
-    }
+    failureConditions = { }
 )
 
 object UnitTests : UnitTestsBuildType(
