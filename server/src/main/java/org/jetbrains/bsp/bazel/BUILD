@@ -4,7 +4,7 @@ load("@bazel_sonatype//:defs.bzl", "sonatype_java_export")
 sonatype_java_export(
     name = "bsp",
     srcs = glob(["*.java"]),
-    maven_coordinates = "org.jetbrains.bsp:bazel-bsp:2.4.0",
+    maven_coordinates = "org.jetbrains.bsp:bazel-bsp:2.5.0",
     maven_profile = "org.jetbrains",
     pom_template = "//:pom.xml",
     resources = ["//log4j_config"],

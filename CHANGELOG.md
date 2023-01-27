@@ -5,10 +5,15 @@
 
 ## [Unreleased]
 
+## [2.5.0] - 27.01.2023
+
 ### Features 🎉
 
-- Add mainClasses parameters to JvmEnvironmentItem
+- Add mainClasses parameters to `JvmEnvironmentItem`.
   | [#309](https://github.com/JetBrains/bazel-bsp/pull/309)
+
+- Exclude bazel-* symlinks; `outputPaths` endpoint implemented.
+  | [#322](https://github.com/JetBrains/bazel-bsp/pull/322)
 
 ## [2.4.0] - 2.01.2023
 
@@ -298,7 +303,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.4.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.5.0...HEAD
+
+[2.5.0]: https://github.com/JetBrains/bazel-bsp/compare/2.4.0..2.5.0
 
 [2.4.0]: https://github.com/JetBrains/bazel-bsp/compare/2.3.1...2.4.0
 
