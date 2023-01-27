@@ -36,6 +36,7 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
                 maximumNumberOfChanges = 10
             }
         }
+        branchFilter = "+:<default>"
         buildFailed = true
         buildFinishedSuccessfully = true
     },
