@@ -5,7 +5,7 @@ kt_junit5_test(
     size = "small",
     srcs = ["WorkspaceContextConstructorTest.kt"],
     test_package = "org.jetbrains.bsp.bazel.workspacecontext",
-    deps = [
+    associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )

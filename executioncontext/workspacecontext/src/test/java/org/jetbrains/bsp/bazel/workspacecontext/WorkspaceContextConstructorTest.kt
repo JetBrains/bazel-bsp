@@ -118,7 +118,8 @@ class WorkspaceContextConstructorTest {
             val expectedWorkspaceContext = WorkspaceContext(
                 targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
-                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
+                // TODO - for now we don't have a framework to change classpath, i'll fix it later
+                bazelPath = BazelPathSpecMapper.default().get(),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),
                 importDepth = ImportDepthSpec(0)
