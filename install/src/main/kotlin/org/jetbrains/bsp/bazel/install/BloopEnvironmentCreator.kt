@@ -5,7 +5,6 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
 import java.nio.file.Path
-import java.nio.file.Paths
 
 private data class WorkspaceSettings(
     val refreshProjectsCommand: List<String>
