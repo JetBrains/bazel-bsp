@@ -112,6 +112,7 @@ object ResultsAggregator : BuildType({
                     maximumNumberOfChanges = 10
                 }
             }
+            branchFilter = "+:<default>"
             buildFailed = true
             buildFinishedSuccessfully = true
         }
