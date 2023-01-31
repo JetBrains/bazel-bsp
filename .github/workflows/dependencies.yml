@@ -3,7 +3,7 @@ name: Update dependencies
 
 on:
   schedule:
-    - cron:  '*/20 * * * *'
+    - cron:  '30 5 * * 6'
 
 jobs:
   bazel-steward:
