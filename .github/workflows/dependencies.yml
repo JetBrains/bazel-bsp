@@ -1,6 +1,5 @@
 name: Update dependencies
 
-
 on:
   schedule:
     - cron:  '30 5 * * 6'
