@@ -37,6 +37,7 @@ class BspModuleExporterTest {
             ),
             emptySet(),
             emptySet(),
+            emptySet(),
             ScalaModule(
                 ScalaSdk("scala", "2.12.15", "2.12.15", emptyList()), emptyList(), JavaModule(
                     Jdk("11", null),

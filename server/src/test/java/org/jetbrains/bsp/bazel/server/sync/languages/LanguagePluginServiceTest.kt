@@ -25,131 +25,131 @@ import kotlin.io.path.createTempDirectory
 
 class LanguagePluginServiceTest {
 
-    private lateinit var languagePluginsService: LanguagePluginsService
+  private lateinit var languagePluginsService: LanguagePluginsService
+
+  @BeforeEach
+  fun beforeEach() {
+    val bazelInfo = BasicBazelInfo("", Paths.get(""), BazelRelease.fromReleaseString("release 6.0.0"))
+    val bazelPathsResolver = BazelPathsResolver(bazelInfo)
+    val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
+    val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
+    val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
+    val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
+    val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
+    languagePluginsService = LanguagePluginsService(
+      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin
+    )
+  }
+
+  @Nested
+  @DisplayName("Tests for the method shouldGetPlugin")
+  inner class ShouldGetPluginTest {
+
+    @Test
+    fun `should return JavaLanguagePlugin for Java Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf(Language.JAVA)
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+
+    @Test
+    fun `should return JavaLanguagePlugin for Kotlin Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf(Language.KOTLIN)
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+
+    @Test
+    fun `should return ScalaLanguagePlugin for Scala Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf(Language.SCALA)
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? ScalaLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+
+    @Test
+    fun `should return CppLanguagePlugin for Cpp Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf(Language.CPP)
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? CppLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+
+    @Test
+    fun `should return EmptyLanguagePlugin for no Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf()
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? EmptyLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+
+    @Test
+    fun `should return ThriftLanguagePlugin for Thrift Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf(Language.THRIFT)
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? ThriftLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+  }
+
+
+  @Nested
+  @DisplayName("Tests for the method shouldGetSourceSet")
+  inner class ShouldGetSourceSetTest {
+    private lateinit var tmpRepo: Path
 
     @BeforeEach
     fun beforeEach() {
-        val bazelInfo = BasicBazelInfo("", Paths.get(""), BazelRelease("6.0.0"))
-        val bazelPathsResolver = BazelPathsResolver(bazelInfo)
-        val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
-        val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
-        val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
-        val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
-        val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
-        languagePluginsService = LanguagePluginsService(
-            scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin
-        )
+      tmpRepo = createTempDirectory()
     }
 
-    @Nested
-    @DisplayName("Tests for the method shouldGetPlugin")
-    inner class ShouldGetPluginTest {
-
-        @Test
-        fun `should return JavaLanguagePlugin for Java Language`() {
-            // given
-            val languages: Set<Language> = hashSetOf(Language.JAVA)
-
-            // when
-            val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
-
-            // then
-            plugin shouldNotBe null
-        }
-
-        @Test
-        fun `should return JavaLanguagePlugin for Kotlin Language`() {
-            // given
-            val languages: Set<Language> = hashSetOf(Language.KOTLIN)
-
-            // when
-            val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
-
-            // then
-            plugin shouldNotBe null
-        }
-
-        @Test
-        fun `should return ScalaLanguagePlugin for Scala Language`() {
-            // given
-            val languages: Set<Language> = hashSetOf(Language.SCALA)
-
-            // when
-            val plugin = languagePluginsService.getPlugin(languages) as? ScalaLanguagePlugin
-
-            // then
-            plugin shouldNotBe null
-        }
-
-        @Test
-        fun `should return CppLanguagePlugin for Cpp Language`() {
-            // given
-            val languages: Set<Language> = hashSetOf(Language.CPP)
-
-            // when
-            val plugin = languagePluginsService.getPlugin(languages) as? CppLanguagePlugin
-
-            // then
-            plugin shouldNotBe null
-        }
-
-        @Test
-        fun `should return EmptyLanguagePlugin for no Language`() {
-            // given
-            val languages: Set<Language> = hashSetOf()
-
-            // when
-            val plugin = languagePluginsService.getPlugin(languages) as? EmptyLanguagePlugin
-
-            // then
-            plugin shouldNotBe null
-        }
-
-        @Test
-        fun `should return ThriftLanguagePlugin for Thrift Language`() {
-            // given
-            val languages: Set<Language> = hashSetOf(Language.THRIFT)
-
-            // when
-            val plugin = languagePluginsService.getPlugin(languages) as? ThriftLanguagePlugin
-
-            // then
-            plugin shouldNotBe null
-        }
+    private fun createFileAndWrite(dirString: String, filename: String, content: String): Path {
+      val dirPath = tmpRepo.resolve(dirString)
+      Files.createDirectories(dirPath)
+      val filePath = dirPath.resolve(filename)
+      Files.createFile(filePath)
+      File(filePath.toUri()).writeText(content)
+      return filePath
     }
 
+    @AfterEach
+    fun afterEach() {
+      val tmpDir = tmpRepo.toFile()
+      tmpDir.deleteRecursively()
+    }
 
-    @Nested
-    @DisplayName("Tests for the method shouldGetSourceSet")
-    inner class ShouldGetSourceSetTest {
-        private lateinit var tmpRepo: Path
-
-        @BeforeEach
-        fun beforeEach() {
-            tmpRepo = createTempDirectory()
-        }
-
-        private fun createFileAndWrite(dirString: String, filename: String, content: String): Path {
-            val dirPath = tmpRepo.resolve(dirString)
-            Files.createDirectories(dirPath)
-            val filePath = dirPath.resolve(filename)
-            Files.createFile(filePath)
-            File(filePath.toUri()).writeText(content)
-            return filePath
-        }
-
-        @AfterEach
-        fun afterEach() {
-            val tmpDir = tmpRepo.toFile()
-            tmpDir.deleteRecursively()
-        }
-
-        @Test
-        fun `should return sourceSet for Java Language`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/java/"
-            val filename = "JavaPackageTest.java"
-            val content = """
+    @Test
+    fun `should return sourceSet for Java Language`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/java/"
+      val filename = "JavaPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages.java;
                 |
                 |            public class JavaPackageTest{
@@ -158,39 +158,39 @@ class LanguagePluginServiceTest {
                 |              }
                 |            }
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldBe tmpRepo
-        }
+      // then
+      result shouldBe tmpRepo
+    }
 
-        @Test
-        fun `should not return tmpRepo for empty file in Java Language`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/java/"
-            val filename = "JavaPackageTest.java"
-            val content = ""
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
+    @Test
+    fun `should not return tmpRepo for empty file in Java Language`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/java/"
+      val filename = "JavaPackageTest.java"
+      val content = ""
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldNotBe tmpRepo
-            result shouldBe tmpRepo.resolve(dirString)
-        }
+      // then
+      result shouldNotBe tmpRepo
+      result shouldBe tmpRepo.resolve(dirString)
+    }
 
-        @Test
-        fun `should not return tmpRepo for Java Language with wrong package declaration`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/java/"
-            val filename = "JavaPackageTest.java"
-            val content = """
+    @Test
+    fun `should not return tmpRepo for Java Language with wrong package declaration`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/java/"
+      val filename = "JavaPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages;
                 |package java;
                 |public class JavaPackageTest{
@@ -199,47 +199,47 @@ class LanguagePluginServiceTest {
                 |  }
                 |}
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.JAVA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldNotBe tmpRepo
-            result shouldBe tmpRepo.resolve(dirString)
-        }
+      // then
+      result shouldNotBe tmpRepo
+      result shouldBe tmpRepo.resolve(dirString)
+    }
 
-        @Test
-        fun `should return sourceSet for Scala Language from one line package declaration`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
-            val filename = "ScalaPackageTest.java"
-            val content = """
+    @Test
+    fun `should return sourceSet for Scala Language from one line package declaration`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
+      val filename = "ScalaPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages;
-                |            
+                |
                 |   class ScalaPackageTest{
                 |        def main(){
                 |                return null;
                 |              }
                 |            }
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldBe tmpRepo
-        }
+      // then
+      result shouldBe tmpRepo
+    }
 
-        @Test
-        fun `should return sourceSet for Scala Language from two line package declaration`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/scala/"
-            val filename = "ScalaPackageTest.java"
-            val content = """
+    @Test
+    fun `should return sourceSet for Scala Language from two line package declaration`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/scala/"
+      val filename = "ScalaPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages;
                 |package scala;
                 |
@@ -249,22 +249,22 @@ class LanguagePluginServiceTest {
                 |  }
                 |}
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldBe tmpRepo
-        }
+      // then
+      result shouldBe tmpRepo
+    }
 
-        @Test
-        fun `should return sourceSet for Scala Language from multi line package declaration`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/scala/"
-            val filename = "ScalaPackageTest.java"
-            val content = """
+    @Test
+    fun `should return sourceSet for Scala Language from multi line package declaration`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/scala/"
+      val filename = "ScalaPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel;
                 |package server.sync.languages;
                 |
@@ -277,107 +277,107 @@ class LanguagePluginServiceTest {
                 |  }
                 |}
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldBe tmpRepo
-        }
+      // then
+      result shouldBe tmpRepo
+    }
 
-        @Test
-        fun `should not return tmpRepo for Scala Language from empty package declaration`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
-            val filename = "ScalaPackageTest.java"
-            val content = ""
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
+    @Test
+    fun `should not return tmpRepo for Scala Language from empty package declaration`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
+      val filename = "ScalaPackageTest.java"
+      val content = ""
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.SCALA))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldNotBe tmpRepo
-            result shouldBe tmpRepo.resolve(dirString)
-        }
+      // then
+      result shouldNotBe tmpRepo
+      result shouldBe tmpRepo.resolve(dirString)
+    }
 
-        @Test
-        fun `should return sourceSet for Kotlin Language`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/kotlin/"
-            val filename = "KotlinPackageTest.kt"
-            val content = """
+    @Test
+    fun `should return sourceSet for Kotlin Language`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/kotlin/"
+      val filename = "KotlinPackageTest.kt"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages.kotlin
-                |            
+                |
                 |fun main() {
                 |    println("Hello, World!")
                 |}
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.KOTLIN))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.KOTLIN))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldBe tmpRepo
-        }
+      // then
+      result shouldBe tmpRepo
+    }
 
-        @Test
-        fun `should not return tmpRepo for Kotlin Language for empty file`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/kotlin/"
-            val filename = "KotlinPackageTest.kt"
-            val content = ""
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.KOTLIN))
+    @Test
+    fun `should not return tmpRepo for Kotlin Language for empty file`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/kotlin/"
+      val filename = "KotlinPackageTest.kt"
+      val content = ""
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.KOTLIN))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldNotBe tmpRepo
-            result shouldBe tmpRepo.resolve(dirString)
-        }
+      // then
+      result shouldNotBe tmpRepo
+      result shouldBe tmpRepo.resolve(dirString)
+    }
 
-        @Test
-        fun `should return null for no Language`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
-            val filename = "EmptyPackageTest.java"
-            val content = """
+    @Test
+    fun `should return null for no Language`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
+      val filename = "EmptyPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages
-                |                       
+                |
                 """.trimMargin()
 
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf())
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf())
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldBe null
-        }
+      // then
+      result shouldBe null
+    }
 
-        @Test
-        fun `should not return tmpRepo for Thrift Language`() {
-            // given
-            val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
-            val filename = "ThriftPackageTest.java"
-            val content = """
+    @Test
+    fun `should not return tmpRepo for Thrift Language`() {
+      // given
+      val dirString = "org/jetbrains/bsp/bazel/server/sync/languages/"
+      val filename = "ThriftPackageTest.java"
+      val content = """
                 |package org.jetbrains.bsp.bazel.server.sync.languages
-                |            
+                |
                 |public class HelloWorldNative
                 |{
                 |        public static String hello(String name)
                 |        {
                 |                return "Hello, "+name;
                 |        }
-                |        
+                |
                 |        public static void main(String args[])
                 |        {
                 |                long start=System.currentTimeMillis();
@@ -390,16 +390,16 @@ class LanguagePluginServiceTest {
                 |        }
                 |}
                 """.trimMargin()
-            val filePath = createFileAndWrite(dirString, filename, content)
-            val plugin = languagePluginsService.getPlugin(hashSetOf(Language.THRIFT))
+      val filePath = createFileAndWrite(dirString, filename, content)
+      val plugin = languagePluginsService.getPlugin(hashSetOf(Language.THRIFT))
 
-            // when
-            val result = plugin.calculateSourceRoot(filePath)
+      // when
+      val result = plugin.calculateSourceRoot(filePath)
 
-            // then
-            result shouldNotBe null
-            result shouldNotBe tmpRepo
-            result shouldBe tmpRepo.resolve(dirString)
-        }
+      // then
+      result shouldNotBe null
+      result shouldNotBe tmpRepo
+      result shouldBe tmpRepo.resolve(dirString)
     }
+  }
 }

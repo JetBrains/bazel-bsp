@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.install
 import io.vavr.control.Option
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -17,11 +18,11 @@ class LauncherArgumentCreator(private val installationContext: InstallationConte
             .toTry { NoSuchElementException("Could not read $name system property") }
 
     private fun mapClasspathToAbsolutePaths(systemPropertyClasspath: String): String =
-        systemPropertyClasspath.split(":")
+        systemPropertyClasspath.split(File.pathSeparator)
             .map(Paths::get)
             .map(Path::toAbsolutePath)
             .map(Path::normalize)
-            .joinToString(separator = ":", transform = Path::toString)
+            .joinToString(separator = File.pathSeparator, transform = Path::toString)
 
     fun debuggerConnectionArgv(): String? =
         installationContext

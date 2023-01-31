@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.BuildTargetDataKind
 import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JvmBuildTarget
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
+import ch.epfl.scala.bsp4j.JvmMainClass
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
@@ -113,7 +114,9 @@ class JavaLanguagePlugin(
             javaModule.jvmOps.toList(),
             bazelInfo.workspaceRoot.toString(),
             module.environmentVariables
-        )
+        ).apply {
+            mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
+        }
     // FIXME: figure out what we should pass here, because passing the environment
     // of the *SERVER* makes little sense
 

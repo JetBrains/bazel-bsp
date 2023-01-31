@@ -10,6 +10,7 @@ import ch.epfl.scala.bsp4j.InverseSourcesParams
 import ch.epfl.scala.bsp4j.InverseSourcesResult
 import ch.epfl.scala.bsp4j.JvmBuildTarget
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
+import ch.epfl.scala.bsp4j.JvmMainClass
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
@@ -540,7 +541,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                        mainClasses = listOf(JvmMainClass("java_targets.JavaBinary", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets:java_library"),
                     listOf(
@@ -560,7 +563,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("target_with_dependency.JavaBinary", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets/subpackage:java_library"),
                     listOf(
@@ -580,7 +585,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("example.Example", listOf("arg1", "arg2")))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//scala_targets:scala_test"),
                     listOf(
@@ -603,7 +610,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("io.bazel.rulesscala.scala_test.Runner", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_with_resources:java_binary"),
                     listOf(
@@ -612,7 +621,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("target_with_resources.JavaBinary", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_args:binary"),
                     listOf(
@@ -623,7 +634,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("example.Example", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_jvm_flags:binary"),
                     listOf(
@@ -634,7 +647,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("example.Example", listOf("arg1", "arg2")))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_main_class:library"),
                     listOf(
@@ -654,7 +669,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf("foo1" to "val1", "foo2" to "val2")
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("environment_variables.JavaEnv", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//environment_variables:java_test"),
                     listOf(
@@ -685,7 +702,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("java_targets.JavaBinary", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets:java_library"),
                     listOf(
@@ -705,7 +724,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("target_with_dependency.JavaBinary", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets/subpackage:java_library"),
                     listOf(
@@ -725,7 +746,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("example.Example", listOf("arg1", "arg2")))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//scala_targets:scala_test"),
                     listOf(
@@ -748,7 +771,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("io.bazel.rulesscala.scala_test.Runner", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_with_resources:java_binary"),
                     listOf(
@@ -757,7 +782,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("target_with_resources.JavaBinary", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_args:binary"),
                     listOf(
@@ -768,7 +795,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     listOf("-Xms2G -Xmx5G"),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("example.Example", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_jvm_flags:binary"),
                     listOf(
@@ -779,7 +808,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("example.Example", listOf("arg1", "arg2")))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_main_class:library"),
                     listOf(
@@ -799,7 +830,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf("foo1" to "val1", "foo2" to "val2")
-                ),
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("environment_variables.JavaEnv", emptyList()))
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//environment_variables:java_test"),
                     listOf(

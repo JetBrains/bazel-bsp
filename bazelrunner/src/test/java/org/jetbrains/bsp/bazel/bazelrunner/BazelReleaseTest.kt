@@ -1,32 +1,45 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
-import org.assertj.core.api.Assertions.assertThat
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 class BazelReleaseTest {
-    @Test
-    fun oldBazel(){
-        val release = BazelRelease("release 4.0.0")
-        assertThat(release.major).isEqualTo(4)
-        assertThat(release.mainRepositoryReferencePrefix()).isEqualTo("//")
-    }
 
-    @Test
-    fun newBazel(){
-        val release = BazelRelease("release 6.0.0")
-        assertThat(release.major).isEqualTo(6)
-        assertThat(release.mainRepositoryReferencePrefix()).isEqualTo("@//")
-    }
+  @Test
+  fun `should handle old bazel`() {
+    // given & when
+    val release = BazelRelease.fromReleaseString("release 4.0.0")
 
-    @Test
-    fun newBazelUnofficial(){
-        val release = BazelRelease("release 6.0.0-pre20230102")
-        assertThat(release.major).isEqualTo(6)
-    }
+    // then
+    release.major shouldBe 4
+    release.mainRepositoryReferencePrefix() shouldBe "//"
+  }
 
-    @Test
-    fun newBuazelMutliDigit(){
-        val release = BazelRelease("release 16.0.0")
-        assertThat(release.major).isEqualTo(16)
-    }
+  @Test
+  fun `should handle new bazel`() {
+    // given & when
+    val release = BazelRelease.fromReleaseString("release 6.0.0")
+
+    // then
+    release.major shouldBe 6
+    release.mainRepositoryReferencePrefix() shouldBe "@//"
+  }
+
+  @Test
+  fun `should handle new bazel unofficial`() {
+    // given & when
+    val release = BazelRelease.fromReleaseString("release 6.0.0-pre20230102")
+
+    // then
+    release.major shouldBe 6
+  }
+
+  @Test
+  fun `should handle new bazel multi-digit version`() {
+    // given & when
+    val release = BazelRelease.fromReleaseString("release 16.0.0")
+
+    // then
+    release.major shouldBe 16
+  }
 }

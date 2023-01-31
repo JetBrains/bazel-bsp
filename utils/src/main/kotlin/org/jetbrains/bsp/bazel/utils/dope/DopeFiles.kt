@@ -8,6 +8,7 @@ import java.nio.file.Path
  * Trys are dope, exceptions are not... Soooo use `DopeFiles` to perform actions on files
  * (it's even better than java `Files`)
  */
+@Deprecated("dont use it")
 object DopeFiles {
 
     // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58

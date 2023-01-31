@@ -31,11 +31,9 @@ class BazelProjectMapper(
         val targetsToImport = selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
         val modulesFromBazel = createModules(targetsToImport, dependencyTree)
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
-        val syntheticModules =
-            createSyntheticModules(modulesFromBazel, workspaceRoot, workspaceContext)
-        val allModules = modulesFromBazel + syntheticModules
-        val sourceToTarget = buildReverseSourceMapping(modulesFromBazel)
-        return Project(workspaceRoot, allModules.toList(), sourceToTarget)
+        val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
+        val sourceToTarget = buildReverseSourceMapping(modifiedModules)
+        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget)
     }
 
     private fun selectTargetsToImport(
@@ -80,6 +78,7 @@ class BazelProjectMapper(
             baseDirectory = baseDirectory,
             sourceSet = sourceSet,
             resources = resources,
+            outputs = emptySet(),
             sourceDependencies = sourceDependencies,
             languageData = languageData,
             environmentVariables = environment
@@ -118,14 +117,16 @@ class BazelProjectMapper(
     private fun resolveResources(target: TargetInfo): Set<URI> =
         bazelPathsResolver.resolveUris(target.resourcesList).toSet()
 
-    // TODO make this feature configurable with flag in project view file
-    private fun createSyntheticModules(
+    private fun modifyModules(
         modulesFromBazel: Sequence<Module>, workspaceRoot: URI, workspaceContext: WorkspaceContext
-    ): Sequence<Module> = IntelliJProjectTreeViewFix(bazelPathsResolver).createModules(
-        workspaceRoot,
-        modulesFromBazel,
-        workspaceContext,
-    )
+    ): Sequence<Module> {
+        // TODO make this feature configurable with flag in project view file
+        return IntelliJProjectTreeViewFix(bazelPathsResolver, bazelInfo).createModules(
+            workspaceRoot,
+            modulesFromBazel,
+            workspaceContext,
+        )
+    }
 
     private fun buildReverseSourceMapping(modules: Sequence<Module>): Map<URI, Label> =
         modules.flatMap(::buildReverseSourceMappingForModule).toMap()
