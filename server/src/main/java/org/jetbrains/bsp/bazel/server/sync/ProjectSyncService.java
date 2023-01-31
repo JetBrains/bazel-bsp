@@ -28,9 +28,8 @@ import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourcesParams;
 import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
-import org.jetbrains.bsp.bazel.server.sync.model.Language;
-
 import java.util.Collections;
+import org.jetbrains.bsp.bazel.server.sync.model.Language;
 
 /** A facade for all project sync related methods */
 public class ProjectSyncService {

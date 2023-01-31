@@ -532,5 +532,5 @@ def extract_python_target_info(target, ctx):
 
     return create_struct(
         interpreter = file_location(getattr(provider, "interpreter", None)),
-        version = getattr(provider, "python_version", None)
+        version = getattr(provider, "python_version", None),
     )

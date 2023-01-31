@@ -47,14 +47,18 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
-
 public class BspServerApi
-    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, PythonBuildServer {
+    implements BuildServer,
+        JvmBuildServer,
+        ScalaBuildServer,
+        JavaBuildServer,
+        CppBuildServer,
+        PythonBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -215,9 +219,10 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(PythonOptionsParams params) {
+  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(
+      PythonOptionsParams params) {
     return runner.handleRequest(
-            "buildTargetPythonOptions", projectSyncService::buildTargetPythonOptions, params);
+        "buildTargetPythonOptions", projectSyncService::buildTargetPythonOptions, params);
   }
 
   @Override
