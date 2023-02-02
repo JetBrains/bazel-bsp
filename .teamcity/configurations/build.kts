@@ -36,7 +36,7 @@ open class BuildBuildType(command: String, targets: String) : BaseConfiguration.
                     "%system.agent.persistent.cache%/bazel/bazel"
                     
                     chmod +x "%system.agent.persistent.cache%/bazel/bazel"
-                    # export PATH="%system.agent.persistent.cache%/bazel:${'$'}PATH"
+                    export PATH="%system.agent.persistent.cache%/bazel:${'$'}PATH"
                     
                     
                     # check installation
