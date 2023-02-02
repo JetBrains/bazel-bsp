@@ -1,27 +1,46 @@
 package configurations
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.BazelStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
 
 open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
     name = "[release] $name",
+    setupSteps = true,
     steps = {
         script {
-            this.scriptContent = """
-                set -ex
-                apt-get update
+            this.name = "Install lxml"
+            scriptContent = """
+                #!/bin/bash
+                set -euxo pipefail
+                
+                apt-get update -q
                 apt-get install -y python3-pip
                 pip3 install lxml
-                cd "/usr/local/lib/bazel/bin" && curl -fLO https://releases.bazel.build/5.1.0/release/bazel-5.1.0-linux-x86_64 && chmod +x bazel-5.1.0-linux-x86_64 && cd -
-                echo %env.GPG_SECRET% | base64 -di | gpg --import
-                bazel run --stamp \
-                  --define "maven_user=%jetbrains.sonatype.access.token.username%" \
-                  --define "maven_password=%jetbrains.sonatype.access.token.password%" \
-                  //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
             """.trimIndent()
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerPull = true
-            dockerImage = "gcr.io/cloud-marketplace-containers/google/bazel"
+            dockerImage = "ubuntu:focal"
+            dockerRunParameters = "-v /usr/:/usr/"
+        }
+        script {
+            this.name = "update GPG key"
+            scriptContent = """
+                #!/bin/bash
+                set -euxo pipefail
+                echo %env.GPG_SECRET% | base64 -di | gpg --import
+            """.trimIndent()
+        }
+        bazel {
+            this.name = "publish $name"
+            this.command = "run"
+            this.targets = "//server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish"
+            logging = BazelStep.Verbosity.Diagnostic
+            param("toolPath", "%system.agent.persistent.cache%/bazel")
+            arguments = """
+                --stamp --define "maven_user=%jetbrains.sonatype.access.token.username%" --define "maven_password=%jetbrains.sonatype.access.token.password%"
+                """.trimIndent()
         }
     },
     failureConditions = {},

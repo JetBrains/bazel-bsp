@@ -1,29 +1,36 @@
 package configurations
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.BazelStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureConditions
 
 
-open class BazelBspE2ETestsBuildType(testLabel: String, failureConditions: FailureConditions.() -> Unit = {}) : BaseConfiguration.BaseBuildType(
-    name = "[e2e tests] $testLabel test",
+open class BazelBspE2ETestsBuildType(targets: String, failureConditions: FailureConditions.() -> Unit = {}) : BaseConfiguration.BaseBuildType(
+    name = "[e2e tests] $targets test",
+    setupSteps = true,
     steps = {
         script {
-            this.name = "running $testLabel e2e test"
-            this.scriptContent = """bazel run $testLabel"""
-            this.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            this.dockerPull = true
-            this.dockerImage = "cbills/build-runner"
+            this.name = "Switch Java to Java11"
+            scriptContent = "export JAVA_HOME=%env.JDK_11_0%"
+        }
+        bazel {
+            this.name = "test $targets"
+            this.command = "run"
+            this.targets = targets
+            logging = BazelStep.Verbosity.Diagnostic
+            param("toolPath", "%system.agent.persistent.cache%/bazel")
         }
     },
     failureConditions = failureConditions,
 )
 
 object SampleRepoE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspSampleRepoTest",
+    targets = "//e2e:BazelBspSampleRepoTest",
 )
 object BazelBspLocalJdkTest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspLocalJdkTest",
+    targets = "//e2e:BazelBspLocalJdkTest",
     failureConditions = {
 
         check(nonZeroExitCode == true) {
@@ -34,10 +41,10 @@ object BazelBspLocalJdkTest : BazelBspE2ETestsBuildType(
 )
 
 object BazelBspRemoteJdkTest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspRemoteJdkTest",
+    targets = "//e2e:BazelBspRemoteJdkTest",
 )
 
 
 object CppProjectE2ETest : BazelBspE2ETestsBuildType(
-    testLabel = "//e2e:BazelBspCppProjectTest",
+    targets = "//e2e:BazelBspCppProjectTest",
 )
