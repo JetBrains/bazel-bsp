@@ -12,22 +12,15 @@ open class BazelBspE2ETestsBuildType(targets: String, failureConditions: Failure
     setupSteps = true,
     steps = {
         script {
-            this.name = "Switch Java to Java11"
-            scriptContent = """
-                #!/bin/bash
-                set -euxo pipefail
-                
-                export JAVA_HOME=%env.JDK_11_0%
-                """.trimIndent()
-        }
-        script {
             this.name = "test $targets"
             scriptContent = """
                 #!/bin/bash
                 set -euxo pipefail
                 
+                export JAVA_HOME=%env.JDK_11_0%
+                
                 bazel run $targets
-                """.trimIndent()
+            """.trimIndent()
         }
     },
     failureConditions = failureConditions,

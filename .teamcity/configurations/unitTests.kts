@@ -13,7 +13,7 @@ open class UnitTestsBuildType(targets: String) : BaseConfiguration.BaseBuildType
             this.command = "test"
             this.targets = targets
             arguments = "--test_output=errors"
-            param("toolPath", "%system.agent.persistent.cache%/bazel")
+            param("toolPath", "/usr/bin/bazel")
         }
     },
     failureConditions = {

@@ -17,7 +17,7 @@ open class BaseBuildType(
     name: String,
     steps: BuildSteps.() -> Unit,
     failureConditions: FailureConditions.() -> Unit,
-    artifactRules: String = "" ,
+    artifactRules: String = "",
     notifications: (Notifications.() -> Unit)? = null,
     setupSteps: Boolean = false
 ) : BuildType({
@@ -38,40 +38,34 @@ open class BaseBuildType(
         steps {
             script {
                 this.name = "Install necessary pakcages via dockerized Ubuntu"
-                scriptContent = """
-                #!/bin/bash
-                set -euxo pipefail
-                
-                apt-get update -q
-                apt-get install -y build-essential
-                
-                # check installation
-                gcc --version ||:
-                find / -name 'cc1plus' 2>/dev/null ||:
-            """.trimIndent()
-                dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-                dockerPull = true
-                dockerImage = "ubuntu:focal"
-                dockerRunParameters = "-v /usr/:/usr/"
-            }
-            script {
-                this.name = "Install Bazelisk"
+
                 scriptContent = """
                     #!/bin/bash
                     set -euxo pipefail
                     
-                    mkdir -p "%system.agent.persistent.cache%/bazel"
-                    curl -L https://github.com/bazelbuild/bazelisk/releases/download/v1.15.0/bazelisk-linux-amd64 -o  \
-                    "%system.agent.persistent.cache%/bazel/bazel"
-                    
-                    chmod +x "%system.agent.persistent.cache%/bazel/bazel"
-                    export PATH="%system.agent.persistent.cache%/bazel:${'$'}PATH"
-                    
+                    apt-get update -q
+                    apt-get install -y build-essential
                     
                     # check installation
                     gcc --version ||:
                     find / -name 'cc1plus' 2>/dev/null ||:
-                    bazel version
+                    
+                    #install bazelisk
+                    curl -L https://github.com/bazelbuild/bazelisk/releases/download/v1.15.0/bazelisk-linux-amd64 -o  \
+                    "/usr/bin/bazel"
+    
+                    chmod +x "/usr/bin/bazel"
+                    
+                    #check bazel working
+                    bazel version ||:
+            """.trimIndent()
+
+                dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+                dockerPull = true
+                dockerImage = "ubuntu:focal"
+                dockerRunParameters = """
+                    -v /usr/:/usr/
+                    -v /etc/:/etc/
                 """.trimIndent()
             }
         }
@@ -83,7 +77,7 @@ object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp"
     url = "https://github.com/JetBrains/bazel-bsp.git"
     branch = "master"
-    branchSpec =  """
+    branchSpec = """
             +:refs/heads/*
             -:refs/heads/team*city
         """.trimIndent()
