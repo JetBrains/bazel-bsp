@@ -12,7 +12,7 @@ open class BuildBuildType(command: String, targets: String) : BaseConfiguration.
             this.name = "$command $targets"
             this.command = command
             this.targets = targets
-            param("toolPath", "/usr/bin/bazel")
+            param("toolPath", "/usr/bin")
         }
     },
     failureConditions = { },

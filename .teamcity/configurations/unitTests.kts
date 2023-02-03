@@ -13,7 +13,7 @@ open class UnitTestsBuildType(targets: String) : BaseConfiguration.BaseBuildType
             this.command = "test"
             this.targets = targets
             arguments = "--test_output=errors"
-            param("toolPath", "/usr/bin/bazel")
+            param("toolPath", "/usr/bin")
         }
     },
     failureConditions = {
