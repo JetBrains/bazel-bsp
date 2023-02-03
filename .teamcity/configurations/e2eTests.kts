@@ -13,14 +13,21 @@ open class BazelBspE2ETestsBuildType(targets: String, failureConditions: Failure
     steps = {
         script {
             this.name = "Switch Java to Java11"
-            scriptContent = "export JAVA_HOME=%env.JDK_11_0%"
+            scriptContent = """
+                #!/bin/bash
+                set -euxo pipefail
+                
+                export JAVA_HOME=%env.JDK_11_0%
+                """.trimIndent()
         }
-        bazel {
+        script {
             this.name = "test $targets"
-            this.command = "run"
-            this.targets = targets
-            logging = BazelStep.Verbosity.Diagnostic
-            param("toolPath", "%system.agent.persistent.cache%/bazel")
+            scriptContent = """
+                #!/bin/bash
+                set -euxo pipefail
+                
+                bazel run $targets
+                """.trimIndent()
         }
     },
     failureConditions = failureConditions,
@@ -31,19 +38,11 @@ object SampleRepoE2ETest : BazelBspE2ETestsBuildType(
 )
 object BazelBspLocalJdkTest : BazelBspE2ETestsBuildType(
     targets = "//e2e:BazelBspLocalJdkTest",
-    failureConditions = {
-
-        check(nonZeroExitCode == true) {
-            "Unexpected option value: nonZeroExitCode = $nonZeroExitCode"
-        }
-        nonZeroExitCode = false
-    }
 )
 
 object BazelBspRemoteJdkTest : BazelBspE2ETestsBuildType(
     targets = "//e2e:BazelBspRemoteJdkTest",
 )
-
 
 object CppProjectE2ETest : BazelBspE2ETestsBuildType(
     targets = "//e2e:BazelBspCppProjectTest",
