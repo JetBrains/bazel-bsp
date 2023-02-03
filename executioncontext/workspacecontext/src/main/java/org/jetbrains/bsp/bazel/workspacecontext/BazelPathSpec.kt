@@ -34,15 +34,12 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
 
     private fun findBazelOnPathOrNull(): BazelPathSpec? =
         splitPath()
-            .filterNot { isBazeliskPath(it) }
             .map { mapToBazel(it) }
             .firstOrNull { it.canExecute() }
             ?.toPath()
             ?.let { BazelPathSpec(it) }
 
     private fun splitPath(): List<String> = System.getenv("PATH").split(File.pathSeparator)
-
-    private fun isBazeliskPath(path: String): Boolean = path.contains("bazelisk/")
 
     private fun mapToBazel(path: String): File = File(path, "bazel")
 
