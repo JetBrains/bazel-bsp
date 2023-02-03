@@ -16,7 +16,12 @@ open class UnitTestsBuildType(targets: String) : BaseConfiguration.BaseBuildType
             param("toolPath", "%system.agent.persistent.cache%/bazel")
         }
     },
-    failureConditions = { }
+    failureConditions = {
+        check(testFailure == true) {
+            "Unexpected option value: testFailure = $testFailure"
+        }
+        testFailure = false
+    }
 )
 
 object UnitTests : UnitTestsBuildType(
