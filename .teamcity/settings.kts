@@ -22,7 +22,6 @@ project {
         })
 
         buildType(UnitTests.UnitTests, options = {
-            runOnSameAgent = true
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
