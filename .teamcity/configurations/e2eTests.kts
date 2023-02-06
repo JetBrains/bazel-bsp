@@ -45,8 +45,8 @@ object BazelBspLocalJdkTest : BazelBspE2ETestsBuildType(
                 #!/bin/bash
                 set -euxo pipefail
                 
-                export PATH="%env.JDK_11_0%/bin:(${'$'})PATH"
-                echo "##teamcity[setParameter name='env.PATH' value='(${'$'})PATH']"
+                export PATH="%env.JDK_11_0%/bin:${'$'}PATH"
+                echo "##teamcity[setParameter name='env.PATH' value='${'$'}PATH']"
                 
                 which java
             """.trimIndent()
