@@ -10,21 +10,6 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
     setupSteps = true,
     steps = {
         script {
-            this.name = "Install lxml"
-            scriptContent = """
-                #!/bin/bash
-                set -euxo pipefail
-                
-                apt-get update -q
-                apt-get install -y python3-pip
-                pip3 install lxml
-            """.trimIndent()
-            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            dockerPull = true
-            dockerImage = "ubuntu:focal"
-            dockerRunParameters = "-v /usr/:/usr/"
-        }
-        script {
             this.name = "update GPG key"
             scriptContent = """
                 #!/bin/bash
