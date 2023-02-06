@@ -37,7 +37,7 @@ open class ReleaseBuildType(name: String) : BaseConfiguration.BaseBuildType(
             this.command = "run"
             this.targets = "//server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish"
             logging = BazelStep.Verbosity.Diagnostic
-            param("toolPath", "%system.agent.persistent.cache%/bazel")
+            param("toolPath", "/usr/bin")
             arguments = """
                 --stamp --define "maven_user=%jetbrains.sonatype.access.token.username%" --define "maven_password=%jetbrains.sonatype.access.token.password%"
                 """.trimIndent()
