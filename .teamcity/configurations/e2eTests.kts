@@ -36,6 +36,13 @@ object SampleRepoE2ETest : BazelBspE2ETestsBuildType(
 
 object BazelBspLocalJdkTest : BazelBspE2ETestsBuildType(
     targets = "//e2e:BazelBspLocalJdkTest",
+    failureConditions = {
+
+        check(nonZeroExitCode == true) {
+            "Unexpected option value: nonZeroExitCode = $nonZeroExitCode"
+        }
+        nonZeroExitCode = false
+    },
     steps = {
         script {
             this.name = "set JDK to 11"
