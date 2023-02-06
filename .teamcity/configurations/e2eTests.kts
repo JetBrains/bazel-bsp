@@ -17,7 +17,9 @@ open class BazelBspE2ETestsBuildType(
     name = "[e2e tests] $targets test",
     setupSteps = true,
     steps = {
-        steps
+        if (steps != null) {
+            steps.invoke(this)
+        }
         bazel {
             this.name = "test $targets"
             this.command = "run"
