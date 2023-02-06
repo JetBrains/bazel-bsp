@@ -97,7 +97,7 @@ object ResultsAggregator : BuildType({
             publisher = github {
                 githubUrl = "https://api.github.com"
                 authType = personalToken {
-                    token = "credentialsJSON:3f56fecd-4c69-4c60-85f2-13bc42792558"
+                    token = "credentialsJSON:ac2b6c0a-11e0-47db-b113-784eb5266027"
                 }
             }
         }
