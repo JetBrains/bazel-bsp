@@ -54,7 +54,12 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         return resolveUri(bazelInfo.workspaceRoot.resolve(relativePath))
     }
 
-    private fun extractRelativePath(label: String): String {
+    fun labelToDirectoryUri2(label: Label): URI {
+        val relativePath = extractRelativePath(label.value)
+        return resolveUri(Paths.get(bazelInfo.execRoot).resolve(relativePath))
+    }
+
+    public fun extractRelativePath(label: String): String {
         val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
         require(label.startsWith(prefix)) {
             String.format(
