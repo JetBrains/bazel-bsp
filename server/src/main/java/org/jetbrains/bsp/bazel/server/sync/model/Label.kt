@@ -4,5 +4,5 @@ data class Label(val value: String) {
 
   // TODO TEST
   fun targetName(): String =
-    value.substringAfterLast(":")
+    value.substringAfterLast(":", "")
 }

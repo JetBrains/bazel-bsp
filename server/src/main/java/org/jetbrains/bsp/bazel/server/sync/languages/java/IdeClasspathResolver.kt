@@ -23,14 +23,14 @@ class IdeClasspathResolver(
   fun resolve(): Sequence<URI> =
     compileJars
       .map(::findRuntimeEquivalent)
-        .filterNot {
-            val a = targetId.targetName()
-            val b = bazelPathsResolver.extractRelativePath(targetId.value)
+      .filterNot {
+        val a = targetId.targetName()
+        val b = bazelPathsResolver.extractRelativePath(targetId.value)
 
-            val c = b + "/" + a + ".jar"
+        val c = b + "/" + a + ".jar"
 
-            it.endsWith(c)
-        }
+        it.endsWith(c)
+      }
       .map(URI::create)
 
   private fun findRuntimeEquivalent(compileJar: String): String {
