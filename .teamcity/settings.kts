@@ -39,9 +39,15 @@ project {
             buildType(E2eTests.CppProjectE2ETest)
         }
 
-        buildType(ResultsAggregator)
+        buildType(ResultsAggregator, options = {
+            onDependencyFailure = FailureAction.ADD_PROBLEM
+            onDependencyCancel = FailureAction.ADD_PROBLEM
+        })
 
-        buildType(Release.Release)
+        buildType(Release.Release, options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        })
 
     }.buildTypes()
 
