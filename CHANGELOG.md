@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+## [2.5.1] - 08.02.2023
+
 ### Changes 🔄
  
 - Initialize the hash sets with the number of elements they are expected to hold.
@@ -315,7 +317,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.5.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.5.1...HEAD
+
+[2.5.1]: https://github.com/JetBrains/bazel-bsp/compare/2.5.0..2.5.1
 
 [2.5.0]: https://github.com/JetBrains/bazel-bsp/compare/2.4.0..2.5.0
 
