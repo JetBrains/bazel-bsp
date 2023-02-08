@@ -5,10 +5,10 @@ import org.jetbrains.bsp.bazel.server.sync.model.Label
 import java.net.URI
 
 class IdeClasspathResolver(
-  private val targetId: Label,
+  private val label: Label,
   private val bazelPathsResolver: BazelPathsResolver,
   runtimeClasspath: Sequence<URI>,
-  compileClasspath: Sequence<URI>
+  compileClasspath: Sequence<URI>,
 ) {
   private val runtimeJars: Set<String>
   private val runtimeMavenJarSuffixes: Set<String>
@@ -24,8 +24,8 @@ class IdeClasspathResolver(
     compileJars
       .map(::findRuntimeEquivalent)
       .filterNot {
-        val a = targetId.targetName()
-        val b = bazelPathsResolver.extractRelativePath(targetId.value)
+        val a = label.targetName()
+        val b = bazelPathsResolver.extractRelativePath(label.value)
 
         val c = b + "/" + a + ".jar"
 
@@ -61,6 +61,6 @@ class IdeClasspathResolver(
   }
 
   companion object {
-    private val JAR_PATTERN = ("(-[hi]jar)|\\.abi\\.jar$").toRegex()
+    private val JAR_PATTERN = ("((-[hi]jar)|(\\.abi))\\.jar\$").toRegex()
   }
 }
