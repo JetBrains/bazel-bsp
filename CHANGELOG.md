@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+### Changes 🔄
+ 
+- Initialize the hash sets with the number of elements they are expected to hold.
+  | [#339](https://github.com/JetBrains/bazel-bsp/pull/339)
+
+### Fixes 🛠️
+
+- Current target jar is excluded from dependencies - aka jump to definition within a module should work now.
+  | [#340](https://github.com/JetBrains/bazel-bsp/pull/340)
+
 ## [2.5.0] - 29.01.2023
 
 ### Features 🎉
