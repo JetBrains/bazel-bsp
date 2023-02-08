@@ -14,6 +14,8 @@
 
 - Current target jar is excluded from dependencies - aka jump to definition within a module should work now.
   | [#340](https://github.com/JetBrains/bazel-bsp/pull/340)
+- Changed separator for classpath to os-agnostic.
+  | [#BAZEL-255](https://github.com/JetBrains/bazel-bsp/commit/8b58b265dbdf5888b1d355866b41a7feda5c0e11)
 
 ## [2.5.0] - 29.01.2023
 
