@@ -9,4 +9,3 @@ kt_junit5_test(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
     ],
 )
-
