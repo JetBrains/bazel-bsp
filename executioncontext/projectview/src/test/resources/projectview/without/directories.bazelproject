@@ -15,3 +15,5 @@ build_flags:
     --build_flag1.2=value1.2
 
 derive_targets_from_directories: true
+
+produce_trace_log: false

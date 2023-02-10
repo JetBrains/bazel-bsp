@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.install.cli
 
+import io.kotest.matchers.maps.containAnyKeys
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -588,6 +589,44 @@ class CliOptionsProviderTest {
             }
         }
 
+        @Nested
+        @DisplayName("cliOptions.projectViewCliOptions.produceTraceLog test")
+        inner class ProduceTraceLogFlagOptionTest {
+            @Test
+            fun `should return success if produceTraceLogFlag is specified`() {
+                // given
+                val args = arrayOf(
+                    "-l"
+                )
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                cliOptions.projectViewCliOptions?.produceTraceLog shouldBe true
+            }
+
+            @Test
+            fun `should return success if produceTraceLogFlag is not specified`() {
+                // given
+                val args = emptyArray<String>()
+
+                // when
+                val provider = CliOptionsProvider(args)
+                val cliOptionsTry = provider.getOptions()
+
+                // then
+                cliOptionsTry.isSuccess shouldBe true
+                val cliOptions = cliOptionsTry.get()
+
+                cliOptions.projectViewCliOptions?.produceTraceLog shouldBe null
+            }
+        }
+
         @Test
         fun `should return success if all flags are specified`() {
             // given
@@ -619,7 +658,8 @@ class CliOptionsProviderTest {
                     "included_dir2",
                     "--excluded-directories",
                     "excluded_dir1",
-                    "-v"
+                    "-v",
+                    "-l",
             )
 
             // when
@@ -676,6 +716,8 @@ class CliOptionsProviderTest {
             cliOptions.projectViewCliOptions?.excludedDirectories shouldBe expectedExcludedDirs
 
             cliOptions.projectViewCliOptions?.deriveTargetsFromDirectories shouldBe true
+
+            cliOptions.projectViewCliOptions?.produceTraceLog shouldBe true
         }
 
         @Test
@@ -691,7 +733,8 @@ class CliOptionsProviderTest {
                     "-f",
                     "--build_flag1=value1",
                     "--build_flag1=value2",
-                    "--build_flag1=value3"
+                    "--build_flag1=value3",
+                    "-l",
             )
 
             // when
@@ -713,6 +756,8 @@ class CliOptionsProviderTest {
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags
+
+            cliOptions.projectViewCliOptions?.produceTraceLog shouldBe true
         }
 
     }

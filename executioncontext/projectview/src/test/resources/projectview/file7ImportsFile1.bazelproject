@@ -22,3 +22,5 @@ build_manual_targets: true
 derive_targets_from_directories: false
 
 import_depth: 7
+
+produce_trace_log: true

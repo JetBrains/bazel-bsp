@@ -28,5 +28,6 @@ object DefaultProjectViewGenerator : ProjectViewGenerator {
             ProjectViewDirectoriesSectionGenerator.generatePrettyString(projectView.directories),
             ProjectViewDeriveTargetsFromDirectoriesSectionGenerator.generatePrettyString(projectView.deriveTargetsFromDirectories),
             ProjectViewImportDepthSectionGenerator.generatePrettyString(projectView.importDepth),
+            ProjectViewProduceTraceLogSectionGenerator.generatePrettyString(projectView.produceTraceLog),
         ).joinToString(separator = "\n\n", postfix = "\n")
 }

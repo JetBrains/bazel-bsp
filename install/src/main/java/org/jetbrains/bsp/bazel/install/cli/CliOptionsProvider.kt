@@ -172,6 +172,15 @@ class CliOptionsProvider(private val args: Array<String>) {
             .desc("Add path to Bazel project's root directory. By default, it is the same as --directory (-d)")
             .build()
         cliParserOptions.addOption(bazelWorkspaceRootDirOption)
+
+        val produceTraceLogOption = Option.builder(PRODUCE_TRACE_LOG_OPT)
+            .longOpt("produce-trace-log")
+            .desc(
+                "Add produce_trace_log to the generated project view file, you can read more about it here: " +
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#produce_trace_log."
+            )
+            .build()
+        cliParserOptions.addOption(produceTraceLogOption)
     }
 
     fun getOptions(): Try<CliOptions> {
@@ -242,6 +251,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 excludedDirectories = excludedDirectories(cmd),
                 deriveTargetsFromDirectories = deriveTargetsFlag(cmd),
                 importDepth = importDepth(cmd),
+                produceTraceLog = produceTraceLogFlag(cmd),
             )
         else null
 
@@ -257,7 +267,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(DIRECTORIES_SHORT_OPT) or
                 cmd.hasOption(EXCLUDED_DIRECTORIES_LONG_OPT) or
                 cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT) or
-                cmd.hasOption(IMPORT_DEPTH_SHORT_OPT)
+                cmd.hasOption(IMPORT_DEPTH_SHORT_OPT) or
+                cmd.hasOption(PRODUCE_TRACE_LOG_OPT)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
@@ -288,6 +299,8 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun deriveTargetsFlag(cmd: CommandLine): Boolean = cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT)
 
+    private fun produceTraceLogFlag(cmd: CommandLine): Boolean = cmd.hasOption(PRODUCE_TRACE_LOG_OPT)
+
     companion object {
         private const val HELP_SHORT_OPT = "h"
         private const val WORKSPACE_ROOT_DIR_SHORT_OPT = "d"
@@ -304,7 +317,8 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
         private const val USE_BLOOP_SHORT_OPT = "u"
-        private const val  BAZEL_WORKSPACE_ROOT_DIR_OPT ="w"
+        private const val BAZEL_WORKSPACE_ROOT_DIR_OPT ="w"
+        private const val PRODUCE_TRACE_LOG_OPT ="l"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }

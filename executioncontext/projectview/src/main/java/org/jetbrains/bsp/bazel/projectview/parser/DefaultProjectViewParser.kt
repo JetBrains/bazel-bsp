@@ -52,6 +52,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
             directories = ProjectViewDirectoriesSectionParser.parse(rawSections),
             deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
             importDepth = ProjectViewImportDepthSectionParser.parse(rawSections),
+            produceTraceLog = ProjectViewProduceTraceLogSectionParser.parse(rawSections),
         ).build()
     }
 

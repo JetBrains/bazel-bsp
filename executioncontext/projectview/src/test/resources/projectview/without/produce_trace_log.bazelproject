@@ -22,4 +22,4 @@ build_manual_targets: false
 
 import_depth: 0
 
-produce_trace_log: false
+java_path: path/to/java

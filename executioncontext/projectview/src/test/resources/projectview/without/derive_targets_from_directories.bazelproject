@@ -17,3 +17,5 @@ build_flags:
 directories:
   included_dir1
   -excluded_dir1
+
+produce_trace_log: false

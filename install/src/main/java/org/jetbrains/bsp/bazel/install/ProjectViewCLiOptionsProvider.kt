@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTarge
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -38,6 +39,7 @@ object ProjectViewCLiOptionsProvider {
             deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions),
             importDepth = toImportDepthSection(projectViewCliOptions),
             buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
+            produceTraceLog = toProduceTraceLogSection(projectViewCliOptions),
         )
 
     private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
@@ -93,4 +95,7 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFromDirectoriesSection? =
         projectViewCliOptions?.deriveTargetsFromDirectories?.let(::ProjectViewDeriveTargetsFromDirectoriesSection)
+
+    private fun toProduceTraceLogSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewProduceTraceLogSection? =
+        projectViewCliOptions?.produceTraceLog?.let {ProjectViewProduceTraceLogSection(it) }
 }
