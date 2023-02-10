@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.io.PrintWriter
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.concurrent.Executors
@@ -35,13 +36,13 @@ object ServerInitializer {
             val rootDir = bspInfo.bazelBspDir()
             Files.createDirectories(rootDir)
             val traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME)
-            val traceWriter = PrintWriter(
-                Files.newOutputStream(
-                    traceFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
-                )
-            )
             val workspaceContextProvider = getWorkspaceContextProvider(cliArgs.projectViewPath)
-            val bspIntegrationData = BspIntegrationData(stdout, stdin, executor, traceWriter)
+            val bspIntegrationData = BspIntegrationData(
+                stdout,
+                stdin,
+                executor,
+                createTraceWriterOrNull(traceFile, workspaceContextProvider)
+            )
             val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot))
             bspServer.startServer(bspIntegrationData)
             val server = bspIntegrationData.server.start()
@@ -58,6 +59,22 @@ object ServerInitializer {
             exitProcess(1)
         }
     }
+
+    private fun createTraceWriterOrNull(
+        traceFile: Path,
+        workspaceContextProvider: WorkspaceContextProvider
+    ): PrintWriter? =
+        when (workspaceContextProvider.currentWorkspaceContext().produceTraceLog.value) {
+            true -> PrintWriter(
+                Files.newOutputStream(
+                    traceFile,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING
+                )
+            )
+
+            false -> null
+        }
 
     private fun getWorkspaceContextProvider(args: String?): WorkspaceContextProvider {
         val projectViewPath = args?.let { Paths.get(it) }
