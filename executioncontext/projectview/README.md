@@ -201,7 +201,7 @@ The default value is 0, meaning that only root targets are imported
 
 A flag specifying if `./bazelbsp/bazelbsp.trace.log` should be created and used to store trace logs.
 
-*NOTE: trace logging may affect server-client communication performance! It is recommended that this flag be set to false.
+*NOTE: trace log may affect server-client communication performance! It is recommended that this flag be set to false.
 
 Flag is boolean value, so it can take either true or false.
 
