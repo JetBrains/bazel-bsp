@@ -29,3 +29,5 @@ derive_targets_from_directories: true
 
 
 import_depth: 8
+
+produce_trace_log: true

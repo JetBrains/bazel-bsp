@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+### Features 🎉
+
+- Project view file flag for disabling trace log.
+  | [#344](https://github.com/JetBrains/bazel-bsp/pull/344)
+
 ## [2.5.1] - 08.02.2023
 
 ### Changes 🔄

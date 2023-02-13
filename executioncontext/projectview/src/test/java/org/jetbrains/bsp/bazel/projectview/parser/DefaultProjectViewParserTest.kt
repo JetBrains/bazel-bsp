@@ -195,6 +195,21 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
+        fun `should return empty produce_trace_log section for file without produce_trace_log section`() {
+            // given
+            val projectViewFilePath = Path("/projectview/without/produce_trace_log.bazelproject")
+
+            // when
+            val projectViewTry = parser.parse(projectViewFilePath)
+
+            // then
+            projectViewTry.isSuccess shouldBe true
+            val projectView = projectViewTry.get()
+
+            projectView.produceTraceLog shouldBe null
+        }
+
+        @Test
         fun `should parse empty file`() {
             // given
             val projectViewFilePath = Path("/projectview/empty.bazelproject")
@@ -216,6 +231,7 @@ class DefaultProjectViewParserTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -263,6 +279,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -318,6 +335,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -371,6 +389,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(7),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -415,6 +434,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(8),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -475,6 +495,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -540,6 +561,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }

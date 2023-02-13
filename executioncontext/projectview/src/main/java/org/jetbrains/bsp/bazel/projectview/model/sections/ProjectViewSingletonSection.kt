@@ -47,3 +47,10 @@ data class ProjectViewImportDepthSection(override val value: Int) :
         const val SECTION_NAME = "import_depth"
     }
 }
+
+data class ProjectViewProduceTraceLogSection(override val value: Boolean) :
+    ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "produce_trace_log"
+    }
+}

@@ -10,10 +10,12 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSect
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
-
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection
 
 /**
  * Representation of the project view file.
@@ -39,9 +41,11 @@ data class ProjectView constructor(
     val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
     /** level of depth for importing inherited targets */
     val importDepth: ProjectViewImportDepthSection?,
+    /** if set to true, json-rpc server will produce .trace.json file */
+    val produceTraceLog: ProjectViewProduceTraceLogSection?,
 ) {
 
-    class Builder constructor(
+    data class Builder constructor(
         private val imports: List<Try<ProjectView>> = emptyList(),
         private val targets: ProjectViewTargetsSection? = null,
         private val bazelPath: ProjectViewBazelPathSection? = null,
@@ -52,35 +56,11 @@ data class ProjectView constructor(
         private val directories: ProjectViewDirectoriesSection? = null,
         private val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
         private val importDepth: ProjectViewImportDepthSection? = null,
+        private val produceTraceLog: ProjectViewProduceTraceLogSection? = null,
     ) {
 
         fun build(): Try<ProjectView> {
-            log.debug(
-                "Building project view with"
-                    + " imports: {}"
-                    + " and (before combining with imported project views)"
-                    + " targets: {},"
-                    + " bazel path: {},"
-                    + " debugger address: {},"
-                    + " java path: {},"
-                    + " build flags: {}."
-                    + "build manual targets: {},"
-                    +" build flags: {},"
-                    + " directories: {},"
-                    + " deriveTargetsFromDirectories: {}."
-                    + " import depth: {}.",
-                imports,
-                targets,
-                bazelPath,
-                debuggerAddress,
-                javaPath,
-                buildFlags,
-                buildManualTargets,
-                buildFlags,
-                directories,
-                deriveTargetsFromDirectories,
-                importDepth,
-            )
+            log.debug("Building project view for: {}", this)
 
             return Try.sequence(imports)
                 .map(Seq<ProjectView>::toJavaList)
@@ -98,17 +78,20 @@ data class ProjectView constructor(
             val directories = combineDirectoriesSection(importedProjectViews)
             val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
             val importDepth = combineImportDepthSection(importedProjectViews)
+            val produceTraceLog =
+                produceTraceLog ?: getLastImportedSingletonValue(importedProjectViews) { it.produceTraceLog }
             log.debug(
                 "Building project view with combined"
-                            + " targets: {},"
-                            + " bazel path: {},"
-                            + " debugger address: {},"
-                            + " java path: {},"
-                            + " build manual targets {},"
-                            + " java path: {},"
-                            + " directories: {},"
-                            + " deriveTargetsFlag: {}."
-                            + " import depth: {}.",
+                        + " targets: {},"
+                        + " bazel path: {},"
+                        + " debugger address: {},"
+                        + " java path: {},"
+                        + " build manual targets {},"
+                        + " java path: {},"
+                        + " directories: {},"
+                        + " deriveTargetsFlag: {}."
+                        + " import depth: {},"
+                        + " produce trace log: {}.",
                 targets,
                 bazelPath,
                 debuggerAddress,
@@ -118,8 +101,20 @@ data class ProjectView constructor(
                 directories,
                 deriveTargetsFromDirectories,
                 importDepth,
+                produceTraceLog,
             )
-            return ProjectView(targets, bazelPath, debuggerAddress, javaPath, buildFlags,buildManualTargets, directories, deriveTargetsFromDirectories, importDepth)
+            return ProjectView(
+                targets,
+                bazelPath,
+                debuggerAddress,
+                javaPath,
+                buildFlags,
+                buildManualTargets,
+                directories,
+                deriveTargetsFromDirectories,
+                importDepth,
+                produceTraceLog
+            )
         }
 
         private fun combineTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewTargetsSection? {
@@ -155,21 +150,21 @@ data class ProjectView constructor(
 
         private fun combineDirectoriesSection(importedProjectViews: List<ProjectView>): ProjectViewDirectoriesSection? {
             val includedTargets = combineListValuesWithImported(
-                    importedProjectViews,
-                    directories,
-                    ProjectView::directories,
-                    ProjectViewDirectoriesSection::values
+                importedProjectViews,
+                directories,
+                ProjectView::directories,
+                ProjectViewDirectoriesSection::values
             )
             val excludedTargets = combineListValuesWithImported(
-                    importedProjectViews,
-                    directories,
-                    ProjectView::directories,
-                    ProjectViewDirectoriesSection::excludedValues
+                importedProjectViews,
+                directories,
+                ProjectView::directories,
+                ProjectViewDirectoriesSection::excludedValues
             )
             return createInstanceOfExcludableListSectionOrNull(
-                    includedTargets,
-                    excludedTargets,
-                    ::ProjectViewDirectoriesSection
+                includedTargets,
+                excludedTargets,
+                ::ProjectViewDirectoriesSection
             )
         }
 
@@ -217,7 +212,10 @@ data class ProjectView constructor(
                 ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::buildManualTargets)
 
         private fun combineDeriveTargetFlagSection(importedProjectViews: List<ProjectView>): ProjectViewDeriveTargetsFromDirectoriesSection? =
-            deriveTargetsFromDirectories ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::deriveTargetsFromDirectories)
+            deriveTargetsFromDirectories ?: getLastImportedSingletonValue(
+                importedProjectViews,
+                ProjectView::deriveTargetsFromDirectories
+            )
 
         private fun combineImportDepthSection(importedProjectViews: List<ProjectView>): ProjectViewImportDepthSection? =
             importDepth ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::importDepth)

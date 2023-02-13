@@ -38,6 +38,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -70,6 +71,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -102,6 +104,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -129,6 +132,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -156,6 +160,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -189,6 +194,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -229,6 +235,7 @@ class DefaultProjectViewGeneratorTest {
                     ),
                     deriveTargetsFromDirectories = null,
                     importDepth = null,
+                    produceTraceLog = null,
             )
 
             // when
@@ -261,6 +268,7 @@ class DefaultProjectViewGeneratorTest {
                     directories = null,
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = null,
+                    produceTraceLog = null,
             )
 
             // when
@@ -288,6 +296,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = null,
             )
 
             // when
@@ -315,6 +324,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             // when
@@ -326,6 +336,34 @@ class DefaultProjectViewGeneratorTest {
                 |build_manual_targets: true
                 |
                 """.trimMargin()
+            generatedString shouldBe expectedGeneratedString
+        }
+
+        @Test
+        fun `should return pretty string only with produce trace log for project view only with produce trace log flag`() {
+            // given
+            val projectView = ProjectView(
+                targets = null,
+                bazelPath = null,
+                debuggerAddress = null,
+                javaPath = null,
+                buildFlags = null,
+                buildManualTargets = null,
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
+                produceTraceLog = ProjectViewProduceTraceLogSection(false),
+            )
+
+            // when
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                """
+                produce_trace_log: false
+
+                """.trimIndent()
             generatedString shouldBe expectedGeneratedString
         }
 
@@ -342,6 +380,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -367,6 +406,8 @@ class DefaultProjectViewGeneratorTest {
                 derive_targets_from_directories: true
 
                 import_depth: 3
+
+                produce_trace_log: true
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -396,7 +437,8 @@ class DefaultProjectViewGeneratorTest {
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
-                importDepth = null
+                importDepth = null,
+                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
 
             // when
@@ -416,6 +458,8 @@ class DefaultProjectViewGeneratorTest {
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
+
+                produce_trace_log: false
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -460,6 +504,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -494,10 +539,12 @@ class DefaultProjectViewGeneratorTest {
                     included_dir3
                     -excluded_dir1
                     -excluded_dir2
-               
+
                 derive_targets_from_directories: true
-                
+
                 import_depth: 3
+
+                produce_trace_log: true
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -549,6 +596,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -589,6 +637,8 @@ class DefaultProjectViewGeneratorTest {
                 derive_targets_from_directories: true
                 
                 import_depth: 3
+                
+                produce_trace_log: true
 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -636,6 +686,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -676,6 +727,8 @@ class DefaultProjectViewGeneratorTest {
                 derive_targets_from_directories: true
                 
                 import_depth: 3
+                
+                produce_trace_log: true
 
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
@@ -696,6 +749,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             val parser = DefaultProjectViewParser()
@@ -718,6 +772,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -749,6 +804,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = null,
+                produceTraceLog = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -805,6 +861,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
 
             val parser = DefaultProjectViewParser()

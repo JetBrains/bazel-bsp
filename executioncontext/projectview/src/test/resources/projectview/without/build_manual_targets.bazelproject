@@ -18,3 +18,5 @@ debugger_address: 127.0.0.1:8000
 build_flags:
     --build_flag1.1=value1.1
     --build_flag1.2=value1.2
+
+produce_trace_log: false

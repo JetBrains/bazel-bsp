@@ -98,3 +98,12 @@ object ProjectViewImportDepthSectionParser :
     override fun createInstance(value: Int): ProjectViewImportDepthSection =
         ProjectViewImportDepthSection(value)
 }
+
+object ProjectViewProduceTraceLogSectionParser :
+    ProjectViewSingletonSectionParser<Boolean, ProjectViewProduceTraceLogSection>(ProjectViewProduceTraceLogSection.SECTION_NAME) {
+
+    override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
+
+    override fun createInstance(value: Boolean): ProjectViewProduceTraceLogSection =
+        ProjectViewProduceTraceLogSection(value)
+}
