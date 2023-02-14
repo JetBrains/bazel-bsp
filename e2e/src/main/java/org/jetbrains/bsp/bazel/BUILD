@@ -9,7 +9,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
     ],
 )
 
@@ -22,7 +22,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
     ],
 )
 
@@ -35,7 +35,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
     ],
 )
 
@@ -48,6 +48,6 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
     ],
 )

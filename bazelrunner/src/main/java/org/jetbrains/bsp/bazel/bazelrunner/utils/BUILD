@@ -6,6 +6,6 @@ kt_jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner/params",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
     ],
 )

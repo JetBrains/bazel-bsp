@@ -8,11 +8,11 @@ kt_jvm_library(
         "//executioncontext/projectview/src/test/java/org/jetbrains/bsp/bazel/projectview/model/sections:__pkg__",
     ],
     exports = [
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
         "@maven//:io_vavr_vavr",
     ],
     deps = [
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
         "@maven//:io_vavr_vavr",
     ],
 )

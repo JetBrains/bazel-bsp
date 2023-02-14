@@ -22,7 +22,7 @@ kt_jvm_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "@maven//:ch_epfl_scala_bloop_config_2_13",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
     ],
 )

@@ -13,7 +13,7 @@ kt_jvm_library(
         "//executioncontext/workspacecontext",
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/info",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_module_jackson_module_kotlin",
