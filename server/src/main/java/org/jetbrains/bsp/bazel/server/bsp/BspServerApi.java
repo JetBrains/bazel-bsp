@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp;
 
+import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
@@ -170,10 +171,14 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(
-      OutputPathsParams outputPathsParams) {
-    // TODO: https://youtrack.jetbrains.com/issue/BAZEL-240
-    return CompletableFuture.failedFuture(new Exception("This endpoint is not implemented yet"));
+  public CompletableFuture<OutputPathsResult> buildTargetOutputPaths(OutputPathsParams params) {
+    return runner.handleRequest(
+        "buildTargetOutputPaths", projectSyncService::buildTargetOutputPaths, params);
+  }
+
+  @Override
+  public void onConnectWithClient(BuildClient buildClient) {
+    BuildServer.super.onConnectWithClient(buildClient);
   }
 
   @Override

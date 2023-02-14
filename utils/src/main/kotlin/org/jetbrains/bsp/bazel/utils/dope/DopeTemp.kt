@@ -8,6 +8,7 @@ import kotlin.io.path.Path
 /**
  * Trys are dope, exceptions are not... Soooo use `DopeTemp` to create temp files / dirs to be dope!
  */
+@Deprecated("dont use it")
 object DopeTemp {
 
     /**

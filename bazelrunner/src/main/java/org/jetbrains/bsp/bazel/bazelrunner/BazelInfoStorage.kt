@@ -17,6 +17,7 @@ class BazelInfoStorage(private val path: Path) {
       try {
         mapper.readValue(path.toFile(), BasicBazelInfo::class.java)
       } catch (e: Exception) {
+        LOGGER.debug("Could not load bazel info", e)
         null
       }
 

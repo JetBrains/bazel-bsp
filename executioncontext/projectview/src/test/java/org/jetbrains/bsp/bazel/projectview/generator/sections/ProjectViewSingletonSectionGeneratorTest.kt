@@ -5,6 +5,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -128,6 +129,36 @@ class ProjectViewSingletonSectionGeneratorTest {
 
             // then
             val expectedGeneratedString = "import_depth: 1"
+            generatedString shouldBe expectedGeneratedString
+        }
+    }
+
+    @Nested
+    @DisplayName("ProjectViewProduceTraceLogSectionGenerator tests")
+    inner class ProjectViewProduceTraceLogSectionGeneratorTest {
+
+        @Test
+        fun `should return null for null section`() {
+            // given
+            val section = null
+
+            // when
+            val generatedString = ProjectViewImportDepthSectionGenerator.generatePrettyString(section)
+
+            // then
+            generatedString shouldBe null
+        }
+
+        @Test
+        fun `should return pretty string for non null section`() {
+            // given
+            val section = ProjectViewProduceTraceLogSection(true)
+
+            // when
+            val generatedString = ProjectViewProduceTraceLogSectionGenerator.generatePrettyString(section)
+
+            // then
+            val expectedGeneratedString = "produce_trace_log: true"
             generatedString shouldBe expectedGeneratedString
         }
     }

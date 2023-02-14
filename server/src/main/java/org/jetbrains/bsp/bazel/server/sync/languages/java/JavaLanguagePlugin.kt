@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.BuildTargetDataKind
 import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JvmBuildTarget
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
+import ch.epfl.scala.bsp4j.JvmMainClass
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
@@ -15,6 +16,7 @@ import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import java.net.URI
 import java.nio.file.Path
@@ -41,7 +43,8 @@ class JavaLanguagePlugin(
             val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList)
             val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList)
             val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList)
-            val ideClasspath = resolveIdeClasspath(
+            val ideClasspath = resolveIdeClasspath(Label(targetInfo.id),
+                bazelPathsResolver,
                 runtimeClasspath.asSequence(), compileClasspath.asSequence()
             )
             val runtimeJdk = jdkResolver.resolveJdk(targetInfo)
@@ -72,8 +75,9 @@ class JavaLanguagePlugin(
     private fun getJdk(): Jdk = jdk ?: throw RuntimeException("Failed to resolve JDK for project")
 
     private fun resolveIdeClasspath(
-        runtimeClasspath: Sequence<URI>, compileClasspath: Sequence<URI>
-    ): List<URI> = IdeClasspathResolver(runtimeClasspath, compileClasspath).resolve().toList()
+        targetId: Label,
+        bazelPathsResolver: BazelPathsResolver, runtimeClasspath: Sequence<URI>, compileClasspath: Sequence<URI>
+    ): List<URI> = IdeClasspathResolver(targetId, bazelPathsResolver, runtimeClasspath, compileClasspath).resolve().toList()
 
     override fun dependencySources(
         targetInfo: TargetInfo, dependencyTree: DependencyTree
@@ -113,7 +117,9 @@ class JavaLanguagePlugin(
             javaModule.jvmOps.toList(),
             bazelInfo.workspaceRoot.toString(),
             module.environmentVariables
-        )
+        ).apply {
+            mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
+        }
     // FIXME: figure out what we should pass here, because passing the environment
     // of the *SERVER* makes little sense
 

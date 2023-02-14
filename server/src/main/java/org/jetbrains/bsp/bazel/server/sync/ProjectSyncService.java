@@ -15,6 +15,8 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
+import ch.epfl.scala.bsp4j.OutputPathsParams;
+import ch.epfl.scala.bsp4j.OutputPathsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -75,6 +77,11 @@ public class ProjectSyncService {
       DependencySourcesParams dependencySourcesParams) {
     var project = projectProvider.get();
     return bspMapper.dependencySources(project, dependencySourcesParams);
+  }
+
+  public OutputPathsResult buildTargetOutputPaths(OutputPathsParams params) {
+    var project = projectProvider.get();
+    return bspMapper.outputPaths(project, params);
   }
 
   public JvmRunEnvironmentResult jvmRunEnvironment(JvmRunEnvironmentParams params) {

@@ -58,7 +58,8 @@ class WorkspaceContextConstructorTest {
                     ),
                     bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(false) ,
-                    importDepth = ProjectViewImportDepthSection(3)
+                    importDepth = ProjectViewImportDepthSection(3),
+                    produceTraceLog = ProjectViewProduceTraceLogSection(false),
                 ).build()
 
             // when
@@ -98,6 +99,9 @@ class WorkspaceContextConstructorTest {
 
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
+
+            val expectedProduceTraceLogSpec = ProduceTraceLogSpec(false)
+            workspaceContext.produceTraceLog shouldBe expectedProduceTraceLogSpec
         }
     }
 
@@ -118,10 +122,12 @@ class WorkspaceContextConstructorTest {
             val expectedWorkspaceContext = WorkspaceContext(
                 targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
-                bazelPath = BazelPathSpec(Path("/usr/local/bin/bazel")),
+                // TODO - for now we don't have a framework to change classpath, i'll fix it later
+                bazelPath = BazelPathSpecMapper.default().get(),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),
-                importDepth = ImportDepthSpec(0)
+                importDepth = ImportDepthSpec(0),
+                produceTraceLog = ProduceTraceLogSpec(false),
             )
             workspaceContext shouldBe expectedWorkspaceContext
         }

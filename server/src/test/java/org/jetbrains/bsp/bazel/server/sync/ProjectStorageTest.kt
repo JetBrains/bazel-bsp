@@ -59,6 +59,7 @@ class ProjectStorageTest {
                     ),
                     emptySet(),
                     emptySet(),
+                    emptySet(),
                     scalaModule,
                     hashMapOf()
                 )

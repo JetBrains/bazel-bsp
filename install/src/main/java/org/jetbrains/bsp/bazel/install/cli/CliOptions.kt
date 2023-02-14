@@ -19,6 +19,7 @@ data class ProjectViewCliOptions internal constructor(
         val excludedDirectories: List<String>?,
         val deriveTargetsFromDirectories: Boolean?,
         val importDepth: Int?,
+        val produceTraceLog: Boolean?,
 )
 
 data class BloopCliOptions internal constructor(

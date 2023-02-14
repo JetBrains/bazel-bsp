@@ -33,9 +33,9 @@ public class BepOutput {
       return Collections.emptySet();
     }
 
-    var result = new HashSet<URI>();
+    var result = new HashSet<URI>(rootIds.size());
     var toVisit = Queues.newArrayDeque(rootIds);
-    var visited = new HashSet<String>();
+    var visited = new HashSet<String>(rootIds.size());
 
     while (!toVisit.isEmpty()) {
       var fileSetId = toVisit.remove();
