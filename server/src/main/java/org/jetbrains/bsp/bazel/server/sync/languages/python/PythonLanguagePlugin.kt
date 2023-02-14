@@ -19,7 +19,8 @@ class PythonLanguagePlugin(
         targetInfo.pythonTargetInfo?.run {
 
             val interpreterURI = interpreter?.let {
-                it.takeUnless { it.relativePath.isNullOrEmpty() }?.let { f -> bazelPathsResolver.resolveUri(f) }
+                it.takeUnless { it.relativePath.isNullOrEmpty() }
+                ?.let { bazelPathsResolver.resolveUri(it) }
             }
             PythonModule(
                 interpreterURI,
@@ -31,7 +32,7 @@ class PythonLanguagePlugin(
 
     override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
         buildTarget.dataKind = BuildTargetDataKind.PYTHON
-        val interpreter = moduleData.interpreter?.let { obj: URI -> obj.toString() }
+        val interpreter = moduleData.interpreter?.let { it.toString() }
         buildTarget.data = PythonBuildTarget(moduleData.version, interpreter)
     }
 

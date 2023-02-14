@@ -264,10 +264,6 @@ class BspProjectMapper(
         return CppOptionsResult(items)
     }
 
-    private fun extractCppOptionsItem(module: Module): CppOptionsItem? =
-        languagePluginsService.extractCppModule(module)?.let {
-            languagePluginsService.cppLanguagePlugin.toCppOptionsItem(module, it)
-        }
 
     fun buildTargetPythonOptions(project: Project, params: PythonOptionsParams): PythonOptionsResult {
         val modules = BspMappings.getModules(project, params.targets)
@@ -280,10 +276,6 @@ class BspProjectMapper(
             languagePluginsService.pythonLanguagePlugin.toPythonOptionsItem(module, it)
         }
 
-    private fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
-        module.javaModule?.let {
-            languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(module, it)
-        }
 
     fun buildTargetScalacOptions(
         project: Project,
