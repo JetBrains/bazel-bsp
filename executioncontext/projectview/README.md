@@ -197,6 +197,26 @@ The default value is 0, meaning that only root targets are imported
 
 ---
 
+#### produce_trace_log
+
+A flag specifying if `./bazelbsp/bazelbsp.trace.log` should be created and used to store trace logs.
+
+*NOTE: trace log may affect server-client communication performance! It is recommended that this flag be set to false.
+
+Flag is boolean value, so it can take either true or false.
+
+##### example:
+
+```
+produce_trace_log: true
+```
+
+##### default:
+
+Log file won't be created.
+
+---
+
 #### workspace_type
 
 _We are working on it, you can expect support for this section in future releases._

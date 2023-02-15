@@ -11,6 +11,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -28,7 +29,8 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
         bazelPathSectionArguments(),
         debuggerAddressSectionArguments(),
         javaPathSectionArguments(),
-        buildManualTargetsSectionArguments());
+        buildManualTargetsSectionArguments(),
+        produceTraceLogSectionArguments());
   }
 
   private static Arguments bazelPathSectionArguments() {
@@ -84,6 +86,20 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
 
     var sectionConstructor =
         createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+    var sectionName = parser.getSectionName();
+
+    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
+  }
+
+  private static Arguments produceTraceLogSectionArguments() {
+    var parser = ProjectViewProduceTraceLogSectionParser.INSTANCE;
+    var rawValueConstructor = (Function<String, String>) (seed) -> "true";
+    var sectionMapper =
+            (Function<Boolean, ProjectViewProduceTraceLogSection>) ProjectViewProduceTraceLogSection::new;
+    var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
+
+    var sectionConstructor =
+            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
     var sectionName = parser.getSectionName();
 
     return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);

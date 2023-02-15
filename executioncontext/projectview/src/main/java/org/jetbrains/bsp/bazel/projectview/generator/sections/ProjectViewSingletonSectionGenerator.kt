@@ -32,3 +32,5 @@ object ProjectViewBuildManualTargetsSectionGenerator : ProjectViewSingletonSecti
 object ProjectViewDeriveTargetsFromDirectoriesSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewDeriveTargetsFromDirectoriesSection>()
 
 object ProjectViewImportDepthSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewImportDepthSection>()
+
+object ProjectViewProduceTraceLogSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewProduceTraceLogSection>()

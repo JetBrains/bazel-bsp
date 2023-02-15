@@ -58,7 +58,8 @@ class WorkspaceContextConstructorTest {
                     ),
                     bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(false) ,
-                    importDepth = ProjectViewImportDepthSection(3)
+                    importDepth = ProjectViewImportDepthSection(3),
+                    produceTraceLog = ProjectViewProduceTraceLogSection(false),
                 ).build()
 
             // when
@@ -98,6 +99,9 @@ class WorkspaceContextConstructorTest {
 
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
+
+            val expectedProduceTraceLogSpec = ProduceTraceLogSpec(false)
+            workspaceContext.produceTraceLog shouldBe expectedProduceTraceLogSpec
         }
     }
 
@@ -122,7 +126,8 @@ class WorkspaceContextConstructorTest {
                 bazelPath = BazelPathSpecMapper.default().get(),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),
-                importDepth = ImportDepthSpec(0)
+                importDepth = ImportDepthSpec(0),
+                produceTraceLog = ProduceTraceLogSpec(false),
             )
             workspaceContext shouldBe expectedWorkspaceContext
         }

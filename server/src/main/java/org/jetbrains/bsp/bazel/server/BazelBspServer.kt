@@ -30,46 +30,44 @@ class BazelBspServer(
     init {
         bazelRunner = BazelRunner.of(workspaceContextProvider, this.bspClientLogger, workspaceRoot)
         compilationManager = BazelBspCompilationManager(bazelRunner)
-        bspServerApi = BspServerApi{bspServerData(bspInfo, workspaceContextProvider)}
+        bspServerApi = BspServerApi { bspServerData(bspInfo, workspaceContextProvider) }
     }
 
     private fun bspServerData(bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider): BazelServices {
         val serverContainer = ServerContainer.create(
-                bspInfo,
-                workspaceContextProvider,
-                null,
-                bspClientLogger,
-                bspClientTestNotifier,
-                bazelRunner,
-                compilationManager
+            bspInfo,
+            workspaceContextProvider,
+            null,
+            bspClientLogger,
+            bspClientTestNotifier,
+            bazelRunner,
+            compilationManager
         )
 
         val bspProjectMapper = BspProjectMapper(
-                serverContainer.languagePluginsService, workspaceContextProvider
+            serverContainer.languagePluginsService, workspaceContextProvider
         )
         val projectSyncService =
-                ProjectSyncService(bspProjectMapper, serverContainer.projectProvider)
+            ProjectSyncService(bspProjectMapper, serverContainer.projectProvider)
         val executeService = ExecuteService(
-                compilationManager,
-                serverContainer.projectProvider,
-                bazelRunner,
-                workspaceContextProvider,
-                bspClientTestNotifier
+            compilationManager,
+            serverContainer.projectProvider,
+            bazelRunner,
+            workspaceContextProvider,
+            bspClientTestNotifier
         )
         val serverLifetime = BazelBspServerLifetime()
         val bspRequestsRunner = BspRequestsRunner(serverLifetime)
         return BazelServices(
-                serverLifetime,
-                bspRequestsRunner,
-                projectSyncService,
-                executeService)
+            serverLifetime,
+            bspRequestsRunner,
+            projectSyncService,
+            executeService
+        )
     }
 
     fun startServer(bspIntegrationData: BspIntegrationData) {
-        val launcher = Launcher.Builder<BuildClient>().traceMessages(bspIntegrationData.traceWriter)
-            .setOutput(bspIntegrationData.stdout).setInput(bspIntegrationData.stdin)
-            .setLocalService(bspServerApi).setRemoteInterface(BuildClient::class.java)
-            .setExecutorService(bspIntegrationData.executor).create()
+        val launcher = createLauncher(bspIntegrationData).create()
         bspIntegrationData.launcher = launcher
         val client = launcher.remoteProxy
         bspClientLogger.initialize(client)
@@ -77,6 +75,19 @@ class BazelBspServer(
         val bepServer = BepServer(client, DiagnosticsService(workspaceRoot))
         compilationManager.setBepServer(bepServer)
         bspIntegrationData.server = ServerBuilder.forPort(0).addService(bepServer).build()
+    }
+
+    private fun createLauncher(bspIntegrationData: BspIntegrationData): Launcher.Builder<BuildClient> {
+        val builder = Launcher.Builder<BuildClient>()
+            .setOutput(bspIntegrationData.stdout).setInput(bspIntegrationData.stdin)
+            .setLocalService(bspServerApi).setRemoteInterface(BuildClient::class.java)
+            .setExecutorService(bspIntegrationData.executor)
+
+        if (bspIntegrationData.traceWriter != null) {
+            builder.traceMessages(bspIntegrationData.traceWriter)
+        }
+
+        return builder
     }
 
     fun setBesBackendPort(port: Int) {

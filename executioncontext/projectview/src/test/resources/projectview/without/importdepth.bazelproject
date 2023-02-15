@@ -14,3 +14,5 @@ java_path: path/to/java
 build_flags:
     --build_flag1.1=value1.1
     --build_flag1.2=value1.2
+
+produce_trace_log: false
