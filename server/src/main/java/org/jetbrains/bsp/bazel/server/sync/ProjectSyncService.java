@@ -106,8 +106,6 @@ public class ProjectSyncService {
     return bspMapper.buildTargetCppOptions(project, params);
   }
 
-  // maybe buildTarget and optionsItem are not necessary? For what?
-  // how to think about Python's build target?
   public PythonOptionsResult buildTargetPythonOptions(PythonOptionsParams params) {
     var project = projectProvider.get();
     return bspMapper.buildTargetPythonOptions(project, params);
