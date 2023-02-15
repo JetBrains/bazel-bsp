@@ -54,14 +54,13 @@ project {
     allSteps.forEach { buildType(it) }
 
     // we dont want to trigger it here for releases
-//    allSteps.dropLast(1).last().triggers {
-//        vcs {
-//            triggerRules = """
-//                +:.
-//                -:comment=^\[release\]:**
-//            """.trimIndent()
-//        }
-//    }
+    allSteps.dropLast(1).last().triggers {
+        vcs {
+            triggerRules = """
+                +:*
+            """.trimIndent()
+        }
+    }
 
     allSteps.last().triggers {
         vcs {
