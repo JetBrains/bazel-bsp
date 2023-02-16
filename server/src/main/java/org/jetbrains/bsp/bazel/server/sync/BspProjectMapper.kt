@@ -31,6 +31,13 @@ import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunProvider
+import ch.epfl.scala.bsp4j.RustOptionsParams
+import ch.epfl.scala.bsp4j.RustOptionsResult
+import ch.epfl.scala.bsp4j.RustOptionsItem
+import ch.epfl.scala.bsp4j.RustMetadataParams
+import ch.epfl.scala.bsp4j.RustMetadataResult
+import ch.epfl.scala.bsp4j.RustPackage
+import ch.epfl.scala.bsp4j.RustResolveNode
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -288,5 +295,25 @@ class BspProjectMapper(
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
         val items = modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
         return ScalaMainClassesResult(items)
+    }
+
+    fun buildTargetRustOptions(
+        project: Project, params: RustOptionsParams
+    ): RustOptionsResult {
+//        TODO: implement
+        return RustOptionsResult(mutableListOf<RustOptionsItem>())
+    }
+
+    fun rustMetadata(
+        project: Project, params: RustMetadataParams
+    ): RustMetadataResult {
+//        TODO: implement
+        return RustMetadataResult(
+            listOf<RustPackage>(),
+            listOf<RustResolveNode>(),
+            1,
+            listOf<String>(),
+            ""
+        )
     }
 }

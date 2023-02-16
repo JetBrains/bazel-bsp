@@ -23,6 +23,14 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildServer;
+import ch.epfl.scala.bsp4j.RustBuildServer;
+import ch.epfl.scala.bsp4j.RustOptionsParams;
+import ch.epfl.scala.bsp4j.RustOptionsResult;
+import ch.epfl.scala.bsp4j.RustOptionsItem;
+import ch.epfl.scala.bsp4j.RustMetadataParams;
+import ch.epfl.scala.bsp4j.RustMetadataResult;
+import ch.epfl.scala.bsp4j.RustPackage;
+import ch.epfl.scala.bsp4j.RustResolveNode;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
@@ -51,7 +59,7 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 
 public class BspServerApi
-    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
+    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, RustBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -226,5 +234,16 @@ public class BspServerApi
       JvmTestEnvironmentParams params) {
     return runner.handleRequest(
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
+  }
+
+  @Override
+  public CompletableFuture<RustOptionsResult> buildTargetRustOptions(RustOptionsParams params) {
+    return runner.handleRequest(
+        "buildTargetRustOptions", projectSyncService::buildTargetRustOptions, params);
+  }
+
+  @Override
+    public CompletableFuture<RustMetadataResult> rustMetadata(RustMetadataParams params) {
+        return runner.handleRequest("rustMetadata", projectSyncService::rustMetadata, params);
   }
 }
