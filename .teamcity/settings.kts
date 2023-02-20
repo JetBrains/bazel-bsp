@@ -11,10 +11,15 @@ project {
     vcsRoot(BaseConfiguration.BazelBspVcs)
 
     val allSteps = sequential {
-        parallel {
-            buildType(Format.JavaFormat)
-            buildType(Format.BuildifierFormat)
-        }
+//        parallel {
+//            buildType(Format.JavaFormat)
+//            buildType(Format.BuildifierFormat)
+//        }
+
+        buildType(Format.BuildifierFormat, options = {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        })
 
         buildType(Build.BuildTheProject, options = {
             onDependencyFailure = FailureAction.CANCEL
