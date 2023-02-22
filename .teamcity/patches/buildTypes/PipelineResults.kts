@@ -1,6 +1,7 @@
 package patches.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.ui.*
 
@@ -11,7 +12,7 @@ accordingly, and delete the patch script.
 */
 changeBuildType(RelativeId("PipelineResults")) {
     features {
-        remove {
+        val feature1 = find<PullRequests> {
             pullRequests {
                 provider = jetbrainsSpace {
                     filterTargetBranch = "+:<default>"
@@ -20,6 +21,9 @@ changeBuildType(RelativeId("PipelineResults")) {
                     }
                 }
             }
+        }
+        feature1.apply {
+            vcsRootExtId = "Scala_BazelBsp_BazelBspVcs"
         }
     }
 }
