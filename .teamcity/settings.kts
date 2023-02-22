@@ -3,6 +3,7 @@ import jetbrains.buildServer.configs.kotlin.v10.toExtId
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 version = "2022.10"
@@ -125,6 +126,14 @@ object ResultsAggregator : BuildType({
             branchFilter = "+:<default>"
             buildFailed = true
             buildFinishedSuccessfully = true
+        }
+        pullRequests {
+            provider = jetbrainsSpace {
+                filterTargetBranch = "+:<default>"
+                authType = connection {
+                    connectionId = "PROJECT_EXT_2845"
+                }
+            }
         }
     }
 })
