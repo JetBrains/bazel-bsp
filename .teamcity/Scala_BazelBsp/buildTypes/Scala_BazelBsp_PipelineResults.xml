@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>pipeline results</name>
+  <description />
+  <settings>
+    <options>
+      <option name="buildConfigurationType" value="COMPOSITE" />
+      <option name="showDependenciesChanges" value="true" />
+    </options>
+    <parameters />
+    <build-runners />
+    <vcs-settings>
+      <vcs-entry-ref root-id="Scala_BazelBsp_BazelBspVcs" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers>
+      <build-trigger id="TRIGGER_1" type="vcsTrigger">
+        <parameters>
+          <param name="branchFilter" value="+:*" />
+          <param name="enableQueueOptimization" value="true" />
+          <param name="quietPeriodMode" value="DO_NOT_USE" />
+          <param name="triggerRules" value="+:*" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <build-extensions>
+      <extension id="BUILD_EXT_1" type="notifications">
+        <parameters>
+          <param name="branchFilter" value="+:&lt;default&gt;" />
+          <param name="buildFinishedFailure" value="true" />
+          <param name="buildFinishedSuccess" value="true" />
+          <param name="notifier" value="jbSlackNotifier" />
+          <param name="plugin:notificator:jbSlackNotifier:addBranch" value="true" />
+          <param name="plugin:notificator:jbSlackNotifier:addBuildStatus" value="true" />
+          <param name="plugin:notificator:jbSlackNotifier:addChanges" value="true" />
+          <param name="plugin:notificator:jbSlackNotifier:channel" value="#bazel-build" />
+          <param name="plugin:notificator:jbSlackNotifier:connection" value="PROJECT_EXT_486" />
+          <param name="plugin:notificator:jbSlackNotifier:maximumNumberOfChanges" value="10" />
+          <param name="plugin:notificator:jbSlackNotifier:messageFormat" value="verbose" />
+        </parameters>
+      </extension>
+      <extension id="BUILD_EXT_2" type="pullRequests">
+        <parameters>
+          <param name="filterTargetBranch" value="+:&lt;default&gt;" />
+          <param name="providerType" value="jetbrainsSpace" />
+          <param name="spaceConnectionId" value="PROJECT_EXT_2845" />
+          <param name="spaceCredentialsType" value="spaceCredentialsConnection" />
+          <param name="vcsRootId" value="Scala_BazelBsp_BazelBspVcs" />
+        </parameters>
+      </extension>
+    </build-extensions>
+    <dependencies>
+      <depend-on sourceBuildTypeId="Scala_BazelBsp_E2eTestsE2eBazelBspSampleRepoTestTest">
+        <options>
+          <option name="run-build-if-dependency-failed" value="RUN_ADD_PROBLEM" />
+          <option name="run-build-if-dependency-failed-to-start" value="RUN_ADD_PROBLEM" />
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Scala_BazelBsp_E2eTestsE2eBazelBspLocalJdkTestTest">
+        <options>
+          <option name="run-build-if-dependency-failed" value="RUN_ADD_PROBLEM" />
+          <option name="run-build-if-dependency-failed-to-start" value="RUN_ADD_PROBLEM" />
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Scala_BazelBsp_E2eTestsE2eBazelBspRemoteJdkTestTest">
+        <options>
+          <option name="run-build-if-dependency-failed" value="RUN_ADD_PROBLEM" />
+          <option name="run-build-if-dependency-failed-to-start" value="RUN_ADD_PROBLEM" />
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+      <depend-on sourceBuildTypeId="Scala_BazelBsp_E2eTestsE2eBazelBspCppProjectTestTest">
+        <options>
+          <option name="run-build-if-dependency-failed" value="RUN_ADD_PROBLEM" />
+          <option name="run-build-if-dependency-failed-to-start" value="RUN_ADD_PROBLEM" />
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+    </dependencies>
+    <cleanup />
+  </settings>
+</build-type>
+

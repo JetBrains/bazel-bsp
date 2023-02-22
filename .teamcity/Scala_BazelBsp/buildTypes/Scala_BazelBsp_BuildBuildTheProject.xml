@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>[build] build the project</name>
+  <description />
+  <settings>
+    <options>
+      <option name="artifactRules" value="" />
+    </options>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_1" name="Install necessary pakcages via dockerized Ubuntu" type="simpleRunner">
+        <parameters>
+          <param name="plugin.docker.imageId" value="ubuntu:focal" />
+          <param name="plugin.docker.imagePlatform" value="linux" />
+          <param name="plugin.docker.pull.enabled" value="true" />
+          <param name="plugin.docker.run.parameters"><![CDATA[-v /usr/:/usr/
+-v /etc/:/etc/]]></param>
+          <param name="script.content"><![CDATA[#!/bin/bash
+set -euxo pipefail
+
+apt-get update -q
+apt-get install -y build-essential
+
+# check installation
+gcc --version ||:
+find / -name 'cc1plus' 2>/dev/null ||:
+
+#install bazelisk
+curl -L https://github.com/bazelbuild/bazelisk/releases/download/v1.15.0/bazelisk-linux-amd64 -o  \
+"/usr/bin/bazel"
+
+chmod +x "/usr/bin/bazel"
+
+#check bazel working
+bazel version ||:]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_2" name="build //..." type="bazel">
+        <parameters>
+          <param name="command" value="build" />
+          <param name="targets" value="//..." />
+          <param name="teamcity.step.mode" value="default" />
+          <param name="toolPath" value="/usr/bin" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="Scala_BazelBsp_BazelBspVcs" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers />
+    <dependencies>
+      <depend-on sourceBuildTypeId="Scala_BazelBsp_FormatBuildifier">
+        <options>
+          <option name="run-build-if-dependency-failed" value="CANCEL" />
+          <option name="run-build-if-dependency-failed-to-start" value="CANCEL" />
+          <option name="take-started-build-with-same-revisions" value="true" />
+          <option name="take-successful-builds-only" value="true" />
+        </options>
+      </depend-on>
+    </dependencies>
+    <cleanup />
+  </settings>
+</build-type>
+
