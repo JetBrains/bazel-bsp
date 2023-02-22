@@ -74,11 +74,17 @@ open class BaseBuildType(
 })
 
 object BazelBspVcs : GitVcsRoot({
-    name = "bazel-bsp"
-    url = "https://github.com/JetBrains/bazel-bsp.git"
+    name = "bazel-bsp-space"
+    url = "https://git.jetbrains.team/bsp/bazel-bsp.git"
     branch = "master"
     branchSpec = """
-            +:refs/heads/*
-            -:refs/heads/team*city
-        """.trimIndent()
+        +:refs/heads/*
+        -:refs/heads/team*city
+    """.trimIndent()
+    authMethod = password {
+        userName = "x-oauth-basic"
+        password = "credentialsJSON:a53a34e8-7404-4fdd-bb1d-5e4a44ff20c1"
+    }
+    param("oauthProviderId", "PROJECT_EXT_2845")
+    param("tokenType", "permanent")
 })
