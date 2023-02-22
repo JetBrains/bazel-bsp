@@ -129,6 +129,7 @@ object ResultsAggregator : BuildType({
             buildFinishedSuccessfully = true
         }
         pullRequests {
+            vcsRootExtId = "${BaseConfiguration.BazelBspVcs.id}"
             provider = jetbrainsSpace {
                 filterTargetBranch = "+:<default>"
                 authType = connection {
