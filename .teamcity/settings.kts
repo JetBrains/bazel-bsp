@@ -105,14 +105,14 @@ object ResultsAggregator : BuildType({
     }
 
     features {
-        commitStatusPublisher {
-            publisher = github {
-                githubUrl = "https://api.github.com"
-                authType = personalToken {
-                    token = "credentialsJSON:ac2b6c0a-11e0-47db-b113-784eb5266027"
-                }
-            }
-        }
+//        commitStatusPublisher {
+//            publisher = github {
+//                githubUrl = "https://api.github.com"
+//                authType = personalToken {
+//                    token = "credentialsJSON:ac2b6c0a-11e0-47db-b113-784eb5266027"
+//                }
+//            }
+//        }
         notifications {
             notifierSettings = slackNotifier {
                 connection = "PROJECT_EXT_486"
