@@ -75,7 +75,7 @@ open class BaseBuildType(
 
 object BazelBspVcs : GitVcsRoot({
     name = "bazel-bsp-space-repo"
-    url = "https://git.jetbrains.team/bsp/bazel-bsp.git"
+    url = "https://git.jetbrains.team/bazel/bazel-bsp.git"
     branch = "master"
     branchSpec = """
         +:refs/heads/*
