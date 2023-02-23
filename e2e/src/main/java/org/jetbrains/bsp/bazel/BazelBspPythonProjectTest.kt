@@ -37,37 +37,37 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             PythonBuildTarget(null, null)
 
         val exampleExampleBuildTarget = BuildTarget(
-            BuildTargetIdentifier("//example:example"),
+            BuildTargetIdentifier("$targetPrefix//example:example"),
             listOf("application"),
             listOf("python"),
-            listOf(BuildTargetIdentifier("//lib:example_library")),
+            listOf(BuildTargetIdentifier("$targetPrefix//lib:example_library")),
             BuildTargetCapabilities(true, false, true, false)
         )
-        exampleExampleBuildTarget.displayName = "//example:example"
+        exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
         exampleExampleBuildTarget.data = examplePythonBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
         val exampleExampleLibBuildTarget = BuildTarget(
-            BuildTargetIdentifier("//lib:example_library"),
+            BuildTargetIdentifier("$targetPrefix//lib:example_library"),
             listOf("library"),
             listOf("python"),
             listOf(),
             BuildTargetCapabilities(true, false, false, false)
         )
-        exampleExampleLibBuildTarget.displayName = "//lib:example_library"
+        exampleExampleLibBuildTarget.displayName = "$targetPrefix//lib:example_library"
         exampleExampleLibBuildTarget.baseDirectory = "file://\$WORKSPACE/lib/"
         exampleExampleLibBuildTarget.data = examplePythonLibBuildTarget
         exampleExampleLibBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
         val exampleExampleTestBuildTarget = BuildTarget(
-            BuildTargetIdentifier("//test:test"),
+            BuildTargetIdentifier("$targetPrefix//test:test"),
             listOf("test"),
             listOf("python"),
             listOf(),
             BuildTargetCapabilities(true, true, false, false)
         )
-        exampleExampleTestBuildTarget.displayName = "//test:test"
+        exampleExampleTestBuildTarget.displayName = "$targetPrefix//test:test"
         exampleExampleTestBuildTarget.baseDirectory = "file://\$WORKSPACE/test/"
         exampleExampleTestBuildTarget.data = examplePythonBuildTarget
         exampleExampleTestBuildTarget.dataKind = BuildTargetDataKind.PYTHON
