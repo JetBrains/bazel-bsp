@@ -197,7 +197,7 @@ maven_install(
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
         "io.vavr:vavr:0.10.4",
-        "org.apache.logging.log4j:log4j-api:2.19.0",
+        "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
         "org.junit.jupiter:junit-jupiter:5.9.2",
