@@ -206,7 +206,7 @@ maven_install(
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.10",
         "com.google.protobuf:protobuf-java:3.22.0",
-        "io.grpc:grpc-stub:1.51.3",
+        "io.grpc:grpc-stub:1.53.0",
     ],
     fetch_sources = True,
     repositories = [
