@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
+import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
@@ -15,11 +16,12 @@ public class BazelBspCompilationManager {
     this.bazelRunner = bazelRunner;
   }
 
-  public BepBuildResult buildTargetsWithBep(TargetsSpec targetSpecs, String originId) {
-    return buildTargetsWithBep(targetSpecs, List.empty(), originId);
+  public BepBuildResult buildTargetsWithBep(CancelChecker cancelChecker, TargetsSpec targetSpecs, String originId) {
+    return buildTargetsWithBep(cancelChecker, targetSpecs, List.empty(), originId);
   }
 
   public BepBuildResult buildTargetsWithBep(
+      CancelChecker cancelChecker,
       TargetsSpec targetSpecs, Seq<String> extraFlags, String originId) {
     var result =
         bazelRunner
@@ -28,7 +30,7 @@ public class BazelBspCompilationManager {
             .withFlags(extraFlags.asJava())
             .withTargets(targetSpecs)
             .executeBazelBesCommand(originId)
-            .waitAndGetResult(false);
+            .waitAndGetResult(cancelChecker, false);
     return new BepBuildResult(result, bepServer.getBepOutput());
   }
 

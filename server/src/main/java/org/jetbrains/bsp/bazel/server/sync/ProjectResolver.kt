@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import java.net.URI
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -19,7 +20,7 @@ class ProjectResolver(
     private val targetInfoReader: TargetInfoReader,
     private val bazelInfo: BazelInfo
 ) {
-    fun resolve(): Project {
+    fun resolve(cancelChecker: CancelChecker): Project {
 
         val workspaceContext = logger.timed(
             "Reading project view and creating workspace context",
@@ -27,7 +28,7 @@ class ProjectResolver(
         )
         val bepOutput = logger.timed<BepOutput>(
             "Building project with aspect"
-        ) { buildProjectWithAspect(workspaceContext) }
+        ) { buildProjectWithAspect(cancelChecker, workspaceContext) }
         val aspectOutputs = logger.timed<Set<URI>>(
             "Reading aspect output paths"
         ) { bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
@@ -46,8 +47,9 @@ class ProjectResolver(
         ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), workspaceContext) }
     }
 
-    private fun buildProjectWithAspect(workspaceContext: WorkspaceContext): BepOutput =
+    private fun buildProjectWithAspect(cancelChecker: CancelChecker, workspaceContext: WorkspaceContext): BepOutput =
         bazelBspAspectsManager.fetchFilesFromOutputGroups(
+            cancelChecker,
             workspaceContext.targets,
             ASPECT_NAME,
             listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP)

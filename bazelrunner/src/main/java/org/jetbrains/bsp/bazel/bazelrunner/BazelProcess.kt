@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import java.time.Duration
 import org.apache.logging.log4j.LogManager
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputProcessor
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.SyncOutputProcessor
@@ -15,13 +16,13 @@ class BazelProcess internal constructor(
     private val originId: String?
 ) {
 
-    fun waitAndGetResult(ensureAllOutputRead: Boolean = false): BazelProcessResult {
+    fun waitAndGetResult(cancelChecker: CancelChecker, ensureAllOutputRead: Boolean = false): BazelProcessResult {
         val stopwatch = Stopwatch.start()
         val outputProcessor: OutputProcessor =
           if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
           else AsyncOutputProcessor(process, logger::message, LOGGER::info)
 
-        val exitCode = outputProcessor.waitForExit()
+        val exitCode = outputProcessor.waitForExit(cancelChecker)
         val duration = stopwatch.stop()
         logCompletion(exitCode, duration)
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)

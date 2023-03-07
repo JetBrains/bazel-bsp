@@ -89,7 +89,7 @@ public class BspServerApi
   public CompletableFuture<Object> buildShutdown() {
     return runner.handleRequest(
         "buildShutdown",
-        () -> {
+        cancelChecker -> {
           serverLifetime.setFinishedComplete();
           return new Object();
         },

@@ -30,7 +30,7 @@ public class BloopExporterInitializer {
     try {
       var bspInfo = new BspInfo(bspProjectRoot);
       var workspaceContextProvider = new DefaultWorkspaceContextProvider(projectViewPath);
-      new BloopExporter(bspInfo, projectRoot, workspaceContextProvider).export();
+      new BloopExporter(bspInfo, projectRoot, workspaceContextProvider).export(() -> {}); // no other CancelChecker available here
     } catch (BloopExporter.BazelExportFailedException ex) {
       hasErrors = true;
       System.err.println(

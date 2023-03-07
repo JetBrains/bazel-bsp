@@ -4,10 +4,12 @@ import io.vavr.control.Option;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.lsp4j.jsonrpc.CancelChecker;
+import org.eclipse.lsp4j.jsonrpc.CompletableFutures;
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError;
@@ -24,13 +26,13 @@ public class BspRequestsRunner {
   }
 
   public <T, R> CompletableFuture<R> handleRequest(
-      String methodName, Function<T, R> function, T arg) {
+          String methodName, BiFunction<CancelChecker, T, R> function, T arg) {
     LOGGER.info("{} call with param: {}", methodName, arg);
     return this.<R>serverIsRunning(methodName)
-        .getOrElse(() -> runAsync(methodName, () -> function.apply(arg)));
+        .getOrElse(() -> runAsync(methodName, cancelChecker -> function.apply(cancelChecker, arg)));
   }
 
-  public <R> CompletableFuture<R> handleRequest(String methodName, Supplier<R> supplier) {
+  public <R> CompletableFuture<R> handleRequest(String methodName, Function<CancelChecker, R> supplier) {
     LOGGER.info("{} call", methodName);
     return this.<R>serverIsRunning(methodName).getOrElse(() -> runAsync(methodName, supplier));
   }
@@ -42,7 +44,7 @@ public class BspRequestsRunner {
 
   public <R> CompletableFuture<R> handleRequest(
       String methodName,
-      Supplier<R> supplier,
+      Function<CancelChecker, R> supplier,
       Function<String, Option<CompletableFuture<R>>> precondition) {
     LOGGER.info("{} call", methodName);
     return precondition.apply(methodName).getOrElse(() -> runAsync(methodName, supplier));
@@ -78,8 +80,8 @@ public class BspRequestsRunner {
     }
   }
 
-  private <T> CompletableFuture<T> runAsync(String methodName, Supplier<T> request) {
-    return CompletableFuture.supplyAsync(request)
+  private <T> CompletableFuture<T> runAsync(String methodName, Function<CancelChecker,T> request) {
+    return CancellableFuture.from(CompletableFutures.computeAsync(request))
         .thenApply(Either::<Throwable, T>forRight)
         .exceptionally(Either::forLeft)
         .thenCompose(

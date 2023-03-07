@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 
 class ProjectProvider(
@@ -8,13 +9,13 @@ class ProjectProvider(
     private var project: Project? = null
 
     @Synchronized
-    fun refreshAndGet(): Project =
-        loadFromBazel()
+    fun refreshAndGet(cancelChecker: CancelChecker): Project =
+        loadFromBazel(cancelChecker)
 
     @Synchronized
-    fun get(): Project = project ?: loadFromDisk() ?: loadFromBazel()
+    fun get(cancelChecker: CancelChecker): Project = project ?: loadFromDisk() ?: loadFromBazel(cancelChecker)
 
-    private fun loadFromBazel() = projectResolver.resolve().also {
+    private fun loadFromBazel(cancelChecker: CancelChecker) = projectResolver.resolve(cancelChecker).also {
         project = it
         storeOnDisk()
     }

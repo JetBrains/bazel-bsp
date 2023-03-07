@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.RunParams
 import ch.epfl.scala.bsp4j.RunResult
 import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
@@ -30,15 +31,15 @@ class ExecuteService(
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientTestNotifier: BspClientTestNotifier
 ) {
-    fun compile(params: CompileParams): CompileResult {
-        val targets = selectTargets(params.targets)
-        val result = build(targets, params.originId)
+    fun compile(cancelChecker: CancelChecker, params: CompileParams): CompileResult {
+        val targets = selectTargets(cancelChecker, params.targets)
+        val result = build(cancelChecker, targets, params.originId)
         return CompileResult(result.statusCode).apply { originId = params.originId }
     }
 
-    fun test(params: TestParams): TestResult {
-        val targets = selectTargets(params.targets)
-        var result = build(targets, params.originId)
+    fun test(cancelChecker: CancelChecker, params: TestParams): TestResult {
+        val targets = selectTargets(cancelChecker, params.targets)
+        var result = build(cancelChecker, targets, params.originId)
         if (result.isNotSuccess) {
             return TestResult(result.statusCode)
         }
@@ -48,7 +49,7 @@ class ExecuteService(
             .withArguments(params.arguments)
             .withFlag(BazelFlag.testOutputAll())
             .executeBazelBesCommand(params.originId)
-            .waitAndGetResult(true)
+            .waitAndGetResult(cancelChecker, true)
         JUnit5TestParser(bspClientTestNotifier).processTestOutput(result)
         return TestResult(result.statusCode).apply {
             originId = originId
@@ -56,8 +57,8 @@ class ExecuteService(
         }
     }
 
-    fun run(params: RunParams): RunResult {
-        val targets = selectTargets(listOf(params.target))
+    fun run(cancelChecker: CancelChecker, params: RunParams): RunResult {
+        val targets = selectTargets(cancelChecker, listOf(params.target))
         if (targets.isEmpty()) {
             throw ResponseErrorException(
                 ResponseError(
@@ -68,32 +69,33 @@ class ExecuteService(
             )
         }
         val bspId = targets.single()
-        val result = build(targets, params.originId)
+        val result = build(cancelChecker, targets, params.originId)
         if (result.isNotSuccess) {
             return RunResult(result.statusCode)
         }
         val bazelProcessResult =
             bazelRunner.commandBuilder().run().withArgument(BspMappings.toBspUri(bspId))
-                .withArguments(params.arguments).executeBazelBesCommand(params.originId).waitAndGetResult()
+                .withArguments(params.arguments).executeBazelBesCommand(params.originId).waitAndGetResult(cancelChecker)
         return RunResult(bazelProcessResult.statusCode).apply { originId = originId }
     }
 
-    fun clean(params: CleanCacheParams?): CleanCacheResult {
+    fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
         val bazelResult =
-            bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult()
+            bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult(cancelChecker)
         return CleanCacheResult(bazelResult.stdout, true)
     }
 
-    private fun build(bspIds: List<BuildTargetIdentifier>, originId: String?): BazelProcessResult {
+    private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String?): BazelProcessResult {
         val targetsSpec = TargetsSpec(bspIds, emptyList())
         return compilationManager.buildTargetsWithBep(
+                cancelChecker,
             targetsSpec,
             originId
         ).processResult()
     }
 
-    private fun selectTargets(targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {
-        val project = projectProvider.get()
+    private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {
+        val project = projectProvider.get(cancelChecker)
         val modules: Set<Module> = BspMappings.getModules(project, targets)
         val modulesToBuild = modules.filter { m: Module -> isBuildable(m) }
         return modulesToBuild.map(::toBspId)

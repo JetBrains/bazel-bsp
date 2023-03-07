@@ -19,6 +19,14 @@ data class CliArgs(val bazelWorkspaceRoot: String, val projectViewPath: String?)
 object ServerInitializer {
     @JvmStatic
     fun main(args: Array<String>) {
+        Runtime.getRuntime().addShutdownHook(
+                Thread {
+                    ProcessHandle.allProcesses()
+                            .filter { it.parent().orElse(null)?.pid() == ProcessHandle.current().pid() }
+                            .forEach { it.destroy() }
+                }
+        )
+
         val cliArgs = if (args.size > 2 || args.isEmpty()) {
             System.err.printf(
                 "Usage: <bazel workspace root> [project view path]%n"

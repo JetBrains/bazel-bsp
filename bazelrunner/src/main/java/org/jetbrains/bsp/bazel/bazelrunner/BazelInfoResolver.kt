@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import java.nio.file.Paths
 
 class BazelInfoResolver(
@@ -7,12 +8,12 @@ class BazelInfoResolver(
     private val storage: BazelInfoStorage
 ) {
 
-  fun resolveBazelInfo(): BazelInfo {
-    return LazyBazelInfo { storage.load() ?: bazelInfoFromBazel() }
+  fun resolveBazelInfo(cancelChecker: CancelChecker): BazelInfo {
+    return LazyBazelInfo { storage.load() ?: bazelInfoFromBazel(cancelChecker) }
   }
 
-  private fun bazelInfoFromBazel(): BazelInfo {
-    val processResult = bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult(true)
+  private fun bazelInfoFromBazel(cancelChecker: CancelChecker): BazelInfo {
+    val processResult = bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult(cancelChecker,true)
     return parseBazelInfo(processResult).also { storage.store(it) }
   }
 

@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier;
@@ -58,7 +60,7 @@ class BloopExporter {
     this.workspaceRoot = workspaceRoot;
   }
 
-  public void export() throws BazelExportFailedException {
+  public void export(CancelChecker cancelChecker) throws BazelExportFailedException {
     var bspClientLogger = new BspClientLogger();
     var bspClientTestNotifier = new BspClientTestNotifier();
     var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
@@ -76,7 +78,7 @@ class BloopExporter {
     var client = new BloopBuildClient(System.out);
     initializeClient(serverContainer, client);
 
-    var project = projectProvider.refreshAndGet();
+    var project = projectProvider.refreshAndGet(cancelChecker);
     var projectTargets =
         project.getModules().stream()
             .map(m -> new BuildTargetIdentifier(m.getLabel().getValue()))
