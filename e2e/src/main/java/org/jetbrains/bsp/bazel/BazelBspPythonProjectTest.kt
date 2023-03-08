@@ -40,7 +40,8 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("$targetPrefix//example:example"),
             listOf("application"),
             listOf("python"),
-            listOf(BuildTargetIdentifier("$targetPrefix//lib:example_library")),
+            listOf(BuildTargetIdentifier("$targetPrefix//lib:example_library"),
+                BuildTargetIdentifier("@requests//:srcs")),
             BuildTargetCapabilities(true, false, true, false)
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"

@@ -10,3 +10,15 @@ http_archive(
     strip_prefix = "rules_python-{}".format(rules_python_version),
     url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
 )
+
+# todo - use format and its sha to generalize download
+http_archive(
+    name = "requests",
+    urls = ["https://github.com/requests/requests/tarball/master/psf-requests-7f694b7.tar.gz"],
+    build_file_content = """
+py_library(
+    name = "srcs",
+    srcs = glob(["requests/*.py"]),
+    visibility = ["//visibility:public"]
+)"""
+)
