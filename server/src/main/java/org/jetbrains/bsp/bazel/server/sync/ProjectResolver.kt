@@ -37,7 +37,7 @@ class ProjectResolver(
             // contrary to "//"-prefixed in older Bazel versions. Unfortunately this does not apply
             // to BEP data, probably due to a bug, so we need to add the "@" prefix here.
             in 0..5 ->  bepOutput.rootTargets()
-            else -> bepOutput.rootTargets().map { target -> "@$target" }
+            else -> bepOutput.rootTargets().map { "@$it" }
         }
         val targets = logger.timed<Map<String, TargetInfo>>(
             "Parsing aspect outputs"

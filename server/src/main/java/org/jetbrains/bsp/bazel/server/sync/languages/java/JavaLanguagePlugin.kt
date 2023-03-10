@@ -26,7 +26,6 @@ class JavaLanguagePlugin(
     private val jdkResolver: JdkResolver,
     private val bazelInfo: BazelInfo
 ) : LanguagePlugin<JavaModule>() {
-    private val environment = System.getenv()
     private var jdk: Jdk? = null
 
     override fun prepareSync(targets: Sequence<TargetInfo>) {
@@ -106,28 +105,26 @@ class JavaLanguagePlugin(
 
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
         val jdk = javaModule.jdk
-        val javaHome = jdk.javaHome?.let { obj: URI -> obj.toString() }
+        val javaHome = jdk.javaHome?.toString()
         return JvmBuildTarget(javaHome, jdk.version)
     }
 
     fun toJvmEnvironmentItem(module: Module, javaModule: JavaModule): JvmEnvironmentItem =
         JvmEnvironmentItem(
             BspMappings.toBspId(module),
-            javaModule.runtimeClasspath.map { obj: URI -> obj.toString() }.toList(),
+            javaModule.runtimeClasspath.map { it.toString() }.toList(),
             javaModule.jvmOps.toList(),
             bazelInfo.workspaceRoot.toString(),
             module.environmentVariables
         ).apply {
             mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
         }
-    // FIXME: figure out what we should pass here, because passing the environment
-    // of the *SERVER* makes little sense
 
     fun toJavacOptionsItem(module: Module, javaModule: JavaModule): JavacOptionsItem =
         JavacOptionsItem(
             BspMappings.toBspId(module),
             javaModule.javacOpts.toList(),
-            javaModule.ideClasspath.map { obj: URI -> obj.toString() }.toList(),
+            javaModule.ideClasspath.map { it.toString() }.toList(),
             javaModule.mainOutput.toString()
         )
 }

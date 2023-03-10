@@ -96,8 +96,8 @@ class ExecuteService(
 
     private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {
         val project = projectProvider.get(cancelChecker)
-        val modules: Set<Module> = BspMappings.getModules(project, targets)
-        val modulesToBuild = modules.filter { m: Module -> isBuildable(m) }
+        val modules = BspMappings.getModules(project, targets)
+        val modulesToBuild = modules.filter { isBuildable(it) }
         return modulesToBuild.map(::toBspId)
     }
 

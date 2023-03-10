@@ -30,7 +30,7 @@ object BazelArgumentsUtils {
   }
 
   fun calculateExcludedTargetsWithExcludedPrefix(targets: List<BuildTargetIdentifier>): List<String> =
-      toRawUris(targets).map { target: String -> "-$target" }
+      toRawUris(targets).map { "-$it" }
 
   fun getMnemonicWithJoinedTargets(
       targets: List<String>, languageIds: List<String>): String {

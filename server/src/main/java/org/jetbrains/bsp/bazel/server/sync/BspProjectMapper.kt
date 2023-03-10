@@ -61,7 +61,7 @@ class BspProjectMapper(
 ) {
 
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {
-        val languageNames = supportedLanguages.map { obj: Language -> obj.id }
+        val languageNames = supportedLanguages.map { it.id }
         val capabilities = BuildServerCapabilities().apply {
             compileProvider = CompileProvider(languageNames)
             runProvider = RunProvider(languageNames)
@@ -124,9 +124,9 @@ class BspProjectMapper(
     fun sources(project: Project, sourcesParams: SourcesParams): SourcesResult {
         fun toSourcesItem(module: Module): SourcesItem {
             val sourceSet = module.sourceSet
-            val sourceItems = sourceSet.sources.map { source: URI ->
+            val sourceItems = sourceSet.sources.map {
                 SourceItem(
-                    BspMappings.toBspUri(source),
+                    BspMappings.toBspUri(it),
                     SourceItemKind.FILE,
                     false
                 )
@@ -143,8 +143,8 @@ class BspProjectMapper(
         // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
         // we need a use case with some generated files and then figure out how to handle it
         val labels = BspMappings.toLabels(sourcesParams.targets)
-        val sourcesItems = labels.map { label: Label ->
-            project.findModule(label)?.let(::toSourcesItem) ?: emptySourcesItem(label)
+        val sourcesItems = labels.map {
+            project.findModule(it)?.let(::toSourcesItem) ?: emptySourcesItem(it)
         }
         return SourcesResult(sourcesItems)
     }
@@ -161,8 +161,8 @@ class BspProjectMapper(
         }
 
         val labels = BspMappings.toLabels(resourcesParams.targets)
-        val resourcesItems = labels.map { label: Label ->
-            project.findModule(label)?.let(::toResourcesItem) ?: emptyResourcesItem(label)
+        val resourcesItems = labels.map {
+            project.findModule(it)?.let(::toResourcesItem) ?: emptyResourcesItem(it)
         }
         return ResourcesResult(resourcesItems)
     }
@@ -182,10 +182,10 @@ class BspProjectMapper(
         project: Project, dependencySourcesParams: DependencySourcesParams
     ): DependencySourcesResult {
         fun getDependencySourcesItem(label: Label): DependencySourcesItem {
-            val sources = project
-                .findModule(label)?.let { module ->
-                    module.sourceDependencies.map(BspMappings::toBspUri)
-                }.orEmpty()
+            val sources = project.findModule(label)
+                    ?.sourceDependencies
+                    ?.map(BspMappings::toBspUri)
+                    .orEmpty()
             return DependencySourcesItem(BspMappings.toBspId(label), sources)
         }
 
@@ -233,8 +233,8 @@ class BspProjectMapper(
             }
 
         val labels = BspMappings.toLabels(targets)
-        return labels.mapNotNull { label: Label ->
-            project.findModule(label)?.let(::extractJvmEnvironmentItem)
+        return labels.mapNotNull {
+            project.findModule(it)?.let(::extractJvmEnvironmentItem)
         }
     }
 

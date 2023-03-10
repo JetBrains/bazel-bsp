@@ -59,7 +59,7 @@ class ScalaLanguagePlugin(
                 version,
                 binaryVersion,
                 ScalaPlatform.JVM,
-                compilerJars.map { obj: URI -> obj.toString() }.toList()
+                compilerJars.map { it.toString() }.toList()
             )
         }
         moduleData.javaModule?.let(javaLanguagePlugin::toJvmBuildTarget)?.let {
