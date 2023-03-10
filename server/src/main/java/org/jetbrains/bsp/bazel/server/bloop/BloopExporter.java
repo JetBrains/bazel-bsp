@@ -102,7 +102,6 @@ class BloopExporter {
     var bepServer =
         new BepServer(
             client, new DiagnosticsService(serverContainer.getBazelInfo().getWorkspaceRoot()));
-    serverContainer.getCompilationManager().setBepServer(bepServer);
 
     var grpcServer = ServerBuilder.forPort(0).addService(bepServer).build();
     try {

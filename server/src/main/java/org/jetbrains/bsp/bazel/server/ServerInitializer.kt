@@ -53,10 +53,7 @@ object ServerInitializer {
             )
             val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot))
             bspServer.startServer(bspIntegrationData)
-            val server = bspIntegrationData.server.start()
-            bspServer.setBesBackendPort(server.port)
-            bspIntegrationData.launcher.startListening()
-            server.awaitTermination()
+            bspIntegrationData.launcher.startListening().get()
         } catch (e: Exception) {
             e.printStackTrace(System.err)
             hasErrors = true
