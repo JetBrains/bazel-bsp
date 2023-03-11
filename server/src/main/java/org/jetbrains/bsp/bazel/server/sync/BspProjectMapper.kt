@@ -34,8 +34,7 @@ import ch.epfl.scala.bsp4j.RunProvider
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.RustPackage
 import ch.epfl.scala.bsp4j.RustRawDependency
-import ch.epfl.scala.bsp4j.RustRawMapper
-import ch.epfl.scala.bsp4j.RustDepMapper
+import ch.epfl.scala.bsp4j.RustDependency
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -302,8 +301,7 @@ class BspProjectMapper(
         return RustWorkspaceResult(
             listOf<RustPackage>(),
             listOf<RustRawDependency>(),
-            listOf<RustRawMapper>(),
-            listOf<RustDepMapper>()
+            listOf<RustDependency>()
         )
     }
 }
