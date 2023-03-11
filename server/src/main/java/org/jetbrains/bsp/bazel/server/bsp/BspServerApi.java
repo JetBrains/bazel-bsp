@@ -24,13 +24,8 @@ import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildServer;
 import ch.epfl.scala.bsp4j.RustBuildServer;
-import ch.epfl.scala.bsp4j.RustOptionsParams;
-import ch.epfl.scala.bsp4j.RustOptionsResult;
-import ch.epfl.scala.bsp4j.RustOptionsItem;
-import ch.epfl.scala.bsp4j.RustMetadataParams;
-import ch.epfl.scala.bsp4j.RustMetadataResult;
+import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.RustPackage;
-import ch.epfl.scala.bsp4j.RustResolveNode;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
@@ -237,13 +232,7 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<RustOptionsResult> buildTargetRustOptions(RustOptionsParams params) {
-    return runner.handleRequest(
-        "buildTargetRustOptions", projectSyncService::buildTargetRustOptions, params);
-  }
-
-  @Override
-    public CompletableFuture<RustMetadataResult> rustMetadata(RustMetadataParams params) {
-        return runner.handleRequest("rustMetadata", projectSyncService::rustMetadata, params);
+    public CompletableFuture<RustWorkspaceResult> rustWorkspace() {
+        return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace);
   }
 }

@@ -27,13 +27,8 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourcesParams;
 import ch.epfl.scala.bsp4j.SourcesResult;
-import ch.epfl.scala.bsp4j.RustOptionsParams;
-import ch.epfl.scala.bsp4j.RustOptionsResult;
-import ch.epfl.scala.bsp4j.RustOptionsItem;
-import ch.epfl.scala.bsp4j.RustMetadataParams;
-import ch.epfl.scala.bsp4j.RustMetadataResult;
+import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.RustPackage;
-import ch.epfl.scala.bsp4j.RustResolveNode;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.Collections;
 import org.jetbrains.bsp.bazel.server.sync.model.Language;
@@ -133,13 +128,8 @@ public class ProjectSyncService {
     return new DependencyModulesResult(Collections.emptyList());
   }
 
-  public RustOptionsResult buildTargetRustOptions(RustOptionsParams params) {
+  public RustWorkspaceResult rustWorkspace() {
     var project = projectProvider.get();
-    return bspMapper.buildTargetRustOptions(project, params);
-  }
-
-  public RustMetadataResult rustMetadata(RustMetadataParams params) {
-    var project = projectProvider.get();
-    return bspMapper.rustMetadata(project, params);
+    return bspMapper.rustWorkspace(project);
   }
 }

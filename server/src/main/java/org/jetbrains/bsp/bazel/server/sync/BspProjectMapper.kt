@@ -31,13 +31,11 @@ import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunProvider
-import ch.epfl.scala.bsp4j.RustOptionsParams
-import ch.epfl.scala.bsp4j.RustOptionsResult
-import ch.epfl.scala.bsp4j.RustOptionsItem
-import ch.epfl.scala.bsp4j.RustMetadataParams
-import ch.epfl.scala.bsp4j.RustMetadataResult
+import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.RustPackage
-import ch.epfl.scala.bsp4j.RustResolveNode
+import ch.epfl.scala.bsp4j.RustRawDependency
+import ch.epfl.scala.bsp4j.RustRawMapper
+import ch.epfl.scala.bsp4j.RustDepMapper
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -297,23 +295,15 @@ class BspProjectMapper(
         return ScalaMainClassesResult(items)
     }
 
-    fun buildTargetRustOptions(
-        project: Project, params: RustOptionsParams
-    ): RustOptionsResult {
+    fun rustWorkspace(
+        project: Project
+    ): RustWorkspaceResult {
 //        TODO: implement
-        return RustOptionsResult(mutableListOf<RustOptionsItem>())
-    }
-
-    fun rustMetadata(
-        project: Project, params: RustMetadataParams
-    ): RustMetadataResult {
-//        TODO: implement
-        return RustMetadataResult(
+        return RustWorkspaceResult(
             listOf<RustPackage>(),
-            listOf<RustResolveNode>(),
-            1,
-            listOf<String>(),
-            ""
+            listOf<RustRawDependency>(),
+            listOf<RustRawMapper>(),
+            listOf<RustDepMapper>()
         )
     }
 }
