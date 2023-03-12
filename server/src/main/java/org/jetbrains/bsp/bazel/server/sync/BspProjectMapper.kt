@@ -317,7 +317,7 @@ class BspProjectMapper(
                         RustTarget(
                             "hello_world",
                             "/home/matt/uw/zpp/basic-example/hello_world/src/main.rs",
-                            "build",
+                            "application",
                             "2018",
                             false,
                             listOf<String>()
