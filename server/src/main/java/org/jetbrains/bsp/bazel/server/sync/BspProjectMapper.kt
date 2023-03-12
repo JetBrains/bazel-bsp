@@ -326,7 +326,22 @@ class BspProjectMapper(
                     listOf<RustFeature>(),
                     listOf<String>(),
                     null, // RustCfgOptions(listOf<RustKeyValueMapper>(), listOf<String>()), // RustCfgOptions(RustKeyValueMapper("dupa", listOf<String>()), listOf<String>()),
-                    listOf<RustEnvData>(),
+                    listOf<RustEnvData>(
+                        RustEnvData("CARGO_MANIFEST_DIF", "/home/matt/uw/zpp/basic-example/hello_world"),
+                        RustEnvData("CARGO", "cargo"),
+                        RustEnvData("CARGO_PKG_VERSION", "0.1.0"),
+                        RustEnvData("CARGO_PKG_VERSION_MAJOR", "0"),
+                        RustEnvData("CARGO_PKG_VERSION_MINOR", "1"),
+                        RustEnvData("CARGO_PKG_VERSION_PATCH", "0"),
+                        RustEnvData("CARGO_PKG_VERSION_PRE", ""),
+                        RustEnvData("CARGO_PKG_AUTHORS", ""),
+                        RustEnvData("CARGO_PKG_NAME", "hello_world"),
+                        RustEnvData("CARGO_PKG_DESCRIPTION", ""),
+                        RustEnvData("CARGO_PKG_REPOSITORY", ""),
+                        RustEnvData("CARGO_PKG_LICENCE", ""),
+                        RustEnvData("CARGO_PKG_LICENCE_FILE", ""),
+                        RustEnvData("CARGO_PKG_NAME", "hello_world"),
+                    ),
                     null, // "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/build/",
                     null, // RustProcMacroArtifact("xddd", "2137")
                 )
