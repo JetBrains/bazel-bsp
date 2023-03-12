@@ -316,7 +316,7 @@ class BspProjectMapper(
                     listOf<RustTarget>(
                         RustTarget(
                             "hello_world",
-                            "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/src/main.rs",
+                            "/home/matt/uw/zpp/basic-example/hello_world/src/main.rs",
                             "build",
                             "2018",
                             false,
@@ -338,9 +338,9 @@ class BspProjectMapper(
                         RustEnvData("CARGO_PKG_NAME", "hello_world"),
                         RustEnvData("CARGO_PKG_DESCRIPTION", ""),
                         RustEnvData("CARGO_PKG_REPOSITORY", ""),
-                        RustEnvData("CARGO_PKG_LICENCE", ""),
-                        RustEnvData("CARGO_PKG_LICENCE_FILE", ""),
-                        RustEnvData("CARGO_PKG_NAME", "hello_world"),
+                        RustEnvData("CARGO_PKG_LICENSE", ""),
+                        RustEnvData("CARGO_PKG_LICENSE_FILE", ""),
+                        RustEnvData("CARGO_CRATE_NAME", "hello_world"),
                     ),
                     null, // "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/build/",
                     null, // RustProcMacroArtifact("xddd", "2137")
