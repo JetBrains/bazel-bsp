@@ -35,6 +35,13 @@ import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.RustPackage
 import ch.epfl.scala.bsp4j.RustRawDependency
 import ch.epfl.scala.bsp4j.RustDependency
+import ch.epfl.scala.bsp4j.RustDepKindInfo
+import ch.epfl.scala.bsp4j.RustTarget
+import ch.epfl.scala.bsp4j.RustFeature
+import ch.epfl.scala.bsp4j.RustCfgOptions
+import ch.epfl.scala.bsp4j.RustEnvData
+import ch.epfl.scala.bsp4j.RustKeyValueMapper
+import ch.epfl.scala.bsp4j.RustProcMacroArtifact
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -299,8 +306,34 @@ class BspProjectMapper(
     ): RustWorkspaceResult {
 //        TODO: implement
         return RustWorkspaceResult(
-            listOf<RustPackage>(),
-            listOf<RustRawDependency>(),
+            listOf<RustPackage>(
+                RustPackage(
+                    BuildTargetIdentifier("//hello_world:hello_world"),
+                    "0.1.0",
+                    "WORKSPACE",
+                    "2018",
+                    null, // "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/src/main.rs",
+                    listOf<RustTarget>(
+                        RustTarget(
+                            "hello_world",
+                            "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/src/main.rs",
+                            "build",
+                            "2018",
+                            false,
+                            listOf<String>()
+                        )
+                    ),
+                    listOf<RustFeature>(),
+                    listOf<String>(),
+                    null, // RustCfgOptions(listOf<RustKeyValueMapper>(), listOf<String>()), // RustCfgOptions(RustKeyValueMapper("dupa", listOf<String>()), listOf<String>()),
+                    listOf<RustEnvData>(),
+                    null, // "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/build/",
+                    null, // RustProcMacroArtifact("xddd", "2137")
+                )
+            ),
+            listOf<RustRawDependency>(
+                // RustRawDependency()
+            ),
             listOf<RustDependency>()
         )
     }
