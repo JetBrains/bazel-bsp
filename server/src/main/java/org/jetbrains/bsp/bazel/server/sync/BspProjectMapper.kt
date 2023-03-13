@@ -316,7 +316,7 @@ class BspProjectMapper(
                     listOf<RustTarget>(
                         RustTarget(
                             "hello_world",
-                            "/home/matt/uw/zpp/basic-example/hello_world/src/main.rs",
+                            "file:///home/tudny/Documents/UW/MIMUW/ZPP/bazel-bsp-zpp-fork/hello-world/hello_world/src/main.rs",
                             "application",
                             "2018",
                             false,
@@ -327,7 +327,7 @@ class BspProjectMapper(
                     listOf<String>(),
                     null, // RustCfgOptions(listOf<RustKeyValueMapper>(), listOf<String>()), // RustCfgOptions(RustKeyValueMapper("dupa", listOf<String>()), listOf<String>()),
                     listOf<RustEnvData>(
-                        RustEnvData("CARGO_MANIFEST_DIF", "/home/matt/uw/zpp/basic-example/hello_world"),
+                        RustEnvData("CARGO_MANIFEST_DIF", "/home/tudny/Documents/UW/MIMUW/ZPP/bazel-bsp-zpp-fork/hello-world/hello_world"),
                         RustEnvData("CARGO", "cargo"),
                         RustEnvData("CARGO_PKG_VERSION", "0.1.0"),
                         RustEnvData("CARGO_PKG_VERSION_MAJOR", "0"),
