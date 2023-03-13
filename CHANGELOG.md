@@ -9,6 +9,8 @@
 
 - Project view file flag for disabling trace log.
   | [#344](https://github.com/JetBrains/bazel-bsp/pull/344)
+- Create BEP connection on demands instead of keeping it as a service (reduces memory footprint)
+  | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
 
 ## [2.5.1] - 08.02.2023
 
