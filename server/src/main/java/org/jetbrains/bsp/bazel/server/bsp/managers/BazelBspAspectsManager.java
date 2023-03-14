@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import io.vavr.collection.Array;
 import java.util.List;
-
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -23,8 +22,10 @@ public class BazelBspAspectsManager {
   }
 
   public BepOutput fetchFilesFromOutputGroups(
-          CancelChecker cancelChecker,
-          TargetsSpec targetSpecs, String aspect, List<String> outputGroups) {
+      CancelChecker cancelChecker,
+      TargetsSpec targetSpecs,
+      String aspect,
+      List<String> outputGroups) {
     var result =
         bazelBspCompilationManager.buildTargetsWithBep(
             cancelChecker,
