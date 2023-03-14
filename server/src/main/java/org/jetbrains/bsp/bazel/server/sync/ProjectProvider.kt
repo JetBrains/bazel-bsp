@@ -18,6 +18,7 @@ class ProjectProvider(
     private fun loadFromBazel(cancelChecker: CancelChecker) = projectResolver.resolve(cancelChecker).also {
         project = it
         storeOnDisk()
+        System.gc()
     }
 
     private fun loadFromDisk() = projectStorage.load()?.also {
