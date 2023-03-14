@@ -26,13 +26,14 @@ public class BspRequestsRunner {
   }
 
   public <T, R> CompletableFuture<R> handleRequest(
-          String methodName, BiFunction<CancelChecker, T, R> function, T arg) {
+      String methodName, BiFunction<CancelChecker, T, R> function, T arg) {
     LOGGER.info("{} call with param: {}", methodName, arg);
     return this.<R>serverIsRunning(methodName)
         .getOrElse(() -> runAsync(methodName, cancelChecker -> function.apply(cancelChecker, arg)));
   }
 
-  public <R> CompletableFuture<R> handleRequest(String methodName, Function<CancelChecker, R> supplier) {
+  public <R> CompletableFuture<R> handleRequest(
+      String methodName, Function<CancelChecker, R> supplier) {
     LOGGER.info("{} call", methodName);
     return this.<R>serverIsRunning(methodName).getOrElse(() -> runAsync(methodName, supplier));
   }
@@ -80,7 +81,7 @@ public class BspRequestsRunner {
     }
   }
 
-  private <T> CompletableFuture<T> runAsync(String methodName, Function<CancelChecker,T> request) {
+  private <T> CompletableFuture<T> runAsync(String methodName, Function<CancelChecker, T> request) {
     return CancellableFuture.from(CompletableFutures.computeAsync(request))
         .thenApply(Either::<Throwable, T>forRight)
         .exceptionally(Either::forLeft)
