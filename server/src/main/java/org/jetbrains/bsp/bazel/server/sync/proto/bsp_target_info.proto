@@ -78,11 +78,12 @@ message RustCrateInfo {
     string bazel_id = 10;
     string crate_id = 20;
     RustCrateLocation location = 30;
-    string name = 40;
-    string kind = 50;
-    string edition = 60;
-    repeated string crate_features = 70;
-    repeated RustDependencyInfo dependencies = 80;
+    bool from_workspace = 40;
+    string name = 50;
+    string kind = 60;
+    string edition = 70;
+    repeated string crate_features = 80;
+    repeated RustDependencyInfo dependencies = 90;
 }
 
 message TargetInfo {

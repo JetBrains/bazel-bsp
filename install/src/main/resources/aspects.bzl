@@ -371,13 +371,7 @@ def extract_rust_crate_info(target, ctx):
 
     crate_is_from_workspace = not crate_accessor.root.path.startswith("external/")
     crate_is_generated = not crate_accessor.root.is_source
-
-    crate_location = ""
-
-    if not crate_is_from_workspace or crate_is_generated:
-        crate_location = "EXEC_ROOT"
-    else:
-        crate_location = "WORKSPACE_DIR"
+    crate_is_in_exec_root = not crate_is_from_workspace or crate_is_generated
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep)]
 
@@ -386,7 +380,8 @@ def extract_rust_crate_info(target, ctx):
     rust_crate_struct = struct(
         bazel_id = str(target.label),
         crate_id = crate_accessor.root.path,
-        location = crate_location,
+        location = "EXEC_ROOT" if crate_is_in_exec_root else "WORKSPACE_DIR",
+        from_workspace = crate_is_from_workspace,
         name = crate_accessor.name,
         kind = crate_accessor.type,
         edition = crate_accessor.edition,
