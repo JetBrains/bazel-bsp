@@ -12,6 +12,11 @@
 - Create BEP connection on demands instead of keeping it as a service (reduces memory footprint)
   | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
 
+### Fixes
+- Reduced memory footprint of the application after project import is done
+  | https://github.com/JetBrains/bazel-bsp/commit/df40a7ce17df90c25f5620640f9330513a492b8a
+  | https://github.com/JetBrains/bazel-bsp/commit/425273634d8666a4a99f714b3b301bd09317e0fd
+
 ## [2.5.1] - 08.02.2023
 
 ### Changes 🔄
