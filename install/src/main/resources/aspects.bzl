@@ -333,50 +333,65 @@ def extract_rust_crate_info(target, ctx):
     # packages with many targets, `features` and `use_default_features` in
     # dependencies, etc.) do not exist in Bazel and low-level `rustc`.
     #
-    debug_struct_ = create_struct(
-         attributes = ctx.rule.attr,
-         crate_deps = crate_accessor.deps,
-         crate_aliases = crate_accessor.aliases,
-         crate_compile_data = crate_accessor.compile_data,
-         crate_compile_data_targets = crate_accessor.compile_data_targets,
-         crate_edition = crate_accessor.edition,
-         crate_is_test = crate_accessor.is_test,
-         crate_name = crate_accessor.name,
-         crate_output = crate_accessor.output,
-         crate_owner = crate_accessor.owner,
-         crate_proc_macro_deps = crate_accessor.owner,
-         crate_root = crate_accessor.root,
-         crate_rustc_env = crate_accessor.rustc_env,
-         crate_rustc_env_files = crate_accessor.rustc_env_files,
-         crate_type = crate_accessor.type,
-         crate_wrapped_crate_type = crate_accessor.wrapped_crate_type,
-     )
+    # debug_struct_ = create_struct(
+    #      attributes = ctx.rule.attr,
+    #      crate_deps = crate_accessor.deps,
+    #      crate_aliases = crate_accessor.aliases,
+    #      crate_compile_data = crate_accessor.compile_data,
+    #      crate_compile_data_targets = crate_accessor.compile_data_targets,
+    #      crate_edition = crate_accessor.edition,
+    #      crate_is_test = crate_accessor.is_test,
+    #      crate_name = crate_accessor.name,
+    #      crate_output = crate_accessor.output,
+    #      crate_owner = crate_accessor.owner,
+    #      crate_proc_macro_deps = crate_accessor.owner,
+    #      crate_root = crate_accessor.root,
+    #      crate_rustc_env = crate_accessor.rustc_env,
+    #      crate_rustc_env_files = crate_accessor.rustc_env_files,
+    #      crate_type = crate_accessor.type,
+    #      crate_wrapped_crate_type = crate_accessor.wrapped_crate_type,
+    #  )
+    #
+    # print(debug_struct_)
 
-    print(debug_struct_)
+    crate_root_path = crate_accessor.root.path
 
-    def generate_rust_dependency_info(dep):
-      if CrateInfo not in dep:
-        return None
+    def is_same_crate(dep):
+        if CrateInfo not in dep:
+            return False
 
+        return dep[CrateInfo].root.path == crate_root_path
+
+    def wrap_dependency(dep):
       return struct(
-        id = str(dep.label),
-        name = dep[CrateInfo].name,
-        # TODO: Without a public `DepInfo` provider, we *cannot* get a rename.
-        rename = "",
+        bazel_id = str(dep.label),
+        # This is stable and unique, according to `rust_analyzer.bzl`
+        crate_id = dep[CrateInfo].root.path,
+        rename = "", # TODO: Without a public `DepInfo` provider, we *cannot* get a rename.
       )
 
-    direct_dependencies = [
-      generate_rust_dependency_info(dep) for dep in ctx.rule.attr.deps
-    ]
+    crate_is_from_workspace = not crate_accessor.root.path.startswith("external/")
+    crate_is_generated = not crate_accessor.root.is_source
+
+    crate_location = ""
+
+    if not crate_is_from_workspace or crate_is_generated:
+        crate_location = "EXEC_ROOT"
+    else:
+        crate_location = "WORKSPACE_DIR"
+
+    deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep)]
 
     rust_crate_struct = struct(
-        id = str(target.label),
+        bazel_id = str(target.label),
+        crate_id = crate_accessor.root.path,
+        location = crate_location,
         name = crate_accessor.name,
-        crate_root_url = crate_accessor.root.path,
         kind = crate_accessor.type,
         edition = crate_accessor.edition,
         crate_features = ctx.rule.attr.crate_features,
-        direct_dependencies = direct_dependencies,
+        direct_dependencies = deps,
+        from_workspace = crate_is_from_workspace,
     )
 
     print(rust_crate_struct)
@@ -591,3 +606,4 @@ bsp_target_info_aspect = aspect(
     attr_aspects = ALL_DEPS,
     toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE],
 )
+

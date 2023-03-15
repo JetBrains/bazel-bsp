@@ -43,7 +43,7 @@ message JavaToolchainInfo {
   string source_version = 1;
   string target_version = 2;
   FileLocation java_home = 3;
-}
+
 
 message JavaRuntimeInfo {
   FileLocation java_home = 1;
@@ -70,8 +70,14 @@ message RustDependencyInfo {
     string rename = 20;
 }
 
+enum RustCrateLocation {
+    WORKSPACE_DIR = 0;
+    EXEC_ROOT = 1;
+}
+
 message RustCrateInfo {
     string id = 5;
+    RustCrateLocation location = 7;
     string name = 10;
     string crate_root_url = 20;
     string kind = 30;
