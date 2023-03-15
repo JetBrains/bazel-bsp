@@ -43,7 +43,7 @@ message JavaToolchainInfo {
   string source_version = 1;
   string target_version = 2;
   FileLocation java_home = 3;
-
+}
 
 message JavaRuntimeInfo {
   FileLocation java_home = 1;
@@ -65,8 +65,7 @@ message CppTargetInfo {
 }
 
 message RustDependencyInfo {
-    string id = 5;
-    string name = 10;
+    string crate_id = 10;
     string rename = 20;
 }
 
@@ -76,14 +75,14 @@ enum RustCrateLocation {
 }
 
 message RustCrateInfo {
-    string id = 5;
-    RustCrateLocation location = 7;
-    string name = 10;
-    string crate_root_url = 20;
-    string kind = 30;
-    string edition = 40;
-    repeated string crate_features = 50;
-    repeated RustDependencyInfo dependencies = 60;
+    string bazel_id = 10;
+    string crate_id = 20;
+    RustCrateLocation location = 30;
+    string name = 40;
+    string kind = 50;
+    string edition = 60;
+    repeated string crate_features = 70;
+    repeated RustDependencyInfo dependencies = 80;
 }
 
 message TargetInfo {

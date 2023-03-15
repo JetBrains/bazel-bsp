@@ -364,7 +364,6 @@ def extract_rust_crate_info(target, ctx):
 
     def wrap_dependency(dep):
       return struct(
-        bazel_id = str(dep.label),
         # This is stable and unique, according to `rust_analyzer.bzl`
         crate_id = dep[CrateInfo].root.path,
         rename = "", # TODO: Without a public `DepInfo` provider, we *cannot* get a rename.
@@ -382,6 +381,8 @@ def extract_rust_crate_info(target, ctx):
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep)]
 
+    # To obtain crate root file, concatenate directory corresponding to
+    # `crate_location` with `crate_id` (relative crate root file path)
     rust_crate_struct = struct(
         bazel_id = str(target.label),
         crate_id = crate_accessor.root.path,
@@ -390,8 +391,7 @@ def extract_rust_crate_info(target, ctx):
         kind = crate_accessor.type,
         edition = crate_accessor.edition,
         crate_features = ctx.rule.attr.crate_features,
-        direct_dependencies = deps,
-        from_workspace = crate_is_from_workspace,
+        dependencies = deps,
     )
 
     print(rust_crate_struct)
