@@ -1,3 +1,5 @@
+load("@rules_rust//rust:rust_common.bzl", "CrateInfo")
+
 def filter(f, xs):
     return [x for x in xs if f(x)]
 
@@ -312,6 +314,75 @@ def extract_cpp_target_info(target, ctx):
         link_shared = getattr(ctx.rule.attr, "linkshared", False),
     )
 
+def extract_rust_crate_info(target, ctx):
+    if CrateInfo not in target:
+        return None
+
+    crate_accessor = target[CrateInfo]
+
+    # Uncomment the following code fragment to print everything that
+    # can be extracted from the public API.
+    #
+    # That's too much and too little at the same time for our use case.
+    #
+    # Some fields (like `crate_rustc_env`) apply directly to the `rustc`
+    # compiler and do not have a meaningful translation to `cargo metadata`
+    # fields.
+    #
+    # On the other hand, some cargo-specific data (like the existence of
+    # packages with many targets, `features` and `use_default_features` in
+    # dependencies, etc.) do not exist in Bazel and low-level `rustc`.
+    #
+    debug_struct_ = create_struct(
+         attributes = ctx.rule.attr,
+         crate_deps = crate_accessor.deps,
+         crate_aliases = crate_accessor.aliases,
+         crate_compile_data = crate_accessor.compile_data,
+         crate_compile_data_targets = crate_accessor.compile_data_targets,
+         crate_edition = crate_accessor.edition,
+         crate_is_test = crate_accessor.is_test,
+         crate_name = crate_accessor.name,
+         crate_output = crate_accessor.output,
+         crate_owner = crate_accessor.owner,
+         crate_proc_macro_deps = crate_accessor.owner,
+         crate_root = crate_accessor.root,
+         crate_rustc_env = crate_accessor.rustc_env,
+         crate_rustc_env_files = crate_accessor.rustc_env_files,
+         crate_type = crate_accessor.type,
+         crate_wrapped_crate_type = crate_accessor.wrapped_crate_type,
+     )
+
+    print(debug_struct_)
+
+    def generate_rust_dependency_info(dep):
+      if CrateInfo not in dep:
+        return None
+
+      return struct(
+        id = str(dep.label),
+        name = dep[CrateInfo].name,
+        # TODO: Without a public `DepInfo` provider, we *cannot* get a rename.
+        rename = "",
+      )
+
+    direct_dependencies = [
+      generate_rust_dependency_info(dep) for dep in ctx.rule.attr.deps
+    ]
+
+    rust_crate_struct = struct(
+        id = str(target.label),
+        name = crate_accessor.name,
+        crate_root_url = crate_accessor.root.path,
+        kind = crate_accessor.type,
+        edition = crate_accessor.edition,
+        crate_features = ctx.rule.attr.crate_features,
+        direct_dependencies = direct_dependencies,
+    )
+
+    print(rust_crate_struct)
+
+    return rust_crate_struct
+
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
     aspect_ids = None
@@ -467,6 +538,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_target_info = extract_java_info(target, ctx, output_groups) if not "manual" in rule_attrs.tags else None
     scala_toolchain_info = extract_scala_toolchain_info(target, ctx, output_groups) if not "manual" in rule_attrs.tags else None
     scala_target_info = extract_scala_info(target, ctx, output_groups)
+    rust_crate_info = extract_rust_crate_info(target, ctx)
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
     cpp_target_info = extract_cpp_target_info(target, ctx)
@@ -483,6 +555,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_target_info = java_target_info,
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
+        rust_crate_info = rust_crate_info,
         cpp_target_info = cpp_target_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),

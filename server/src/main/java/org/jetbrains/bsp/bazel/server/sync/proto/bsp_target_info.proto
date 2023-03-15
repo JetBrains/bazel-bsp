@@ -64,6 +64,22 @@ message CppTargetInfo {
   bool link_shared = 4;
 }
 
+message RustDependencyInfo {
+    string id = 5;
+    string name = 10;
+    string rename = 20;
+}
+
+message RustCrateInfo {
+    string id = 5;
+    string name = 10;
+    string crate_root_url = 20;
+    string kind = 30;
+    string edition = 40;
+    repeated string crate_features = 50;
+    repeated RustDependencyInfo dependencies = 60;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -79,4 +95,5 @@ message TargetInfo {
   ScalaTargetInfo scala_target_info = 4000;
   ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
+  RustCrateInfo rust_crate_info = 7000;
 }
