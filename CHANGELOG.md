@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 
+## [2.6.0]
+
 ### Features 🎉
 
 - Project view file flag for disabling trace log.
@@ -13,6 +15,8 @@
   | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
 
 ### Fixes
+- Fixed handle bazelisk exec on windows.
+  | [#6294219](https://github.com/JetBrains/bazel-bsp/commit/629421998dcd1adb1e9c87973a128b207b9993eb)
 - Reduced memory footprint of the application after project import is done
   | [#359](https://github.com/JetBrains/bazel-bsp/pull/359)
 - Exit bazel-bsp process when std io streams are closed
@@ -330,7 +334,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.5.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0...HEAD
+
+[2.6.0]: https://github.com/JetBrains/bazel-bsp/compare/2.5.1..2.6.0
 
 [2.5.1]: https://github.com/JetBrains/bazel-bsp/compare/2.5.0..2.5.1
 
