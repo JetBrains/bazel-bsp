@@ -15,6 +15,8 @@
 ### Fixes
 - Reduced memory footprint of the application after project import is done
   | [#359](https://github.com/JetBrains/bazel-bsp/pull/359)
+- Exit bazel-bsp process when std io streams are closed
+  | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
 
 ## [2.5.1] - 08.02.2023
 
