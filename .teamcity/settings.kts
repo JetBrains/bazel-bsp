@@ -5,6 +5,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPu
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.ScheduleTrigger
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 
 version = "2022.10"
@@ -79,6 +81,23 @@ project {
         }
     }
 
+    buildType(Release.Nightly)
+
+    Release.Nightly.triggers {
+        schedule {
+            schedulingPolicy = daily {
+                hour = 2
+                timezone = "Europe/Berlin"
+            }
+            branchFilter = "+:<default>"
+            triggerBuild = onWatchedBuildChange {
+                buildType = "${ResultsAggregator.id}"
+                watchedBuildRule = ScheduleTrigger.WatchedBuildRule.LAST_SUCCESSFUL
+            }
+        }
+    }
+
+
     buildTypesOrderIds = arrayListOf(
         RelativeId("FormatBuildifier"),
         RelativeId("FormatGoogleJavaFormat"),
@@ -88,7 +107,8 @@ project {
         RelativeId("E2eTestsE2eBazelBspLocalJdkTestTest"),
         RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTest"),
         RelativeId("E2eTestsE2eBazelBspCppProjectTestTest"),
-        RelativeId("ReleaseNewRelease"),
+        RelativeId("PublishNightly"),
+        RelativeId("PublishNewRelease"),
         RelativeId("PipelineResults")
     )
 }
