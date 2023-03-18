@@ -62,6 +62,11 @@ project {
 
     allSteps.forEach { buildType(it) }
 
+    allSteps.forEach { it.requirements {
+        contains("cloud.amazon.agent-name-prefix", "default-linux-aws")
+        }
+    }
+
     // we dont want to trigger it here for releases
     allSteps.dropLast(1).last().triggers {
         vcs {
@@ -97,6 +102,9 @@ project {
         }
     }
 
+    Release.Nightly.requirements {
+        contains("cloud.amazon.agent-name-prefix", "default-linux-aws")
+    }
 
     buildTypesOrderIds = arrayListOf(
         RelativeId("FormatBuildifier"),
