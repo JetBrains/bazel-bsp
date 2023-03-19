@@ -312,11 +312,11 @@ class BspProjectMapper(
                     "0.1.0",
                     "WORKSPACE",
                     "2018",
-                    null, // "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/src/main.rs",
+                    null,
                     listOf<RustTarget>(
                         RustTarget(
                             "hello_world",
-                            "file:///home/tudny/Documents/UW/MIMUW/ZPP/bazel-bsp-zpp-fork/hello-world/hello_world/src/main.rs",
+                            "file:///home/matt/uw/zpp/rust-bazel-bsp-sample/hello_world/src/main.rs",
                             "application",
                             "2018",
                             false,
@@ -325,9 +325,9 @@ class BspProjectMapper(
                     ),
                     listOf<RustFeature>(),
                     listOf<String>(),
-                    null, // RustCfgOptions(listOf<RustKeyValueMapper>(), listOf<String>()), // RustCfgOptions(RustKeyValueMapper("dupa", listOf<String>()), listOf<String>()),
+                    null,
                     listOf<RustEnvData>(
-                        RustEnvData("CARGO_MANIFEST_DIF", "/home/tudny/Documents/UW/MIMUW/ZPP/bazel-bsp-zpp-fork/hello-world/hello_world"),
+                        RustEnvData("CARGO_MANIFEST_DIF", "/home/matt/uw/zpp/rust-bazel-bsp-sample/hello_world"),
                         RustEnvData("CARGO", "cargo"),
                         RustEnvData("CARGO_PKG_VERSION", "0.1.0"),
                         RustEnvData("CARGO_PKG_VERSION_MAJOR", "0"),
@@ -342,14 +342,73 @@ class BspProjectMapper(
                         RustEnvData("CARGO_PKG_LICENSE_FILE", ""),
                         RustEnvData("CARGO_CRATE_NAME", "hello_world"),
                     ),
-                    null, // "/mnt/27e923d6-8904-475e-905f-978834da3357/second/uw/zpp/basic-example/hello_world/build/",
-                    null, // RustProcMacroArtifact("xddd", "2137")
+                    null,
+                    null,
+                ),
+
+                RustPackage(
+                    BuildTargetIdentifier("//hello_lib:hello_lib"),
+                    "0.1.0",
+                    "WORKSPACE",
+                    "2018",
+                    null,
+                    listOf<RustTarget>(
+                        RustTarget(
+                            "hello_lib",
+                            "file:///home/matt/uw/zpp/rust-bazel-bsp-sample/hello_lib/src/lib.rs",
+                            "library",
+                            "2018",
+                            false,
+                            listOf<String>()
+                        )
+                    ),
+                    listOf<RustFeature>(),
+                    listOf<String>(),
+                    null,
+                    listOf<RustEnvData>(
+                        RustEnvData("CARGO_MANIFEST_DIF", "/home/matt/uw/zpp/rust-bazel-bsp-sample/hello_lib"),
+                        RustEnvData("CARGO", "cargo"),
+                        RustEnvData("CARGO_PKG_VERSION", "0.1.0"),
+                        RustEnvData("CARGO_PKG_VERSION_MAJOR", "0"),
+                        RustEnvData("CARGO_PKG_VERSION_MINOR", "1"),
+                        RustEnvData("CARGO_PKG_VERSION_PATCH", "0"),
+                        RustEnvData("CARGO_PKG_VERSION_PRE", ""),
+                        RustEnvData("CARGO_PKG_AUTHORS", ""),
+                        RustEnvData("CARGO_PKG_NAME", "hello_lib"),
+                        RustEnvData("CARGO_PKG_DESCRIPTION", ""),
+                        RustEnvData("CARGO_PKG_REPOSITORY", ""),
+                        RustEnvData("CARGO_PKG_LICENSE", ""),
+                        RustEnvData("CARGO_PKG_LICENSE_FILE", ""),
+                        RustEnvData("CARGO_CRATE_NAME", "hello_lib"),
+                    ),
+                    null,
+                    null,
                 )
             ),
+
             listOf<RustRawDependency>(
-                // RustRawDependency()
+                RustRawDependency(
+                    "//hello_world:hello_world",
+                    "hello_lib",
+                    null,
+                    null,
+                    null,
+                    false,
+                    true,
+                    listOf<String>()
+                )
             ),
-            listOf<RustDependency>()
+
+            listOf<RustDependency>(
+                RustDependency(
+                    "//hello_world:hello_world",
+                    "//hello_lib:hello_lib",
+                    null,
+                    listOf<RustDepKindInfo>(
+                        RustDepKindInfo("normal", null)
+                    )
+                )
+            )
         )
     }
 }
