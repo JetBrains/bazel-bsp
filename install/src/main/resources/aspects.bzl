@@ -314,6 +314,11 @@ def extract_cpp_target_info(target, ctx):
         link_shared = getattr(ctx.rule.attr, "linkshared", False),
     )
 
+# This is supposed to be enum, but Starlark does not support enums.
+# See bsp_target_info.proto:RustCrateLocation.
+WORKSPACE_DIR = 0
+EXEC_ROOT = 1
+
 def extract_rust_crate_info(target, ctx):
     if CrateInfo not in target:
         return None
@@ -384,7 +389,7 @@ def extract_rust_crate_info(target, ctx):
         # in bazel-bsp
         # (see rules_rust/tools/rust_analyzer/aquery.rs:consolidate_crate_specs).
         crate_id = crate_accessor.root.path,
-        location = "EXEC_ROOT" if crate_is_in_exec_root else "WORKSPACE_DIR",
+        location = EXEC_ROOT if crate_is_in_exec_root else WORKSPACE_DIR,
         from_workspace = crate_is_from_workspace,
         name = crate_accessor.name,
         kind = crate_accessor.type,
