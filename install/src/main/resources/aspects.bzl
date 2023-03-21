@@ -384,7 +384,6 @@ def extract_rust_crate_info(target, ctx):
     # file path); this has be done in bazel-bsp
     # (see rules_rust/tools/rust_analyzer/rust_project.rs:write_rust_project).
     rust_crate_struct = struct(
-        bazel_id = str(target.label),
         # The `crate-id` field must be unique. The deduplication has to be done
         # in bazel-bsp
         # (see rules_rust/tools/rust_analyzer/aquery.rs:consolidate_crate_specs).

@@ -75,7 +75,6 @@ enum RustCrateLocation {
 }
 
 message RustCrateInfo {
-    string bazel_id = 10;
     string crate_id = 20;
     RustCrateLocation location = 30;
     bool from_workspace = 40;

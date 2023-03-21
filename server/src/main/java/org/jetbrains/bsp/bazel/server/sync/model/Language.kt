@@ -10,7 +10,8 @@ enum class Language(
     JAVA("java", hashSetOf(".java"), binary_targets = setOf("java_binary")),
     KOTLIN("kotlin", hashSetOf(".kt"), setOf("kt_jvm_binary"), hashSetOf(JAVA.id)),
     CPP("cpp", hashSetOf(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
-    THRIFT("thrift", hashSetOf(".thrift"));
+    THRIFT("thrift", hashSetOf(".thrift")),
+    RUST("rust", hashSetOf(".rs"));
 
     val allNames: Set<String> = dependentNames + id
 
