@@ -30,7 +30,8 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         val examplePythonBuildTarget =
             PythonBuildTarget(
                 "PY3",
-                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh"
+                "file://\$BAZEL_CACHE/external/python3_9_x86_64-unknown-linux-gnu/bin/python3",
+//                "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/external/bazel_tools/tools/python/py3wrapper.sh"
             )
 
         val examplePythonLibBuildTarget =
@@ -53,7 +54,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("$targetPrefix//lib:example_library"),
             listOf("library"),
             listOf("python"),
-            listOf(),
+            listOf(BuildTargetIdentifier("@pip_deps_numpy//:pkg")),
             BuildTargetCapabilities(true, false, false, false)
         )
         exampleExampleLibBuildTarget.displayName = "$targetPrefix//lib:example_library"
