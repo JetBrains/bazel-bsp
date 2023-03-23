@@ -14,8 +14,8 @@ class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,
     val javaLanguagePlugin: JavaLanguagePlugin,
     val cppLanguagePlugin: CppLanguagePlugin,
-    val rustLanguagePlugin: RustLanguagePlugin,
-    private val thriftLanguagePlugin: ThriftLanguagePlugin
+    private val thriftLanguagePlugin: ThriftLanguagePlugin,
+    val rustLanguagePlugin: RustLanguagePlugin
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
