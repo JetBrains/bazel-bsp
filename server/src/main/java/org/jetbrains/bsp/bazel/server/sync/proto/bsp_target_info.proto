@@ -81,8 +81,9 @@ message RustCrateInfo {
     string name = 50;
     string kind = 60;
     string edition = 70;
-    repeated string crate_features = 80;
-    repeated RustDependencyInfo dependencies = 90;
+    string out_dir = 80;
+    repeated string crate_features = 90;
+    repeated RustDependencyInfo dependencies = 100;
 }
 
 message TargetInfo {

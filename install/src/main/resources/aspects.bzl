@@ -1,4 +1,4 @@
-load("@rules_rust//rust:rust_common.bzl", "CrateInfo")
+load("@rules_rust//rust:rust_common.bzl", "CrateInfo", "BuildInfo", "DepInfo")
 
 def filter(f, xs):
     return [x for x in xs if f(x)]
@@ -323,7 +323,9 @@ def extract_rust_crate_info(target, ctx):
     if CrateInfo not in target:
         return None
 
-    crate_accessor = target[CrateInfo]
+    crate_info = target[CrateInfo]
+    dep_info = target[DepInfo]
+    build_info = None if not BuildInfo in target else target[BuildInfo]
 
     # Uncomment the following code fragment to print everything that
     # can be extracted from the public API.
@@ -340,26 +342,26 @@ def extract_rust_crate_info(target, ctx):
     #
     # debug_struct_ = create_struct(
     #      attributes = ctx.rule.attr,
-    #      crate_deps = crate_accessor.deps,
-    #      crate_aliases = crate_accessor.aliases,
-    #      crate_compile_data = crate_accessor.compile_data,
-    #      crate_compile_data_targets = crate_accessor.compile_data_targets,
-    #      crate_edition = crate_accessor.edition,
-    #      crate_is_test = crate_accessor.is_test,
-    #      crate_name = crate_accessor.name,
-    #      crate_output = crate_accessor.output,
-    #      crate_owner = crate_accessor.owner,
-    #      crate_proc_macro_deps = crate_accessor.owner,
-    #      crate_root = crate_accessor.root,
-    #      crate_rustc_env = crate_accessor.rustc_env,
-    #      crate_rustc_env_files = crate_accessor.rustc_env_files,
-    #      crate_type = crate_accessor.type,
-    #      crate_wrapped_crate_type = crate_accessor.wrapped_crate_type,
+    #      crate_deps = crate_info.deps,
+    #      crate_aliases = crate_info.aliases,
+    #      crate_compile_data = crate_info.compile_data,
+    #      crate_compile_data_targets = crate_info.compile_data_targets,
+    #      crate_edition = crate_info.edition,
+    #      crate_is_test = crate_info.is_test,
+    #      crate_name = crate_info.name,
+    #      crate_output = crate_info.output,
+    #      crate_owner = crate_info.owner,
+    #      crate_proc_macro_deps = crate_info.owner,
+    #      crate_root = crate_info.root,
+    #      crate_rustc_env = crate_info.rustc_env,
+    #      crate_rustc_env_files = crate_info.rustc_env_files,
+    #      crate_type = crate_info.type,
+    #      crate_wrapped_crate_type = crate_info.wrapped_crate_type,
     #  )
     #
     # print(debug_struct_)
 
-    crate_root_path = crate_accessor.root.path
+    crate_root_path = crate_info.root.path
 
     def is_same_crate(dep):
         if CrateInfo not in dep:
@@ -373,11 +375,13 @@ def extract_rust_crate_info(target, ctx):
         rename = "", # TODO: Without a public `DepInfo` provider, we *cannot* get a rename.
       )
 
-    crate_is_from_workspace = not crate_accessor.root.path.startswith("external/")
-    crate_is_generated = not crate_accessor.root.is_source
+    crate_is_from_workspace = not crate_info.root.path.startswith("external/")
+    crate_is_generated = not crate_info.root.is_source
     crate_is_in_exec_root = not crate_is_from_workspace or crate_is_generated
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep)]
+
+
 
     # To obtain crate root file, find directory corresponding to
     # `crate_location` and concatenate it with `crate_id` (relative crate root
@@ -387,12 +391,13 @@ def extract_rust_crate_info(target, ctx):
         # The `crate-id` field must be unique. The deduplication has to be done
         # in bazel-bsp
         # (see rules_rust/tools/rust_analyzer/aquery.rs:consolidate_crate_specs).
-        crate_id = crate_accessor.root.path,
+        crate_id = crate_info.root.path,
         location = EXEC_ROOT if crate_is_in_exec_root else WORKSPACE_DIR,
         from_workspace = crate_is_from_workspace,
-        name = crate_accessor.name,
-        kind = crate_accessor.type,
-        edition = crate_accessor.edition,
+        name = crate_info.name,
+        kind = crate_info.type,
+        edition = crate_info.edition,
+        out_dir = "" if build_info == None else build_info.out_dir.path,
         crate_features = ctx.rule.attr.crate_features,
         dependencies = deps,
     )
