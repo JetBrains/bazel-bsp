@@ -57,7 +57,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val samplePath = when (try { System.getenv("USER") } catch (_: Exception) { "matt" }) {
             "matt" -> "/home/matt/uw/zpp/rust-bazel-bsp-sample"
             "tudny" -> "/home/tudny/Documents/UW/MIMUW/ZPP/rust-bazel-bsp-sample"
-            "xewar" -> "/home/mikolaj/Desktop/zpp/rust-bazel-bsp-sample"
+            "mikolaj" -> "/home/mikolaj/Desktop/zpp/rust-bazel-bsp-sample"
             else -> "/home/matt/uw/zpp/rust-bazel-bsp-sample" // dla Pana marudy
         }
 
