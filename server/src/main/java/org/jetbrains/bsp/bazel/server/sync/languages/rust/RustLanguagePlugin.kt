@@ -58,7 +58,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             "matt" -> "/home/matt/uw/zpp/rust-bazel-bsp-sample"
             "tudny" -> "/home/tudny/Documents/UW/MIMUW/ZPP/rust-bazel-bsp-sample"
             "mikolaj" -> "/home/mikolaj/Desktop/zpp/rust-bazel-bsp-sample"
-            else -> "/home/matt/uw/zpp/rust-bazel-bsp-sample" // dla Pana marudy
+            else -> "/Users/przemek/ZPP/rust-bazel-bsp-sample" // dla Pana marudy
         }
 
         return RustWorkspaceResult(

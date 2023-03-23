@@ -59,7 +59,7 @@ class ServerContainer internal constructor(
             val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
             val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
             val languagePluginsService = LanguagePluginsService(
-                scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, rustLanguagePlugin, thriftLanguagePlugin
+                scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin, rustLanguagePlugin
             )
             val targetKindResolver = TargetKindResolver()
             val bazelProjectMapper =
