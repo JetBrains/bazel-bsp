@@ -12,7 +12,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
     override fun repoName(): String = "python-project"
 
-    override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
+    override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets(), dependencySourcesResults())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
 
@@ -41,8 +41,10 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("$targetPrefix//example:example"),
             listOf("application"),
             listOf("python"),
-            listOf(BuildTargetIdentifier("$targetPrefix//lib:example_library"),
-                BuildTargetIdentifier("@requests//:srcs")),
+            listOf(
+                BuildTargetIdentifier("$targetPrefix//lib:example_library"),
+                BuildTargetIdentifier("@requests//:srcs")
+            ),
             BuildTargetCapabilities(true, false, true, false)
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
@@ -86,6 +88,43 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             testClient.testWorkspaceTargets(
                 Duration.ofSeconds(60),
                 workspaceBuildTargetsResult
+            )
+        }
+    }
+
+    private fun dependencySourcesResults(): BazelBspTestScenarioStep {
+        val examplePythonDependencySourcesItem = DependencySourcesItem(
+            BuildTargetIdentifier("$targetPrefix//lib:example_library"),
+            listOf(
+                "file://\$BAZEL_CACHE/external/pip_deps_numpy/"
+            )
+        )
+
+        val pythonLibPythonBuildTarget =
+            PythonBuildTarget(null, null)
+
+        val pythonLibBuildTarget = BuildTarget(
+            BuildTargetIdentifier("$targetPrefix//lib:example_library"),
+            listOf("library"),
+            listOf("python"),
+            listOf(BuildTargetIdentifier("@pip_deps_numpy//:pkg")),
+            BuildTargetCapabilities(true, false, false, false)
+        )
+        pythonLibBuildTarget.displayName = "$targetPrefix//lib:example_library"
+        pythonLibBuildTarget.baseDirectory = "file://\$WORKSPACE/lib/"
+        pythonLibBuildTarget.data = pythonLibPythonBuildTarget
+        pythonLibBuildTarget.dataKind = BuildTargetDataKind.PYTHON
+
+        val expectedWorkspaceBuildTargetsResult = WorkspaceBuildTargetsResult(listOf(pythonLibBuildTarget))
+        val expectedTargetIdentifiers = expectedWorkspaceBuildTargetsResult.targets.map { it.id }
+        val expectedDependencies = DependencySourcesResult(listOf(examplePythonDependencySourcesItem))
+
+        val dependencySourcesParams = DependencySourcesParams(expectedTargetIdentifiers)
+        return BazelBspTestScenarioStep(
+            "dependency sources results"
+        ) {
+            testClient.testDependencySources(
+                Duration.ofSeconds(30), dependencySourcesParams, expectedDependencies
             )
         }
     }
