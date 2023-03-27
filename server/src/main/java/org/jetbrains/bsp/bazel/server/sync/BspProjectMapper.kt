@@ -305,7 +305,7 @@ class BspProjectMapper(
     fun rustWorkspace(
         project: Project
     ): RustWorkspaceResult {
-        val module = project.modules.filter{it.languageData is RustModule}[0]
+        val module = project.modules.filter{it.languageData is RustModule}
         val rustLanguagePlugin = languagePluginsService.rustLanguagePlugin
         val result = rustLanguagePlugin.toRustWorkspaceResult(module)
         return result

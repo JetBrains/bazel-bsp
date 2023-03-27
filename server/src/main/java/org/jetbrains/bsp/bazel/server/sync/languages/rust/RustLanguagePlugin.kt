@@ -53,7 +53,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         // TODO
     }
 
-    fun toRustWorkspaceResult(module: Module): RustWorkspaceResult {
+    fun toRustWorkspaceResult(modules: List<Module>): RustWorkspaceResult {
         val samplePath = when (try { System.getenv("USER") } catch (_: Exception) { "matt" }) {
             "matt" -> "/home/matt/uw/zpp/rust-bazel-bsp-sample"
             "tudny" -> "/home/tudny/Documents/UW/MIMUW/ZPP/rust-bazel-bsp-sample"
