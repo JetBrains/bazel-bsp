@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.RunParams
 import ch.epfl.scala.bsp4j.RunResult
 import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
+import io.grpc.Server
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
@@ -17,6 +18,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
+import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -31,6 +33,17 @@ class ExecuteService(
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientTestNotifier: BspClientTestNotifier
 ) {
+    private fun <T> withBepServer(body : (Server) -> T) :T {
+        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot)
+        val nettyServer = BepServer.nettyServerBuilder().addService(server).build()
+        nettyServer.start()
+        try {
+            return body(nettyServer)
+        } finally {
+            nettyServer.shutdown()
+        }
+    }
+
     fun compile(cancelChecker: CancelChecker, params: CompileParams): CompileResult {
         val targets = selectTargets(cancelChecker, params.targets)
         val result = build(cancelChecker, targets, params.originId)
@@ -44,12 +57,15 @@ class ExecuteService(
             return TestResult(result.statusCode)
         }
         val targetsSpec = TargetsSpec(targets, emptyList())
-        result = bazelRunner.commandBuilder().test()
-            .withTargets(targetsSpec)
-            .withArguments(params.arguments)
-            .withFlag(BazelFlag.testOutputAll())
-            .executeBazelBesCommand(params.originId)
-            .waitAndGetResult(cancelChecker, true)
+
+        result = withBepServer {server ->
+            bazelRunner.commandBuilder().test()
+                .withTargets(targetsSpec)
+                .withArguments(params.arguments)
+                .withFlag(BazelFlag.testOutputAll())
+                .executeBazelBesCommand(params.originId, server.port)
+                .waitAndGetResult(cancelChecker, true)
+        }
         JUnit5TestParser(bspClientTestNotifier).processTestOutput(result)
         return TestResult(result.statusCode).apply {
             originId = originId
@@ -74,14 +90,18 @@ class ExecuteService(
             return RunResult(result.statusCode)
         }
         val bazelProcessResult =
-            bazelRunner.commandBuilder().run().withArgument(BspMappings.toBspUri(bspId))
-                .withArguments(params.arguments).executeBazelBesCommand(params.originId).waitAndGetResult(cancelChecker)
+            withBepServer { server ->
+                bazelRunner.commandBuilder().run().withArgument(BspMappings.toBspUri(bspId))
+                    .withArguments(params.arguments).executeBazelBesCommand(params.originId, server.port)
+                    .waitAndGetResult(cancelChecker)
+            }
         return RunResult(bazelProcessResult.statusCode).apply { originId = originId }
     }
 
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
-        val bazelResult =
-            bazelRunner.commandBuilder().clean().executeBazelBesCommand().waitAndGetResult(cancelChecker)
+        val bazelResult = withBepServer { server ->
+            bazelRunner.commandBuilder().clean().executeBazelBesCommand(bazelBesPort = server.port).waitAndGetResult(cancelChecker)
+        }
         return CleanCacheResult(bazelResult.stdout, true)
     }
 

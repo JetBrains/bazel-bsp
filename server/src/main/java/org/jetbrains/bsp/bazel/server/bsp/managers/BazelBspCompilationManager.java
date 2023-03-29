@@ -1,16 +1,13 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
-import io.grpc.netty.NettyServerBuilder;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
-import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 
 public class BazelBspCompilationManager {
@@ -33,17 +30,13 @@ public class BazelBspCompilationManager {
       TargetsSpec targetSpecs,
       Seq<String> extraFlags,
       String originId) {
-    var bepServer = new BepServer(client, new DiagnosticsService(workspaceRoot));
-    var server =
-        NettyServerBuilder.forAddress(new InetSocketAddress("localhost", 0))
-            .addService(bepServer)
-            .build();
+    var bepServer = BepServer.newBepServer(client, workspaceRoot);
+    var nettyServer = BepServer.nettyServerBuilder().addService(bepServer).build();
     try {
-      server.start();
+      nettyServer.start();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    bazelRunner.setBesBackendPort(server.getPort());
     try {
       var result =
           bazelRunner
@@ -51,11 +44,11 @@ public class BazelBspCompilationManager {
               .build()
               .withFlags(extraFlags.asJava())
               .withTargets(targetSpecs)
-              .executeBazelBesCommand(originId)
+              .executeBazelBesCommand(originId, nettyServer.getPort())
               .waitAndGetResult(cancelChecker, true);
       return new BepBuildResult(result, bepServer.getBepOutput());
     } finally {
-      server.shutdown();
+      nettyServer.shutdown();
     }
   }
 
@@ -63,7 +56,15 @@ public class BazelBspCompilationManager {
     this.client = client;
   }
 
+  public BuildClient getClient() {
+    return client;
+  }
+
   public void setWorkspaceRoot(Path workspaceRoot) {
     this.workspaceRoot = workspaceRoot;
+  }
+
+  public Path getWorkspaceRoot() {
+    return workspaceRoot;
   }
 }
