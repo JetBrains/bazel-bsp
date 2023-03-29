@@ -11,9 +11,10 @@ import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskProgressParams;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import com.google.common.collect.Sets;
-import io.grpc.ServerBuilder;
+import io.grpc.netty.NettyServerBuilder;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -102,7 +103,10 @@ class BloopExporter {
         new BepServer(
             client, new DiagnosticsService(serverContainer.getBazelInfo().getWorkspaceRoot()));
 
-    var grpcServer = ServerBuilder.forPort(0).addService(bepServer).build();
+    var grpcServer =
+        NettyServerBuilder.forAddress(new InetSocketAddress("localhost", 0))
+            .addService(bepServer)
+            .build();
     try {
       grpcServer.start();
     } catch (IOException ex) {
