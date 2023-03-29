@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [2.6.1]
+
+### SECURITY 🚨
+
+- Make BEP Server listening on localhost instead of 0.0.0.0.
+  | [#369](https://github.com/JetBrains/bazel-bsp/pull/369)
+
+### Fixes 🛠️
+
+- Create BEP server on demand for each Bazel call.
+  | [#370](https://github.com/JetBrains/bazel-bsp/pull/370)
+
 ## [2.6.0]
 
 ### Features 🎉
@@ -14,7 +26,8 @@
 - Create BEP connection on demands instead of keeping it as a service (reduces memory footprint)
   | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
 
-### Fixes
+### Fixes 🛠️
+
 - Fixed handle bazelisk exec on windows.
   | [#6294219](https://github.com/JetBrains/bazel-bsp/commit/629421998dcd1adb1e9c87973a128b207b9993eb)
 - Reduced memory footprint of the application after project import is done
@@ -334,7 +347,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1...HEAD
+
+[2.6.1]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0..2.6.1
 
 [2.6.0]: https://github.com/JetBrains/bazel-bsp/compare/2.5.1..2.6.0
 
