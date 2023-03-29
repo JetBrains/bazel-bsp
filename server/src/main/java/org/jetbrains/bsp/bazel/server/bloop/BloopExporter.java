@@ -108,7 +108,6 @@ class BloopExporter {
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
-    serverContainer.getBazelRunner().setBesBackendPort(grpcServer.getPort());
   }
 
   private void cleanUpBloopDirectory(Set<Path> expected, Path bloopRoot) {

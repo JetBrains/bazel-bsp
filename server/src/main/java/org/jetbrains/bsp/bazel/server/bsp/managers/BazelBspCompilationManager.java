@@ -39,7 +39,6 @@ public class BazelBspCompilationManager {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    bazelRunner.setBesBackendPort(server.getPort());
     try {
       var result =
           bazelRunner
@@ -47,7 +46,7 @@ public class BazelBspCompilationManager {
               .build()
               .withFlags(extraFlags.asJava())
               .withTargets(targetSpecs)
-              .executeBazelBesCommand(originId)
+              .executeBazelBesCommand(originId, server.getPort())
               .waitAndGetResult(cancelChecker, true);
       return new BepBuildResult(result, bepServer.getBepOutput());
     } finally {
@@ -59,7 +58,15 @@ public class BazelBspCompilationManager {
     this.client = client;
   }
 
+  public BuildClient getClient() {
+    return client;
+  }
+
   public void setWorkspaceRoot(Path workspaceRoot) {
     this.workspaceRoot = workspaceRoot;
+  }
+
+  public Path getWorkspaceRoot() {
+    return workspaceRoot;
   }
 }
