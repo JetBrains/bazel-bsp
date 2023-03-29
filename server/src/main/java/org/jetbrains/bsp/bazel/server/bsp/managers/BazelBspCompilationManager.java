@@ -1,10 +1,11 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
-import io.grpc.ServerBuilder;
+import io.grpc.netty.NettyServerBuilder;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
@@ -33,7 +34,10 @@ public class BazelBspCompilationManager {
       Seq<String> extraFlags,
       String originId) {
     var bepServer = new BepServer(client, new DiagnosticsService(workspaceRoot));
-    var server = ServerBuilder.forPort(0).addService(bepServer).build();
+    var server =
+        NettyServerBuilder.forAddress(new InetSocketAddress("localhost", 0))
+            .addService(bepServer)
+            .build();
     try {
       server.start();
     } catch (IOException e) {
