@@ -11,10 +11,7 @@ import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskProgressParams;
 import ch.epfl.scala.bsp4j.TaskStartParams;
 import com.google.common.collect.Sets;
-import io.grpc.netty.NettyServerBuilder;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -25,11 +22,9 @@ import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier;
-import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager;
 import org.jetbrains.bsp.bazel.server.common.ServerContainer;
-import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectStorage;
 import org.jetbrains.bsp.bazel.server.sync.model.Project;
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider;
@@ -99,20 +94,10 @@ class BloopExporter {
 
   private void initializeClient(ServerContainer serverContainer, BloopBuildClient client) {
     serverContainer.getBspClientLogger().initialize(client);
-    var bepServer =
-        new BepServer(
-            client, new DiagnosticsService(serverContainer.getBazelInfo().getWorkspaceRoot()));
-
-    var grpcServer =
-        NettyServerBuilder.forAddress(new InetSocketAddress("localhost", 0))
-            .addService(bepServer)
-            .build();
-    try {
-      grpcServer.start();
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
-    serverContainer.getBazelRunner().setBesBackendPort(grpcServer.getPort());
+    serverContainer.getCompilationManager().setClient(client);
+    serverContainer
+        .getCompilationManager()
+        .setWorkspaceRoot(serverContainer.getBazelInfo().getWorkspaceRoot());
   }
 
   private void cleanUpBloopDirectory(Set<Path> expected, Path bloopRoot) {
