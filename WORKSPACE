@@ -206,7 +206,7 @@ maven_install(
         "org.scala-lang:scala-library:2.13.10",
         "com.google.protobuf:protobuf-java:3.21.12",
         "io.grpc:grpc-stub:1.51.1",
-        "com.github.zpp-This-is-fine:build-server-protocol:1c9277a35d101dbf07a910a23f496201b26418cd",
+        "com.github.zpp-This-is-fine:build-server-protocol:rust-meta", # todo: bsp with mappers available at tag `rust-meta2`
     ],
     fetch_sources = True,
     repositories = [
