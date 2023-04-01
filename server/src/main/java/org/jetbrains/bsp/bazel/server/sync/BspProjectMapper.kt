@@ -31,17 +31,8 @@ import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunProvider
+import ch.epfl.scala.bsp4j.RustWorkspaceParams
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
-import ch.epfl.scala.bsp4j.RustPackage
-import ch.epfl.scala.bsp4j.RustRawDependency
-import ch.epfl.scala.bsp4j.RustDependency
-import ch.epfl.scala.bsp4j.RustDepKindInfo
-import ch.epfl.scala.bsp4j.RustTarget
-import ch.epfl.scala.bsp4j.RustFeature
-import ch.epfl.scala.bsp4j.RustCfgOptions
-import ch.epfl.scala.bsp4j.RustEnvData
-import ch.epfl.scala.bsp4j.RustKeyValueMapper
-import ch.epfl.scala.bsp4j.RustProcMacroArtifact
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -58,7 +49,6 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
-import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -66,6 +56,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
+import org.apache.logging.log4j.LogManager // TODO: remove
 
 class BspProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
@@ -303,11 +294,15 @@ class BspProjectMapper(
     }
 
     fun rustWorkspace(
-        project: Project
+        project: Project,
+        params: RustWorkspaceParams
     ): RustWorkspaceResult {
-        val module = project.modules.filter{it.languageData is RustModule}
+        val modules = BspMappings.getModules(project, params.targets).toList()
         val rustLanguagePlugin = languagePluginsService.rustLanguagePlugin
-        val result = rustLanguagePlugin.toRustWorkspaceResult(module)
-        return result
+        return rustLanguagePlugin.toRustWorkspaceResult(modules)
+    }
+
+    companion object {
+        private val LOGGER = LogManager.getLogger(BspProjectMapper::class.java)
     }
 }

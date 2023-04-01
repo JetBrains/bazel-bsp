@@ -7,17 +7,19 @@ enum class RustCrateLocation {
 }
 
 data class RustDependency(
-        val crateId: String,
-        val rename: String,
+    val crateId: String,
+    val rename: String,
 )
 
 data class RustModule(
-        val crateId: String,
-        val location: RustCrateLocation,
-        val fromWorkspace: Boolean,
-        val name: String,
-        val kind: String,
-        val edition: String,
-        val crateFeatures: List<String>,
-        val dependencies: List<RustDependency>) : LanguageData
+    val crateId: String,
+    val location: RustCrateLocation,
+    val fromWorkspace: Boolean,
+    val name: String,
+    val kind: String,
+    val edition: String,
+    val crateFeatures: List<String>,
+    val dependencies: List<RustDependency>,
+    val crateRoot: String,
+) : LanguageData
 

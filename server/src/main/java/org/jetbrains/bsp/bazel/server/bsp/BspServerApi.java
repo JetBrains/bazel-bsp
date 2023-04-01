@@ -24,8 +24,8 @@ import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildServer;
 import ch.epfl.scala.bsp4j.RustBuildServer;
+import ch.epfl.scala.bsp4j.RustWorkspaceParams;
 import ch.epfl.scala.bsp4j.RustWorkspaceResult;
-import ch.epfl.scala.bsp4j.RustPackage;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
@@ -48,8 +48,10 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 
@@ -232,7 +234,7 @@ public class BspServerApi
   }
 
   @Override
-    public CompletableFuture<RustWorkspaceResult> rustWorkspace() {
-        return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace);
+  public CompletableFuture<RustWorkspaceResult> rustWorkspace(RustWorkspaceParams params) {
+    return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace, params);
   }
 }

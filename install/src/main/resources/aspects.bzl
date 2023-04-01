@@ -400,6 +400,7 @@ def extract_rust_crate_info(target, ctx):
         out_dir = "" if build_info == None else build_info.out_dir.path,
         crate_features = ctx.rule.attr.crate_features,
         dependencies = deps,
+        crate_root = crate_info.root.path,
     )
 
     print(rust_crate_struct)
