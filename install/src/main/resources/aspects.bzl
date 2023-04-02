@@ -379,7 +379,7 @@ def extract_rust_crate_info(target, ctx):
     crate_is_generated = not crate_info.root.is_source
     crate_is_in_exec_root = not crate_is_from_workspace or crate_is_generated
 
-    deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep)]
+    deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep) and CrateInfo in dep]
 
     # TODO: hoped it will be in `crate_info.version`. Version is passed to targets in `rust_library`.
     version = "0.0.0"
