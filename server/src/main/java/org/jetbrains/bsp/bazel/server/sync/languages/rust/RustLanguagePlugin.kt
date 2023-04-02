@@ -59,9 +59,13 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     data class BazelPackageTargetInfo(val packageName: String, val targetName: String)
 
     private fun resolvePackage(rustTarget: Module): BazelPackageTargetInfo {
-        val label = rustTarget.label.value
-        val packageName = label.substringBefore(":")
-        val targetName = label.substringAfter(":")
+        return resolvePackage(rustTarget.label)
+    }
+
+    private fun resolvePackage(label: Label): BazelPackageTargetInfo {
+        val labelVal = label.value
+        val packageName = labelVal.substringBefore(":")
+        val targetName = labelVal.substringAfter(":")
         return BazelPackageTargetInfo(packageName, targetName)
     }
 
@@ -180,22 +184,75 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     }
 
     // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
-    private fun rustDependencies(rustBspTargets: List<Module>): Pair<List<BuildTargetIdentifier>, List<RustDependency>> {
+    private fun rustDependencies(rustPackages: List<RustPackage>, rustBspTargets: List<Module>): Pair<List<BuildTargetIdentifier>, Pair<List<RustDependency>, List<RustRawDependency>>> {
 
-        val rustDependencies = rustBspTargets.flatMap {
-            it.directDependencies.map { label -> label.value }
+        // TODO: I guess it can be made faster #PoC
+        val associatedBspTargets = rustPackages.associateWith {
+            it.targets.mapNotNull { pkgTarget ->
+                rustBspTargets.find {
+                    bspTarget -> "${it.id.uri}:${pkgTarget.name}" == bspTarget.label.value
+                }
+            }
         }
 
-        LOGGER.info("Direct dependencies")
+        val associatedRawBspTargets = rustPackages.associateWith { pkg ->
+            rustBspTargets.filter { resolvePackage(it).packageName == pkg.id.uri }
+        }
+
+        val rustDependenciesLabels = associatedBspTargets
+            .values
+            .toList()
+            .flatten()
+            .flatMap { it.directDependencies.map { label -> label.value } }
+            .distinct()
+            .map { BuildTargetIdentifier(it) }
+
+        val rustDependencies = associatedBspTargets
+            .flatMap { (rustPackage, bspTargets) ->
+                bspTargets.flatMap { bspTarget ->
+                    bspTarget.directDependencies
+                        .map { label -> resolvePackage(label) }
+                        .map { RustDependency(
+                            rustPackage.id.uri,
+                            it.packageName,
+                            it.targetName,
+                            listOf(
+                                RustDepKindInfo("normal", null)
+                            )
+                        ) }
+                }
+            }
+
+        val rustRawDependencies = associatedRawBspTargets
+            .flatMap { (rustPackage, bspTargets) ->
+                bspTargets.flatMap { bspTarget ->
+                    bspTarget.directDependencies
+                        .map {
+                            RustRawDependency(
+                                rustPackage.id.uri,
+                                it.value,
+                                null,
+                                null,
+                                null,
+                                false,
+                                true,
+                                listOf<String>()
+                            )
+                        }
+                }
+            }
+
+        LOGGER.info("rustDependencies")
         LOGGER.info(rustDependencies)
 
-        return Pair(listOf(), listOf())
+        return Pair(rustDependenciesLabels, Pair(rustDependencies, rustRawDependencies))
     }
 
     fun toRustWorkspaceResult(modules: List<Module>): RustWorkspaceResult {
 
         val packages = rustPackages(modules)
-        val dependencies = rustDependencies(modules)
+        val (transitiveBuildTargetsToResolve, dependenciesPair) = rustDependencies(packages, modules)
+        val (dependencies, rawDependencies) = dependenciesPair
 
         LOGGER.info("=================================================================================")
 
@@ -604,11 +661,34 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 null
             )
         )
-
-        return RustWorkspaceResult(
-            packages,
-
-            // TODO: mappings in BSP are different than those in cargo metadata
+        val mockDependencies = listOf<RustDependency>(
+            RustDependency(
+                "//hello_world",
+                "//hello_lib",
+                "hello_lib",
+                listOf<RustDepKindInfo>(
+                    RustDepKindInfo("normal", null)
+                )
+            ),
+            RustDependency(
+                "//hello_lib",
+                "@crate_index__itertools-0.10.5//",
+                "itertools",
+                listOf<RustDepKindInfo>(
+                    RustDepKindInfo("normal", null)
+                )
+            ),
+            RustDependency(
+                "@crate_index__itertools-0.10.5//",
+                "@crate_index__either-1.8.0//",
+                "either",
+                listOf<RustDepKindInfo>(
+                    RustDepKindInfo("normal", null)
+                )
+            ),
+            // No dependencies for -- "@crate_index__either-1.8.0//"
+        )
+        val mockRawDependencies = // TODO: mappings in BSP are different than those in cargo metadata
             listOf<RustRawDependency>(
                 RustRawDependency(
                     "//hello_world",
@@ -692,35 +772,12 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 //         true,
                 //         listOf<String>()
                 // )
-            ),
-
-            listOf<RustDependency>(
-                RustDependency(
-                    "//hello_world",
-                    "//hello_lib",
-                    "hello_lib",
-                    listOf<RustDepKindInfo>(
-                        RustDepKindInfo("normal", null)
-                    )
-                ),
-                RustDependency(
-                    "//hello_lib",
-                    "@crate_index__itertools-0.10.5//",
-                    "itertools",
-                    listOf<RustDepKindInfo>(
-                        RustDepKindInfo("normal", null)
-                    )
-                ),
-                RustDependency(
-                    "@crate_index__itertools-0.10.5//",
-                    "@crate_index__either-1.8.0//",
-                    "either",
-                    listOf<RustDepKindInfo>(
-                        RustDepKindInfo("normal", null)
-                    )
-                ),
-                // No dependencies for -- "@crate_index__either-1.8.0//"
             )
+
+        return RustWorkspaceResult(
+            packages,
+            rawDependencies,
+            dependencies
         )
     }
 
