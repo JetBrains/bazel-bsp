@@ -254,6 +254,18 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val (transitiveBuildTargetsToResolve, dependenciesPair) = rustDependencies(packages, modules)
         val (dependencies, rawDependencies) = dependenciesPair
 
+        // TODO: we need to package targets in `transitiveBuildTargetsToResolve`
+        //       even local dependencies are not resolved currently. Only one
+        //       level of BFS is passed. e.g.
+        //       Let's say we have a tree:
+        //                foo
+        //                 |
+        //                bar
+        //                 |
+        //                zonk
+        //      If `modules` is a singleton of `foo` only foo will be resolved.
+        //      `bar` will be a `transitiveBuildTargetsToResolve` and `zonk` will be ignored.
+
         LOGGER.info("=================================================================================")
 
         for (module in modules) {
