@@ -381,7 +381,8 @@ def extract_rust_crate_info(target, ctx):
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep)]
 
-
+    # TODO: hoped it will be in `crate_info.version`. Version is passed to targets in `rust_library`.
+    version = "0.0.0"
 
     # To obtain crate root file, find directory corresponding to
     # `crate_location` and concatenate it with `crate_id` (relative crate root
@@ -401,7 +402,7 @@ def extract_rust_crate_info(target, ctx):
         crate_features = ctx.rule.attr.crate_features,
         dependencies = deps,
         crate_root = crate_info.root.path,
-        version = crate_info.version,
+        version = version,
     )
 
     print(rust_crate_struct)

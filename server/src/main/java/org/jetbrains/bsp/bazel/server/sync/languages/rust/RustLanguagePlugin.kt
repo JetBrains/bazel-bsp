@@ -17,6 +17,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateLocation as ProtoRustCrateLocation
 import org.apache.logging.log4j.LogManager // TODO: remove
+import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 
 class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<RustModule>() {
@@ -178,14 +179,28 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         return packages
     }
 
+    // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
+    private fun rustDependencies(rustBspTargets: List<Module>): Pair<List<BuildTargetIdentifier>, List<RustDependency>> {
+
+        val rustDependencies = rustBspTargets.flatMap {
+            it.directDependencies.map { label -> label.value }
+        }
+
+        LOGGER.info("Direct dependencies")
+        LOGGER.info(rustDependencies)
+
+        return Pair(listOf(), listOf())
+    }
+
     fun toRustWorkspaceResult(modules: List<Module>): RustWorkspaceResult {
 
         val packages = rustPackages(modules)
+        val dependencies = rustDependencies(modules)
 
         LOGGER.info("=================================================================================")
 
         for (module in modules) {
-            LOGGER.info("module info:")
+            LOGGER.info("module info: ")
             LOGGER.info(module)
         }
 
