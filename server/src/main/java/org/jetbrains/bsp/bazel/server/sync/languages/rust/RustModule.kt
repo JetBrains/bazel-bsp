@@ -21,5 +21,6 @@ data class RustModule(
     val crateFeatures: List<String>,
     val dependencies: List<RustDependency>,
     val crateRoot: String,
+    val version: String,
 ) : LanguageData
 

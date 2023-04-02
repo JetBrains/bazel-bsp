@@ -42,7 +42,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         rename = it.rename,
                     )
                 },
-                crateRoot = targetInfo.rustCrateInfo.crateRoot
+                crateRoot = targetInfo.rustCrateInfo.crateRoot,
+                version = targetInfo.rustCrateInfo.version
             )
         }
     }
@@ -77,7 +78,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         return rustTargets.maxByOrNull { (_, rustData) -> rustData.crateFeatures.size }!!
     }
 
-    private fun rustPackages(rustBspTargets: List<Module>): List<RustPackage>? {
+    private fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> {
         for (target in rustBspTargets) {
             LOGGER.info("rust target:")
             LOGGER.info(target)
@@ -112,7 +113,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         mergeTargets(targets)
                     }
 
-                val version = "0.0.0"   // TODO: there is no such thing in Rust (w/o Cargo)
+                // target have versions, but package no, as there is no such thing as package in Rust in Bazel
+                val version = rustTargetsWithData.map { (_, rustData) -> rustData.version }.maxOf { it }
                 val isFromWorkspace = rustTargetsWithData.any { (_, rustData) -> rustData.fromWorkspace }
                 val origin = if (isFromWorkspace) {
                     "WORKSPACE"
@@ -129,9 +131,9 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     RustTarget(
                         resolvePackage(genericData).targetName,
                         "$workspaceRoot${rustData.crateRoot}",
-                        genericData.tags.first().toString(),   // TODO: not so sure about that
+                        genericData.tags.first().toString(),    // TODO: not so sure about that
                         rustData.edition,
-                        false,                                  // TODO: check it somehow
+                        false,                                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
                         rustData.crateFeatures
                     )
                 }

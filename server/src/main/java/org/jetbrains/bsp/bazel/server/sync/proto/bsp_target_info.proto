@@ -85,6 +85,7 @@ message RustCrateInfo {
     repeated string crate_features = 90;
     repeated RustDependencyInfo dependencies = 100;
     string crate_root = 110;
+    string version = 120;
 }
 
 message TargetInfo {
