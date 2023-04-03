@@ -222,6 +222,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         ) }
                 }
             }
+            .filter { it.source != it.target }
 
         val rustRawDependencies = associatedRawBspTargets
             .flatMap { (rustPackage, bspTargets) ->
