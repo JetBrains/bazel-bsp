@@ -15,7 +15,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets(), dependencySourcesResults())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
-
         val bspWorkspaceRootExampleBuildTarget =
             BuildTarget(
                 BuildTargetIdentifier("bsp-workspace-root"),

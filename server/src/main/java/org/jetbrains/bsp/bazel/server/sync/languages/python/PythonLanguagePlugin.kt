@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.BuildTargetDataKind
 import ch.epfl.scala.bsp4j.PythonBuildTarget
 import ch.epfl.scala.bsp4j.PythonOptionsItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
@@ -13,7 +14,6 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import java.net.URI
 import java.nio.file.Path
-import kotlin.io.path.exists
 import kotlin.io.path.toPath
 
 class PythonLanguagePlugin(
@@ -22,22 +22,24 @@ class PythonLanguagePlugin(
 
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
         targetInfo.pythonTargetInfo?.run {
-
-            val interpreterURI = interpreter?.let {
-                it.takeUnless { it.relativePath.isNullOrEmpty() }
-                ?.let { bazelPathsResolver.resolveUri(it) }
-            }
             PythonModule(
-                interpreterURI,
+                calculateInterpreterURI(this),
                 version.takeUnless(String::isNullOrEmpty)
             )
+        }
 
+    private fun calculateInterpreterURI(pythonTargetInfo: PythonTargetInfo): URI? =
+        pythonTargetInfo.run {
+            interpreter?.let {
+                it.takeUnless { it.relativePath.isNullOrEmpty() }
+                    ?.let { bazelPathsResolver.resolveUri(it) }
+            }
         }
 
 
     override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
         buildTarget.dataKind = BuildTargetDataKind.PYTHON
-        val interpreter = moduleData.interpreter?.let { it.toString() }
+        val interpreter = moduleData.interpreter?.toString()
         buildTarget.data = PythonBuildTarget(moduleData.version, interpreter)
     }
 
@@ -47,27 +49,27 @@ class PythonLanguagePlugin(
             emptyList(),
         )
 
-    override fun dependencySources(targetInfo: TargetInfo, dependencyTree: DependencyTree): Set<URI> {
-        return targetInfo.pythonTargetInfo?.run {
+    override fun dependencySources(targetInfo: TargetInfo, dependencyTree: DependencyTree): Set<URI> =
+        targetInfo.pythonTargetInfo?.run {
             dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getExternalSources)
-                .map(bazelPathsResolver::resolveUri)
-                .map {
-                    fun findExternal(path: Path?): Path? {
-                        return if (path == null || path.parent.endsWith("external"))
-                            path
-                        else
-                            findExternal(path.parent)
-                    }
-
-                    val path = it.toPath()
-                    bazelPathsResolver.resolveUri(findExternal(path) ?: path)
-                }
+                .map(::calculateExternalSourcePath)
                 .toSet()
         }.orEmpty()
+
+
+    private fun getExternalSources(targetInfo: TargetInfo): List<FileLocation> =
+        targetInfo.sourcesList.mapNotNull { it.takeIf { it.isExternal } }
+
+    private fun calculateExternalSourcePath(externalSource: FileLocation): URI {
+        val path = bazelPathsResolver.resolveUri(externalSource).toPath()
+        return bazelPathsResolver.resolveUri(findExternalSubdirectory(path) ?: path)
     }
 
-    private fun getExternalSources(targetInfo: TargetInfo): List<FileLocation> {
-        return targetInfo.sourcesList.mapNotNull { it.takeIf { it.isExternal } }
+    private fun findExternalSubdirectory(path: Path?): Path? {
+        return if (path == null || path.parent.endsWith("external"))
+            path
+        else
+            findExternalSubdirectory(path.parent)
     }
 }

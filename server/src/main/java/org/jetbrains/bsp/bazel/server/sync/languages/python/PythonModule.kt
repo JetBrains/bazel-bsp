@@ -7,5 +7,3 @@ data class PythonModule(
     val interpreter: URI?,
     val version: String?
 ) : LanguageData
-
-
