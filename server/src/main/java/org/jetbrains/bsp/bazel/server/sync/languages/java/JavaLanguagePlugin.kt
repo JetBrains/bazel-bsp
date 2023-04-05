@@ -40,7 +40,7 @@ class JavaLanguagePlugin(
             }.map(bazelPathsResolver::resolveUri)
             val mainClass = getMainClass(this)
             val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList)
-            val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList)
+            val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList + generatedJarsList.flatMap { it.binaryJarsList })
             val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList)
             val ideClasspath = resolveIdeClasspath(Label(targetInfo.id),
                 bazelPathsResolver,

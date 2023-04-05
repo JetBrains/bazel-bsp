@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+### Fixes
+-  Add class jars generated during annotation processing
+  | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
+
 ## [2.6.1]
 
 ### SECURITY 🚨
