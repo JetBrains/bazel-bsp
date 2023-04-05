@@ -56,14 +56,21 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
 
     fun extractRelativePath(label: String): String {
         val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
-        require(label.startsWith(prefix)) {
-            String.format(
-                "%s didn't start with %s", label, prefix
-            )
+        if (label.startsWith(prefix)) {
+            val labelWithoutPrefix = label.substring(prefix.length)
+            val parts = labelWithoutPrefix.split(":".toRegex()).toTypedArray()
+            require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
+            return parts[0]
+        } else {
+            require(label[0] == '@')
+            val externalName = label.substring(1)
+            val externalSplitted = externalName.split("//", limit=2)
+            require(externalSplitted.size == 2) { String.format("Label does not contain //")}
+
+            val parts = externalSplitted[1].split(":".toRegex()).toTypedArray()
+            require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
+
+            return "external/" + externalSplitted[0] + '/' + parts[0]
         }
-        val labelWithoutPrefix = label.substring(prefix.length)
-        val parts = labelWithoutPrefix.split(":".toRegex()).toTypedArray()
-        require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
-        return parts[0]
     }
 }

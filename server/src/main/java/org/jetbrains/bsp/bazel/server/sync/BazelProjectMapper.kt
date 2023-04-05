@@ -37,12 +37,15 @@ class BazelProjectMapper(
     }
 
     private fun selectTargetsToImport(
-        workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
+            workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
     ): Sequence<TargetInfo> = tree.allTargetsAtDepth(
-        workspaceContext.importDepth.value, rootTargets
-    ).asSequence().filter(::isWorkspaceTarget)
+            workspaceContext.importDepth.value, rootTargets
+    ).asSequence().filter({
+        isWorkspaceTarget(it) && !isRustTarget(it)
+    }) + tree.allTargets().asSequence().filter(::isRustTarget)
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean = target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix())
+    private fun isRustTarget(target: TargetInfo): Boolean = target.rustCrateInfo != null
 
     private fun createModules(
         targetsToImport: Sequence<TargetInfo>, dependencyTree: DependencyTree

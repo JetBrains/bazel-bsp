@@ -108,7 +108,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             .mapNotNull { (rustPackage, rustTargets) ->
                 val rustTargetsWithData: List<Pair<Module, RustModule>> = rustTargets.mapNotNull {
                     if (it.languageData is RustModule) {
-                        Pair(it, it.languageData as RustModule)
+                        Pair(it, it.languageData)
                     } else {
                         null
                     }
@@ -274,6 +274,13 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             LOGGER.info(module)
         }
 
+        return RustWorkspaceResult(
+                packages,
+                rawDependencies,
+                dependencies
+        )
+
+        /*
         val samplePath = when (try {
             System.getenv("USER")
         } catch (_: Exception) {
@@ -290,6 +297,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
         LOGGER.info("$itertoolsPath")
         LOGGER.info("$eitherPath")
+
 
         val mockPackages = listOf<RustPackage>(
             RustPackage(
@@ -786,12 +794,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 //         listOf<String>()
                 // )
             )
-
-        return RustWorkspaceResult(
-            packages,
-            rawDependencies,
-            dependencies
-        )
+         */
     }
 
     companion object {
