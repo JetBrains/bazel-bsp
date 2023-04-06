@@ -1,2 +1,2 @@
 pull-requests:
-  - title: "[maintenance] Updated ${dependencyId} to ${versionTo}"
+  - title: "[maintenance] updated ${dependencyId} to ${versionTo}"
