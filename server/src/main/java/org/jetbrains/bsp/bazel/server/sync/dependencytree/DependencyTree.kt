@@ -56,8 +56,6 @@ class DependencyTree(
                 idToDirectDependenciesIds[it].orEmpty()
             }.toSet()
 
-    fun allTargets(): Collection<TargetInfo> = idToTargetInfo.values
-
     fun allTargetsAtDepth(depth: Int, targets: Set<String>): Set<TargetInfo> =
             if (depth < 0)
                 idsToTargetInfo(targets) + calculateStrictlyTransitiveDependencies(targets)

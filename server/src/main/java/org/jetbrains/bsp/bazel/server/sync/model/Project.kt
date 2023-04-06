@@ -6,6 +6,7 @@ import java.net.URI
 data class Project(
     val workspaceRoot: URI,
     val modules: List<Module>,
+    val rustExternalModules: List<Module>,
     val sourceToTarget: Map<URI, Label>
 ) {
     private val moduleMap: Map<Label, Module> = modules.associateBy(Module::label)

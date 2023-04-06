@@ -29,20 +29,25 @@ class BazelProjectMapper(
         languagePluginsService.prepareSync(targets.values.asSequence())
         val dependencyTree = DependencyTree(rootTargets, targets)
         val targetsToImport = selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
+        val rustExternalTargetsToImport = selectRustExternalTargetsToImport(rootTargets, dependencyTree)
         val modulesFromBazel = createModules(targetsToImport, dependencyTree)
+        val rustExternalModules = createModules(rustExternalTargetsToImport, dependencyTree)
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
         val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
         val sourceToTarget = buildReverseSourceMapping(modifiedModules)
-        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget)
+        return Project(workspaceRoot, modifiedModules.toList(), rustExternalModules.toList(), sourceToTarget)
     }
+
+    private fun selectRustExternalTargetsToImport(
+            rootTargets: Set<String>, tree: DependencyTree
+    ): Sequence<TargetInfo> =
+            tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter({ !isWorkspaceTarget(it) && isRustTarget(it) })
 
     private fun selectTargetsToImport(
             workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
     ): Sequence<TargetInfo> = tree.allTargetsAtDepth(
             workspaceContext.importDepth.value, rootTargets
-    ).asSequence().filter({
-        isWorkspaceTarget(it) && !isRustTarget(it)
-    }) + tree.allTargets().asSequence().filter(::isRustTarget)
+    ).asSequence().filter(::isWorkspaceTarget)
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean = target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix())
     private fun isRustTarget(target: TargetInfo): Boolean = target.rustCrateInfo != null
