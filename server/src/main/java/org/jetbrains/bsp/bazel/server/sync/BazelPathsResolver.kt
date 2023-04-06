@@ -50,27 +50,46 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         fileLocation.isSource && !fileLocation.isExternal
 
     fun labelToDirectoryUri(label: Label): URI {
-        val relativePath = extractRelativePath(label.value)
-        return resolveUri(bazelInfo.workspaceRoot.resolve(relativePath))
+        if (isRelativeWorkspacePath(label.value)) {
+            val relativePath = extractRelativePath(label.value)
+            return resolveUri(bazelInfo.workspaceRoot.resolve(relativePath))
+        } else {
+            val relativeExternalPath = extractExternalPath(label.value)
+            val absolutePath = Paths.get(
+                    bazelInfo.execRoot, relativeExternalPath
+            )
+            return resolveUri(absolutePath)
+        }
+    }
+
+    fun isRelativeWorkspacePath(label: String): Boolean {
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
+        return label.startsWith(prefix)
+    }
+
+    fun extractExternalPath(label: String): String {
+        require(label[0] == '@')
+        val externalName = label.substring(1)
+        val externalSplitted = externalName.split("//", limit=2)
+        require(externalSplitted.size == 2) { String.format("Label does not contain //")}
+
+        val parts = externalSplitted[1].split(":".toRegex()).toTypedArray()
+        require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
+
+        return "external/" + externalSplitted[0] + '/' + parts[0]
     }
 
     fun extractRelativePath(label: String): String {
         val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
-        if (label.startsWith(prefix)) {
-            val labelWithoutPrefix = label.substring(prefix.length)
-            val parts = labelWithoutPrefix.split(":".toRegex()).toTypedArray()
-            require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
-            return parts[0]
-        } else {
-            require(label[0] == '@')
-            val externalName = label.substring(1)
-            val externalSplitted = externalName.split("//", limit=2)
-            require(externalSplitted.size == 2) { String.format("Label does not contain //")}
 
-            val parts = externalSplitted[1].split(":".toRegex()).toTypedArray()
-            require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
-
-            return "external/" + externalSplitted[0] + '/' + parts[0]
+        require(isRelativeWorkspacePath(label)) {
+            String.format(
+                    "%s didn't start with %s", label, prefix
+            )
         }
+        val labelWithoutPrefix = label.substring(prefix.length)
+        val parts = labelWithoutPrefix.split(":".toRegex()).toTypedArray()
+        require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
+        return parts[0]
     }
 }
