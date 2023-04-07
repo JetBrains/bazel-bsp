@@ -8,6 +8,8 @@
 ### Fixes
 -  Add class jars generated during annotation processing
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
+- Set PublishDiagnosticsParams.reset to be true
+  | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
 
 ## [2.6.1]
 

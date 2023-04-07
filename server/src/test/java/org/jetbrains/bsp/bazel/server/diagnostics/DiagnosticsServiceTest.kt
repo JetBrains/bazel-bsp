@@ -509,7 +509,7 @@ class DiagnosticsServiceTest {
             textDocument,
             buildTarget,
             diagnostics.asList(),
-            false
+            true
         )
     }
 
