@@ -29,22 +29,32 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 RustCrateLocation.EXEC_ROOT
             }
 
+            val crateRoot = {
+                val path = if (location == RustCrateLocation.WORKSPACE_DIR) {
+                    bazelPathsResolver.relativePathToWorkspaceAbsolute(targetInfo.rustCrateInfo.crateRoot)
+                } else {
+                    bazelPathsResolver.relativePathToExecRootAbsolute(targetInfo.rustCrateInfo.crateRoot)
+                }
+
+                bazelPathsResolver.resolveUri(path).toString()
+            }
+
             RustModule(
-                crateId = targetInfo.rustCrateInfo.crateId,
-                location = location,
-                fromWorkspace = targetInfo.rustCrateInfo.fromWorkspace,
-                name = targetInfo.rustCrateInfo.name,
-                kind = targetInfo.rustCrateInfo.kind,
-                edition = targetInfo.rustCrateInfo.edition,
-                crateFeatures = targetInfo.rustCrateInfo.crateFeaturesList,
-                dependencies = targetInfo.rustCrateInfo.dependenciesList.mapNotNull {
-                    RustDependency(
-                        crateId = it.crateId,
-                        rename = it.rename,
-                    )
-                },
-                crateRoot = targetInfo.rustCrateInfo.crateRoot,
-                version = targetInfo.rustCrateInfo.version
+                    crateId = targetInfo.rustCrateInfo.crateId,
+                    location = location,
+                    fromWorkspace = targetInfo.rustCrateInfo.fromWorkspace,
+                    name = targetInfo.rustCrateInfo.name,
+                    kind = targetInfo.rustCrateInfo.kind,
+                    edition = targetInfo.rustCrateInfo.edition,
+                    crateFeatures = targetInfo.rustCrateInfo.crateFeaturesList,
+                    dependencies = targetInfo.rustCrateInfo.dependenciesList.mapNotNull {
+                        RustDependency(
+                                crateId = it.crateId,
+                                rename = it.rename,
+                        )
+                    },
+                    crateRoot = crateRoot(),
+                    version = targetInfo.rustCrateInfo.version
             )
         }
     }
@@ -120,20 +130,10 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 val pkgBaseDir = rustTargetsWithData.first().first.baseDirectory.toString()
                 val targets = rustTargetsWithData.map { (genericData, rustData) ->
                     val baseDir = genericData.baseDirectory.toString()
-                    var crateRoot = rustData.crateRoot
-                    // Crate root can be in external directory, so we need to remove it
-                    if (crateRoot.startsWith("external/")) {
-                        // TODO: this is a hack. We need to find a better way to resolve it
-                        crateRoot = crateRoot.substringAfter("external/")
-                    }
-                    // Crate root can be in the package directory, so we need to remove it
-                    crateRoot = crateRoot.substringAfter("/")
-
-                    // TODO: We should handle it somehow. It is a hack
 
                     RustTarget(
                         resolvePackage(genericData).targetName,
-                        "$baseDir$crateRoot",
+                        "${rustData.crateRoot}",
                         baseDir,
                         genericData.tags.first().toString(),    // TODO: not so sure about that
                         rustData.edition,
