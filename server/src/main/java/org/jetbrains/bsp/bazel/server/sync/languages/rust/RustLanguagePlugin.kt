@@ -85,21 +85,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     private fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> {
         for (target in rustBspTargets) {
-            LOGGER.info("rust target:")
-            LOGGER.info(target)
-
             require(Language.RUST in target.languages) { "The target is not a Rust target" }
-
-            val uri = bazelPathsResolver.labelToDirectoryUri(target.label)
-            LOGGER.info("uri: $uri")
-
-            val relPath = bazelPathsResolver.workspaceRoot()
-            LOGGER.info("relPath: $relPath")
-
-            val packageTargetInfo = resolvePackage(target)
-            LOGGER.info("packageTargetInfo: $packageTargetInfo")
         }
-        val workspaceRoot = bazelPathsResolver.workspaceRoot()
         val packages = rustBspTargets
             .groupBy { resolvePackage(it).packageName }
             .mapNotNull { (rustPackage, rustTargets) ->
@@ -117,11 +104,12 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
                 // target have versions, but package no, as there is no such thing as package in Rust in Bazel
                 val version = rustTargetsWithData.map { (_, rustData) -> rustData.version }.maxOf { it }
+                val (major, minor, patch) = version.split(".")
                 val isFromWorkspace = rustTargetsWithData.any { (_, rustData) -> rustData.fromWorkspace }
                 val origin = if (isFromWorkspace) {
                     "WORKSPACE"
                 } else {
-                    "DEPENDENCY"
+                    "DEP"
                 }
                 val edition = rustTargetsWithData.map { (_, rustData) -> rustData.edition }.maxOf { it }
                 val source = if (isFromWorkspace) {
@@ -129,11 +117,24 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 } else {
                     "registry+https://github.com/rust-lang/crates.io-index"
                 }     // let's hope it is
+                val pkgBaseDir = rustTargetsWithData.first().first.baseDirectory.toString()
                 val targets = rustTargetsWithData.map { (genericData, rustData) ->
+                    val baseDir = genericData.baseDirectory.toString()
+                    var crateRoot = rustData.crateRoot
+                    // Crate root can be in external directory, so we need to remove it
+                    if (crateRoot.startsWith("external/")) {
+                        // TODO: this is a hack. We need to find a better way to resolve it
+                        crateRoot = crateRoot.substringAfter("external/")
+                    }
+                    // Crate root can be in the package directory, so we need to remove it
+                    crateRoot = crateRoot.substringAfter("/")
+
+                    // TODO: We should handle it somehow. It is a hack
+
                     RustTarget(
                         resolvePackage(genericData).targetName,
-                        "$workspaceRoot${rustData.crateRoot}",
-                        genericData.baseDirectory.path,
+                        "$baseDir$crateRoot",
+                        baseDir,
                         genericData.tags.first().toString(),    // TODO: not so sure about that
                         rustData.edition,
                         false,                                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
@@ -154,12 +155,12 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     allFeatures,
                     null,
                     listOf(
-                        RustEnvData("CARGO_MANIFEST_DIF", "$workspaceRoot${rustPackage.drop(1)}"),
+                        RustEnvData("CARGO_MANIFEST_DIF", "$pkgBaseDir${rustPackage.drop(1)}"),
                         RustEnvData("CARGO", "cargo"),
-                        RustEnvData("CARGO_PKG_VERSION", "0.0.0"),
-                        RustEnvData("CARGO_PKG_VERSION_MAJOR", "0"),
-                        RustEnvData("CARGO_PKG_VERSION_MINOR", "0"),
-                        RustEnvData("CARGO_PKG_VERSION_PATCH", "0"),
+                        RustEnvData("CARGO_PKG_VERSION", version),
+                        RustEnvData("CARGO_PKG_VERSION_MAJOR", major),
+                        RustEnvData("CARGO_PKG_VERSION_MINOR", minor),
+                        RustEnvData("CARGO_PKG_VERSION_PATCH", patch),
                         RustEnvData("CARGO_PKG_VERSION_PRE", ""),
                         RustEnvData("CARGO_PKG_AUTHORS", ""),
                         RustEnvData("CARGO_PKG_NAME", rustPackage),
