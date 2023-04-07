@@ -133,6 +133,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     RustTarget(
                         resolvePackage(genericData).targetName,
                         "$workspaceRoot${rustData.crateRoot}",
+                        genericData.baseDirectory.path,
                         genericData.tags.first().toString(),    // TODO: not so sure about that
                         rustData.edition,
                         false,                                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
