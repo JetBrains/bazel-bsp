@@ -62,12 +62,12 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         }
     }
 
-    fun isRelativeWorkspacePath(label: String): Boolean {
+    private fun isRelativeWorkspacePath(label: String): Boolean {
         val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
         return label.startsWith(prefix)
     }
 
-    fun extractExternalPath(label: String): String {
+    private fun extractExternalPath(label: String): String {
         require(label[0] == '@')
         val externalName = label.substring(1)
         val externalSplitted = externalName.split("//", limit=2)

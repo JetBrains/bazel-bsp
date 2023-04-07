@@ -41,7 +41,7 @@ class BazelProjectMapper(
     private fun selectRustExternalTargetsToImport(
             rootTargets: Set<String>, tree: DependencyTree
     ): Sequence<TargetInfo> =
-            tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter({ !isWorkspaceTarget(it) && isRustTarget(it) })
+            tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
 
     private fun selectTargetsToImport(
             workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree

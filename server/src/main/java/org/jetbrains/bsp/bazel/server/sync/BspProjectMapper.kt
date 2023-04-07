@@ -300,7 +300,7 @@ class BspProjectMapper(
         val modules = BspMappings
                 .getModules(project, params.targets)
                 .toList()
-                .filter({ Language.RUST in it.languages }) + project.rustExternalModules.toList()
+                .filter { Language.RUST in it.languages } + project.rustExternalModules.toList()
 
         val rustLanguagePlugin = languagePluginsService.rustLanguagePlugin
         return rustLanguagePlugin.toRustWorkspaceResult(modules)
