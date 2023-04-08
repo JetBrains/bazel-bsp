@@ -206,7 +206,7 @@ maven_install(
         "org.scala-lang:scala-library:2.13.10",
         "com.google.protobuf:protobuf-java:3.21.12",
         "io.grpc:grpc-stub:1.51.1",
-        "com.github.zpp-This-is-fine:build-server-protocol:rust-easter",
+        "com.github.zpp-This-is-fine:build-server-protocol:rust-easter-egg",
     ],
     fetch_sources = True,
     repositories = [

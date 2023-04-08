@@ -35,7 +35,7 @@ class BazelProjectMapper(
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
         val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
         val sourceToTarget = buildReverseSourceMapping(modifiedModules)
-        return Project(workspaceRoot, modifiedModules.toList(), rustExternalModules.toList(), sourceToTarget)
+        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, rustExternalModules.toList())
     }
 
     private fun selectRustExternalTargetsToImport(

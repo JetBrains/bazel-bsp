@@ -100,15 +100,18 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val packages = rustBspTargets
             .groupBy { resolvePackage(it).packageName }
             .mapNotNull { (rustPackage, rustTargets) ->
-                val rustTargetsWithData: List<Pair<Module, RustModule>> = rustTargets.mapNotNull {
+                val allRustTargetsWithData: List<Pair<Module, RustModule>> = rustTargets.mapNotNull {
                     if (it.languageData is RustModule) {
                         Pair(it, it.languageData)
                     } else {
                         null
                     }
                 }
-                    .groupBy { (_, rustData) -> rustData.crateRoot }
-                    .map { (_, targets) ->
+                // With removed `duplicates` for the same crate root
+                val rustTargetsWithData: List<Pair<Module, RustModule>> =
+                    allRustTargetsWithData.groupBy { (_, rustData) ->
+                        rustData.crateRoot
+                    }.map { (_, targets) ->
                         mergeTargets(targets)
                     }
 
@@ -128,7 +131,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     "bazel+https://github.com/rust-lang/crates.io-index"
                 }     // let's hope it is
                 val pkgBaseDir = rustTargetsWithData.first().first.baseDirectory.toString()
-                val targets = rustTargetsWithData.map { (genericData, rustData) ->
+
+                val mapTarget = { (genericData, rustData): Pair<Module, RustModule> ->
                     RustTarget(
                         resolvePackage(genericData).targetName,
                         rustData.crateRoot,
@@ -139,6 +143,9 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         rustData.crateFeatures
                     )
                 }
+
+                val targets = rustTargetsWithData.map(mapTarget)
+                val allTargets = allRustTargetsWithData.map(mapTarget)
                 val allFeatures = rustTargetsWithData.flatMap { (_, rustData) ->
                     rustData.crateFeatures
                 }
@@ -149,6 +156,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     edition,
                     source,
                     targets,
+                    allTargets,
                     allFeatures.map { RustFeature(it, listOf()) },
                     allFeatures,
                     null,
