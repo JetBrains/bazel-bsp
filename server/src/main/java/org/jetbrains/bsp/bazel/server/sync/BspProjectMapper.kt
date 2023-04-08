@@ -297,13 +297,13 @@ class BspProjectMapper(
         project: Project,
         params: RustWorkspaceParams
     ): RustWorkspaceResult {
-        val modules = BspMappings
-                .getModules(project, params.targets)
-                .toList()
-                .filter { Language.RUST in it.languages } + project.rustExternalModules.toList()
+        val rustModules = project.findModulesByLanguage(Language.RUST)
+        val externalModules = project.rustExternalModules.toList()
+        val modules = BspMappings.getModules(project, params.targets)
+            .filter { Language.RUST in it.languages }
 
         val rustLanguagePlugin = languagePluginsService.rustLanguagePlugin
-        return rustLanguagePlugin.toRustWorkspaceResult(modules)
+        return rustLanguagePlugin.toRustWorkspaceResult(modules, rustModules + externalModules)
     }
 
     companion object {

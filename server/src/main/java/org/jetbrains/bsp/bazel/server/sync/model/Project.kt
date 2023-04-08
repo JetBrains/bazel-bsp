@@ -16,4 +16,7 @@ data class Project(
 
     fun findTargetBySource(documentUri: URI): Label? =
         sourceToTarget[documentUri]
+
+    fun findModulesByLanguage(language: Language): List<Module> =
+        modules.filter { language in it.languages }
 }

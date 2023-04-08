@@ -40,21 +40,21 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             }
 
             RustModule(
-                    crateId = targetInfo.rustCrateInfo.crateId,
-                    location = location,
-                    fromWorkspace = targetInfo.rustCrateInfo.fromWorkspace,
-                    name = targetInfo.rustCrateInfo.name,
-                    kind = targetInfo.rustCrateInfo.kind,
-                    edition = targetInfo.rustCrateInfo.edition,
-                    crateFeatures = targetInfo.rustCrateInfo.crateFeaturesList,
-                    dependencies = targetInfo.rustCrateInfo.dependenciesList.mapNotNull {
-                        RustDependency(
-                                crateId = it.crateId,
-                                rename = it.rename,
-                        )
-                    },
-                    crateRoot = crateRoot(),
-                    version = targetInfo.rustCrateInfo.version
+                crateId = targetInfo.rustCrateInfo.crateId,
+                location = location,
+                fromWorkspace = targetInfo.rustCrateInfo.fromWorkspace,
+                name = targetInfo.rustCrateInfo.name,
+                kind = targetInfo.rustCrateInfo.kind,
+                edition = targetInfo.rustCrateInfo.edition,
+                crateFeatures = targetInfo.rustCrateInfo.crateFeaturesList,
+                dependencies = targetInfo.rustCrateInfo.dependenciesList.mapNotNull {
+                    RustDependency(
+                        crateId = it.crateId,
+                        rename = it.rename,
+                    )
+                },
+                crateRoot = crateRoot(),
+                version = targetInfo.rustCrateInfo.version
             )
         }
     }
@@ -125,16 +125,14 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 val source = if (isFromWorkspace) {
                     null
                 } else {
-                    "registry+https://github.com/rust-lang/crates.io-index"
+                    "bazel+https://github.com/rust-lang/crates.io-index"
                 }     // let's hope it is
                 val pkgBaseDir = rustTargetsWithData.first().first.baseDirectory.toString()
                 val targets = rustTargetsWithData.map { (genericData, rustData) ->
-                    val baseDir = genericData.baseDirectory.toString()
-
                     RustTarget(
                         resolvePackage(genericData).targetName,
-                        "${rustData.crateRoot}",
-                        baseDir,
+                        rustData.crateRoot,
+                        genericData.baseDirectory.toString(),
                         genericData.tags.first().toString(),    // TODO: not so sure about that
                         rustData.edition,
                         false,                                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
@@ -174,23 +172,20 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     null
                 )
             }
-        LOGGER.info("packages:")
-        for (rustPackage in packages) {
-            LOGGER.info(rustPackage)
-        }
 
         return packages
     }
 
     // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
-    private fun rustDependencies(rustPackages: List<RustPackage>, rustBspTargets: List<Module>): Pair<List<BuildTargetIdentifier>, Pair<List<RustDependency>, List<RustRawDependency>>> {
+    private fun rustDependencies(
+        rustPackages: List<RustPackage>,
+        rustBspTargets: List<Module>
+    ): Pair<List<RustDependency>, List<RustRawDependency>> {
 
-        // TODO: I guess it can be made faster #PoC
+        val rustBspTargetsMapped = rustBspTargets.associateBy { it.label.value }
         val associatedBspTargets = rustPackages.associateWith {
             it.targets.mapNotNull { pkgTarget ->
-                rustBspTargets.find {
-                    bspTarget -> "${it.id.uri}:${pkgTarget.name}" == bspTarget.label.value
-                }
+                rustBspTargetsMapped["${it.id.uri}:${pkgTarget.name}"]
             }
         }
 
@@ -198,27 +193,21 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             rustBspTargets.filter { resolvePackage(it).packageName == pkg.id.uri }
         }
 
-        val rustDependenciesLabels = associatedBspTargets
-            .values
-            .toList()
-            .flatten()
-            .flatMap { it.directDependencies.map { label -> label.value } }
-            .distinct()
-            .map { BuildTargetIdentifier(it) }
-
         val rustDependencies = associatedBspTargets
             .flatMap { (rustPackage, bspTargets) ->
                 bspTargets.flatMap { bspTarget ->
                     bspTarget.directDependencies
                         .map { label -> resolvePackage(label) }
-                        .map { RustDependency(
-                            rustPackage.id.uri,
-                            it.packageName,
-                            it.targetName,
-                            listOf(
-                                RustDepKindInfo("normal", null)
+                        .map {
+                            RustDependency(
+                                rustPackage.id.uri,
+                                it.packageName,
+                                it.targetName,
+                                listOf(
+                                    RustDepKindInfo("normal", null)
+                                )
                             )
-                        ) }
+                        }
                 }
             }
             .filter { it.source != it.target }
@@ -242,41 +231,51 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 }
             }
 
-        LOGGER.info("rustDependencies")
-        LOGGER.info(rustDependencies)
-
-        return Pair(rustDependenciesLabels, Pair(rustDependencies, rustRawDependencies))
+        return Pair(rustDependencies, rustRawDependencies)
     }
 
-    fun toRustWorkspaceResult(modules: List<Module>): RustWorkspaceResult {
-
-        val packages = rustPackages(modules)
-        val (transitiveBuildTargetsToResolve, dependenciesPair) = rustDependencies(packages, modules)
-        val (dependencies, rawDependencies) = dependenciesPair
-
-        // TODO: we need to package targets in `transitiveBuildTargetsToResolve`
-        //       even local dependencies are not resolved currently. Only one
-        //       level of BFS is passed. e.g.
-        //       Let's say we have a tree:
-        //                foo
-        //                 |
-        //                bar
-        //                 |
-        //                zonk
-        //      If `modules` is a singleton of `foo` only foo will be resolved.
-        //      `bar` will be a `transitiveBuildTargetsToResolve` and `zonk` will be ignored.
-
-        LOGGER.info("=================================================================================")
-
-        for (module in modules) {
-            LOGGER.info("module info: ")
-            LOGGER.info(module)
+    /**
+     * Find all targets that are needed to be resolved.
+     * It includes all targets from `targets` and all their dependencies.
+     *
+     * Let's assume we have a following project:
+     *           B    A
+     *           |   / \
+     *           C  D   E
+     *           \ /    |
+     *            F     G
+     * We want to resolve all targets related to B. We only need B, C and F.
+     *
+     * There is no need to revisit already visited targets - we can use `visited` set for that.
+     * */
+    private fun findAllRelatedRustTargets(
+        targets: List<Module>,
+        allModules: Map<Label, Module>,
+        visited: MutableSet<Label> = mutableSetOf()
+    ): List<Module> {
+        visited.addAll(targets.map { it.label })
+        return targets.flatMap { module ->
+            listOf(module) +
+                    findAllRelatedRustTargets(
+                        module.directDependencies
+                            .mapNotNull { allModules[it] }
+                            .filter { it.label !in visited }
+                            .filter { Language.RUST in it.languages },
+                        allModules,
+                        visited
+                    )
         }
+    }
+
+    fun toRustWorkspaceResult(requestTargets: List<Module>, allTargets: List<Module>): RustWorkspaceResult {
+        val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
+        val packages = rustPackages(modules)
+        val (dependencies, rawDependencies) = rustDependencies(packages, modules)
 
         return RustWorkspaceResult(
-                packages,
-                rawDependencies,
-                dependencies
+            packages,
+            rawDependencies,
+            dependencies
         )
     }
 
