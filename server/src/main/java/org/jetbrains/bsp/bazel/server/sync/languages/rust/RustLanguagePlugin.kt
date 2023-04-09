@@ -150,7 +150,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     rustData.crateFeatures
                 }
                 RustPackage(
-                    BuildTargetIdentifier(rustPackage),         // id. TODO: it shouldn't be a BuildTargetIdentifier!!
+                    rustPackage,
                     version,
                     origin,
                     edition,
@@ -193,12 +193,12 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val rustBspTargetsMapped = rustBspTargets.associateBy { it.label.value }
         val associatedBspTargets = rustPackages.associateWith {
             it.targets.mapNotNull { pkgTarget ->
-                rustBspTargetsMapped["${it.id.uri}:${pkgTarget.name}"]
+                rustBspTargetsMapped["${it.id}:${pkgTarget.name}"]
             }
         }
 
         val associatedRawBspTargets = rustPackages.associateWith { pkg ->
-            rustBspTargets.filter { resolvePackage(it).packageName == pkg.id.uri }
+            rustBspTargets.filter { resolvePackage(it).packageName == pkg.id }
         }
 
         val rustDependencies = associatedBspTargets
@@ -208,7 +208,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         .map { label -> resolvePackage(label) }
                         .map {
                             RustDependency(
-                                rustPackage.id.uri,
+                                rustPackage.id,
                                 it.packageName,
                                 it.targetName,
                                 listOf(
@@ -226,7 +226,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     bspTarget.directDependencies
                         .map {
                             RustRawDependency(
-                                rustPackage.id.uri,
+                                rustPackage.id,
                                 it.value,
                                 null,
                                 null,
