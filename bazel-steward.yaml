@@ -1,0 +1,2 @@
+pull-requests:
+  - title: "[maintenance] updated ${dependencyId} to ${versionTo}"
