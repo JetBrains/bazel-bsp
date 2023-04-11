@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.commons.BspCompileState;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 
@@ -15,9 +16,11 @@ public class BazelBspCompilationManager {
   private final BazelRunner bazelRunner;
   private BuildClient client;
   private Path workspaceRoot;
+  private BspCompileState state;
 
-  public BazelBspCompilationManager(BazelRunner bazelRunner) {
+  public BazelBspCompilationManager(BazelRunner bazelRunner, BspCompileState state) {
     this.bazelRunner = bazelRunner;
+    this.state = state;
   }
 
   public BepBuildResult buildTargetsWithBep(
@@ -30,7 +33,7 @@ public class BazelBspCompilationManager {
       TargetsSpec targetSpecs,
       Seq<String> extraFlags,
       String originId) {
-    var bepServer = BepServer.newBepServer(client, workspaceRoot);
+    var bepServer = BepServer.newBepServer(client, workspaceRoot, state);
     var nettyServer = BepServer.nettyServerBuilder().addService(bepServer).build();
     try {
       nettyServer.start();

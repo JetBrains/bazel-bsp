@@ -10,6 +10,8 @@
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
 - Set PublishDiagnosticsParams.reset to be true
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
+- Publish `build/publishDiagnostics` with an empty array of diagnostics to clear former diagnotics.
+  | [#381](https://github.com/JetBrains/bazel-bsp/pull/381)
 
 ## [2.6.1]
 

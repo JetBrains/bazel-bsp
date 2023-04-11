@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server
 import ch.epfl.scala.bsp4j.BuildClient
 import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.commons.BspCompileState
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.*
@@ -23,10 +24,11 @@ class BazelBspServer(
     private val bspServerApi: BspServerApi
     private val bspClientLogger: BspClientLogger = BspClientLogger()
     private val bspClientTestNotifier: BspClientTestNotifier = BspClientTestNotifier()
+    private val bspState: BspCompileState = BspCompileState()
 
     init {
         bazelRunner = BazelRunner.of(workspaceContextProvider, this.bspClientLogger, workspaceRoot)
-        compilationManager = BazelBspCompilationManager(bazelRunner)
+        compilationManager = BazelBspCompilationManager(bazelRunner, bspState)
         bspServerApi = BspServerApi { bspServerData(bspInfo, workspaceContextProvider) }
     }
 
@@ -51,7 +53,8 @@ class BazelBspServer(
             serverContainer.projectProvider,
             bazelRunner,
             workspaceContextProvider,
-            bspClientTestNotifier
+            bspClientTestNotifier,
+            bspState,
         )
         val serverLifetime = BazelBspServerLifetime()
         val bspRequestsRunner = BspRequestsRunner(serverLifetime)

@@ -25,16 +25,18 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import org.jetbrains.bsp.bazel.commons.BspCompileState
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
     private val projectProvider: ProjectProvider,
     private val bazelRunner: BazelRunner,
     private val workspaceContextProvider: WorkspaceContextProvider,
-    private val bspClientTestNotifier: BspClientTestNotifier
+    private val bspClientTestNotifier: BspClientTestNotifier,
+    private val state: BspCompileState
 ) {
     private fun <T> withBepServer(body : (Server) -> T) :T {
-        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot)
+        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, state)
         val nettyServer = BepServer.nettyServerBuilder().addService(server).build()
         nettyServer.start()
         try {

@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
+import org.jetbrains.bsp.bazel.commons.BspCompileState;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
@@ -59,7 +60,7 @@ class BloopExporter {
     var bspClientLogger = new BspClientLogger();
     var bspClientTestNotifier = new BspClientTestNotifier();
     var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
-    var compilationManager = new BazelBspCompilationManager(bazelRunner);
+    var compilationManager = new BazelBspCompilationManager(bazelRunner, new BspCompileState());
     var serverContainer =
         ServerContainer.create(
             bspInfo,

@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.bsp.bazel.commons.BspCompileState;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
@@ -41,14 +42,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final Deque<Map.Entry<TaskId, String>> startedEvents = new ArrayDeque<>();
   private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
+  private BspCompileState state;
 
   public BepServer(BuildClient bspClient, DiagnosticsService diagnosticsService) {
     this.bspClient = bspClient;
     this.diagnosticsService = diagnosticsService;
   }
 
-  public static BepServer newBepServer(BuildClient client, Path workspaceRoot) {
-    return new BepServer(client, new DiagnosticsService(workspaceRoot));
+  public static BepServer newBepServer(
+      BuildClient client, Path workspaceRoot, BspCompileState state) {
+    return new BepServer(client, new DiagnosticsService(workspaceRoot, state));
   }
 
   public static NettyServerBuilder nettyServerBuilder() {
@@ -195,6 +198,14 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     var outputGroups = targetComplete.getOutputGroupList();
     LOGGER.debug("Consuming target completed event " + targetComplete);
     bepOutputBuilder.storeTargetOutputGroups(label, outputGroups);
+    if (targetComplete.getSuccess()) {
+      // clear former diagnostics by publishing an empty array of diagnostics
+      // why we do this on `target_completed` instead of `action_completed`?
+      // because `action_completed` won't be published on build success for a target.
+      // https://github.com/bazelbuild/bazel/blob/d43737f95d28789bb2d9ef2d7f62320e9a840ab0/src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto#L157-L160
+      var events = diagnosticsService.clearFormerDiagnostics(label);
+      events.forEach(bspClient::onBuildPublishDiagnostics);
+    }
   }
 
   private void processAbortedEvent(BuildEventStreamProtos.BuildEvent event) {
