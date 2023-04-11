@@ -458,6 +458,7 @@ COMPILE_DEPS = [
     "deps",
     "jars",
     "exports",
+    "proc_macro_deps",
 ]
 
 PRIVATE_COMPILE_DEPS = [
