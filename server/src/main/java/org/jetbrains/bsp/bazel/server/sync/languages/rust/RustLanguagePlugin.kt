@@ -137,7 +137,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         resolvePackage(genericData).targetName,
                         rustData.crateRoot,
                         genericData.baseDirectory.toString(),
-                        genericData.tags.first().toString(),    // TODO: not so sure about that
+                        rustData.kind,    // TODO: not so sure about that
                         rustData.edition,
                         false,                                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
                         rustData.crateFeatures
