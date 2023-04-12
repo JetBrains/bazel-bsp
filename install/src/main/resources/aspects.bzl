@@ -319,6 +319,25 @@ def extract_cpp_target_info(target, ctx):
 WORKSPACE_DIR = 0
 EXEC_ROOT = 1
 
+def is_proc_macro_output(output):
+    extensions = [".so", ".dll", ".dylib"]
+    is_ext = [output.endswith(ext) for ext in extensions]
+    return len([x for x in is_ext if x]) > 0
+
+def collect_proc_maco_artifacts(target, kind):
+    if not hasattr(target, "actions") or kind != "proc-macro":
+        return []
+
+    proc_macro_artifacts = []
+    for action in target.actions:
+        outputs = action.outputs.to_list()
+        for output in outputs:
+            output_path = output.path
+            if is_proc_macro_output(output_path):
+                proc_macro_artifacts.append(output)
+
+    return proc_macro_artifacts
+
 def extract_rust_crate_info(target, ctx):
     if CrateInfo not in target:
         return None
@@ -381,6 +400,9 @@ def extract_rust_crate_info(target, ctx):
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep) and CrateInfo in dep]
 
+    proc_maco_artifacts = collect_proc_maco_artifacts(target, crate_info.type)
+    proc_maco_artifacts_paths = [artifact.path for artifact in proc_maco_artifacts]
+
     # To obtain crate root file, find directory corresponding to
     # `crate_location` and concatenate it with `crate_id` (relative crate root
     # file path); this has be done in bazel-bsp
@@ -400,6 +422,7 @@ def extract_rust_crate_info(target, ctx):
         dependencies = deps,
         crate_root = crate_info.root.path,
         version = ctx.rule.attr.version,
+        proc_macro_artifacts = proc_maco_artifacts_paths,
     )
 
     print(rust_crate_struct)

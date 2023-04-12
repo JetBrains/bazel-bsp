@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.RustPackage
 import ch.epfl.scala.bsp4j.RustRawDependency
@@ -10,6 +9,7 @@ import ch.epfl.scala.bsp4j.RustDepKindInfo
 import ch.epfl.scala.bsp4j.RustTarget
 import ch.epfl.scala.bsp4j.RustFeature
 import ch.epfl.scala.bsp4j.RustEnvData
+import ch.epfl.scala.bsp4j.RustProcMacroArtifact
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
@@ -54,7 +54,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     )
                 },
                 crateRoot = crateRoot(),
-                version = targetInfo.rustCrateInfo.version
+                version = targetInfo.rustCrateInfo.version,
+                procMacroArtifacts = targetInfo.rustCrateInfo.procMacroArtifactsList,
             )
         }
     }
@@ -144,6 +145,13 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     )
                 }
 
+                val procMacroArtifacts = rustTargetsWithData
+                    .flatMap { (_, rustData) -> rustData.procMacroArtifacts }
+                    .map { bazelPathsResolver.pathToDirectoryUri(it) }
+                    .map { RustProcMacroArtifact(it.path, "") }
+
+                val procMacroArtifact = procMacroArtifacts.firstOrNull() // TODO: oh yeah, we need toolchain here...
+
                 val targets = rustTargetsWithData.map(mapTarget)
                 val allTargets = allRustTargetsWithData.map(mapTarget)
                 val allFeatures = rustTargetsWithData.flatMap { (_, rustData) ->
@@ -177,7 +185,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                         RustEnvData("CARGO_CRATE_NAME", rustPackage),
                     ),
                     null,
-                    null
+                    procMacroArtifact
                 )
             }
 

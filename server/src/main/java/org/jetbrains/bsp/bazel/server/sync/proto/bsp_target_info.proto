@@ -86,6 +86,7 @@ message RustCrateInfo {
     repeated RustDependencyInfo dependencies = 100;
     string crate_root = 110;
     string version = 120;
+    repeated string proc_macro_artifacts = 130;
 }
 
 message TargetInfo {

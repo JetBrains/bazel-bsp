@@ -59,6 +59,15 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         return resolveUri(absolutePath)
     }
 
+    fun pathToDirectoryUri(path: String, isWorkspace: Boolean = true): URI {
+        val absolutePath = if (isWorkspace) {
+            relativePathToWorkspaceAbsolute(path)
+        } else {
+            relativePathToExecRootAbsolute(path)
+        }
+        return resolveUri(absolutePath)
+    }
+
     fun relativePathToWorkspaceAbsolute(path: String): Path {
         return bazelInfo.workspaceRoot.resolve(path)
     }
