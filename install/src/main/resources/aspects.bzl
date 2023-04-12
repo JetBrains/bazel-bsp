@@ -319,12 +319,28 @@ def extract_cpp_target_info(target, ctx):
 WORKSPACE_DIR = 0
 EXEC_ROOT = 1
 
-def is_proc_macro_output(output):
-    extensions = [".so", ".dll", ".dylib"]
-    is_ext = [output.endswith(ext) for ext in extensions]
-    return len([x for x in is_ext if x]) > 0
+RUST_TOOLCHAIN_TYPE = "@rules_rust//rust:toolchain_type"
 
-def collect_proc_maco_artifacts(target, kind):
+RUST_SYSTEM_TO_DYLIB_EXT = {
+    "android": ".so",
+    "darwin": ".dylib",
+    "eabi": ".so",
+    "eabihf": ".so",
+    "emscripten": ".js",
+    "freebsd": ".so",
+    "fuchsia": ".so",
+    "ios": ".dylib",
+    "linux": ".so",
+    "none": ".so",
+    "unknown": ".wasm",
+    "wasi": ".wasm",
+    "windows": ".dll",
+}
+
+def is_proc_macro_output(output, os):
+    output.endswith(RUST_SYSTEM_TO_DYLIB_EXT[os])
+
+def collect_proc_maco_artifacts(target, kind, os):
     if not hasattr(target, "actions") or kind != "proc-macro":
         return []
 
@@ -333,7 +349,7 @@ def collect_proc_maco_artifacts(target, kind):
         outputs = action.outputs.to_list()
         for output in outputs:
             output_path = output.path
-            if is_proc_macro_output(output_path):
+            if is_proc_macro_output(output_path, os):
                 proc_macro_artifacts.append(output)
 
     return proc_macro_artifacts
@@ -342,9 +358,13 @@ def extract_rust_crate_info(target, ctx):
     if CrateInfo not in target:
         return None
 
+    if RUST_TOOLCHAIN_TYPE not in ctx.toolchains:
+        return None
+
     crate_info = target[CrateInfo]
     dep_info = target[DepInfo]
     build_info = None if not BuildInfo in target else target[BuildInfo]
+    toolchain = ctx.toolchains[RUST_TOOLCHAIN_TYPE]
 
     # Uncomment the following code fragment to print everything that
     # can be extracted from the public API.
@@ -400,7 +420,7 @@ def extract_rust_crate_info(target, ctx):
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep) and CrateInfo in dep]
 
-    proc_maco_artifacts = collect_proc_maco_artifacts(target, crate_info.type)
+    proc_maco_artifacts = collect_proc_maco_artifacts(target, crate_info.type, toolchain.os)
     proc_maco_artifacts_paths = [artifact.path for artifact in proc_maco_artifacts]
 
     # To obtain crate root file, find directory corresponding to
@@ -636,6 +656,6 @@ bsp_target_info_aspect = aspect(
     implementation = _bsp_target_info_aspect_impl,
     required_aspect_providers = [[JavaInfo]],
     attr_aspects = ALL_DEPS,
-    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE],
+    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE, RUST_TOOLCHAIN_TYPE],
 )
 
