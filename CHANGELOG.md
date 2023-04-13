@@ -10,6 +10,8 @@
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
 - Set PublishDiagnosticsParams.reset to be true
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
+- Update document about how to use projectview
+  | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
 
 ## [2.6.1]
 
