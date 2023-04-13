@@ -78,8 +78,8 @@ class IntelliJProjectTreeViewFix(
             }
         }
 
-        return (stableSymlinkNames + execRootSymlinkNames).map { name ->
-            workspaceRoot.toPath().resolve(name).toUri()
+        return (stableSymlinkNames + execRootSymlinkNames).map {
+            workspaceRoot.toPath().resolve(it).toUri()
         }.toSet()
     }
 
@@ -100,7 +100,7 @@ class IntelliJProjectTreeViewFix(
     }
 
     private fun resolveExistingRootDirectories(modules: Sequence<Module>): Sequence<URI> =
-        modules.map(Module::sourceSet).flatMap { obj: SourceSet -> obj.sourceRoots }.distinct()
+        modules.map(Module::sourceSet).flatMap { it.sourceRoots }.distinct()
 
     private fun resolveExpectedRootDirs(
         workspaceContext: WorkspaceContext, workspaceRoot: URI
@@ -123,8 +123,8 @@ class IntelliJProjectTreeViewFix(
         workspaceContext: WorkspaceContext, workspaceRoot: URI
     ): Sequence<String> {
         val root = Paths.get(workspaceRoot)
-        return importTargetSpecs(workspaceContext).map { s -> stripSuffixes(s, ":all", "...", "/") }
-            .map { s -> stripPrefixes(s, "//") }.map(root::resolve).filter(Files::exists)
+        return importTargetSpecs(workspaceContext).map { stripSuffixes(it, ":all", "...", "/") }
+            .map { stripPrefixes(it, "//") }.map(root::resolve).filter(Files::exists)
             .map(bazelPathsResolver::resolveUri).map(URI::toString)
     }
 

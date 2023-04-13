@@ -5,10 +5,43 @@
 
 ## [Unreleased]
 
+### Fixes
+-  Add class jars generated during annotation processing
+  | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
+- Set PublishDiagnosticsParams.reset to be true
+  | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
+- Update document about how to use projectview
+  | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
+
+## [2.6.1]
+
+### SECURITY 🚨
+
+- Make BEP Server listening on localhost instead of 0.0.0.0.
+  | [#369](https://github.com/JetBrains/bazel-bsp/pull/369)
+
+### Fixes 🛠️
+
+- Create BEP server on demand for each Bazel call.
+  | [#370](https://github.com/JetBrains/bazel-bsp/pull/370)
+
+## [2.6.0]
+
 ### Features 🎉
 
 - Project view file flag for disabling trace log.
   | [#344](https://github.com/JetBrains/bazel-bsp/pull/344)
+- Create BEP connection on demands instead of keeping it as a service (reduces memory footprint)
+  | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
+
+### Fixes 🛠️
+
+- Fixed handle bazelisk exec on windows.
+  | [#6294219](https://github.com/JetBrains/bazel-bsp/commit/629421998dcd1adb1e9c87973a128b207b9993eb)
+- Reduced memory footprint of the application after project import is done
+  | [#359](https://github.com/JetBrains/bazel-bsp/pull/359)
+- Exit bazel-bsp process when std io streams are closed
+  | [#356](https://github.com/JetBrains/bazel-bsp/pull/356)
 
 ## [2.5.1] - 08.02.2023
 
@@ -322,7 +355,11 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.5.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1...HEAD
+
+[2.6.1]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0..2.6.1
+
+[2.6.0]: https://github.com/JetBrains/bazel-bsp/compare/2.5.1..2.6.0
 
 [2.5.1]: https://github.com/JetBrains/bazel-bsp/compare/2.5.0..2.5.1
 

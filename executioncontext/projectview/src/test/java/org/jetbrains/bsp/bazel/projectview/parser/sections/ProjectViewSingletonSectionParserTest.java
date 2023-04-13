@@ -95,11 +95,12 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     var parser = ProjectViewProduceTraceLogSectionParser.INSTANCE;
     var rawValueConstructor = (Function<String, String>) (seed) -> "true";
     var sectionMapper =
-            (Function<Boolean, ProjectViewProduceTraceLogSection>) ProjectViewProduceTraceLogSection::new;
+        (Function<Boolean, ProjectViewProduceTraceLogSection>)
+            ProjectViewProduceTraceLogSection::new;
     var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
 
     var sectionConstructor =
-            createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
+        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
     var sectionName = parser.getSectionName();
 
     return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);

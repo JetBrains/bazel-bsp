@@ -15,5 +15,4 @@ data class BspIntegrationData(
     val traceWriter: PrintWriter?,
 ) {
     lateinit var launcher: Launcher<BuildClient>
-    lateinit var server: Server
 }

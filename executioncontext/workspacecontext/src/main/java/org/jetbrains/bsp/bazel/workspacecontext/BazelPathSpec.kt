@@ -34,7 +34,6 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
 
     private fun findBazelOnPathOrNull(): BazelPathSpec? =
         splitPath()
-            .filterNot { isBazeliskPath(it) }
             .map { mapToBazel(it) }
             .firstOrNull { it.canExecute() }
             ?.toPath()
@@ -42,9 +41,18 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
 
     private fun splitPath(): List<String> = System.getenv("PATH").split(File.pathSeparator)
 
-    private fun isBazeliskPath(path: String): Boolean = path.contains("bazelisk/")
+    private fun mapToBazel(path: String): File = File(path, calculateBazeliskExecName())
 
-    private fun mapToBazel(path: String): File = File(path, "bazel")
+    // TODO: update tests for the whole flow and mock different OSes
+    private fun calculateBazeliskExecName(): String {
+        val osName = System.getProperty("os.name").lowercase()
+        return with(osName) {
+            when {
+                startsWith("windows") -> "bazel.exe"
+                else -> "bazel"
+            }
+        }
+    }
 
     private fun map(bazelPathSection: ProjectViewBazelPathSection): BazelPathSpec =
         BazelPathSpec(bazelPathSection.value)

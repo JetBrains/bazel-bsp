@@ -17,7 +17,8 @@ from [Bazel Plugin for Intellij](https://ij.bazel.build/docs/project-views.html)
 
 **Note:** We will be changing this mechanism in future releases.
 
-Simply put `projectview.bazelproject` file in the root of your project and fill it.
+`$ cs launch org.jetbrains.bsp:bazel-bsp:<version> -M org.jetbrains.bsp.bazel.install.Install -- -p <path/to/projectview_file>`.
+For more details, see `--help`.
 
 ## Available sections
 

@@ -20,7 +20,7 @@ class DiagnosticBspMapper(private val workspaceRoot: Path) {
                 val bspDiagnostics = kv.value.map { createDiagnostic(it) }
                 val doc = TextDocumentIdentifier(toAbsoluteUri(kv.key.first))
                 val publishDiagnosticsParams =
-                    PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), bspDiagnostics, false)
+                    PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), bspDiagnostics, true)
                 publishDiagnosticsParams.originId = originId
                 publishDiagnosticsParams
             }

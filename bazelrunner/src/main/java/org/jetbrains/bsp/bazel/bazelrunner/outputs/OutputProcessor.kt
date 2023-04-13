@@ -1,11 +1,13 @@
 package org.jetbrains.bsp.bazel.bazelrunner.outputs
 
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
 abstract class OutputProcessor(private val process: Process, vararg loggers: OutputHandler) {
   val stdoutCollector = OutputCollector()
@@ -29,12 +31,12 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     val runnable = Runnable {
       try {
         BufferedReader(InputStreamReader(inputStream)).use { reader ->
-          var prevLine: String? = null
-
           while (!Thread.currentThread().isInterrupted) {
+            // TODO: bazel process output doesn't capture replaceable logs (displayed for example for fetching
+            //  repositories) returning a duplicated log line instead. Passing duplicated lines allows us not
+            //  to exceed client timeout. The duplicates filtering should be restored with the introduction of
+            //  servers heartbeat
             val line = reader.readLine() ?: return@Runnable
-            if (line == prevLine) continue
-            prevLine = line
             if (isRunning()) {
               handlers.forEach { it.onNextLine(line) }
             } else {
@@ -51,7 +53,16 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     executorService.submit(runnable).also { runningProcessors.add(it) }
   }
 
-  fun waitForExit(): Int {
+  fun waitForExit(cancelChecker: CancelChecker): Int {
+    var isFinished = false;
+    while (!isFinished) {
+      isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
+      if (cancelChecker.isCanceled) {
+        process.destroy()
+      }
+    }
+    // Return values of waitFor() and waitFor(long, TimeUnit) differ
+    // so we can't just return value from waitFor(long, TimeUnit) here
     val exitCode = process.waitFor()
     shutdown()
     return exitCode

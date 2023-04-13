@@ -12,10 +12,13 @@ import com.google.devtools.build.v1.PublishBuildToolEventStreamRequest;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamResponse;
 import com.google.devtools.build.v1.PublishLifecycleEventRequest;
 import com.google.protobuf.Empty;
+import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayDeque;
@@ -42,6 +45,14 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   public BepServer(BuildClient bspClient, DiagnosticsService diagnosticsService) {
     this.bspClient = bspClient;
     this.diagnosticsService = diagnosticsService;
+  }
+
+  public static BepServer newBepServer(BuildClient client, Path workspaceRoot) {
+    return new BepServer(client, new DiagnosticsService(workspaceRoot));
+  }
+
+  public static NettyServerBuilder nettyServerBuilder() {
+    return NettyServerBuilder.forAddress(new InetSocketAddress("localhost", 0));
   }
 
   @Override
