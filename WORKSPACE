@@ -207,7 +207,7 @@ maven_install(
         "org.scala-lang:scala-library:2.13.10",
         "com.google.protobuf:protobuf-java:3.22.3",
         "io.grpc:grpc-stub:1.54.0",
-        "io.grpc:grpc-netty:1.54.0",
+        "io.grpc:grpc-netty:1.54.1",
     ],
     fetch_sources = True,
     repositories = [
