@@ -291,7 +291,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         return RustWorkspaceResult(
             packages,
             rawDependencies,
-            dependencies
+            dependencies,
+            listOf()
         )
     }
 
