@@ -90,6 +90,7 @@ message RustCrateInfo {
     string proc_macro_srv = 140;
     string rustc_sysroot = 150;
     string rustc_src_sysroot = 160;
+    string cargo_bin_path = 170;
 }
 
 message TargetInfo {

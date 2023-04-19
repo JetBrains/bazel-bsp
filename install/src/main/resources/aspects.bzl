@@ -390,12 +390,11 @@ def extract_rust_crate_info(target, ctx):
     if RUST_TOOLCHAIN_TYPE not in ctx.toolchains:
         return None
 
-    print('Analyzing target:', target.label)
-
     crate_info = target[CrateInfo]
     dep_info = target[DepInfo]
     build_info = None if not BuildInfo in target else target[BuildInfo]
     toolchain = ctx.toolchains[RUST_TOOLCHAIN_TYPE]
+    cargo_bin_path = toolchain.cargo.path
 
     if RUST_ANALYZER_TOOLCHAIN_TYPE in ctx.toolchains:
         rust_analyzer_toolchain = ctx.toolchains[RUST_ANALYZER_TOOLCHAIN_TYPE]
@@ -408,7 +407,6 @@ def extract_rust_crate_info(target, ctx):
         rustc_src_sysroot = None
         proc_macro_srv = None
 
-    print('=' * 120)
     # Uncomment the following code fragment to print everything that
     # can be extracted from the public API.
     #
@@ -489,6 +487,7 @@ def extract_rust_crate_info(target, ctx):
         proc_macro_srv = proc_macro_srv,
         rustc_sysroot = rustc_sysroot,
         rustc_src_sysroot = rustc_src_sysroot,
+        cargo_bin_path = cargo_bin_path,
     )
 
     print(rust_crate_struct)
