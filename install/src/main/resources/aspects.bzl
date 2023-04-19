@@ -365,7 +365,7 @@ def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
 
     rustc_srcs = rust_analyzer_toolchain.rustc_srcs
 
-    sysroot_src = rustc_srcs.label.package + "/library"
+    sysroot_src = rustc_srcs.label.package
     if rustc_srcs.label.workspace_root:
         sysroot_src = rustc_srcs.label.workspace_root + "/" + sysroot_src
 
