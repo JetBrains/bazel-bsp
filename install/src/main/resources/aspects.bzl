@@ -320,6 +320,8 @@ WORKSPACE_DIR = 0
 EXEC_ROOT = 1
 
 RUST_TOOLCHAIN_TYPE = "@rules_rust//rust:toolchain_type"
+RUST_ANALYZER_TOOLCHAIN_TYPE = "@rules_rust//rust/rust_analyzer:toolchain_type"
+RUST_TOOLCHAINS_TYPES = [RUST_TOOLCHAIN_TYPE, RUST_ANALYZER_TOOLCHAIN_TYPE]
 
 RUST_SYSTEM_TO_DYLIB_EXT = {
     "android": ".so",
@@ -354,6 +356,33 @@ def collect_proc_maco_artifacts(target, kind, os):
 
     return proc_macro_artifacts
 
+def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
+    if not rust_analyzer_toolchain.rustc_srcs:
+        fail(
+            "Current Rust-Analyzer toolchain doesn't contain rustc sources in `rustc_srcs` attribute.",
+            "These are needed by rust-analyzer. If you are using the default Rust toolchain, add `rust_repositories(include_rustc_srcs = True, ...).` to your WORKSPACE file.",
+        )
+
+    rustc_srcs = rust_analyzer_toolchain.rustc_srcs
+
+    sysroot_src = rustc_srcs.label.package + "/library"
+    if rustc_srcs.label.workspace_root:
+        sysroot_src = rustc_srcs.label.workspace_root + "/" + sysroot_src
+
+    rustc = rust_analyzer_toolchain.rustc
+    sysroot_dir, _, bin_dir = rustc.dirname.rpartition("/")
+    if bin_dir != "bin":
+        fail("The rustc path is expected to be relative to the sysroot as `bin/rustc`. Instead got: {}".format(
+            rustc.path,
+        ))
+
+    toolchain_info = {
+        "sysroot": sysroot_dir,
+        "sysroot_src": sysroot_src,
+    }
+
+    return toolchain_info
+
 def extract_rust_crate_info(target, ctx):
     if CrateInfo not in target:
         return None
@@ -361,11 +390,25 @@ def extract_rust_crate_info(target, ctx):
     if RUST_TOOLCHAIN_TYPE not in ctx.toolchains:
         return None
 
+    print('Analyzing target:', target.label)
+
     crate_info = target[CrateInfo]
     dep_info = target[DepInfo]
     build_info = None if not BuildInfo in target else target[BuildInfo]
     toolchain = ctx.toolchains[RUST_TOOLCHAIN_TYPE]
 
+    if RUST_ANALYZER_TOOLCHAIN_TYPE in ctx.toolchains:
+        rust_analyzer_toolchain = ctx.toolchains[RUST_ANALYZER_TOOLCHAIN_TYPE]
+        sysroot = rust_analyzer_detect_sysroot(rust_analyzer_toolchain)
+        proc_macro_srv = rust_analyzer_toolchain.proc_macro_srv.path
+        rustc_sysroot = sysroot["sysroot"]
+        rustc_src_sysroot = sysroot["sysroot_src"]
+    else:
+        rustc_sysroot = None
+        rustc_src_sysroot = None
+        proc_macro_srv = None
+
+    print('=' * 120)
     # Uncomment the following code fragment to print everything that
     # can be extracted from the public API.
     #
@@ -443,6 +486,9 @@ def extract_rust_crate_info(target, ctx):
         crate_root = crate_info.root.path,
         version = ctx.rule.attr.version,
         proc_macro_artifacts = proc_maco_artifacts_paths,
+        proc_macro_srv = proc_macro_srv,
+        rustc_sysroot = rustc_sysroot,
+        rustc_src_sysroot = rustc_src_sysroot,
     )
 
     print(rust_crate_struct)
@@ -656,6 +702,6 @@ bsp_target_info_aspect = aspect(
     implementation = _bsp_target_info_aspect_impl,
     required_aspect_providers = [[JavaInfo]],
     attr_aspects = ALL_DEPS,
-    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE, RUST_TOOLCHAIN_TYPE],
+    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE] + RUST_TOOLCHAINS_TYPES,
 )
 

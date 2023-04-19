@@ -87,6 +87,9 @@ message RustCrateInfo {
     string crate_root = 110;
     string version = 120;
     repeated string proc_macro_artifacts = 130;
+    string proc_macro_srv = 140;
+    string rustc_sysroot = 150;
+    string rustc_src_sysroot = 160;
 }
 
 message TargetInfo {
