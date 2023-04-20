@@ -88,7 +88,7 @@ scala_repositories()
 
 IO_BAZEL_TAG = "5.4.1"
 
-IO_BAZEL_SHA = "dcff6935756aa7aca4fc569bb2bd26e1537f0b1f6d1bda5f2b200fa835cc507f"
+IO_BAZEL_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "io_bazel",
@@ -102,7 +102,7 @@ http_archive(
 
 GOOGLEAPIS_TAG = "5.4.1"
 
-GOOGLEAPIS_SHA = "dcff6935756aa7aca4fc569bb2bd26e1537f0b1f6d1bda5f2b200fa835cc507f"
+GOOGLEAPIS_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "googleapis",
