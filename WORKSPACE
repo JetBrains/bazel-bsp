@@ -8,9 +8,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "5.1"
+RULES_JVM_EXTERNAL_TAG = "5.2"
 
-RULES_JVM_EXTERNAL_SHA = "8c3b207722e5f97f1c83311582a6c11df99226e65e2471086e296561e57cc954"
+RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
 
 http_archive(
     name = "rules_jvm_external",
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.4.0"
+IO_BAZEL_TAG = "5.4.1"
 
-IO_BAZEL_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+IO_BAZEL_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.4.0"
+GOOGLEAPIS_TAG = "5.4.1"
 
-GOOGLEAPIS_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+GOOGLEAPIS_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "googleapis",
@@ -158,9 +158,9 @@ sonatype_dependencies()
 
 load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
 
-JUNIT_JUPITER_VERSION = "5.8.2"
+JUNIT_JUPITER_VERSION = "5.9.2"
 
-JUNIT_PLATFORM_VERSION = "1.8.2"
+JUNIT_PLATFORM_VERSION = "1.9.2"
 
 junit_jupiter_java_repositories(
     version = JUNIT_JUPITER_VERSION,
@@ -206,8 +206,8 @@ maven_install(
         "org.scala-lang:scala-library:2.13.10",
         "com.github.zpp-This-is-fine:build-server-protocol:rust-stdlib",
         "com.google.protobuf:protobuf-java:3.22.3",
-        "io.grpc:grpc-stub:1.54.0",
-        "io.grpc:grpc-netty:1.54.0",
+        "io.grpc:grpc-stub:1.54.1",
+        "io.grpc:grpc-netty:1.54.1",
     ],
     fetch_sources = True,
     repositories = [
