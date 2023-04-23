@@ -77,25 +77,12 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         exampleExampleTestBuildTarget.data = examplePythonBuildTarget
         exampleExampleTestBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
-        val exampleWithResourcesTarget = BuildTarget(
-            BuildTargetIdentifier("$targetPrefix//target_with_resources:example_with_resources"),
-            listOf("application"),
-            listOf("python"),
-            listOf(),
-            BuildTargetCapabilities(true, false, true, false)
-        )
-        exampleWithResourcesTarget.displayName = "$targetPrefix//target_with_resources:example_with_resources"
-        exampleWithResourcesTarget.baseDirectory = "file://\$WORKSPACE/target_with_resources/"
-        exampleWithResourcesTarget.data = examplePythonBuildTarget
-        exampleWithResourcesTarget.dataKind = BuildTargetDataKind.PYTHON
-
         val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
             listOf(
                 bspWorkspaceRootExampleBuildTarget,
                 exampleExampleBuildTarget,
                 exampleExampleLibBuildTarget,
                 exampleExampleTestBuildTarget,
-                exampleWithResourcesTarget
             )
         )
 
