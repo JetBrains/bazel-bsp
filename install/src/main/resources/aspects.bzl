@@ -323,26 +323,10 @@ RUST_TOOLCHAIN_TYPE = "@rules_rust//rust:toolchain_type"
 RUST_ANALYZER_TOOLCHAIN_TYPE = "@rules_rust//rust/rust_analyzer:toolchain_type"
 RUST_TOOLCHAINS_TYPES = [RUST_TOOLCHAIN_TYPE, RUST_ANALYZER_TOOLCHAIN_TYPE]
 
-RUST_SYSTEM_TO_DYLIB_EXT = {
-    "android": ".so",
-    "darwin": ".dylib",
-    "eabi": ".so",
-    "eabihf": ".so",
-    "emscripten": ".js",
-    "freebsd": ".so",
-    "fuchsia": ".so",
-    "ios": ".dylib",
-    "linux": ".so",
-    "none": ".so",
-    "unknown": ".wasm",
-    "wasi": ".wasm",
-    "windows": ".dll",
-}
+def is_proc_macro_output(output, ext):
+    return output.endswith(ext)
 
-def is_proc_macro_output(output, os):
-    output.endswith(RUST_SYSTEM_TO_DYLIB_EXT[os])
-
-def collect_proc_maco_artifacts(target, kind, os):
+def collect_proc_maco_artifacts(target, kind, ext):
     if not hasattr(target, "actions") or kind != "proc-macro":
         return []
 
@@ -351,7 +335,7 @@ def collect_proc_maco_artifacts(target, kind, os):
         outputs = action.outputs.to_list()
         for output in outputs:
             output_path = output.path
-            if is_proc_macro_output(output_path, os):
+            if is_proc_macro_output(output_path, ext):
                 proc_macro_artifacts.append(output)
 
     return proc_macro_artifacts
@@ -383,7 +367,50 @@ def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
 
     return toolchain_info
 
+# TODO: remove this debug function.
+# Generated using regex
+def print_toolchain(toolchain):
+    print('all_files', toolchain.all_files)
+    print('binary_ext', toolchain.binary_ext)
+    print('cargo', toolchain.cargo)
+    print('clippy_driver', toolchain.clippy_driver)
+    print('compilation_mode_opts', toolchain.compilation_mode_opts)
+    print('crosstool_files', toolchain.crosstool_files)
+    print('default_edition', toolchain.default_edition)
+    print('dylib_ext', toolchain.dylib_ext)
+    print('env', toolchain.env)
+    print('exec_triple', toolchain.exec_triple)
+    print('libstd_and_allocator_ccinfo', toolchain.libstd_and_allocator_ccinfo)
+    print('llvm_cov', toolchain.llvm_cov)
+    print('llvm_profdata', toolchain.llvm_profdata)
+    print('make_variables', toolchain.make_variables)
+    print('os', toolchain.os)
+    print('rust_doc', toolchain.rust_doc)
+    print('rust_std', toolchain.rust_std)
+    print('rust_std_paths', toolchain.rust_std_paths)
+    print('rustc', toolchain.rustc)
+    print('rustc_lib', toolchain.rustc_lib)
+    print('rustfmt', toolchain.rustfmt)
+    print('staticlib_ext', toolchain.staticlib_ext)
+    print('stdlib_linkflags', toolchain.stdlib_linkflags)
+    print('extra_rustc_flags', toolchain.extra_rustc_flags)
+    print('extra_exec_rustc_flags', toolchain.extra_exec_rustc_flags)
+    print('sysroot', toolchain.sysroot)
+    print('sysroot_short_path', toolchain.sysroot_short_path)
+    print('target_arch', toolchain.target_arch)
+    print('target_flag_value', toolchain.target_flag_value)
+    print('target_json', toolchain.target_json)
+    print('target_triple', toolchain.target_triple)
+    print('_rename_first_party_crates', toolchain._rename_first_party_crates)
+    print('_third_party_dir', toolchain._third_party_dir)
+    print('_pipelined_compilation', toolchain._pipelined_compilation)
+    print('_experimental_use_cc_common_link', toolchain._experimental_use_cc_common_link)
+    print('=' * 160)
+
 def extract_rust_crate_info(target, ctx):
+
+    DEBUG = True
+
     if CrateInfo not in target:
         return None
 
@@ -395,6 +422,11 @@ def extract_rust_crate_info(target, ctx):
     build_info = None if not BuildInfo in target else target[BuildInfo]
     toolchain = ctx.toolchains[RUST_TOOLCHAIN_TYPE]
     cargo_bin_path = toolchain.cargo.path
+
+    if DEBUG:
+        print('Analyzing target:', target.label)
+        print('toolchain info')
+        print_toolchain(toolchain)
 
     if RUST_ANALYZER_TOOLCHAIN_TYPE in ctx.toolchains:
         rust_analyzer_toolchain = ctx.toolchains[RUST_ANALYZER_TOOLCHAIN_TYPE]
@@ -461,7 +493,7 @@ def extract_rust_crate_info(target, ctx):
 
     deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep) and CrateInfo in dep]
 
-    proc_maco_artifacts = collect_proc_maco_artifacts(target, crate_info.type, toolchain.os)
+    proc_maco_artifacts = collect_proc_maco_artifacts(target, crate_info.type, toolchain.dylib_ext)
     proc_maco_artifacts_paths = [artifact.path for artifact in proc_maco_artifacts]
 
     # To obtain crate root file, find directory corresponding to
@@ -490,7 +522,8 @@ def extract_rust_crate_info(target, ctx):
         cargo_bin_path = cargo_bin_path,
     )
 
-    print(rust_crate_struct)
+    if DEBUG:
+        print(rust_crate_struct)
 
     return rust_crate_struct
 
@@ -546,7 +579,12 @@ COMPILE_DEPS = [
     "deps",
     "jars",
     "exports",
+]
+
+RUST_DEPS = [
     "proc_macro_deps",
+    "crate", 
+    "actual",
 ]
 
 PRIVATE_COMPILE_DEPS = [
@@ -561,7 +599,7 @@ RUNTIME_DEPS = [
     "runtime_deps",
 ]
 
-ALL_DEPS = COMPILE_DEPS + PRIVATE_COMPILE_DEPS + RUNTIME_DEPS
+ALL_DEPS = COMPILE_DEPS + PRIVATE_COMPILE_DEPS + RUNTIME_DEPS + RUST_DEPS
 
 def make_dep(dep, dependency_type):
     return struct(

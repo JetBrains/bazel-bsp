@@ -24,6 +24,8 @@ import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildServer;
 import ch.epfl.scala.bsp4j.RustBuildServer;
+import ch.epfl.scala.bsp4j.RustToolchainParams;
+import ch.epfl.scala.bsp4j.RustToolchainResult;
 import ch.epfl.scala.bsp4j.RustWorkspaceParams;
 import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
@@ -236,5 +238,10 @@ public class BspServerApi
   @Override
   public CompletableFuture<RustWorkspaceResult> rustWorkspace(RustWorkspaceParams params) {
     return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace, params);
+  }
+
+  @Override
+  public CompletableFuture<RustToolchainResult> rustToolchain(RustToolchainParams params) {
+    return runner.handleRequest("rustToolchain", projectSyncService::rustToolchain, params);
   }
 }

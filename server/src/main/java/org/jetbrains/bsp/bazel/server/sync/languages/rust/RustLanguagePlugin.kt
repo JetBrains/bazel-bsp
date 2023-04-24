@@ -1,16 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.RustWorkspaceResult
-import ch.epfl.scala.bsp4j.RustPackage
-import ch.epfl.scala.bsp4j.RustRawDependency
+import ch.epfl.scala.bsp4j.*
 import ch.epfl.scala.bsp4j.RustDependency
-import ch.epfl.scala.bsp4j.RustDepKindInfo
-import ch.epfl.scala.bsp4j.RustTarget
-import ch.epfl.scala.bsp4j.RustFeature
-import ch.epfl.scala.bsp4j.RustEnvData
-import ch.epfl.scala.bsp4j.RustProcMacroArtifact
-import ch.epfl.scala.bsp4j.RustStdLib
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
@@ -102,12 +93,10 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     private fun prependWorkspacePath(path: String): String =
         bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()
 
-    private fun rustPackages(rustBspTargets: List<Module>): Pair<List<RustPackage>, List<RustStdLib>> {
+    private fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> {
         for (target in rustBspTargets) {
             require(Language.RUST in target.languages) { "The target is not a Rust target" }
         }
-        // We use set, because we can have multiple targets with the same stdlib
-        val stdLibs = mutableSetOf<RustStdLib>()
         val packages = rustBspTargets
             .groupBy { resolvePackage(it).packageName }
             .mapNotNull { (rustPackage, rustTargets) ->
@@ -125,15 +114,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                     }.map { (_, targets) ->
                         mergeTargets(targets)
                     }
-
-                stdLibs.addAll(rustTargetsWithData.map { (_, rustData) ->
-                    RustStdLib(
-                        prependWorkspacePath(rustData.rustcSysroot),
-                        prependWorkspacePath(rustData.rustcSrcSysroot),
-                        prependWorkspacePath(rustData.cargoBinPath),
-                        prependWorkspacePath(rustData.procMacroSrv)
-                    )
-                })
 
                 // target have versions, but package no, as there is no such thing as package in Rust in Bazel
                 val version = rustTargetsWithData.map { (_, rustData) -> rustData.version }.maxOf { it }
@@ -208,7 +188,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 )
             }
 
-        return Pair(packages, stdLibs.toList())
+        return packages
     }
 
     // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
@@ -304,20 +284,43 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     fun toRustWorkspaceResult(requestTargets: List<Module>, allTargets: List<Module>): RustWorkspaceResult {
         val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val (packages, stdLibs) = rustPackages(modules)
+        val packages = rustPackages(modules)
         val (dependencies, rawDependencies) = rustDependencies(packages, modules)
-
-        LOGGER.info("StdLibs:")
-        for (stdLib in stdLibs) {
-            LOGGER.info("  $stdLib")
-        }
 
         return RustWorkspaceResult(
             packages,
             rawDependencies,
-            dependencies,
-            stdLibs
+            dependencies
         )
+    }
+
+    private fun resolveStdLib(rustModule: Module): RustToolchain? {
+        if (rustModule.languageData !is RustModule) {
+            return null;
+        }
+
+        val rustData = rustModule.languageData
+        val stdLib = if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
+            null
+        } else {
+            RustStdLib(
+                rustData.rustcSysroot,
+                rustData.rustcSrcSysroot
+            )
+        }
+
+        return RustToolchain(
+            stdLib,
+            rustData.cargoBinPath,
+            rustData.procMacroSrv
+        )
+    }
+
+    fun toRustToolchains(requestTargets: List<Module>, allTargets: List<Module>): RustToolchainResult {
+        val allRelatedTargets = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
+        val toolchains = allRelatedTargets.mapNotNull { resolveStdLib(it) }
+
+        return RustToolchainResult(toolchains)
     }
 
     companion object {
