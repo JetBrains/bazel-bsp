@@ -326,7 +326,7 @@ RUST_TOOLCHAINS_TYPES = [RUST_TOOLCHAIN_TYPE, RUST_ANALYZER_TOOLCHAIN_TYPE]
 def is_proc_macro_output(output, ext):
     return output.endswith(ext)
 
-def collect_proc_maco_artifacts(target, kind, ext):
+def collect_proc_macro_artifacts(target, kind, ext):
     if not hasattr(target, "actions") or kind != "proc-macro":
         return []
 
@@ -491,10 +491,12 @@ def extract_rust_crate_info(target, ctx):
     crate_is_generated = not crate_info.root.is_source
     crate_is_in_exec_root = not crate_is_from_workspace or crate_is_generated
 
-    deps = [wrap_dependency(dep) for dep in ctx.rule.attr.deps if not is_same_crate(dep) and CrateInfo in dep]
+    deps = [wrap_dependency(dep)
+            for dep in (ctx.rule.attr.deps + ctx.rule.attr.proc_macro_deps)
+            if not is_same_crate(dep) and CrateInfo in dep]
 
-    proc_maco_artifacts = collect_proc_maco_artifacts(target, crate_info.type, toolchain.dylib_ext)
-    proc_maco_artifacts_paths = [artifact.path for artifact in proc_maco_artifacts]
+    proc_macro_artifacts = collect_proc_macro_artifacts(target, crate_info.type, toolchain.dylib_ext)
+    proc_macro_artifacts_paths = [artifact.path for artifact in proc_macro_artifacts]
 
     # To obtain crate root file, find directory corresponding to
     # `crate_location` and concatenate it with `crate_id` (relative crate root
@@ -515,7 +517,7 @@ def extract_rust_crate_info(target, ctx):
         dependencies = deps,
         crate_root = crate_info.root.path,
         version = ctx.rule.attr.version,
-        proc_macro_artifacts = proc_maco_artifacts_paths,
+        proc_macro_artifacts = proc_macro_artifacts_paths,
         proc_macro_srv = proc_macro_srv,
         rustc_sysroot = rustc_sysroot,
         rustc_src_sysroot = rustc_src_sysroot,
@@ -579,12 +581,7 @@ COMPILE_DEPS = [
     "deps",
     "jars",
     "exports",
-]
-
-RUST_DEPS = [
     "proc_macro_deps",
-    "crate", 
-    "actual",
 ]
 
 PRIVATE_COMPILE_DEPS = [
@@ -599,7 +596,7 @@ RUNTIME_DEPS = [
     "runtime_deps",
 ]
 
-ALL_DEPS = COMPILE_DEPS + PRIVATE_COMPILE_DEPS + RUNTIME_DEPS + RUST_DEPS
+ALL_DEPS = COMPILE_DEPS + PRIVATE_COMPILE_DEPS + RUNTIME_DEPS
 
 def make_dep(dep, dependency_type):
     return struct(
