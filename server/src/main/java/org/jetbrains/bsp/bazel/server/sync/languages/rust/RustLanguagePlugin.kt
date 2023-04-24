@@ -304,15 +304,15 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             null
         } else {
             RustStdLib(
-                rustData.rustcSysroot,
-                rustData.rustcSrcSysroot
+                prependWorkspacePath(rustData.rustcSysroot),
+                prependWorkspacePath(rustData.rustcSrcSysroot)
             )
         }
 
         return RustToolchain(
             stdLib,
-            rustData.cargoBinPath,
-            rustData.procMacroSrv
+            prependWorkspacePath(rustData.cargoBinPath),
+            prependWorkspacePath(rustData.procMacroSrv)
         )
     }
 

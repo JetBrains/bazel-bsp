@@ -409,7 +409,7 @@ def print_toolchain(toolchain):
 
 def extract_rust_crate_info(target, ctx):
 
-    DEBUG = True
+    DEBUG = False
 
     if CrateInfo not in target:
         return None
