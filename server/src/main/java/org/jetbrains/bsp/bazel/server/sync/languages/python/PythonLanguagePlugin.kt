@@ -23,19 +23,15 @@ class PythonLanguagePlugin(
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
         targetInfo.pythonTargetInfo?.run {
             PythonModule(
-                calculateInterpreterURI(this),
+                calculateInterpreterURI(interpreter),
                 version.takeUnless(String::isNullOrEmpty)
             )
         }
 
-    private fun calculateInterpreterURI(pythonTargetInfo: PythonTargetInfo): URI? =
-        pythonTargetInfo.run {
-            interpreter?.let {
-                it.takeUnless { it.relativePath.isNullOrEmpty() }
-                    ?.let { bazelPathsResolver.resolveUri(it) }
-            }
-        }
-
+    private fun calculateInterpreterURI(interpreter: FileLocation?): URI? =
+        interpreter
+            ?.takeUnless { it.relativePath.isNullOrEmpty() }
+            ?.let { bazelPathsResolver.resolveUri(it) }
 
     override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
         buildTarget.dataKind = BuildTargetDataKind.PYTHON
@@ -53,6 +49,7 @@ class PythonLanguagePlugin(
         targetInfo.pythonTargetInfo?.run {
             dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getExternalSources)
+                .filter(::isExternal)
                 .map(::calculateExternalSourcePath)
                 .toSet()
         }.orEmpty()
