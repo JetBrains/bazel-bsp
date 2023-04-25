@@ -19,12 +19,23 @@ import kotlin.io.path.toPath
 class PythonLanguagePlugin(
     private val bazelPathsResolver: BazelPathsResolver
 ) : LanguagePlugin<PythonModule>() {
+    private var defaultInterpreter: URI? = null
+    private var defaultVersion: String? = null
+
+    override fun prepareSync(targets: Sequence<TargetInfo>) {
+        val targetWithSdk = targets.filter { it.hasPythonTargetInfo() && it.pythonTargetInfo.hasInterpreter() }.firstOrNull()
+        val defaultTargetInfo = targetWithSdk?.pythonTargetInfo
+        defaultInterpreter = defaultTargetInfo?.interpreter
+            ?.takeUnless { it.relativePath.isNullOrEmpty() }
+            ?.let { bazelPathsResolver.resolveUri(it) }
+        defaultVersion = defaultTargetInfo?.version
+    }
 
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
         targetInfo.pythonTargetInfo?.run {
             PythonModule(
-                calculateInterpreterURI(interpreter),
-                version.takeUnless(String::isNullOrEmpty)
+                calculateInterpreterURI(interpreter) ?: defaultInterpreter,
+                version.takeUnless(String::isNullOrEmpty) ?: defaultVersion
             )
         }
 

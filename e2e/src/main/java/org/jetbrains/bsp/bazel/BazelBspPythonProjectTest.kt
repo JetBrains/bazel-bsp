@@ -6,6 +6,15 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import ch.epfl.scala.bsp4j.PythonBuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetDataKind
+import ch.epfl.scala.bsp4j.PythonOptionsItem
+import ch.epfl.scala.bsp4j.PythonOptionsParams
+import ch.epfl.scala.bsp4j.PythonOptionsResult
+import ch.epfl.scala.bsp4j.DependencySourcesItem
+import ch.epfl.scala.bsp4j.DependencySourcesParams
+import ch.epfl.scala.bsp4j.DependencySourcesResult
+import ch.epfl.scala.bsp4j.ResourcesItem
+import ch.epfl.scala.bsp4j.ResourcesParams
+import ch.epfl.scala.bsp4j.ResourcesResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 
@@ -18,9 +27,11 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
     override fun repoName(): String = "python-project"
 
-    override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets(),
+    override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
+        workspaceBuildTargets(),
         dependencySourcesResults(),
-        pythonOptionsResults())
+        pythonOptionsResults(),
+        resourcesResults())
 
     private fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
         val bspWorkspaceRootExampleBuildTarget =
@@ -39,9 +50,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
                 "PY3",
                 "file://\$BAZEL_CACHE/external/python3_9_x86_64-unknown-linux-gnu/bin/python3",
             )
-
-        val examplePythonLibBuildTarget =
-            PythonBuildTarget(null, null)
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//example:example"),
@@ -67,7 +75,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         )
         exampleExampleLibBuildTarget.displayName = "$targetPrefix//lib:example_library"
         exampleExampleLibBuildTarget.baseDirectory = "file://\$WORKSPACE/lib/"
-        exampleExampleLibBuildTarget.data = examplePythonLibBuildTarget
+        exampleExampleLibBuildTarget.data = examplePythonBuildTarget
         exampleExampleLibBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
         val exampleExampleTestBuildTarget = BuildTarget(
@@ -141,6 +149,19 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             "pythonOptions results"
         ) {
             testClient.testPythonOptions(Duration.ofSeconds(30), pythonOptionsParams, expectedPythonOptionsResult)
+        }
+    }
+
+    private fun resourcesResults(): BazelBspTestScenarioStep {
+        val expectedTargetIdentifiers = expectedTargetIdentifiers().filter { it.uri != "bsp-workspace-root" }
+        val expectedResourcesItems = expectedTargetIdentifiers.map { ResourcesItem(it, emptyList()) }
+        val expectedResourcesResult = ResourcesResult(expectedResourcesItems)
+        val resourcesParams = ResourcesParams(expectedTargetIdentifiers)
+
+        return BazelBspTestScenarioStep(
+            "resources results"
+        ) {
+            testClient.testResources(Duration.ofSeconds(30), resourcesParams, expectedResourcesResult)
         }
     }
 }
