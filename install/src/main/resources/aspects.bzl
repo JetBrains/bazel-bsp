@@ -1,4 +1,4 @@
-load("@rules_rust//rust:rust_common.bzl", "CrateInfo", "BuildInfo", "DepInfo")
+load("@rules_rust//rust:rust_common.bzl", "CrateInfo", "BuildInfo")
 
 def filter(f, xs):
     return [x for x in xs if f(x)]
@@ -418,7 +418,6 @@ def extract_rust_crate_info(target, ctx):
         return None
 
     crate_info = target[CrateInfo]
-    dep_info = target[DepInfo]
     build_info = None if not BuildInfo in target else target[BuildInfo]
     toolchain = ctx.toolchains[RUST_TOOLCHAIN_TYPE]
     cargo_bin_path = toolchain.cargo.path
