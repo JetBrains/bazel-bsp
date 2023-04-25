@@ -4,3 +4,4 @@
 .ijwb/
 bazel-*
 .DS_Store
+projectview.bazelproject
