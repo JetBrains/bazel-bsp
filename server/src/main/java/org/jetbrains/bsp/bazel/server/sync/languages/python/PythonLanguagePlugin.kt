@@ -55,6 +55,8 @@ class PythonLanguagePlugin(
         }.orEmpty()
 
 
+    private fun isExternal(fileLocation: FileLocation): Boolean = fileLocation.isExternal
+
     private fun getExternalSources(targetInfo: TargetInfo): List<FileLocation> =
         targetInfo.sourcesList.mapNotNull { it.takeIf { it.isExternal } }
 
