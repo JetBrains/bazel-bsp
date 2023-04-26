@@ -81,7 +81,7 @@ object ReGlobber {
                 walkDepth = Option.empty()
                 globPrefix = "glob:**."
             }
-            val includes = extensions.map { ext: String -> globPrefix + ext }
+            val includes = extensions.map { globPrefix + it }
             val singleGlob = SourcesGlobs(basePath, walkDepth, includes.toScalaList(), emptyList())
             listOf(singleGlob).toScalaList()
         }

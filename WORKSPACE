@@ -8,23 +8,23 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "4.5"
+RULES_JVM_EXTERNAL_TAG = "5.2"
 
-RULES_JVM_EXTERNAL_SHA = "b17d7388feb9bfa7f2fa09031b32707df529f26c91ab9e5d909eb1676badd9a6"
+RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
 
 http_archive(
     name = "rules_jvm_external",
     sha256 = RULES_JVM_EXTERNAL_SHA,
     strip_prefix = "rules_jvm_external-{}".format(RULES_JVM_EXTERNAL_TAG),
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/{}.zip".format(RULES_JVM_EXTERNAL_TAG),
+    url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG),
 )
 
 # ======================================================================================================================
 # kotlin
 
-IO_BAZEL_KOTLIN_RULES_TAG = "v1.7.0"
+IO_BAZEL_KOTLIN_RULES_TAG = "v1.7.1"
 
-IO_BAZEL_KOTLIN_RULES_SHA = "15afe2d727f0dba572e0ce58f1dac20aec1441422ca65f7c3f7671b47fd483bf"
+IO_BAZEL_KOTLIN_RULES_SHA = "fd92a98bd8a8f0e1cdcb490b93f5acef1f1727ed992571232d33de42395ca9b3"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -44,9 +44,9 @@ register_toolchains("//:kotlin_toolchain")
 # ======================================================================================================================
 # bazel_skylib - starlark functions
 
-BAZEL_SKYLIB_TAG = "1.3.0"
+BAZEL_SKYLIB_TAG = "1.4.1"
 
-BAZEL_SKYLIB_SHA = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506"
+BAZEL_SKYLIB_SHA = "b8a1527901774180afc798aeb28c4634bdccf19c4d98e7bdd1ce79d1fe9aaad7"
 
 http_archive(
     name = "bazel_skylib",
@@ -57,15 +57,15 @@ http_archive(
 # ======================================================================================================================
 # io_bazel_rules_scala - required by bazel_sonatype
 
-IO_BAZEL_RULES_SCALA_TAG = "20220201"
+IO_BAZEL_RULES_SCALA_TAG = "5.0.0"
 
-IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
+IO_BAZEL_RULES_SCALA_SHA = "141a3919b37c80a846796f792dcf6ea7cd6e7b7ca4297603ca961cd22750c951"
 
 http_archive(
     name = "io_bazel_rules_scala",
     sha256 = IO_BAZEL_RULES_SCALA_SHA,
     strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
-    url = "https://github.com/bazelbuild/rules_scala/releases/download/{}/rules_scala-{}.zip".format(IO_BAZEL_RULES_SCALA_TAG, IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/bazelbuild/rules_scala/archive/refs/tags/v{}.tar.gz".format(IO_BAZEL_RULES_SCALA_TAG),
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.4.0"
+IO_BAZEL_TAG = "5.4.1"
 
-IO_BAZEL_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+IO_BAZEL_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.4.0"
+GOOGLEAPIS_TAG = "5.4.1"
 
-GOOGLEAPIS_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+GOOGLEAPIS_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "googleapis",
@@ -158,9 +158,9 @@ sonatype_dependencies()
 
 load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
 
-JUNIT_JUPITER_VERSION = "5.8.2"
+JUNIT_JUPITER_VERSION = "5.9.2"
 
-JUNIT_PLATFORM_VERSION = "1.8.2"
+JUNIT_PLATFORM_VERSION = "1.9.2"
 
 junit_jupiter_java_repositories(
     version = JUNIT_JUPITER_VERSION,
@@ -197,16 +197,17 @@ maven_install(
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
         "io.vavr:vavr:0.10.4",
-        "org.apache.logging.log4j:log4j-api:2.19.0",
-        "org.apache.logging.log4j:log4j-core:2.19.0",
+        "org.apache.logging.log4j:log4j-api:2.20.0",
+        "org.apache.logging.log4j:log4j-core:2.20.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
         "org.junit.jupiter:junit-jupiter:5.9.2",
-        "com.fasterxml.jackson.core:jackson-databind:2.14.1",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1",
+        "com.fasterxml.jackson.core:jackson-databind:2.15.0",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.10",
-        "com.google.protobuf:protobuf-java:3.21.12",
-        "io.grpc:grpc-stub:1.51.3",
+        "com.google.protobuf:protobuf-java:3.22.3",
+        "io.grpc:grpc-stub:1.54.1",
+        "io.grpc:grpc-netty:1.54.1",
     ],
     fetch_sources = True,
     repositories = [

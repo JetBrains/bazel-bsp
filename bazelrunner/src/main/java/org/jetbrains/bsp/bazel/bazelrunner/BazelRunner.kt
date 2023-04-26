@@ -25,17 +25,16 @@ class BazelRunner private constructor(
         }
     }
 
-    private var besBackendPort: Int? = null
-
     fun commandBuilder(): BazelRunnerCommandBuilder = BazelRunnerCommandBuilder(this)
 
     fun runBazelCommandBes(
         command: String,
         flags: List<String>,
         arguments: List<String>,
-        originId: String?
+        originId: String?,
+        besBackendPort: Int,
     ): BazelProcess {
-        fun besFlags() = listOf("--bes_backend=grpc://localhost:${besBackendPort!!}")
+        fun besFlags() = listOf("--bes_backend=grpc://localhost:${besBackendPort}")
 
         return runBazelCommand(command, flags = besFlags() + flags, arguments, originId)
     }
@@ -69,8 +68,4 @@ class BazelRunner private constructor(
 
     private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelPath.value.toString()
     private fun buildFlags(workspaceContext: WorkspaceContext): List<String> = workspaceContext.buildFlags.values
-
-    fun setBesBackendPort(port: Int) {
-        besBackendPort = port
-    }
 }

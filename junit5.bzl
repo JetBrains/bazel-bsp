@@ -21,13 +21,13 @@ JUNIT_PLATFORM_ARTIFACT_ID_LIST = [
 ]
 
 JUNIT_EXTRA_DEPENDENCIES = [
-    ("org.apiguardian", "apiguardian-api", "1.0.0"),
-    ("org.opentest4j", "opentest4j", "1.1.1"),
-    ("org.assertj", "assertj-core", "3.22.0"),
-    ("io.kotest", "kotest-assertions-api-jvm", "5.2.2"),
-    ("io.kotest", "kotest-assertions-core-jvm", "5.2.2"),
-    ("io.kotest", "kotest-assertions-shared-jvm", "5.2.2"),
-    ("io.kotest", "kotest-common-jvm", "5.2.2"),
+    ("org.apiguardian", "apiguardian-api", "1.1.2"),
+    ("org.opentest4j", "opentest4j", "1.2.0"),
+    ("org.assertj", "assertj-core", "3.24.2"),
+    ("io.kotest", "kotest-assertions-api-jvm", "5.5.5"),
+    ("io.kotest", "kotest-assertions-core-jvm", "5.5.5"),
+    ("io.kotest", "kotest-assertions-shared-jvm", "5.5.5"),
+    ("io.kotest", "kotest-common-jvm", "5.5.5"),
 ]
 
 def junit_jupiter_java_repositories(
