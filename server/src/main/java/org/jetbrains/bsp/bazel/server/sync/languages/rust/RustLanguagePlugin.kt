@@ -52,6 +52,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 rustcSysroot = targetInfo.rustCrateInfo.rustcSysroot,
                 rustcSrcSysroot = targetInfo.rustCrateInfo.rustcSrcSysroot,
                 cargoBinPath = targetInfo.rustCrateInfo.cargoBinPath,
+                rustcVersion = targetInfo.rustCrateInfo.rustcVersion,
             )
         }
     }
@@ -305,7 +306,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         } else {
             RustStdLib(
                 prependWorkspacePath(rustData.rustcSysroot),
-                prependWorkspacePath(rustData.rustcSrcSysroot)
+                prependWorkspacePath(rustData.rustcSrcSysroot),
+                rustData.rustcVersion
             )
         }
 

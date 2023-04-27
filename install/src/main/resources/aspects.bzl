@@ -340,6 +340,16 @@ def collect_proc_macro_artifacts(target, kind, ext):
 
     return proc_macro_artifacts
 
+def extract_rust_version(sysroot_dir):
+    split = sysroot_dir.partition("/")
+    for path_fragment in split:
+        if path_fragment.startswith("rust_analyzer_") and path_fragment.endswith("_tools"):
+            strip_prefix = len("rust_analyzer_")
+            strip_suffix = len("_tools")
+            return path_fragment[strip_prefix:-strip_suffix]
+    return None
+
+
 def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
     if not rust_analyzer_toolchain.rustc_srcs:
         fail(
@@ -360,9 +370,12 @@ def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
             rustc.path,
         ))
 
+    version = extract_rust_version(sysroot_dir)
+
     toolchain_info = {
         "sysroot": sysroot_dir,
         "sysroot_src": sysroot_src,
+        "version": version,
     }
 
     return toolchain_info
@@ -405,7 +418,7 @@ def print_toolchain(toolchain):
     print('_third_party_dir', toolchain._third_party_dir)
     print('_pipelined_compilation', toolchain._pipelined_compilation)
     print('_experimental_use_cc_common_link', toolchain._experimental_use_cc_common_link)
-    print('=' * 160)
+    print('=' * 250)
 
 def extract_rust_crate_info(target, ctx):
 
@@ -433,10 +446,12 @@ def extract_rust_crate_info(target, ctx):
         proc_macro_srv = rust_analyzer_toolchain.proc_macro_srv.path
         rustc_sysroot = sysroot["sysroot"]
         rustc_src_sysroot = sysroot["sysroot_src"]
+        rustc_version = sysroot["version"]
     else:
         rustc_sysroot = None
         rustc_src_sysroot = None
         proc_macro_srv = None
+        rustc_version = None
 
     # Uncomment the following code fragment to print everything that
     # can be extracted from the public API.
@@ -521,10 +536,12 @@ def extract_rust_crate_info(target, ctx):
         rustc_sysroot = rustc_sysroot,
         rustc_src_sysroot = rustc_src_sysroot,
         cargo_bin_path = cargo_bin_path,
+        rustc_version = rustc_version,
     )
 
     if DEBUG:
         print(rust_crate_struct)
+        print("=" * 120)
 
     return rust_crate_struct
 
