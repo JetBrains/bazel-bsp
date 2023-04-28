@@ -82,13 +82,13 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     private fun extractExternalPath(label: String): String {
         require(label[0] == '@')
         val externalName = label.substring(1)
-        val externalSplitted = externalName.split("//", limit=2)
-        require(externalSplitted.size == 2) { String.format("Label does not contain //")}
+        val externalSplit = externalName.split("//", limit = 2)
+        require(externalSplit.size == 2) { "Label does not contain //" }
 
-        val parts = externalSplitted[1].split(":".toRegex()).toTypedArray()
-        require(parts.size == 2) { String.format("Label %s didn't contain exactly one ':'", label) }
+        val parts = externalSplit[1].split(":".toRegex()).toTypedArray()
+        require(parts.size == 2) { "Label $label didn't contain exactly one ':'" }
 
-        return "external/" + externalSplitted[0] + '/' + parts[0]
+        return "external/" + externalSplit[0] + '/' + parts[0]
     }
 
     fun extractRelativePath(label: String): String {
