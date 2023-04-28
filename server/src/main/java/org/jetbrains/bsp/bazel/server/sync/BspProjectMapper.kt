@@ -1,6 +1,53 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildServerCapabilities
+import ch.epfl.scala.bsp4j.BuildTarget
+import ch.epfl.scala.bsp4j.BuildTargetCapabilities
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import ch.epfl.scala.bsp4j.CompileProvider
+import ch.epfl.scala.bsp4j.CppOptionsItem
+import ch.epfl.scala.bsp4j.CppOptionsParams
+import ch.epfl.scala.bsp4j.CppOptionsResult
+import ch.epfl.scala.bsp4j.DependencySourcesItem
+import ch.epfl.scala.bsp4j.DependencySourcesParams
+import ch.epfl.scala.bsp4j.DependencySourcesResult
+import ch.epfl.scala.bsp4j.InitializeBuildResult
+import ch.epfl.scala.bsp4j.InverseSourcesParams
+import ch.epfl.scala.bsp4j.InverseSourcesResult
+import ch.epfl.scala.bsp4j.JavacOptionsItem
+import ch.epfl.scala.bsp4j.JavacOptionsParams
+import ch.epfl.scala.bsp4j.JavacOptionsResult
+import ch.epfl.scala.bsp4j.JvmEnvironmentItem
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
+import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
+import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
+import ch.epfl.scala.bsp4j.OutputPathsParams
+import ch.epfl.scala.bsp4j.OutputPathItem
+import ch.epfl.scala.bsp4j.OutputPathsItem
+import ch.epfl.scala.bsp4j.OutputPathItemKind
+import ch.epfl.scala.bsp4j.OutputPathsResult
+import ch.epfl.scala.bsp4j.ResourcesItem
+import ch.epfl.scala.bsp4j.ResourcesParams
+import ch.epfl.scala.bsp4j.ResourcesResult
+import ch.epfl.scala.bsp4j.RunProvider
+import ch.epfl.scala.bsp4j.RustToolchainParams
+import ch.epfl.scala.bsp4j.RustToolchainResult
+import ch.epfl.scala.bsp4j.RustWorkspaceParams
+import ch.epfl.scala.bsp4j.RustWorkspaceResult
+import ch.epfl.scala.bsp4j.ScalaMainClassesParams
+import ch.epfl.scala.bsp4j.ScalaMainClassesResult
+import ch.epfl.scala.bsp4j.ScalaTestClassesParams
+import ch.epfl.scala.bsp4j.ScalaTestClassesResult
+import ch.epfl.scala.bsp4j.ScalacOptionsParams
+import ch.epfl.scala.bsp4j.ScalacOptionsResult
+import ch.epfl.scala.bsp4j.SourceItem
+import ch.epfl.scala.bsp4j.SourceItemKind
+import ch.epfl.scala.bsp4j.SourcesItem
+import ch.epfl.scala.bsp4j.SourcesParams
+import ch.epfl.scala.bsp4j.SourcesResult
+import ch.epfl.scala.bsp4j.TestProvider
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
@@ -10,8 +57,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.net.URI
-import org.apache.logging.log4j.LogManager // TODO: remove
 
 class BspProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
@@ -248,33 +293,38 @@ class BspProjectMapper(
         return ScalaMainClassesResult(items)
     }
 
+    private fun <T> collectRustTargets(
+        project: Project,
+        requestedTargets: List<BuildTargetIdentifier>,
+        resolver: (List<Module>, List<Module>) -> T
+    ): T {
+        val allRustModules = project.findModulesByLanguage(Language.RUST)
+        val externalModules = project.rustExternalModules.toList()
+        val requestedModules = BspMappings.getModules(project, requestedTargets)
+            .filter { Language.RUST in it.languages }
+
+        return resolver(requestedModules, allRustModules + externalModules)
+    }
+
     fun rustWorkspace(
         project: Project,
         params: RustWorkspaceParams
     ): RustWorkspaceResult {
-        val rustModules = project.findModulesByLanguage(Language.RUST)
-        val externalModules = project.rustExternalModules.toList()
-        val modules = BspMappings.getModules(project, params.targets)
-            .filter { Language.RUST in it.languages }
-
-        val rustLanguagePlugin = languagePluginsService.rustLanguagePlugin
-        return rustLanguagePlugin.toRustWorkspaceResult(modules, rustModules + externalModules)
+        return collectRustTargets(
+            project,
+            params.targets,
+            languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
+        )
     }
 
     fun rustToolchain(
         project: Project,
         params: RustToolchainParams
     ): RustToolchainResult {
-        val rustModules = project.findModulesByLanguage(Language.RUST)
-        val externalModules = project.rustExternalModules.toList()
-        val modules = BspMappings.getModules(project, params.targets)
-            .filter { Language.RUST in it.languages }
-
-        val rustLanguagePlugin = languagePluginsService.rustLanguagePlugin
-        return rustLanguagePlugin.toRustToolchains(modules, rustModules + externalModules)
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(BspProjectMapper::class.java)
+        return collectRustTargets(
+            project,
+            params.targets,
+            languagePluginsService.rustLanguagePlugin::toRustToolchains
+        )
     }
 }
