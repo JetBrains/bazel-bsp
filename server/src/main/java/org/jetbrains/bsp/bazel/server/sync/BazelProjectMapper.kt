@@ -50,6 +50,7 @@ class BazelProjectMapper(
     ).asSequence().filter(::isWorkspaceTarget)
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean = target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix())
+
     private fun isRustTarget(target: TargetInfo): Boolean = target.rustCrateInfo != null
 
     private fun createModules(
