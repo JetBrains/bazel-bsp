@@ -14,6 +14,7 @@ import ch.epfl.scala.bsp4j.RustToolchain
 import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -24,51 +25,55 @@ import org.jetbrains.bsp.bazel.server.sync.model.Language
 
 class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<RustModule>() {
 
+    private fun resolveTargetLocation(rustCrateInfo: RustCrateInfo): RustCrateLocation =
+        if (rustCrateInfo.location == BspTargetInfo.RustCrateLocation.WORKSPACE_DIR) {
+            RustCrateLocation.WORKSPACE_DIR
+        } else {
+            RustCrateLocation.EXEC_ROOT
+        }
+
+    private fun resolveTargetCrateRoot(rustCrateInfo: RustCrateInfo, location: RustCrateLocation): String {
+        val path = if (location == RustCrateLocation.WORKSPACE_DIR) {
+            bazelPathsResolver.relativePathToWorkspaceAbsolute(rustCrateInfo.crateRoot)
+        } else {
+            bazelPathsResolver.relativePathToExecRootAbsolute(rustCrateInfo.crateRoot)
+        }
+
+        return bazelPathsResolver.resolveUri(path).toString()
+    }
+
     override fun resolveModule(targetInfo: TargetInfo): RustModule? {
-        return targetInfo.getRustCrateInfoOrNull()?.run {
-            val location = if (targetInfo.rustCrateInfo.location == ProtoRustCrateLocation.WORKSPACE_DIR) {
-                RustCrateLocation.WORKSPACE_DIR
-            } else {
-                RustCrateLocation.EXEC_ROOT
-            }
-
-            val crateRoot = {
-                val path = if (location == RustCrateLocation.WORKSPACE_DIR) {
-                    bazelPathsResolver.relativePathToWorkspaceAbsolute(targetInfo.rustCrateInfo.crateRoot)
-                } else {
-                    bazelPathsResolver.relativePathToExecRootAbsolute(targetInfo.rustCrateInfo.crateRoot)
-                }
-
-                bazelPathsResolver.resolveUri(path).toString()
-            }
+        return targetInfo.getRustCrateInfoOrNull()?.let { rustCrateInfo ->
+            val location = resolveTargetLocation(rustCrateInfo)
+            val crateRoot = resolveTargetCrateRoot(rustCrateInfo, location)
 
             RustModule(
-                crateId = targetInfo.rustCrateInfo.crateId,
+                crateId = rustCrateInfo.crateId,
                 location = location,
-                fromWorkspace = targetInfo.rustCrateInfo.fromWorkspace,
-                name = targetInfo.rustCrateInfo.name,
-                kind = targetInfo.rustCrateInfo.kind,
-                edition = targetInfo.rustCrateInfo.edition,
-                crateFeatures = targetInfo.rustCrateInfo.crateFeaturesList,
-                dependencies = targetInfo.rustCrateInfo.dependenciesList.mapNotNull {
+                fromWorkspace = rustCrateInfo.fromWorkspace,
+                name = rustCrateInfo.name,
+                kind = rustCrateInfo.kind,
+                edition = rustCrateInfo.edition,
+                crateFeatures = rustCrateInfo.crateFeaturesList,
+                dependencies = rustCrateInfo.dependenciesList.mapNotNull { depInfo ->
                     RustDependency(
-                        crateId = it.crateId,
-                        rename = it.rename,
+                        crateId = depInfo.crateId,
+                        rename = depInfo.rename,
                     )
                 },
-                crateRoot = crateRoot(),
-                version = targetInfo.rustCrateInfo.version,
-                procMacroArtifacts = targetInfo.rustCrateInfo.procMacroArtifactsList,
-                procMacroSrv = targetInfo.rustCrateInfo.procMacroSrv,
-                rustcSysroot = targetInfo.rustCrateInfo.rustcSysroot,
-                rustcSrcSysroot = targetInfo.rustCrateInfo.rustcSrcSysroot,
-                cargoBinPath = targetInfo.rustCrateInfo.cargoBinPath,
-                rustcVersion = targetInfo.rustCrateInfo.rustcVersion,
+                crateRoot = crateRoot,
+                version = rustCrateInfo.version,
+                procMacroArtifacts = rustCrateInfo.procMacroArtifactsList,
+                procMacroSrv = rustCrateInfo.procMacroSrv,
+                rustcSysroot = rustCrateInfo.rustcSysroot,
+                rustcSrcSysroot = rustCrateInfo.rustcSrcSysroot,
+                cargoBinPath = rustCrateInfo.cargoBinPath,
+                rustcVersion = rustCrateInfo.rustcVersion,
             )
         }
     }
 
-    private fun TargetInfo.getRustCrateInfoOrNull(): BspTargetInfo.RustCrateInfo? =
+    private fun TargetInfo.getRustCrateInfoOrNull(): RustCrateInfo? =
         this.takeIf(TargetInfo::hasRustCrateInfo)?.rustCrateInfo
 
     override fun applyModuleData(moduleData: RustModule, buildTarget: BuildTarget) {
