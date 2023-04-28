@@ -92,16 +92,17 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     // We need to merge targets with the same crate root.
     private fun mergeTargets(rustTargets: List<Pair<Module, RustModule>>): Pair<Module, RustModule> {
+        require(rustTargets.isNotEmpty()) { "Cannot merge an empty list of targets." }
         if (rustTargets.size == 1) {
             return rustTargets[0]
         }
 
         // TODO:
-        // We need some heuristic here. As we need the proper label, lets take the target with
-        //  the most features. It can be changes as a union of features set, but we need
-        //  to give it a proper label.
+        //  We need some heuristic here. As we need the proper label, lets take the target with
+        //   the most features. It can be changes as a union of features set, but we need
+        //   to give it a proper label.
 
-        return rustTargets.maxByOrNull { (_, rustData) -> rustData.crateFeatures.size }!!
+        return rustTargets.maxBy { (_, rustData) -> rustData.crateFeatures.size }
     }
 
     private fun prependWorkspacePath(path: String): String =
