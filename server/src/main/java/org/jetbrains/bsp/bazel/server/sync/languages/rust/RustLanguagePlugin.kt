@@ -1,14 +1,24 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
-import ch.epfl.scala.bsp4j.*
+import ch.epfl.scala.bsp4j.BuildTarget
+import ch.epfl.scala.bsp4j.RustDepKindInfo
 import ch.epfl.scala.bsp4j.RustDependency
+import ch.epfl.scala.bsp4j.RustEnvData
+import ch.epfl.scala.bsp4j.RustFeature
+import ch.epfl.scala.bsp4j.RustPackage
+import ch.epfl.scala.bsp4j.RustProcMacroArtifact
+import ch.epfl.scala.bsp4j.RustRawDependency
+import ch.epfl.scala.bsp4j.RustStdLib
+import ch.epfl.scala.bsp4j.RustTarget
+import ch.epfl.scala.bsp4j.RustToolchain
+import ch.epfl.scala.bsp4j.RustToolchainResult
+import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateLocation as ProtoRustCrateLocation
-import org.apache.logging.log4j.LogManager // TODO: remove
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 
@@ -323,9 +333,5 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val toolchains = allRelatedTargets.mapNotNull { resolveStdLib(it) }
 
         return RustToolchainResult(toolchains)
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(RustLanguagePlugin::class.java)
     }
 }
