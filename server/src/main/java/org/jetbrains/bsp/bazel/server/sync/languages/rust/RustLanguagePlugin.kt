@@ -23,6 +23,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 
 class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<RustModule>() {
+
     override fun resolveModule(targetInfo: TargetInfo): RustModule? {
         return targetInfo.getRustCrateInfoOrNull()?.run {
             val location = if (targetInfo.rustCrateInfo.location == ProtoRustCrateLocation.WORKSPACE_DIR) {
