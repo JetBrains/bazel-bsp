@@ -387,6 +387,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     }
 }
 
-data class BazelPackageTargetInfo(val packageName: String, val targetName: String)
+private data class BazelPackageTargetInfo(val packageName: String, val targetName: String)
 // TODO: add private
-typealias RustTargetModule = Pair<Module, RustModule>
+private typealias RustTargetModule = Pair<Module, RustModule>
