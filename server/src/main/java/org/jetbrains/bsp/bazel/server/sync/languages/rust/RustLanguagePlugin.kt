@@ -80,8 +80,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         // TODO
     }
 
-    data class BazelPackageTargetInfo(val packageName: String, val targetName: String)
-
     private fun resolvePackage(rustTarget: Module): BazelPackageTargetInfo {
         return resolvePackage(rustTarget.label)
     }
@@ -341,3 +339,5 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         return RustToolchainResult(toolchains)
     }
 }
+
+private data class BazelPackageTargetInfo(val packageName: String, val targetName: String)
