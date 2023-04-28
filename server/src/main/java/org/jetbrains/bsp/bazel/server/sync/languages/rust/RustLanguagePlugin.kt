@@ -109,9 +109,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()
 
     private fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> {
-        for (target in rustBspTargets) {
-            require(Language.RUST in target.languages) { "The target is not a Rust target" }
-        }
         val packages = rustBspTargets
             .groupBy { resolvePackage(it).packageName }
             .mapNotNull { (rustPackage, rustTargets) ->
