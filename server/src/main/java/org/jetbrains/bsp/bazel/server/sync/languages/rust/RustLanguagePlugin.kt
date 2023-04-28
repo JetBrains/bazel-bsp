@@ -109,11 +109,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     private fun serveTargetWithRustData(rustTargets: List<Module>): List<RustTargetModule> =
         rustTargets.mapNotNull {
-            if (it.languageData is RustModule) {
-                Pair(it, it.languageData)
-            } else {
-                null
-            }
+            Pair(it, it.languageData as? RustModule ?: return@mapNotNull null)
         }
 
     private fun removeConflictingRustTargets(allRustTargets: List<RustTargetModule>): List<RustTargetModule> =
@@ -359,13 +355,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         )
     }
 
-    private fun resolveStdLib(rustModule: Module): RustToolchain? {
-        if (rustModule.languageData !is RustModule) {
-            return null;
-        }
-
-        val rustData = rustModule.languageData
-        val stdLib = if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
+    private fun resolveRustStdLib(rustData: RustModule): RustStdLib? {
+        return if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
             null
         } else {
             RustStdLib(
@@ -374,6 +365,12 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 rustData.rustcVersion
             )
         }
+    }
+
+    private fun resolveRustToolchain(rustModule: Module): RustToolchain? {
+        // https://kotlinlang.org/docs/typecasts.html#safe-nullable-cast-operator
+        val rustData = rustModule.languageData as? RustModule ?: return null
+        val stdLib = resolveRustStdLib(rustData)
 
         return RustToolchain(
             stdLib,
@@ -384,7 +381,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     fun toRustToolchains(requestTargets: List<Module>, allTargets: List<Module>): RustToolchainResult {
         val allRelatedTargets = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val toolchains = allRelatedTargets.mapNotNull { resolveStdLib(it) }
+        val toolchains = allRelatedTargets.mapNotNull { resolveRustToolchain(it) }
 
         return RustToolchainResult(toolchains)
     }
