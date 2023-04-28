@@ -80,9 +80,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         // TODO
     }
 
-    private fun resolvePackage(rustTarget: Module): BazelPackageTargetInfo {
-        return resolvePackage(rustTarget.label)
-    }
+    private fun resolvePackage(rustTarget: Module): BazelPackageTargetInfo =
+        resolvePackage(rustTarget.label)
 
     private fun resolvePackage(label: Label): BazelPackageTargetInfo {
         val labelVal = label.value
