@@ -6,6 +6,12 @@ def filter(f, xs):
 def map(f, xs):
     return [f(x) for x in xs]
 
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+def flatmap(f, xs):
+    return flatten(map(f, xs))
+
 def map_not_none(f, xs):
     rs = [f(x) for x in xs if x != None]
     return [r for r in rs if r != None]
@@ -323,22 +329,20 @@ RUST_TOOLCHAIN_TYPE = "@rules_rust//rust:toolchain_type"
 RUST_ANALYZER_TOOLCHAIN_TYPE = "@rules_rust//rust/rust_analyzer:toolchain_type"
 RUST_TOOLCHAINS_TYPES = [RUST_TOOLCHAIN_TYPE, RUST_ANALYZER_TOOLCHAIN_TYPE]
 
-def is_proc_macro_output(output, ext):
-    return output.endswith(ext)
-
 def collect_proc_macro_artifacts(target, kind, ext):
     if not hasattr(target, "actions") or kind != "proc-macro":
         return []
 
-    proc_macro_artifacts = []
-    for action in target.actions:
-        outputs = action.outputs.to_list()
-        for output in outputs:
-            output_path = output.path
-            if is_proc_macro_output(output_path, ext):
-                proc_macro_artifacts.append(output)
+    def is_proc_macro_output_with_ext(output):
+        return output.path.endswith(ext)
 
-    return proc_macro_artifacts
+    return filter(
+        is_proc_macro_output_with_ext,
+        flatmap(
+            lambda _action: _action.outputs.to_list(),
+            target.actions
+        )
+    )
 
 def extract_rust_version(sysroot_dir):
     split = sysroot_dir.partition("/")
@@ -422,6 +426,8 @@ def print_toolchain(toolchain):
 
 def extract_rust_crate_info(target, ctx):
 
+    # TODO: remove DEBUG are related functions.
+    #   we keep them for now, as they are useful for target analysis
     DEBUG = False
 
     if CrateInfo not in target:
