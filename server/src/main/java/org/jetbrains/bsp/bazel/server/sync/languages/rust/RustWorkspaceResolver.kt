@@ -184,24 +184,27 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         .groupBy { resolvePackage(it).packageName }
         .mapNotNull(::resolveSinglePackage)
 
-    // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
-    fun rustDependencies(
-        rustPackages: List<RustPackage>,
-        rustBspTargets: List<Module>
-    ): Pair<List<RustDependency>, List<RustRawDependency>> {
-
-        val rustBspTargetsMapped = rustBspTargets.associateBy { it.label.value }
-        val associatedBspTargets = rustPackages.associateWith {
+    private fun groupBspTargetsByPackage(
+        rustBspTargets: List<Module>,
+        rustPackages: List<RustPackage>
+    ): Map<RustPackage, List<Module>> {
+        val rustBspTargetsMappedToLabel = rustBspTargets.associateBy { it.label.value }
+        return rustPackages.associateWith {
             it.targets.mapNotNull { pkgTarget ->
-                rustBspTargetsMapped["${it.id}:${pkgTarget.name}"]
+                rustBspTargetsMappedToLabel["${it.id}:${pkgTarget.name}"]
             }
         }
+    }
 
-        val associatedRawBspTargets = rustPackages.associateWith { pkg ->
-            rustBspTargets.filter { resolvePackage(it).packageName == pkg.id }
-        }
+    private fun groupBspRawTargetsByPackage(
+        rustBspTargets: List<Module>,
+        rustPackages: List<RustPackage>
+    ): Map<RustPackage, List<Module>> = rustPackages.associateWith { pkg ->
+        rustBspTargets.filter { resolvePackage(it).packageName == pkg.id }
+    }
 
-        val rustDependencies = associatedBspTargets
+    private fun resolveDependencies(associatedBspTargets: Map<RustPackage, List<Module>>): List<RustDependency> =
+        associatedBspTargets
             .flatMap { (rustPackage, bspTargets) ->
                 bspTargets.flatMap { bspTarget ->
                     bspTarget.directDependencies
@@ -220,7 +223,8 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
             }
             .filter { it.source != it.target }
 
-        val rustRawDependencies = associatedRawBspTargets
+    private fun resolveRawDependencies(associatedRawBspTargets: Map<RustPackage, List<Module>>): List<RustRawDependency> =
+        associatedRawBspTargets
             .flatMap { (rustPackage, bspTargets) ->
                 bspTargets.flatMap { bspTarget ->
                     bspTarget.directDependencies
@@ -238,6 +242,18 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                         }
                 }
             }
+
+    // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
+    fun rustDependencies(
+        rustPackages: List<RustPackage>,
+        rustBspTargets: List<Module>
+    ): Pair<List<RustDependency>, List<RustRawDependency>> {
+
+        val associatedBspTargets = groupBspTargetsByPackage(rustBspTargets, rustPackages)
+        val associatedRawBspTargets = groupBspRawTargetsByPackage(rustBspTargets, rustPackages)
+
+        val rustDependencies = resolveDependencies(associatedBspTargets)
+        val rustRawDependencies = resolveRawDependencies(associatedRawBspTargets)
 
         return Pair(rustDependencies, rustRawDependencies)
     }
