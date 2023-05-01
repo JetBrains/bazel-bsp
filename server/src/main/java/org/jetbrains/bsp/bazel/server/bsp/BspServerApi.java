@@ -29,6 +29,9 @@ import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.OutputPathsParams;
 import ch.epfl.scala.bsp4j.OutputPathsResult;
+import ch.epfl.scala.bsp4j.PythonBuildServer;
+import ch.epfl.scala.bsp4j.PythonOptionsParams;
+import ch.epfl.scala.bsp4j.PythonOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
@@ -51,7 +54,7 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 
 public class BspServerApi
-    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer {
+    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, PythonBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -226,5 +229,11 @@ public class BspServerApi
       JvmTestEnvironmentParams params) {
     return runner.handleRequest(
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
+  }
+
+  @Override
+  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(PythonOptionsParams pythonOptionsParams) {
+    // TODO: https://github.com/JetBrains/bazel-bsp/pull/323
+    return CompletableFuture.failedFuture(new Exception("This endpoint is not implemented yet"));
   }
 }
