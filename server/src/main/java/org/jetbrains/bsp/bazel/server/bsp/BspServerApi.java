@@ -54,7 +54,12 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 
 public class BspServerApi
-    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, PythonBuildServer {
+    implements BuildServer,
+        JvmBuildServer,
+        ScalaBuildServer,
+        JavaBuildServer,
+        CppBuildServer,
+        PythonBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -232,7 +237,8 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(PythonOptionsParams pythonOptionsParams) {
+  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(
+      PythonOptionsParams pythonOptionsParams) {
     // TODO: https://github.com/JetBrains/bazel-bsp/pull/323
     return CompletableFuture.failedFuture(new Exception("This endpoint is not implemented yet"));
   }
