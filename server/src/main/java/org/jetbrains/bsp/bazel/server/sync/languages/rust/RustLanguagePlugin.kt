@@ -42,8 +42,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         // TODO
     }
 
-    override fun resolveModule(targetInfo: TargetInfo): RustModule? {
-        return targetInfo.getRustCrateInfoOrNull()?.let { rustCrateInfo ->
+    override fun resolveModule(targetInfo: TargetInfo): RustModule? =
+        targetInfo.getRustCrateInfoOrNull()?.let { rustCrateInfo ->
             val location = resolveTargetLocation(rustCrateInfo)
             val crateRoot = resolveTargetCrateRoot(rustCrateInfo, location)
 
@@ -71,7 +71,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 rustcVersion = rustCrateInfo.rustcVersion,
             )
         }
-    }
 
     /**
      * Find all targets that are needed to be resolved.
@@ -121,8 +120,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     private fun prependWorkspacePath(path: String): String =
         bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()
 
-    private fun resolveRustStdLib(rustData: RustModule): RustStdLib? {
-        return if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
+    private fun resolveRustStdLib(rustData: RustModule): RustStdLib? =
+        if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
             null
         } else {
             RustStdLib(
@@ -131,10 +130,8 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 rustData.rustcVersion
             )
         }
-    }
 
     private fun resolveRustToolchain(rustModule: Module): RustToolchain? {
-        // https://kotlinlang.org/docs/typecasts.html#safe-nullable-cast-operator
         val rustData = rustModule.languageData as? RustModule ?: return null
         val stdLib = resolveRustStdLib(rustData)
 

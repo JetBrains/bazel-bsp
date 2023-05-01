@@ -309,22 +309,20 @@ class BspProjectMapper(
     fun rustWorkspace(
         project: Project,
         params: RustWorkspaceParams
-    ): RustWorkspaceResult {
-        return collectRustTargets(
+    ): RustWorkspaceResult =
+        collectRustTargets(
             project,
             params.targets,
             languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
         )
-    }
 
     fun rustToolchain(
         project: Project,
         params: RustToolchainParams
-    ): RustToolchainResult {
-        return collectRustTargets(
+    ): RustToolchainResult =
+        collectRustTargets(
             project,
             params.targets,
             languagePluginsService.rustLanguagePlugin::toRustToolchains
         )
-    }
 }
