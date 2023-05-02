@@ -29,6 +29,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         targetInfo.getRustCrateInfoOrNull()?.let { rustCrateInfo ->
             val location = resolveTargetLocation(rustCrateInfo)
             val crateRoot = resolveTargetCrateRoot(rustCrateInfo, location)
+            val dependencies = resolveTargetDependencies(rustCrateInfo)
 
             RustModule(
                 crateId = rustCrateInfo.crateId,
@@ -38,12 +39,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 kind = rustCrateInfo.kind,
                 edition = rustCrateInfo.edition,
                 crateFeatures = rustCrateInfo.crateFeaturesList,
-                dependencies = rustCrateInfo.dependenciesList.mapNotNull { depInfo ->
-                    RustDependency(
-                        crateId = depInfo.crateId,
-                        rename = depInfo.rename,
-                    )
-                },
+                dependencies = dependencies,
                 crateRoot = crateRoot,
                 version = rustCrateInfo.version,
                 procMacroArtifacts = rustCrateInfo.procMacroArtifactsList,
@@ -52,6 +48,14 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 rustcSrcSysroot = rustCrateInfo.rustcSrcSysroot,
                 cargoBinPath = rustCrateInfo.cargoBinPath,
                 rustcVersion = rustCrateInfo.rustcVersion,
+            )
+        }
+
+    private fun resolveTargetDependencies(rustCrateInfo: RustCrateInfo): List<RustDependency> =
+        rustCrateInfo.dependenciesList.mapNotNull { depInfo ->
+            RustDependency(
+                crateId = depInfo.crateId,
+                rename = depInfo.rename,
             )
         }
 
@@ -92,17 +96,30 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     ): List<Module> {
         visited.addAll(targets.map { it.label })
         return targets.flatMap { module ->
-            listOf(module) +
-                    findAllRelatedRustTargets(
-                        module.directDependencies
-                            .mapNotNull { allModules[it] }
-                            .filter { it.label !in visited }
-                            .filter { Language.RUST in it.languages },
-                        allModules,
-                        visited
-                    )
+            listOf(module) + findAllRustTargetsRelatedToModule(module, allModules, visited)
         }
     }
+
+    private fun findAllRustTargetsRelatedToModule(
+        module: Module,
+        allModules: Map<Label, Module>,
+        visited: MutableSet<Label>,
+    ): List<Module> =
+        findAllRelatedRustTargets(
+            filterVisitedRustDependencies(module.directDependencies, allModules, visited),
+            allModules,
+            visited
+        )
+
+    private fun filterVisitedRustDependencies(
+        dependencies: List<Label>,
+        allModules: Map<Label, Module>,
+        visited: MutableSet<Label>
+    ): List<Module> = 
+        dependencies
+            .mapNotNull { allModules[it] }
+            .filter { it.label !in visited }
+            .filter { Language.RUST in it.languages }
 
     fun toRustWorkspaceResult(requestTargets: List<Module>, allTargets: List<Module>): RustWorkspaceResult {
         val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
