@@ -12,6 +12,13 @@ import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 
+private data class BazelPackageTargetInfo(
+    val packageName: String,
+    val targetName: String
+)
+
+private typealias RustTargetModule = Pair<Module, RustModule>
+
 class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
     private fun resolvePackage(rustTarget: Module): BazelPackageTargetInfo =
@@ -258,8 +265,3 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         return Pair(rustDependencies, rustRawDependencies)
     }
 }
-
-private data class BazelPackageTargetInfo(val packageName: String, val targetName: String)
-
-private typealias RustTargetModule = Pair<Module, RustModule>
-

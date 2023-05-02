@@ -18,22 +18,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     private val rustWorkspaceResolver = RustWorkspaceResolver(bazelPathsResolver)
 
-    private fun resolveTargetLocation(rustCrateInfo: RustCrateInfo): RustCrateLocation =
-        when (rustCrateInfo.location) {
-            BspTargetInfo.RustCrateLocation.WORKSPACE_DIR -> RustCrateLocation.WORKSPACE_DIR
-            else -> RustCrateLocation.EXEC_ROOT
-        }
-
-    private fun resolveTargetCrateRoot(rustCrateInfo: RustCrateInfo, location: RustCrateLocation): String {
-        val path = if (location == RustCrateLocation.WORKSPACE_DIR) {
-            bazelPathsResolver.relativePathToWorkspaceAbsolute(rustCrateInfo.crateRoot)
-        } else {
-            bazelPathsResolver.relativePathToExecRootAbsolute(rustCrateInfo.crateRoot)
-        }
-
-        return bazelPathsResolver.resolveUri(path).toString()
-    }
-
     private fun TargetInfo.getRustCrateInfoOrNull(): RustCrateInfo? =
         this.takeIf(TargetInfo::hasRustCrateInfo)?.rustCrateInfo
 
@@ -70,6 +54,22 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 rustcVersion = rustCrateInfo.rustcVersion,
             )
         }
+
+    private fun resolveTargetLocation(rustCrateInfo: RustCrateInfo): RustCrateLocation =
+        when (rustCrateInfo.location) {
+            BspTargetInfo.RustCrateLocation.WORKSPACE_DIR -> RustCrateLocation.WORKSPACE_DIR
+            else -> RustCrateLocation.EXEC_ROOT
+        }
+
+    private fun resolveTargetCrateRoot(rustCrateInfo: RustCrateInfo, location: RustCrateLocation): String {
+        val path = if (location == RustCrateLocation.WORKSPACE_DIR) {
+            bazelPathsResolver.relativePathToWorkspaceAbsolute(rustCrateInfo.crateRoot)
+        } else {
+            bazelPathsResolver.relativePathToExecRootAbsolute(rustCrateInfo.crateRoot)
+        }
+
+        return bazelPathsResolver.resolveUri(path).toString()
+    }
 
     /**
      * Find all targets that are needed to be resolved.
@@ -116,19 +116,12 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         )
     }
 
-    private fun prependWorkspacePath(path: String): String =
-        bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()
+    fun toRustToolchains(requestTargets: List<Module>, allTargets: List<Module>): RustToolchainResult {
+        val allRelatedTargets = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
+        val toolchains = allRelatedTargets.mapNotNull { resolveRustToolchain(it) }
 
-    private fun resolveRustStdLib(rustData: RustModule): RustStdLib? =
-        if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
-            null
-        } else {
-            RustStdLib(
-                prependWorkspacePath(rustData.rustcSysroot),
-                prependWorkspacePath(rustData.rustcSrcSysroot),
-                rustData.rustcVersion
-            )
-        }
+        return RustToolchainResult(toolchains)
+    }
 
     private fun resolveRustToolchain(rustModule: Module): RustToolchain? {
         val rustData = rustModule.languageData as? RustModule ?: return null
@@ -141,10 +134,17 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         )
     }
 
-    fun toRustToolchains(requestTargets: List<Module>, allTargets: List<Module>): RustToolchainResult {
-        val allRelatedTargets = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val toolchains = allRelatedTargets.mapNotNull { resolveRustToolchain(it) }
+    private fun resolveRustStdLib(rustData: RustModule): RustStdLib? =
+        if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
+            null
+        } else {
+            RustStdLib(
+                prependWorkspacePath(rustData.rustcSysroot),
+                prependWorkspacePath(rustData.rustcSrcSysroot),
+                rustData.rustcVersion
+            )
+        }
 
-        return RustToolchainResult(toolchains)
-    }
+    private fun prependWorkspacePath(path: String): String =
+        bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()
 }
