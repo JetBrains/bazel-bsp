@@ -19,10 +19,9 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     private val rustWorkspaceResolver = RustWorkspaceResolver(bazelPathsResolver)
 
     private fun resolveTargetLocation(rustCrateInfo: RustCrateInfo): RustCrateLocation =
-        if (rustCrateInfo.location == BspTargetInfo.RustCrateLocation.WORKSPACE_DIR) {
-            RustCrateLocation.WORKSPACE_DIR
-        } else {
-            RustCrateLocation.EXEC_ROOT
+        when (rustCrateInfo.location) {
+            BspTargetInfo.RustCrateLocation.WORKSPACE_DIR -> RustCrateLocation.WORKSPACE_DIR
+            else -> RustCrateLocation.EXEC_ROOT
         }
 
     private fun resolveTargetCrateRoot(rustCrateInfo: RustCrateInfo, location: RustCrateLocation): String {
