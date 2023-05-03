@@ -1,5 +1,0 @@
-[package]
-name = "hello_world"
-version = "0.1.0"
-rust-version = "1.64.0"
-edition = "2018"
