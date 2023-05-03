@@ -120,6 +120,17 @@ class LanguagePluginServiceTest {
     }
   }
 
+  @Test
+  fun `should return RustLanguagePlugin for Rust Language`() {
+    // given
+    val languages: Set<Language> = hashSetOf(Language.RUST)
+
+    // when
+    val plugin = languagePluginsService.getPlugin(languages) as? RustLanguagePlugin
+
+    // then
+    plugin shouldNotBe null
+  }
 
   @Nested
   @DisplayName("Tests for the method shouldGetSourceSet")
