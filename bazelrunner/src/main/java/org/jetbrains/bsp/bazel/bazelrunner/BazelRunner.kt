@@ -51,9 +51,10 @@ class BazelRunner private constructor(
 
         val flagsWithOrigin = if (originId != null) flags + "--define=ORIGINID=$originId" else flags
         val processArgs = listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flagsWithOrigin + arguments
-        logInvocation(processArgs, originId)
+        val processEnv = mapOf(CARGO_BAZEL_REPIN_ENV_VAR)
+        logInvocation(processArgs, processEnv, originId)
         val processBuilder = ProcessBuilder(processArgs)
-        processBuilder.environment() += CARGO_BAZEL_REPIN_ENV_VAR
+        processBuilder.environment() += processEnv
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
         val process = processBuilder.start()
         return BazelProcess(
@@ -63,8 +64,11 @@ class BazelRunner private constructor(
         )
     }
 
-    private fun logInvocation(processArgs: List<String>, originId: String?) {
-        "Invoking: ${processArgs.joinToString(" ")}"
+    private fun envToString(env: Map<String, String>): String =
+        env.entries.joinToString(" ") { "${it.key}=${it.value}" }
+
+    private fun logInvocation(processArgs: List<String>, env: Map<String, String>, originId: String?) {
+        "Invoking: ${envToString(env)} ${processArgs.joinToString(" ")}"
             .also { LOGGER.info(it) }
             .also { bspClientLogger.withOriginId(originId).message(it) }
     }
