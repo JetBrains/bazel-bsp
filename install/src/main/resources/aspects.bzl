@@ -428,7 +428,7 @@ def extract_rust_crate_info(target, ctx):
 
     # TODO: remove DEBUG and related functions.
     #   we keep them for now, as they are useful for target analysis
-    DEBUG = False
+    DEBUG = True
 
     if CrateInfo not in target:
         return None
@@ -440,6 +440,7 @@ def extract_rust_crate_info(target, ctx):
     build_info = None if not BuildInfo in target else target[BuildInfo]
     toolchain = ctx.toolchains[RUST_TOOLCHAIN_TYPE]
     cargo_bin_path = toolchain.cargo.path
+    rustc_host = toolchain.target_flag_value
 
     if DEBUG:
         print('Analyzing target:', target.label)
@@ -543,6 +544,7 @@ def extract_rust_crate_info(target, ctx):
         rustc_src_sysroot = rustc_src_sysroot,
         cargo_bin_path = cargo_bin_path,
         rustc_version = rustc_version,
+        rustc_host = rustc_host,
     )
 
     if DEBUG:

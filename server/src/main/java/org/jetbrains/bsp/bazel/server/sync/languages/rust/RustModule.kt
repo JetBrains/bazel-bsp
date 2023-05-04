@@ -28,5 +28,6 @@ data class RustModule(
     val rustcSrcSysroot: String,
     val cargoBinPath: String,
     val rustcVersion: String,
+    val rustcHost: String,
 ) : LanguageData
 

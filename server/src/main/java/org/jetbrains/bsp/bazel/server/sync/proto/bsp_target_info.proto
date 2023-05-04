@@ -92,6 +92,7 @@ message RustCrateInfo {
     string rustc_src_sysroot = 160;
     string cargo_bin_path = 170;
     string rustc_version = 180;
+    string rustc_host = 190;
 }
 
 message TargetInfo {
