@@ -15,6 +15,8 @@ class BazelRunner private constructor(
     companion object {
         private val LOGGER = LogManager.getLogger(BazelRunner::class.java)
 
+        private val CARGO_BAZEL_REPIN_ENV_VAR = "CARGO_BAZEL_REPIN" to "1"
+
         @JvmStatic
         fun of(
             workspaceContextProvider: WorkspaceContextProvider,
@@ -51,6 +53,7 @@ class BazelRunner private constructor(
         val processArgs = listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flagsWithOrigin + arguments
         logInvocation(processArgs, originId)
         val processBuilder = ProcessBuilder(processArgs)
+        processBuilder.environment() += CARGO_BAZEL_REPIN_ENV_VAR
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
         val process = processBuilder.start()
         return BazelProcess(
