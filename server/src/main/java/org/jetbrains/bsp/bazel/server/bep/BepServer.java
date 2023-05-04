@@ -38,6 +38,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private final BuildClient bspClient;
 
+  private BepLogger bepLogger;
+
   private final Deque<Map.Entry<TaskId, String>> startedEvents = new ArrayDeque<>();
   private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
@@ -76,6 +78,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       LOGGER.debug("Got event {}", event);
 
       processBuildStartedEvent(event);
+      processProgressEvent(event);
+      processBuildMetrics(event);
       processFinishedEvent(event);
       processActionCompletedEvent(event);
       fetchNamedSet(event);
@@ -100,10 +104,23 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
+  private void processProgressEvent(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasProgress()) {
+      bepLogger.onProgress(event.getProgress());
+    }
+  }
+
+  private void processBuildMetrics(BuildEventStreamProtos.BuildEvent event) {
+    if (event.hasBuildMetrics()) {
+      bepLogger.onBuildMetrics(event.getBuildMetrics());
+    }
+  }
+
   private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
     bepOutputBuilder = new BepOutputBuilder();
     TaskId taskId = new TaskId(buildStarted.getUuid());
     String originId = extractOriginIdFromOptions(buildStarted.getOptionsDescription());
+    bepLogger = new BepLogger(bspClient, originId);
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
 
@@ -131,7 +148,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     StatusCode exitCode = ExitCodeMapper.mapExitCode(buildFinished.getExitCode().getCode());
     TaskFinishParams finishParams = new TaskFinishParams(startedEvents.pop().getKey(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
-
     bspClient.onBuildTaskFinish(finishParams);
   }
 
