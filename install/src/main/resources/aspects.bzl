@@ -428,7 +428,7 @@ def extract_rust_crate_info(target, ctx):
 
     # TODO: remove DEBUG and related functions.
     #   we keep them for now, as they are useful for target analysis
-    DEBUG = True
+    DEBUG = False
 
     if CrateInfo not in target:
         return None
