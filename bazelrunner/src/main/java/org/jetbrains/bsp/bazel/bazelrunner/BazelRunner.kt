@@ -64,11 +64,11 @@ class BazelRunner private constructor(
         )
     }
 
-    private fun envToString(env: Map<String, String>): String =
-        env.entries.joinToString(" ") { "${it.key}=${it.value}" }
+    private fun envToString(processEnv: Map<String, String>): String =
+        processEnv.entries.joinToString(" ") { "${it.key}=${it.value}" }
 
-    private fun logInvocation(processArgs: List<String>, env: Map<String, String>, originId: String?) {
-        "Invoking: ${envToString(env)} ${processArgs.joinToString(" ")}"
+    private fun logInvocation(processArgs: List<String>, processEnv: Map<String, String>, originId: String?) {
+        "Invoking: ${envToString(processEnv)} ${processArgs.joinToString(" ")}"
             .also { LOGGER.info(it) }
             .also { bspClientLogger.withOriginId(originId).message(it) }
     }
