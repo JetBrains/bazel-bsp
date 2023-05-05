@@ -1,20 +1,18 @@
-load("//:junit5.bzl", "kt_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 
-kt_junit5_test(
+kt_test(
     name = "JVMLanguagePluginParserTest",
     size = "small",
-    srcs = ["JVMLanguagePluginParserTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.server.sync.languages",
+    src = "JVMLanguagePluginParserTest.kt",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
     ],
 )
 
-kt_junit5_test(
+kt_test(
     name = "LanguagePluginServiceTest",
     size = "small",
-    srcs = ["LanguagePluginServiceTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.server.sync.languages",
+    src = "LanguagePluginServiceTest.kt",
     deps = [
         "//bazelrunner",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",

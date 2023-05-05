@@ -1,81 +1,73 @@
-load("//:junit5.bzl", "kt_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 
-kt_junit5_test(
+kt_test(
     name = "WorkspaceContextConstructorTest",
     size = "small",
-    srcs = ["WorkspaceContextConstructorTest.kt"],
+    src = "WorkspaceContextConstructorTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "BazelPathSpecMapperTest",
     size = "small",
-    srcs = ["BazelPathSpecMapperTest.kt"],
+    src = "BazelPathSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "BuildFlagsSpecMapperTest",
     size = "small",
-    srcs = ["BuildFlagsSpecMapperTest.kt"],
+    src = "BuildFlagsSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "BuildManualTargetsSpecMapperTest",
     size = "small",
-    srcs = ["BuildManualTargetsSpecMapperTest.kt"],
+    src = "BuildManualTargetsSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "TargetsSpecMapperTest",
     size = "small",
-    srcs = ["TargetsSpecMapperTest.kt"],
+    src = "TargetsSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "DotBazelBspDirPathSpecMapperTest",
     size = "small",
-    srcs = ["DotBazelBspDirPathSpecMapperTest.kt"],
+    src = "DotBazelBspDirPathSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "ImportDepthSpecMapperTest",
     size = "small",
-    srcs = ["ImportDepthSpecMapperTest.kt"],
+    src = "ImportDepthSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )
 
-kt_junit5_test(
+kt_test(
     name = "ProduceTraceLogSpecMapperTest",
     size = "small",
-    srcs = ["ProduceTraceLogSpecMapperTest.kt"],
+    src = "ProduceTraceLogSpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
-    test_package = "org.jetbrains.bsp.bazel.workspacecontext",
 )

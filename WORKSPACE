@@ -154,23 +154,6 @@ load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
 sonatype_dependencies()
 
 # ======================================================================================================================
-# junit5
-
-load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
-
-JUNIT_JUPITER_VERSION = "5.9.2"
-
-JUNIT_PLATFORM_VERSION = "1.9.2"
-
-junit_jupiter_java_repositories(
-    version = JUNIT_JUPITER_VERSION,
-)
-
-junit_platform_java_repositories(
-    version = JUNIT_PLATFORM_VERSION,
-)
-
-# ======================================================================================================================
 # the new testkit
 # todo: merge into the bsp repo?
 
@@ -196,6 +179,7 @@ maven_install(
         "ch.epfl.scala:bsp4j:2.1.0-M4",
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
+        # TODO: we need to remove it
         "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
@@ -208,6 +192,17 @@ maven_install(
         "com.google.protobuf:protobuf-java:3.22.3",
         "io.grpc:grpc-stub:1.54.1",
         "io.grpc:grpc-netty:1.54.1",
+
+        # tests
+        "org.junit.jupiter:junit-jupiter-api:5.9.3",
+        "org.junit.jupiter:junit-jupiter-engine:5.9.3",
+        "org.junit.jupiter:junit-jupiter-params:5.9.3",
+        "org.junit.platform:junit-platform-console:1.9.3",
+        "io.kotest:kotest-assertions-api-jvm:5.6.1",
+        "io.kotest:kotest-assertions-core-jvm:5.6.1",
+        "io.kotest:kotest-assertions-shared-jvm:5.6.1",
+        "io.kotest:kotest-common-jvm:5.6.1",
+        "org.assertj:assertj-core:3.24.2",
     ],
     fetch_sources = True,
     repositories = [
