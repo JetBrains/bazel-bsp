@@ -5,7 +5,11 @@
 
 ## [Unreleased]
 
-### Fixes
+### Features 🎉
+- Server uses BEP to log bazel progress.
+  | [ae52b8f](https://github.com/JetBrains/bazel-bsp/commit/ae52b8f401b793ba15e84d492ba0f72a462b74dc)
+
+### Fixes 🛠️
 -  Add class jars generated during annotation processing
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
 - Set PublishDiagnosticsParams.reset to be true
