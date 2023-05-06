@@ -82,7 +82,7 @@ class RustWorkspaceResolverTest {
           rustcSrcSysroot = "/path/to/rustcSrcSysroot",
           cargoBinPath = "/path/to/cargoBinPath",
           rustcVersion = "rustcVersion",
-          rustcHost = "/path/to/rustcHost",
+          rustcHost = "x86_64-unknown-linux-gnu",
       )
 
   private fun createTarget(
@@ -122,12 +122,12 @@ class RustWorkspaceResolverTest {
     )
     val rustModule = createRustModule(
         crateId = "SampleTarget",
-        crateRoot = "/path/to/target",
+        crateRoot = "@//path/to/target",
         crateFeatures = features,
         dependencies = emptyList()
     )
     val module = createModule(
-        label = "/path/to/target:SampleTarget",
+        label = "@//path/to/target:SampleTarget",
         directDependencies = emptyList(),
         rustModule = rustModule
     )
@@ -190,18 +190,18 @@ class RustWorkspaceResolverTest {
     //   A
     val rustModuleA = createRustModule(
         crateId = "TargetA",
-        crateRoot = "/path/to/target/a",
+        crateRoot = "@//path/to/target/a",
         dependencies = emptyList()
     )
     val moduleA = createModule(
-        label = "/path/to/target/a:TargetA",
+        label = "@//path/to/target/a:TargetA",
         directDependencies = emptyList(),
         rustModule = rustModuleA
     )
 
     val rustModuleB = createRustModule(
         crateId = "TargetB",
-        crateRoot = "/path/to/target/b",
+        crateRoot = "@//path/to/target/b",
         dependencies = listOf(
             RustDependency(
                 crateId = rustModuleA.crateId,
@@ -210,7 +210,7 @@ class RustWorkspaceResolverTest {
         )
     )
     val moduleB = createModule(
-        label = "/path/to/target/b:TargetB",
+        label = "@//path/to/target/b:TargetB",
         directDependencies = listOf(moduleA.label),
         rustModule = rustModuleB
     )
@@ -242,7 +242,7 @@ class RustWorkspaceResolverTest {
     // \ /  \ |
     //  F     G
 
-    val pathPrefix = "/path/to/target"
+    val pathPrefix = "@//path/to/target"
 
     val moduleA = createTarget(
         packageName = pathPrefix + "A",
