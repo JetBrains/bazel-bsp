@@ -1,6 +1,8 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.RustPackage
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
@@ -83,6 +85,21 @@ class RustWorkspaceResolverTest {
           rustcHost = "/path/to/rustcHost",
       )
 
+  private fun createTarget(
+      packageName: String,
+      targetName: String,
+      directDependencies: List<String>,
+  ): Module =
+      createModule(
+          label = "$packageName:$targetName",
+          directDependencies = directDependencies.map { Label(it) },
+          rustModule = createRustModule(
+              crateId = targetName,
+              crateRoot = packageName,
+              dependencies = directDependencies.map { RustDependency(it, it) } // TODO where is it used?
+          )
+      )
+
   @Test
   fun `should return empty package list for empty module list`() {
     // given
@@ -127,8 +144,8 @@ class RustWorkspaceResolverTest {
     pkg.id shouldBe rustModule.crateRoot
     pkg.version shouldBe rustModule.version
     pkg.edition shouldBe rustModule.edition
-    pkg.features.map { it.name } shouldBe features
-    pkg.enabledFeatures shouldBe features
+    pkg.features.map { it.name } shouldContainExactlyInAnyOrder features
+    pkg.enabledFeatures shouldContainExactlyInAnyOrder features
 
     pkg.targets shouldNotBe null
     pkg.targets shouldBe pkg.allTargets
@@ -139,7 +156,7 @@ class RustWorkspaceResolverTest {
     target.crateRootUrl shouldBe rustModule.crateRoot
     target.kind shouldBe rustModule.kind
     target.edition shouldBe rustModule.edition
-    target.requiredFeatures shouldBe features
+    target.requiredFeatures shouldContainExactlyInAnyOrder features
 
     dependencies shouldNotBe null
     dependencies shouldBe emptyList()
@@ -214,5 +231,77 @@ class RustWorkspaceResolverTest {
 
     rawDependencies.size shouldBe 1
     // TODO are rawDependencies needed?
+  }
+
+  @Test
+  fun `should return proper dependency graph for multiple targets with multiple dependencies`() {
+    // given
+    // B    A
+    // | \ / \
+    // C  D   E
+    // \ /  \ |
+    //  F     G
+
+    val pathPrefix = "/path/to/target"
+
+    val moduleA = createTarget(
+        packageName = pathPrefix + "A",
+        targetName = "A",
+        directDependencies = listOf("D", "E"),
+    )
+    val moduleB = createTarget(
+        packageName = pathPrefix + "B",
+        targetName = "B",
+        directDependencies = listOf("C", "D"),
+    )
+    val moduleC = createTarget(
+        packageName = pathPrefix + "C",
+        targetName = "C",
+        directDependencies = listOf("F"),
+    )
+    val moduleD = createTarget(
+        packageName = pathPrefix + "D",
+        targetName = "D",
+        directDependencies = listOf("F", "G"),
+    )
+    val moduleE = createTarget(
+        packageName = pathPrefix + "E",
+        targetName = "E",
+        directDependencies = listOf("G"),
+    )
+    val moduleF = createTarget(
+        packageName = pathPrefix + "F",
+        targetName = "F",
+        directDependencies = emptyList(),
+    )
+    val moduleG = createTarget(
+        packageName = pathPrefix + "G",
+        targetName = "G",
+        directDependencies = emptyList(),
+    )
+
+    val modules = listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG)
+    val packages = resolver.rustPackages(modules)
+
+    // when
+    val (dependencies, _) = resolver.rustDependencies(packages, modules)
+
+    // then
+    dependencies.map { it.source }.toSet() shouldContainExactlyInAnyOrder listOf(
+        moduleA, moduleB, moduleC, moduleD, moduleE
+    ).map { (it.languageData as RustModule).crateRoot }
+
+    val dependenciesNames = dependencies
+        .groupBy { it.source }
+        .mapValues { (_, deps) -> deps.map { it.target } }
+    val trueDependenciesNames = mapOf(
+        moduleA to listOf("D", "E"),
+        moduleB to listOf("C", "D"),
+        moduleC to listOf("F"),
+        moduleD to listOf("F", "G"),
+        moduleE to listOf("G")
+    ).mapKeys { (module, _) -> (module.languageData as RustModule).crateRoot }
+
+    dependenciesNames shouldContainExactly trueDependenciesNames
   }
 }
