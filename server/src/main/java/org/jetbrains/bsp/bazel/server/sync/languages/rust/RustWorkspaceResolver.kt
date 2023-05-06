@@ -226,15 +226,17 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
     private fun resolveDependencies(associatedBspTargets: Map<RustPackage, List<Module>>): List<RustDependency> =
         associatedBspTargets
-            .flatMap { (rustPackage, bspTargets) -> resolveBspTargets(rustPackage, bspTargets) }
+            .flatMap { (rustPackage, bspTargets) ->
+                bspTargets.flatMap { bspTarget ->
+                    resolveBspDependencies(rustPackage, bspTarget.directDependencies)
+                }
+            }
             .filter { it.source != it.target }
 
-    private fun resolveBspTargets(rustPackage: RustPackage, bspTargets: List<Module>): List<RustDependency> =
-        bspTargets.flatMap { bspTarget ->
-            resolveDirectBspDependencies(rustPackage, bspTarget.directDependencies)
-        }
-
-    private fun resolveDirectBspDependencies(rustPackage: RustPackage, directDependencies: List<Label>): List<RustDependency> =
+    private fun resolveBspDependencies(
+        rustPackage: RustPackage,
+        directDependencies: List<Label>
+    ): List<RustDependency> =
         directDependencies
             .map { label -> resolvePackage(label) }
             .map {
@@ -249,16 +251,16 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
             }
 
     private fun resolveRawDependencies(associatedRawBspTargets: Map<RustPackage, List<Module>>): List<RustRawDependency> =
-        associatedRawBspTargets.flatMap { (rustPackage, bspTargets) -> 
-            resolveRawBspTargets(rustPackage, bspTargets) 
+        associatedRawBspTargets.flatMap { (rustPackage, bspTargets) ->
+            bspTargets.flatMap { bspTarget ->
+                resolveRawBspDependencies(rustPackage, bspTarget.directDependencies)
+            }
         }
 
-    private fun resolveRawBspTargets(rustPackage: RustPackage, bspTargets: List<Module>): List<RustRawDependency> =
-        bspTargets.flatMap { bspTarget ->
-            resolveDirectRawBspDependencies(rustPackage, bspTarget.directDependencies)
-        }
-
-    private fun resolveDirectRawBspDependencies(rustPackage: RustPackage, directDependencies: List<Label>): List<RustRawDependency> =
+    private fun resolveRawBspDependencies(
+        rustPackage: RustPackage,
+        directDependencies: List<Label>
+    ): List<RustRawDependency> =
         directDependencies.map {
             RustRawDependency(
                 rustPackage.id,
