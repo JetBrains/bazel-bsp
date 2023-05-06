@@ -20,6 +20,24 @@ private data class BazelPackageTargetInfo(
 private typealias RustTargetModule = Pair<Module, RustModule>
 
 class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
+    fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> = rustBspTargets
+        .groupBy { resolvePackage(it).packageName }
+        .mapNotNull(::resolveSinglePackage)
+
+    // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
+    fun rustDependencies(
+        rustPackages: List<RustPackage>,
+        rustBspTargets: List<Module>
+    ): Pair<List<RustDependency>, List<RustRawDependency>> {
+
+        val associatedBspTargets = groupBspTargetsByPackage(rustBspTargets, rustPackages)
+        val associatedRawBspTargets = groupBspRawTargetsByPackage(rustBspTargets, rustPackages)
+
+        val rustDependencies = resolveDependencies(associatedBspTargets)
+        val rustRawDependencies = resolveRawDependencies(associatedRawBspTargets)
+
+        return Pair(rustDependencies, rustRawDependencies)
+    }
 
     private fun resolvePackage(rustTarget: Module): BazelPackageTargetInfo =
         resolvePackage(rustTarget.label)
@@ -187,10 +205,6 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         )
     }
 
-    fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> = rustBspTargets
-        .groupBy { resolvePackage(it).packageName }
-        .mapNotNull(::resolveSinglePackage)
-
     private fun groupBspTargetsByPackage(
         rustBspTargets: List<Module>,
         rustPackages: List<RustPackage>
@@ -257,19 +271,4 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                 listOf<String>()
             )
         }
-
-    // We need to resolve all dependencies are provide a list of new bazel targets (deps) to be transformed into packages.
-    fun rustDependencies(
-        rustPackages: List<RustPackage>,
-        rustBspTargets: List<Module>
-    ): Pair<List<RustDependency>, List<RustRawDependency>> {
-
-        val associatedBspTargets = groupBspTargetsByPackage(rustBspTargets, rustPackages)
-        val associatedRawBspTargets = groupBspRawTargetsByPackage(rustBspTargets, rustPackages)
-
-        val rustDependencies = resolveDependencies(associatedBspTargets)
-        val rustRawDependencies = resolveRawDependencies(associatedRawBspTargets)
-
-        return Pair(rustDependencies, rustRawDependencies)
-    }
 }
