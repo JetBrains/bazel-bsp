@@ -37,6 +37,8 @@ class RustWorkspaceResolverTest {
   private fun createModule(
       label: String,
       directDependencies: List<Label>,
+      baseDirectory: URI,
+      sources: Set<URI>,
       rustModule: RustModule
   ): Module =
       Module(
@@ -45,9 +47,9 @@ class RustWorkspaceResolverTest {
           directDependencies = directDependencies,
           languages = setOf(Language.RUST),
           tags = setOf(Tag.APPLICATION),
-          baseDirectory = URI.create("/path/to/base/directory"),
+          baseDirectory = baseDirectory,
           sourceSet = SourceSet(
-              sources = setOf<URI>(),
+              sources = sources,
               sourceRoots = setOf<URI>()
           ),
           resources = setOf<URI>(),
@@ -69,13 +71,13 @@ class RustWorkspaceResolverTest {
           crateId = crateId,
           location = location,
           fromWorkspace = true,
-          name = "name", // TODO where is it used?
-          kind = "kind",
-          edition = "edition",
+          name = crateId.split("/")[0],
+          kind = "bin",
+          edition = "2018",
           crateFeatures = crateFeatures,
           dependencies = dependencies,
           crateRoot = crateRoot,
-          version = "version",
+          version = "1.2.3",
           procMacroArtifacts = procMacroArtifacts,
           procMacroSrv = "/path/to/procMacroSrv",
           rustcSysroot = "/path/to/rustcSysroot",
@@ -89,15 +91,20 @@ class RustWorkspaceResolverTest {
       packageName: String,
       targetName: String,
       directDependencies: List<String>,
+      sources: Set<String>,
+      crateRoot: String,
+      baseDirectory: String
   ): Module =
       createModule(
           label = "$packageName:$targetName",
           directDependencies = directDependencies.map { Label(it) },
           rustModule = createRustModule(
               crateId = targetName,
-              crateRoot = packageName,
-              dependencies = directDependencies.map { RustDependency(it, it) } // TODO where is it used?
-          )
+              crateRoot = crateRoot,
+              dependencies = directDependencies.map { RustDependency(it, it) },
+          ),
+          sources = sources.map { URI.create(it) }.toSet(),
+          baseDirectory = URI.create(baseDirectory)
       )
 
   @Test
@@ -121,14 +128,18 @@ class RustWorkspaceResolverTest {
         "another_feature"
     )
     val rustModule = createRustModule(
-        crateId = "SampleTarget",
-        crateRoot = "@//path/to/target",
+        crateId = "sample_target/src/lib.rs",
+        crateRoot = "file:///path/to/sample_target/src/lib.rs",
         crateFeatures = features,
         dependencies = emptyList()
     )
     val module = createModule(
-        label = "@//path/to/target:SampleTarget",
+        label = "@//sample_target:sample_target",
         directDependencies = emptyList(),
+        sources = setOf<URI>(
+            URI.create("file:///path/to/sample_target/src/lib.rs")
+        ),
+        baseDirectory = URI.create("file:///path/to/sample_target/"),
         rustModule = rustModule
     )
     val modules = listOf(module)
@@ -138,10 +149,11 @@ class RustWorkspaceResolverTest {
     val (dependencies, rawDependencies) = resolver.rustDependencies(packages, modules)
 
     // then
+//    packages shouldBe emptyList()
     packages.size shouldBe 1
 
     val pkg = packages[0]
-    pkg.id shouldBe rustModule.crateRoot
+    pkg.id shouldBe module.label.value.split(":")[0]
     pkg.version shouldBe rustModule.version
     pkg.edition shouldBe rustModule.edition
     pkg.features.map { it.name } shouldContainExactlyInAnyOrder features
@@ -152,7 +164,7 @@ class RustWorkspaceResolverTest {
     pkg.targets.size shouldBe 1
 
     val target = pkg.targets[0]
-    target.name shouldBe rustModule.crateId
+    target.name shouldBe module.label.value.split(":")[1]
     target.crateRootUrl shouldBe rustModule.crateRoot
     target.kind shouldBe rustModule.kind
     target.edition shouldBe rustModule.edition
@@ -188,20 +200,23 @@ class RustWorkspaceResolverTest {
     //   B
     //   |
     //   A
+
     val rustModuleA = createRustModule(
-        crateId = "TargetA",
-        crateRoot = "@//path/to/target/a",
+        crateId = "dirA/src/lib.rs",
+        crateRoot = "file:///path/to/targetA/src/lib.rs",
         dependencies = emptyList()
     )
     val moduleA = createModule(
-        label = "@//path/to/target/a:TargetA",
+        label = "@//dirA:targetA",
         directDependencies = emptyList(),
+        sources = setOf(URI.create("file:///path/to/dirA/src/lib.rs")),
+        baseDirectory = URI.create("file:///path/to/dirA/"),
         rustModule = rustModuleA
     )
 
     val rustModuleB = createRustModule(
-        crateId = "TargetB",
-        crateRoot = "@//path/to/target/b",
+        crateId = "dirB/src/lib.rs",
+        crateRoot = "file:///path/to/dirB/src/lib.rs",
         dependencies = listOf(
             RustDependency(
                 crateId = rustModuleA.crateId,
@@ -210,8 +225,10 @@ class RustWorkspaceResolverTest {
         )
     )
     val moduleB = createModule(
-        label = "@//path/to/target/b:TargetB",
+        label = "@//dirB:targetB",
         directDependencies = listOf(moduleA.label),
+        sources = setOf(URI.create("file:///path/to/dirB/src/lib.rs")),
+        baseDirectory = URI.create("file:///path/to/dirB/"),
         rustModule = rustModuleB
     )
 
@@ -225,9 +242,9 @@ class RustWorkspaceResolverTest {
     dependencies.size shouldBe 1
 
     val dependency = dependencies[0]
-    dependency.source shouldBe rustModuleB.crateRoot
-    dependency.target shouldBe rustModuleA.crateRoot
-    dependency.name shouldBe rustModuleA.crateId
+    dependency.source shouldBe moduleB.label.value.split(":")[0]
+    dependency.target shouldBe moduleA.label.value.split(":")[0]
+    dependency.name shouldBe moduleA.label.value.split(":")[1]
 
     rawDependencies.size shouldBe 1
     // TODO are rawDependencies needed?
@@ -242,42 +259,63 @@ class RustWorkspaceResolverTest {
     // \ /  \ |
     //  F     G
 
-    val pathPrefix = "@//path/to/target"
+    val pathPrefix = "file:///path/to/targets"
 
     val moduleA = createTarget(
-        packageName = pathPrefix + "A",
+        packageName = "pkgA",
         targetName = "A",
         directDependencies = listOf("D", "E"),
+        sources = setOf("$pathPrefix/dirA/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirA/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirA/"
     )
     val moduleB = createTarget(
-        packageName = pathPrefix + "B",
+        packageName = "pkgB",
         targetName = "B",
         directDependencies = listOf("C", "D"),
+        sources = setOf("$pathPrefix/dirB/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirB/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirB/"
     )
     val moduleC = createTarget(
-        packageName = pathPrefix + "C",
+        packageName = "pkgC",
         targetName = "C",
         directDependencies = listOf("F"),
+        sources = setOf("$pathPrefix/dirC/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirC/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirC/"
     )
     val moduleD = createTarget(
-        packageName = pathPrefix + "D",
+        packageName = "pkgD",
         targetName = "D",
         directDependencies = listOf("F", "G"),
+        sources = setOf("$pathPrefix/dirD/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirD/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirD/"
     )
     val moduleE = createTarget(
-        packageName = pathPrefix + "E",
+        packageName = "pkgE",
         targetName = "E",
         directDependencies = listOf("G"),
+        sources = setOf("$pathPrefix/dirE/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirE/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirE/"
     )
     val moduleF = createTarget(
-        packageName = pathPrefix + "F",
+        packageName = "pkgF",
         targetName = "F",
         directDependencies = emptyList(),
+        sources = setOf("$pathPrefix/dirF/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirF/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirF/"
     )
     val moduleG = createTarget(
-        packageName = pathPrefix + "G",
+        packageName = "pkgG",
         targetName = "G",
         directDependencies = emptyList(),
+        sources = setOf("$pathPrefix/dirG/src/lib.rs"),
+        crateRoot = "$pathPrefix/dirG/src/lib.rs",
+        baseDirectory = "$pathPrefix/dirG/"
     )
 
     val modules = listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG)
@@ -289,7 +327,7 @@ class RustWorkspaceResolverTest {
     // then
     dependencies.map { it.source }.toSet() shouldContainExactlyInAnyOrder listOf(
         moduleA, moduleB, moduleC, moduleD, moduleE
-    ).map { (it.languageData as RustModule).crateRoot }
+    ).map { it.label.value.split(":")[0] }
 
     val dependenciesNames = dependencies
         .groupBy { it.source }
@@ -300,7 +338,7 @@ class RustWorkspaceResolverTest {
         moduleC to listOf("F"),
         moduleD to listOf("F", "G"),
         moduleE to listOf("G")
-    ).mapKeys { (module, _) -> (module.languageData as RustModule).crateRoot }
+    ).mapKeys { (module, _) -> module.label.value.split(":")[0] }
 
     dependenciesNames shouldContainExactly trueDependenciesNames
   }
