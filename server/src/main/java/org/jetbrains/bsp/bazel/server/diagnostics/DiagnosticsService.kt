@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import java.nio.file.Path
 
 class DiagnosticsService(workspaceRoot: Path) {

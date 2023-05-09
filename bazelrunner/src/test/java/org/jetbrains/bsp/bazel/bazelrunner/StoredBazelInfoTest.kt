@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import org.junit.jupiter.api.Test
+import java.io.File
 import java.nio.file.Paths
 
 class StoredBazelInfoTest {
@@ -10,7 +10,10 @@ class StoredBazelInfoTest {
   @Test
   fun `should return null for not existing bazel info cache`() {
     // given
-    val path = DopeTemp.createTempFile("bazel-info-cache-test.json")
+    val file = File.createTempFile("bazel-info-cache-test", ".json")
+    file.deleteOnExit()
+
+    val path = file.toPath()
     val storage = BazelInfoStorage(path)
 
     // when
@@ -23,7 +26,10 @@ class StoredBazelInfoTest {
   @Test
   fun `should store and load bazel info cache`() {
     // given
-    val path = DopeTemp.createTempFile("bazel-info-cache-test.json")
+    val file = File.createTempFile("bazel-info-cache-test", ".json")
+    file.deleteOnExit()
+
+    val path = file.toPath()
     val storage = BazelInfoStorage(path)
 
     // when

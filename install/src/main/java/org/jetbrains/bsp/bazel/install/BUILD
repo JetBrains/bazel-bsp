@@ -11,7 +11,6 @@ kt_jvm_library(
         "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",
         "//install/src/main/java/org/jetbrains/bsp/bazel/install/cli",
-        "//utils:dope",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
         "@maven//:commons_cli_commons_cli",
