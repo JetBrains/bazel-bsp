@@ -190,7 +190,7 @@ maven_install(
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.10",
         "com.google.protobuf:protobuf-java:3.23.0",
-        "io.grpc:grpc-stub:1.54.1",
+        "io.grpc:grpc-stub:1.55.1",
         "io.grpc:grpc-netty:1.55.1",
 
         # tests
