@@ -1,20 +1,18 @@
-load("//:junit5.bzl", "kt_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 
-kt_junit5_test(
+kt_test(
     name = "ProjectViewRawSectionsTest",
     size = "small",
-    srcs = ["ProjectViewRawSectionsTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.projectview.parser.splitter",
+    src = "ProjectViewRawSectionsTest.kt",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],
 )
 
-kt_junit5_test(
+kt_test(
     name = "ProjectViewSectionSplitterTest",
     size = "small",
-    srcs = ["ProjectViewSectionSplitterTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.projectview.parser.splitter",
+    src = "ProjectViewSectionSplitterTest.kt",
     deps = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
     ],

@@ -5,13 +5,19 @@
 
 ## [Unreleased]
 
-### Fixes
+### Features 🎉
+- Server uses BEP to log bazel progress.
+  | [ae52b8f](https://github.com/JetBrains/bazel-bsp/commit/ae52b8f401b793ba15e84d492ba0f72a462b74dc)
+
+### Fixes 🛠️
 -  Add class jars generated during annotation processing
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
 - Set PublishDiagnosticsParams.reset to be true
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
 - Publish `build/publishDiagnostics` with an empty array of diagnostics to clear former diagnotics.
   | [#381](https://github.com/JetBrains/bazel-bsp/pull/381)
+- Update document about how to use projectview
+  | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
 
 ## [2.6.1]
 

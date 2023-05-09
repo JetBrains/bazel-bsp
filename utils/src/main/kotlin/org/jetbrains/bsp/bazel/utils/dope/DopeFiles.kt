@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.utils.dope
 import io.vavr.control.Try
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.writeText
 
 /**
  * Trys are dope, exceptions are not... Soooo use `DopeFiles` to perform actions on files
@@ -36,7 +37,7 @@ object DopeFiles {
     fun writeText(filePath: Path, text: String): Try<Void> =
         Try.run {
             Files.createDirectories(filePath.parent)
-            Files.writeString(filePath, text)
+            filePath.writeText(text)
         }
 
     // TODO we can do it in more kotlin way - https://youtrack.jetbrains.com/issue/BAZEL-58

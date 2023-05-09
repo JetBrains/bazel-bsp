@@ -1,21 +1,19 @@
-load("//:junit5.bzl", "kt_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 
-kt_junit5_test(
+kt_test(
     name = "StoredBazelInfoTest",
     size = "small",
-    srcs = ["StoredBazelInfoTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.bazelrunner",
+    src = "StoredBazelInfoTest.kt",
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner",
         "//utils:dope",
     ],
 )
 
-kt_junit5_test(
+kt_test(
     name = "BazelReleaseTest",
     size = "small",
-    srcs = ["BazelReleaseTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.bazelrunner",
+    src = "BazelReleaseTest.kt",
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner",
         "//utils:dope",

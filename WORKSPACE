@@ -8,15 +8,15 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "4.5"
+RULES_JVM_EXTERNAL_TAG = "5.2"
 
-RULES_JVM_EXTERNAL_SHA = "b17d7388feb9bfa7f2fa09031b32707df529f26c91ab9e5d909eb1676badd9a6"
+RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
 
 http_archive(
     name = "rules_jvm_external",
     sha256 = RULES_JVM_EXTERNAL_SHA,
     strip_prefix = "rules_jvm_external-{}".format(RULES_JVM_EXTERNAL_TAG),
-    url = "https://github.com/bazelbuild/rules_jvm_external/archive/{}.zip".format(RULES_JVM_EXTERNAL_TAG),
+    url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG),
 )
 
 # ======================================================================================================================
@@ -57,15 +57,15 @@ http_archive(
 # ======================================================================================================================
 # io_bazel_rules_scala - required by bazel_sonatype
 
-IO_BAZEL_RULES_SCALA_TAG = "20220201"
+IO_BAZEL_RULES_SCALA_TAG = "5.0.0"
 
-IO_BAZEL_RULES_SCALA_SHA = "77a3b9308a8780fff3f10cdbbe36d55164b85a48123033f5e970fdae262e8eb2"
+IO_BAZEL_RULES_SCALA_SHA = "141a3919b37c80a846796f792dcf6ea7cd6e7b7ca4297603ca961cd22750c951"
 
 http_archive(
     name = "io_bazel_rules_scala",
     sha256 = IO_BAZEL_RULES_SCALA_SHA,
     strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
-    url = "https://github.com/bazelbuild/rules_scala/releases/download/{}/rules_scala-{}.zip".format(IO_BAZEL_RULES_SCALA_TAG, IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/bazelbuild/rules_scala/archive/refs/tags/v{}.tar.gz".format(IO_BAZEL_RULES_SCALA_TAG),
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -86,9 +86,9 @@ scala_repositories()
 # ======================================================================================================================
 # io_bazel - for protobuf
 
-IO_BAZEL_TAG = "5.4.0"
+IO_BAZEL_TAG = "5.4.1"
 
-IO_BAZEL_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+IO_BAZEL_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "io_bazel",
@@ -100,9 +100,9 @@ http_archive(
 # ======================================================================================================================
 # googleapis - for build protos
 
-GOOGLEAPIS_TAG = "5.4.0"
+GOOGLEAPIS_TAG = "5.4.1"
 
-GOOGLEAPIS_SHA = "d9e96269e67d270976a9c4ae6e81b86f54fceb736627bf0a1ba9816ec60d2e78"
+GOOGLEAPIS_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
 
 http_archive(
     name = "googleapis",
@@ -154,23 +154,6 @@ load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
 sonatype_dependencies()
 
 # ======================================================================================================================
-# junit5
-
-load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
-
-JUNIT_JUPITER_VERSION = "5.8.2"
-
-JUNIT_PLATFORM_VERSION = "1.8.2"
-
-junit_jupiter_java_repositories(
-    version = JUNIT_JUPITER_VERSION,
-)
-
-junit_platform_java_repositories(
-    version = JUNIT_PLATFORM_VERSION,
-)
-
-# ======================================================================================================================
 # the new testkit
 # todo: merge into the bsp repo?
 
@@ -196,18 +179,30 @@ maven_install(
         "ch.epfl.scala:bsp4j:2.1.0-M4",
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "commons-cli:commons-cli:jar:1.5.0",
+        # TODO: we need to remove it
         "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
-        "org.junit.jupiter:junit-jupiter:5.9.2",
-        "com.fasterxml.jackson.core:jackson-databind:2.14.2",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0",
+        "org.junit.jupiter:junit-jupiter:5.9.3",
+        "com.fasterxml.jackson.core:jackson-databind:2.15.0",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.10",
-        "com.google.protobuf:protobuf-java:3.22.2",
-        "io.grpc:grpc-stub:1.54.0",
-        "io.grpc:grpc-netty:1.54.0",
+        "com.google.protobuf:protobuf-java:3.22.4",
+        "io.grpc:grpc-stub:1.54.1",
+        "io.grpc:grpc-netty:1.54.1",
+
+        # tests
+        "org.junit.jupiter:junit-jupiter-api:5.9.3",
+        "org.junit.jupiter:junit-jupiter-engine:5.9.3",
+        "org.junit.jupiter:junit-jupiter-params:5.9.3",
+        "org.junit.platform:junit-platform-console:1.9.3",
+        "io.kotest:kotest-assertions-api-jvm:5.6.1",
+        "io.kotest:kotest-assertions-core-jvm:5.6.1",
+        "io.kotest:kotest-assertions-shared-jvm:5.6.1",
+        "io.kotest:kotest-common-jvm:5.6.1",
+        "org.assertj:assertj-core:3.24.2",
     ],
     fetch_sources = True,
     repositories = [
