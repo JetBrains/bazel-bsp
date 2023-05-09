@@ -25,20 +25,20 @@ class DiagnosticsService(workspaceRoot: Path, private val state: BspCompileState
                 val buildTarget = it.key
                 val paramss = it.value
                 val docs = paramss.map { it.getTextDocument() }.toSet()
-                state.hasAnyProblems.put(buildTarget, docs)
+                updateProblemState(buildTarget, docs)
             }
         return events
     }
 
     fun clearFormerDiagnostics(targetLabel: String): List<PublishDiagnosticsParams> {
-        val id = targetLabel
-        val docs = state.hasAnyProblems[id]
-        if (docs != null && docs.isNotEmpty()) {
-            val diagnostics = emptyList<Diagnostic>()
-            state.hasAnyProblems.remove(id)
-            return docs.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(id), diagnostics, true) }
-        } else {
-            return emptyList<PublishDiagnosticsParams>()
-        }
+	    val docs = state.hasAnyProblems[targetLabel]
+	    state.hasAnyProblems.remove(targetLabel)
+	    return docs
+	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), emptyList(), true)}
+	      .orEmpty()
+	}
+
+    private fun updateProblemState(buildTarget: String, docs: Set<TextDocumentIdentifier>) {
+        state.hasAnyProblems[buildTarget] = docs
     }
 }
