@@ -548,6 +548,82 @@ class DiagnosticsServiceTest {
         diagnosticsAfterError shouldContainExactlyInAnyOrder expected
     }
 
+    @Test
+    fun `should clear partial former diagnostics`() {
+        val service = DiagnosticsService(workspacePath, BspCompileState())
+        val output1 = """
+            |Loading:
+            |Loading: 0 packages loaded
+            |Analyzing: target //path/to/package:test (0 packages loaded, 0 targets configured)
+            |INFO: Analyzed target //path/to/package:test (0 packages loaded, 0 targets configured).
+            |INFO: Found 1 target...
+            |[0 / 3] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+            |ERROR: /user/workspace/path/to/package/BUILD:12:37: scala //path/to/package:test failed: (Exit 1): scalac failed: error executing command bazel-out/darwin-opt-exec-2B5CBBC6/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac @bazel-out/darwin-fastbuild/bin/path/to/package/test.jar-0.params
+            |path/to/package/Test.scala:3: error: type mismatch;
+            | found   : String("test")
+            | required: Int
+            |  val foo: Int = "test"
+            |                 ^
+            |one error found
+            |Build failed
+            |java.lang.RuntimeException: Build failed
+            |  at io.bazel.rulesscala.scalac.ScalacWorker.compileScalaSources(ScalacWorker.java:280)
+            |  at io.bazel.rulesscala.scalac.ScalacWorker.work(ScalacWorker.java:63)
+            |  at io.bazel.rulesscala.worker.Worker.persistentWorkerMain(Worker.java:92)
+            |  at io.bazel.rulesscala.worker.Worker.workerMain(Worker.java:46)
+            |  at io.bazel.rulesscala.scalac.ScalacWorker.main(ScalacWorker.java:26)
+            |Target //path/to/package:test failed to build
+            |Use --verbose_failures to see the command lines of failed build steps.
+            |INFO: Elapsed time: 0.220s, Critical Path: 0.09s
+            |INFO: 2 processes: 2 internal.
+            |FAILED: Build did NOT complete successfully""".trimMargin()
+
+        val output2 = """
+            |Loading:
+            |Loading: 0 packages loaded
+            |Analyzing: target //path/to/package2:test (0 packages loaded, 0 targets configured)
+            |INFO: Analyzed target //path/to/package2:test (0 packages loaded, 0 targets configured).
+            |INFO: Found 1 target...
+            |[0 / 3] [Prepa] BazelWorkspaceStatusAction stable-status.txt
+            |ERROR: /user/workspace/path/to/package2/BUILD:12:37: scala //path/to/package2:test failed: (Exit 1): scalac failed: error executing command bazel-out/darwin-opt-exec-2B5CBBC6/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac @bazel-out/darwin-fastbuild/bin/path/to/package/test.jar-0.params
+            |path/to/package2/Test.scala:3: error: type mismatch;
+            | found   : String("test")
+            | required: Int
+            |  val foo: Int = "test"
+            |                 ^
+            |one error found
+            |Build failed
+            |java.lang.RuntimeException: Build failed
+            |  at io.bazel.rulesscala.scalac.ScalacWorker.compileScalaSources(ScalacWorker.java:280)
+            |  at io.bazel.rulesscala.scalac.ScalacWorker.work(ScalacWorker.java:63)
+            |  at io.bazel.rulesscala.worker.Worker.persistentWorkerMain(Worker.java:92)
+            |  at io.bazel.rulesscala.worker.Worker.workerMain(Worker.java:46)
+            |  at io.bazel.rulesscala.scalac.ScalacWorker.main(ScalacWorker.java:26)
+            |Target //path/to/package:test failed to build
+            |Use --verbose_failures to see the command lines of failed build steps.
+            |INFO: Elapsed time: 0.220s, Critical Path: 0.09s
+            |INFO: 2 processes: 2 internal.
+            |FAILED: Build did NOT complete successfully""".trimMargin()
+
+        service.clearFormerDiagnostics("//path/to/package:test").shouldBeEmpty()
+        service.clearFormerDiagnostics("//path/to/package2:test").shouldBeEmpty()
+
+        val expected = listOf(
+            PublishDiagnosticsParams(
+                TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
+                BuildTargetIdentifier("//path/to/package:test"),
+            )
+        )
+
+        service.extractDiagnostics(output1, "//path/to/package:test", null)
+        service.extractDiagnostics(output2, "//path/to/package2:test", null)
+
+        val empty = service.clearFormerDiagnostics("//path/to/package:test")
+
+        // clearFormerDiagnostics shouldn't clear up for "//path/to/package2:test"
+        empty shouldContainExactlyInAnyOrder expected
+    }
+
     private fun PublishDiagnosticsParams(
         textDocument: TextDocumentIdentifier,
         buildTarget: BuildTargetIdentifier,
