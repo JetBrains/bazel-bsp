@@ -1,10 +1,10 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.RustStdLib
 import ch.epfl.scala.bsp4j.RustToolchain
 import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
+import ch.epfl.scala.bsp4j.RustcInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -143,25 +143,24 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     private fun resolveRustToolchain(rustModule: Module): RustToolchain? {
         val rustData = rustModule.languageData as? RustModule ?: return null
-        val stdLib = resolveRustStdLib(rustData)
+        val rustc = resolveRustc(rustData)
 
         return RustToolchain(
-            stdLib,
+            rustc,
             prependWorkspacePath(rustData.cargoBinPath),
-            prependWorkspacePath(rustData.procMacroSrv),
-            prependWorkspacePath(rustData.rustcSysroot),
-            rustData.rustcHost,
+            prependWorkspacePath(rustData.procMacroSrv), 
         )
     }
 
-    private fun resolveRustStdLib(rustData: RustModule): RustStdLib? =
+    private fun resolveRustc(rustData: RustModule): RustcInfo? =
         if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
             null
         } else {
-            RustStdLib(
+            RustcInfo(
                 prependWorkspacePath(rustData.rustcSysroot),
                 prependWorkspacePath(rustData.rustcSrcSysroot),
-                rustData.rustcVersion
+                rustData.rustcVersion,
+                rustData.rustcHost
             )
         }
 
