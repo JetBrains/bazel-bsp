@@ -264,7 +264,7 @@ class RustWorkspaceResolverTest {
     val moduleA = createTarget(
         packageName = "pkgA",
         targetName = "A",
-        directDependencies = listOf("D", "E"),
+        directDependencies = listOf("pkgD:D", "pkgE:E"),
         sources = setOf("$pathPrefix/dirA/src/lib.rs"),
         crateRoot = "$pathPrefix/dirA/src/lib.rs",
         baseDirectory = "$pathPrefix/dirA/"
@@ -272,7 +272,7 @@ class RustWorkspaceResolverTest {
     val moduleB = createTarget(
         packageName = "pkgB",
         targetName = "B",
-        directDependencies = listOf("C", "D"),
+        directDependencies = listOf("pkgC:C", "pkgD:D"),
         sources = setOf("$pathPrefix/dirB/src/lib.rs"),
         crateRoot = "$pathPrefix/dirB/src/lib.rs",
         baseDirectory = "$pathPrefix/dirB/"
@@ -280,7 +280,7 @@ class RustWorkspaceResolverTest {
     val moduleC = createTarget(
         packageName = "pkgC",
         targetName = "C",
-        directDependencies = listOf("F"),
+        directDependencies = listOf("pkgF:F"),
         sources = setOf("$pathPrefix/dirC/src/lib.rs"),
         crateRoot = "$pathPrefix/dirC/src/lib.rs",
         baseDirectory = "$pathPrefix/dirC/"
@@ -288,7 +288,7 @@ class RustWorkspaceResolverTest {
     val moduleD = createTarget(
         packageName = "pkgD",
         targetName = "D",
-        directDependencies = listOf("F", "G"),
+        directDependencies = listOf("pkgF:F", "pkgG:G"),
         sources = setOf("$pathPrefix/dirD/src/lib.rs"),
         crateRoot = "$pathPrefix/dirD/src/lib.rs",
         baseDirectory = "$pathPrefix/dirD/"
@@ -296,7 +296,7 @@ class RustWorkspaceResolverTest {
     val moduleE = createTarget(
         packageName = "pkgE",
         targetName = "E",
-        directDependencies = listOf("G"),
+        directDependencies = listOf("pkgG:G"),
         sources = setOf("$pathPrefix/dirE/src/lib.rs"),
         crateRoot = "$pathPrefix/dirE/src/lib.rs",
         baseDirectory = "$pathPrefix/dirE/"
@@ -331,7 +331,7 @@ class RustWorkspaceResolverTest {
 
     val dependenciesNames = dependencies
         .groupBy { it.source }
-        .mapValues { (_, deps) -> deps.map { it.target } }
+        .mapValues { (_, deps) -> deps.map { it.name } }
     val trueDependenciesNames = mapOf(
         moduleA to listOf("D", "E"),
         moduleB to listOf("C", "D"),

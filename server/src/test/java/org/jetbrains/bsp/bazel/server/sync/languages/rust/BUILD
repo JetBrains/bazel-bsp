@@ -9,3 +9,13 @@ kt_junit5_test(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
     ],
 )
+
+kt_junit5_test(
+    name = "RustLanguagePluginTest",
+    size = "small",
+    srcs = ["RustLanguagePluginTest.kt"],
+    test_package = "org.jetbrains.bsp.bazel.server.sync.languages.rust",
+    deps = [
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+    ],
+)
