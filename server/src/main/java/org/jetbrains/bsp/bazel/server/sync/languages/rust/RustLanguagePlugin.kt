@@ -53,7 +53,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         }
 
     private fun resolveTargetDependencies(rustCrateInfo: RustCrateInfo): List<RustDependency> =
-        rustCrateInfo.dependenciesList.mapNotNull { depInfo ->
+        rustCrateInfo.dependenciesList.map { depInfo ->
             RustDependency(
                 crateId = depInfo.crateId,
                 rename = depInfo.rename,
