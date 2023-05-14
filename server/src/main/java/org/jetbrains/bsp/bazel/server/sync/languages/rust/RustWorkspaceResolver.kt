@@ -17,7 +17,10 @@ private data class BazelPackageTargetInfo(
     val targetName: String
 )
 
-private typealias RustTargetModule = Pair<Module, RustModule>
+private data class RustTargetModule(
+    val module: Module,
+    val rustModule: RustModule
+)
 
 class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
     fun rustPackages(rustBspTargets: List<Module>): List<RustPackage> = rustBspTargets
@@ -66,7 +69,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
     private fun serveTargetWithRustData(rustTargets: List<Module>): List<RustTargetModule> =
         rustTargets.mapNotNull {
-            Pair(it, it.languageData as? RustModule ?: return@mapNotNull null)
+            RustTargetModule(it, it.languageData as? RustModule ?: return@mapNotNull null)
         }
 
     private fun removeConflictingRustTargets(allRustTargets: List<RustTargetModule>): List<RustTargetModule> =
