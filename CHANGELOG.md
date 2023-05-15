@@ -16,6 +16,8 @@
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
 - Update document about how to use projectview
   | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
+- Add support for Scala SDK provided by rules_jvm_external
+  | [#403](https://github.com/JetBrains/bazel-bsp/pull/403)
 
 ## [2.6.1]
 
