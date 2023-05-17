@@ -155,11 +155,10 @@ sonatype_dependencies()
 
 # ======================================================================================================================
 # the new testkit
-# todo: merge into the bsp repo?
 
 git_repository(
     name = "testkit",
-    commit = "86b6c5b80f70ea3f41032f1f55e5376451ea9939",
+    commit = "412b23b8ad239284759eaba9bfeb67603780ef80",
     remote = "https://github.com/build-server-protocol/bsp-testkit2.git",
 )
 
