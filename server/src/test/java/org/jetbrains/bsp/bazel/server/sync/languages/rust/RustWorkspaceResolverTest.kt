@@ -76,7 +76,6 @@ class RustWorkspaceResolverTest {
     val (dependencies, rawDependencies) = resolver.rustDependencies(packages, modules)
 
     // then
-//    packages shouldBe emptyList()
     packages.size shouldBe 1
 
     val pkg = packages[0]
@@ -174,7 +173,10 @@ class RustWorkspaceResolverTest {
     dependency.name shouldBe moduleA.label.value.split(":")[1]
 
     rawDependencies.size shouldBe 1
-    // TODO are rawDependencies needed?
+
+    val rawDependency = rawDependencies[0]
+    rawDependency.name shouldBe moduleA.label.value
+    rawDependency.packageId shouldBe moduleB.label.value.split(":")[0]
   }
 
   @Test
@@ -183,90 +185,39 @@ class RustWorkspaceResolverTest {
     // B    A
     // | \ / \
     // C  D   E
-    // \ /  \ |
-    //  F     G
+    // \ /  \ | \
+    //  F     G  H
 
-    val pathPrefix = "file:///path/to/targets"
-
-    val moduleA = createTarget(
-        packageName = "pkgA",
-        targetName = "A",
-        directDependencies = listOf("pkgD:D", "pkgE:E"),
-        sources = setOf("$pathPrefix/dirA/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirA/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirA/"
-    )
-    val moduleB = createTarget(
-        packageName = "pkgB",
-        targetName = "B",
-        directDependencies = listOf("pkgC:C", "pkgD:D"),
-        sources = setOf("$pathPrefix/dirB/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirB/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirB/"
-    )
-    val moduleC = createTarget(
-        packageName = "pkgC",
-        targetName = "C",
-        directDependencies = listOf("pkgF:F"),
-        sources = setOf("$pathPrefix/dirC/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirC/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirC/"
-    )
-    val moduleD = createTarget(
-        packageName = "pkgD",
-        targetName = "D",
-        directDependencies = listOf("pkgF:F", "pkgG:G"),
-        sources = setOf("$pathPrefix/dirD/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirD/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirD/"
-    )
-    val moduleE = createTarget(
-        packageName = "pkgE",
-        targetName = "E",
-        directDependencies = listOf("pkgG:G"),
-        sources = setOf("$pathPrefix/dirE/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirE/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirE/"
-    )
-    val moduleF = createTarget(
-        packageName = "pkgF",
-        targetName = "F",
-        directDependencies = emptyList(),
-        sources = setOf("$pathPrefix/dirF/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirF/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirF/"
-    )
-    val moduleG = createTarget(
-        packageName = "pkgG",
-        targetName = "G",
-        directDependencies = emptyList(),
-        sources = setOf("$pathPrefix/dirG/src/lib.rs"),
-        crateRoot = "$pathPrefix/dirG/src/lib.rs",
-        baseDirectory = "$pathPrefix/dirG/"
-    )
-
-    val modules = listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG)
+    val (modules, _) = getSampleModules()
     val packages = resolver.rustPackages(modules)
 
     // when
-    val (dependencies, _) = resolver.rustDependencies(packages, modules)
+    val (dependencies, rawDependencies) = resolver.rustDependencies(packages, modules)
 
     // then
-    dependencies.map { it.source }.toSet() shouldContainExactlyInAnyOrder listOf(
-        moduleA, moduleB, moduleC, moduleD, moduleE
-    ).map { it.label.value.split(":")[0] }
+    dependencies.map { it.source }.toSet() shouldContainExactlyInAnyOrder
+        listOf("A", "B", "C", "D", "E").map { "@//pkg$it" }
 
     val dependenciesNames = dependencies
         .groupBy { it.source }
         .mapValues { (_, deps) -> deps.map { it.name } }
     val trueDependenciesNames = mapOf(
-        moduleA to listOf("D", "E"),
-        moduleB to listOf("C", "D"),
-        moduleC to listOf("F"),
-        moduleD to listOf("F", "G"),
-        moduleE to listOf("G")
-    ).mapKeys { (module, _) -> module.label.value.split(":")[0] }
-
+        "A" to listOf("D", "E"),
+        "B" to listOf("C", "D"),
+        "C" to listOf("F"),
+        "D" to listOf("F", "G"),
+        "E" to listOf("G", "H")
+    ).mapKeys { (name, _) -> "@//pkg$name" }
     dependenciesNames shouldContainExactly trueDependenciesNames
+
+    rawDependencies.map { it.packageId }.toSet() shouldContainExactlyInAnyOrder
+        listOf("A", "B", "C", "D", "E").map { "@//pkg$it" }
+
+    val rawDependenciesNames = rawDependencies
+        .groupBy { it.packageId }
+        .mapValues { (_, deps) -> deps.map { it.name } }
+    val trueRawDependenciesNames = trueDependenciesNames
+        .mapValues { (_, names) -> names.map { "@//pkg$it:$it" } }
+    rawDependenciesNames shouldContainExactly trueRawDependenciesNames
   }
 }

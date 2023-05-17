@@ -33,7 +33,7 @@ class RustLanguagePluginTest {
   @Test
   fun `should return empty workspace for empty requested targets list`() {
     // given
-    val modules = getSampleModules()
+    val (modules, _) = getSampleModules()
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(emptyList(), modules)
@@ -50,8 +50,8 @@ class RustLanguagePluginTest {
     //    C  D   E
     //    \ /  \ | \
     // --> F     G  H
-    val modules = getSampleModules()
-    val requestedTargets = modules.filter { it.label.value.split(":")[1] == "F" }
+    val (modules, modulesMap) = getSampleModules()
+    val requestedTargets = listOf(modulesMap["F"]!!)
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(requestedTargets, modules)
@@ -69,8 +69,8 @@ class RustLanguagePluginTest {
     //    C  D   E <--
     //    \ /  \ | \
     //     F     G  H
-    val modules = getSampleModules()
-    val requestedTargets = modules.filter { it.label.value.split(":")[1] == "E" }
+    val (modules, modulesMap) = getSampleModules()
+    val requestedTargets = listOf(modulesMap["E"]!!)
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(requestedTargets, modules)
@@ -88,8 +88,8 @@ class RustLanguagePluginTest {
     //    C  D   E
     //    \ /  \ | \
     //     F     G  H
-    val modules = getSampleModules()
-    val requestedTargets = modules.filter { it.label.value.split(":")[1] == "A" }
+    val (modules, modulesMap) = getSampleModules()
+    val requestedTargets = listOf(modulesMap["A"]!!)
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(requestedTargets, modules)
@@ -107,8 +107,8 @@ class RustLanguagePluginTest {
     //    C  D   E <--
     //    \ /  \ | \
     //     F     G  H
-    val modules = getSampleModules()
-    val requestedTargets = modules.filter { it.label.value.split(":")[1] in listOf("B", "E") }
+    val (modules, modulesMap) = getSampleModules()
+    val requestedTargets = listOf(modulesMap["B"]!!, modulesMap["E"]!!)
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(requestedTargets, modules)
@@ -126,8 +126,8 @@ class RustLanguagePluginTest {
     //    C  D   E
     //    \ /  \ | \
     //     F     G  H
-    val modules = getSampleModules()
-    val requestedTargets = modules.filter { it.label.value.split(":")[1] in listOf("A", "B") }
+    val (modules, modulesMap) = getSampleModules()
+    val requestedTargets = listOf(modulesMap["A"]!!, modulesMap["B"]!!)
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(requestedTargets, modules)
@@ -145,8 +145,10 @@ class RustLanguagePluginTest {
     //    C  D   E <--
     //    \ /  \ | \
     //     F --> G  H <--
-    val modules = getSampleModules()
-    val requestedTargets = modules.filter { it.label.value.split(":")[1] in listOf("A", "E", "G", "H") }
+    val (modules, modulesMap) = getSampleModules()
+    val requestedTargets = listOf(
+        modulesMap["A"]!!, modulesMap["E"]!!, modulesMap["G"]!!, modulesMap["H"]!!
+    )
 
     // when
     val workspace = languagePlugin.toRustWorkspaceResult(requestedTargets, modules)

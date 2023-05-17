@@ -76,7 +76,7 @@ fun createTarget(
         baseDirectory = URI.create(baseDirectory)
     )
 
-fun getSampleModules(): List<Module> {
+fun getSampleModules(): Pair<List<Module>, Map<String, Module>> {
   // B    A
   // | \ / \
   // C  D   E
@@ -86,47 +86,47 @@ fun getSampleModules(): List<Module> {
   val pathPrefix = "file:///path/to/targets"
 
   val moduleA = createTarget(
-      packageName = "pkgA",
+      packageName = "@//pkgA",
       targetName = "A",
-      directDependencies = listOf("pkgD:D", "pkgE:E"),
+      directDependencies = listOf("@//pkgD:D", "@//pkgE:E"),
       sources = setOf("$pathPrefix/dirA/src/lib.rs"),
       crateRoot = "$pathPrefix/dirA/src/lib.rs",
       baseDirectory = "$pathPrefix/dirA/"
   )
   val moduleB = createTarget(
-      packageName = "pkgB",
+      packageName = "@//pkgB",
       targetName = "B",
-      directDependencies = listOf("pkgC:C", "pkgD:D"),
+      directDependencies = listOf("@//pkgC:C", "@//pkgD:D"),
       sources = setOf("$pathPrefix/dirB/src/lib.rs"),
       crateRoot = "$pathPrefix/dirB/src/lib.rs",
       baseDirectory = "$pathPrefix/dirB/"
   )
   val moduleC = createTarget(
-      packageName = "pkgC",
+      packageName = "@//pkgC",
       targetName = "C",
-      directDependencies = listOf("pkgF:F"),
+      directDependencies = listOf("@//pkgF:F"),
       sources = setOf("$pathPrefix/dirC/src/lib.rs"),
       crateRoot = "$pathPrefix/dirC/src/lib.rs",
       baseDirectory = "$pathPrefix/dirC/"
   )
   val moduleD = createTarget(
-      packageName = "pkgD",
+      packageName = "@//pkgD",
       targetName = "D",
-      directDependencies = listOf("pkgF:F", "pkgG:G"),
+      directDependencies = listOf("@//pkgF:F", "@//pkgG:G"),
       sources = setOf("$pathPrefix/dirD/src/lib.rs"),
       crateRoot = "$pathPrefix/dirD/src/lib.rs",
       baseDirectory = "$pathPrefix/dirD/"
   )
   val moduleE = createTarget(
-      packageName = "pkgE",
+      packageName = "@//pkgE",
       targetName = "E",
-      directDependencies = listOf("pkgG:G", "pkgH:H"),
+      directDependencies = listOf("@//pkgG:G", "@//pkgH:H"),
       sources = setOf("$pathPrefix/dirE/src/lib.rs"),
       crateRoot = "$pathPrefix/dirE/src/lib.rs",
       baseDirectory = "$pathPrefix/dirE/"
   )
   val moduleF = createTarget(
-      packageName = "pkgF",
+      packageName = "@//pkgF",
       targetName = "F",
       directDependencies = emptyList(),
       sources = setOf("$pathPrefix/dirF/src/lib.rs"),
@@ -134,7 +134,7 @@ fun getSampleModules(): List<Module> {
       baseDirectory = "$pathPrefix/dirF/"
   )
   val moduleG = createTarget(
-      packageName = "pkgG",
+      packageName = "@//pkgG",
       targetName = "G",
       directDependencies = emptyList(),
       sources = setOf("$pathPrefix/dirG/src/lib.rs"),
@@ -142,7 +142,7 @@ fun getSampleModules(): List<Module> {
       baseDirectory = "$pathPrefix/dirG/"
   )
   val moduleH = createTarget(
-      packageName = "pkgH",
+      packageName = "@//pkgH",
       targetName = "H",
       directDependencies = emptyList(),
       sources = setOf("$pathPrefix/dirH/src/lib.rs"),
@@ -150,5 +150,11 @@ fun getSampleModules(): List<Module> {
       baseDirectory = "$pathPrefix/dirH/"
   )
 
-  return listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG, moduleH)
+  val modules = listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG, moduleH)
+  val modulesMap = mapOf(
+      "A" to moduleA, "B" to moduleB, "C" to moduleC, "D" to moduleD, "E" to moduleE,
+      "F" to moduleF, "G" to moduleG, "H" to moduleH
+  )
+
+  return Pair(modules, modulesMap)
 }
