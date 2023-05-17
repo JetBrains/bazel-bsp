@@ -73,13 +73,13 @@ class PythonLanguagePlugin(
 
     private fun calculateExternalSourcePath(externalSource: FileLocation): URI {
         val path = bazelPathsResolver.resolveUri(externalSource).toPath()
-        return bazelPathsResolver.resolveUri(findExternalSubdirectory(path) ?: path)
+        return bazelPathsResolver.resolveUri(findSitePackagesSubdirectory(path) ?: path)
     }
 
-    private fun findExternalSubdirectory(path: Path?): Path? {
-        return if (path == null || path.parent.endsWith("external"))
+    private fun findSitePackagesSubdirectory(path: Path?): Path? {
+        return if (path == null || path.endsWith("site-packages"))
             path
         else
-            findExternalSubdirectory(path.parent)
+            findSitePackagesSubdirectory(path.parent)
     }
 }

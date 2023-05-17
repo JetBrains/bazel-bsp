@@ -122,7 +122,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         val examplePythonDependencySourcesItem = DependencySourcesItem(
             BuildTargetIdentifier("$targetPrefix//lib:example_library"),
             listOf(
-                "file://\$BAZEL_CACHE/external/pip_deps_numpy/"
+                "file://\$BAZEL_CACHE/external/pip_deps_numpy/site-packages/"
             )
         )
 
