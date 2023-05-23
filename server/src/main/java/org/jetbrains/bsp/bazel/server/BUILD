@@ -6,7 +6,10 @@ kt_jvm_library(
         "**/*.java",
         "**/*.kt",
     ]),
-    visibility = ["//server:__subpackages__"],
+    visibility = [
+        "//bsp-cli:__subpackages__",
+        "//server:__subpackages__",
+    ],
     deps = [
         "//bazelrunner",
         "//commons",
