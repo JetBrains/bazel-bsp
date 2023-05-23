@@ -33,7 +33,7 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 2. Run in the directory where Bazel BSP should be installed:
 
 ```shell
-cs launch org.jetbrains.bsp:bazel-bsp:2.6.1 -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:2.7.0 -M org.jetbrains.bsp.bazel.install.Install
 ```
 
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
@@ -66,7 +66,7 @@ bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src
 cs launch -r m2Local org.jetbrains.bsp:bazel-bsp:<your version> -M org.jetbrains.bsp.bazel.install.Install
 ```
 
-### Using Bloop
+### Using Bloop (_deprecated!_)
 
 By default Bazel BSP runs as a BSP server and invokes Bazel to compile, test and run targets. 
 This provides the most accurate build results at the expense of  
@@ -95,7 +95,7 @@ For example, using Coursier:
 
 ```shell
 cd ~/src/my-repository
-cs launch org.jetbrains.bsp:bazel-bsp:2.6.1 -M org.jetbrains.bsp.bazel.install.Install \
+cs launch org.jetbrains.bsp:bazel-bsp:2.7.0 -M org.jetbrains.bsp.bazel.install.Install \
   -- \
   --use-bloop \
   -t //my-targets/... \

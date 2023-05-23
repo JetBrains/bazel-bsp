@@ -5,17 +5,22 @@
 
 ## [Unreleased]
 
+## [2.7.0]
+
 ### Features 🎉
 - Server uses BEP to log bazel progress.
   | [ae52b8f](https://github.com/JetBrains/bazel-bsp/commit/ae52b8f401b793ba15e84d492ba0f72a462b74dc)
 
 ### Fixes 🛠️
--  Add class jars generated during annotation processing
+-  Add class jars generated during annotation processing.
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
-- Set PublishDiagnosticsParams.reset to be true
+- Set PublishDiagnosticsParams.reset to be true.
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
-- Update document about how to use projectview
+- Update document about how to use projectview.
   | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
+- Fixup failed target names from BEP in bazel 6+ in the bloop mode.
+  | [#402](https://github.com/JetBrains/bazel-bsp/pull/402)
+
 
 ## [2.6.1]
 
@@ -359,7 +364,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.7.0...HEAD
+
+[2.7.0]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1..2.7.0
 
 [2.6.1]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0..2.6.1
 
