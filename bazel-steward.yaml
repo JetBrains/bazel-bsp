@@ -1,2 +1,12 @@
 pull-requests:
+  - group-id: log4j
+    dependencies: "org.apache.logging.log4j:*"
+  - group-id: jackson
+    dependencies: "com.fasterxml.jackson*:*"
+  - group-id: grpc
+    dependencies: "io.grpc:*"
+  - group-id: junit-jupiter
+    dependencies: "org.junit.jupiter:*"
+  - group-id: kotest
+    dependencies: "io.kotest:*"
   - title: "[maintenance] updated ${dependencyId} to ${versionTo}"

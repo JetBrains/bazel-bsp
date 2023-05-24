@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.server.sync
 import io.kotest.matchers.shouldBe
 import java.io.IOException
 import java.net.URI
-import java.nio.file.Files
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk
@@ -15,15 +14,17 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
-import org.jetbrains.bsp.bazel.utils.dope.DopeTemp.createTempPath
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class ProjectStorageTest {
     @Test
     @Throws(IOException::class)
     fun `should store and load project`() {
-        val path = createTempPath("project-cache-test.json")
-        Files.deleteIfExists(path)
+        val file = File.createTempFile("project-cache-test", ".json")
+        file.delete()
+        file.deleteOnExit()
+        val path = file.toPath()
         val storage = FileProjectStorage(path, BspClientLogger())
         val empty = storage.load()
         empty shouldBe null

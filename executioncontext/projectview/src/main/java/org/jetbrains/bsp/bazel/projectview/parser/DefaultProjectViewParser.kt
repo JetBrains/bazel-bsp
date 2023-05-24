@@ -12,7 +12,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManua
 import org.jetbrains.bsp.bazel.projectview.parser.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
-import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -29,7 +29,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
     override fun parse(projectViewFilePath: Path): Try<ProjectView> {
         log.info("Parsing project view from {}.", projectViewFilePath)
 
-        return DopeFiles.readText(projectViewFilePath)
+        return Try.of { Files.readString(projectViewFilePath) }
             .onFailure { log.error("Failed to read file {}. Parsing failed!", projectViewFilePath, it) }
             .flatMap(this::parse)
             .onSuccess { log.info("Project view from {} parsed!\n{}", projectViewFilePath, it) }
