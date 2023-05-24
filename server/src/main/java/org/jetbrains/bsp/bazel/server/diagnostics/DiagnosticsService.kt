@@ -5,9 +5,14 @@ import ch.epfl.scala.bsp4j.Diagnostic
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import java.nio.file.Path
-import org.jetbrains.bsp.bazel.commons.BspCompileState
+import java.util.concurrent.ConcurrentHashMap
 
-class DiagnosticsService(workspaceRoot: Path, private val state: BspCompileState) {
+/**
+ * @property hasAnyProblems keeps track of problems in given file so BSP reporter
+ * can publish diagnostics with an empty array, to clear up former diagnostics.
+ * see: https://youtrack.jetbrains.com/issue/BAZEL-376
+ */
+class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: ConcurrentHashMap<String, Set<TextDocumentIdentifier>>) {
 
     private val parser = DiagnosticsParser()
     private val mapper = DiagnosticBspMapper(workspaceRoot)
@@ -31,14 +36,14 @@ class DiagnosticsService(workspaceRoot: Path, private val state: BspCompileState
     }
 
     fun clearFormerDiagnostics(targetLabel: String): List<PublishDiagnosticsParams> {
-	    val docs = state.hasAnyProblems[targetLabel]
-	    state.hasAnyProblems.remove(targetLabel)
+	    val docs = hasAnyProblems[targetLabel]
+	    hasAnyProblems.remove(targetLabel)
 	    return docs
 	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), emptyList(), true)}
 	      .orEmpty()
 	}
 
     private fun updateProblemState(buildTarget: String, docs: Set<TextDocumentIdentifier>) {
-        state.hasAnyProblems[buildTarget] = docs
+        hasAnyProblems[buildTarget] = docs
     }
 }

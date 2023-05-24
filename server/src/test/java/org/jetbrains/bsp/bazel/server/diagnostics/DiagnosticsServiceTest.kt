@@ -11,8 +11,8 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldBeEmpty
 import java.nio.file.Paths
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
-import org.jetbrains.bsp.bazel.commons.BspCompileState
 import org.junit.jupiter.api.Test
+import java.util.concurrent.ConcurrentHashMap
 
 class DiagnosticsServiceTest {
 
@@ -504,7 +504,7 @@ class DiagnosticsServiceTest {
 
     @Test
     fun `should clear former diagnostics`() {
-        val service = DiagnosticsService(workspacePath, BspCompileState())
+        val service = DiagnosticsService(workspacePath, ConcurrentHashMap())
         val output = """
             |Loading:
             |Loading: 0 packages loaded
@@ -550,7 +550,7 @@ class DiagnosticsServiceTest {
 
     @Test
     fun `should clear partial former diagnostics`() {
-        val service = DiagnosticsService(workspacePath, BspCompileState())
+        val service = DiagnosticsService(workspacePath, ConcurrentHashMap())
         val output1 = """
             |Loading:
             |Loading: 0 packages loaded
@@ -649,6 +649,6 @@ class DiagnosticsServiceTest {
     }
 
     private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams>? {
-        return DiagnosticsService(workspacePath, BspCompileState()).extractDiagnostics(output, buildTarget, null)
+        return DiagnosticsService(workspacePath, ConcurrentHashMap()).extractDiagnostics(output, buildTarget, null)
     }
 }

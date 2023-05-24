@@ -1,13 +1,15 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.commons.BspCompileState;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 
@@ -16,11 +18,13 @@ public class BazelBspCompilationManager {
   private final BazelRunner bazelRunner;
   private BuildClient client;
   private Path workspaceRoot;
-  private BspCompileState state;
+  private ConcurrentHashMap<String, Set<TextDocumentIdentifier>> hasAnyProblems;
 
-  public BazelBspCompilationManager(BazelRunner bazelRunner, BspCompileState state) {
+  public BazelBspCompilationManager(
+      BazelRunner bazelRunner,
+      ConcurrentHashMap<String, Set<TextDocumentIdentifier>> hasAnyProblems) {
     this.bazelRunner = bazelRunner;
-    this.state = state;
+    this.hasAnyProblems = hasAnyProblems;
   }
 
   public BepBuildResult buildTargetsWithBep(
@@ -33,7 +37,7 @@ public class BazelBspCompilationManager {
       TargetsSpec targetSpecs,
       Seq<String> extraFlags,
       String originId) {
-    var bepServer = BepServer.newBepServer(client, workspaceRoot, state);
+    var bepServer = BepServer.newBepServer(client, workspaceRoot, hasAnyProblems);
     var nettyServer = BepServer.nettyServerBuilder().addService(bepServer).build();
     try {
       nettyServer.start();

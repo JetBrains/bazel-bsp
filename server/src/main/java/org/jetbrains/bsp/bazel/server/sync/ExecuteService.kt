@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.RunParams
 import ch.epfl.scala.bsp4j.RunResult
 import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import io.grpc.Server
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
@@ -25,7 +26,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import org.jetbrains.bsp.bazel.commons.BspCompileState
+import java.util.concurrent.ConcurrentHashMap
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
@@ -33,10 +34,10 @@ class ExecuteService(
     private val bazelRunner: BazelRunner,
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientTestNotifier: BspClientTestNotifier,
-    private val state: BspCompileState
+    private val hasAnyProblems: ConcurrentHashMap<String, Set<TextDocumentIdentifier>>
 ) {
     private fun <T> withBepServer(body : (Server) -> T) :T {
-        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, state)
+        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems)
         val nettyServer = BepServer.nettyServerBuilder().addService(server).build()
         nettyServer.start()
         try {

@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.TaskFinishParams;
 import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.v1.BuildEvent;
 import com.google.devtools.build.v1.PublishBuildEventGrpc;
@@ -24,11 +25,12 @@ import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.bsp.bazel.commons.BspCompileState;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
@@ -44,7 +46,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final Deque<Map.Entry<TaskId, String>> startedEvents = new ArrayDeque<>();
   private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
-  private BspCompileState state;
 
   public BepServer(BuildClient bspClient, DiagnosticsService diagnosticsService) {
     this.bspClient = bspClient;
@@ -52,8 +53,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   public static BepServer newBepServer(
-      BuildClient client, Path workspaceRoot, BspCompileState state) {
-    return new BepServer(client, new DiagnosticsService(workspaceRoot, state));
+      BuildClient client,
+      Path workspaceRoot,
+      ConcurrentHashMap<String, Set<TextDocumentIdentifier>> hasAnyProblems) {
+    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems));
   }
 
   public static NettyServerBuilder nettyServerBuilder() {

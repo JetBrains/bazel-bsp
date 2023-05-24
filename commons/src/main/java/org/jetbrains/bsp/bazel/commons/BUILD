@@ -1,11 +1,8 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_java//java:defs.bzl", "java_library")
 
-kt_jvm_library(
+java_library(
     name = "commons",
-    srcs = glob([
-        "*.java",
-        "*.kt",
-    ]),
+    srcs = glob(["*.java"]),
     visibility = ["//commons:__subpackages__"],
     deps = [
         "@maven//:ch_epfl_scala_bsp4j",

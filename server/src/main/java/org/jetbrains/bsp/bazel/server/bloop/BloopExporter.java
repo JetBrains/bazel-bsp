@@ -16,11 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
-import org.jetbrains.bsp.bazel.commons.BspCompileState;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier;
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
@@ -60,7 +60,7 @@ class BloopExporter {
     var bspClientLogger = new BspClientLogger();
     var bspClientTestNotifier = new BspClientTestNotifier();
     var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
-    var compilationManager = new BazelBspCompilationManager(bazelRunner, new BspCompileState());
+    var compilationManager = new BazelBspCompilationManager(bazelRunner, new ConcurrentHashMap());
     var serverContainer =
         ServerContainer.create(
             bspInfo,
