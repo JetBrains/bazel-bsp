@@ -25,7 +25,7 @@ class BazelBspServer(
     private val bspServerApi: BspServerApi
     private val bspClientLogger: BspClientLogger = BspClientLogger()
     private val bspClientTestNotifier: BspClientTestNotifier = BspClientTestNotifier()
-    private val bspState: ConcurrentHashMap<String, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
+    private val bspState: Map<String, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
 
     init {
         bazelRunner = BazelRunner.of(workspaceContextProvider, this.bspClientLogger, workspaceRoot)

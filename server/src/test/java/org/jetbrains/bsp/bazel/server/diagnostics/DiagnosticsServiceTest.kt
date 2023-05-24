@@ -533,7 +533,7 @@ class DiagnosticsServiceTest {
             |INFO: 2 processes: 2 internal.
             |FAILED: Build did NOT complete successfully""".trimMargin()
 
-        service.hasAnyProblems.keys().toList().shouldBeEmpty()
+        service.hasAnyProblems.keys.shouldBeEmpty()
         val diagnosticsBeforeError = service.clearFormerDiagnostics("//path/to/package:test")
         diagnosticsBeforeError.shouldBeEmpty()
 
@@ -541,7 +541,7 @@ class DiagnosticsServiceTest {
         service.extractDiagnostics(output, "//path/to/package:test", null)
 
         // Assert that state is updated
-        service.hasAnyProblems.keys().toList().shouldHaveSize(1)
+        service.hasAnyProblems.keys.shouldHaveSize(1)
         service.hasAnyProblems["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
         )
@@ -556,7 +556,7 @@ class DiagnosticsServiceTest {
             )
         )
         diagnosticsAfterError shouldContainExactlyInAnyOrder expected
-        service.hasAnyProblems.keys().toList().shouldBeEmpty()
+        service.hasAnyProblems.keys.shouldBeEmpty()
     }
 
     @Test
@@ -630,7 +630,7 @@ class DiagnosticsServiceTest {
         service.extractDiagnostics(output2, "//path/to/package2:test", null)
 
         // Assert that state is updated
-        service.hasAnyProblems.keys().toList() shouldContainExactlyInAnyOrder listOf(
+        service.hasAnyProblems.keys shouldContainExactlyInAnyOrder listOf(
           "//path/to/package:test",
           "//path/to/package2:test",
         )
@@ -645,7 +645,7 @@ class DiagnosticsServiceTest {
         val empty = service.clearFormerDiagnostics("//path/to/package:test")
         empty shouldContainExactlyInAnyOrder expected
         // clearFormerDiagnostics shouldn't clear up for "//path/to/package2:test"
-        service.hasAnyProblems.keys().toList() shouldContainExactlyInAnyOrder listOf(
+        service.hasAnyProblems.keys shouldContainExactlyInAnyOrder listOf(
           "//path/to/package2:test",
         )
     }

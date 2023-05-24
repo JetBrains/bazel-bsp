@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
  * can publish diagnostics with an empty array, to clear up former diagnostics.
  * see: https://youtrack.jetbrains.com/issue/BAZEL-376
  */
-class DiagnosticsService(workspaceRoot: Path, val hasAnyProblems: ConcurrentHashMap<String, Set<TextDocumentIdentifier>>) {
+class DiagnosticsService(workspaceRoot: Path, val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>) {
 
     private val parser = DiagnosticsParser()
     private val mapper = DiagnosticBspMapper(workspaceRoot)

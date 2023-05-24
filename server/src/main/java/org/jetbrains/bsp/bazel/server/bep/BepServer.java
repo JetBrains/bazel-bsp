@@ -26,7 +26,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +54,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   public static BepServer newBepServer(
       BuildClient client,
       Path workspaceRoot,
-      ConcurrentHashMap<String, Set<TextDocumentIdentifier>> hasAnyProblems) {
+      Map<String, Set<TextDocumentIdentifier>> hasAnyProblems) {
     return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems));
   }
 

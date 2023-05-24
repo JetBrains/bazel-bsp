@@ -26,7 +26,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.util.concurrent.ConcurrentHashMap
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
@@ -34,7 +33,7 @@ class ExecuteService(
     private val bazelRunner: BazelRunner,
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientTestNotifier: BspClientTestNotifier,
-    private val hasAnyProblems: ConcurrentHashMap<String, Set<TextDocumentIdentifier>>
+    private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
 ) {
     private fun <T> withBepServer(body : (Server) -> T) :T {
         val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems)
