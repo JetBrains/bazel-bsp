@@ -347,12 +347,16 @@ def collect_proc_macro_artifacts(target, kind, ext):
 def extract_rust_version(sysroot_dir):
     split = sysroot_dir.partition("/")
     for path_fragment in split:
+        # This may not be the most elegant way, but rust providers does not
+        #   provide toolchain version. Standard library soruces are hidden in
+        #   `rust_analyzer_<version>_tools`, so we extract the version from
+        #   the path rust-analyzer aspect provides us.
+        #   Would be nice to use Regex here, but **Starlark**.
         if path_fragment.startswith("rust_analyzer_") and path_fragment.endswith("_tools"):
             strip_prefix = len("rust_analyzer_")
             strip_suffix = len("_tools")
             return path_fragment[strip_prefix:-strip_suffix]
     return None
-
 
 def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
     if not rust_analyzer_toolchain.rustc_srcs:
@@ -384,51 +388,7 @@ def rust_analyzer_detect_sysroot(rust_analyzer_toolchain):
 
     return toolchain_info
 
-# TODO: remove this debug function.
-# Generated using regex
-def print_toolchain(toolchain):
-    print('all_files', toolchain.all_files)
-    print('binary_ext', toolchain.binary_ext)
-    print('cargo', toolchain.cargo)
-    print('clippy_driver', toolchain.clippy_driver)
-    print('compilation_mode_opts', toolchain.compilation_mode_opts)
-    print('crosstool_files', toolchain.crosstool_files)
-    print('default_edition', toolchain.default_edition)
-    print('dylib_ext', toolchain.dylib_ext)
-    print('env', toolchain.env)
-    print('exec_triple', toolchain.exec_triple)
-    print('libstd_and_allocator_ccinfo', toolchain.libstd_and_allocator_ccinfo)
-    print('llvm_cov', toolchain.llvm_cov)
-    print('llvm_profdata', toolchain.llvm_profdata)
-    print('make_variables', toolchain.make_variables)
-    print('os', toolchain.os)
-    print('rust_doc', toolchain.rust_doc)
-    print('rust_std', toolchain.rust_std)
-    print('rust_std_paths', toolchain.rust_std_paths)
-    print('rustc', toolchain.rustc)
-    print('rustc_lib', toolchain.rustc_lib)
-    print('rustfmt', toolchain.rustfmt)
-    print('staticlib_ext', toolchain.staticlib_ext)
-    print('stdlib_linkflags', toolchain.stdlib_linkflags)
-    print('extra_rustc_flags', toolchain.extra_rustc_flags)
-    print('extra_exec_rustc_flags', toolchain.extra_exec_rustc_flags)
-    print('sysroot', toolchain.sysroot)
-    print('sysroot_short_path', toolchain.sysroot_short_path)
-    print('target_arch', toolchain.target_arch)
-    print('target_flag_value', toolchain.target_flag_value)
-    print('target_json', toolchain.target_json)
-    print('target_triple', toolchain.target_triple)
-    print('_rename_first_party_crates', toolchain._rename_first_party_crates)
-    print('_third_party_dir', toolchain._third_party_dir)
-    print('_pipelined_compilation', toolchain._pipelined_compilation)
-    print('_experimental_use_cc_common_link', toolchain._experimental_use_cc_common_link)
-    print('=' * 250)
-
 def extract_rust_crate_info(target, ctx):
-
-    # TODO: remove DEBUG and related functions.
-    #   we keep them for now, as they are useful for target analysis
-    DEBUG = False
 
     if CrateInfo not in target:
         return None
@@ -442,11 +402,6 @@ def extract_rust_crate_info(target, ctx):
     cargo_bin_path = toolchain.cargo.path
     rustc_host = toolchain.target_flag_value
 
-    if DEBUG:
-        print('Analyzing target:', target.label)
-        print('toolchain info')
-        print_toolchain(toolchain)
-
     if RUST_ANALYZER_TOOLCHAIN_TYPE in ctx.toolchains:
         rust_analyzer_toolchain = ctx.toolchains[RUST_ANALYZER_TOOLCHAIN_TYPE]
         sysroot = rust_analyzer_detect_sysroot(rust_analyzer_toolchain)
@@ -459,40 +414,6 @@ def extract_rust_crate_info(target, ctx):
         rustc_src_sysroot = None
         proc_macro_srv = None
         rustc_version = None
-
-    # Uncomment the following code fragment to print everything that
-    # can be extracted from the public API.
-    #
-    # That's too much and too little at the same time for our use case.
-    #
-    # Some fields (like `crate_rustc_env`) apply directly to the `rustc`
-    # compiler and do not have a meaningful translation to `cargo metadata`
-    # fields.
-    #
-    # On the other hand, some cargo-specific data (like the existence of
-    # packages with many targets, `features` and `use_default_features` in
-    # dependencies, etc.) do not exist in Bazel and low-level `rustc`.
-    #
-    # debug_struct_ = create_struct(
-    #      attributes = ctx.rule.attr,
-    #      crate_deps = crate_info.deps,
-    #      crate_aliases = crate_info.aliases,
-    #      crate_compile_data = crate_info.compile_data,
-    #      crate_compile_data_targets = crate_info.compile_data_targets,
-    #      crate_edition = crate_info.edition,
-    #      crate_is_test = crate_info.is_test,
-    #      crate_name = crate_info.name,
-    #      crate_output = crate_info.output,
-    #      crate_owner = crate_info.owner,
-    #      crate_proc_macro_deps = crate_info.owner,
-    #      crate_root = crate_info.root,
-    #      crate_rustc_env = crate_info.rustc_env,
-    #      crate_rustc_env_files = crate_info.rustc_env_files,
-    #      crate_type = crate_info.type,
-    #      crate_wrapped_crate_type = crate_info.wrapped_crate_type,
-    #  )
-    #
-    # print(debug_struct_)
 
     crate_root_path = crate_info.root.path
 
@@ -546,10 +467,6 @@ def extract_rust_crate_info(target, ctx):
         rustc_version = rustc_version,
         rustc_host = rustc_host,
     )
-
-    if DEBUG:
-        print(rust_crate_struct)
-        print("=" * 120)
 
     return rust_crate_struct
 
