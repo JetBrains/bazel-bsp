@@ -47,8 +47,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
     private fun resolvePackage(label: Label): BazelPackageTargetInfo {
         val labelVal = label.value
-        val packageName = labelVal.substringBefore(":")
-        val targetName = labelVal.substringAfter(":")
+        val (packageName, targetName) = labelVal.split(":", limit = 2)
         return BazelPackageTargetInfo(packageName, targetName)
     }
 

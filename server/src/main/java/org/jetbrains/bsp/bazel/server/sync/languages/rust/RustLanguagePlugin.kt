@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.BuildTarget
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.RustToolchain
 import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
@@ -126,11 +127,16 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
         val packages = rustWorkspaceResolver.rustPackages(modules)
         val (dependencies, rawDependencies) = rustWorkspaceResolver.rustDependencies(packages, modules)
-
+        val resolvedTargets = packages.filter { it.origin == "WORKSPACE" }
+                                        .flatMap { it.targets.map { it2 -> it.id + ':' + it2.name }}
+                                        .map { BuildTargetIdentifier(it) }
+        
+        
         return RustWorkspaceResult(
             packages,
             rawDependencies,
-            dependencies
+            dependencies,
+            resolvedTargets
         )
     }
 
