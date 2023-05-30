@@ -189,7 +189,7 @@ maven_install(
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.1",
         "ch.epfl.scala:bloop-config_2.13:1.5.0",
         "org.scala-lang:scala-library:2.13.10",
-        "com.google.protobuf:protobuf-java:3.23.1",
+        "com.google.protobuf:protobuf-java:3.23.2",
         "io.grpc:grpc-stub:1.55.1",
         "io.grpc:grpc-netty:1.55.1",
 
