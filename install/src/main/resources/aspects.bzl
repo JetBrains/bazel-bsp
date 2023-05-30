@@ -312,6 +312,20 @@ def extract_cpp_target_info(target, ctx):
         link_shared = getattr(ctx.rule.attr, "linkshared", False),
     )
 
+def extract_python_target_info(target, ctx):
+    if PyInfo not in target:
+        return None
+
+    if PyRuntimeInfo in target:
+        provider = target[PyRuntimeInfo]
+    else:
+        provider = None
+
+    return create_struct(
+        interpreter = file_location(getattr(provider, "interpreter", None)),
+        version = getattr(provider, "python_version", None),
+    )
+
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
     aspect_ids = None
@@ -520,17 +534,3 @@ bsp_target_info_aspect = aspect(
     attr_aspects = ALL_DEPS,
     toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE],
 )
-
-def extract_python_target_info(target, ctx):
-    if PyInfo not in target:
-        return None
-
-    if PyRuntimeInfo in target:
-        provider = target[PyRuntimeInfo]
-    else:
-        provider = None
-
-    return create_struct(
-        interpreter = file_location(getattr(provider, "interpreter", None)),
-        version = getattr(provider, "python_version", None),
-    )

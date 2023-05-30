@@ -23,25 +23,31 @@ class PythonLanguagePlugin(
     private var defaultVersion: String? = null
 
     override fun prepareSync(targets: Sequence<TargetInfo>) {
-        val targetWithSdk = targets.filter { it.hasPythonTargetInfo() && it.pythonTargetInfo.hasInterpreter() }.firstOrNull()
-        val defaultTargetInfo = targetWithSdk?.pythonTargetInfo
+        val defaultTargetInfo = calculateDefaultTargetInfo(targets)
         defaultInterpreter = defaultTargetInfo?.interpreter
             ?.takeUnless { it.relativePath.isNullOrEmpty() }
             ?.let { bazelPathsResolver.resolveUri(it) }
         defaultVersion = defaultTargetInfo?.version
     }
 
+    private fun calculateDefaultTargetInfo(targets: Sequence<TargetInfo>): PythonTargetInfo? {
+        val targetWithSdk = targets.filter(::hasPythonInterpreter).firstOrNull()
+        return targetWithSdk?.pythonTargetInfo
+    }
+
+    private fun hasPythonInterpreter(targetInfo: TargetInfo): Boolean =
+        targetInfo.hasPythonTargetInfo() && targetInfo.pythonTargetInfo.hasInterpreter()
+
     override fun resolveModule(targetInfo: TargetInfo): PythonModule? =
-        targetInfo.pythonTargetInfo?.run {
+        targetInfo.pythonTargetInfo?.let { pythonTargetInfo ->
             PythonModule(
-                calculateInterpreterURI(interpreter) ?: defaultInterpreter,
-                version.takeUnless(String::isNullOrEmpty) ?: defaultVersion
+                calculateInterpreterURI(interpreter = pythonTargetInfo.interpreter) ?: defaultInterpreter,
+                pythonTargetInfo.version.takeUnless(String::isNullOrEmpty) ?: defaultVersion
             )
         }
 
     private fun calculateInterpreterURI(interpreter: FileLocation?): URI? =
-        interpreter
-            ?.takeUnless { it.relativePath.isNullOrEmpty() }
+        interpreter?.takeUnless { it.relativePath.isNullOrEmpty() }
             ?.let { bazelPathsResolver.resolveUri(it) }
 
     override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
@@ -57,16 +63,14 @@ class PythonLanguagePlugin(
         )
 
     override fun dependencySources(targetInfo: TargetInfo, dependencyTree: DependencyTree): Set<URI> =
-        targetInfo.pythonTargetInfo?.run {
+        if (targetInfo.hasPythonTargetInfo())
             dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getExternalSources)
-                .filter(::isExternal)
                 .map(::calculateExternalSourcePath)
                 .toSet()
-        }.orEmpty()
+        else
+            emptySet()
 
-
-    private fun isExternal(fileLocation: FileLocation): Boolean = fileLocation.isExternal
 
     private fun getExternalSources(targetInfo: TargetInfo): List<FileLocation> =
         targetInfo.sourcesList.mapNotNull { it.takeIf { it.isExternal } }

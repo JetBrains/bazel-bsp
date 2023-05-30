@@ -31,7 +31,8 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         workspaceBuildTargets(),
         dependencySourcesResults(),
         pythonOptionsResults(),
-        resourcesResults())
+        resourcesResults()
+    )
 
     private fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
         val bspWorkspaceRootExampleBuildTarget =
@@ -90,7 +91,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         exampleExampleTestBuildTarget.data = examplePythonBuildTarget
         exampleExampleTestBuildTarget.dataKind = BuildTargetDataKind.PYTHON
 
-        val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
+        return WorkspaceBuildTargetsResult(
             listOf(
                 bspWorkspaceRootExampleBuildTarget,
                 exampleExampleBuildTarget,
@@ -98,14 +99,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
                 exampleExampleTestBuildTarget,
             )
         )
-
-        return workspaceBuildTargetsResult
     }
-
-    private fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =
-        expectedWorkspaceBuildTargetsResult()
-            .targets
-            .map { it.id }
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
         val workspaceBuildTargetsResult = expectedWorkspaceBuildTargetsResult()
@@ -119,15 +113,15 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
     }
 
     private fun dependencySourcesResults(): BazelBspTestScenarioStep {
-        val examplePythonDependencySourcesItem = DependencySourcesItem(
-            BuildTargetIdentifier("$targetPrefix//lib:example_library"),
-            listOf(
-                "file://\$BAZEL_CACHE/external/pip_deps_numpy/site-packages/"
-            )
-        )
+        val expectedPythonDependencySourcesItems = expectedWorkspaceBuildTargetsResult().targets.map {
+            if (it.id == BuildTargetIdentifier("$targetPrefix//lib:example_library"))
+                DependencySourcesItem(it.id, listOf("file://\$BAZEL_CACHE/external/pip_deps_numpy/site-packages/"))
+            else
+                DependencySourcesItem(it.id, emptyList())
+        }
 
-        val expectedTargetIdentifiers = expectedTargetIdentifiers().filter { it.uri == "@//lib:example_library" }
-        val expectedDependencies = DependencySourcesResult(listOf(examplePythonDependencySourcesItem))
+        val expectedTargetIdentifiers = expectedTargetIdentifiers()
+        val expectedDependencies = DependencySourcesResult(expectedPythonDependencySourcesItems)
         val dependencySourcesParams = DependencySourcesParams(expectedTargetIdentifiers)
 
         return BazelBspTestScenarioStep(
@@ -164,4 +158,9 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             testClient.testResources(Duration.ofSeconds(30), resourcesParams, expectedResourcesResult)
         }
     }
+
+    private fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =
+        expectedWorkspaceBuildTargetsResult()
+            .targets
+            .map { it.id }
 }
