@@ -4,6 +4,9 @@
 
 
 ## [Unreleased]
+### Fixes 🛠️
+-  Prioritize most frequently used JDKs when selecting the project JDK. 
+   | [#420](https://github.com/JetBrains/bazel-bsp/pull/420)
 
 ## [2.7.0]
 
