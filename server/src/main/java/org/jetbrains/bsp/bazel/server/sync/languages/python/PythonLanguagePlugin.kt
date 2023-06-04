@@ -30,10 +30,12 @@ class PythonLanguagePlugin(
         defaultVersion = defaultTargetInfo?.version
     }
 
-    private fun calculateDefaultTargetInfo(targets: Sequence<TargetInfo>): PythonTargetInfo? {
-        val targetWithSdk = targets.filter(::hasPythonInterpreter).firstOrNull()
-        return targetWithSdk?.pythonTargetInfo
-    }
+    private fun calculateDefaultTargetInfo(targets: Sequence<TargetInfo>): PythonTargetInfo? =
+        targets
+            .filter(::hasPythonInterpreter)
+            .firstOrNull()
+            ?.pythonTargetInfo
+
 
     private fun hasPythonInterpreter(targetInfo: TargetInfo): Boolean =
         targetInfo.hasPythonTargetInfo() && targetInfo.pythonTargetInfo.hasInterpreter()
@@ -80,10 +82,11 @@ class PythonLanguagePlugin(
         return bazelPathsResolver.resolveUri(findSitePackagesSubdirectory(path) ?: path)
     }
 
-    private fun findSitePackagesSubdirectory(path: Path?): Path? {
-        return if (path == null || path.endsWith("site-packages"))
-            path
-        else
-            findSitePackagesSubdirectory(path.parent)
+    private tailrec fun findSitePackagesSubdirectory(path: Path?): Path? {
+        return when {
+            path == null -> null
+            path.endsWith("site-packages") -> path
+            else -> findSitePackagesSubdirectory(path.parent)
+        }
     }
 }
