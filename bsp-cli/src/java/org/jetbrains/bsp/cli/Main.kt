@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.cli
 
 import ch.epfl.scala.bsp4j.*
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.eclipse.lsp4j.jsonrpc.Launcher.Builder
 import org.jetbrains.bsp.bazel.install.Install
@@ -15,6 +16,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
+import kotlin.system.exitProcess
 
 /**
  * The application expects just a single argument - path to your bazel project
@@ -35,12 +38,12 @@ fun main(args: Array<String>) {
     val clientOut = PipedInputStream()
     val clientIn = PrintStream(PipedOutputStream(clientOut), true)
 
-    val serverExecutor = Executors.newFixedThreadPool(4)
+    val serverExecutor = Executors.newFixedThreadPool(4, threadFactory("cli-server-pool-%d"))
     val serverLauncher = startServer(serverIn, clientOut, serverExecutor, workspace)
     val serverAlveFuture = serverLauncher.startListening()
 
 
-    val clientExecutor = Executors.newFixedThreadPool(4)
+    val clientExecutor = Executors.newFixedThreadPool(4, threadFactory("cli-client-pool-%d"))
     val clientLauncher = startClient(serverOut, clientIn, clientExecutor)
     val clientAliveFuture = clientLauncher.startListening()
 
@@ -63,6 +66,15 @@ fun main(args: Array<String>) {
     clientExecutor.shutdown()
     serverExecutor.shutdown()
 }
+
+private fun threadFactory(nameFormat: String): ThreadFactory =
+        ThreadFactoryBuilder()
+                .setNameFormat(nameFormat)
+                .setUncaughtExceptionHandler { t, e ->
+                    e.printStackTrace()
+                    exitProcess(1)
+                }
+                .build()
 
 private fun startClient(serverOut: PipedInputStream, clientIn: PrintStream, clientExecutor: ExecutorService?): Launcher<BuildServer> =
         Builder<BuildServer>()
