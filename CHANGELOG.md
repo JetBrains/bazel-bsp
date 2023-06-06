@@ -5,8 +5,10 @@
 
 ## [Unreleased]
 ### Fixes 🛠️
--  Prioritize most frequently used JDKs when selecting the project JDK. 
+-  Prioritize most frequently used JDKs when selecting the project JDK.
    | [#420](https://github.com/JetBrains/bazel-bsp/pull/420)
+-  Fix ide classpath computation for recent rules_jvm_external.
+   | [#421](https://github.com/JetBrains/bazel-bsp/pull/421)
 
 ## [2.7.0]
 
