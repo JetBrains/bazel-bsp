@@ -32,7 +32,7 @@ jobs:
     needs: setup
     strategy:
       matrix:
-        bazel_version: ["5.4.0", "6.2.0"]
+        bazel_version: ["5.4.1", "6.2.1"]
         test_target: ["//e2e:BazelBspSampleRepoTest", "//e2e:BazelBspLocalJdkTest", "//e2e:BazelBspRemoteJdkTest", "//e2e:BazelBspCppProjectTest"]
         include:
           - test_name: sample-repo-test
