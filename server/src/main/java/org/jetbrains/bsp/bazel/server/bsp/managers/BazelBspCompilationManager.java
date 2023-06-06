@@ -1,10 +1,14 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -31,7 +35,8 @@ public class BazelBspCompilationManager {
       Seq<String> extraFlags,
       String originId) {
     var bepServer = BepServer.newBepServer(client, workspaceRoot);
-    var nettyServer = BepServer.nettyServerBuilder().addService(bepServer).build();
+    var executor = Executors.newFixedThreadPool(4, threadFactory());
+    var nettyServer = BepServer.nettyServerBuilder().addService(bepServer).executor(executor).build();
     try {
       nettyServer.start();
     } catch (IOException e) {
@@ -50,6 +55,16 @@ public class BazelBspCompilationManager {
     } finally {
       nettyServer.shutdown();
     }
+  }
+
+  private static ThreadFactory threadFactory() {
+    return new ThreadFactoryBuilder()
+            .setNameFormat("grpc-netty-pool-%d")
+            .setUncaughtExceptionHandler((t, e) -> {
+              e.printStackTrace();
+              System.exit(1);
+            })
+            .build();
   }
 
   public void setClient(BuildClient client) {
