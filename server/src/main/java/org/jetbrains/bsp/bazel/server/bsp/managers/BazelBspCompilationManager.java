@@ -54,6 +54,7 @@ public class BazelBspCompilationManager {
       return new BepBuildResult(result, bepServer.getBepOutput());
     } finally {
       nettyServer.shutdown();
+      executor.shutdown();
     }
   }
 

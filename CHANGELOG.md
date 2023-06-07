@@ -11,6 +11,7 @@
    | [#421](https://github.com/JetBrains/bazel-bsp/pull/421)
 -  Process exit instead of hang in case of uncaught exception in pooled threads
    | [#425](https://github.com/JetBrains/bazel-bsp/pull/425)
+   | [#426](https://github.com/JetBrains/bazel-bsp/pull/426)
 
 ## [2.7.0]
 
