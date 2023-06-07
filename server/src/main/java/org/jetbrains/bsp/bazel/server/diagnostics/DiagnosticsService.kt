@@ -24,14 +24,7 @@ class DiagnosticsService(workspaceRoot: Path, val hasAnyProblems: MutableMap<Str
     ): List<PublishDiagnosticsParams> {
         val parsedDiagnostics = parser.parse(bazelOutput, targetLabel)
         val events = mapper.createDiagnostics(parsedDiagnostics, originId)
-        events
-            .groupBy { it.getBuildTarget().getUri() }
-            .forEach {
-                val buildTarget = it.key
-                val paramss = it.value
-                val docs = paramss.map { it.getTextDocument() }.toSet()
-                updateProblemState(buildTarget, docs)
-            }
+        updateProblemState(events)
         return events
     }
 
@@ -43,7 +36,14 @@ class DiagnosticsService(workspaceRoot: Path, val hasAnyProblems: MutableMap<Str
 	      .orEmpty()
 	}
 
-    private fun updateProblemState(buildTarget: String, docs: Set<TextDocumentIdentifier>) {
-        hasAnyProblems[buildTarget] = docs
+    private fun updateProblemState(events: List<PublishDiagnosticsParams>) {
+        events
+            .groupBy { it.getBuildTarget().getUri() }
+            .forEach {
+                val buildTarget = it.key
+                val paramss = it.value
+                val docs = paramss.map { it.getTextDocument() }.toSet()
+                hasAnyProblems[buildTarget] = docs
+            }
     }
 }
