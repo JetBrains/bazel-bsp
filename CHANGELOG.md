@@ -4,6 +4,9 @@
 
 
 ## [Unreleased]
+
+## [2.7.1]
+
 ### Fixes 🛠️
 -  Publish `build/publishDiagnostics` with an empty array of diagnostics to clear former diagnotics.
    | [#381](https://github.com/JetBrains/bazel-bsp/pull/381)
@@ -12,8 +15,8 @@
 -  Fix ide classpath computation for recent rules_jvm_external.
    | [#421](https://github.com/JetBrains/bazel-bsp/pull/421)
 -  Process exit instead of hang in case of uncaught exception in pooled threads
-   | [#425](https://github.com/JetBrains/bazel-bsp/pull/425)
-   | [#426](https://github.com/JetBrains/bazel-bsp/pull/426)
+   | [#425](https://github.com/JetBrains/bazel-bsp/pull/425),
+   [#426](https://github.com/JetBrains/bazel-bsp/pull/426)
 
 ## [2.7.0]
 
@@ -374,7 +377,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.7.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.7.1...HEAD
+
+[2.7.1]: https://github.com/JetBrains/bazel-bsp/compare/2.7.0..2.7.1
 
 [2.7.0]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1..2.7.0
 
