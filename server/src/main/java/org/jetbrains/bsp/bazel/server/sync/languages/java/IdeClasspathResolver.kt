@@ -44,13 +44,13 @@ class IdeClasspathResolver(
   }
 
   private fun toMavenSuffix(uri: String): String? {
-    val indicator = "/maven2/"
-    val index = uri.lastIndexOf(indicator)
-    return if (index < 0) {
-      null
-    } else {
-      uri.substring(index + indicator.length)
+    listOf("/maven/", "/maven2/").forEach { indicator ->
+      val index = uri.lastIndexOf(indicator)
+      if (index >= 0) {
+        return uri.substring(index + indicator.length)
+      }
     }
+    return null
   }
 
   private fun isItJarOfTheCurrentTarget(jar: String): Boolean {

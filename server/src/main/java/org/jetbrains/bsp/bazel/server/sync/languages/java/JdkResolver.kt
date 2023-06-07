@@ -11,7 +11,7 @@ class JdkResolver(
 ) {
 
   fun resolve(targets: Sequence<TargetInfo>): Jdk? {
-    val allCandidates = targets.mapNotNull { resolveJdkData(it) }.distinct().map { JdkCandidate(it) }
+    val allCandidates = targets.mapNotNull { resolveJdkData(it) }.sortByFrequency().map { JdkCandidate(it) }
     if (allCandidates.none()) return null
     val latestVersion = candidatesWithLatestVersion(allCandidates)
     val complete = allCandidates.filter { it.isComplete }
@@ -33,7 +33,6 @@ class JdkResolver(
       findLatestVersion(candidates)
         ?.let { version -> candidates.filter { it.version == version } }
         .orEmpty()
-        .sortedBy { it.javaHome.toString() } // for predictable results
 
   private fun findLatestVersion(candidates: Sequence<JdkCandidate>): String? =
       candidates.mapNotNull { it.version }.maxByOrNull { Integer.parseInt(it) }
@@ -75,5 +74,11 @@ class JdkResolver(
       val isRuntime: Boolean,
       val javaHome: URI?,
   )
+
+private fun <A> Sequence<A>.sortByFrequency(): Sequence<A> =
+      groupBy { it }.values
+        .sortedByDescending { it.size }
+        .map { it.first() }
+        .asSequence()
 
 }
