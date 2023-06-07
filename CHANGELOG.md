@@ -5,6 +5,8 @@
 
 ## [Unreleased]
 ### Fixes 🛠️
+-  Publish `build/publishDiagnostics` with an empty array of diagnostics to clear former diagnotics.
+   | [#381](https://github.com/JetBrains/bazel-bsp/pull/381)
 -  Prioritize most frequently used JDKs when selecting the project JDK.
    | [#420](https://github.com/JetBrains/bazel-bsp/pull/420)
 -  Fix ide classpath computation for recent rules_jvm_external.
