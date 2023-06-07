@@ -6,16 +6,19 @@ import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import java.util.Collections
 
 /**
  * @property hasAnyProblems keeps track of problems in given file so BSP reporter
  * can publish diagnostics with an empty array, to clear up former diagnostics.
  * see: https://youtrack.jetbrains.com/issue/BAZEL-376
  */
-class DiagnosticsService(workspaceRoot: Path, val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>) {
+class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>) {
 
     private val parser = DiagnosticsParser()
     private val mapper = DiagnosticBspMapper(workspaceRoot)
+
+    fun getBspState() = Collections.unmodifiableMap(hasAnyProblems)
 
     fun extractDiagnostics(
         bazelOutput: String,

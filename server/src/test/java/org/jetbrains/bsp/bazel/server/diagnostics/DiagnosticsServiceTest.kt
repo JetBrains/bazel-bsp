@@ -533,7 +533,7 @@ class DiagnosticsServiceTest {
             |INFO: 2 processes: 2 internal.
             |FAILED: Build did NOT complete successfully""".trimMargin()
 
-        service.hasAnyProblems.keys.shouldBeEmpty()
+        service.getBspState().keys.shouldBeEmpty()
         val diagnosticsBeforeError = service.clearFormerDiagnostics("//path/to/package:test")
         diagnosticsBeforeError.shouldBeEmpty()
 
@@ -541,13 +541,13 @@ class DiagnosticsServiceTest {
         service.extractDiagnostics(output, "//path/to/package:test", null)
 
         // Assert that state is updated
-        service.hasAnyProblems.keys.shouldHaveSize(1)
-        service.hasAnyProblems["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
+        service.getBspState().keys.shouldHaveSize(1)
+        service.getBspState()["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
         )
 
         // Verify we can get `PublishDiagnosticsParams` to clear up previously published diagnostics,
-        // and the state (hasAnyProblems) has updated to have no problems.
+        // and the state (getBspState()) has updated to have no problems.
         val diagnosticsAfterError = service.clearFormerDiagnostics("//path/to/package:test")
         val expected = listOf(
             PublishDiagnosticsParams(
@@ -556,7 +556,7 @@ class DiagnosticsServiceTest {
             )
         )
         diagnosticsAfterError shouldContainExactlyInAnyOrder expected
-        service.hasAnyProblems.keys.shouldBeEmpty()
+        service.getBspState().keys.shouldBeEmpty()
     }
 
     @Test
@@ -630,14 +630,14 @@ class DiagnosticsServiceTest {
         service.extractDiagnostics(output2, "//path/to/package2:test", null)
 
         // Assert that state is updated
-        service.hasAnyProblems.keys shouldContainExactlyInAnyOrder listOf(
+        service.getBspState().keys shouldContainExactlyInAnyOrder listOf(
           "//path/to/package:test",
           "//path/to/package2:test",
         )
-        service.hasAnyProblems["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
+        service.getBspState()["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
         )
-        service.hasAnyProblems["//path/to/package2:test"] shouldContainExactlyInAnyOrder setOf(
+        service.getBspState()["//path/to/package2:test"] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package2/Test.scala"),
         )
 
@@ -645,7 +645,7 @@ class DiagnosticsServiceTest {
         val empty = service.clearFormerDiagnostics("//path/to/package:test")
         empty shouldContainExactlyInAnyOrder expected
         // clearFormerDiagnostics shouldn't clear up for "//path/to/package2:test"
-        service.hasAnyProblems.keys shouldContainExactlyInAnyOrder listOf(
+        service.getBspState().keys shouldContainExactlyInAnyOrder listOf(
           "//path/to/package2:test",
         )
     }
