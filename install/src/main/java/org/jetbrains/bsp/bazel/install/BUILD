@@ -5,7 +5,7 @@ kt_jvm_library(
     srcs = glob(["*.kt"]),
     resources = ["//install/src/main/resources"],
     visibility = [
-        "//bsp-cli:__subpackages__",
+        "//bspcli:__subpackages__",
         "//install:__subpackages__",
     ],
     deps = [
