@@ -4,6 +4,11 @@ load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
 
 LOG4J_CONFIG = "log4j2_bspcli.xml"
 
+filegroup(
+    name = "bspcli_resources",
+    srcs = ["src/main/resources/{}".format(LOG4J_CONFIG)],
+)
+
 kt_jvm_binary(
     name = "bspcli",
     srcs = ["src/java/org/jetbrains/bsp/cli/Main.kt"],
@@ -12,7 +17,7 @@ kt_jvm_binary(
         "-Dlog4j.configurationFile=classpath:{}".format(LOG4J_CONFIG),
     ],
     main_class = "org.jetbrains.bsp.cli.MainKt",
-    resources = ["src/main/resources/{}".format(LOG4J_CONFIG)],
+    resources = [":bspcli_resources"],
     visibility = ["//visibility:public"],
     deps = [
         "//executioncontext/workspacecontext",
