@@ -82,8 +82,8 @@ class PythonLanguagePlugin(
         return bazelPathsResolver.resolveUri(findSitePackagesSubdirectory(path) ?: path)
     }
 
-    private tailrec fun findSitePackagesSubdirectory(path: Path?): Path? {
-        return when {
+    private tailrec fun findSitePackagesSubdirectory(path: Path?): Path? =
+        when {
             path == null -> null
             path.endsWith("site-packages") -> path
             else -> findSitePackagesSubdirectory(path.parent)
