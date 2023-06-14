@@ -7,7 +7,7 @@ kt_jvm_library(
         "**/*.kt",
     ]),
     visibility = [
-        "//bsp-cli:__subpackages__",
+        "//bspcli:__subpackages__",
         "//server:__subpackages__",
     ],
     deps = [
