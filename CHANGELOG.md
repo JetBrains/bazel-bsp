@@ -4,7 +4,9 @@
 
 
 ## [Unreleased]
-
+### Performance
+-  Reduce peak memory footprint
+   | [#428](https://github.com/JetBrains/bazel-bsp/pull/428)
 ## [2.7.1]
 
 ### Fixes 🛠️
