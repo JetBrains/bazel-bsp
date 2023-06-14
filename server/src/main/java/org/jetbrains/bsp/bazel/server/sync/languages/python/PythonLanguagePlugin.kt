@@ -88,5 +88,4 @@ class PythonLanguagePlugin(
             path.endsWith("site-packages") -> path
             else -> findSitePackagesSubdirectory(path.parent)
         }
-    }
 }
