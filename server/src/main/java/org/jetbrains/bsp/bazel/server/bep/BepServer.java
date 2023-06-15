@@ -80,7 +80,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       BuildEventStreamProtos.BuildEvent event =
           BuildEventStreamProtos.BuildEvent.parseFrom(buildEvent.getBazelEvent().getValue());
 
-      LOGGER.debug("Got event {}", event);
+      LOGGER.trace("Got event {}", event);
 
       processBuildStartedEvent(event);
       processProgressEvent(event);
@@ -214,7 +214,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     var label = event.getId().getTargetCompleted().getLabel();
     var targetComplete = event.getCompleted();
     var outputGroups = targetComplete.getOutputGroupList();
-    LOGGER.debug("Consuming target completed event " + targetComplete);
+    LOGGER.trace("Consuming target completed event " + targetComplete);
     bepOutputBuilder.storeTargetOutputGroups(label, outputGroups);
     if (targetComplete.getSuccess()) {
       // clear former diagnostics by publishing an empty array of diagnostics

@@ -16,6 +16,9 @@ object BazelFlag {
   @JvmStatic fun buildManualTests(): String =
           flag("build_manual_tests")
 
+  @JvmStatic fun curses(enabled: Boolean): String =
+          arg("curses", if (enabled) "yes" else "no")
+
   @JvmStatic fun repositoryOverride(repositoryName: String, path: String): String =
     arg("override_repository", "$repositoryName=$path")
 

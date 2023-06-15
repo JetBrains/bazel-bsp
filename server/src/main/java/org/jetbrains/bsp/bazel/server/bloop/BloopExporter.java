@@ -70,7 +70,7 @@ class BloopExporter {
             bspClientLogger,
             bspClientTestNotifier,
             bazelRunner,
-            compilationManager);
+            compilationManager, null);
     var projectProvider = serverContainer.getProjectProvider();
     var client = new BloopBuildClient(System.out, serverContainer.getBazelInfo());
     initializeClient(serverContainer, client);

@@ -44,10 +44,6 @@ class BepOutputBuilder {
   }
 
   public BepOutput build() {
-    System.gc();
-    LOGGER.debug(
-        "Memory usage: {} MB",
-        (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024);
     return new BepOutput(outputGroups, textProtoFileSets, rootTargets);
   }
 

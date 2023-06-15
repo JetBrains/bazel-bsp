@@ -12,13 +12,14 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.common.ServerContainer
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService
+import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 class BazelBspServer(
-    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, val workspaceRoot: Path
+    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, val workspaceRoot: Path, val metricsLogger: MetricsLogger?
 ) {
     private val bazelRunner: BazelRunner
     private val compilationManager: BazelBspCompilationManager
@@ -41,7 +42,8 @@ class BazelBspServer(
             bspClientLogger,
             bspClientTestNotifier,
             bazelRunner,
-            compilationManager
+            compilationManager,
+            metricsLogger
         )
 
         val bspProjectMapper = BspProjectMapper(
