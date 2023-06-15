@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
 private fun threadFactory(nameFormat: String): ThreadFactory =
         ThreadFactoryBuilder()
                 .setNameFormat(nameFormat)
-                .setUncaughtExceptionHandler { t, e ->
+                .setUncaughtExceptionHandler { _, e ->
                     e.printStackTrace()
                     exitProcess(1)
                 }
