@@ -16,9 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.logger.BspClientLogger;
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier;
@@ -59,7 +61,7 @@ class BloopExporter {
     var bspClientLogger = new BspClientLogger();
     var bspClientTestNotifier = new BspClientTestNotifier();
     var bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot);
-    var compilationManager = new BazelBspCompilationManager(bazelRunner);
+    var compilationManager = new BazelBspCompilationManager(bazelRunner, new ConcurrentHashMap());
     var serverContainer =
         ServerContainer.create(
             bspInfo,
@@ -68,9 +70,9 @@ class BloopExporter {
             bspClientLogger,
             bspClientTestNotifier,
             bazelRunner,
-            compilationManager);
+            compilationManager, null);
     var projectProvider = serverContainer.getProjectProvider();
-    var client = new BloopBuildClient(System.out);
+    var client = new BloopBuildClient(System.out, serverContainer.getBazelInfo());
     initializeClient(serverContainer, client);
 
     var project = projectProvider.refreshAndGet(cancelChecker);
@@ -126,10 +128,12 @@ class BloopExporter {
   private static class BloopBuildClient implements BuildClient {
 
     private final PrintStream out;
+    private final BazelInfo bazelInfo;
     private final java.util.Set<BuildTargetIdentifier> failedTargets = Sets.newHashSet();
 
-    BloopBuildClient(PrintStream out) {
+    BloopBuildClient(PrintStream out, BazelInfo bazelInfo) {
       this.out = out;
+      this.bazelInfo = bazelInfo;
     }
 
     public Set<BuildTargetIdentifier> getFailedTargets() {
@@ -157,7 +161,18 @@ class BloopExporter {
     public void onBuildPublishDiagnostics(PublishDiagnosticsParams publishDiagnosticsParams) {
       if (publishDiagnosticsParams.getDiagnostics().stream()
           .anyMatch(d -> d.getSeverity() == DiagnosticSeverity.ERROR)) {
-        this.failedTargets.add(publishDiagnosticsParams.getBuildTarget());
+        BuildTargetIdentifier modifiedTargetLabel;
+        if (bazelInfo.getRelease().getMajor() > 5) {
+          // Since bazel 6, the main repository targets are stringified to "@//"-prefixed labels,
+          // contrary to "//"-prefixed in older Bazel versions. Unfortunately this does not apply
+          // to BEP data, probably due to a bug, so we need to add the "@" prefix here.
+          modifiedTargetLabel =
+              new BuildTargetIdentifier("@" + publishDiagnosticsParams.getBuildTarget().getUri());
+        } else {
+          modifiedTargetLabel = publishDiagnosticsParams.getBuildTarget();
+        }
+
+        this.failedTargets.add(modifiedTargetLabel);
       }
     }
 

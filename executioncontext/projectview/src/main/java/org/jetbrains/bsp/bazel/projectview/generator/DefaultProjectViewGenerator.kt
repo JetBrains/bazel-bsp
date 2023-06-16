@@ -9,13 +9,16 @@ import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFl
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildManualTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.*
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
+import java.nio.file.Files
 import java.nio.file.Path
 
 object DefaultProjectViewGenerator : ProjectViewGenerator {
 
     override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> =
-        DopeFiles.writeText(filePath, generatePrettyString(projectView))
+        Try.run {
+            Files.createDirectories(filePath.parent)
+            Files.writeString(filePath, generatePrettyString(projectView))
+        }
 
     override fun generatePrettyString(projectView: ProjectView): String =
         listOfNotNull(

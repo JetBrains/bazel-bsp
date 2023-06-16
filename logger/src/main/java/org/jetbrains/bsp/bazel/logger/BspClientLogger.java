@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.LogMessageParams;
 import ch.epfl.scala.bsp4j.MessageType;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.commons.Stopwatch;
@@ -55,10 +56,14 @@ public class BspClientLogger {
     var sw = Stopwatch.start();
     T result = supplier.get();
     var duration = sw.stop();
-    if (duration.compareTo(LOG_OPERATION_THRESHOLD) >= 0) {
-      message("%s completed in %s", description, Format.duration(duration));
-    }
+    logDuration(description, duration);
     return result;
+  }
+
+  public void logDuration(String description, Duration duration) {
+    if (duration.compareTo(LOG_OPERATION_THRESHOLD) >= 0) {
+      message("Task '%s' completed in %s", description, Format.duration(duration));
+    }
   }
 
   public void timed(String description, Runnable runnable) {

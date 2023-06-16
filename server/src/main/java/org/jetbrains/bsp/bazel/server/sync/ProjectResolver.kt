@@ -2,34 +2,47 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
-import java.net.URI
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import java.net.URI
+import java.util.Locale
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
-    private val bazelBspAspectsManager: BazelBspAspectsManager,
-    private val workspaceContextProvider: WorkspaceContextProvider,
-    private val bazelProjectMapper: BazelProjectMapper,
-    private val logger: BspClientLogger,
-    private val targetInfoReader: TargetInfoReader,
-    private val bazelInfo: BazelInfo
+        private val bazelBspAspectsManager: BazelBspAspectsManager,
+        private val workspaceContextProvider: WorkspaceContextProvider,
+        private val bazelProjectMapper: BazelProjectMapper,
+        private val bspLogger: BspClientLogger,
+        private val targetInfoReader: TargetInfoReader,
+        private val bazelInfo: BazelInfo,
+        private val metricsLogger: MetricsLogger?
 ) {
+    private fun <T> measured(description: String, f: () -> T): T {
+        val sw = Stopwatch.start()
+        val result = f()
+        val duration = sw.stop()
+        val taskKey = description.lowercase(Locale.getDefault()).replace("\\s+".toRegex(), ".")
+        metricsLogger?.logMemory("$taskKey.memory.mb")
+        metricsLogger?.log("$taskKey.time.ms", duration.toMillis())
+        bspLogger.logDuration(description, duration)
+        return result
+    }
+
     fun resolve(cancelChecker: CancelChecker): Project {
 
-        val workspaceContext = logger.timed(
+        val workspaceContext = measured(
             "Reading project view and creating workspace context",
             workspaceContextProvider::currentWorkspaceContext
         )
-        val bepOutput = logger.timed<BepOutput>(
+        val bepOutput = measured(
             "Building project with aspect"
         ) { buildProjectWithAspect(cancelChecker, workspaceContext) }
-        val aspectOutputs = logger.timed<Set<URI>>(
+        val aspectOutputs = measured<Set<URI>>(
             "Reading aspect output paths"
         ) { bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
         val rootTargets = when(bazelInfo.release.major){
@@ -39,10 +52,10 @@ class ProjectResolver(
             in 0..5 ->  bepOutput.rootTargets()
             else -> bepOutput.rootTargets().map { "@$it" }
         }
-        val targets = logger.timed<Map<String, TargetInfo>>(
+        val targets = measured(
             "Parsing aspect outputs"
         ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
-        return logger.timed<Project>(
+        return measured(
             "Mapping to internal model"
         ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), workspaceContext) }
     }

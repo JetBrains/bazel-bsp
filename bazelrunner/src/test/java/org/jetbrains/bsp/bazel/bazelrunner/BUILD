@@ -6,7 +6,6 @@ kt_test(
     src = "StoredBazelInfoTest.kt",
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner",
-        "//utils:dope",
     ],
 )
 
@@ -16,6 +15,5 @@ kt_test(
     src = "BazelReleaseTest.kt",
     deps = [
         "//bazelrunner/src/main/java/org/jetbrains/bsp/bazel/bazelrunner",
-        "//utils:dope",
     ],
 )

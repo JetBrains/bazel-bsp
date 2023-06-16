@@ -37,7 +37,8 @@ public class BazelBspAspectsManager {
                 BazelFlag.outputGroups(outputGroups),
                 BazelFlag.keepGoing(),
                 BazelFlag.color(true),
-                BazelFlag.buildManualTests()),
+                BazelFlag.buildManualTests(),
+                BazelFlag.curses(false)),
             null);
     return result.bepOutput();
   }
