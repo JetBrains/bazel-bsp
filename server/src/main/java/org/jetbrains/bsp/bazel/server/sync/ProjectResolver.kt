@@ -24,7 +24,7 @@ class ProjectResolver(
 ) {
     private fun <T> measured(description: String, f: () -> T): T {
         val sw = Stopwatch.start()
-        val result: T =  f()
+        val result = f()
         val duration = sw.stop()
         val taskKey = description.lowercase(Locale.getDefault()).replace("\\s+".toRegex(), ".")
         metricsLogger?.logMemory("$taskKey.memory.mb")
