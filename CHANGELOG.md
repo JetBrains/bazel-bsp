@@ -4,9 +4,15 @@
 
 
 ## [Unreleased]
+
+### Fixes 🛠️
+- Collect scalac options from the toolchain
+   | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
+
 ### Performance
 -  Reduce peak memory footprint
    | [#428](https://github.com/JetBrains/bazel-bsp/pull/428)
+
 ## [2.7.1]
 
 ### Fixes 🛠️
