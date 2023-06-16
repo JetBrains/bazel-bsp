@@ -2,17 +2,12 @@ package org.jetbrains.bsp.cli
 
 import ch.epfl.scala.bsp4j.*
 import com.google.common.util.concurrent.ThreadFactoryBuilder
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.Layout
-import org.apache.logging.log4j.core.LoggerContext
-import org.apache.logging.log4j.core.appender.ConsoleAppender
-import org.apache.logging.log4j.core.layout.PatternLayout
-
 
 import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.eclipse.lsp4j.jsonrpc.Launcher.Builder
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.bazel.server.BazelBspServer
+import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
@@ -25,22 +20,37 @@ import java.nio.file.Paths
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
+import kotlin.io.path.absolute
+import kotlin.io.path.writeText
 
 
 import kotlin.system.exitProcess
 
+data class Args(
+        val workspace: Path,
+        val metricsFile: Path?
+)
+
+fun parseArgs(args: Array<String>): Args {
+    if (args.size == 1) {
+        return Args(workspace = Paths.get(args[0]), metricsFile = null)
+    }
+    if (args.size == 2) {
+        return Args(workspace = Paths.get(args[0]), metricsFile = Paths.get(args[1]))
+    }
+
+    println("Invalid number of arguments. Just pass path to your workspace as a CLI argument to this app")
+    exitProcess(1)
+}
+
 /**
  * The application expects just a single argument - path to your bazel project
  */
-fun main(args: Array<String>) {
-    if (args.size != 1) {
-        println("Invalid number of arguments. Just pass path to your workspace as a CLI argument to this app")
-        System.exit(1)
-    }
-    val workspace = Paths.get(args[0])
+fun main(args0: Array<String>) {
+    val args = parseArgs(args0)
     val installationDirectory = Files.createTempDirectory("bazelbsp-dir-")
     Install.main(arrayOf(
-            "--bazel-workspace", workspace.toString(),
+            "--bazel-workspace", args.workspace.toString(),
             "--directory", installationDirectory.toString(),
             "--targets", "//..."
     ))
@@ -50,8 +60,9 @@ fun main(args: Array<String>) {
     val clientOut = PipedInputStream()
     val clientIn = PrintStream(PipedOutputStream(clientOut), true)
 
+    val metricsLogger = MetricsLogger(true)
     val serverExecutor = Executors.newFixedThreadPool(4, threadFactory("cli-server-pool-%d"))
-    val serverLauncher = startServer(serverIn, clientOut, serverExecutor, workspace, installationDirectory)
+    val serverLauncher = startServer(serverIn, clientOut, serverExecutor, args.workspace, installationDirectory, metricsLogger)
     val serverAlveFuture = serverLauncher.startListening()
 
 
@@ -64,7 +75,7 @@ fun main(args: Array<String>) {
             InitializeBuildParams("IntelliJ-BSP",
                     "0.0.1",
                     "2.0.0",
-                    workspace.toUri().toString(),
+                    args.workspace.toUri().toString(),
                     BuildClientCapabilities(listOf("java")))).get()
     println(buildInitializeResponse)
     proxy.onBuildInitialized()
@@ -77,6 +88,11 @@ fun main(args: Array<String>) {
 
     clientExecutor.shutdown()
     serverExecutor.shutdown()
+
+    args.metricsFile?.let {
+        it.writeText(metricsLogger.dump())
+        println("Metrics dumped to '${it.absolute()}'")
+    }
 }
 
 private fun threadFactory(nameFormat: String): ThreadFactory =
@@ -101,17 +117,20 @@ private fun startServer(serverIn: PrintStream,
                         clientOut: PipedInputStream,
                         serverExecutor: ExecutorService,
                         workspace: Path,
-                        directory: Path): Launcher<ch.epfl.scala.bsp4j.BuildClient> {
+                        directory: Path,
+                        metricsLogger: MetricsLogger): Launcher<ch.epfl.scala.bsp4j.BuildClient> {
     val bspInfo = BspInfo(directory)
     val bspIntegrationData = BspIntegrationData(serverIn, clientOut, serverExecutor, null)
     val workspaceContextProvider = DefaultWorkspaceContextProvider(directory.resolve("projectview.bazelproject"))
-    val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspace)
+    val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspace, metricsLogger)
     bspServer.startServer(bspIntegrationData)
     return bspIntegrationData.launcher
 }
 
 
 class BuildClient : ch.epfl.scala.bsp4j.BuildClient {
+
+
     override fun onBuildShowMessage(params: ShowMessageParams?) {}
 
     override fun onBuildLogMessage(params: LogMessageParams?) {}
