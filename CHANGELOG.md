@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+
+## [2.7.2]
+
 ### Fixes 🛠️
 - Collect scalac options from the toolchain
    | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
@@ -386,7 +389,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.7.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.7.2...HEAD
+
+[2.7.2]: https://github.com/JetBrains/bazel-bsp/compare/2.7.1..2.7.2
 
 [2.7.1]: https://github.com/JetBrains/bazel-bsp/compare/2.7.0..2.7.1
 
