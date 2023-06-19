@@ -8,6 +8,8 @@
 ### Fixes 🛠️
 - Collect scalac options from the toolchain
    | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
+- Add support for Scala SDK provided by rules_jvm_external
+  | [#403](https://github.com/JetBrains/bazel-bsp/pull/403)
 
 ### Performance
 -  Reduce peak memory footprint
@@ -41,7 +43,6 @@
   | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
 - Fixup failed target names from BEP in bazel 6+ in the bloop mode.
   | [#402](https://github.com/JetBrains/bazel-bsp/pull/402)
-
 
 ## [2.6.1]
 
