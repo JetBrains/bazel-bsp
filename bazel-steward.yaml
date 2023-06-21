@@ -1,3 +1,7 @@
+update-rules:
+  - dependencies: "ch.epfl.scala:bloop-config*"
+    enabled: false
+
 pull-requests:
   - group-id: log4j
     dependencies: "org.apache.logging.log4j:*"
