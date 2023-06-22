@@ -25,22 +25,13 @@ object BazelBsp : Project({
         parallel(options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
+
         }) {
             buildType(BazelBuild.BuildTheProject)
-            buildType(BazelBenchmark.RegularBenchmark)
-        }
-
-        parallel(options = {
-            onDependencyFailure = FailureAction.CANCEL
-            onDependencyCancel = FailureAction.CANCEL
-        }) {
             buildType(BazelUnitTests.UnitTests)
-
             buildType(BazelE2eTests.SampleRepoE2ETest)
-
             buildType(BazelE2eTests.BazelBspLocalJdkTest)
             buildType(BazelE2eTests.BazelBspRemoteJdkTest)
-
             buildType(BazelE2eTests.CppProjectE2ETest)
         }
 
@@ -67,7 +58,6 @@ object BazelBsp : Project({
     buildTypesOrderIds = arrayListOf(
         RelativeId("FormatBuildifier"),
         RelativeId("BuildBuildBazelBsp"),
-        RelativeId("Benchmark1001Targets"),
         RelativeId("UnitTestsUnitTests"),
         RelativeId("E2eTestsE2eBazelBspSampleRepoTestTest"),
         RelativeId("E2eTestsE2eBazelBspLocalJdkTestTest"),
