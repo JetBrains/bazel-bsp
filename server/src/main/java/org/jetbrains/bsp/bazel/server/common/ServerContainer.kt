@@ -6,6 +6,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
+import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
@@ -39,7 +40,8 @@ class ServerContainer internal constructor(
                 bspClientLogger: BspClientLogger,
                 bspClientTestNotifier: BspClientTestNotifier,
                 bazelRunner: BazelRunner,
-                compilationManager: BazelBspCompilationManager
+                compilationManager: BazelBspCompilationManager,
+                metricsLogger: MetricsLogger?
         ): ServerContainer {
             val bazelInfoStorage = BazelInfoStorage(bspInfo)
             val bazelDataResolver =
@@ -71,7 +73,8 @@ class ServerContainer internal constructor(
                 bazelProjectMapper,
                 bspClientLogger,
                 targetInfoReader,
-                bazelInfo
+                bazelInfo,
+                metricsLogger
             )
             val finalProjectStorage = projectStorage ?: FileProjectStorage(bspInfo, bspClientLogger)
             val projectProvider = ProjectProvider(projectResolver, finalProjectStorage)

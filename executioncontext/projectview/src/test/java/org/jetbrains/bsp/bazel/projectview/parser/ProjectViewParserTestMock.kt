@@ -4,11 +4,11 @@ import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
-import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createTempFile
 
 object ProjectViewParserTestMock : DefaultProjectViewParser() {
 
@@ -34,11 +34,13 @@ object ProjectViewParserTestMock : DefaultProjectViewParser() {
     }
 
     private fun createTempFileWithContentIfContentExists(path: Path, content: String?): Path =
-        content?.let { createTempFileWithContent(path, it) } ?: path
+        content?.let { createTempFileWithContent(it) } ?: path
 
-    private fun createTempFileWithContent(path: Path, content: String): Path {
-        val tempFile = DopeTemp.createTempFile(path.toString())
-        DopeFiles.writeText(tempFile, content)
+    private fun createTempFileWithContent(content: String): Path {
+        val tempFile = createTempFile("ProjectViewParserTestMock")
+
+        Files.createDirectories(tempFile.parent)
+        Files.writeString(tempFile, content)
 
         return tempFile
     }

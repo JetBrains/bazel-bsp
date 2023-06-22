@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server
 
 import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
@@ -51,7 +52,7 @@ object ServerInitializer {
                 executor,
                 createTraceWriterOrNull(traceFile, workspaceContextProvider)
             )
-            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot))
+            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), null)
             bspServer.startServer(bspIntegrationData)
             bspIntegrationData.launcher.startListening().get()
         } catch (e: Exception) {

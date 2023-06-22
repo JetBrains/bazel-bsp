@@ -31,12 +31,12 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     val runnable = Runnable {
       try {
         BufferedReader(InputStreamReader(inputStream)).use { reader ->
+          var prevLine: String? = null
+
           while (!Thread.currentThread().isInterrupted) {
-            // TODO: bazel process output doesn't capture replaceable logs (displayed for example for fetching
-            //  repositories) returning a duplicated log line instead. Passing duplicated lines allows us not
-            //  to exceed client timeout. The duplicates filtering should be restored with the introduction of
-            //  servers heartbeat
             val line = reader.readLine() ?: return@Runnable
+            if (line == prevLine) continue
+            prevLine = line
             if (isRunning()) {
               handlers.forEach { it.onNextLine(line) }
             } else {

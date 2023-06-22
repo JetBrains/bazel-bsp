@@ -34,28 +34,34 @@ class BazelRunner private constructor(
         originId: String?,
         besBackendPort: Int,
     ): BazelProcess {
-        fun besFlags() = listOf("--bes_backend=grpc://localhost:${besBackendPort}")
+        fun besFlags() = listOf(
+            "--bes_backend=grpc://localhost:${besBackendPort}",
+            "--bes_outerr_buffer_size=10",
+            "--isatty=true",
+        )
 
-        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId)
+        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, false)
     }
 
     fun runBazelCommand(
         command: String,
         flags: List<String>,
         arguments: List<String>,
-        originId: String? = null
+        originId: String? = null,
+        parseProcessOutput: Boolean = true,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
-
         val flagsWithOrigin = if (originId != null) flags + "--define=ORIGINID=$originId" else flags
-        val processArgs = listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flagsWithOrigin + arguments
+        val processArgs =
+            listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flagsWithOrigin + arguments
         logInvocation(processArgs, originId)
         val processBuilder = ProcessBuilder(processArgs)
+        val outputLogger = bspClientLogger.takeIf { parseProcessOutput }
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
         val process = processBuilder.start()
         return BazelProcess(
             process,
-            if (originId == null) bspClientLogger else bspClientLogger.withOriginId(originId),
+            if (originId == null) outputLogger else outputLogger?.withOriginId(originId),
             originId
         )
     }

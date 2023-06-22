@@ -1,10 +1,9 @@
-load("//:junit5.bzl", "kt_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 
-kt_junit5_test(
+kt_test(
     name = "IdeClasspathResolverTest",
     size = "small",
-    srcs = ["IdeClasspathResolverTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.server.sync.languages.java",
+    src = "IdeClasspathResolverTest.kt",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
     ],

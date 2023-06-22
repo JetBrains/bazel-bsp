@@ -5,13 +5,47 @@
 
 ## [Unreleased]
 
-### Fixes
--  Add class jars generated during annotation processing
+
+## [2.7.2]
+
+### Fixes 🛠️
+- Collect scalac options from the toolchain
+   | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
+- Add support for Scala SDK provided by rules_jvm_external
+  | [#403](https://github.com/JetBrains/bazel-bsp/pull/403)
+
+### Performance
+-  Reduce peak memory footprint
+   | [#428](https://github.com/JetBrains/bazel-bsp/pull/428)
+
+## [2.7.1]
+
+### Fixes 🛠️
+-  Publish `build/publishDiagnostics` with an empty array of diagnostics to clear former diagnotics.
+   | [#381](https://github.com/JetBrains/bazel-bsp/pull/381)
+-  Prioritize most frequently used JDKs when selecting the project JDK.
+   | [#420](https://github.com/JetBrains/bazel-bsp/pull/420)
+-  Fix ide classpath computation for recent rules_jvm_external.
+   | [#421](https://github.com/JetBrains/bazel-bsp/pull/421)
+-  Process exit instead of hang in case of uncaught exception in pooled threads
+   | [#425](https://github.com/JetBrains/bazel-bsp/pull/425),
+   [#426](https://github.com/JetBrains/bazel-bsp/pull/426)
+
+## [2.7.0]
+
+### Features 🎉
+- Server uses BEP to log bazel progress.
+  | [ae52b8f](https://github.com/JetBrains/bazel-bsp/commit/ae52b8f401b793ba15e84d492ba0f72a462b74dc)
+
+### Fixes 🛠️
+-  Add class jars generated during annotation processing.
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
-- Set PublishDiagnosticsParams.reset to be true
+- Set PublishDiagnosticsParams.reset to be true.
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
-- Update document about how to use projectview
+- Update document about how to use projectview.
   | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
+- Fixup failed target names from BEP in bazel 6+ in the bloop mode.
+  | [#402](https://github.com/JetBrains/bazel-bsp/pull/402)
 
 ## [2.6.1]
 
@@ -355,7 +389,13 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.7.2...HEAD
+
+[2.7.2]: https://github.com/JetBrains/bazel-bsp/compare/2.7.1..2.7.2
+
+[2.7.1]: https://github.com/JetBrains/bazel-bsp/compare/2.7.0..2.7.1
+
+[2.7.0]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1..2.7.0
 
 [2.6.1]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0..2.6.1
 
