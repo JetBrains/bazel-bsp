@@ -17,13 +17,12 @@ python_register_toolchains(
 )
 
 load("@python3_9//:defs.bzl", "interpreter")
-
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
     name = "pip_deps",
     python_interpreter_target = interpreter,
-    requirements_lock = "//lib:requirements.txt"
+    requirements_lock = "//lib:requirements.txt",
 )
 
 load("@pip_deps//:requirements.bzl", "install_deps")
@@ -32,11 +31,11 @@ install_deps()
 
 http_archive(
     name = "requests",
-    urls = ["https://github.com/requests/requests/tarball/master/psf-requests-7f694b7.tar.gz"],
     build_file_content = """
 py_library(
     name = "srcs",
     srcs = glob(["requests/*.py"]),
     visibility = ["//visibility:public"]
-)"""
+)""",
+    urls = ["https://github.com/requests/requests/tarball/master/psf-requests-7f694b7.tar.gz"],
 )
