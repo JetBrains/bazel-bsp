@@ -8,9 +8,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "5.2"
+RULES_JVM_EXTERNAL_TAG = "5.3"
 
-RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
+RULES_JVM_EXTERNAL_SHA = "d31e369b854322ca5098ea12c69d7175ded971435e55c18dd9dd5f29cc5249ac"
 
 http_archive(
     name = "rules_jvm_external",
