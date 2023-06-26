@@ -187,8 +187,6 @@ maven_install(
         "org.junit.jupiter:junit-jupiter:5.9.3",
         "com.fasterxml.jackson.core:jackson-databind:2.15.2",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
-        "ch.epfl.scala:bloop-config_2.13:1.5.0",
-        "org.scala-lang:scala-library:2.13.11",
         "com.google.protobuf:protobuf-java:3.23.3",
         "io.grpc:grpc-stub:1.56.0",
         "io.grpc:grpc-netty:1.56.0",
