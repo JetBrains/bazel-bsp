@@ -160,12 +160,6 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(importDepthOption)
 
-        val useBloopOption = Option.builder(USE_BLOOP_SHORT_OPT)
-            .longOpt("use-bloop")
-            .desc("Use bloop as the BSP server rather than bazel-bsp.")
-            .build()
-        cliParserOptions.addOption(useBloopOption)
-
         val bazelWorkspaceRootDirOption = Option.builder(BAZEL_WORKSPACE_ROOT_DIR_OPT)
             .longOpt("bazel-workspace")
             .hasArg()
@@ -195,7 +189,6 @@ class CliOptionsProvider(private val args: Array<String>) {
             workspaceRootDir = workspaceRootDir(cmd),
             projectViewFilePath = projectViewFilePath(cmd),
             projectViewCliOptions = createProjectViewCliOptions(cmd),
-            bloopCliOptions = createBloopCliOptions(cmd),
             bazelWorkspaceRootDir = bazelWorkspaceRootDir(cmd),
         )
 
@@ -216,8 +209,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
 
-    private fun useBloop(cmd: CommandLine): Boolean = cmd.hasOption(USE_BLOOP_SHORT_OPT)
-
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 160
@@ -233,9 +224,6 @@ class CliOptionsProvider(private val args: Array<String>) {
             true
         )
     }
-
-    private fun createBloopCliOptions(cmd: CommandLine): BloopCliOptions =
-        BloopCliOptions(useBloop = useBloop(cmd))
 
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
@@ -316,7 +304,6 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val EXCLUDED_DIRECTORIES_LONG_OPT = "excluded-directories"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
-        private const val USE_BLOOP_SHORT_OPT = "u"
         private const val BAZEL_WORKSPACE_ROOT_DIR_OPT ="w"
         private const val PRODUCE_TRACE_LOG_OPT ="l"
 
