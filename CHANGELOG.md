@@ -9,6 +9,9 @@
 
 - Bloop support has been dropped.
 
+### Fixes 🛠️
+- Now we report the failure of the whole test target and binaries are reporting stdout.
+
 
 ## [2.7.2]
 
