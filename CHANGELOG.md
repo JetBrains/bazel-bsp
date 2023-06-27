@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+### Breaking changes 🚨
+
+- Bloop support has been dropped.
+
 
 ## [2.7.2]
 

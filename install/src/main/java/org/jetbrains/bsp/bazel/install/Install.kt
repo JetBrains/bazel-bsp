@@ -17,25 +17,11 @@ object Install {
 
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
             cliOptions.helpCliOptions.printHelp()
-        } else if (cliOptions.bloopCliOptions.useBloop) {
-            createBloopEnvironmentAndInstallBloopBspServer(cliOptions)
-                .onSuccess { printInCaseOfSuccess(cliOptions) }
-                .onFailure(::printFailureReasonAndExit1)
         } else {
             createEnvironmentAndInstallBazelBspServer(cliOptions)
                 .onSuccess { printInCaseOfSuccess(cliOptions) }
                 .onFailure(::printFailureReasonAndExit1)
         }
-    }
-
-    private fun createBloopEnvironmentAndInstallBloopBspServer(cliOptions: CliOptions): Try<Void> =
-        InstallationContextProvider.parseProjectViewOrGenerateAndSaveAndCreateInstallationContext(cliOptions)
-            .flatMap { createBloopEnvironment(it, cliOptions) }
-
-    private fun createBloopEnvironment(installationContext: InstallationContext, cliOptions: CliOptions): Try<Void> {
-        val environmentCreator = BloopEnvironmentCreator(cliOptions, installationContext)
-
-        return environmentCreator.create()
     }
 
     private fun createEnvironmentAndInstallBazelBspServer(cliOptions: CliOptions): Try<Void> =

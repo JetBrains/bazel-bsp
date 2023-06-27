@@ -22,15 +22,10 @@ data class ProjectViewCliOptions internal constructor(
         val produceTraceLog: Boolean?,
 )
 
-data class BloopCliOptions internal constructor(
-        val useBloop: Boolean
-)
-
 data class CliOptions internal constructor(
         val helpCliOptions: HelpCliOptions,
         val workspaceRootDir: Path,
         val projectViewFilePath: Path?,
         val projectViewCliOptions: ProjectViewCliOptions?,
-        val bloopCliOptions: BloopCliOptions,
         val bazelWorkspaceRootDir: Path,
 )
