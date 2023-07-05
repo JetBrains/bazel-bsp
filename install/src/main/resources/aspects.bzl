@@ -175,6 +175,42 @@ def extract_scala_info(target, ctx, output_groups):
     )
     return scala_info
 
+def extract_kotlin_info(target, ctx):
+    # if KtJvmInfo not in target:
+    #    return None
+
+    # provider = target[KtJvmInfo]
+
+    if not hasattr(target, "kt"):
+        return None
+
+    provider = target.kt
+
+    # Only supports JVM platform now
+    if not hasattr(provider, "language_version"):
+        return None
+
+    language_version = getattr(provider, "language_version", None)
+    api_version = language_version
+    associates = getattr(ctx.rule.attr, "associates", [])
+    associates_labels = [str(associate.label) for associate in associates]
+
+    # kotlinc_opts_target = getattr(ctx.rule.attr, "kotlinc_opts", None)
+    kotlinc_opts = None
+    # if kotlinc_opts_target != None and KotlincOptions in kotlinc_opts_target:
+    #    kotlinc_opts = kotlinc_opts_target[KotlincOptions]
+
+    kotlin_info = dict(
+        language_version = language_version,
+        api_version = api_version,
+        associates = associates_labels,
+    )
+
+    if kotlinc_opts != None:
+        kotlin_info["kotlinc_opts"] = kotlinc_opts
+
+    return struct(**kotlin_info)
+
 def extract_runtime_jars(target, provider):
     compilation_info = getattr(provider, "compilation_info", None)
 
@@ -185,8 +221,9 @@ def extract_runtime_jars(target, provider):
 
 def extract_compile_jars(provider):
     compilation_info = getattr(provider, "compilation_info", None)
+    transitive_compile_time_jars = getattr(provider, "transitive_compile_time_jars", [])
 
-    return compilation_info.compilation_classpath if compilation_info else provider.transitive_compile_time_jars
+    return compilation_info.compilation_classpath if compilation_info else transitive_compile_time_jars
 
 def extract_java_info(target, ctx, output_groups):
     provider = get_java_provider(target)
@@ -495,6 +532,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
     java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
     java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
     cpp_target_info = extract_cpp_target_info(target, ctx)
+    kotlin_target_info = extract_kotlin_info(target, ctx)
 
     result = dict(
         id = str(target.label),
@@ -509,6 +547,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         java_toolchain_info = java_toolchain_info,
         java_runtime_info = java_runtime_info,
         cpp_target_info = cpp_target_info,
+        kotlin_target_info = kotlin_target_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )

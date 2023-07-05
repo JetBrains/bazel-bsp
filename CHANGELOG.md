@@ -9,9 +9,12 @@
 
 - Bloop support has been dropped.
 
+### Features 🎉
+- Enhance support for Kotlin by providing Kotlin target's specific info.
+  | [#BAZEL-460](https://youtrack.jetbrains.com/issue/BAZEL-460)
+
 ### Fixes 🛠️
 - Now we report the failure of the whole test target and binaries are reporting stdout.
-
 
 ## [2.7.2]
 

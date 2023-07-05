@@ -9,6 +9,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -35,9 +36,10 @@ class LanguagePluginServiceTest {
     val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
     val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
+    val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
     languagePluginsService = LanguagePluginsService(
-      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin
+      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin
     )
   }
 
@@ -58,12 +60,12 @@ class LanguagePluginServiceTest {
     }
 
     @Test
-    fun `should return JavaLanguagePlugin for Kotlin Language`() {
+    fun `should return KotlinLanguagePlugin for Kotlin Language`() {
       // given
       val languages: Set<Language> = hashSetOf(Language.KOTLIN)
 
       // when
-      val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
+      val plugin = languagePluginsService.getPlugin(languages) as? KotlinLanguagePlugin
 
       // then
       plugin shouldNotBe null
