@@ -5,8 +5,6 @@ import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
@@ -90,21 +88,6 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
-        fun `should return empty debugger address for file without debugger address section`() {
-            // given
-            val projectViewFilePath = Path("/projectview/without/debuggeraddress.bazelproject")
-
-            // when
-            val projectViewTry = parser.parse(projectViewFilePath)
-
-            // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
-            projectView.debuggerAddress shouldBe null
-        }
-
-        @Test
         fun `should return null import depth for file without import depth section`() {
             // given
             val projectViewFilePath = Path("/projectview/without/importdepth.bazelproject")
@@ -117,21 +100,6 @@ class DefaultProjectViewParserTest {
             val projectView = projectViewTry.get()
 
             projectView.importDepth shouldBe null
-        }
-
-        @Test
-        fun `should return empty java path section for file without java path section`() {
-            // given
-            val projectViewFilePath = Path("/projectview/without/javapath.bazelproject")
-
-            // when
-            val projectViewTry = parser.parse(projectViewFilePath)
-
-            // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
-            projectView.javaPath shouldBe null
         }
 
         @Test
@@ -195,21 +163,6 @@ class DefaultProjectViewParserTest {
         }
 
         @Test
-        fun `should return empty produce_trace_log section for file without produce_trace_log section`() {
-            // given
-            val projectViewFilePath = Path("/projectview/without/produce_trace_log.bazelproject")
-
-            // when
-            val projectViewTry = parser.parse(projectViewFilePath)
-
-            // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
-            projectView.produceTraceLog shouldBe null
-        }
-
-        @Test
         fun `should parse empty file`() {
             // given
             val projectViewFilePath = Path("/projectview/empty.bazelproject")
@@ -224,14 +177,11 @@ class DefaultProjectViewParserTest {
             val expectedProjectView = ProjectView(
                 targets = null,
                 bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -260,8 +210,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
@@ -279,7 +227,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -309,8 +256,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -335,7 +280,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -366,8 +310,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path7/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.7:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path7/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -389,7 +331,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(7),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -413,8 +354,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path8/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.8:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path8/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag8.1=value8.1",
@@ -434,7 +373,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(8),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -466,8 +404,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path3/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path3/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -495,7 +431,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -528,8 +463,6 @@ class DefaultProjectViewParserTest {
                     )
                 ),
                 bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path1/to/java")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag2.1=value2.1",
@@ -561,7 +494,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }

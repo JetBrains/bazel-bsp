@@ -4,11 +4,6 @@ targets:
 
 bazel_path: path3/to/bazel
 
-debugger_address: 0.0.0.3:8000
-
-java_path: path3/to/java
-
-
 build_flags:
 
 
@@ -24,5 +19,3 @@ directories:
 derive_targets_from_directories: false
 
 import_depth: 3
-
-produce_trace_log: true

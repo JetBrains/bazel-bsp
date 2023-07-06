@@ -7,10 +7,6 @@ targets:
 
 bazel_path: path7/to/bazel
 
-debugger_address: 0.0.0.7:8000
-
-java_path: path7/to/java
-
 build_flags:
     --build_flag7.1=value7.1
     --build_flag7.2=value7.2
@@ -22,5 +18,3 @@ build_manual_targets: true
 derive_targets_from_directories: false
 
 import_depth: 7
-
-produce_trace_log: true

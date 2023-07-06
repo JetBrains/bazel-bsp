@@ -8,6 +8,3 @@ targets:
 
 bazel_path: path9/to/bazel
 
-debugger_address: 0.0.0.9:8000
-
-java_path: path9/to/java

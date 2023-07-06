@@ -4,7 +4,11 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -59,7 +63,6 @@ class WorkspaceContextConstructorTest {
                     bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(false) ,
                     importDepth = ProjectViewImportDepthSection(3),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(false),
                 ).build()
 
             // when
@@ -99,9 +102,6 @@ class WorkspaceContextConstructorTest {
 
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
-
-            val expectedProduceTraceLogSpec = ProduceTraceLogSpec(false)
-            workspaceContext.produceTraceLog shouldBe expectedProduceTraceLogSpec
         }
     }
 
@@ -127,7 +127,6 @@ class WorkspaceContextConstructorTest {
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),
                 importDepth = ImportDepthSpec(0),
-                produceTraceLog = ProduceTraceLogSpec(false),
             )
             workspaceContext shouldBe expectedWorkspaceContext
         }

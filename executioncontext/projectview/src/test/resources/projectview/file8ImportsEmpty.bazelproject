@@ -8,10 +8,6 @@ targets:
 
 bazel_path: path8/to/bazel
 
-debugger_address: 0.0.0.8:8000
-
-java_path: path8/to/java
-
 build_flags:
     --build_flag8.1=value8.1
     --build_flag8.2=value8.2
@@ -30,4 +26,3 @@ derive_targets_from_directories: true
 
 import_depth: 8
 
-produce_trace_log: true

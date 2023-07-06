@@ -10,10 +10,6 @@ targets:
     //included_target1.2
     -//excluded_target1.1
 
-debugger_address: 127.0.0.1:8000
-
-java_path: path/to/java
-
 build_flags:
     --build_flag1.1=value1.1
     --build_flag1.2=value1.2
@@ -21,5 +17,3 @@ build_flags:
 build_manual_targets: false
 
 import_depth: 0
-
-produce_trace_log: false

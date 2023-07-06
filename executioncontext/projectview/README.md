@@ -40,61 +40,6 @@ import path/to/another/projectview.bazelproject
 
 ---
 
-### Server installer sections
-
-These sections are read during server [installation](https://github.com/JetBrains/bazel-bsp#installation)
--- the moment when `.bsp/` is created containing all the necessary information to start the server.
-
-**Note**: It happens when the installer is invoked -- **before** starting the server!
-
----
-
-#### java_path
-
-Path to java which will be used to start the server (first argument in `argv` in `.bsp/bazelbsp.json`).
-
-##### example:
-
-```
-java_path: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/java
-```
-
-##### default:
-
-The following code will be used to deduct a java path automatically:
-
-```
-System.getProperty("java.home").resolve("bin").resolve("java")
-```
-
----
-
-#### debugger_address
-
-Address of debugger which will be attached to the java program by the flag:
-
-```
-<java path> <server runner> -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=<debugger_address>`
-```
-
-##### example:
-
-```
-debugger_address: 127.0.0.1:8000
-```
-
-##### default:
-
-The server will be started without debugger
-
---- 
-
-### Project sections
-
-These sections are read when server is starting -- usually when you open a project in IDE.
-
----
-
 #### targets
 
 A list of bazel target expressions, they support `/...` notation.
@@ -195,26 +140,6 @@ import_depth: 1
 ##### default:
 
 The default value is 0, meaning that only root targets are imported
-
----
-
-#### produce_trace_log
-
-A flag specifying if `./bazelbsp/bazelbsp.trace.log` should be created and used to store trace logs.
-
-*NOTE: trace log may affect server-client communication performance! It is recommended that this flag be set to false.
-
-Flag is boolean value, so it can take either true or false.
-
-##### example:
-
-```
-produce_trace_log: true
-```
-
-##### default:
-
-Log file won't be created.
 
 ---
 

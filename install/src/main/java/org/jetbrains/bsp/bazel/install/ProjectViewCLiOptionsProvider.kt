@@ -9,12 +9,9 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -30,20 +27,14 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toProjectView(projectViewCliOptions: ProjectViewCliOptions?): ProjectView =
         ProjectView(
-            javaPath = toJavaPathSection(projectViewCliOptions),
             bazelPath = toBazelPathSection(projectViewCliOptions),
-            debuggerAddress = toDebuggerAddressSection(projectViewCliOptions),
             targets = toTargetsSection(projectViewCliOptions),
             buildFlags = toBuildFlagsSection(projectViewCliOptions),
             directories = toDirectoriesSection(projectViewCliOptions),
             deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions),
             importDepth = toImportDepthSection(projectViewCliOptions),
             buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
-            produceTraceLog = toProduceTraceLogSection(projectViewCliOptions),
         )
-
-    private fun toJavaPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewJavaPathSection? =
-        projectViewCliOptions?.javaPath?.let(::ProjectViewJavaPathSection)
 
     private fun toBazelPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelPathSection? =
         projectViewCliOptions?.bazelPath?.let(::ProjectViewBazelPathSection)
@@ -87,15 +78,9 @@ object ProjectViewCLiOptionsProvider {
     private fun toImportDepthSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewImportDepthSection? =
         projectViewCliOptions?.importDepth?.let(::ProjectViewImportDepthSection)
 
-    private fun toDebuggerAddressSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDebuggerAddressSection? =
-        projectViewCliOptions?.debuggerAddress?.let(::ProjectViewDebuggerAddressSection)
-
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
         projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
 
     private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFromDirectoriesSection? =
         projectViewCliOptions?.deriveTargetsFromDirectories?.let(::ProjectViewDeriveTargetsFromDirectoriesSection)
-
-    private fun toProduceTraceLogSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewProduceTraceLogSection? =
-        projectViewCliOptions?.produceTraceLog?.let {ProjectViewProduceTraceLogSection(it) }
 }

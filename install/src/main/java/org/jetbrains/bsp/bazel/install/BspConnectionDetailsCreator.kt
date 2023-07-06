@@ -5,7 +5,7 @@ import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
 
-class BspConnectionDetailsCreator(private val installationContext: InstallationContext) {
+class BspConnectionDetailsCreator(installationContext: InstallationContext, private val produceTraceLog: Boolean) {
     private val launcherArgumentCreator = LauncherArgumentCreator(installationContext)
 
     fun create(): Try<BspConnectionDetails> =
@@ -30,6 +30,7 @@ class BspConnectionDetailsCreator(private val installationContext: InstallationC
                 Constants.SERVER_CLASS_NAME,
                 launcherArgumentCreator.bazelWorkspaceRootDir(),
                 launcherArgumentCreator.projectViewFilePathArgv(),
+                produceTraceLog.toString(),
             )
         }
 

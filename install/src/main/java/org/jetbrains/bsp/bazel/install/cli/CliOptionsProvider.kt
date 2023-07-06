@@ -90,10 +90,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             .longOpt("debugger-address")
             .hasArg()
             .argName("address")
-            .desc(
-                "Add debugger address to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address."
-            )
+            .desc("Add debugger address to the server invocation.")
             .build()
         cliParserOptions.addOption(debuggerAddressOption)
 
@@ -101,10 +98,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             .longOpt("java-path")
             .hasArg()
             .argName("path")
-            .desc(
-                "Add java path to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path."
-            )
+            .desc("Add java path to the server invocation.")
             .build()
         cliParserOptions.addOption(javaPathOption)
 
@@ -169,10 +163,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
         val produceTraceLogOption = Option.builder(PRODUCE_TRACE_LOG_OPT)
             .longOpt("produce-trace-log")
-            .desc(
-                "Add produce_trace_log to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#produce_trace_log."
-            )
+            .desc("Server will create trace log file.")
             .build()
         cliParserOptions.addOption(produceTraceLogOption)
     }

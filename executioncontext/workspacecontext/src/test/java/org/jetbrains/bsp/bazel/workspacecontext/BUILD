@@ -62,12 +62,3 @@ kt_test(
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )
-
-kt_test(
-    name = "ProduceTraceLogSpecMapperTest",
-    size = "small",
-    src = "ProduceTraceLogSpecMapperTest.kt",
-    associates = [
-        "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
-    ],
-)

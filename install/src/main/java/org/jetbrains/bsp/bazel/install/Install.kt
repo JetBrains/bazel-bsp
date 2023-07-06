@@ -1,10 +1,10 @@
 package org.jetbrains.bsp.bazel.install
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
+import java.nio.file.Path
 import kotlin.system.exitProcess
 
 object Install {
@@ -12,43 +12,46 @@ object Install {
     @JvmStatic
     fun main(args: Array<String>) {
         val cliOptionsProvider = CliOptionsProvider(args)
-        // TODO .get() wont be needed later (https://youtrack.jetbrains.com/issue/BAZEL-23)
         val cliOptions = cliOptionsProvider.getOptions().get()
 
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
             cliOptions.helpCliOptions.printHelp()
         } else {
-            createEnvironmentAndInstallBazelBspServer(cliOptions)
-                .onSuccess { printInCaseOfSuccess(cliOptions) }
-                .onFailure(::printFailureReasonAndExit1)
+            runInstall(cliOptions)
         }
     }
 
-    private fun createEnvironmentAndInstallBazelBspServer(cliOptions: CliOptions): Try<Void> =
-        InstallationContextProvider.parseProjectViewOrGenerateAndSaveAndCreateInstallationContext(cliOptions)
-            .flatMap(::createBspConnectionDetails)
-            .flatMap { createEnvironment(it, cliOptions) }
-
-    private fun createBspConnectionDetails(installationContext: InstallationContext): Try<BspConnectionDetails> {
-        val bspConnectionDetailsCreator = BspConnectionDetailsCreator(installationContext)
-
-        return bspConnectionDetailsCreator.create()
+    private fun runInstall(cliOptions: CliOptions) {
+        try {
+            runInstallOrThrow(cliOptions, cliOptions.projectViewCliOptions?.produceTraceLog ?: false)
+        } catch (e: Exception) {
+            System.err.print("Bazel BSP server installation failed! Reason: ${e.stackTrace}")
+            exitProcess(1)
+        }
     }
 
-    private fun createEnvironment(details: BspConnectionDetails, cliOptions: CliOptions): Try<Void> {
+    private fun runInstallOrThrow(cliOptions: CliOptions, createTraceLog: Boolean) {
+        val installationContext = InstallationContextProvider.createInstallationContext(cliOptions)
+        InstallationContextProvider.generateAndSaveProjectViewFile(cliOptions)
+
+        val connectionDetails = createBspConnectionDetails(installationContext, createTraceLog)
+        createEnvironment(connectionDetails, cliOptions)
+
+        printSuccess(cliOptions.workspaceRootDir)
+    }
+
+    private fun createBspConnectionDetails(installationContext: InstallationContext, createTraceLog: Boolean): BspConnectionDetails {
+        val bspConnectionDetailsCreator = BspConnectionDetailsCreator(installationContext, createTraceLog)
+        return bspConnectionDetailsCreator.create().get()
+    }
+
+    private fun createEnvironment(details: BspConnectionDetails, cliOptions: CliOptions) {
         val environmentCreator = BazelBspEnvironmentCreator(cliOptions.workspaceRootDir, details)
-
-        return environmentCreator.create()
+        environmentCreator.create().get()
     }
 
-    private fun printInCaseOfSuccess(cliOptions: CliOptions) {
-        val absoluteDirWhereServerWasInstalledIn = cliOptions.workspaceRootDir.toAbsolutePath().normalize()
+    private fun printSuccess(workspaceRootDir: Path) {
+        val absoluteDirWhereServerWasInstalledIn = workspaceRootDir.toAbsolutePath().normalize()
         println("Bazel BSP server installed in '$absoluteDirWhereServerWasInstalledIn'.")
-    }
-
-    private fun printFailureReasonAndExit1(exception: Throwable) {
-        System.err.print("Bazel BSP server installation failed! Reason: ")
-        exception.printStackTrace()
-        exitProcess(1)
     }
 }

@@ -3,8 +3,6 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBazelPathSectionGenerator
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewDebuggerAddressSectionGenerator
-import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewJavaPathSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFlagsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildManualTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.*
@@ -24,13 +22,10 @@ object DefaultProjectViewGenerator : ProjectViewGenerator {
         listOfNotNull(
             ProjectViewTargetsSectionGenerator.generatePrettyString(projectView.targets),
             ProjectViewBazelPathSectionGenerator.generatePrettyString(projectView.bazelPath),
-            ProjectViewDebuggerAddressSectionGenerator.generatePrettyString(projectView.debuggerAddress),
-            ProjectViewJavaPathSectionGenerator.generatePrettyString(projectView.javaPath),
             ProjectViewBuildFlagsSectionGenerator.generatePrettyString(projectView.buildFlags),
             ProjectViewBuildManualTargetsSectionGenerator.generatePrettyString(projectView.buildManualTargets),
             ProjectViewDirectoriesSectionGenerator.generatePrettyString(projectView.directories),
             ProjectViewDeriveTargetsFromDirectoriesSectionGenerator.generatePrettyString(projectView.deriveTargetsFromDirectories),
             ProjectViewImportDepthSectionGenerator.generatePrettyString(projectView.importDepth),
-            ProjectViewProduceTraceLogSectionGenerator.generatePrettyString(projectView.produceTraceLog),
         ).joinToString(separator = "\n\n", postfix = "\n")
 }

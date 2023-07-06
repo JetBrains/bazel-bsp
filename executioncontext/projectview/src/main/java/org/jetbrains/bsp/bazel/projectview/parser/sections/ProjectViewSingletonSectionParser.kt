@@ -3,10 +3,9 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -53,16 +52,6 @@ object ProjectViewBazelPathSectionParser :
     override fun createInstance(value: Path): ProjectViewBazelPathSection = ProjectViewBazelPathSection(value)
 }
 
-
-object ProjectViewDebuggerAddressSectionParser :
-    ProjectViewSingletonSectionParser<String, ProjectViewDebuggerAddressSection>(ProjectViewDebuggerAddressSection.SECTION_NAME) {
-
-    override fun mapRawValue(rawValue: String): String = rawValue
-
-    override fun createInstance(value: String): ProjectViewDebuggerAddressSection =
-        ProjectViewDebuggerAddressSection(value)
-}
-
 object ProjectViewDeriveTargetsFromDirectoriesSectionParser :
         ProjectViewSingletonSectionParser<Boolean, ProjectViewDeriveTargetsFromDirectoriesSection>(ProjectViewDeriveTargetsFromDirectoriesSection.SECTION_NAME) {
 
@@ -70,14 +59,6 @@ object ProjectViewDeriveTargetsFromDirectoriesSectionParser :
 
     override fun createInstance(value: Boolean): ProjectViewDeriveTargetsFromDirectoriesSection =
             ProjectViewDeriveTargetsFromDirectoriesSection(value)
-}
-
-object ProjectViewJavaPathSectionParser :
-    ProjectViewSingletonSectionParser<Path, ProjectViewJavaPathSection>(ProjectViewJavaPathSection.SECTION_NAME) {
-
-    override fun mapRawValue(rawValue: String): Path = Path(rawValue)
-
-    override fun createInstance(value: Path): ProjectViewJavaPathSection = ProjectViewJavaPathSection(value)
 }
 
 object ProjectViewBuildManualTargetsSectionParser :
@@ -97,13 +78,4 @@ object ProjectViewImportDepthSectionParser :
 
     override fun createInstance(value: Int): ProjectViewImportDepthSection =
         ProjectViewImportDepthSection(value)
-}
-
-object ProjectViewProduceTraceLogSectionParser :
-    ProjectViewSingletonSectionParser<Boolean, ProjectViewProduceTraceLogSection>(ProjectViewProduceTraceLogSection.SECTION_NAME) {
-
-    override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
-
-    override fun createInstance(value: Boolean): ProjectViewProduceTraceLogSection =
-        ProjectViewProduceTraceLogSection(value)
 }

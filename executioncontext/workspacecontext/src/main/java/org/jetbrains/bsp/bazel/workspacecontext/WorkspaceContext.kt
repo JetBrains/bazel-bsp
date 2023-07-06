@@ -55,13 +55,6 @@ data class WorkspaceContext(
      * Obtained from `ProjectView` simply by mapping `import_depth` section.
      */
     val importDepth: ImportDepthSpec,
-
-    /**
-     * If true .trace.json file will be created.
-     *
-     * Obtained from `ProjectView` simply by mapping 'produce_trace_log' section.
-     */
-    val produceTraceLog: ProduceTraceLogSpec,
 ) : ExecutionContext()
 
 
@@ -78,26 +71,23 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
                 BazelPathSpecMapper.map(projectView).flatMap { bazelPathSpec ->
                     DotBazelBspDirPathSpecMapper.map(projectView).flatMap { dotBazelBspDirPathSpec ->
                         BuildManualTargetsSpecMapper.map(projectView).flatMap { buildManualTargetsSpec ->
-                            ImportDepthSpecMapper.map(projectView).flatMap { importDepthSpec ->
-                                ProduceTraceLogSpecMapper.map(projectView).map { produceTraceLogSpec ->
-                                    WorkspaceContext(
-                                        targets = targetsSpec,
-                                        buildFlags = buildFlagsSpec,
-                                        bazelPath = bazelPathSpec,
-                                        dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                        buildManualTargets = buildManualTargetsSpec,
-                                        importDepth = importDepthSpec,
-                                        produceTraceLog = produceTraceLogSpec,
-                                    )
-                                }
+                            ImportDepthSpecMapper.map(projectView).map { importDepthSpec ->
+                                WorkspaceContext(
+                                    targets = targetsSpec,
+                                    buildFlags = buildFlagsSpec,
+                                    bazelPath = bazelPathSpec,
+                                    dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                    buildManualTargets = buildManualTargetsSpec,
+                                    importDepth = importDepthSpec,
+                                )
                             }
                         }
                     }
                 }
             }
         }
-
     }
+
 
     override fun constructDefault(): Try<WorkspaceContext> =
         TargetsSpecMapper.default().flatMap { targetsSpec ->
@@ -105,18 +95,15 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
                 BazelPathSpecMapper.default().flatMap { bazelPathSpec ->
                     DotBazelBspDirPathSpecMapper.default().flatMap { dotBazelBspDirPathSpec ->
                         BuildManualTargetsSpecMapper.default().flatMap { buildManualTargetsSpec ->
-                            ImportDepthSpecMapper.default().flatMap { importDepthSpec ->
-                                ProduceTraceLogSpecMapper.default().map { produceTraceLogSpec ->
-                                    WorkspaceContext(
-                                        targets = targetsSpec,
-                                        buildFlags = buildFlagsSpec,
-                                        bazelPath = bazelPathSpec,
-                                        dotBazelBspDirPath = dotBazelBspDirPathSpec,
-                                        buildManualTargets = buildManualTargetsSpec,
-                                        importDepth = importDepthSpec,
-                                        produceTraceLog = produceTraceLogSpec,
-                                    )
-                                }
+                            ImportDepthSpecMapper.default().map { importDepthSpec ->
+                                WorkspaceContext(
+                                    targets = targetsSpec,
+                                    buildFlags = buildFlagsSpec,
+                                    bazelPath = bazelPathSpec,
+                                    dotBazelBspDirPath = dotBazelBspDirPathSpec,
+                                    buildManualTargets = buildManualTargetsSpec,
+                                    importDepth = importDepthSpec,
+                                )
                             }
                         }
                     }

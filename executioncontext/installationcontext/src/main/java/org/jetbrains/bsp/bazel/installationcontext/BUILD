@@ -9,11 +9,9 @@ kt_jvm_library(
     ],
     exports = [
         "//executioncontext/api",
-        "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//executioncontext/api",
         "//executioncontext/projectview:parser",
-        "@maven//:io_vavr_vavr",
     ],
 )

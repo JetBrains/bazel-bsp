@@ -5,9 +5,12 @@
 
 ## [Unreleased]
 
-### Breaking changes 🚨
+### BREAKING CHANGES 🚨
 
 - Bloop support has been dropped.
+- Project view file is obligatory now! Server requires path to the file in `argv` in `.bsp/bazelbsp.json`.
+  Debugger address (`debugger_address`), java path (`java_path`) and flag for trace log (`produce_trace_log`) are *no 
+  longer* fields in project view files! They can be set *only* using installer flags (check [README](install/README.md)).
 
 ### Features 🎉
 - Enhance support for Kotlin by providing Kotlin target's specific info.
@@ -20,7 +23,7 @@
 
 ### Fixes 🛠️
 - Collect scalac options from the toolchain
-   | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
+  | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
 - Add support for Scala SDK provided by rules_jvm_external
   | [#403](https://github.com/JetBrains/bazel-bsp/pull/403)
 
