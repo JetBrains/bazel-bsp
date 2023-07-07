@@ -6,7 +6,7 @@ targets:
     -//excluded_target8.1
     -//excluded_target8.2
 
-bazel_path: path8/to/bazel
+bazel_binary: path8/to/bazel
 
 build_flags:
     --build_flag8.1=value8.1

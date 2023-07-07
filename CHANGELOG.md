@@ -11,6 +11,7 @@
 - Project view file is obligatory now! Server requires path to the file in `argv` in `.bsp/bazelbsp.json`.
   Debugger address (`debugger_address`), java path (`java_path`) and flag for trace log (`produce_trace_log`) are *no 
   longer* fields in project view files! They can be set *only* using installer flags (check [README](install/README.md)).
+- Project view `bazel_path` has been renamed to `bazel_binary` (now it's compatible with https://ij.bazel.build/docs/project-views.html#bazel_binary).
 
 ### Features 🎉
 - Enhance support for Kotlin by providing Kotlin target's specific info.

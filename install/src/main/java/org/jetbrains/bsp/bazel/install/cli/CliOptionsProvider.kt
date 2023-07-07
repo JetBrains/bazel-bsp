@@ -75,16 +75,16 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(buildFlagsOption)
 
-        val bazelPathOption = Option.builder(BAZEL_PATH_SHORT_OPT)
-            .longOpt("bazel-path")
+        val bazelBinaryOption = Option.builder(BAZEL_BINARY_SHORT_OPT)
+            .longOpt("bazel-binary")
             .hasArg()
             .argName("path")
             .desc(
                 "Add bazel path to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path."
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_binary."
             )
             .build()
-        cliParserOptions.addOption(bazelPathOption)
+        cliParserOptions.addOption(bazelBinaryOption)
 
         val debuggerAddressOption = Option.builder(DEBUGGER_ADDRESS_SHORT_OPT)
             .longOpt("debugger-address")
@@ -220,7 +220,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
                 javaPath = javaPath(cmd),
-                bazelPath = bazelPath(cmd),
+                bazelBinary = bazelBinary(cmd),
                 debuggerAddress = debuggerAddress(cmd),
                 targets = targets(cmd),
                 excludedTargets = excludedTargets(cmd),
@@ -238,7 +238,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         cmd.hasOption(TARGETS_SHORT_OPT) or
                 cmd.hasOption(EXCLUDED_TARGETS_LONG_OPT) or
                 cmd.hasOption(JAVA_PATH_SHORT_OPT) or
-                cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
+                cmd.hasOption(BAZEL_BINARY_SHORT_OPT) or
                 cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
                 cmd.hasOption(BUILD_MANUAL_TARGETS_OPT) or
@@ -251,7 +251,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
-    private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
+    private fun bazelBinary(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_BINARY_SHORT_OPT)
 
     private fun getOptionValueAndMapToAbsolutePath(cmd: CommandLine, shortOpt: String): Path? =
         cmd.getOptionValue(shortOpt)?.let(Paths::get)
@@ -287,7 +287,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val TARGETS_SHORT_OPT = "t"
         private const val EXCLUDED_TARGETS_LONG_OPT = "excluded-targets"
         private const val BUILD_FLAGS_SHORT_OPT = "f"
-        private const val BAZEL_PATH_SHORT_OPT = "b"
+        private const val BAZEL_BINARY_SHORT_OPT = "b"
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
         private const val BUILD_MANUAL_TARGETS_OPT = "m"

@@ -6,5 +6,5 @@ targets:
     -//excluded_target9.1
     -//excluded_target9.2
 
-bazel_path: path9/to/bazel
+bazel_binary: path9/to/bazel
 

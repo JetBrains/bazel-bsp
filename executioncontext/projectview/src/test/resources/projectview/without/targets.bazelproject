@@ -5,7 +5,7 @@ not_parsed_section1:
 not_parsed_section2: not_parsed2.1
 
 
-bazel_path: path/to/bazel
+bazel_binary: path/to/bazel
 
 build_flags:
     --build_flag1.1=value1.1

@@ -4,7 +4,7 @@ import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelPathSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelBinarySectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManualTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDeriveTargetsFromDirectoriesSectionParser
@@ -44,7 +44,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
         return ProjectView.Builder(
             imports = findImportedProjectViews(rawSections),
             targets = ProjectViewTargetsSectionParser.parse(rawSections),
-            bazelPath = ProjectViewBazelPathSectionParser.parse(rawSections),
+            bazelBinary = ProjectViewBazelBinarySectionParser.parse(rawSections),
             buildFlags = ProjectViewBuildFlagsSectionParser.parse(rawSections),
             buildManualTargets = ProjectViewBuildManualTargetsSectionParser.parse(rawSections),
             directories = ProjectViewDirectoriesSectionParser.parse(rawSections),

@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
@@ -44,12 +44,12 @@ abstract class ProjectViewSingletonSectionParser<V, T : ProjectViewSingletonSect
 }
 
 
-object ProjectViewBazelPathSectionParser :
-    ProjectViewSingletonSectionParser<Path, ProjectViewBazelPathSection>(ProjectViewBazelPathSection.SECTION_NAME) {
+object ProjectViewBazelBinarySectionParser :
+    ProjectViewSingletonSectionParser<Path, ProjectViewBazelBinarySection>(ProjectViewBazelBinarySection.SECTION_NAME) {
 
     override fun mapRawValue(rawValue: String): Path = Path(rawValue)
 
-    override fun createInstance(value: Path): ProjectViewBazelPathSection = ProjectViewBazelPathSection(value)
+    override fun createInstance(value: Path): ProjectViewBazelBinarySection = ProjectViewBazelBinarySection(value)
 }
 
 object ProjectViewDeriveTargetsFromDirectoriesSectionParser :

@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
@@ -75,7 +75,7 @@ class DefaultProjectViewParserTest {
         @Test
         fun `should return empty bazel path for file without bazel path section`() {
             // given
-            val projectViewFilePath = Path("/projectview/without/bazelpath.bazelproject")
+            val projectViewFilePath = Path("/projectview/without/bazelbinary.bazelproject")
 
             // when
             val projectViewTry = parser.parse(projectViewFilePath)
@@ -84,7 +84,7 @@ class DefaultProjectViewParserTest {
             projectViewTry.isSuccess shouldBe true
             val projectView = projectViewTry.get()
 
-            projectView.bazelPath shouldBe null
+            projectView.bazelBinary shouldBe null
         }
 
         @Test
@@ -176,7 +176,7 @@ class DefaultProjectViewParserTest {
 
             val expectedProjectView = ProjectView(
                 targets = null,
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
@@ -209,7 +209,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target1.1")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path1/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
@@ -255,7 +255,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path1/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -309,7 +309,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target7.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path7/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path7/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -353,7 +353,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target8.1"), BuildTargetIdentifier("//excluded_target8.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path8/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path8/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag8.1=value8.1",
@@ -403,7 +403,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target5.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path3/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path3/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -462,7 +462,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path1/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag2.1=value2.1",

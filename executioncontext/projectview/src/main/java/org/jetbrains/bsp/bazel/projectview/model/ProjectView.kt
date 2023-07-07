@@ -5,7 +5,7 @@ import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
@@ -23,7 +23,7 @@ data class ProjectView constructor(
     /** targets included and excluded from the project  */
     val targets: ProjectViewTargetsSection?,
     /** bazel path used to invoke bazel from the code  */
-    val bazelPath: ProjectViewBazelPathSection?,
+    val bazelBinary: ProjectViewBazelBinarySection?,
     /** bazel flags added to all bazel command invocations  */
     val buildFlags: ProjectViewBuildFlagsSection?,
     /** flag for building manual targets. */
@@ -39,7 +39,7 @@ data class ProjectView constructor(
     data class Builder constructor(
         private val imports: List<Try<ProjectView>> = emptyList(),
         private val targets: ProjectViewTargetsSection? = null,
-        private val bazelPath: ProjectViewBazelPathSection? = null,
+        private val bazelBinary: ProjectViewBazelBinarySection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
         private val buildManualTargets: ProjectViewBuildManualTargetsSection? = null,
         private val directories: ProjectViewDirectoriesSection? = null,
@@ -58,7 +58,7 @@ data class ProjectView constructor(
 
         private fun buildWithImports(importedProjectViews: List<ProjectView>): ProjectView {
             val targets = combineTargetsSection(importedProjectViews)
-            val bazelPath = combineBazelPathSection(importedProjectViews)
+            val bazelBinary = combineBazelBinarySection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
             val buildManualTargets = combineManualTargetsSection(importedProjectViews)
             val directories = combineDirectoriesSection(importedProjectViews)
@@ -67,14 +67,14 @@ data class ProjectView constructor(
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
-                        + " bazel path: {},"
+                        + " bazel binary: {},"
                         + " build flags: {}"
                         + " build manual targets {},"
                         + " directories: {},"
                         + " deriveTargetsFlag: {}."
                         + " import depth: {},",
                 targets,
-                bazelPath,
+                bazelBinary,
                 buildFlags,
                 buildManualTargets,
                 directories,
@@ -83,7 +83,7 @@ data class ProjectView constructor(
             )
             return ProjectView(
                 targets,
-                bazelPath,
+                bazelBinary,
                 buildFlags,
                 buildManualTargets,
                 directories,
@@ -173,8 +173,8 @@ data class ProjectView constructor(
             values: List<V>, constructor: (List<V>) -> T
         ): T? = if (values.isEmpty()) null else constructor(values)
 
-        private fun combineBazelPathSection(importedProjectViews: List<ProjectView>): ProjectViewBazelPathSection? =
-            bazelPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::bazelPath)
+        private fun combineBazelBinarySection(importedProjectViews: List<ProjectView>): ProjectViewBazelBinarySection? =
+            bazelBinary ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::bazelBinary)
 
         private fun combineManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewBuildManualTargetsSection? =
             buildManualTargets

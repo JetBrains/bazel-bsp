@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.model
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
@@ -64,7 +64,7 @@ class ProjectViewBuilderTest {
 
             val expectedProjectView = ProjectView(
                 targets = null,
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
@@ -95,7 +95,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target2"),
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                     directories = ProjectViewDirectoriesSection(
@@ -124,7 +124,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
@@ -155,7 +155,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
@@ -190,7 +190,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target1.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
@@ -217,7 +217,7 @@ class ProjectViewBuilderTest {
                     targets = ProjectViewTargetsSection(
                         listOf(BuildTargetIdentifier("//included_target1")), emptyList()
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
@@ -240,7 +240,7 @@ class ProjectViewBuilderTest {
                 targets = ProjectViewTargetsSection(
                     listOf(BuildTargetIdentifier("//included_target1")), emptyList()
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
@@ -271,7 +271,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported/path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
@@ -302,7 +302,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target2.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag2.1=value2.1", "--build_flag2.2=value2.2")
                     ),
@@ -338,7 +338,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target2.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -383,7 +383,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported1/path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported1/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
@@ -429,7 +429,7 @@ class ProjectViewBuilderTest {
                         ),
                         emptyList()
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag3.1=value3.1")
                     ),
@@ -500,7 +500,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -553,7 +553,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported1/path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported1/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
@@ -600,7 +600,7 @@ class ProjectViewBuilderTest {
                         ),
                         emptyList()
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag3.1=value3.1")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                     directories = ProjectViewDirectoriesSection(
@@ -673,7 +673,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",

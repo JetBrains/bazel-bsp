@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.generator.sections
 
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
@@ -18,7 +18,7 @@ abstract class ProjectViewSingletonSectionGenerator<in T : ProjectViewSingletonS
         "${section.sectionName}: ${section.value}"
 }
 
-object ProjectViewBazelPathSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBazelPathSection>()
+object ProjectViewBazelBinarySectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBazelBinarySection>()
 
 object ProjectViewBuildManualTargetsSectionGenerator : ProjectViewSingletonSectionGenerator<ProjectViewBuildManualTargetsSection>()
 

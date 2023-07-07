@@ -13,10 +13,10 @@ data class ProjectViewDeriveTargetsFromDirectoriesSection(override val value: Bo
     }
 }
 
-data class ProjectViewBazelPathSection(override val value: Path) :
+data class ProjectViewBazelBinarySection(override val value: Path) :
     ProjectViewSingletonSection<Path>(SECTION_NAME) {
     companion object {
-        const val SECTION_NAME = "bazel_path"
+        const val SECTION_NAME = "bazel_binary"
     }
 }
 

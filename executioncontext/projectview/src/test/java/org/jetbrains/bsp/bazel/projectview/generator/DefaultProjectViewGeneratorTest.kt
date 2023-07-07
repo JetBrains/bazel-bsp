@@ -29,7 +29,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
@@ -59,7 +59,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
@@ -89,7 +89,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
@@ -103,7 +103,7 @@ class DefaultProjectViewGeneratorTest {
             // then
             val expectedGeneratedString =
                 """
-                bazel_path: /path/to/bazel
+                bazel_binary: /path/to/bazel
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -114,7 +114,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -148,7 +148,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                     targets = null,
-                    bazelPath = null,
+                    bazelBinary = null,
                     buildFlags = null,
                     buildManualTargets = null,
                     directories = ProjectViewDirectoriesSection(
@@ -188,7 +188,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                     targets = null,
-                    bazelPath = null,
+                    bazelBinary = null,
                     buildFlags = null,
                     buildManualTargets = null,
                     directories = null,
@@ -213,7 +213,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
@@ -238,7 +238,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = null,
@@ -263,7 +263,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(emptyList(), emptyList()),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
@@ -279,7 +279,7 @@ class DefaultProjectViewGeneratorTest {
                 """
                 targets:
 
-                bazel_path: /path/to/bazel
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                 
@@ -306,7 +306,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//included_target3"),
                     ), emptyList()
                 ),
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -355,7 +355,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -392,7 +392,7 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target1
                     -//excluded_target2
 
-                bazel_path: /path/to/bazel
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                     --build_flag1=value1
@@ -450,7 +450,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -489,7 +489,7 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target1
                     -//excluded_target2
 
-                bazel_path: /path/to/bazel
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                     --build_flag1=value1
@@ -531,7 +531,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -570,7 +570,7 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target1
                     -//excluded_target2
 
-                bazel_path: /path/to/bazel
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                     --build_flag1=value1
@@ -601,7 +601,7 @@ class DefaultProjectViewGeneratorTest {
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(emptyList(), emptyList()),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
@@ -621,7 +621,7 @@ class DefaultProjectViewGeneratorTest {
 
             val expectedProjectView = ProjectView(
                 targets = null,
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = null,
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = null,
@@ -644,7 +644,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//included_target3"),
                     ), emptyList()
                 ),
-                bazelPath = null,
+                bazelBinary = null,
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -688,7 +688,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",

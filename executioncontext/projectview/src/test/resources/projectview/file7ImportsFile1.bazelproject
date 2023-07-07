@@ -5,7 +5,7 @@ targets:
     -//excluded_target7.1
     -//excluded_target7.2
 
-bazel_path: path7/to/bazel
+bazel_binary: path7/to/bazel
 
 build_flags:
     --build_flag7.1=value7.1

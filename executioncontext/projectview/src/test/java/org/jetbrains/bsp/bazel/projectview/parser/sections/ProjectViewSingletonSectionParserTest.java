@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
@@ -23,15 +23,15 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
 
   public static Stream<Arguments> data() {
     return Stream.of(
-        bazelPathSectionArguments(),
+        bazelBinarySectionArguments(),
         buildManualTargetsSectionArguments());
   }
 
-  private static Arguments bazelPathSectionArguments() {
-    var parser = ProjectViewBazelPathSectionParser.INSTANCE;
+  private static Arguments bazelBinarySectionArguments() {
+    var parser = ProjectViewBazelBinarySectionParser.INSTANCE;
     var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/bazel/" + seed;
     var sectionMapper =
-        (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new;
+        (Function<Path, ProjectViewBazelBinarySection>) ProjectViewBazelBinarySection::new;
     var elementMapper = (Function<String, Path>) Paths::get;
 
     var sectionConstructor =

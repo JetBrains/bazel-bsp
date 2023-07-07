@@ -10,7 +10,7 @@ targets:
     //included_target1.2
     -//excluded_target1.1
 
-bazel_path: path/to/bazel
+bazel_binary: path/to/bazel
 
 build_manual_targets: false
 

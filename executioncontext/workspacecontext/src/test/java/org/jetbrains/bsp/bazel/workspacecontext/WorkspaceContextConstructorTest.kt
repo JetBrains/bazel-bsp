@@ -4,7 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
@@ -60,7 +60,7 @@ class WorkspaceContextConstructorTest {
                             "--build_flag3=value3",
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Path("/path/to/bazel")),
+                    bazelBinary = ProjectViewBazelBinarySection(Path("/path/to/bazel")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(false) ,
                     importDepth = ProjectViewImportDepthSection(3),
                 ).build()
@@ -91,8 +91,8 @@ class WorkspaceContextConstructorTest {
             )
             workspaceContext.buildFlags shouldBe expectedBuildFlagsSpec
 
-            val expectedBazelPathSpec = BazelPathSpec(Path("/path/to/bazel"))
-            workspaceContext.bazelPath shouldBe expectedBazelPathSpec
+            val expectedBazelBinarySpec = BazelBinarySpec(Path("/path/to/bazel"))
+            workspaceContext.bazelBinary shouldBe expectedBazelBinarySpec
 
             val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
@@ -123,7 +123,7 @@ class WorkspaceContextConstructorTest {
                 targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
                 // TODO - for now we don't have a framework to change classpath, i'll fix it later
-                bazelPath = BazelPathSpecMapper.default().get(),
+                bazelBinary = BazelBinarySpecMapper.default().get(),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),
                 importDepth = ImportDepthSpec(0),

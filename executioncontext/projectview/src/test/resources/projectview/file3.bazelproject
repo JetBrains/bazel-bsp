@@ -2,7 +2,7 @@ targets:
 
 	//included_target3.1
 
-bazel_path: path3/to/bazel
+bazel_binary: path3/to/bazel
 
 build_flags:
 

@@ -6,7 +6,7 @@ import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.ProjectViewCliOptions
 import org.jetbrains.bsp.bazel.projectview.generator.DefaultProjectViewGenerator
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
@@ -27,7 +27,7 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toProjectView(projectViewCliOptions: ProjectViewCliOptions?): ProjectView =
         ProjectView(
-            bazelPath = toBazelPathSection(projectViewCliOptions),
+            bazelBinary = toBazelBinarySection(projectViewCliOptions),
             targets = toTargetsSection(projectViewCliOptions),
             buildFlags = toBuildFlagsSection(projectViewCliOptions),
             directories = toDirectoriesSection(projectViewCliOptions),
@@ -36,8 +36,8 @@ object ProjectViewCLiOptionsProvider {
             buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
         )
 
-    private fun toBazelPathSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelPathSection? =
-        projectViewCliOptions?.bazelPath?.let(::ProjectViewBazelPathSection)
+    private fun toBazelBinarySection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelBinarySection? =
+        projectViewCliOptions?.bazelBinary?.let(::ProjectViewBazelBinarySection)
 
     private fun toTargetsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewTargetsSection? =
         when {

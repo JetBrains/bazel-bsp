@@ -10,9 +10,9 @@ kt_test(
 )
 
 kt_test(
-    name = "BazelPathSpecMapperTest",
+    name = "BazelBinarySpecMapperTest",
     size = "small",
-    src = "BazelPathSpecMapperTest.kt",
+    src = "BazelBinarySpecMapperTest.kt",
     associates = [
         "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
     ],

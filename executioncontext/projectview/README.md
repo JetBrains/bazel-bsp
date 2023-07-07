@@ -29,7 +29,7 @@ For more details, see `--help`.
 Imports another project view.
 
 You may use multiple imports in any project view. Any list type sections (e.g. `targets`) compose. Single-value
-sections (e.g. `bazel_path`) override and use the last one encountered, depth-first parse order (i.e. imports are
+sections (e.g. `bazel_binary`) override and use the last one encountered, depth-first parse order (i.e. imports are
 evaluated as they are encountered).
 
 ##### example:
@@ -68,14 +68,14 @@ targets:
 
 ---
 
-#### bazel_path
+#### bazel_binary
 
 Path to bazel which will be used to invoke bazel from the server (e.g. to build a project, or query bazel).
 
 ##### example:
 
 ```
-bazel_path: /usr/local/bin/bazel
+bazel_binary: /usr/local/bin/bazel
 ```
 
 ##### default:

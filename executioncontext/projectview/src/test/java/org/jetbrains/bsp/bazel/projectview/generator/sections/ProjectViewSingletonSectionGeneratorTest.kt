@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.generator.sections
 
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -11,8 +11,8 @@ import java.nio.file.Paths
 class ProjectViewSingletonSectionGeneratorTest {
 
     @Nested
-    @DisplayName("ProjectViewBazelPathSectionGenerator tests")
-    inner class ProjectViewBazelPathSectionGeneratorTest {
+    @DisplayName("ProjectViewBazelBinarySectionGenerator tests")
+    inner class ProjectViewBazelBinarySectionGeneratorTest {
 
         @Test
         fun `should return null for null section`() {
@@ -20,7 +20,7 @@ class ProjectViewSingletonSectionGeneratorTest {
             val section = null
 
             // when
-            val generatedString = ProjectViewBazelPathSectionGenerator.generatePrettyString(section)
+            val generatedString = ProjectViewBazelBinarySectionGenerator.generatePrettyString(section)
 
             // then
             generatedString shouldBe null
@@ -29,13 +29,13 @@ class ProjectViewSingletonSectionGeneratorTest {
         @Test
         fun `should return pretty string for non null section`() {
             // given
-            val section = ProjectViewBazelPathSection(Paths.get("/path/to/bazel"))
+            val section = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel"))
 
             // when
-            val generatedString = ProjectViewBazelPathSectionGenerator.generatePrettyString(section)
+            val generatedString = ProjectViewBazelBinarySectionGenerator.generatePrettyString(section)
 
             // then
-            val expectedGeneratedString = "bazel_path: /path/to/bazel"
+            val expectedGeneratedString = "bazel_binary: /path/to/bazel"
             generatedString shouldBe expectedGeneratedString
         }
     }
