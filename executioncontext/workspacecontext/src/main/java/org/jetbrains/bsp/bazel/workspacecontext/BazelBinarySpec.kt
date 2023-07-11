@@ -5,25 +5,25 @@ import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEnt
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import java.io.File
 import java.nio.file.Path
 
-data class BazelPathSpec(
+data class BazelBinarySpec(
     override val value: Path
 ) : ExecutionContextSingletonEntity<Path>()
 
-internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<BazelPathSpec> {
+internal object BazelBinarySpecMapper : ProjectViewToExecutionContextEntityMapper<BazelBinarySpec> {
 
-    override fun map(projectView: ProjectView): Try<BazelPathSpec> =
-        when (projectView.bazelPath) {
+    override fun map(projectView: ProjectView): Try<BazelBinarySpec> =
+        when (projectView.bazelBinary) {
             null -> findBazelOnPath()
-            else -> Try.success(map(projectView.bazelPath!!))
+            else -> Try.success(map(projectView.bazelBinary!!))
         }
 
-    override fun default(): Try<BazelPathSpec> = findBazelOnPath()
+    override fun default(): Try<BazelBinarySpec> = findBazelOnPath()
 
-    private fun findBazelOnPath(): Try<BazelPathSpec> =
+    private fun findBazelOnPath(): Try<BazelBinarySpec> =
         findBazelOnPathOrNull()?.let { Try.success(it) }
             ?: Try.failure(
                 ProjectViewToExecutionContextEntityMapperException(
@@ -32,12 +32,12 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
                 )
             )
 
-    private fun findBazelOnPathOrNull(): BazelPathSpec? =
+    private fun findBazelOnPathOrNull(): BazelBinarySpec? =
         splitPath()
             .map { mapToBazel(it) }
             .firstOrNull { it.canExecute() }
             ?.toPath()
-            ?.let { BazelPathSpec(it) }
+            ?.let { BazelBinarySpec(it) }
 
     private fun splitPath(): List<String> = System.getenv("PATH").split(File.pathSeparator)
 
@@ -54,7 +54,7 @@ internal object BazelPathSpecMapper : ProjectViewToExecutionContextEntityMapper<
         }
     }
 
-    private fun map(bazelPathSection: ProjectViewBazelPathSection): BazelPathSpec =
-        BazelPathSpec(bazelPathSection.value)
+    private fun map(bazelBinarySection: ProjectViewBazelBinarySection): BazelBinarySpec =
+        BazelBinarySpec(bazelBinarySection.value)
 
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.bazelrunner.outputs
 
+import com.google.common.base.Charsets
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import java.io.BufferedReader
 import java.io.IOException
@@ -30,7 +31,7 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
   protected fun start(inputStream: InputStream, vararg handlers: OutputHandler) {
     val runnable = Runnable {
       try {
-        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+        BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8)).use { reader ->
           var prevLine: String? = null
 
           while (!Thread.currentThread().isInterrupted) {

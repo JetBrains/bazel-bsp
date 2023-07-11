@@ -1,0 +1,14 @@
+name: Update dependencies
+
+on:
+  schedule:
+    - cron:  '30 5 * * *'
+
+jobs:
+  bazel-steward:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: VirtusLab/bazel-steward@v0.2

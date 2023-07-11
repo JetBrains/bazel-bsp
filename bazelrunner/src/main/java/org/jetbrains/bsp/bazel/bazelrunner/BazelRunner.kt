@@ -72,6 +72,6 @@ class BazelRunner private constructor(
             .also { bspClientLogger.withOriginId(originId).message(it) }
     }
 
-    private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelPath.value.toString()
+    private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelBinary.value.toString()
     private fun buildFlags(workspaceContext: WorkspaceContext): List<String> = workspaceContext.buildFlags.values
 }

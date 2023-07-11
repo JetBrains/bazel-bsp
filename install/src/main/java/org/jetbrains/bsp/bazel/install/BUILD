@@ -17,6 +17,5 @@ kt_jvm_library(
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
         "@maven//:commons_cli_commons_cli",
-        "@maven//:io_vavr_vavr",
     ],
 )

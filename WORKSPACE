@@ -8,9 +8,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "5.2"
+RULES_JVM_EXTERNAL_TAG = "5.3"
 
-RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
+RULES_JVM_EXTERNAL_SHA = "d31e369b854322ca5098ea12c69d7175ded971435e55c18dd9dd5f29cc5249ac"
 
 http_archive(
     name = "rules_jvm_external",
@@ -183,15 +183,13 @@ maven_install(
         "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2",
         "org.junit.jupiter:junit-jupiter:5.9.3",
         "com.fasterxml.jackson.core:jackson-databind:2.15.2",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
-        "ch.epfl.scala:bloop-config_2.13:1.5.0",
-        "org.scala-lang:scala-library:2.13.11",
-        "com.google.protobuf:protobuf-java:3.23.3",
-        "io.grpc:grpc-stub:1.56.0",
-        "io.grpc:grpc-netty:1.56.0",
+        "com.google.protobuf:protobuf-java:3.23.4",
+        "io.grpc:grpc-stub:1.56.1",
+        "io.grpc:grpc-netty:1.56.1",
 
         # tests
         "org.junit.jupiter:junit-jupiter-api:5.9.3",

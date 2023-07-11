@@ -1,6 +1,5 @@
 import configurations.bazelBsp.*
 import configurations.*
-import jetbrains.buildServer.configs.kotlin.v10.toExtId
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -25,23 +24,16 @@ object BazelBsp : Project({
         parallel(options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
+
         }) {
             buildType(BazelBuild.BuildTheProject)
-            buildType(BazelBenchmark.RegularBenchmark)
-        }
-
-        parallel(options = {
-            onDependencyFailure = FailureAction.CANCEL
-            onDependencyCancel = FailureAction.CANCEL
-        }) {
             buildType(BazelUnitTests.UnitTests)
-
-            buildType(BazelE2eTests.SampleRepoE2ETest)
-
-            buildType(BazelE2eTests.BazelBspLocalJdkTest)
-            buildType(BazelE2eTests.BazelBspRemoteJdkTest)
-
-            buildType(BazelE2eTests.CppProjectE2ETest)
+            buildType(BazelE2eTests.SampleRepoBazel6E2ETest)
+            buildType(BazelE2eTests.SampleRepoBazel5E2ETest)
+            buildType(BazelE2eTests.BazelBspLocalBazel6JdkTest)
+            buildType(BazelE2eTests.BazelBspLocalBazel5JdkTest)
+            buildType(BazelE2eTests.BazelBspRemoteBazel6JdkTest)
+            buildType(BazelE2eTests.BazelBspRemoteBazel5JdkTest)
         }
 
         buildType(ResultsAggregator.BazelBspAggregator, options = {
@@ -58,6 +50,7 @@ object BazelBsp : Project({
     allSteps.last().triggers {
         vcs {
             branchFilter = """
+                +:<default>
                 +:pull/*
             """.trimIndent()
         }
@@ -67,12 +60,13 @@ object BazelBsp : Project({
     buildTypesOrderIds = arrayListOf(
         RelativeId("FormatBuildifier"),
         RelativeId("BuildBuildBazelBsp"),
-        RelativeId("Benchmark1001Targets"),
         RelativeId("UnitTestsUnitTests"),
-        RelativeId("E2eTestsE2eBazelBspSampleRepoTestTest"),
-        RelativeId("E2eTestsE2eBazelBspLocalJdkTestTest"),
-        RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTest"),
-        RelativeId("E2eTestsE2eBazelBspCppProjectTestTest"),
+        RelativeId("E2eTestsE2eBazelBspSampleRepoTestTestWithBazel621"),
+        RelativeId("E2eTestsE2eBazelBspSampleRepoTestTestWithBazel541"),
+        RelativeId("E2eTestsE2eBazelBspLocalJdkTestTestWithBazel621"),
+        RelativeId("E2eTestsE2eBazelBspLocalJdkTestTestWithBazel541"),
+        RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTestWithBazel621"),
+        RelativeId("E2eTestsE2eBazelBspRemoteJdkTestTestWithBazel541"),
         RelativeId("BazelBspResults")
     )
 })

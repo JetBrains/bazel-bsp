@@ -9,6 +9,8 @@ object BazelBspAggregator : BuildType({
 
     name = "bazel-bsp results"
 
+    allowExternalStatus = true
+
     vcs {
         root(BaseConfiguration.BazelBspVcs)
         showDependenciesChanges = false

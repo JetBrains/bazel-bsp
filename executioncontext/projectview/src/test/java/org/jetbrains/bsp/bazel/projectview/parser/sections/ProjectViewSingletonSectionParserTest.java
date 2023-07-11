@@ -7,11 +7,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection;
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
@@ -26,34 +23,16 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
 
   public static Stream<Arguments> data() {
     return Stream.of(
-        bazelPathSectionArguments(),
-        debuggerAddressSectionArguments(),
-        javaPathSectionArguments(),
-        buildManualTargetsSectionArguments(),
-        produceTraceLogSectionArguments());
+        bazelBinarySectionArguments(),
+        buildManualTargetsSectionArguments());
   }
 
-  private static Arguments bazelPathSectionArguments() {
-    var parser = ProjectViewBazelPathSectionParser.INSTANCE;
+  private static Arguments bazelBinarySectionArguments() {
+    var parser = ProjectViewBazelBinarySectionParser.INSTANCE;
     var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/bazel/" + seed;
     var sectionMapper =
-        (Function<Path, ProjectViewBazelPathSection>) ProjectViewBazelPathSection::new;
+        (Function<Path, ProjectViewBazelBinarySection>) ProjectViewBazelBinarySection::new;
     var elementMapper = (Function<String, Path>) Paths::get;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static Arguments debuggerAddressSectionArguments() {
-    var parser = ProjectViewDebuggerAddressSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "host_" + seed + ":8080";
-    var sectionMapper =
-        (Function<String, ProjectViewDebuggerAddressSection>)
-            ProjectViewDebuggerAddressSection::new;
-    var elementMapper = (Function<String, String>) x -> x;
 
     var sectionConstructor =
         createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
@@ -68,35 +47,6 @@ public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingl
     var sectionMapper =
         (Function<Boolean, ProjectViewBuildManualTargetsSection>)
             ProjectViewBuildManualTargetsSection::new;
-    var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static Arguments javaPathSectionArguments() {
-    var parser = ProjectViewJavaPathSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/java/" + seed;
-    var sectionMapper =
-        (Function<Path, ProjectViewJavaPathSection>) ProjectViewJavaPathSection::new;
-    var elementMapper = (Function<String, Path>) Paths::get;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static Arguments produceTraceLogSectionArguments() {
-    var parser = ProjectViewProduceTraceLogSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "true";
-    var sectionMapper =
-        (Function<Boolean, ProjectViewProduceTraceLogSection>)
-            ProjectViewProduceTraceLogSection::new;
     var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
 
     var sectionConstructor =

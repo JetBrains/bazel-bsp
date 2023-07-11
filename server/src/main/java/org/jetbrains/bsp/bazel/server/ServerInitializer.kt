@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server
 
 import org.jetbrains.bsp.bazel.commons.Constants
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
@@ -9,13 +8,16 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.concurrent.Executors
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
-data class CliArgs(val bazelWorkspaceRoot: String, val projectViewPath: String?)
+data class CliArgs(
+    val bazelWorkspaceRoot: String,
+    val projectViewPath: String,
+    val produceTraceLog: Boolean,
+)
 
 object ServerInitializer {
     @JvmStatic
@@ -28,13 +30,15 @@ object ServerInitializer {
                 }
         )
 
-        val cliArgs = if (args.size > 2 || args.isEmpty()) {
-            System.err.printf(
-                "Usage: <bazel workspace root> [project view path]%n"
-            )
+        val cliArgs = if (args.size != 3) {
+            System.err.println("Usage: <bazel workspace root> <project view path> <produce trace log flag>")
             exitProcess(1)
         } else {
-            CliArgs(args.elementAt(0), args.elementAtOrNull(1))
+            CliArgs(
+                bazelWorkspaceRoot = args.elementAt(0),
+                projectViewPath = args.elementAt(1),
+                produceTraceLog = args.elementAt(2).toBoolean(),
+            )
         }
         var hasErrors = false
         val stdout = System.out
@@ -50,7 +54,7 @@ object ServerInitializer {
                 stdout,
                 stdin,
                 executor,
-                createTraceWriterOrNull(traceFile, workspaceContextProvider)
+                createTraceWriterOrNull(traceFile, cliArgs.produceTraceLog)
             )
             val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), null)
             bspServer.startServer(bspIntegrationData)
@@ -68,22 +72,18 @@ object ServerInitializer {
 
     private fun createTraceWriterOrNull(
         traceFile: Path,
-        workspaceContextProvider: WorkspaceContextProvider
+        createTraceFile: Boolean,
     ): PrintWriter? =
-        when (workspaceContextProvider.currentWorkspaceContext().produceTraceLog.value) {
-            true -> PrintWriter(
+        if (createTraceFile) {
+            PrintWriter(
                 Files.newOutputStream(
                     traceFile,
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
                 )
             )
+        } else null
 
-            false -> null
-        }
-
-    private fun getWorkspaceContextProvider(args: String?): WorkspaceContextProvider {
-        val projectViewPath = args?.let { Paths.get(it) }
-        return DefaultWorkspaceContextProvider(projectViewPath)
-    }
+    private fun getWorkspaceContextProvider(projectViewPath: String): WorkspaceContextProvider =
+        DefaultWorkspaceContextProvider(Path(projectViewPath))
 }

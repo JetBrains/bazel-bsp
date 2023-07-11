@@ -4,6 +4,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
@@ -15,6 +16,7 @@ class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,
     val javaLanguagePlugin: JavaLanguagePlugin,
     val cppLanguagePlugin: CppLanguagePlugin,
+    val kotlinLanguagePlugin: KotlinLanguagePlugin,
     private val thriftLanguagePlugin: ThriftLanguagePlugin,
     val pythonLanguagePlugin: PythonLanguagePlugin
 ) {
@@ -31,7 +33,8 @@ class LanguagePluginsService(
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
         when {
             languages.contains(Language.SCALA) -> scalaLanguagePlugin
-            (languages.contains(Language.JAVA) || languages.contains(Language.KOTLIN)) -> javaLanguagePlugin
+            languages.contains(Language.JAVA) -> javaLanguagePlugin
+            languages.contains(Language.KOTLIN) -> kotlinLanguagePlugin
             languages.contains(Language.CPP) -> cppLanguagePlugin
             languages.contains(Language.THRIFT) -> thriftLanguagePlugin
             languages.contains(Language.PYTHON) -> pythonLanguagePlugin
