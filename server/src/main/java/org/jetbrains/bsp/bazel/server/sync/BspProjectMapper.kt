@@ -22,10 +22,10 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
-import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathItem
-import ch.epfl.scala.bsp4j.OutputPathsItem
 import ch.epfl.scala.bsp4j.OutputPathItemKind
+import ch.epfl.scala.bsp4j.OutputPathsItem
+import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathsResult
 import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
@@ -53,7 +53,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.net.URI
 
 class BspProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
@@ -81,6 +80,15 @@ class BspProjectMapper(
     fun workspaceTargets(project: Project): WorkspaceBuildTargetsResult {
         val buildTargets = project.modules.map(::toBuildTarget)
         return WorkspaceBuildTargetsResult(buildTargets)
+    }
+
+    fun workspaceLibraries(project: Project): WorkspaceLibrariesResult {
+        val libraries = project.libraries.values.map { LibraryItem(
+                BuildTargetIdentifier(it.label),
+                it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
+                it.outputs.map { uri -> uri.toString() }
+        ) }
+        return WorkspaceLibrariesResult(libraries)
     }
 
     private fun toBuildTarget(module: Module): BuildTarget {

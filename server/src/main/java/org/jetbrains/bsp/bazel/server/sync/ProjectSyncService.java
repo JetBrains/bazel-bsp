@@ -59,6 +59,11 @@ public class ProjectSyncService {
     return bspMapper.workspaceTargets(project);
   }
 
+  public WorkspaceLibrariesResult workspaceBuildLibraries(CancelChecker cancelChecker) {
+    var project = projectProvider.get(cancelChecker);
+    return bspMapper.workspaceLibraries(project);
+  }
+
   public SourcesResult buildTargetSources(
       CancelChecker cancelChecker, SourcesParams sourcesParams) {
     var project = projectProvider.get(cancelChecker);

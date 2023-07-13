@@ -24,7 +24,15 @@ class TargetInfoReader {
     fun readTargetMapFromAspectOutputs(files: Set<URI>): Map<String, TargetInfo> =
         runBlocking(Dispatchers.IO) {
             files.asFlow().map(::getTargetInfo).toList()
-                .associateBy(TargetInfo::getId)
+                .groupBy (TargetInfo::getId)
+                // If any aspect has already been run on the build graph, it created shadow graph
+                // containing new nodes of the same labels as the original ones. In particular,
+                // this happens for all protobuf targets, for which a built-in aspect "bazel_java_proto_aspect"
+                // is run. In order to correctly address this issue, we would have to provide separate
+                // entities (TargetInfos) for each target and each ruleset (or language) instead of just
+                // entity-per-label. As long as we don't have it, in case of a conflict we just take the entity
+                // that contains JavaTargetInfo as currently it's the most important one for us.
+                .mapValues { it.value.find{v -> v.hasJavaTargetInfo()} ?: it.value.first() }
         }
 
     private fun readTargetInfoFromFile(uri: URI): TargetInfo {
