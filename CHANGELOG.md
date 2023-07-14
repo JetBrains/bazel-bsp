@@ -4,6 +4,8 @@
 
 
 ## [Unreleased]
+### Features 🎉
+- Experimental `workspace/libraries` endpoint that returns list of external libraries
 
 ### BREAKING CHANGES 🚨
 

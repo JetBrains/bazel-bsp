@@ -4,7 +4,6 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.LogMessageParams;
 import ch.epfl.scala.bsp4j.MessageType;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.commons.Format;
 import org.jetbrains.bsp.bazel.commons.Stopwatch;

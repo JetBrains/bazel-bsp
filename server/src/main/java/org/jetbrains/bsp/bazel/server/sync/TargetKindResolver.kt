@@ -5,7 +5,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Tag
 
 class TargetKindResolver {
     fun resolveTags(targetInfo: BspTargetInfo.TargetInfo): Set<Tag> {
-        if (targetInfo.kind == "resources_union") {
+        if (targetInfo.kind == "resources_union" || targetInfo.kind == "java_import") {
             return LIBRARY
         }
         val tag = ruleSuffixToTargetType.filterKeys {

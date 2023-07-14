@@ -7,6 +7,7 @@ import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.eclipse.lsp4j.jsonrpc.Launcher.Builder
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.bazel.server.BazelBspServer
+import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer
 import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
@@ -25,6 +26,8 @@ import kotlin.io.path.writeText
 
 
 import kotlin.system.exitProcess
+
+interface Api: BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, BazelBuildServer
 
 data class Args(
         val workspace: Path,
@@ -104,11 +107,11 @@ private fun threadFactory(nameFormat: String): ThreadFactory =
                 }
                 .build()
 
-private fun startClient(serverOut: PipedInputStream, clientIn: PrintStream, clientExecutor: ExecutorService?): Launcher<BuildServer> =
-        Builder<BuildServer>()
+private fun startClient(serverOut: PipedInputStream, clientIn: PrintStream, clientExecutor: ExecutorService?): Launcher<Api> =
+        Builder<Api>()
                 .setInput(serverOut)
                 .setOutput(clientIn)
-                .setRemoteInterface(BuildServer::class.java)
+                .setRemoteInterface(Api::class.java)
                 .setExecutorService(clientExecutor)
                 .setLocalService(BuildClient())
                 .create()

@@ -50,8 +50,11 @@ import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+
+import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
     implements BuildServer,
@@ -59,6 +62,7 @@ public class BspServerApi
         ScalaBuildServer,
         JavaBuildServer,
         CppBuildServer,
+        BazelBuildServer,
         PythonBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
@@ -241,5 +245,10 @@ public class BspServerApi
       JvmTestEnvironmentParams params) {
     return runner.handleRequest(
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
+  }
+
+  @Override
+  public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
+    return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
   }
 }
