@@ -51,3 +51,16 @@ kt_jvm_binary(
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
+
+kt_jvm_binary(
+    name = "BazelBspPythonProjectTest",
+    srcs = ["BazelBspPythonProjectTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspPythonProjectTest",
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//e2e:__subpackages__"],
+    deps = [
+        "//commons",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
+        "@maven//:ch_epfl_scala_bsp4j",
+    ],
+)

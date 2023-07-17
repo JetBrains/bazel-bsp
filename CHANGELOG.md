@@ -6,6 +6,7 @@
 ## [Unreleased]
 ### Features 🎉
 - Experimental `workspace/libraries` endpoint that returns list of external libraries
+- Support for Python targets, including `buildTarget/pythonOptions` endpoint
 
 ### BREAKING CHANGES 🚨
 

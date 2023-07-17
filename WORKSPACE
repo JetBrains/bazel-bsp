@@ -159,7 +159,7 @@ sonatype_dependencies()
 
 git_repository(
     name = "testkit",
-    commit = "36bb3467d3df351780d0092dadfd9f3313787e8d",
+    commit = "9743061ce45653bdc46e9a67303a76c1d4455bbb",
     patch_args = ["-p1"],
     patches = ["//e2e:testkit.patch"],
     remote = "https://github.com/agluszak/bsp-testkit2.git",

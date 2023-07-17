@@ -98,6 +98,11 @@ message KotlinTargetInfo {
   KotlincOpts kotlinc_opts = 4;
 }
 
+message PythonTargetInfo {
+  FileLocation interpreter = 1;
+  string version = 2;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -114,4 +119,5 @@ message TargetInfo {
   ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
   KotlinTargetInfo kotlin_target_info = 7000;
+  PythonTargetInfo python_target_info = 8000;
 }

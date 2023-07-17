@@ -17,6 +17,8 @@ import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.OutputPathsParams;
 import ch.epfl.scala.bsp4j.OutputPathsResult;
+import ch.epfl.scala.bsp4j.PythonOptionsParams;
+import ch.epfl.scala.bsp4j.PythonOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
@@ -116,6 +118,12 @@ public class ProjectSyncService {
       CancelChecker cancelChecker, CppOptionsParams params) {
     var project = projectProvider.get(cancelChecker);
     return bspMapper.buildTargetCppOptions(project, params);
+  }
+
+  public PythonOptionsResult buildTargetPythonOptions(
+          CancelChecker cancelChecker, PythonOptionsParams params) {
+    var project = projectProvider.get(cancelChecker);
+    return bspMapper.buildTargetPythonOptions(project, params);
   }
 
   public ScalacOptionsResult buildTargetScalacOptions(

@@ -10,6 +10,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -38,8 +39,9 @@ class LanguagePluginServiceTest {
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
     val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
+    val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
     languagePluginsService = LanguagePluginsService(
-      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin
+      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin
     )
   }
 
