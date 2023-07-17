@@ -89,7 +89,8 @@ class BazelProjectMapper(
     private fun hasJavaSources(targetInfo: TargetInfo) =
                 targetInfo.sourcesList.any { it.relativePath.endsWith(".java") ||
                         it.relativePath.endsWith(".kt") ||
-                        it.relativePath.endsWith(".scala") }
+                        it.relativePath.endsWith(".scala") ||
+                        it.relativePath.endsWith(".py") }
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean =
         target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix()) &&
