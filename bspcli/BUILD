@@ -29,7 +29,8 @@ kt_jvm_binary(
 
 py_binary(
     name = "generator",
-    srcs = ["gen.py"],
+    srcs = glob(["*.py"]),
+    imports = ["."],
     main = "gen.py",
     deps = [],
 )
