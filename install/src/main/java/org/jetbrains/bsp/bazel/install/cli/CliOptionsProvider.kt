@@ -176,6 +176,8 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createCliOptions(cmd: CommandLine): CliOptions =
         CliOptions(
+            javaPath = javaPath(cmd),
+            debuggerAddress = debuggerAddress(cmd),
             helpCliOptions = createHelpCliOptions(cmd),
             workspaceRootDir = workspaceRootDir(cmd),
             projectViewFilePath = projectViewFilePath(cmd),
@@ -219,9 +221,7 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
-                javaPath = javaPath(cmd),
                 bazelBinary = bazelBinary(cmd),
-                debuggerAddress = debuggerAddress(cmd),
                 targets = targets(cmd),
                 excludedTargets = excludedTargets(cmd),
                 buildFlags = buildFlags(cmd),
@@ -237,9 +237,7 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun isAnyGenerationFlagSet(cmd: CommandLine): Boolean =
         cmd.hasOption(TARGETS_SHORT_OPT) or
                 cmd.hasOption(EXCLUDED_TARGETS_LONG_OPT) or
-                cmd.hasOption(JAVA_PATH_SHORT_OPT) or
                 cmd.hasOption(BAZEL_BINARY_SHORT_OPT) or
-                cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
                 cmd.hasOption(BUILD_MANUAL_TARGETS_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or

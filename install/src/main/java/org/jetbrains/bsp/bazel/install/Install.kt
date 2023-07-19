@@ -32,7 +32,8 @@ object Install {
 
     private fun runInstallOrThrow(cliOptions: CliOptions, createTraceLog: Boolean) {
         val installationContext = InstallationContextProvider.createInstallationContext(cliOptions)
-        InstallationContextProvider.generateAndSaveProjectViewFile(cliOptions)
+
+        InstallationContextProvider.generateAndSaveProjectViewFileIfNeeded(cliOptions)
 
         val connectionDetails = createBspConnectionDetails(installationContext, createTraceLog)
         createEnvironment(connectionDetails, cliOptions)

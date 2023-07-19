@@ -204,7 +204,7 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 val expectedJavaPath = Paths.get("/path/to/java")
-                cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
+                cliOptions.javaPath shouldBe expectedJavaPath
             }
 
             @Test
@@ -221,8 +221,8 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 val expectedJavaPath = Paths.get("path/to/java").toAbsolutePath()
-                cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
-                cliOptions.projectViewCliOptions?.javaPath?.isAbsolute shouldBe true
+                cliOptions.javaPath shouldBe expectedJavaPath
+                cliOptions.javaPath?.isAbsolute shouldBe true
             }
 
             @Test
@@ -243,8 +243,8 @@ class CliOptionsProviderTest {
                         .parent
                         .parent
                         .resolve("path/to/java")
-                cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
-                cliOptions.projectViewCliOptions?.javaPath?.isAbsolute shouldBe true
+                cliOptions.javaPath shouldBe expectedJavaPath
+                cliOptions.javaPath?.isAbsolute shouldBe true
             }
         }
 
@@ -344,7 +344,7 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 val expectedDebuggerAddress = "host:8000"
-                cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+                cliOptions.debuggerAddress shouldBe expectedDebuggerAddress
             }
         }
 
@@ -677,13 +677,13 @@ class CliOptionsProviderTest {
             cliOptions.projectViewFilePath?.isAbsolute shouldBe true
 
             val expectedJavaPath = Paths.get("/path/to/java")
-            cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
+            cliOptions.javaPath shouldBe expectedJavaPath
 
             val expectedBazelBinary = Paths.get("/path/to/bazel")
             cliOptions.projectViewCliOptions?.bazelBinary shouldBe expectedBazelBinary
 
             val expectedDebuggerAddress = "host:8000"
-            cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+            cliOptions.debuggerAddress shouldBe expectedDebuggerAddress
 
             val expectedTargets = listOf(
                     "//included_target1",
@@ -748,10 +748,10 @@ class CliOptionsProviderTest {
             cliOptions.workspaceRootDir shouldBe expectedWorkspaceRootDir
 
             val expectedJavaPath = Paths.get("/path/to/java")
-            cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
+            cliOptions.javaPath shouldBe expectedJavaPath
 
             val expectedDebuggerAddress = "host:8000"
-            cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+            cliOptions.debuggerAddress shouldBe expectedDebuggerAddress
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags

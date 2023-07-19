@@ -8,9 +8,7 @@ data class HelpCliOptions internal constructor(
 )
 
 data class ProjectViewCliOptions internal constructor(
-        val javaPath: Path?,
         val bazelBinary: Path?,
-        val debuggerAddress: String?,
         val targets: List<String>?,
         val excludedTargets: List<String>?,
         val buildFlags: List<String>?,
@@ -23,6 +21,8 @@ data class ProjectViewCliOptions internal constructor(
 )
 
 data class CliOptions internal constructor(
+        val javaPath: Path?,
+        val debuggerAddress: String?,
         val helpCliOptions: HelpCliOptions,
         val workspaceRootDir: Path,
         val projectViewFilePath: Path?,
