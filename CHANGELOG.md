@@ -4,9 +4,6 @@
 
 
 ## [Unreleased]
-### Features 🎉
-- Experimental `workspace/libraries` endpoint that returns list of external libraries
-- Support for Python targets, including `buildTarget/pythonOptions` endpoint
 
 ### BREAKING CHANGES 🚨
 
@@ -19,9 +16,13 @@
 ### Features 🎉
 - Enhance support for Kotlin by providing Kotlin target's specific info.
   | [#BAZEL-460](https://youtrack.jetbrains.com/issue/BAZEL-460)
+- Experimental `workspace/libraries` endpoint that returns list of external libraries
+- Support for Python targets, including `buildTarget/pythonOptions` endpoint
 
 ### Fixes 🛠️
 - Now we report the failure of the whole test target and binaries are reporting stdout.
+- Aspects don't throw an exception for kotlin rules if an attr doesn't exist.
+
 
 ## [2.7.2]
 

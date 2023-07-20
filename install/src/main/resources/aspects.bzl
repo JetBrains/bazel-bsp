@@ -221,7 +221,7 @@ def extract_runtime_jars(target, provider):
 
 def extract_compile_jars(provider):
     compilation_info = getattr(provider, "compilation_info", None)
-    transitive_compile_time_jars = getattr(provider, "transitive_compile_time_jars", [])
+    transitive_compile_time_jars = getattr(provider, "transitive_compile_time_jars", depset())
 
     return compilation_info.compilation_classpath if compilation_info else transitive_compile_time_jars
 
@@ -247,7 +247,7 @@ def extract_java_info(target, ctx, output_groups):
 
     runtime_jars = extract_runtime_jars(target, provider).to_list()
     compile_jars = extract_compile_jars(provider).to_list()
-    source_jars = provider.transitive_source_jars.to_list()
+    source_jars = getattr(provider, "transitive_source_jars", depset()).to_list()
     resolve_files += runtime_jars
     resolve_files += compile_jars
     resolve_files += source_jars
