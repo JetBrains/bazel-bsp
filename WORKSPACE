@@ -184,7 +184,7 @@ maven_install(
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2",
-        "org.junit.jupiter:junit-jupiter:5.9.3",
+        "org.junit.jupiter:junit-jupiter:5.10.0",
         "com.fasterxml.jackson.core:jackson-databind:2.15.2",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
         "com.google.protobuf:protobuf-java:3.23.4",
@@ -192,9 +192,9 @@ maven_install(
         "io.grpc:grpc-netty:1.56.1",
 
         # tests
-        "org.junit.jupiter:junit-jupiter-api:5.9.3",
-        "org.junit.jupiter:junit-jupiter-engine:5.9.3",
-        "org.junit.jupiter:junit-jupiter-params:5.9.3",
+        "org.junit.jupiter:junit-jupiter-api:5.10.0",
+        "org.junit.jupiter:junit-jupiter-engine:5.10.0",
+        "org.junit.jupiter:junit-jupiter-params:5.10.0",
         "org.junit.platform:junit-platform-console:1.9.3",
         "io.kotest:kotest-assertions-api-jvm:5.6.2",
         "io.kotest:kotest-assertions-core-jvm:5.6.2",
