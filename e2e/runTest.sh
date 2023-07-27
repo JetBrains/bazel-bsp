@@ -25,20 +25,9 @@ echo -e "==================================="
 echo -e "Running BSP test '$TEST_TARGET' in '$TEST_PROJECT_PATH'..."
 echo -e "-----------------------------------\n"
 
-echo "Building project..."
-cd "$BUILD_WORKSPACE_DIRECTORY" || exit
-bazel build //server/src/main/java/org/jetbrains/bsp/bazel:bsp-install
-EXECUTION_CODE=$?
-if [ $EXECUTION_CODE -ne 0 ]; then
-  echo -e "${RED}building failed :(${NC}"
-  exit 1
-fi
-
 TEST_BSP_WORKSPACE_ROOT=$BUILD_WORKSPACE_DIRECTORY/bazel-integration-tests
 mkdir -p $TEST_BSP_WORKSPACE_ROOT
 BSP_ROOT=$(mktemp -d "$TEST_BSP_WORKSPACE_ROOT/XXXXXXX")
-bsp_path="$(bazel info bazel-bin)/server/src/main/java/org/jetbrains/bsp/bazel/bsp-install"
-echo "Building done."
 
 echo "Cleaning project directory..."
 if [ "$#" -eq 2 ]; then
@@ -49,7 +38,8 @@ rm -r .bazelbsp/ > /dev/null 2>&1
 echo "Cleaning project directory done!"
 
 echo "Installing BSP... for $TEST_PROJECT_PATH"
-"$bsp_path" -d $BSP_ROOT -w $TEST_PROJECT_PATH || exit
+cd "$BUILD_WORKSPACE_DIRECTORY" || exit
+bazel run //install:install-server -- -d "$BSP_ROOT" -w "$TEST_PROJECT_PATH" || exit
 echo "Installing done."
 echo "Environment has been prepared!"
 echo -e "-----------------------------------\n"

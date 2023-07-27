@@ -8,6 +8,7 @@ kt_jvm_library(
     ]),
     visibility = [
         "//bspcli:__subpackages__",
+        "//install:__subpackages__",
         "//server:__subpackages__",
     ],
     deps = [

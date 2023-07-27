@@ -1,6 +1,6 @@
-load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "install",
     visibility = ["//visibility:public"],
     exports = [
@@ -8,8 +8,14 @@ java_library(
     ],
 )
 
-java_binary(
-    name = "bsp-install",
+kt_jvm_binary(
+    name = "install-server",
     main_class = "org.jetbrains.bsp.bazel.install.Install",
-    runtime_deps = ["//install/src/main/java/org/jetbrains/bsp/bazel/install"],
+    resources = ["//log4j_config"],
+    visibility = ["//visibility:public"],
+    runtime_deps = [
+        "//commons",
+        "//install",
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server",
+    ],
 )

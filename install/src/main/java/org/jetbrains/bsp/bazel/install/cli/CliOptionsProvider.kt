@@ -6,8 +6,10 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import java.lang.System
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 class CliOptionsProvider(private val args: Array<String>) {
 
@@ -268,7 +270,11 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
-    private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
+    private fun calculateCurrentAbsoluteDirectory(): Path = calculateCurrentDir().toAbsolutePath()
+
+    private fun calculateCurrentDir(): Path =
+        System.getenv("BUILD_WORKING_DIRECTORY")
+            ?.let { Path(it) } ?: Path("")
 
     private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
 
