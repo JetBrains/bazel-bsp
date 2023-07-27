@@ -22,6 +22,6 @@ public class InternalAspectsResolver {
   }
 
   private String getPrefix() {
-    return "@" + Constants.ASPECT_REPOSITORY + "//:aspects.bzl%";
+    return "@" + Constants.ASPECT_REPOSITORY + "//aspects:core.bzl%";
   }
 }

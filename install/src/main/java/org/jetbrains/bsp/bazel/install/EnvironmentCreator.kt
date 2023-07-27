@@ -4,10 +4,11 @@ import ch.epfl.scala.bsp4j.BspConnectionDetails
 import com.google.gson.GsonBuilder
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
-import java.io.InputStream
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import java.nio.file.Paths
+import kotlin.io.path.copyTo
 
 abstract class EnvironmentCreator(private val projectRootDir: Path) {
 
@@ -15,19 +16,15 @@ abstract class EnvironmentCreator(private val projectRootDir: Path) {
 
     protected fun createDotBazelBsp(): Try<Path> {
         val bazelBspDir = createDir(projectRootDir, Constants.DOT_BAZELBSP_DIR_NAME)
-        return bazelBspDir.flatMap(::createDotBazelBspFiles)
-            .flatMap { bazelBspDir }
+        return bazelBspDir.flatMap(::createDotBazelBspFiles).flatMap { bazelBspDir }
     }
 
     private fun createDotBazelBspFiles(dotBazelBspDir: Path): Try<Void> =
-        copyAspects(dotBazelBspDir)
-            .flatMap { createEmptyBuildFile(dotBazelBspDir) }
+        Try.of { copyAspects(dotBazelBspDir) }.flatMap { createEmptyBuildFile(dotBazelBspDir) }
 
-    private fun copyAspects(dotBazelBspDir: Path): Try<Void> {
-        val resourcesAspectsPath = "/" + Constants.ASPECTS_FILE_NAME
-        val destinationAspectsPath = dotBazelBspDir.resolve(Constants.ASPECTS_FILE_NAME)
-
-        return copyFileFromResources(resourcesAspectsPath, destinationAspectsPath)
+    private fun copyAspects(dotBazelBspDir: Path) {
+        val destinationAspectsPath = dotBazelBspDir.resolve(Constants.ASPECTS_ROOT)
+        copyAspectsFromResources("/" + Constants.ASPECTS_ROOT, destinationAspectsPath)
     }
 
     private fun createEmptyBuildFile(dotBazelBspDir: Path): Try<Void> {
@@ -39,13 +36,21 @@ abstract class EnvironmentCreator(private val projectRootDir: Path) {
         }
     }
 
-    private fun copyFileFromResources(resourcesPath: String, destinationPath: Path): Try<Void> =
-        Try.withResources { BazelBspEnvironmentCreator::class.java.getResourceAsStream(resourcesPath) }
-            .of { copyFile(it, destinationPath) }
-            .flatMap { it }
+    private fun copyAspectsFromResources(aspectsJarPath: String, destinationPath: Path) =
+        javaClass.getResource(aspectsJarPath)?.let {
+            val fileSystem = FileSystems.newFileSystem(it.toURI(), emptyMap<String, String>())
+            copyFileTree(fileSystem.getPath(aspectsJarPath), destinationPath)
+        } ?: error("Missing aspects resource")
 
-    private fun copyFile(inputStream: InputStream, destinationPath: Path): Try<Void> =
-        Try.run { Files.copy(inputStream, destinationPath, StandardCopyOption.REPLACE_EXISTING) }
+
+    private fun copyFileTree(source: Path, destination: Path): Unit =
+        Files.walk(source).forEach { copyUsingRelativePath(source, it, destination) }
+
+    private fun copyUsingRelativePath(sourcePrefix: Path, source: Path, destination: Path) {
+        val sourceRelativePath = sourcePrefix.relativize(source).toString()
+        val destinationAbsolutePath = Paths.get(destination.toString(), sourceRelativePath)
+        source.copyTo(destinationAbsolutePath, overwrite = true)
+    }
 
     protected fun createDotBsp(discoveryDetails: BspConnectionDetails): Try<Void> =
         createDir(projectRootDir, Constants.DOT_BSP_DIR_NAME)

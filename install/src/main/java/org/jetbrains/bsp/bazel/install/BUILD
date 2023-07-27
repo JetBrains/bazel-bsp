@@ -3,7 +3,7 @@ load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 kt_jvm_library(
     name = "install",
     srcs = glob(["*.kt"]),
-    resources = ["//install/src/main/resources"],
+    resources = ["//aspects"],
     visibility = [
         "//bspcli:__subpackages__",
         "//install:__subpackages__",
