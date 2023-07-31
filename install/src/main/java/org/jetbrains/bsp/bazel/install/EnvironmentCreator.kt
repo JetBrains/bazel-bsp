@@ -15,8 +15,15 @@ abstract class EnvironmentCreator(private val projectRootDir: Path) {
     abstract fun create(): Try<Void>
 
     protected fun createDotBazelBsp(): Try<Path> {
+        removeOldDotBazelBspIfExists()
+
         val bazelBspDir = createDir(projectRootDir, Constants.DOT_BAZELBSP_DIR_NAME)
         return bazelBspDir.flatMap(::createDotBazelBspFiles).flatMap { bazelBspDir }
+    }
+
+    private fun removeOldDotBazelBspIfExists() {
+        val oldBazelBspDir = projectRootDir.resolve(Constants.DOT_BAZELBSP_DIR_NAME)
+        oldBazelBspDir.toFile().deleteRecursively()
     }
 
     private fun createDotBazelBspFiles(dotBazelBspDir: Path): Try<Void> =
