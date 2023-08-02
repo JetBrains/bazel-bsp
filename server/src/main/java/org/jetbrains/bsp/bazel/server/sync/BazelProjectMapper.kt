@@ -41,17 +41,22 @@ class BazelProjectMapper(
         val targetsAsLibraries = targets - targetsToImport.map { it.id }.toSet()
         val annotationProcessorLibraries = annotationProcessorLibraries(targetsToImport)
         val kotlinStdlibsMapper = calculateKotlinStdlibsMapper(targetsToImport)
-        val modulesFromBazel = createModules(targetsToImport, dependencyTree, annotationProcessorLibraries, kotlinStdlibsMapper)
+        val allLibraries = concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
+        val modulesFromBazel = createModules(targetsToImport, dependencyTree, allLibraries)
         val librariesToImport = createLibraries(targetsAsLibraries) +
-            annotationProcessorLibraries.values.associateBy { it.label } +
-            mapOf(kotlinStdlibsMapper.first.label to kotlinStdlibsMapper.first)
+            allLibraries.values.flatten().associateBy { it.label }
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
         val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
         val sourceToTarget = buildReverseSourceMapping(modifiedModules)
         return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport)
     }
 
-    private fun annotationProcessorLibraries(targetsToImport: Sequence<TargetInfo>): Map<String, Library> {
+    private fun <K, V> concatenateMaps(
+        left: Map<K, List<V>>,
+        right: Map<K, List<V>>
+    ) = (left.keys + right.keys).associateWith { left[it].orEmpty() + right[it].orEmpty() }
+
+    private fun annotationProcessorLibraries(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
         return targetsToImport
             .filter { it.javaTargetInfo.generatedJarsList.isNotEmpty() }
             .associate { targetInfo ->
@@ -65,15 +70,17 @@ class BazelProjectMapper(
                         emptyList()
                     )
             }
+            .map { it.key to listOf(it.value) }
+            .toMap()
     }
 
-    private fun calculateKotlinStdlibsMapper(targetsToImport: Sequence<TargetInfo>): Pair<Library, Set<String>> {
+    private fun calculateKotlinStdlibsMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
         val projectLevelKotlinStdlibs = calculateProjectLevelKotlinStdlibs(targetsToImport)
         val rulesKotlinTargets = targetsToImport
             .filter { targetInfo -> targetInfo.javaTargetInfo.compileClasspathList.any { it.isKotlinStdlibPath() } }
             .map { it.id }
             .toSet()
-        return Pair(projectLevelKotlinStdlibs, rulesKotlinTargets)
+        return rulesKotlinTargets.associateWith { listOf(projectLevelKotlinStdlibs) }
     }
 
     private fun calculateProjectLevelKotlinStdlibs(targets: Sequence<TargetInfo>) =
@@ -132,15 +139,13 @@ class BazelProjectMapper(
     private fun createModules(
         targetsToImport: Sequence<TargetInfo>,
         dependencyTree: DependencyTree,
-        generatedLibraries: Map<String, Library>,
-        kotlinStdlibsMapper: Pair<Library, Set<String>>
+        generatedLibraries: Map<String, Collection<Library>>,
     ): Sequence<Module> = runBlocking {
         targetsToImport.asFlow()
             .map { createModule(
                 it,
                 dependencyTree,
-                generatedLibraries[it.id],
-                if (it.id in kotlinStdlibsMapper.second) kotlinStdlibsMapper.first else null)
+                generatedLibraries[it.id].orEmpty())
             }
             .filterNot { it.tags.contains(Tag.NO_IDE) }
             .toList()
@@ -151,15 +156,10 @@ class BazelProjectMapper(
     private fun createModule(
         target: TargetInfo,
         dependencyTree: DependencyTree,
-        library: Library?,
-        kotlinStdLibs: Library?,
+        extraLibraries: Collection<Library>,
     ): Module {
         val label = Label(target.id)
-        val directDependencies = resolveDirectDependencies(target) +
-            listOfNotNull(
-                library?.let { Label(it.label) },
-                kotlinStdLibs?.let { Label(it.label) }
-            )
+        val directDependencies = resolveDirectDependencies(target) + extraLibraries.map {  Label(it.label) }
         val languages = inferLanguages(target)
         val tags = targetKindResolver.resolveTags(target)
         val baseDirectory = bazelPathsResolver.labelToDirectoryUri(label)
