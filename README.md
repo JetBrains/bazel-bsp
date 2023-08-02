@@ -6,21 +6,13 @@
 An implementation of the [Build Server Protocol](https://github.com/build-server-protocol/build-server-protocol) for
 Bazel.
 
-## Status
-
-Below is a list of languages supported over Bazel BSP and their implementation status.
-
-- Language: name of the Language
-- Import: Ability to import a project's targets, sources, dependencies, and resources.
-- Compilation: Ability to compile
-- Run: Ability to run
-- Test: Ability to test
-
-| Language | Import | Compilation | Run | Test | Diagnostics |
-| - | - | - | - | - | - |
-| Scala | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Java | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Kotlin | ✅ | ✅ | ✅ | ✅ | ✅ |
+## Supported languages
+- Java
+- Kotlin
+- Scala
+- Python
+- Thrift
+- Rust (coming soon!)
 
 ## Installation
 
@@ -30,9 +22,10 @@ Below is a list of languages supported over Bazel BSP and their implementation s
 2. Run in the directory where Bazel BSP should be installed:
 
 ```shell
-cs launch org.jetbrains.bsp:bazel-bsp:2.7.2 -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:<version> -M org.jetbrains.bsp.bazel.install.Install
 ```
 
+Please check [release](https://github.com/JetBrains/bazel-bsp/releases) to find the newest available version
 3. Add bsp generated folders to your `.gitignore`: `.bsp` and `.bazelbsp`
 
 ### More difficult way (from sources)
@@ -42,7 +35,7 @@ Might be useful during development
 #### Using install script
 
 1. Be inside this project
-2. Run `./install.sh <installer flags>` (`--help` is available)
+2. Run `bazel run //install:install-server -- <installer flags>` (`--help` is available)
 
 #### Using coursier
 
@@ -81,8 +74,7 @@ Check [project view readme](executioncontext/projectview/README.md) for more inf
 
 ### Unit tests
 
-Most modules also have unit tests that can be run using `bazel test //<module>/...` or just `bazel test //...` to run
-all tests in the project.
+Run `bazel run //...` to execute all the unit tests.
 
 ## Contributing
 
