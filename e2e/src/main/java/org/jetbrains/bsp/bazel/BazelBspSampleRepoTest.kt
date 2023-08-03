@@ -397,11 +397,16 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             )
         )
 
+        val manualTargetScalaBinary = ScalaMainClassesItem(
+            BuildTargetIdentifier("$targetPrefix//manual_target:scala_binary"),
+            listOf(ScalaMainClass("manual_target.TestScalaBinary", emptyList(), emptyList()))
+        )
+
         // FIXME: I'd like to add a test case where target's environment variables field is non-null.
         //  But how can I even populate it?
         //  Apparently it is populated in JVM run environment?
         val expectedScalaMainClassesResult = ScalaMainClassesResult(
-            listOf(scalaTargetsScalaBinary, targetWithoutJvmFlagsBinary, targetWithoutArgsBinary)
+            listOf(scalaTargetsScalaBinary, targetWithoutJvmFlagsBinary, targetWithoutArgsBinary, manualTargetScalaBinary)
         )
         return BazelBspTestScenarioStep(
             "Scala main classes"
@@ -422,7 +427,13 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             BuildTargetIdentifier("$targetPrefix//scala_targets:scala_test"),
             listOf("io.bazel.rulesscala.scala_test.Runner")
         )
-        val expectedScalaTestClassesResult = ScalaTestClassesResult(listOf(scalaTargetsScalaTest))
+
+        val manualTargetScalaTest = ScalaTestClassesItem(
+            BuildTargetIdentifier("$targetPrefix//manual_target:scala_test"),
+            listOf("io.bazel.rulesscala.scala_test.Runner")
+        )
+
+        val expectedScalaTestClassesResult = ScalaTestClassesResult(listOf(scalaTargetsScalaTest, manualTargetScalaTest))
         return BazelBspTestScenarioStep(
             "Scala test classes"
         ) {
@@ -535,9 +546,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             listOf(
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets:java_binary"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/java_binary.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
@@ -546,18 +555,16 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets:java_library"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/libjava_library.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_with_dependency:java_binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_with_dependency/java_binary.jar",
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/subpackage/libjava_library.jar",
                         "file://\$BAZEL_CACHE/external/guava/guava-28.0-jre.jar"
                     ),
                     emptyList(),
@@ -568,17 +575,16 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets/subpackage:java_library"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/subpackage/libjava_library.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//scala_targets:scala_binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/scala_targets/scala_binary.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
@@ -591,7 +597,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//scala_targets:scala_test"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/scala_targets/scala_test.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
@@ -615,9 +620,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_with_resources:java_binary"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_with_resources/java_binary.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
@@ -627,7 +630,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_args:binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_args/binary.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
@@ -640,7 +642,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_jvm_flags:binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_jvm_flags/binary.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
@@ -653,19 +654,18 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_main_class:library"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_main_class/library.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//environment_variables:java_binary"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf("foo1" to "val1", "foo2" to "val2")
@@ -675,13 +675,91 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//environment_variables:java_test"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test.jar",
                         "file://\$BAZEL_CACHE/external/remote_java_tools/java_tools/Runner_deploy.jar"
                     ),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf("foo1" to "val1", "foo2" to "val2", "foo3" to "val3", "foo4" to "val4")
-                )
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:scala_test"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("io.bazel.rulesscala.scala_test.Runner", emptyList()))
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:scala_library"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:scala_binary"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("manual_target.TestScalaBinary", emptyList()))
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:java_test"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/remote_java_tools/java_tools/Runner_deploy.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:java_library"),
+                    emptyList(),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:java_binary"),
+                    emptyList(),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("manual_target.TestJavaBinary", emptyList()))
+                }
             )
         )
         return BazelBspTestScenarioStep(
@@ -696,9 +774,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             listOf(
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets:java_binary"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/java_binary.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
@@ -707,18 +783,16 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets:java_library"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/libjava_library.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_with_dependency:java_binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_with_dependency/java_binary.jar",
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/subpackage/libjava_library.jar",
                         "file://\$BAZEL_CACHE/external/guava/guava-28.0-jre.jar"
                     ),
                     emptyList(),
@@ -729,17 +803,16 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//java_targets/subpackage:java_library"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/java_targets/subpackage/libjava_library.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//scala_targets:scala_binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/scala_targets/scala_binary.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
@@ -752,7 +825,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//scala_targets:scala_test"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/scala_targets/scala_test.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
@@ -776,9 +848,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_with_resources:java_binary"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_with_resources/java_binary.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
@@ -788,7 +858,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_args:binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_args/binary.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
@@ -801,7 +870,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_jvm_flags:binary"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_jvm_flags/binary.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
@@ -814,19 +882,18 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//target_without_main_class:library"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/target_without_main_class/library.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
                         "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
                     ),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf()
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//environment_variables:java_binary"),
-                    listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_binary.jar"
-                    ),
+                    listOf(),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf("foo1" to "val1", "foo2" to "val2")
@@ -836,13 +903,91 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
                 JvmEnvironmentItem(
                     BuildTargetIdentifier("$targetPrefix//environment_variables:java_test"),
                     listOf(
-                        "file://\$BAZEL_CACHE/bazel-out/k8-fastbuild/bin/environment_variables/java_test.jar",
                         "file://\$BAZEL_CACHE/external/remote_java_tools/java_tools/Runner_deploy.jar"
                     ),
                     emptyList(),
                     "\$WORKSPACE",
                     mapOf("foo1" to "val1", "foo2" to "val2", "foo3" to "val3", "foo4" to "val4")
-                ),
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:scala_test"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalactic/scalactic_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest/scalatest_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_compatible/scalatest-compatible-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_core/scalatest-core_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_featurespec/scalatest-featurespec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_flatspec/scalatest-flatspec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_freespec/scalatest-freespec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funspec/scalatest-funspec_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_funsuite/scalatest-funsuite_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_matchers_core/scalatest-matchers-core_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_mustmatchers/scalatest-mustmatchers_2.12-3.2.9.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scalatest_shouldmatchers/scalatest-shouldmatchers_2.12-3.2.9.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("io.bazel.rulesscala.scala_test.Runner", emptyList()))
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:scala_library"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:scala_binary"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
+                        "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("manual_target.TestScalaBinary", emptyList()))
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:java_test"),
+                    listOf(
+                        "file://\$BAZEL_CACHE/external/remote_java_tools/java_tools/Runner_deploy.jar"
+                    ),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:java_library"),
+                    emptyList(),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = emptyList()
+                },
+                JvmEnvironmentItem(
+                    BuildTargetIdentifier("$targetPrefix//manual_target:java_binary"),
+                    emptyList(),
+                    emptyList(),
+                    "\$WORKSPACE",
+                    mapOf()
+                ).apply {
+                    mainClasses = listOf(JvmMainClass("manual_target.TestJavaBinary", emptyList()))
+                }
             )
         )
         return BazelBspTestScenarioStep(
@@ -1008,18 +1153,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         javaTargetsJavaLibraryExported.displayName = "$targetPrefix//java_targets:java_library_exported"
         javaTargetsJavaLibraryExported.baseDirectory = "file://\$WORKSPACE/java_targets/"
 
-        val manualScalaBuildTarget = ScalaBuildTarget(
-            "org.scala-lang",
-            "2.12.14",
-            "2.12",
-            ScalaPlatform.JVM,
-            listOf(
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_compiler/scala-compiler-2.12.14.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_library/scala-library-2.12.14.jar",
-                "file://\$BAZEL_CACHE/external/io_bazel_rules_scala_scala_reflect/scala-reflect-2.12.14.jar"
-            )
-        )
-
         val manualTargetScalaLibrary = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//manual_target:scala_library"),
             listOf("library"),
@@ -1030,7 +1163,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         manualTargetScalaLibrary.displayName = "$targetPrefix//manual_target:scala_library"
         manualTargetScalaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
         manualTargetScalaLibrary.dataKind = "scala"
-        manualTargetScalaLibrary.data = manualScalaBuildTarget
+        manualTargetScalaLibrary.data = scalaBuildTarget
 
         val manualTargetJavaLibrary = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//manual_target:java_library"),
@@ -1041,6 +1174,8 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         )
         manualTargetJavaLibrary.displayName = "$targetPrefix//manual_target:java_library"
         manualTargetJavaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
+        manualTargetJavaLibrary.dataKind = "jvm"
+        manualTargetJavaLibrary.data = jvmBuildTarget
 
         val manualTargetScalaBinary = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//manual_target:scala_binary"),
@@ -1052,7 +1187,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         manualTargetScalaBinary.displayName = "$targetPrefix//manual_target:scala_binary"
         manualTargetScalaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
         manualTargetScalaBinary.dataKind = "scala"
-        manualTargetScalaBinary.data = manualScalaBuildTarget
+        manualTargetScalaBinary.data = scalaBuildTarget
 
         val manualTargetJavaBinary = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//manual_target:java_binary"),
@@ -1063,6 +1198,8 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         )
         manualTargetJavaBinary.displayName = "$targetPrefix//manual_target:java_binary"
         manualTargetJavaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
+        manualTargetJavaBinary.dataKind = "jvm"
+        manualTargetJavaBinary.data = jvmBuildTarget
 
         val manualTargetScalaTest = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//manual_target:scala_test"),
@@ -1074,7 +1211,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         manualTargetScalaTest.displayName = "$targetPrefix//manual_target:scala_test"
         manualTargetScalaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
         manualTargetScalaTest.dataKind = "scala"
-        manualTargetScalaTest.data = manualScalaBuildTarget
+        manualTargetScalaTest.data = scalaBuildTarget
 
         val manualTargetJavaTest = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//manual_target:java_test"),
@@ -1085,6 +1222,8 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         )
         manualTargetJavaTest.displayName = "$targetPrefix//manual_target:java_test"
         manualTargetJavaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
+        manualTargetJavaTest.dataKind = "jvm"
+        manualTargetJavaTest.data = jvmBuildTarget
 
         val environmentVariablesJavaLibrary = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//environment_variables:java_binary"),

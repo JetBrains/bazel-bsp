@@ -6,7 +6,7 @@ import java.util.List;
 public class Constants {
   public static final String NAME = "bazelbsp";
   public static final String VERSION = "2.7.2";
-  public static final String BSP_VERSION = "2.1.0-M4";
+  public static final String BSP_VERSION = "2.1.0";
   public static final String SCALA = "scala";
   public static final String JAVA = "java";
   public static final String KOTLIN = "kotlin";

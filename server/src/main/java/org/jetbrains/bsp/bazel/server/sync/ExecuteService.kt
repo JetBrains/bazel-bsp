@@ -51,8 +51,13 @@ class ExecuteService(
 
     fun compile(cancelChecker: CancelChecker, params: CompileParams): CompileResult {
         val targets = selectTargets(cancelChecker, params.targets)
-        val result = build(cancelChecker, targets, params.originId)
-        return CompileResult(result.statusCode).apply { originId = params.originId }
+
+        return if (targets.isNotEmpty()) {
+            val result = build(cancelChecker, targets, params.originId)
+            CompileResult(result.statusCode).apply { originId = params.originId }
+        } else {
+            CompileResult(StatusCode.ERROR).apply { originId = params.originId }
+        }
     }
 
     fun test(cancelChecker: CancelChecker, params: TestParams): TestResult {

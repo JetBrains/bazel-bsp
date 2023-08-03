@@ -8,6 +8,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.exists
+import kotlin.io.path.toPath
 
 class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     private val uris = ConcurrentHashMap<Path, URI>()
@@ -17,7 +19,10 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
 
     fun workspaceRoot(): URI = resolveUri(bazelInfo.workspaceRoot.toAbsolutePath())
 
-    fun resolveUris(fileLocations: List<FileLocation>): List<URI> = fileLocations.map(::resolveUri)
+    fun resolveUris(fileLocations: List<FileLocation>, shouldFilterExisting: Boolean = false): List<URI> =
+        fileLocations
+            .map(::resolveUri)
+            .filter { !shouldFilterExisting || it.toPath().exists() }
 
     fun resolvePaths(fileLocations: List<FileLocation>): List<Path> = fileLocations.map(::resolve)
 

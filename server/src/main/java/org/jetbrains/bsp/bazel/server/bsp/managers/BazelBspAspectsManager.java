@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import io.vavr.collection.Array;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -38,7 +39,8 @@ public class BazelBspAspectsManager {
                 BazelFlag.keepGoing(),
                 BazelFlag.color(true),
                 BazelFlag.buildManualTests(),
-                BazelFlag.curses(false)),
+                BazelFlag.curses(false)
+            ),
             null);
     return result.bepOutput();
   }

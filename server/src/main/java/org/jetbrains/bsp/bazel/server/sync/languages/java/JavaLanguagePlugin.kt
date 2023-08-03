@@ -39,9 +39,9 @@ class JavaLanguagePlugin(
                 it.interfaceJarsList + it.binaryJarsList
             }.map(bazelPathsResolver::resolveUri)
             val mainClass = getMainClass(this)
-            val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList)
-            val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList + generatedJarsList.flatMap { it.binaryJarsList })
-            val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList)
+            val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList, true)
+            val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList + generatedJarsList.flatMap { it.binaryJarsList }, true)
+            val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList, true)
             val ideClasspath = resolveIdeClasspath(Label(targetInfo.id),
                 bazelPathsResolver,
                 runtimeClasspath.asSequence(), compileClasspath.asSequence()

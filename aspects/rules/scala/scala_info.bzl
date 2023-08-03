@@ -1,5 +1,5 @@
 load("//aspects:utils/java_utils.bzl", "get_java_provider")
-load("//aspects:utils/utils.bzl", "file_location", "map", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "file_location", "map")
 
 def find_scalac_classpath(runfiles):
     result = []
@@ -23,8 +23,6 @@ def extract_scala_toolchain_info(target, ctx, output_groups):
 
     resolve_files = classpath
     compiler_classpath = map(file_location, classpath)
-
-    update_sync_output_groups(output_groups, "bsp-ide-resolve", depset(resolve_files))
 
     return struct(compiler_classpath = compiler_classpath)
 
