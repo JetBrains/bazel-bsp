@@ -1,13 +1,15 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import ch.epfl.scala.bsp4j.BuildTargetCapabilities
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import org.eclipse.lsp4j.jsonrpc.services.JsonRequest
 import java.util.concurrent.CompletableFuture
 
 data class LibraryItem(
-        val id: BuildTargetIdentifier,
-        val dependencies: List<BuildTargetIdentifier>,
-        val jars: List<String>
+    val id: BuildTargetIdentifier,
+    val dependencies: List<BuildTargetIdentifier>,
+    val jars: List<String>,
+    val capabilities: BuildTargetCapabilities
 )
 
 data class WorkspaceLibrariesResult(

@@ -67,7 +67,8 @@ class BazelProjectMapper(
                             .flatMap { it.binaryJarsList }
                             .map { bazelPathsResolver.resolveUri(it) }
                             .toSet(),
-                        emptyList()
+                        emptyList(),
+                        tags = emptySet()
                     )
             }
             .map { it.key to listOf(it.value) }
@@ -91,7 +92,8 @@ class BazelProjectMapper(
                 .filter { it.isKotlinStdlibPath() }
                 .map { bazelPathsResolver.resolveUri(it) }
                 .toSet(),
-            dependencies = emptyList()
+            dependencies = emptyList(),
+            tags = emptySet()
         )
 
     private fun FileLocation.isKotlinStdlibPath() =
@@ -106,7 +108,8 @@ class BazelProjectMapper(
             Library(
                 targetId,
                 getTargetJarUris(targetInfo),
-                targetInfo.dependenciesList.map { it.id }
+                targetInfo.dependenciesList.map { it.id },
+                targetKindResolver.resolveTags(entry.value)
             )
         }
     }

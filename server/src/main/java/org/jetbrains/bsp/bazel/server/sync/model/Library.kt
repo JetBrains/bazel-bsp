@@ -5,5 +5,6 @@ import java.net.URI
 data class Library(
         val label: String,
         val outputs: Set<URI>,
-        val dependencies: List<String>
+        val dependencies: List<String>,
+        val tags: Set<Tag>
 )

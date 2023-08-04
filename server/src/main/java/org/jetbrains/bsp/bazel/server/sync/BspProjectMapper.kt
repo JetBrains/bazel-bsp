@@ -27,7 +27,6 @@ import ch.epfl.scala.bsp4j.OutputPathItemKind
 import ch.epfl.scala.bsp4j.OutputPathsItem
 import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathsResult
-import ch.epfl.scala.bsp4j.PythonBuildTarget
 import ch.epfl.scala.bsp4j.PythonOptionsItem
 import ch.epfl.scala.bsp4j.PythonOptionsParams
 import ch.epfl.scala.bsp4j.PythonOptionsResult
@@ -90,7 +89,8 @@ class BspProjectMapper(
         val libraries = project.libraries.values.map { LibraryItem(
                 BuildTargetIdentifier(it.label),
                 it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
-                it.outputs.map { uri -> uri.toString() }
+                it.outputs.map { uri -> uri.toString() },
+                inferCapabilities(it.tags)
         ) }
         return WorkspaceLibrariesResult(libraries)
     }
@@ -100,7 +100,7 @@ class BspProjectMapper(
         val dependencies =
             module.directDependencies.map(BspMappings::toBspId)
         val languages = module.languages.flatMap(Language::allNames)
-        val capabilities = inferCapabilities(module)
+        val capabilities = inferCapabilities(module.tags)
         val tags = module.tags.mapNotNull(BspMappings::toBspTag)
         val baseDirectory = BspMappings.toBspUri(module.baseDirectory)
         val buildTarget = BuildTarget(
@@ -116,16 +116,17 @@ class BspProjectMapper(
         return buildTarget
     }
 
-    private fun inferCapabilities(module: Module): BuildTargetCapabilities {
-        val canCompile = !module.tags.contains(Tag.NO_BUILD) && isBuildableIfManual(module)
-        val canTest = module.tags.contains(Tag.TEST) && !module.tags.contains(Tag.MANUAL)
-        val canRun = module.tags.contains(Tag.APPLICATION) && !module.tags.contains(Tag.MANUAL)
+    private fun inferCapabilities(tags: Set<Tag>): BuildTargetCapabilities {
+        val canCompile = !tags.contains(Tag.NO_BUILD) && isBuildableIfManual(tags)
+        val canTest = tags.contains(Tag.TEST) && !tags.contains(Tag.MANUAL)
+        val canRun = tags.contains(Tag.APPLICATION) && !tags.contains(Tag.MANUAL)
         return BuildTargetCapabilities(canCompile, canTest, canRun)
     }
 
-    private fun isBuildableIfManual(module: Module): Boolean =
-        (!module.tags.contains(Tag.MANUAL)
+    private fun isBuildableIfManual(tags: Set<Tag>): Boolean {
+        return (!tags.contains(Tag.MANUAL)
                 || workspaceContextProvider.currentWorkspaceContext().buildManualTargets.value)
+    }
 
 
     private fun applyLanguageData(module: Module, buildTarget: BuildTarget) {
