@@ -1,5 +1,5 @@
 load("//aspects:utils/java_utils.bzl", "get_java_provider")
-load("//aspects:utils/utils.bzl", "create_struct", "file_location", "map", "to_file_location")
+load("//aspects:utils/utils.bzl", "create_struct", "file_location", "is_external", "map", "to_file_location", "update_sync_output_groups")
 
 def map_with_resolve_files(f, xs):
     results = []
@@ -126,6 +126,9 @@ def extract_java_info(target, ctx, output_groups):
     jvm_flags = getattr(ctx.rule.attr, "jvm_flags", [])
     args = getattr(ctx.rule.attr, "args", [])
     main_class = getattr(ctx.rule.attr, "main_class", None)
+
+    if (is_external(target)):
+        update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
 
     return create_struct(
         jars = jars,

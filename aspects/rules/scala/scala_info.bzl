@@ -1,5 +1,5 @@
 load("//aspects:utils/java_utils.bzl", "get_java_provider")
-load("//aspects:utils/utils.bzl", "file_location", "map")
+load("//aspects:utils/utils.bzl", "file_location", "is_external", "map", "update_sync_output_groups")
 
 def find_scalac_classpath(runfiles):
     result = []
@@ -23,6 +23,9 @@ def extract_scala_toolchain_info(target, ctx, output_groups):
 
     resolve_files = classpath
     compiler_classpath = map(file_location, classpath)
+
+    if (is_external(target)):
+        update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
 
     return struct(compiler_classpath = compiler_classpath)
 

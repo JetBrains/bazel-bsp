@@ -65,11 +65,13 @@ class ProjectResolver(
             cancelChecker,
             workspaceContext.targets,
             ASPECT_NAME,
-            listOf(BSP_INFO_OUTPUT_GROUP)
+            listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP)
         )
+
 
     companion object {
         private const val ASPECT_NAME = "bsp_target_info_aspect"
         private const val BSP_INFO_OUTPUT_GROUP = "bsp-target-info-transitive-deps"
+        private const val ARTIFACTS_OUTPUT_GROUP = "external-deps-resolve-transitive-deps"
     }
 }

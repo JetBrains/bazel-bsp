@@ -48,3 +48,6 @@ def update_sync_output_groups(groups_dict, key, new_set):
 
 def update_set_in_dict(input_dict, key, other_set):
     input_dict[key] = depset(transitive = [input_dict.get(key, depset()), other_set])
+
+def is_external(target):
+    return not str(target.label).startswith("@//") and not str(target.label).startswith("//")
