@@ -128,7 +128,8 @@ class BazelProjectMapper(
             it.relativePath.endsWith(".java") ||
                 it.relativePath.endsWith(".kt") ||
                 it.relativePath.endsWith(".scala") ||
-                it.relativePath.endsWith(".py")
+                it.relativePath.endsWith(".py") ||
+                it.relativePath.endsWith(".sh")
         }
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean =
