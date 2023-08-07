@@ -25,9 +25,8 @@ import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
@@ -39,23 +38,27 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private static final Logger LOGGER = LogManager.getLogger(BepServer.class);
 
   private final BuildClient bspClient;
-
+  private final Optional<String> originId;
   private BepLogger bepLogger;
 
-  private final Deque<Map.Entry<TaskId, String>> startedEvents = new ArrayDeque<>();
+  private final Deque<Map.Entry<TaskId, Optional<String>>> startedEvents = new ArrayDeque<>();
   private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
-  public BepServer(BuildClient bspClient, DiagnosticsService diagnosticsService) {
+  public BepServer(
+      BuildClient bspClient, DiagnosticsService diagnosticsService, Optional<String> originId) {
     this.bspClient = bspClient;
     this.diagnosticsService = diagnosticsService;
+    this.originId = originId;
+    this.bepLogger = new BepLogger(bspClient, originId);
   }
 
   public static BepServer newBepServer(
       BuildClient client,
       Path workspaceRoot,
-      Map<String, Set<TextDocumentIdentifier>> hasAnyProblems) {
-    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems));
+      Map<String, Set<TextDocumentIdentifier>> hasAnyProblems,
+      Optional<String> originId) {
+    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems), originId);
   }
 
   public static NettyServerBuilder nettyServerBuilder() {
@@ -124,8 +127,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
     bepOutputBuilder = new BepOutputBuilder();
     TaskId taskId = new TaskId(buildStarted.getUuid());
-    String originId = extractOriginIdFromOptions(buildStarted.getOptionsDescription());
-    bepLogger = new BepLogger(bspClient, originId);
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
 
@@ -168,15 +169,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
-  private String extractOriginIdFromOptions(String optionsDescription) {
-    Pattern pattern = Pattern.compile("(?<=ORIGINID=)(.*?)(?=')");
-    Matcher matcher = pattern.matcher(optionsDescription);
-    if (matcher.find()) {
-      return matcher.group();
-    }
-    return null;
-  }
-
   private void consumeActionCompletedEvent(BuildEventStreamProtos.BuildEvent event) {
     var label = event.getId().getActionCompleted().getLabel();
     var actionEvent = event.getAction();
@@ -206,7 +198,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private void processDiagnosticText(String stdErrText, String targetLabel) {
     var events =
         diagnosticsService.extractDiagnostics(
-            stdErrText, targetLabel, startedEvents.getFirst().getValue());
+            stdErrText, targetLabel, startedEvents.getFirst().getValue().orElse(null));
     events.forEach(bspClient::onBuildPublishDiagnostics);
   }
 

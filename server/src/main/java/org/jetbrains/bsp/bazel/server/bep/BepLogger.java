@@ -4,6 +4,7 @@ import ch.epfl.scala.bsp4j.BuildClient;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +19,10 @@ public class BepLogger extends BspClientLogger {
 
   private final BspClientLogger bspClientLogger;
 
-  public BepLogger(BuildClient client, String originId) {
+  public BepLogger(BuildClient client, Optional<String> originId) {
     super();
-    bspClientLogger = new BspClientLogger().withOriginId(originId);
+    bspClientLogger =
+        originId.map(oid -> new BspClientLogger().withOriginId(oid)).orElse(new BspClientLogger());
     bspClientLogger.initialize(client);
   }
 

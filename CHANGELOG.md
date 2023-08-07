@@ -22,7 +22,7 @@
 ### Fixes 🛠️
 - Now we report the failure of the whole test target and binaries are reporting stdout.
 - Aspects don't throw an exception for kotlin rules if an attr doesn't exist.
-
+- Fix 'this.bepLogger is null' error on project sync
 
 ## [2.7.2]
 

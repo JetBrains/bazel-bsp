@@ -8,6 +8,7 @@ import io.vavr.collection.Seq;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -39,7 +40,9 @@ public class BazelBspCompilationManager {
       TargetsSpec targetSpecs,
       Seq<String> extraFlags,
       String originId) {
-    var bepServer = BepServer.newBepServer(client, workspaceRoot, hasAnyProblems);
+    var bepServer =
+        BepServer.newBepServer(
+            client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId));
     var executor = Executors.newFixedThreadPool(4, threadFactory());
     var nettyServer =
         BepServer.nettyServerBuilder().addService(bepServer).executor(executor).build();

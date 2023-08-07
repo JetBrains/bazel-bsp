@@ -29,6 +29,7 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import java.util.Optional
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
@@ -39,7 +40,7 @@ class ExecuteService(
     private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
 ) {
     private fun <T> withBepServer(body : (Server) -> T) :T {
-        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems)
+        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems, Optional.empty())
         val nettyServer = BepServer.nettyServerBuilder().addService(server).build()
         nettyServer.start()
         try {
@@ -125,7 +126,8 @@ class ExecuteService(
 
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
         val bazelResult = withBepServer { server ->
-            bazelRunner.commandBuilder().clean().executeBazelBesCommand(bazelBesPort = server.port).waitAndGetResult(cancelChecker)
+            bazelRunner.commandBuilder().clean()
+                .executeBazelBesCommand(bazelBesPort = server.port).waitAndGetResult(cancelChecker)
         }
         return CleanCacheResult(bazelResult.stdout, true)
     }
