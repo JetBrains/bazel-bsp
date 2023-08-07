@@ -74,7 +74,7 @@ Check [project view readme](executioncontext/projectview/README.md) for more inf
 
 ### Unit tests
 
-Run `bazel run //...` to execute all the unit tests.
+Run `bazel test //...` to execute all the unit tests.
 
 ## Contributing
 
