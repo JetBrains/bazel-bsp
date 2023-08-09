@@ -33,7 +33,7 @@ class TargetsSpecMapperTest {
                 targetsSpecTry.isSuccess shouldBe true
                 val targetsSpec = targetsSpecTry.get()
 
-                val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+                val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
 
@@ -54,7 +54,7 @@ class TargetsSpecMapperTest {
                 targetsSpecTry.isSuccess shouldBe true
                 val targetsSpec = targetsSpecTry.get()
 
-                val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+                val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
 
@@ -138,7 +138,7 @@ class TargetsSpecMapperTest {
                 targetsSpecTry.isSuccess shouldBe true
                 val targetsSpec = targetsSpecTry.get()
 
-                val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+                val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
 
@@ -160,7 +160,7 @@ class TargetsSpecMapperTest {
                 targetsSpecTry.isSuccess shouldBe true
                 val targetsSpec = targetsSpecTry.get()
 
-                val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+                val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
 
@@ -247,7 +247,7 @@ class TargetsSpecMapperTest {
                 targetsSpecTry.isSuccess shouldBe true
                 val targetsSpec = targetsSpecTry.get()
 
-                val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+                val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
 
@@ -273,7 +273,7 @@ class TargetsSpecMapperTest {
                 targetsSpecTry.isSuccess shouldBe true
                 val targetsSpec = targetsSpecTry.get()
 
-                val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+                val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
 
@@ -470,7 +470,7 @@ class TargetsSpecMapperTest {
             targetsSpecTry.isSuccess shouldBe true
             val targetsSpec = targetsSpecTry.get()
 
-            val expectedTargetsSpec = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList())
+            val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
             targetsSpec shouldBe expectedTargetsSpec
         }
     }

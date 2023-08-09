@@ -120,7 +120,7 @@ class WorkspaceContextConstructorTest {
             val workspaceContext = workspaceContextTry.get()
 
             val expectedWorkspaceContext = WorkspaceContext(
-                targets = TargetsSpec(listOf(BuildTargetIdentifier("//...")), emptyList()),
+                targets = TargetsSpec(emptyList(), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
                 // TODO - for now we don't have a framework to change classpath, i'll fix it later
                 bazelBinary = BazelBinarySpecMapper.default().get(),

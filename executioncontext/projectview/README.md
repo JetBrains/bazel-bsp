@@ -59,11 +59,10 @@ targets:
 
 ##### default:
 
-All targets are included:
+No target is included:
 
 ```
 targets:
-  //...
 ```
 
 ---

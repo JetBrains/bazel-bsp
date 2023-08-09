@@ -1,6 +1,9 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import io.vavr.collection.Array;
+
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
@@ -27,8 +30,10 @@ public class BazelBspAspectsManager {
       TargetsSpec targetSpecs,
       String aspect,
       List<String> outputGroups) {
-    var result =
-        bazelBspCompilationManager.buildTargetsWithBep(
+    if (targetSpecs.getValues().isEmpty()) return new BepOutput(new HashMap<>(), new HashMap<>(), new HashSet<>());
+    return
+        bazelBspCompilationManager
+          .buildTargetsWithBep(
             cancelChecker,
             targetSpecs,
             Array.of(
@@ -41,7 +46,8 @@ public class BazelBspAspectsManager {
                 BazelFlag.buildManualTests(),
                 BazelFlag.curses(false)
             ),
-            null);
-    return result.bepOutput();
+            null
+          )
+          .bepOutput();
   }
 }
