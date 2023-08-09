@@ -39,7 +39,7 @@ echo "Cleaning project directory done!"
 
 echo "Installing BSP... for $TEST_PROJECT_PATH"
 cd "$BUILD_WORKSPACE_DIRECTORY" || exit
-bazel run //install:install-server -- -d "$BSP_ROOT" -w "$TEST_PROJECT_PATH" -t //... || exit
+bazel run //install -- -d "$BSP_ROOT" -w "$TEST_PROJECT_PATH" -t //... || exit
 echo "Installing done."
 echo "Environment has been prepared!"
 echo -e "-----------------------------------\n"

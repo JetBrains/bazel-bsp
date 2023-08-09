@@ -10,7 +10,7 @@ sonatype_java_export(
     visibility = ["//visibility:public"],
     runtime_deps = [
         "//commons",
-        "//install",
+        "//install:install-lib",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server",
     ],
 )
