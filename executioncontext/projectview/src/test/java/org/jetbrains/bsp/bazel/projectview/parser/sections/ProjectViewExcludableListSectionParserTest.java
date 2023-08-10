@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;

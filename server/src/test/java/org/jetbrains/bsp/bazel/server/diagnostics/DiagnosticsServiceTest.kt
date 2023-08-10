@@ -1,17 +1,16 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
-import ch.epfl.scala.bsp4j.Diagnostic as BspDiagnostic
-import ch.epfl.scala.bsp4j.Position as BspPosition
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.DiagnosticSeverity
-import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
-import ch.epfl.scala.bsp4j.Range
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.jetbrains.bsp.bsp4kt.Diagnostic as BspDiagnostic
+import com.jetbrains.bsp.bsp4kt.Position as BspPosition
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.DiagnosticSeverity
+import com.jetbrains.bsp.bsp4kt.PublishDiagnosticsParams
+import com.jetbrains.bsp.bsp4kt.Range
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import java.nio.file.Paths
-import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ConcurrentHashMap
 
@@ -36,7 +35,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/BUILD"),
                 BuildTargetIdentifier("//path/to/package:test"),
                 ErrorDiagnostic(
@@ -82,7 +81,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
                 BuildTargetIdentifier("//path/to/package:test"),
                 ErrorDiagnostic(
@@ -140,7 +139,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test1.scala"),
                 BuildTargetIdentifier("//path/to/package:test"),
                 ErrorDiagnostic(
@@ -152,7 +151,7 @@ class DiagnosticsServiceTest {
                   |                    ^""".trimMargin()
                 )
             ),
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test2.scala"),
                 BuildTargetIdentifier("//path/to/package:test"),
                 ErrorDiagnostic(
@@ -209,7 +208,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
                 BuildTargetIdentifier("//path/to/package:test"),
                 ErrorDiagnostic(
@@ -273,7 +272,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/server/src/test/java/org/jetbrains/bsp/bazel/server/diagnostics/DiagnosticsServiceTest.kt"),
                 BuildTargetIdentifier("//server/src/test/java/org/jetbrains/bsp/bazel/server/diagnostics:diagnostics"),
                 ErrorDiagnostic(
@@ -321,7 +320,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/project/src/main/scala/com/example/project/File1.scala"),
                 BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
                 ErrorDiagnostic(
@@ -339,7 +338,7 @@ class DiagnosticsServiceTest {
                    |      ^""".trimMargin()
                 )
             ),
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/project/src/main/scala/com/example/project/File2.scala"),
                 BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
                 WarningDiagnostic(
@@ -385,7 +384,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/intellij/release-tool/src/main/scala/com/intellij/releasetool/PluginResolver.scala"),
                 BuildTargetIdentifier("//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool"),
                 WarningDiagnostic(
@@ -396,7 +395,7 @@ class DiagnosticsServiceTest {
                    |    ^""".trimMargin()
                 )
             ),
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/intellij/release-tool/src/main/scala/com/intellij/releasetool/Json.scala"),
                 BuildTargetIdentifier("//intellij/release-tool/src/main/scala/com/intellij/releasetool:releasetool"),
                 WarningDiagnostic(
@@ -435,7 +434,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/sync/ProjectResolver.java"),
                 BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
                 ErrorDiagnostic(
@@ -485,7 +484,7 @@ class DiagnosticsServiceTest {
 
         // then
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/server/src/main/java/org/jetbrains/bsp/bazel/server/bep/BepServer.java"),
                 BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
                 ErrorDiagnostic(
@@ -550,7 +549,7 @@ class DiagnosticsServiceTest {
         // and the state (getBspState()) has updated to have no problems.
         val diagnosticsAfterError = service.clearFormerDiagnostics("//path/to/package:test")
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
                 BuildTargetIdentifier("//path/to/package:test"),
             )
@@ -620,7 +619,7 @@ class DiagnosticsServiceTest {
         service.clearFormerDiagnostics("//path/to/package2:test").shouldBeEmpty()
 
         val expected = listOf(
-            PublishDiagnosticsParams(
+            GetPublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
                 BuildTargetIdentifier("//path/to/package:test"),
             )
@@ -650,7 +649,7 @@ class DiagnosticsServiceTest {
         )
     }
 
-    private fun PublishDiagnosticsParams(
+    private fun GetPublishDiagnosticsParams(
         textDocument: TextDocumentIdentifier,
         buildTarget: BuildTargetIdentifier,
         vararg diagnostics: BspDiagnostic
@@ -658,23 +657,24 @@ class DiagnosticsServiceTest {
         return PublishDiagnosticsParams(
             textDocument,
             buildTarget,
+            null,
             diagnostics.asList(),
             true
         )
     }
 
     private fun ErrorDiagnostic(position: Position, message: String): BspDiagnostic =
-        createDiagnostic(position, message, DiagnosticSeverity.ERROR)
+        createDiagnostic(position, message, DiagnosticSeverity.Error)
 
     private fun WarningDiagnostic(position: Position, message: String): BspDiagnostic =
-        createDiagnostic(position, message, DiagnosticSeverity.WARNING)
+        createDiagnostic(position, message, DiagnosticSeverity.Warning)
 
     private fun createDiagnostic(position: Position, message: String, severity: DiagnosticSeverity): BspDiagnostic {
         val adjustedPosition = BspPosition(position.line - 1, position.character - 1)
-        return BspDiagnostic(Range(adjustedPosition, adjustedPosition), message).apply { this.severity = severity }
+        return BspDiagnostic(Range(adjustedPosition, adjustedPosition), severity, message = message)
     }
 
-    private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams>? {
+    private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams> {
         return DiagnosticsService(workspacePath, ConcurrentHashMap()).extractDiagnostics(output, buildTarget, null)
     }
 }

@@ -1,53 +1,53 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.BuildServerCapabilities
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetCapabilities
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.CompileProvider
-import ch.epfl.scala.bsp4j.CppOptionsItem
-import ch.epfl.scala.bsp4j.CppOptionsParams
-import ch.epfl.scala.bsp4j.CppOptionsResult
-import ch.epfl.scala.bsp4j.DependencySourcesItem
-import ch.epfl.scala.bsp4j.DependencySourcesParams
-import ch.epfl.scala.bsp4j.DependencySourcesResult
-import ch.epfl.scala.bsp4j.InitializeBuildResult
-import ch.epfl.scala.bsp4j.InverseSourcesParams
-import ch.epfl.scala.bsp4j.InverseSourcesResult
-import ch.epfl.scala.bsp4j.JavacOptionsItem
-import ch.epfl.scala.bsp4j.JavacOptionsParams
-import ch.epfl.scala.bsp4j.JavacOptionsResult
-import ch.epfl.scala.bsp4j.JvmEnvironmentItem
-import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
-import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
-import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
-import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
-import ch.epfl.scala.bsp4j.OutputPathItem
-import ch.epfl.scala.bsp4j.OutputPathItemKind
-import ch.epfl.scala.bsp4j.OutputPathsItem
-import ch.epfl.scala.bsp4j.OutputPathsParams
-import ch.epfl.scala.bsp4j.OutputPathsResult
-import ch.epfl.scala.bsp4j.PythonBuildTarget
-import ch.epfl.scala.bsp4j.PythonOptionsItem
-import ch.epfl.scala.bsp4j.PythonOptionsParams
-import ch.epfl.scala.bsp4j.PythonOptionsResult
-import ch.epfl.scala.bsp4j.ResourcesItem
-import ch.epfl.scala.bsp4j.ResourcesParams
-import ch.epfl.scala.bsp4j.ResourcesResult
-import ch.epfl.scala.bsp4j.RunProvider
-import ch.epfl.scala.bsp4j.ScalaMainClassesParams
-import ch.epfl.scala.bsp4j.ScalaMainClassesResult
-import ch.epfl.scala.bsp4j.ScalaTestClassesParams
-import ch.epfl.scala.bsp4j.ScalaTestClassesResult
-import ch.epfl.scala.bsp4j.ScalacOptionsParams
-import ch.epfl.scala.bsp4j.ScalacOptionsResult
-import ch.epfl.scala.bsp4j.SourceItem
-import ch.epfl.scala.bsp4j.SourceItemKind
-import ch.epfl.scala.bsp4j.SourcesItem
-import ch.epfl.scala.bsp4j.SourcesParams
-import ch.epfl.scala.bsp4j.SourcesResult
-import ch.epfl.scala.bsp4j.TestProvider
-import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
+import com.jetbrains.bsp.bsp4kt.BuildServerCapabilities
+import com.jetbrains.bsp.bsp4kt.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTargetCapabilities
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.CompileProvider
+import com.jetbrains.bsp.bsp4kt.CppOptionsItem
+import com.jetbrains.bsp.bsp4kt.CppOptionsParams
+import com.jetbrains.bsp.bsp4kt.CppOptionsResult
+import com.jetbrains.bsp.bsp4kt.DependencySourcesItem
+import com.jetbrains.bsp.bsp4kt.DependencySourcesParams
+import com.jetbrains.bsp.bsp4kt.DependencySourcesResult
+import com.jetbrains.bsp.bsp4kt.InitializeBuildResult
+import com.jetbrains.bsp.bsp4kt.InverseSourcesParams
+import com.jetbrains.bsp.bsp4kt.InverseSourcesResult
+import com.jetbrains.bsp.bsp4kt.JavacOptionsItem
+import com.jetbrains.bsp.bsp4kt.JavacOptionsParams
+import com.jetbrains.bsp.bsp4kt.JavacOptionsResult
+import com.jetbrains.bsp.bsp4kt.JvmEnvironmentItem
+import com.jetbrains.bsp.bsp4kt.JvmRunEnvironmentParams
+import com.jetbrains.bsp.bsp4kt.JvmRunEnvironmentResult
+import com.jetbrains.bsp.bsp4kt.JvmTestEnvironmentParams
+import com.jetbrains.bsp.bsp4kt.JvmTestEnvironmentResult
+import com.jetbrains.bsp.bsp4kt.OutputPathItem
+import com.jetbrains.bsp.bsp4kt.OutputPathItemKind
+import com.jetbrains.bsp.bsp4kt.OutputPathsItem
+import com.jetbrains.bsp.bsp4kt.OutputPathsParams
+import com.jetbrains.bsp.bsp4kt.OutputPathsResult
+import com.jetbrains.bsp.bsp4kt.PythonBuildTarget
+import com.jetbrains.bsp.bsp4kt.PythonOptionsItem
+import com.jetbrains.bsp.bsp4kt.PythonOptionsParams
+import com.jetbrains.bsp.bsp4kt.PythonOptionsResult
+import com.jetbrains.bsp.bsp4kt.ResourcesItem
+import com.jetbrains.bsp.bsp4kt.ResourcesParams
+import com.jetbrains.bsp.bsp4kt.ResourcesResult
+import com.jetbrains.bsp.bsp4kt.RunProvider
+import com.jetbrains.bsp.bsp4kt.ScalaMainClassesParams
+import com.jetbrains.bsp.bsp4kt.ScalaMainClassesResult
+import com.jetbrains.bsp.bsp4kt.ScalaTestClassesParams
+import com.jetbrains.bsp.bsp4kt.ScalaTestClassesResult
+import com.jetbrains.bsp.bsp4kt.ScalacOptionsParams
+import com.jetbrains.bsp.bsp4kt.ScalacOptionsResult
+import com.jetbrains.bsp.bsp4kt.SourceItem
+import com.jetbrains.bsp.bsp4kt.SourceItemKind
+import com.jetbrains.bsp.bsp4kt.SourcesItem
+import com.jetbrains.bsp.bsp4kt.SourcesParams
+import com.jetbrains.bsp.bsp4kt.SourcesResult
+import com.jetbrains.bsp.bsp4kt.TestProvider
+import com.jetbrains.bsp.bsp4kt.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
@@ -65,17 +65,18 @@ class BspProjectMapper(
 
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {
         val languageNames = supportedLanguages.map { it.id }
-        val capabilities = BuildServerCapabilities().apply {
-            compileProvider = CompileProvider(languageNames)
-            runProvider = RunProvider(languageNames)
-            testProvider = TestProvider(languageNames)
-            outputPathsProvider = true
-            dependencySourcesProvider = true
-            inverseSourcesProvider = true
-            resourcesProvider = true
-            jvmRunEnvironmentProvider = true
-            jvmTestEnvironmentProvider = true
-        }
+        val capabilities = BuildServerCapabilities(
+            compileProvider = CompileProvider(languageNames),
+            runProvider = RunProvider(languageNames),
+            testProvider = TestProvider(languageNames),
+            outputPathsProvider = true,
+            dependencySourcesProvider = true,
+            inverseSourcesProvider = true,
+            resourcesProvider = true,
+            jvmRunEnvironmentProvider = true,
+            jvmTestEnvironmentProvider = true,
+        )
+
         return InitializeBuildResult(
             Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities
         )
@@ -105,15 +106,14 @@ class BspProjectMapper(
         val baseDirectory = BspMappings.toBspUri(module.baseDirectory)
         val buildTarget = BuildTarget(
             label,
-            tags,
-            languages,
-            dependencies,
-            capabilities
+            tags = tags,
+            languageIds = languages,
+            dependencies = dependencies,
+            capabilities = capabilities,
+            displayName = label.uri,
+            baseDirectory = baseDirectory
         )
-        buildTarget.displayName = label.uri
-        buildTarget.baseDirectory = baseDirectory
-        applyLanguageData(module, buildTarget)
-        return buildTarget
+        return applyLanguageData(module, buildTarget)
     }
 
     private fun inferCapabilities(module: Module): BuildTargetCapabilities {
@@ -128,9 +128,9 @@ class BspProjectMapper(
                 || workspaceContextProvider.currentWorkspaceContext().buildManualTargets.value)
 
 
-    private fun applyLanguageData(module: Module, buildTarget: BuildTarget) {
+    private fun applyLanguageData(module: Module, buildTarget: BuildTarget): BuildTarget {
         val plugin = languagePluginsService.getPlugin(module.languages)
-        module.languageData?.let { plugin.setModuleData(it, buildTarget) }
+        return plugin.setModuleData(buildTarget, module.languageData)
     }
 
     fun sources(project: Project, sourcesParams: SourcesParams): SourcesResult {
@@ -139,13 +139,12 @@ class BspProjectMapper(
             val sourceItems = sourceSet.sources.map {
                 SourceItem(
                     BspMappings.toBspUri(it),
-                    SourceItemKind.FILE,
+                    SourceItemKind.File,
                     false
                 )
             }
             val sourceRoots = sourceSet.sourceRoots.map(BspMappings::toBspUri)
-            val sourcesItem = SourcesItem(BspMappings.toBspId(module), sourceItems)
-            sourcesItem.roots = sourceRoots
+            val sourcesItem = SourcesItem(BspMappings.toBspId(module), sourceItems, roots = sourceRoots)
             return sourcesItem
         }
 
@@ -210,7 +209,7 @@ class BspProjectMapper(
     fun outputPaths(project: Project, params: OutputPathsParams): OutputPathsResult {
         fun getItem(label: Label): OutputPathsItem {
             val items = project.findModule(label)?.let { module ->
-                module.outputs.map { OutputPathItem(BspMappings.toBspUri(it), OutputPathItemKind.DIRECTORY) }
+                module.outputs.map { OutputPathItem(BspMappings.toBspUri(it), OutputPathItemKind.Directory) }
             }.orEmpty()
             return OutputPathsItem(BspMappings.toBspId(label), items)
         }
@@ -289,7 +288,7 @@ class BspProjectMapper(
         project: Project,
         params: ScalacOptionsParams
     ): ScalacOptionsResult {
-        val labels = params.targets.map(BuildTargetIdentifier::getUri).map(::Label)
+        val labels = params.targets.map(BuildTargetIdentifier::uri).map(::Label)
         val modules = labels.mapNotNull(project::findModule)
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
         val items = modules.mapNotNull(scalaLanguagePlugin::toScalacOptionsItem)

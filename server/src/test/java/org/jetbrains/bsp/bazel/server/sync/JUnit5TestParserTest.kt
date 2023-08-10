@@ -1,9 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.*
+import com.jetbrains.bsp.bsp4kt.*
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.longs.shouldBeExactly
 import io.kotest.matchers.shouldBe
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputCollector
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
@@ -30,7 +32,7 @@ class JUnit5TestParserTest {
 
   @Test
   fun `should fail one test`() {
-    val failed = bspClient.conductedTests.filter { it.status == TestStatus.FAILED }
+    val failed = bspClient.conductedTests.filter { it.status == TestStatus.Failed }
     failed.size shouldBeExactly 1
     failed.firstOrNull()?.name shouldBe "should return ScalaLanguagePlugin for Scala Language()"
   }
@@ -176,38 +178,37 @@ private class MockBspClient : BuildClient {
   val outputLines = mutableListOf<String?>()
   var duration = -1L
 
-  override fun onBuildShowMessage(params: ShowMessageParams?) {
-    outputLines.add(params?.message)
+  override fun onBuildShowMessage(params: ShowMessageParams) {
+    outputLines.add(params.message)
   }
 
-  override fun onBuildLogMessage(params: LogMessageParams?) {
-    outputLines.add(params?.message)
+  override fun onBuildLogMessage(params: LogMessageParams) {
+    outputLines.add(params.message)
   }
 
-  override fun onBuildTaskStart(params: TaskStartParams?) {
-    when (params?.dataKind) {
-      TaskDataKind.TEST_START -> {
-        val testStart = params.data as? TestStart
-        val isSuite = params.message.startsWith("<S>")
-        val displayName = testStart?.displayName
+  override fun onBuildTaskStart(params: TaskStartParams) {
+    val data = params.data ?: return
+    when (params.dataKind) {
+      TaskStartDataKind.TestStart -> {
+        val testStart = Json.decodeFromJsonElement<TestStart>(data)
+        val isSuite = params.message?.startsWith("<S>") ?: false
+        val displayName = testStart.displayName
         if (isSuite) startedSuiteStack.push(displayName)
         else startedTest = displayName
-      }
-      TaskDataKind.TEST_TASK -> {
-        // ignore
       }
     }
   }
 
-  override fun onBuildTaskProgress(params: TaskProgressParams?) {
+  override fun onBuildTaskProgress(params: TaskProgressParams) {
     // ignore
   }
 
-  override fun onBuildTaskFinish(params: TaskFinishParams?) {
-    when (params?.dataKind) {
-      TaskDataKind.TEST_FINISH -> {
-        val testFinish = params.data as TestFinish
-        val isSuite = params.message.startsWith("<S>")
+  override fun onBuildTaskFinish(params: TaskFinishParams) {
+    val data = params.data ?: return
+    when (params.dataKind) {
+      TaskFinishDataKind.TestFinish -> {
+        val testFinish = Json.decodeFromJsonElement<TestFinish>(data)
+        val isSuite = params.message?.startsWith("<S>") ?: false
         val displayName = testFinish.displayName
         if (isSuite && displayName == stackPeekOrNull(startedSuiteStack)) {
           stackPopOrNull(startedSuiteStack)
@@ -218,18 +219,18 @@ private class MockBspClient : BuildClient {
         }
       }
 
-      TaskDataKind.TEST_REPORT -> {
-        val report = params.data as? TestReport
-        duration = (report?.time) ?: -1
+      TaskFinishDataKind.TestReport -> {
+        val report = Json.decodeFromJsonElement<TestReport>(data)
+        duration = (report.time) ?: -1
       }
     }
   }
 
-  override fun onBuildPublishDiagnostics(params: PublishDiagnosticsParams?) {
+  override fun onBuildPublishDiagnostics(params: PublishDiagnosticsParams) {
     // ignore
   }
 
-  override fun onBuildTargetDidChange(params: DidChangeBuildTarget?) {
+  override fun onBuildTargetDidChange(params: DidChangeBuildTarget) {
     // ignore
   }
 

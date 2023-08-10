@@ -1,11 +1,13 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetDataKind
-import ch.epfl.scala.bsp4j.JavacOptionsItem
-import ch.epfl.scala.bsp4j.JvmBuildTarget
-import ch.epfl.scala.bsp4j.JvmEnvironmentItem
-import ch.epfl.scala.bsp4j.JvmMainClass
+import com.jetbrains.bsp.bsp4kt.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTargetDataKind
+import com.jetbrains.bsp.bsp4kt.JavacOptionsItem
+import com.jetbrains.bsp.bsp4kt.JvmBuildTarget
+import com.jetbrains.bsp.bsp4kt.JvmEnvironmentItem
+import com.jetbrains.bsp.bsp4kt.JvmMainClass
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
@@ -97,10 +99,12 @@ class JavaLanguagePlugin(
     private fun TargetInfo.getJavaTargetInfoOrNull(): JavaTargetInfo? =
         this.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo
 
-    override fun applyModuleData(moduleData: JavaModule, buildTarget: BuildTarget) {
-        val jvmBuildTarget = toJvmBuildTarget(moduleData)
-        buildTarget.dataKind = BuildTargetDataKind.JVM
-        buildTarget.data = jvmBuildTarget
+    override fun applyModuleData(buildTarget: BuildTarget, moduleData: JavaModule): BuildTarget {
+        val jvmBuildTarget = moduleData.let { Json.encodeToJsonElement(toJvmBuildTarget(it))}
+        return buildTarget.copy(
+            dataKind = BuildTargetDataKind.Jvm,
+            data = jvmBuildTarget
+        )
     }
 
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
@@ -115,10 +119,9 @@ class JavaLanguagePlugin(
             javaModule.runtimeClasspath.map { it.toString() }.toList(),
             javaModule.jvmOps.toList(),
             bazelInfo.workspaceRoot.toString(),
-            module.environmentVariables
-        ).apply {
+            module.environmentVariables,
             mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
-        }
+        )
 
     fun toJavacOptionsItem(module: Module, javaModule: JavaModule): JavacOptionsItem =
         JavacOptionsItem(

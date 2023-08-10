@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.bazelrunner.outputs
 
 import com.google.common.base.Charsets
-import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import com.jetbrains.jsonrpc4kt.CancelChecker
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream

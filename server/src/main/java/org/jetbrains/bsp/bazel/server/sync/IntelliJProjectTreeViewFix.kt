@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -141,7 +141,7 @@ class IntelliJProjectTreeViewFix(
         }
 
     private fun importTargetSpecs(workspaceContext: WorkspaceContext): Sequence<String> =
-        workspaceContext.targets.values.map(BuildTargetIdentifier::getUri).asSequence()
+        workspaceContext.targets.values.map(BuildTargetIdentifier::uri).asSequence()
 
     private fun syntheticModule(moduleName: String, baseDirectory: URI, outputs: Set<URI> = emptySet()): Module {
         val resources = hashSetOf(baseDirectory)

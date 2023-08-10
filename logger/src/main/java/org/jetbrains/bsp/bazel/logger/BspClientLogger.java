@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.logger;
 
-import ch.epfl.scala.bsp4j.BuildClient;
-import ch.epfl.scala.bsp4j.LogMessageParams;
-import ch.epfl.scala.bsp4j.MessageType;
+import com.jetbrains.bsp.bsp4kt.BuildClient;
+import com.jetbrains.bsp.bsp4kt.LogMessageParams;
+import com.jetbrains.bsp.bsp4kt.MessageType;
 import java.time.Duration;
 import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.commons.Format;
@@ -22,7 +22,7 @@ public class BspClientLogger {
   }
 
   public void error(String errorMessage) {
-    log(MessageType.ERROR, errorMessage);
+    log(MessageType.Error, errorMessage);
   }
 
   public void message(String format, Object... args) {
@@ -30,7 +30,7 @@ public class BspClientLogger {
   }
 
   public void message(String message) {
-    log(MessageType.LOG, message);
+    log(MessageType.Log, message);
   }
 
   public void warn(String format, Object... args) {
@@ -38,15 +38,14 @@ public class BspClientLogger {
   }
 
   public void warn(String message) {
-    log(MessageType.WARNING, message);
+    log(MessageType.Warning, message);
   }
 
   private void log(MessageType messageType, String message) {
     if (bspClient == null) return;
 
     if (!message.trim().isEmpty()) {
-      var params = new LogMessageParams(messageType, message);
-      params.setOriginId(originId);
+      var params = new LogMessageParams(messageType, null, originId, message);
       bspClient.onBuildLogMessage(params);
     }
   }

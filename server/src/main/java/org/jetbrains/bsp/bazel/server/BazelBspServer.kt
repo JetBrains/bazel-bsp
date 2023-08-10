@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.server
 
-import ch.epfl.scala.bsp4j.BuildClient
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier
-import org.eclipse.lsp4j.jsonrpc.Launcher
+import com.jetbrains.bsp.bsp4kt.BuildClient
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier
+import com.jetbrains.jsonrpc4kt.Launcher
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
@@ -79,15 +79,16 @@ class BazelBspServer(
         compilationManager.setWorkspaceRoot(workspaceRoot)
     }
 
-    private fun createLauncher(bspIntegrationData: BspIntegrationData): Launcher.Builder<BuildClient> {
-        val builder = Launcher.Builder<BuildClient>()
-            .setOutput(bspIntegrationData.stdout).setInput(bspIntegrationData.stdin)
-            .setLocalService(bspServerApi).setRemoteInterface(BuildClient::class.java)
-            .setExecutorService(bspIntegrationData.executor)
+    private fun createLauncher(bspIntegrationData: BspIntegrationData): Launcher.Builder<BspServerApi, BuildClient> {
+        val builder = Launcher.Builder(input = bspIntegrationData.stdin, output = bspIntegrationData.stdout,
+            localService = bspServerApi, remoteInterface = BuildClient::class,
+            executorService = bspIntegrationData.executor
+        )
 
-        if (bspIntegrationData.traceWriter != null) {
-            builder.traceMessages(bspIntegrationData.traceWriter)
-        }
+        // TODO: enable tracing in bsp4kt
+//        if (bspIntegrationData.traceWriter != null) {
+//            builder.traceMessages(bspIntegrationData.traceWriter)
+//        }
 
         return builder
     }

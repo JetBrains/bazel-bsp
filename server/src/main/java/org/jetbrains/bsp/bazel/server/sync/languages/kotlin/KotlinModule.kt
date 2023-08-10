@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.kotlin
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 

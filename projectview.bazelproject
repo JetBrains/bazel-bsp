@@ -1,0 +1,64 @@
+####################################
+# BAZEL PROJECT CONFIGURATION FILE #
+####################################
+
+# Import another project view.
+#
+# Example:
+# import path/to/another/projectview.bazelproject
+
+# List of bazel target expressions, supporting `/...` notation.
+# e.g. `-//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...`).
+#
+# Example:
+# targets:
+#   //install/src/main/java/org/jetbrains/bsp/bazel/install
+#   //executioncontext/projectview/...
+#   -//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...
+targets:
+  //...
+
+# Path to bazel which will be used to invoke bazel from the server (e.g. to build a project, or query bazel).
+#
+# Example:
+# bazel_binary: /usr/local/bin/bazel
+#
+# Default: The server will deduct bazel path from `$PATH`
+
+# List of directories to be mapped into bazel targets.
+#
+# You can use negative directories to have server ignore certain directories (
+# e.g. `-executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...`).
+#
+# Example:
+# directories:
+#   install/src/main/java/org/jetbrains/bsp/bazel/install
+#   executioncontext/projectview/
+#   -executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser
+#
+# directories:
+#   .
+
+
+# Flag specifying if targets should be derived from list of directories in directories section.
+derive_targets_from_directories: false
+
+# How many levels of bazel targets dependencies should be imported as modules.
+# Only the targets that are present in workspace are imported.
+# You can use negative value to import all transitive dependencies.
+import_depth: 0
+
+# A flag specifying if `./bazelbsp/bazelbsp.trace.log` should be created and used to store trace logs.
+produce_trace_log: false
+
+# A set of bazel flags added to **all** bazel command invocations.
+#
+# Example:
+# build_flags:
+#   --define=ij_product=intellij-latest
+build_flags:
+
+# Flag specifying if targets with `manual` tag should be built.
+build_manual_targets: false
+
+# For more information on these options, see https://github.com/JetBrains/bazel-bsp/blob/master/executioncontext/projectview/README.md

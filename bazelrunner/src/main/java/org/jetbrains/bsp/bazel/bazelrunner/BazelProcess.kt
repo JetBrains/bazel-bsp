@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import java.time.Duration
 import org.apache.logging.log4j.LogManager
-import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import com.jetbrains.jsonrpc4kt.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.AsyncOutputProcessor
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.OutputProcessor
 import org.jetbrains.bsp.bazel.bazelrunner.outputs.SyncOutputProcessor

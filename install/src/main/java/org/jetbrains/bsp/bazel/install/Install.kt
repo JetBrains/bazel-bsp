@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.install
 
-import ch.epfl.scala.bsp4j.BspConnectionDetails
+import com.jetbrains.bsp.bsp4kt.BspConnectionDetails
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.CliOptionsProvider
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext

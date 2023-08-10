@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.model.sections
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
 import java.nio.file.Path
 
 sealed class ProjectViewExcludableListSection<T> constructor(sectionName: String) :

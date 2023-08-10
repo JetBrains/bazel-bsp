@@ -1,7 +1,9 @@
 package org.jetbrains.bsp.bazel.server.sync.languages
 
-import ch.epfl.scala.bsp4j.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTarget
 
 class EmptyLanguagePlugin : LanguagePlugin<LanguageData>() {
-    override fun applyModuleData(moduleData: LanguageData, buildTarget: BuildTarget) {}
+    override fun applyModuleData(buildTarget: BuildTarget, moduleData: LanguageData): BuildTarget {
+        return buildTarget
+    }
 }

@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.thrift
 
-import ch.epfl.scala.bsp4j.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
@@ -43,7 +43,9 @@ class ThriftLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) :
     private fun isThriftLibrary(target: BspTargetInfo.TargetInfo): Boolean =
         target.kind == THRIFT_LIBRARY_RULE_NAME
 
-    protected override fun applyModuleData(moduleData: ThriftModule, buildTarget: BuildTarget) {}
+    override fun applyModuleData(buildTarget: BuildTarget, moduleData: ThriftModule): BuildTarget {
+        return buildTarget
+    }
 
     override fun calculateSourceRoot(source: Path): Path =
         SourceRootGuesser.getSourcesRoot(source)

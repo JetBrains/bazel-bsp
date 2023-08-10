@@ -178,6 +178,8 @@ maven_install(
         "com.google.guava:guava:31.0.1-jre",
         "ch.epfl.scala:bsp4j:2.1.0-M5",
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
+        "com.github.agluszak:jsonrpc4kt:c5fd56ad5d",
+        "com.github.agluszak:bsp-generators:a2e3304a2e",
         "commons-cli:commons-cli:jar:1.5.0",
         # TODO: we need to remove it
         "io.vavr:vavr:0.10.4",
@@ -206,5 +208,6 @@ maven_install(
     repositories = [
         "https://maven.google.com",
         "https://repo.maven.apache.org/maven2",
+        "https://jitpack.io",
     ],
 )

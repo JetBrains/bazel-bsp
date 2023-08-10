@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import org.eclipse.lsp4j.jsonrpc.CancelChecker;
+import com.jetbrains.jsonrpc4kt.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.server.bep.BepOutput;

@@ -1,23 +1,25 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.CleanCacheParams
-import ch.epfl.scala.bsp4j.CleanCacheResult
-import ch.epfl.scala.bsp4j.CompileParams
-import ch.epfl.scala.bsp4j.CompileResult
-import ch.epfl.scala.bsp4j.RunParams
-import ch.epfl.scala.bsp4j.RunResult
-import ch.epfl.scala.bsp4j.StatusCode
-import ch.epfl.scala.bsp4j.TaskId
-import ch.epfl.scala.bsp4j.TestParams
-import ch.epfl.scala.bsp4j.TestResult
-import ch.epfl.scala.bsp4j.TestStatus
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.CleanCacheParams
+import com.jetbrains.bsp.bsp4kt.CleanCacheResult
+import com.jetbrains.bsp.bsp4kt.CompileParams
+import com.jetbrains.bsp.bsp4kt.CompileResult
+import com.jetbrains.bsp.bsp4kt.RunParams
+import com.jetbrains.bsp.bsp4kt.RunResult
+import com.jetbrains.bsp.bsp4kt.StatusCode
+import com.jetbrains.bsp.bsp4kt.TaskId
+import com.jetbrains.bsp.bsp4kt.TestParams
+import com.jetbrains.bsp.bsp4kt.TestResult
+import com.jetbrains.bsp.bsp4kt.TestStatus
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier
 import io.grpc.Server
-import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
-import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
-import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
+import com.jetbrains.jsonrpc4kt.CancelChecker
+import com.jetbrains.jsonrpc4kt.ResponseErrorException
+import com.jetbrains.jsonrpc4kt.messages.ResponseError
+import com.jetbrains.jsonrpc4kt.messages.ResponseErrorCode
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
@@ -55,9 +57,9 @@ class ExecuteService(
 
         return if (targets.isNotEmpty()) {
             val result = build(cancelChecker, targets, params.originId)
-            CompileResult(result.statusCode).apply { originId = params.originId }
+            CompileResult(statusCode = result.statusCode, originId = params.originId)
         } else {
-            CompileResult(StatusCode.ERROR).apply { originId = params.originId }
+            CompileResult(statusCode = StatusCode.Error, originId = params.originId)
         }
     }
 
@@ -65,10 +67,10 @@ class ExecuteService(
         val targets = selectTargets(cancelChecker, params.targets)
         var result = build(cancelChecker, targets, params.originId)
         if (result.isNotSuccess) {
-            return TestResult(result.statusCode)
+            return TestResult(statusCode = result.statusCode)
         }
         val targetsSpec = TargetsSpec(targets, emptyList())
-        val taskId = TaskId(params.originId)
+        val taskId = TaskId(id = params.originId ?: TODO())
         val displayName = targets.joinToString(", ") { it.uri }
         bspClientTestNotifier.startTest(
             isSuite = false,
@@ -88,13 +90,11 @@ class ExecuteService(
             isSuite = false,
             displayName = displayName,
             taskId = taskId,
-            status = if (result.statusCode == StatusCode.OK) TestStatus.PASSED else TestStatus.FAILED,
+            status = if (result.statusCode == StatusCode.Ok) TestStatus.Passed else TestStatus.Failed,
             message = null,
         )
-        return TestResult(result.statusCode).apply {
-            originId = originId
-            data = result
-        }
+        val data = Json.encodeToJsonElement(result)
+        return TestResult(statusCode = result.statusCode, originId = params.originId, data = data)
     }
 
     fun run(cancelChecker: CancelChecker, params: RunParams): RunResult {
@@ -102,7 +102,7 @@ class ExecuteService(
         if (targets.isEmpty()) {
             throw ResponseErrorException(
                 ResponseError(
-                    ResponseErrorCode.InvalidRequest,
+                    ResponseErrorCode.InvalidRequest.code,
                     "No supported target found for " + params.target.uri,
                     null
                 )
@@ -111,7 +111,7 @@ class ExecuteService(
         val bspId = targets.single()
         val result = build(cancelChecker, targets, params.originId)
         if (result.isNotSuccess) {
-            return RunResult(result.statusCode)
+            return RunResult(statusCode = result.statusCode)
         }
         val bazelProcessResult =
             bazelRunner.commandBuilder()
@@ -121,7 +121,7 @@ class ExecuteService(
                 .withFlag(BazelFlag.color(true))
                 .executeBazelCommand(params.originId)
                 .waitAndGetResult(cancelChecker)
-        return RunResult(bazelProcessResult.statusCode).apply { originId = originId }
+        return RunResult(originId = params.originId, bazelProcessResult.statusCode)
     }
 
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {

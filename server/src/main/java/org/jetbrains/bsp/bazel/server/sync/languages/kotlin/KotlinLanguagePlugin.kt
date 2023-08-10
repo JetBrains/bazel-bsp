@@ -1,7 +1,9 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.kotlin
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
@@ -14,21 +16,20 @@ class KotlinLanguagePlugin(
     private val javaLanguagePlugin: JavaLanguagePlugin
 ) : LanguagePlugin<KotlinModule>() {
 
-  override fun applyModuleData(moduleData: KotlinModule, buildTarget: BuildTarget) {
+  override fun applyModuleData(buildTarget: BuildTarget, moduleData: KotlinModule): BuildTarget {
+    val jvmBuildTarget = moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }
     val kotlinBuildTarget = with(moduleData) {
       KotlinBuildTarget(
           languageVersion = languageVersion,
           apiVersion = apiVersion,
           associates = associates,
-          kotlincOptions = kotlincOptions
+          kotlincOptions = kotlincOptions,
+          jvmBuildTarget = jvmBuildTarget
       )
     }
-    moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
-      kotlinBuildTarget.jvmBuildTarget = it
-    }
 
-    buildTarget.dataKind = "kotlin"
-    buildTarget.data = kotlinBuildTarget
+    val data = Json.encodeToJsonElement(kotlinBuildTarget)
+    return buildTarget.copy(dataKind = "kotlin", data = data)
   }
 
   override fun resolveModule(targetInfo: BspTargetInfo.TargetInfo): KotlinModule? {

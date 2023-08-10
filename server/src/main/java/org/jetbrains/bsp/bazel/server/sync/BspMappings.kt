@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.BuildTargetTag
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetTag
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
@@ -17,10 +17,10 @@ object BspMappings {
 
     fun toBspTag(tag: Tag): String? =
         when (tag) {
-            Tag.APPLICATION -> BuildTargetTag.APPLICATION
-            Tag.TEST -> BuildTargetTag.TEST
-            Tag.LIBRARY -> BuildTargetTag.LIBRARY
-            Tag.NO_IDE -> BuildTargetTag.NO_IDE
+            Tag.APPLICATION -> BuildTargetTag.Application
+            Tag.TEST -> BuildTargetTag.Test
+            Tag.LIBRARY -> BuildTargetTag.Library
+            Tag.NO_IDE -> BuildTargetTag.NoIde
             Tag.NO_BUILD, Tag.MANUAL -> null
         }
 
@@ -34,5 +34,5 @@ object BspMappings {
     fun toUri(textDocument: TextDocumentIdentifier): URI = URI.create(textDocument.uri)
 
     fun toLabels(targets: List<BuildTargetIdentifier>): Set<Label> =
-        targets.map(BuildTargetIdentifier::getUri).map(::Label).toSet()
+        targets.map(BuildTargetIdentifier::uri).map(::Label).toSet()
 }

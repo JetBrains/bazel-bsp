@@ -1,8 +1,8 @@
 package org.jetbrains.bsp.bazel.server.bsp
 
-import ch.epfl.scala.bsp4j.BuildClient
+import com.jetbrains.bsp.bsp4kt.BuildClient
 import io.grpc.Server
-import org.eclipse.lsp4j.jsonrpc.Launcher
+import com.jetbrains.jsonrpc4kt.Launcher
 import java.io.InputStream
 import java.io.PrintStream
 import java.io.PrintWriter
@@ -14,5 +14,5 @@ data class BspIntegrationData(
     val executor: ExecutorService,
     val traceWriter: PrintWriter?,
 ) {
-    lateinit var launcher: Launcher<BuildClient>
+    lateinit var launcher: Launcher<BspServerApi, BuildClient>
 }

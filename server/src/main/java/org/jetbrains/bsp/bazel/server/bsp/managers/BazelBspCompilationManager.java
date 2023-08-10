@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
-import ch.epfl.scala.bsp4j.BuildClient;
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.jetbrains.bsp.bsp4kt.BuildClient;
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import org.eclipse.lsp4j.jsonrpc.CancelChecker;
+import com.jetbrains.jsonrpc4kt.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;

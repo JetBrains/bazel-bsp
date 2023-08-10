@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages
 
-import ch.epfl.scala.bsp4j.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import java.net.URI
@@ -17,8 +17,9 @@ abstract class LanguagePlugin<T : LanguageData> {
     ): Set<URI> = emptySet()
 
     @Suppress("UNCHECKED_CAST")
-    fun setModuleData(moduleData: LanguageData, buildTarget: BuildTarget) =
-        applyModuleData(moduleData as T, buildTarget)
+    fun setModuleData(buildTarget: BuildTarget, moduleData: LanguageData?): BuildTarget =
+        if (moduleData == null) buildTarget
+        else applyModuleData(buildTarget, moduleData as T)
 
-    protected abstract fun applyModuleData(moduleData: T, buildTarget: BuildTarget)
+    protected abstract fun applyModuleData(buildTarget: BuildTarget, moduleData: T): BuildTarget
 }

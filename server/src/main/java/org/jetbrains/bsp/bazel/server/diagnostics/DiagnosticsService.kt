@@ -1,9 +1,9 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.Diagnostic
-import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.Diagnostic
+import com.jetbrains.bsp.bsp4kt.PublishDiagnosticsParams
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.Collections
@@ -35,17 +35,17 @@ class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: Mutabl
 	    val docs = hasAnyProblems[targetLabel]
 	    hasAnyProblems.remove(targetLabel)
 	    return docs
-	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), emptyList(), true)}
+	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), diagnostics = emptyList(), reset = true)}
 	      .orEmpty()
 	}
 
     private fun updateProblemState(events: List<PublishDiagnosticsParams>) {
         events
-            .groupBy { it.getBuildTarget().getUri() }
+            .groupBy { it.buildTarget.uri }
             .forEach {
                 val buildTarget = it.key
                 val paramss = it.value
-                val docs = paramss.map { it.getTextDocument() }.toSet()
+                val docs = paramss.map { it.textDocument }.toSet()
                 hasAnyProblems[buildTarget] = docs
             }
     }

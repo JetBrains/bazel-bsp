@@ -1,11 +1,11 @@
 package org.jetbrains.bsp.bazel.server.bep;
 
-import ch.epfl.scala.bsp4j.BuildClient;
-import ch.epfl.scala.bsp4j.StatusCode;
-import ch.epfl.scala.bsp4j.TaskFinishParams;
-import ch.epfl.scala.bsp4j.TaskId;
-import ch.epfl.scala.bsp4j.TaskStartParams;
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.jetbrains.bsp.bsp4kt.BuildClient;
+import com.jetbrains.bsp.bsp4kt.StatusCode;
+import com.jetbrains.bsp.bsp4kt.TaskFinishParams;
+import com.jetbrains.bsp.bsp4kt.TaskId;
+import com.jetbrains.bsp.bsp4kt.TaskStartParams;
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.v1.BuildEvent;
 import com.google.devtools.build.v1.PublishBuildEventGrpc;
@@ -126,9 +126,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
     bepOutputBuilder = new BepOutputBuilder();
-    TaskId taskId = new TaskId(buildStarted.getUuid());
-    TaskStartParams startParams = new TaskStartParams(taskId);
-    startParams.setEventTime(buildStarted.getStartTimeMillis());
+    TaskId taskId = new TaskId(buildStarted.getUuid(), null);
+    TaskStartParams startParams = new TaskStartParams(taskId, buildStarted.getStartTimeMillis(), null, null, null);
 
     bspClient.onBuildTaskStart(startParams);
     startedEvents.push(new AbstractMap.SimpleEntry<>(taskId, originId));
@@ -152,8 +151,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
 
     StatusCode exitCode = ExitCodeMapper.mapExitCode(buildFinished.getExitCode().getCode());
-    TaskFinishParams finishParams = new TaskFinishParams(startedEvents.pop().getKey(), exitCode);
-    finishParams.setEventTime(buildFinished.getFinishTimeMillis());
+    TaskFinishParams finishParams = new TaskFinishParams(startedEvents.pop().getKey(), buildFinished.getFinishTimeMillis(), null, exitCode, null, null);
     bspClient.onBuildTaskFinish(finishParams);
   }
 

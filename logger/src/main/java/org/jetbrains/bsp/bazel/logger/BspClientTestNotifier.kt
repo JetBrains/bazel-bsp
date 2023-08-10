@@ -1,17 +1,20 @@
 package org.jetbrains.bsp.bazel.logger
 
-import ch.epfl.scala.bsp4j.BuildClient
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.StatusCode
-import ch.epfl.scala.bsp4j.TaskDataKind
-import ch.epfl.scala.bsp4j.TaskFinishParams
-import ch.epfl.scala.bsp4j.TaskId
-import ch.epfl.scala.bsp4j.TaskStartParams
-import ch.epfl.scala.bsp4j.TestFinish
-import ch.epfl.scala.bsp4j.TestReport
-import ch.epfl.scala.bsp4j.TestStart
-import ch.epfl.scala.bsp4j.TestStatus
-import ch.epfl.scala.bsp4j.TestTask
+import com.jetbrains.bsp.bsp4kt.BuildClient
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.StatusCode
+import com.jetbrains.bsp.bsp4kt.TaskFinishDataKind
+import com.jetbrains.bsp.bsp4kt.TaskFinishParams
+import com.jetbrains.bsp.bsp4kt.TaskId
+import com.jetbrains.bsp.bsp4kt.TaskStartDataKind
+import com.jetbrains.bsp.bsp4kt.TaskStartParams
+import com.jetbrains.bsp.bsp4kt.TestFinish
+import com.jetbrains.bsp.bsp4kt.TestReport
+import com.jetbrains.bsp.bsp4kt.TestStart
+import com.jetbrains.bsp.bsp4kt.TestStatus
+import com.jetbrains.bsp.bsp4kt.TestTask
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 
 class BspClientTestNotifier {
   private lateinit var bspClient: BuildClient
@@ -31,12 +34,12 @@ class BspClientTestNotifier {
    * @param displayName display name of the started test / test suite
    * @param taskId      TaskId of the started test / test suite
    */
-  fun startTest(isSuite: Boolean, displayName: String?, taskId: TaskId?) {
-    val testStart = TestStart(displayName)
-    val taskStartParams = TaskStartParams(taskId)
-    taskStartParams.dataKind = TaskDataKind.TEST_START
-    taskStartParams.data = testStart
-    taskStartParams.message = if (isSuite) SUITE_TAG else TEST_TAG
+  fun startTest(isSuite: Boolean, displayName: String, taskId: TaskId) {
+    val testStart = Json.encodeToJsonElement(TestStart(displayName))
+    val message = if (isSuite) SUITE_TAG else TEST_TAG
+    val taskStartParams =
+      TaskStartParams(taskId, message = message, dataKind = TaskStartDataKind.TestStart, data = testStart)
+
     bspClient.onBuildTaskStart(taskStartParams)
   }
 
@@ -49,8 +52,8 @@ class BspClientTestNotifier {
    * @param displayName display name of the finished test suite
    * @param taskId      TaskId if the finished test suite
    */
-  fun finishTestSuite(displayName: String?, taskId: TaskId?) {
-    finishTest(true, displayName, taskId, TestStatus.PASSED, "")
+  fun finishTestSuite(displayName: String, taskId: TaskId) {
+    finishTest(true, displayName, taskId, TestStatus.Passed, "")
   }
 
   /**
@@ -63,13 +66,16 @@ class BspClientTestNotifier {
    * @param status      status of the performed test (does not matter for test suites)
    * @param message     additional message concerning the test execution
    */
-  fun finishTest(isSuite: Boolean, displayName: String?, taskId: TaskId?, status: TestStatus?, message: String?) {
-    val testFinish = TestFinish(displayName, status)
-    testFinish.message = message
-    val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
-    taskFinishParams.dataKind = TaskDataKind.TEST_FINISH
-    taskFinishParams.data = testFinish
-    taskFinishParams.message = if (isSuite) SUITE_TAG else TEST_TAG
+  fun finishTest(isSuite: Boolean, displayName: String, taskId: TaskId, status: TestStatus, message: String?) {
+    val testFinish = Json.encodeToJsonElement(TestFinish(displayName, status = status, message = message))
+    val message = if (isSuite) SUITE_TAG else TEST_TAG
+    val taskFinishParams = TaskFinishParams(
+      taskId,
+      status = StatusCode.Ok,
+      message = message,
+      dataKind = TaskFinishDataKind.TestFinish,
+      data = testFinish
+    )
     bspClient.onBuildTaskFinish(taskFinishParams)
   }
 
@@ -79,11 +85,10 @@ class BspClientTestNotifier {
    * @param targetIdentifier identifier of the testing target being executed
    * @param taskId           TaskId of the testing target execution
    */
-  fun beginTestTarget(targetIdentifier: BuildTargetIdentifier?, taskId: TaskId?) {
-    val testingBegin = TestTask(targetIdentifier)
-    val taskStartParams = TaskStartParams(taskId)
-    taskStartParams.dataKind = TaskDataKind.TEST_TASK
-    taskStartParams.data = testingBegin
+  fun beginTestTarget(targetIdentifier: BuildTargetIdentifier, taskId: TaskId) {
+    val testTask = Json.encodeToJsonElement(TestTask(targetIdentifier))
+    val taskStartParams =
+      TaskStartParams(taskId, message = "Testing", dataKind = TaskStartDataKind.TestTask, data = testTask)
     bspClient.onBuildTaskStart(taskStartParams)
   }
 
@@ -93,10 +98,15 @@ class BspClientTestNotifier {
    * @param testReport report concerning conducted tests
    * @param taskId     TaskId of the testing target execution
    */
-  fun endTestTarget(testReport: TestReport?, taskId: TaskId?) {
-    val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
-    taskFinishParams.dataKind = TaskDataKind.TEST_REPORT
-    taskFinishParams.data = testReport
+  fun endTestTarget(testReport: TestReport, taskId: TaskId) {
+    val report = Json.encodeToJsonElement(testReport)
+    val taskFinishParams = TaskFinishParams(
+      taskId,
+      status = StatusCode.Ok,
+      message = "Testing",
+      dataKind = TaskFinishDataKind.TestReport,
+      data = report
+    )
     bspClient.onBuildTaskFinish(taskFinishParams)
   }
 

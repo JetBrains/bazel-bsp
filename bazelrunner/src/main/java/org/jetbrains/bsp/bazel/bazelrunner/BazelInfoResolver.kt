@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
-import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import com.jetbrains.jsonrpc4kt.CancelChecker
 import java.nio.file.Paths
 
 class BazelInfoResolver(

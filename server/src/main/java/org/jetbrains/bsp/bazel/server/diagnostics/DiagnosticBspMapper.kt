@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
-import ch.epfl.scala.bsp4j.Diagnostic as BspDiagnostic
-import ch.epfl.scala.bsp4j.DiagnosticSeverity as BspDiagnosticSeverity
-import ch.epfl.scala.bsp4j.Position as BspPosition
-import ch.epfl.scala.bsp4j.Range as BspRange
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
-import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.jetbrains.bsp.bsp4kt.Diagnostic as BspDiagnostic
+import com.jetbrains.bsp.bsp4kt.DiagnosticSeverity as BspDiagnosticSeverity
+import com.jetbrains.bsp.bsp4kt.Position as BspPosition
+import com.jetbrains.bsp.bsp4kt.Range as BspRange
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.PublishDiagnosticsParams
+import com.jetbrains.bsp.bsp4kt.TextDocumentIdentifier
 import java.nio.file.Paths
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import java.nio.file.Path
@@ -20,8 +20,7 @@ class DiagnosticBspMapper(private val workspaceRoot: Path) {
                 val bspDiagnostics = kv.value.map { createDiagnostic(it) }
                 val doc = TextDocumentIdentifier(toAbsoluteUri(kv.key.first))
                 val publishDiagnosticsParams =
-                    PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), bspDiagnostics, true)
-                publishDiagnosticsParams.originId = originId
+                    PublishDiagnosticsParams(doc, BuildTargetIdentifier(kv.key.second), diagnostics = bspDiagnostics, reset = true, originId = originId)
                 publishDiagnosticsParams
             }
     }
@@ -29,12 +28,11 @@ class DiagnosticBspMapper(private val workspaceRoot: Path) {
     private fun createDiagnostic(it: Diagnostic): BspDiagnostic {
         val position = BspPosition(it.position.line - 1, it.position.character - 1)
         val range = BspRange(position, position)
-        return BspDiagnostic(range, it.message).apply {
-            severity = when (it.level) {
-                Level.Error -> BspDiagnosticSeverity.ERROR
-                Level.Warning -> BspDiagnosticSeverity.WARNING
-            }
+        val severity = when (it.level) {
+            Level.Error -> BspDiagnosticSeverity.Error
+            Level.Warning -> BspDiagnosticSeverity.Warning
         }
+        return BspDiagnostic(range, message = it.message, severity = severity)
     }
 
     private fun toAbsoluteUri(rawFileLocation: String): String {

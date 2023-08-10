@@ -1,9 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.cpp
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetDataKind
-import ch.epfl.scala.bsp4j.CppBuildTarget
-import ch.epfl.scala.bsp4j.CppOptionsItem
+import com.jetbrains.bsp.bsp4kt.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTargetDataKind
+import com.jetbrains.bsp.bsp4kt.CppBuildTarget
+import com.jetbrains.bsp.bsp4kt.CppOptionsItem
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
@@ -26,11 +28,14 @@ class CppLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : La
         }
     }
 
-    override fun applyModuleData(moduleData: CppModule, buildTarget: BuildTarget) {
+    override fun applyModuleData(buildTarget: BuildTarget, moduleData: CppModule): BuildTarget {
         // TODO retrieve real information about cpp compiler
         val cppBuildTarget = CppBuildTarget(null, "compiler", "/bin/gcc", "/bin/gcc")
-        buildTarget.data = cppBuildTarget
-        buildTarget.dataKind = BuildTargetDataKind.CPP
+        val data = Json.encodeToJsonElement(cppBuildTarget)
+        return buildTarget.copy(
+            data = data,
+            dataKind = BuildTargetDataKind.Cpp
+        )
 
     }
 

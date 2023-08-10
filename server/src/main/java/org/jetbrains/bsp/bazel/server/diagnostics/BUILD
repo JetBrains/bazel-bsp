@@ -7,6 +7,6 @@ kt_jvm_library(
     deps = [
         "//bazelrunner",
         "//commons",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_github_agluszak_bsp_generators",
     ],
 )

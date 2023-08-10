@@ -1,13 +1,15 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetDataKind
-import ch.epfl.scala.bsp4j.ScalaBuildTarget
-import ch.epfl.scala.bsp4j.ScalaMainClass
-import ch.epfl.scala.bsp4j.ScalaMainClassesItem
-import ch.epfl.scala.bsp4j.ScalaPlatform
-import ch.epfl.scala.bsp4j.ScalaTestClassesItem
-import ch.epfl.scala.bsp4j.ScalacOptionsItem
+import com.jetbrains.bsp.bsp4kt.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTargetDataKind
+import com.jetbrains.bsp.bsp4kt.ScalaBuildTarget
+import com.jetbrains.bsp.bsp4kt.ScalaMainClass
+import com.jetbrains.bsp.bsp4kt.ScalaMainClassesItem
+import com.jetbrains.bsp.bsp4kt.ScalaPlatform
+import com.jetbrains.bsp.bsp4kt.ScalaTestClassesItem
+import com.jetbrains.bsp.bsp4kt.ScalacOptionsItem
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
@@ -52,21 +54,23 @@ class ScalaLanguagePlugin(
     ): Set<URI> =
         javaLanguagePlugin.dependencySources(targetInfo, dependencyTree)
 
-    override fun applyModuleData(moduleData: ScalaModule, buildTarget: BuildTarget) {
+    override fun applyModuleData(buildTarget: BuildTarget, moduleData: ScalaModule): BuildTarget {
+        val jvmBuildTarget = moduleData.javaModule?.let(javaLanguagePlugin::toJvmBuildTarget)
         val scalaBuildTarget = with(moduleData.sdk) {
             ScalaBuildTarget(
                 organization,
                 version,
                 binaryVersion,
-                ScalaPlatform.JVM,
-                compilerJars.map { it.toString() }.toList()
+                ScalaPlatform.Jvm, // TODO: Change this when we support other platforms
+                compilerJars.map { it.toString() }.toList(),
+                jvmBuildTarget,
             )
         }
-        moduleData.javaModule?.let(javaLanguagePlugin::toJvmBuildTarget)?.let {
-            scalaBuildTarget.jvmBuildTarget = it
-        }
-        buildTarget.dataKind = BuildTargetDataKind.SCALA
-        buildTarget.data = scalaBuildTarget
+        val data = Json.encodeToJsonElement(scalaBuildTarget)
+        return buildTarget.copy(
+            dataKind = BuildTargetDataKind.Scala,
+            data = data
+        )
     }
 
     override fun calculateSourceRoot(source: Path): Path? {
@@ -91,7 +95,7 @@ class ScalaLanguagePlugin(
         else withScalaAndJavaModules(module) { _, javaModule: JavaModule ->
             val mainClasses: List<String> = listOfNotNull(javaModule.mainClass)
             val id = BspMappings.toBspId(module)
-            ScalaTestClassesItem(id, mainClasses)
+            ScalaTestClassesItem(id, null, mainClasses)
         }
 
     fun toScalaMainClassesItem(module: Module): ScalaMainClassesItem? =

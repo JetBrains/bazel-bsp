@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import com.jetbrains.jsonrpc4kt.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger

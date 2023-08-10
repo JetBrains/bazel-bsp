@@ -7,6 +7,7 @@ kt_test(
     deps = [
         "//logger",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "@maven//:com_github_agluszak_bsp_generators",
     ],
 )
 
@@ -16,5 +17,6 @@ kt_test(
     src = "JUnit5TestParserTest.kt",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "@maven//:com_github_agluszak_bsp_generators",
     ],
 )

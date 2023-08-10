@@ -1,9 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.python
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetDataKind
-import ch.epfl.scala.bsp4j.PythonBuildTarget
-import ch.epfl.scala.bsp4j.PythonOptionsItem
+import com.jetbrains.bsp.bsp4kt.BuildTarget
+import com.jetbrains.bsp.bsp4kt.BuildTargetDataKind
+import com.jetbrains.bsp.bsp4kt.PythonBuildTarget
+import com.jetbrains.bsp.bsp4kt.PythonOptionsItem
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -52,10 +54,11 @@ class PythonLanguagePlugin(
         interpreter?.takeUnless { it.relativePath.isNullOrEmpty() }
             ?.let { bazelPathsResolver.resolveUri(it) }
 
-    override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
-        buildTarget.dataKind = BuildTargetDataKind.PYTHON
+    override fun applyModuleData(buildTarget: BuildTarget, moduleData: PythonModule): BuildTarget {
         val interpreter = moduleData.interpreter?.toString()
-        buildTarget.data = PythonBuildTarget(moduleData.version, interpreter)
+        val pythonBuildTarget = PythonBuildTarget(moduleData.version, interpreter)
+        val data = Json.encodeToJsonElement(pythonBuildTarget)
+        return buildTarget.copy(dataKind = BuildTargetDataKind.Python, data = data)
     }
 
     fun toPythonOptionsItem(module: Module, pythonModule: PythonModule): PythonOptionsItem =

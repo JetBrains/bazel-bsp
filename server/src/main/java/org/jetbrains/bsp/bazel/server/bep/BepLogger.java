@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bep;
 
-import ch.epfl.scala.bsp4j.BuildClient;
+import com.jetbrains.bsp.bsp4kt.BuildClient;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import java.time.Duration;
 import java.util.Arrays;

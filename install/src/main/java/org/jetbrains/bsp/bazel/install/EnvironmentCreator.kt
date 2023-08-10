@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.install
 
-import ch.epfl.scala.bsp4j.BspConnectionDetails
+import com.jetbrains.bsp.bsp4kt.BspConnectionDetails
 import com.google.gson.GsonBuilder
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants

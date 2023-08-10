@@ -1,10 +1,10 @@
 package org.jetbrains.bsp.bazel.server.sync
 // TODO - rethink the location
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.TaskId
-import ch.epfl.scala.bsp4j.TestReport
-import ch.epfl.scala.bsp4j.TestStatus
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.TaskId
+import com.jetbrains.bsp.bsp4kt.TestReport
+import com.jetbrains.bsp.bsp4kt.TestStatus
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import java.util.*
@@ -116,14 +116,12 @@ class JUnit5TestParser(
   }
 
   private fun endTesting(testTarget: StartedBuildTarget, millis: Long) {
-    val report = TestReport(BuildTargetIdentifier(testTarget.uri), 0, 0, 0, 0, 0)
-    report.time = millis
+    val report = TestReport(null, BuildTargetIdentifier(testTarget.uri), 0, 0, 0, 0, 0, time = millis)
     bspClientTestNotifier.endTestTarget(report, testTarget.taskId)
   }
 
   private fun startSuite(startedSuites: Stack<TestOutputLine>, suite: TestOutputLine) {
-    val newTaskId = TaskId(testUUID())
-    newTaskId.parents = generateParentList(startedSuites)
+    val newTaskId = TaskId(testUUID(), parents = generateParentList(startedSuites))
     val updatedSuite = suite.copy(taskId = newTaskId)
     bspClientTestNotifier.startTest(true, updatedSuite.name, newTaskId)
     startedSuites.push(updatedSuite)
@@ -133,19 +131,18 @@ class JUnit5TestParser(
     val finishingSuite = startedSuites.pop()
     bspClientTestNotifier.finishTestSuite(
       finishingSuite!!.name,
-      finishingSuite.taskId
+      finishingSuite.taskId!!
     )
   }
 
   private fun startAndFinishTest(startedSuites: Stack<TestOutputLine>, test: TestOutputLine) {
-    val newTaskId = TaskId(testUUID())
-    newTaskId.parents = generateParentList(startedSuites)
+    val newTaskId = TaskId(testUUID(), parents = generateParentList(startedSuites))
     bspClientTestNotifier.startTest(false, test.name, newTaskId)
     bspClientTestNotifier.finishTest(
       false,
       test.name,
       newTaskId,
-      if (test.passed) TestStatus.PASSED else TestStatus.FAILED,
+      if (test.passed) TestStatus.Passed else TestStatus.Failed,
       test.message
     )
   }

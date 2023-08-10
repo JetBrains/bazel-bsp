@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
