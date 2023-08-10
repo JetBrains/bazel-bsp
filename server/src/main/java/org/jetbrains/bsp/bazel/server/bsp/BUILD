@@ -16,5 +16,6 @@ kt_jvm_library(
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@maven//:com_github_agluszak_jsonrpc4kt",
+        "//:kotlin_serialization",
     ],
 )

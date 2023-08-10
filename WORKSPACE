@@ -180,6 +180,7 @@ maven_install(
         "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
         "com.github.agluszak:jsonrpc4kt:c5fd56ad5d",
         "com.github.agluszak:bsp-generators:a2e3304a2e",
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1",
         "commons-cli:commons-cli:jar:1.5.0",
         # TODO: we need to remove it
         "io.vavr:vavr:0.10.4",

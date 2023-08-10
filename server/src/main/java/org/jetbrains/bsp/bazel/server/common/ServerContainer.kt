@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.common
 
+import com.jetbrains.jsonrpc4kt.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
@@ -50,7 +51,10 @@ class ServerContainer internal constructor(
                     bazelRunner,
                     bazelInfoStorage
                 )
-            val bazelInfo = bazelDataResolver.resolveBazelInfo(TODO("No idea how this worked before"))
+            val bazelInfo = bazelDataResolver.resolveBazelInfo(object : CancelChecker {
+              override fun checkCanceled() {
+              }
+            })
 
             val aspectsResolver = InternalAspectsResolver(bspInfo)
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)

@@ -26,5 +26,7 @@ kt_jvm_library(
         "@maven//:com_github_agluszak_jsonrpc4kt",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
         "@maven//:io_grpc_grpc_stub",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json",
+        "//:kotlin_serialization",
     ],
 )

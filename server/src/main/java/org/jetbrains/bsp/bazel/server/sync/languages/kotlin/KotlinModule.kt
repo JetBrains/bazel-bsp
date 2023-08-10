@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.kotlin
 
 import com.jetbrains.bsp.bsp4kt.BuildTargetIdentifier
+import kotlinx.serialization.Serializable
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 
@@ -12,6 +13,7 @@ data class KotlinModule(
     val javaModule: JavaModule?
 ) : LanguageData
 
+@Serializable
 data class KotlincOpts(
     val includeStdlibs: String,
     val javaParameters: Boolean,

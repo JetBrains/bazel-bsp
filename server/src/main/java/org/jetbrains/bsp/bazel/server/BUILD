@@ -26,5 +26,6 @@ kt_jvm_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "@maven//:com_github_agluszak_bsp_generators",
         "@maven//:com_github_agluszak_jsonrpc4kt",
+        "//:kotlin_serialization",
     ],
 )

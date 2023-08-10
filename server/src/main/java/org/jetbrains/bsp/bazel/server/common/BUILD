@@ -13,5 +13,6 @@ kt_jvm_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/managers",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "@maven//:com_github_agluszak_jsonrpc4kt",
     ],
 )
