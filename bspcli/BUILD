@@ -23,7 +23,7 @@ kt_jvm_binary(
         "//executioncontext/workspacecontext",
         "//install/src/main/java/org/jetbrains/bsp/bazel/install",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
 

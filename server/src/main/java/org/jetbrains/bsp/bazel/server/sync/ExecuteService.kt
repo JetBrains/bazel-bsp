@@ -125,11 +125,11 @@ class ExecuteService(
     }
 
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
-        val bazelResult = withBepServer { server ->
+        withBepServer { server ->
             bazelRunner.commandBuilder().clean()
                 .executeBazelBesCommand(bazelBesPort = server.port).waitAndGetResult(cancelChecker)
         }
-        return CleanCacheResult(bazelResult.stdout, true)
+        return CleanCacheResult(true)
     }
 
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String?): BazelProcessResult {

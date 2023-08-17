@@ -16,7 +16,7 @@ java_library(
         "@googleapis//:google_devtools_build_v1_publish_build_event_proto",
         "@io_bazel//src/main/java/com/google/devtools/build/lib/buildeventstream/proto:build_event_stream_java_proto",
         "@io_bazel//third_party/grpc:grpc-jar_checked_in",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:io_grpc_grpc_netty",

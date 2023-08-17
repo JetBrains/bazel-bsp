@@ -189,11 +189,6 @@ public class BspServerApi
   }
 
   @Override
-  public void onConnectWithClient(BuildClient buildClient) {
-    BuildServer.super.onConnectWithClient(buildClient);
-  }
-
-  @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams params) {
     return runner.handleRequest(
@@ -235,13 +230,13 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<JvmRunEnvironmentResult> jvmRunEnvironment(
+  public CompletableFuture<JvmRunEnvironmentResult> buildTargetJvmRunEnvironment(
       JvmRunEnvironmentParams params) {
     return runner.handleRequest("jvmRunEnvironment", projectSyncService::jvmRunEnvironment, params);
   }
 
   @Override
-  public CompletableFuture<JvmTestEnvironmentResult> jvmTestEnvironment(
+  public CompletableFuture<JvmTestEnvironmentResult> buildTargetJvmTestEnvironment(
       JvmTestEnvironmentParams params) {
     return runner.handleRequest(
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);

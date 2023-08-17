@@ -106,7 +106,10 @@ class JavaLanguagePlugin(
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
         val jdk = javaModule.jdk
         val javaHome = jdk.javaHome?.toString()
-        return JvmBuildTarget(javaHome, jdk.version)
+        return JvmBuildTarget().also {
+            it.javaVersion = jdk.version
+            it.javaHome = javaHome
+        }
     }
 
     fun toJvmEnvironmentItem(module: Module, javaModule: JavaModule): JvmEnvironmentItem =

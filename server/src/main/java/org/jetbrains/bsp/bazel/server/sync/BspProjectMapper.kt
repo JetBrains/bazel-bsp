@@ -120,7 +120,7 @@ class BspProjectMapper(
         val canCompile = !module.tags.contains(Tag.NO_BUILD) && isBuildableIfManual(module)
         val canTest = module.tags.contains(Tag.TEST) && !module.tags.contains(Tag.MANUAL)
         val canRun = module.tags.contains(Tag.APPLICATION) && !module.tags.contains(Tag.MANUAL)
-        return BuildTargetCapabilities(canCompile, canTest, canRun)
+        return BuildTargetCapabilities().also { it.canCompile = canCompile; it.canTest = canTest; it.canRun = canRun; it.canDebug = false }
     }
 
     private fun isBuildableIfManual(module: Module): Boolean =

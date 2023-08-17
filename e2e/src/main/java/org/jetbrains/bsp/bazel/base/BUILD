@@ -6,7 +6,7 @@ kt_jvm_library(
     resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
     visibility = ["//e2e:__subpackages__"],
     deps = [
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@testkit//:bazel-testkit-client",

@@ -5,7 +5,7 @@ java_library(
     srcs = glob(["*.java"]),
     visibility = ["//commons:__subpackages__"],
     deps = [
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
         "@maven//:com_google_guava_guava",
         "@maven//:io_vavr_vavr",
     ],

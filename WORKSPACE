@@ -155,14 +155,11 @@ sonatype_dependencies()
 
 # ======================================================================================================================
 # the new testkit
-# todo: merge into the bsp repo?
 
 git_repository(
     name = "testkit",
-    commit = "9743061ce45653bdc46e9a67303a76c1d4455bbb",
-    patch_args = ["-p1"],
-    patches = ["//e2e:testkit.patch"],
-    remote = "https://github.com/agluszak/bsp-testkit2.git",
+    commit = "79298920c6b5d9150ae284293b88aef468e203f4",
+    remote = "https://github.com/build-server-protocol/bsp-testkit2.git",
 )
 
 # ======================================================================================================================
@@ -176,8 +173,7 @@ maven_install(
     artifacts = [
         "com.google.code.gson:gson:2.10.1",
         "com.google.guava:guava:31.0.1-jre",
-        "ch.epfl.scala:bsp4j:2.1.0-M5",
-        "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
+        "ch.epfl.scala:bsp4j_2.13:2.1.0-M6.alpha",
         "commons-cli:commons-cli:jar:1.5.0",
         # TODO: we need to remove it
         "io.vavr:vavr:0.10.4",

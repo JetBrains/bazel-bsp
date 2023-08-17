@@ -21,17 +21,22 @@ object BazelBspLocalJdkTest : BazelBspTestBaseScenario() {
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
-        val exampleExampleJvmBuildTarget = JvmBuildTarget(
-            "file://\$BAZEL_CACHE/external/local_jdk/",
-            "17"
-        )
+        val exampleExampleJvmBuildTarget = JvmBuildTarget().also {
+            it.javaHome = "file://\$BAZEL_CACHE/external/local_jdk/"
+            it.javaVersion = "17"
+        }
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//example:example"),
             listOf("application"),
             listOf("java"),
             emptyList(),
-            BuildTargetCapabilities(true, false, true, false)
+            BuildTargetCapabilities().also {
+                it.canCompile = true
+                it.canTest = false
+                it.canRun = true
+                it.canDebug = false
+            }
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"

@@ -55,7 +55,10 @@ class PythonLanguagePlugin(
     override fun applyModuleData(moduleData: PythonModule, buildTarget: BuildTarget) {
         buildTarget.dataKind = BuildTargetDataKind.PYTHON
         val interpreter = moduleData.interpreter?.toString()
-        buildTarget.data = PythonBuildTarget(moduleData.version, interpreter)
+        buildTarget.data = PythonBuildTarget().also {
+            it.version = moduleData.version
+            it.interpreter = interpreter
+        }
     }
 
     fun toPythonOptionsItem(module: Module, pythonModule: PythonModule): PythonOptionsItem =

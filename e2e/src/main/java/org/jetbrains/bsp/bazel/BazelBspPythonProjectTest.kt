@@ -41,16 +41,16 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
                 listOf(),
                 listOf(),
                 listOf(),
-                BuildTargetCapabilities(false, false, false, false)
+               BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
             )
         bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
 
         val examplePythonBuildTarget =
-            PythonBuildTarget(
-                "PY3",
-                "file://\$BAZEL_CACHE/external/python3_9_x86_64-unknown-linux-gnu/bin/python3",
-            )
+            PythonBuildTarget().also {
+                it.version = "PY3"
+                it.interpreter = "file://\$BAZEL_CACHE/external/python3_9_x86_64-unknown-linux-gnu/bin/python3"
+            }
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//example:example"),
@@ -60,7 +60,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
                 BuildTargetIdentifier("$targetPrefix//lib:example_library"),
                 BuildTargetIdentifier("@requests//:srcs")
             ),
-            BuildTargetCapabilities(true, false, true, false)
+            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
@@ -72,7 +72,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             listOf("library"),
             listOf("python"),
             listOf(BuildTargetIdentifier("@pip_deps_numpy//:pkg")),
-            BuildTargetCapabilities(true, false, false, false)
+           BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
         )
         exampleExampleLibBuildTarget.displayName = "$targetPrefix//lib:example_library"
         exampleExampleLibBuildTarget.baseDirectory = "file://\$WORKSPACE/lib/"
@@ -84,7 +84,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             listOf("test"),
             listOf("python"),
             listOf(),
-            BuildTargetCapabilities(true, true, false, false)
+           BuildTargetCapabilities().also { it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = false }
         )
         exampleExampleTestBuildTarget.displayName = "$targetPrefix//test:test"
         exampleExampleTestBuildTarget.baseDirectory = "file://\$WORKSPACE/test/"

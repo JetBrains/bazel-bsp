@@ -9,7 +9,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
 
@@ -22,7 +22,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
 
@@ -35,7 +35,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
 
@@ -48,7 +48,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
 
@@ -61,6 +61,6 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
