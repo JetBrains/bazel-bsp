@@ -51,7 +51,11 @@ fun parseArgs(args: Array<String>): Args {
  */
 fun main(args0: Array<String>) {
     val args = parseArgs(args0)
-    val installationDirectory = Files.createTempDirectory("bazelbsp-dir-")
+    val attrs = PosixFilePermissions.asFileAttribute(
+            setOf(PosixFilePermission.OWNER_WRITE,
+                    PosixFilePermission.OWNER_READ,
+                    PosixFilePermission.OWNER_EXECUTE))
+    val installationDirectory = Files.createTempDirectory("bazelbsp-dir-", attrs)
     Install.main(arrayOf(
             "--bazel-workspace", args.workspace.toString(),
             "--directory", installationDirectory.toString(),
