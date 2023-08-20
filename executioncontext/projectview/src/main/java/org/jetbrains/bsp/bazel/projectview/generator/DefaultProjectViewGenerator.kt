@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.projectview.generator
 
-import io.vavr.control.Try
+import org.jetbrains.bsp.bazel.commons.of
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBazelBinarySectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFlagsSectionGenerator
@@ -12,8 +12,8 @@ import java.nio.file.Path
 
 object DefaultProjectViewGenerator : ProjectViewGenerator {
 
-    override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> =
-        Try.run {
+    override fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Result<Unit> =
+        Result.of {
             Files.createDirectories(filePath.parent)
             Files.writeString(filePath, generatePrettyString(projectView))
         }

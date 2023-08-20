@@ -11,20 +11,20 @@ import kotlin.io.path.Path
 class DotBazelBspDirPathSpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<DotBazelBspDirPathSpec> tests")
+    @DisplayName("fun map(projectView): Result<DotBazelBspDirPathSpec> tests")
     inner class MapTest {
 
         @Test
         fun `should return success with deducted dir path skipping project view`() {
             // given
-            val projectView = ProjectView.Builder().build().get()
+            val projectView = ProjectView.Builder().build().getOrThrow()
 
             // when
             val dotBazelBspDirPathSpecTry = DotBazelBspDirPathSpecMapper.map(projectView)
 
             // then
             dotBazelBspDirPathSpecTry.isSuccess shouldBe true
-            val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.get()
+            val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.getOrThrow()
 
             val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec
@@ -32,7 +32,7 @@ class DotBazelBspDirPathSpecMapperTest {
     }
 
     @Nested
-    @DisplayName("fun default(): Try<DotBazelBspDirPathSpec> tests")
+    @DisplayName("fun default(): Result<DotBazelBspDirPathSpec> tests")
     inner class DefaultTest {
 
         @Test
@@ -43,7 +43,7 @@ class DotBazelBspDirPathSpecMapperTest {
 
             // then
             dotBazelBspDirPathSpecTry.isSuccess shouldBe true
-            val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.get()
+            val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.getOrThrow()
 
             val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
             dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec

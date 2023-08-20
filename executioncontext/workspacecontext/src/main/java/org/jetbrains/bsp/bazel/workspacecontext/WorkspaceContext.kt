@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.commons.flatMap
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextConstructor
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -62,7 +62,7 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
 
     private val log = LogManager.getLogger(WorkspaceContextConstructor::class.java)
 
-    override fun construct(projectView: ProjectView): Try<WorkspaceContext> {
+    override fun construct(projectView: ProjectView): Result<WorkspaceContext> {
         log.info("Constructing workspace context for: {}.", projectView)
 
         // maybe TRY is not that good xd
@@ -89,7 +89,7 @@ object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContex
     }
 
 
-    override fun constructDefault(): Try<WorkspaceContext> =
+    override fun constructDefault(): Result<WorkspaceContext> =
         TargetsSpecMapper.default().flatMap { targetsSpec ->
             BuildFlagsSpecMapper.default().flatMap { buildFlagsSpec ->
                 BazelBinarySpecMapper.default().flatMap { bazelBinarySpec ->

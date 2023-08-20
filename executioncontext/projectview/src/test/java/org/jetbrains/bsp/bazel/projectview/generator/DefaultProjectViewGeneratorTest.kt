@@ -418,7 +418,7 @@ class DefaultProjectViewGeneratorTest {
     }
 
     @Nested
-    @DisplayName("fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> tests")
+    @DisplayName("fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Result<Unit> tests")
     inner class GeneratePrettyStringAndSaveInFileTest {
 
         private lateinit var tempRoot: Path
@@ -628,7 +628,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
             )
-            parsedProjectViewTry.get() shouldBe expectedProjectView
+            parsedProjectViewTry.getOrNull() shouldBe expectedProjectView
         }
 
         @Test
@@ -668,7 +668,7 @@ class DefaultProjectViewGeneratorTest {
             result.isSuccess shouldBe true
             parsedProjectViewTry.isSuccess shouldBe true
 
-            parsedProjectViewTry.get() shouldBe projectView
+            parsedProjectViewTry.getOrNull() shouldBe projectView
         }
 
         @Test
@@ -722,7 +722,7 @@ class DefaultProjectViewGeneratorTest {
             result.isSuccess shouldBe true
             parsedProjectViewTry.isSuccess shouldBe true
 
-            parsedProjectViewTry.get() shouldBe projectView
+            parsedProjectViewTry.getOrNull() shouldBe projectView
         }
     }
 }

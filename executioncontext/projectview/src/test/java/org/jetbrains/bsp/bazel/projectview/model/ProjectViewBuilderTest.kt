@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.projectview.model
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
@@ -28,12 +27,12 @@ class ProjectViewBuilderTest {
             val importedProjectViewTry1 = ProjectView.Builder().build()
 
             val importedProjectViewTry2 =
-                Try.failure<ProjectView>(IOException("doesnt/exist/projectview2.bazelproject file does not exist!"))
+                Result.failure<ProjectView>(IOException("doesnt/exist/projectview2.bazelproject file does not exist!"))
 
             val importedProjectViewTry3 = ProjectView.Builder(imports = emptyList()).build()
 
             val importedProjectViewTry4 =
-                Try.failure<ProjectView>(IOException("doesnt/exist/projectview4.bazelproject file does not exist!"))
+                Result.failure<ProjectView>(IOException("doesnt/exist/projectview4.bazelproject file does not exist!"))
 
             // when
             val projectViewTry =
@@ -49,8 +48,8 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe IOException::class
-            projectViewTry.cause.message shouldBe "doesnt/exist/projectview2.bazelproject file does not exist!"
+            projectViewTry.exceptionOrNull()!!::class shouldBe IOException::class
+            projectViewTry.exceptionOrNull()!!.message shouldBe "doesnt/exist/projectview2.bazelproject file does not exist!"
         }
 
         @Test
@@ -60,7 +59,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = null,
@@ -110,7 +109,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -176,7 +175,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -234,7 +233,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -319,7 +318,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -477,7 +476,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -650,7 +649,7 @@ class ProjectViewBuilderTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrThrow()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(

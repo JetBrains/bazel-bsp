@@ -1,11 +1,11 @@
 package org.jetbrains.bsp.bazel.install.cli
 
-import io.vavr.control.Try
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import org.jetbrains.bsp.bazel.commons.of
 import java.lang.System
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -170,9 +170,9 @@ class CliOptionsProvider(private val args: Array<String>) {
         cliParserOptions.addOption(produceTraceLogOption)
     }
 
-    fun getOptions(): Try<CliOptions> {
+    fun getOptions(): Result<CliOptions> {
         val parser = DefaultParser()
-        return Try.of { parser.parse(cliParserOptions, args, false) }
+        return Result.of { parser.parse(cliParserOptions, args, false) }
             .map(::createCliOptions)
     }
 

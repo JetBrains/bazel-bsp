@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -12,13 +11,13 @@ data class ImportDepthSpec(
 
 internal object ImportDepthSpecMapper : ProjectViewToExecutionContextEntityMapper<ImportDepthSpec> {
 
-    override fun map(projectView: ProjectView): Try<ImportDepthSpec> =
+    override fun map(projectView: ProjectView): Result<ImportDepthSpec> =
         when (projectView.importDepth) {
             null -> default()
-            else -> Try.success(map(projectView.importDepth!!))
+            else -> Result.success(map(projectView.importDepth!!))
         }
 
-    override fun default(): Try<ImportDepthSpec> = Try.success(ImportDepthSpec(0))
+    override fun default(): Result<ImportDepthSpec> = Result.success(ImportDepthSpec(0))
 
     private fun map(importDepthSection: ProjectViewImportDepthSection): ImportDepthSpec =
         ImportDepthSpec(importDepthSection.value)

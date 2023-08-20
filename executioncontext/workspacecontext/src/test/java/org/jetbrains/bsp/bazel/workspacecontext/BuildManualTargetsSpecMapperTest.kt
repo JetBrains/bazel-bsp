@@ -10,20 +10,20 @@ import org.junit.jupiter.api.Test
 class BuildManualTargetsSpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<BuildManualTargetsSpec> tests")
+    @DisplayName("fun map(projectView): Result<BuildManualTargetsSpec> tests")
     inner class MapTest {
 
         @Test
         fun `should return success with default spec if build manual targets is null`() {
             // given
-            val projectView = ProjectView.Builder(buildManualTargets = null).build().get()
+            val projectView = ProjectView.Builder(buildManualTargets = null).build().getOrThrow()
 
             // when
             val buildManualTargetsSpecTry = BuildManualTargetsSpecMapper.map(projectView)
 
             // then
             buildManualTargetsSpecTry.isSuccess shouldBe true
-            val buildManualTargetsSpec = buildManualTargetsSpecTry.get()
+            val buildManualTargetsSpec = buildManualTargetsSpecTry.getOrThrow()
 
             val expectedBuildManualTargetsSpec = BuildManualTargetsSpec(false)
             buildManualTargetsSpec shouldBe expectedBuildManualTargetsSpec
@@ -37,14 +37,14 @@ class BuildManualTargetsSpecMapperTest {
                             buildManualTargets = ProjectViewBuildManualTargetsSection(
                                     true
                             )
-                    ).build().get()
+                    ).build().getOrThrow()
 
             // when
             val buildManualTargetsSpecTry = BuildManualTargetsSpecMapper.map(projectView)
 
             // then
             buildManualTargetsSpecTry.isSuccess shouldBe true
-            val buildManualTargetsSpec = buildManualTargetsSpecTry.get()
+            val buildManualTargetsSpec = buildManualTargetsSpecTry.getOrThrow()
 
             val expectedBuildManualTargetsSpec = BuildManualTargetsSpec(
                     true
@@ -54,7 +54,7 @@ class BuildManualTargetsSpecMapperTest {
     }
 
     @Nested
-    @DisplayName("fun default(): Try<BuildManualTargetsSpec> tests")
+    @DisplayName("fun default(): Result<BuildManualTargetsSpec> tests")
     inner class DefaultTest {
 
         @Test
@@ -65,7 +65,7 @@ class BuildManualTargetsSpecMapperTest {
 
             // then
             buildManualTargetsTry.isSuccess shouldBe true
-            val buildManualTargetsSpec = buildManualTargetsTry.get()
+            val buildManualTargetsSpec = buildManualTargetsTry.getOrThrow()
 
             val expectedBuildFlagsSpec = BuildManualTargetsSpec(false)
             buildManualTargetsSpec shouldBe expectedBuildFlagsSpec

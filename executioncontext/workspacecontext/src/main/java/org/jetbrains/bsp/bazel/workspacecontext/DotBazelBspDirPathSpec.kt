@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -13,9 +12,9 @@ data class DotBazelBspDirPathSpec(
 
 internal object DotBazelBspDirPathSpecMapper : ProjectViewToExecutionContextEntityMapper<DotBazelBspDirPathSpec> {
 
-    override fun map(projectView: ProjectView): Try<DotBazelBspDirPathSpec> = default()
+    override fun map(projectView: ProjectView): Result<DotBazelBspDirPathSpec> = default()
 
-    override fun default(): Try<DotBazelBspDirPathSpec> = Try.success(calculatePathToDorBazelBspDirAndMap())
+    override fun default(): Result<DotBazelBspDirPathSpec> = Result.success(calculatePathToDorBazelBspDirAndMap())
 
     private fun calculatePathToDorBazelBspDirAndMap(): DotBazelBspDirPathSpec =
         DotBazelBspDirPathSpec(

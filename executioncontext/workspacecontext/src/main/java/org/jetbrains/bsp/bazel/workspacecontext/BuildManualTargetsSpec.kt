@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -14,12 +13,12 @@ private val defaultBuildManualTargetsSpec = BuildManualTargetsSpec(
 
 internal object BuildManualTargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<BuildManualTargetsSpec> {
 
-    override fun map(projectView: ProjectView): Try<BuildManualTargetsSpec> =
+    override fun map(projectView: ProjectView): Result<BuildManualTargetsSpec> =
         if (projectView.buildManualTargets == null) default()
-        else Try.success(map(projectView.buildManualTargets!!))
+        else Result.success(map(projectView.buildManualTargets!!))
 
     private fun map(buildManualTargetsSection: ProjectViewBuildManualTargetsSection): BuildManualTargetsSpec =
             BuildManualTargetsSpec(buildManualTargetsSection.value)
 
-    override fun default(): Try<BuildManualTargetsSpec> = Try.success(defaultBuildManualTargetsSpec)
+    override fun default(): Result<BuildManualTargetsSpec> = Result.success(defaultBuildManualTargetsSpec)
 }

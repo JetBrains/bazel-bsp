@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.projectview.parser
 
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.commons.flatMap
+import org.jetbrains.bsp.bazel.commons.of
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelBinarySectionParser
@@ -26,17 +27,17 @@ open class DefaultProjectViewParser : ProjectViewParser {
 
     private val log = LogManager.getLogger(DefaultProjectViewParser::class.java)
 
-    override fun parse(projectViewFilePath: Path): Try<ProjectView> {
+    override fun parse(projectViewFilePath: Path): Result<ProjectView> {
         log.info("Parsing project view from {}.", projectViewFilePath)
 
-        return Try.of { Files.readString(projectViewFilePath) }
+        return Result.of { Files.readString(projectViewFilePath) }
             .onFailure { log.error("Failed to read file {}. Parsing failed!", projectViewFilePath, it) }
             .flatMap(this::parse)
             .onSuccess { log.info("Project view from {} parsed!\n{}", projectViewFilePath, it) }
             .onFailure { log.error("Failed to parse file {}. Parsing failed!", projectViewFilePath, it) }
     }
 
-    override fun parse(projectViewFileContent: String): Try<ProjectView> {
+    override fun parse(projectViewFileContent: String): Result<ProjectView> {
         log.debug("Parsing project view for the content:\n'{}'.", projectViewFileContent)
 
         val rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent)
@@ -53,7 +54,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
         ).build()
     }
 
-    private fun findImportedProjectViews(rawSections: ProjectViewRawSections): List<Try<ProjectView>> =
+    private fun findImportedProjectViews(rawSections: ProjectViewRawSections): List<Result<ProjectView>> =
         rawSections
             .getAllWithName(IMPORT_STATEMENT)
             .asSequence()

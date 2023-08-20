@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.parser
 
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
-import io.vavr.control.Try
+import org.jetbrains.bsp.bazel.commons.flatMap
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -12,8 +12,8 @@ import kotlin.io.path.createTempFile
 
 object ProjectViewParserTestMock : DefaultProjectViewParser() {
 
-    override fun parse(projectViewFilePath: Path): Try<ProjectView> =
-        Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
+    override fun parse(projectViewFilePath: Path): Result<ProjectView> =
+        Result.success(copyResourcesFileToTmpFile(projectViewFilePath))
             .flatMap { super.parse(it) }
 
     private fun copyResourcesFileToTmpFile(resourcesFile: Path): Path {

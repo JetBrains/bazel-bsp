@@ -10,20 +10,20 @@ import org.junit.jupiter.api.Test
 class BuildFlagsSpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<BuildFlagsSpec> tests")
+    @DisplayName("fun map(projectView): Result<BuildFlagsSpec> tests")
     inner class MapTest {
 
         @Test
         fun `should return success with default spec if build flags are null`() {
             // given
-            val projectView = ProjectView.Builder(buildFlags = null).build().get()
+            val projectView = ProjectView.Builder(buildFlags = null).build().getOrThrow()
 
             // when
             val buildFlagsSpecTry = BuildFlagsSpecMapper.map(projectView)
 
             // then
             buildFlagsSpecTry.isSuccess shouldBe true
-            val buildFlagsSpec = buildFlagsSpecTry.get()
+            val buildFlagsSpec = buildFlagsSpecTry.getOrThrow()
 
             val expectedBuildFlagsSpec = BuildFlagsSpec(emptyList())
             buildFlagsSpec shouldBe expectedBuildFlagsSpec
@@ -41,14 +41,14 @@ class BuildFlagsSpecMapperTest {
                             "--build_flag3=value3",
                         ),
                     )
-                ).build().get()
+                ).build().getOrThrow()
 
             // when
             val buildFlagsSpecTry = BuildFlagsSpecMapper.map(projectView)
 
             // then
             buildFlagsSpecTry.isSuccess shouldBe true
-            val buildFlagsSpec = buildFlagsSpecTry.get()
+            val buildFlagsSpec = buildFlagsSpecTry.getOrThrow()
 
             val expectedBuildFlagsSpec = BuildFlagsSpec(
                 listOf(
@@ -62,7 +62,7 @@ class BuildFlagsSpecMapperTest {
     }
 
     @Nested
-    @DisplayName("fun default(): Try<BuildFlagsSpec> tests")
+    @DisplayName("fun default(): Result<BuildFlagsSpec> tests")
     inner class DefaultTest {
 
         @Test
@@ -73,7 +73,7 @@ class BuildFlagsSpecMapperTest {
 
             // then
             buildFlagsSpecTry.isSuccess shouldBe true
-            val buildFlagsSpec = buildFlagsSpecTry.get()
+            val buildFlagsSpec = buildFlagsSpecTry.getOrThrow()
 
             val expectedBuildFlagsSpec = BuildFlagsSpec(emptyList())
             buildFlagsSpec shouldBe expectedBuildFlagsSpec

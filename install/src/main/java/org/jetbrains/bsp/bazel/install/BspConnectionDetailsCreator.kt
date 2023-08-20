@@ -1,14 +1,13 @@
 package org.jetbrains.bsp.bazel.install
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.installationcontext.InstallationContext
 
 class BspConnectionDetailsCreator(installationContext: InstallationContext, private val produceTraceLog: Boolean) {
     private val launcherArgumentCreator = LauncherArgumentCreator(installationContext)
 
-    fun create(): Try<BspConnectionDetails> =
+    fun create(): Result<BspConnectionDetails> =
         calculateArgv()
             .map {
                 BspConnectionDetails(
@@ -20,7 +19,7 @@ class BspConnectionDetailsCreator(installationContext: InstallationContext, priv
                 )
             }
 
-    private fun calculateArgv(): Try<List<String>> =
+    private fun calculateArgv(): Result<List<String>> =
         launcherArgumentCreator.classpathArgv().map {
             listOfNotNull(
                 launcherArgumentCreator.javaBinaryArgv(),

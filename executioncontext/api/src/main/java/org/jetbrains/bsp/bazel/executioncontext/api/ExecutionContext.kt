@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.executioncontext.api
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.commons.flatMap
 
 /**
  * `ExecutionContext` base class - you need to extend it if you want to create your
@@ -23,10 +23,10 @@ abstract class ExecutionContext
  */
 interface ExecutionContextConstructor<T : ExecutionContext> {
 
-    fun construct(projectViewTry: Try<ProjectView>): Try<T> =
+    fun construct(projectViewTry: Result<ProjectView>): Result<T> =
         projectViewTry.flatMap(::construct)
 
-    fun construct(projectView: ProjectView): Try<T>
+    fun construct(projectView: ProjectView): Result<T>
 
-    fun constructDefault(): Try<T>
+    fun constructDefault(): Result<T>
 }

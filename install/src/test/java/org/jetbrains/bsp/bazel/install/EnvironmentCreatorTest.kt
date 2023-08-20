@@ -15,7 +15,7 @@ import kotlin.io.path.isDirectory
 class EnvironmentCreatorTest {
 
     class MockEnvironmentCreator(projectRootDir: Path) : EnvironmentCreator(projectRootDir) {
-        override fun create(): io.vavr.control.Try<Void> = io.vavr.control.Try.run { }
+        override fun create(): Result<Unit> = Result.success(Unit)
 
         fun testCreateDotBazelBsp() = createDotBazelBsp()
     }
@@ -39,7 +39,7 @@ class EnvironmentCreatorTest {
 
             // then
             result.isSuccess shouldBe true
-            val dotBazelBsp = result.get()
+            val dotBazelBsp = result.getOrThrow()
             dotBazelBsp shouldNotBe null
             dotBazelBsp.resolve("aspects/core.bzl").exists() shouldBeEqual true
             dotBazelBsp.resolve("aspects/rules").isDirectory() shouldBeEqual true

@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextExcludableListEntity
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
@@ -25,34 +24,34 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
 
     private const val NAME = "targets"
 
-    override fun map(projectView: ProjectView): Try<TargetsSpec> =
+    override fun map(projectView: ProjectView): Result<TargetsSpec> =
         if (projectView.deriveTargetsFromDirectories?.value == true)
             deriveTargetsFromDirectoriesSectionTrue(projectView)
         else
             deriveTargetsFromDirectoriesSectionFalse(projectView)
 
-    private fun deriveTargetsFromDirectoriesSectionTrue(projectView: ProjectView): Try<TargetsSpec> =
+    private fun deriveTargetsFromDirectoriesSectionTrue(projectView: ProjectView): Result<TargetsSpec> =
         when {
             projectView.directories == null -> deriveTargetsFromDirectoriesSectionFalse(projectView)
             hasEmptyIncludedValuesAndEmptyExcludedValuesDirectories(projectView.directories!!) -> deriveTargetsFromDirectoriesSectionFalse(projectView)
-            hasEmptyIncludedValuesAndNonEmptyExcludedValuesDirectories(projectView.directories!!) -> Try.failure(
+            hasEmptyIncludedValuesAndNonEmptyExcludedValuesDirectories(projectView.directories!!) -> Result.failure(
                 ProjectViewToExecutionContextEntityMapperException(
                     NAME, "'directories' section has no included targets."
                 )
             )
-            else -> Try.success(mapNotEmptyDerivedTargetSection(projectView.targets, projectView.directories!!))
+            else -> Result.success(mapNotEmptyDerivedTargetSection(projectView.targets, projectView.directories!!))
         }
 
-    private fun deriveTargetsFromDirectoriesSectionFalse(projectView: ProjectView): Try<TargetsSpec> =
+    private fun deriveTargetsFromDirectoriesSectionFalse(projectView: ProjectView): Result<TargetsSpec> =
         when {
-            projectView.targets == null -> Try.success(defaultTargetsSpec)
-            hasEmptyIncludedValuesAndEmptyExcludedValues(projectView.targets!!) -> Try.success(defaultTargetsSpec)
-            hasEmptyIncludedValuesAndNonEmptyExcludedValues(projectView.targets!!) -> Try.failure(
+            projectView.targets == null -> Result.success(defaultTargetsSpec)
+            hasEmptyIncludedValuesAndEmptyExcludedValues(projectView.targets!!) -> Result.success(defaultTargetsSpec)
+            hasEmptyIncludedValuesAndNonEmptyExcludedValues(projectView.targets!!) -> Result.failure(
                     ProjectViewToExecutionContextEntityMapperException(
                             NAME, "'targets' section has no included targets."
                     )
             )
-            else -> Try.success(mapNotEmptyNotDerivedTargetsSection(projectView.targets!!))
+            else -> Result.success(mapNotEmptyNotDerivedTargetsSection(projectView.targets!!))
         }
 
     private fun hasEmptyIncludedValuesAndEmptyExcludedValues(targetsSection: ProjectViewTargetsSection): Boolean =
@@ -84,5 +83,5 @@ internal object TargetsSpecMapper : ProjectViewToExecutionContextEntityMapper<Ta
             BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "/...")
 
 
-    override fun default(): Try<TargetsSpec> = Try.success(defaultTargetsSpec)
+    override fun default(): Result<TargetsSpec> = Result.success(defaultTargetsSpec)
 }

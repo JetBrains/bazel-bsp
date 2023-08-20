@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
@@ -12,7 +11,7 @@ abstract class ProjectViewSectionParser<T : ProjectViewSection> {
 
     abstract fun parse(rawSections: ProjectViewRawSections): T?
 
-    fun parse(rawSection: ProjectViewRawSection): Try<T?> =
+    fun parse(rawSection: ProjectViewRawSection): Result<T?> =
         getSectionBodyOrFailureIfNameIsWrong(rawSection)
             .onFailure {
                 log.error(
@@ -22,13 +21,13 @@ abstract class ProjectViewSectionParser<T : ProjectViewSection> {
             }
             .map { parse(it) }
 
-    private fun getSectionBodyOrFailureIfNameIsWrong(rawSection: ProjectViewRawSection): Try<String> {
+    private fun getSectionBodyOrFailureIfNameIsWrong(rawSection: ProjectViewRawSection): Result<String> {
         if (rawSection.sectionName != sectionName) {
             val exceptionMessage =
                 "Project view parsing failed! Expected '$sectionName' section name, got '${rawSection.sectionName}'!"
-            return Try.failure(IllegalArgumentException(exceptionMessage))
+            return Result.failure(IllegalArgumentException(exceptionMessage))
         }
-        return Try.success(rawSection.sectionBody)
+        return Result.success(rawSection.sectionBody)
     }
 
     protected abstract fun parse(sectionBody: String): T?

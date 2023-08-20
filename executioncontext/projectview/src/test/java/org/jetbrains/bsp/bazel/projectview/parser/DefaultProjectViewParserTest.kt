@@ -39,8 +39,8 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe NoSuchFileException::class
-            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject"
+            projectViewTry.exceptionOrNull()!!::class shouldBe NoSuchFileException::class
+            projectViewTry.exceptionOrNull()!!.message shouldBe "/does/not/exist.bazelproject"
         }
 
         @Test
@@ -53,8 +53,8 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe NoSuchFileException::class
-            projectViewTry.cause.message shouldBe "/projectview/does/not/exist.bazelproject"
+            projectViewTry.exceptionOrNull()!!::class shouldBe NoSuchFileException::class
+            projectViewTry.exceptionOrNull()!!.message shouldBe "/projectview/does/not/exist.bazelproject"
         }
 
         @Test
@@ -67,7 +67,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.targets shouldBe null
         }
@@ -82,7 +82,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.bazelBinary shouldBe null
         }
@@ -97,7 +97,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.importDepth shouldBe null
         }
@@ -112,7 +112,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.buildFlags shouldBe null
         }
@@ -127,7 +127,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.buildManualTargets shouldBe null
         }
@@ -142,7 +142,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.directories shouldBe null
         }
@@ -157,7 +157,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             projectView.deriveTargetsFromDirectories shouldBe null
         }
@@ -172,7 +172,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = null,
@@ -197,7 +197,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -241,7 +241,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -295,7 +295,7 @@ class DefaultProjectViewParserTest {
             // then
             print(projectViewTry)
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -345,7 +345,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -387,7 +387,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -445,7 +445,7 @@ class DefaultProjectViewParserTest {
 
             // then
             projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            val projectView = projectViewTry.getOrNull()!!
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(

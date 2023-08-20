@@ -1,198 +1,193 @@
-package org.jetbrains.bsp.bazel.projectview.parser.sections;
+package org.jetbrains.bsp.bazel.projectview.parser.sections
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
+import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.function.Function
+import java.util.stream.Stream
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection;
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection;
-import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection;
-import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-// TODO to kotlin
-public class ProjectViewSingletonSectionParserTest<V, T extends ProjectViewSingletonSection<V>> {
-
-  public static Stream<Arguments> data() {
-    return Stream.of(
+class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V>> {
+  companion object {
+    @JvmStatic
+    fun data(): Stream<Arguments> {
+      return Stream.of(
         bazelBinarySectionArguments(),
-        buildManualTargetsSectionArguments());
-  }
+        buildManualTargetsSectionArguments()
+      )
+    }
 
-  private static Arguments bazelBinarySectionArguments() {
-    var parser = ProjectViewBazelBinarySectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "/path/to/bazel/" + seed;
-    var sectionMapper =
-        (Function<Path, ProjectViewBazelBinarySection>) ProjectViewBazelBinarySection::new;
-    var elementMapper = (Function<String, Path>) Paths::get;
+    private fun bazelBinarySectionArguments(): Arguments {
+      val parser = ProjectViewBazelBinarySectionParser
+      val rawValueConstructor = Function { seed: String -> "/path/to/bazel/$seed" }
+      val elementMapper = Function { first: String -> Paths.get(first) }
+      val sectionConstructor = createSectionConstructor(
+        rawValueConstructor,
+        { value: Path -> ProjectViewBazelBinarySection(value) },
+        elementMapper
+      )
+      val sectionName = parser.sectionName
+      return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName)
+    }
 
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
+    private fun buildManualTargetsSectionArguments(): Arguments {
+      val parser = ProjectViewBuildManualTargetsSectionParser
+      val rawValueConstructor = Function { seed: String -> "false" }
+      val sectionConstructor = createSectionConstructor(
+        rawValueConstructor,
+        Function<Boolean, ProjectViewBuildManualTargetsSection> { value: Boolean ->
+          ProjectViewBuildManualTargetsSection(
+            value
+          )
+        },
+        Function { value: String -> value.toBoolean() }
+      )
+      val sectionName = parser.sectionName
+      return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName)
+    }
 
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static Arguments buildManualTargetsSectionArguments() {
-    var parser = ProjectViewBuildManualTargetsSectionParser.INSTANCE;
-    var rawValueConstructor = (Function<String, String>) (seed) -> "false";
-    var sectionMapper =
-        (Function<Boolean, ProjectViewBuildManualTargetsSection>)
-            ProjectViewBuildManualTargetsSection::new;
-    var elementMapper = (Function<String, Boolean>) Boolean::valueOf;
-
-    var sectionConstructor =
-        createSectionConstructor(rawValueConstructor, sectionMapper, elementMapper);
-    var sectionName = parser.getSectionName();
-
-    return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName);
-  }
-
-  private static <V, T extends ProjectViewSingletonSection<V>>
-      Function<String, T> createSectionConstructor(
-          Function<String, String> rawValueConstructor,
-          Function<V, T> sectionMapper,
-          Function<String, V> elementMapper) {
-
-    return (seed) -> sectionMapper.apply(elementMapper.apply(rawValueConstructor.apply(seed)));
+    private fun <V, T : ProjectViewSingletonSection<V>?> createSectionConstructor(
+      rawValueConstructor: Function<String, String>,
+      sectionMapper: Function<V, T>,
+      elementMapper: Function<String, V>,
+    ): Function<String, T> {
+      return Function { seed: String -> sectionMapper.apply(elementMapper.apply(rawValueConstructor.apply(seed))) }
+    }
   }
 
   @Nested
   @DisplayName("T parse(rawSection) tests")
-  class ParseRawSectionTest {
-
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+  internal inner class ParseRawSectionTest {
+    @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
     @ParameterizedTest
-    public void shouldReturnFailureForWrongSectionName(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
+    fun shouldReturnFailureForWrongSectionName(
+      parser: ProjectViewSingletonSectionParser<V, T>,
+      rawValueConstructor: Function<String?, String?>?,
+      sectionConstructor: Function<String?, T>?,
+      sectionName: String,
+    ) {
       // given
-      var rawSection = new ProjectViewRawSection("wrongsection", "value");
+      val rawSection = ProjectViewRawSection("wrongsection", "value")
 
       // when
-      var sectionTry = parser.parse(rawSection);
+      val sectionTry = parser.parse(rawSection)
 
       // then
-      assertThat(sectionTry.isFailure()).isTrue();
-      assertThat(sectionTry.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
-      assertThat(sectionTry.getCause().getMessage())
-          .isEqualTo(
-              "Project view parsing failed! Expected '"
-                  + sectionName
-                  + "' section name, got 'wrongsection'!");
+      assertTrue(sectionTry.isFailure)
+      assertTrue(sectionTry.exceptionOrNull() is IllegalArgumentException)
+      assertEquals(
+        "Project view parsing failed! Expected '$sectionName' section name, got 'wrongsection'!",
+        sectionTry.exceptionOrNull()!!.message
+      )
     }
 
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+    @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
     @ParameterizedTest
-    public void shouldReturnEmptyForEmptySectionBody(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
+    fun shouldReturnEmptyForEmptySectionBody(
+      parser: ProjectViewSingletonSectionParser<V, T>,
+      rawValueConstructor: Function<String, String>,
+      sectionConstructor: Function<String, T>,
+      sectionName: String,
+    ) {
       // given
-      var rawSection = new ProjectViewRawSection(sectionName, "");
+      val rawSection = ProjectViewRawSection(
+        sectionName, ""
+      )
 
       // when
-      var sectionTry = parser.parse(rawSection);
+      val sectionTry = parser.parse(rawSection)
 
       // then
-      assertThat(sectionTry.isSuccess()).isTrue();
-      var section = sectionTry.get();
-
-      assertThat(section).isNull();
+      assertTrue(sectionTry.isSuccess)
+      assertTrue(sectionTry.getOrNull() == null)
     }
 
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+    @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
     @ParameterizedTest
-    public void shouldReturnSectionWithTrimmedValue(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
+    fun shouldReturnSectionWithTrimmedValue(
+      parser: ProjectViewSingletonSectionParser<V, T>,
+      rawValueConstructor: Function<String?, String>,
+      sectionConstructor: Function<String?, T>,
+      sectionName: String?,
+    ) {
       // given
-      var rawSection =
-          new ProjectViewRawSection(
-              sectionName, "  " + rawValueConstructor.apply("value") + "\t\n");
+      val rawSection = ProjectViewRawSection(
+        sectionName!!, "  " + rawValueConstructor.apply("value") + "\t\n"
+      )
 
       // when
-      var sectionTry = parser.parse(rawSection);
+      val sectionTry = parser.parse(rawSection)
 
       // then
-      assertThat(sectionTry.isSuccess()).isTrue();
-      var section = sectionTry.get();
-
-      var expectedSection = sectionConstructor.apply("value");
-      assertThat(section).isEqualTo(expectedSection);
+      assertTrue(sectionTry.isSuccess)
+      val expectedSection = sectionConstructor.apply("value")
+      assertEquals(expectedSection, sectionTry.getOrNull())
     }
   }
 
   @Nested
   @DisplayName("T parse(rawSections) tests")
-  class ParseRawSectionsTest {
-
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+  internal inner class ParseRawSectionsTest {
+    @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
     @ParameterizedTest
-    public void shouldReturnLastSectionWithoutExplicitDefault(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
+    fun shouldReturnLastSectionWithoutExplicitDefault(
+      parser: ProjectViewSingletonSectionParser<V, T>,
+      rawValueConstructor: Function<String?, String>,
+      sectionConstructor: Function<String?, T>,
+      sectionName: String?,
+    ) {
       // given
-      var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
-      var rawSection2 =
-          new ProjectViewRawSection(sectionName, "  " + rawValueConstructor.apply("value2") + "\n");
-      var rawSection3 = new ProjectViewRawSection("another_section2", "\tvalue3\n");
-      var rawSection4 =
-          new ProjectViewRawSection(
-              sectionName, "    " + rawValueConstructor.apply("value4") + "\n  ");
-      var rawSection5 = new ProjectViewRawSection("another_section3", "\tvalue5\n");
-
-      var rawSections =
-          new ProjectViewRawSections(
-              List.of(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5));
+      val rawSection1 = ProjectViewRawSection("another_section1", "value1")
+      val rawSection2 = ProjectViewRawSection(
+        sectionName!!, "  " + rawValueConstructor.apply("value2") + "\n"
+      )
+      val rawSection3 = ProjectViewRawSection("another_section2", "\tvalue3\n")
+      val rawSection4 = ProjectViewRawSection(
+        sectionName, """    ${rawValueConstructor.apply("value4")}
+  """
+      )
+      val rawSection5 = ProjectViewRawSection("another_section3", "\tvalue5\n")
+      val rawSections = ProjectViewRawSections(
+        listOf(rawSection1, rawSection2, rawSection3, rawSection4, rawSection5)
+      )
 
       // when
-      var section = parser.parse(rawSections);
+      val section = parser.parse(rawSections)
 
       // then
-      var expectedSection = sectionConstructor.apply("value4");
-      assertThat(section).isEqualTo(expectedSection);
+      val expectedSection = sectionConstructor.apply("value4")
+      assertEquals(expectedSection, section)
     }
 
-    @MethodSource(
-        "org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
+    @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewSingletonSectionParserTest#data")
     @ParameterizedTest
-    public void shouldReturnEmptyIfSectionDoesntExist(
-        ProjectViewSingletonSectionParser<V, T> parser,
-        Function<String, String> rawValueConstructor,
-        Function<String, T> sectionConstructor,
-        String sectionName) {
+    fun shouldReturnEmptyIfSectionDoesntExist(
+      parser: ProjectViewSingletonSectionParser<V, T>,
+      rawValueConstructor: Function<String?, String?>?,
+      sectionConstructor: Function<String?, T>?,
+      sectionName: String?,
+    ) {
       // given
-      var rawSection1 = new ProjectViewRawSection("another_section1", "value1");
-      var rawSection2 = new ProjectViewRawSection("another_section2", "  value2");
-      var rawSection3 = new ProjectViewRawSection("another_section3", "\tvalue3\n");
-
-      var rawSections = new ProjectViewRawSections(List.of(rawSection1, rawSection2, rawSection3));
+      val rawSection1 = ProjectViewRawSection("another_section1", "value1")
+      val rawSection2 = ProjectViewRawSection("another_section2", "  value2")
+      val rawSection3 = ProjectViewRawSection("another_section3", "\tvalue3\n")
+      val rawSections = ProjectViewRawSections(listOf(rawSection1, rawSection2, rawSection3))
 
       // when
-      var section = parser.parse(rawSections);
+      val section = parser.parse(rawSections)
 
       // then
-      assertThat(section).isNull();
+      assertTrue(section == null)
     }
   }
 }

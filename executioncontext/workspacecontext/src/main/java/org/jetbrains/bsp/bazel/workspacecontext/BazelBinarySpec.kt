@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
 import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
@@ -15,17 +14,17 @@ data class BazelBinarySpec(
 
 internal object BazelBinarySpecMapper : ProjectViewToExecutionContextEntityMapper<BazelBinarySpec> {
 
-    override fun map(projectView: ProjectView): Try<BazelBinarySpec> =
+    override fun map(projectView: ProjectView): Result<BazelBinarySpec> =
         when (projectView.bazelBinary) {
             null -> findBazelOnPath()
-            else -> Try.success(map(projectView.bazelBinary!!))
+            else -> Result.success(map(projectView.bazelBinary!!))
         }
 
-    override fun default(): Try<BazelBinarySpec> = findBazelOnPath()
+    override fun default(): Result<BazelBinarySpec> = findBazelOnPath()
 
-    private fun findBazelOnPath(): Try<BazelBinarySpec> =
-        findBazelOnPathOrNull()?.let { Try.success(it) }
-            ?: Try.failure(
+    private fun findBazelOnPath(): Result<BazelBinarySpec> =
+        findBazelOnPathOrNull()?.let { Result.success(it) }
+            ?: Result.failure(
                 ProjectViewToExecutionContextEntityMapperException(
                     "bazel path",
                     "Could not find bazel on your PATH"

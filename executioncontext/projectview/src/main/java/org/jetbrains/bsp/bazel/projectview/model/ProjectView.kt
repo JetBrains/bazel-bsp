@@ -1,8 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
-import io.vavr.collection.Seq
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.commons.sequence
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
@@ -37,7 +36,7 @@ data class ProjectView constructor(
 ) {
 
     data class Builder constructor(
-        private val imports: List<Try<ProjectView>> = emptyList(),
+        private val imports: List<Result<ProjectView>> = emptyList(),
         private val targets: ProjectViewTargetsSection? = null,
         private val bazelBinary: ProjectViewBazelBinarySection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
@@ -47,12 +46,10 @@ data class ProjectView constructor(
         private val importDepth: ProjectViewImportDepthSection? = null,
     ) {
 
-        fun build(): Try<ProjectView> {
+        fun build(): Result<ProjectView> {
             log.debug("Building project view for: {}", this)
 
-            return Try.sequence(imports)
-                .map(Seq<ProjectView>::toJavaList)
-                .map(MutableList<ProjectView>::toList)
+            return imports.sequence()
                 .map(::buildWithImports)
         }
 

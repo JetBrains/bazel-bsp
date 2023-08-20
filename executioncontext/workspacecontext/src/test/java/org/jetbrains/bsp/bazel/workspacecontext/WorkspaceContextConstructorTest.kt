@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
@@ -17,26 +16,26 @@ import kotlin.io.path.Path
 class WorkspaceContextConstructorTest {
 
     @Nested
-    @DisplayName("fun construct(projectViewTry: Try<ProjectView>): Try<WorkspaceContext> tests")
+    @DisplayName("fun construct(projectViewTry: Result<ProjectView>): Result<WorkspaceContext> tests")
     inner class ConstructTryTest {
 
         @Test
         fun `should return failure if project view is failure`() {
             // given
-            val projectViewTry = Try.failure<ProjectView>(Exception("exception message"))
+            val projectViewTry = Result.failure<ProjectView>(Exception("exception message"))
 
             // when
             val workspaceContextTry = WorkspaceContextConstructor.construct(projectViewTry)
 
             // then
             workspaceContextTry.isFailure shouldBe true
-            workspaceContextTry.cause::class shouldBe Exception::class
-            workspaceContextTry.cause.message shouldBe "exception message"
+            workspaceContextTry.exceptionOrNull()!!::class shouldBe Exception::class
+            workspaceContextTry.exceptionOrNull()!!.message shouldBe "exception message"
         }
     }
 
     @Nested
-    @DisplayName("fun construct(projectView: ProjectView): Try<WorkspaceContext> tests")
+    @DisplayName("fun construct(projectView: ProjectView): Result<WorkspaceContext> tests")
     inner class ConstructTest {
 
         @Test
@@ -70,7 +69,7 @@ class WorkspaceContextConstructorTest {
 
             // then
             workspaceContextTry.isSuccess shouldBe true
-            val workspaceContext = workspaceContextTry.get()
+            val workspaceContext = workspaceContextTry.getOrThrow()
 
             val expectedTargets =
                 TargetsSpec(
@@ -106,7 +105,7 @@ class WorkspaceContextConstructorTest {
     }
 
     @Nested
-    @DisplayName("fun constructDefault(): Try<WorkspaceContext> tests")
+    @DisplayName("fun constructDefault(): Result<WorkspaceContext> tests")
     inner class ConstructDefaultTest {
 
         @Test
@@ -117,13 +116,13 @@ class WorkspaceContextConstructorTest {
 
             // then
             workspaceContextTry.isSuccess shouldBe true
-            val workspaceContext = workspaceContextTry.get()
+            val workspaceContext = workspaceContextTry.getOrThrow()
 
             val expectedWorkspaceContext = WorkspaceContext(
                 targets = TargetsSpec(emptyList(), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
                 // TODO - for now we don't have a framework to change classpath, i'll fix it later
-                bazelBinary = BazelBinarySpecMapper.default().get(),
+                bazelBinary = BazelBinarySpecMapper.default().getOrThrow(),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),
                 importDepth = ImportDepthSpec(0),

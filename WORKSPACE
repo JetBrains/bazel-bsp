@@ -175,8 +175,6 @@ maven_install(
         "com.google.guava:guava:31.0.1-jre",
         "ch.epfl.scala:bsp4j_2.13:2.1.0-M6.alpha",
         "commons-cli:commons-cli:jar:1.5.0",
-        # TODO: we need to remove it
-        "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",

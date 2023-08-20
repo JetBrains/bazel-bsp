@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.install
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.ProjectViewCliOptions
 import org.jetbrains.bsp.bazel.projectview.generator.DefaultProjectViewGenerator
@@ -18,7 +17,7 @@ import kotlin.io.path.Path
 
 object ProjectViewCLiOptionsProvider {
 
-    fun generateProjectViewAndSave(cliOptions: CliOptions, generatedProjectViewFilePath: Path): Try<ProjectView> {
+    fun generateProjectViewAndSave(cliOptions: CliOptions, generatedProjectViewFilePath: Path): Result<ProjectView> {
         val projectView = toProjectView(cliOptions.projectViewCliOptions)
 
         return DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, generatedProjectViewFilePath)

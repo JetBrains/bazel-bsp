@@ -1,27 +1,24 @@
-package org.jetbrains.bsp.bazel.server.bsp.utils;
+package org.jetbrains.bsp.bazel.server.bsp.utils
 
-import io.vavr.Lazy;
-import org.jetbrains.bsp.bazel.commons.Constants;
-import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo;
+import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 
-public class InternalAspectsResolver {
+class InternalAspectsResolver(bspInfo: BspInfo) {
+    private val bspInfo: BspInfo
+    private val prefix: Lazy<String> = lazy { getPrefix() }
 
-  private final BspInfo bspInfo;
-  private final Lazy<String> prefix = Lazy.of(this::getPrefix);
+    init {
+        this.bspInfo = bspInfo
+    }
 
-  public InternalAspectsResolver(BspInfo bspInfo) {
-    this.bspInfo = bspInfo;
-  }
+    fun resolveLabel(aspect: String): String {
+        return prefix.value + aspect
+    }
 
-  public String resolveLabel(String aspect) {
-    return prefix.get() + aspect;
-  }
+    val bazelBspRoot: String
+        get() = bspInfo.bazelBspDir().toString()
 
-  public String getBazelBspRoot() {
-    return this.bspInfo.bazelBspDir().toString();
-  }
-
-  private String getPrefix() {
-    return "@" + Constants.ASPECT_REPOSITORY + "//aspects:core.bzl%";
-  }
+    private fun getPrefix(): String {
+        return "@" + Constants.ASPECT_REPOSITORY + "//aspects:core.bzl%"
+    }
 }

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.executioncontext.api
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 
 /**
@@ -44,9 +43,9 @@ class ProjectViewToExecutionContextEntityMapperException(entityName: String, mes
 
 
 interface ProjectViewToExecutionContextEntityBaseMapper<T> {
-    fun map(projectView: ProjectView): Try<T>
+    fun map(projectView: ProjectView): Result<T>
 
-    fun default(): Try<T>
+    fun default(): Result<T>
 }
 
 

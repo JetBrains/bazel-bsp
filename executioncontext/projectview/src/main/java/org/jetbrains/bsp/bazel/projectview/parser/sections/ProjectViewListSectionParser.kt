@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.commons.toList
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
@@ -24,7 +25,7 @@ abstract class ProjectViewListSectionParser<V, T : ProjectViewListSection<V>> pr
 
     private fun parseAllSectionsAndMerge(rawSections: ProjectViewRawSections): T? =
         rawSections.getAllWithName(sectionName)
-            .flatMap { parse(it) }
+            .flatMap { parse(it).toList() }
             .filterNotNull()
             .reduceOrNull(::concatSectionsItems)
 
