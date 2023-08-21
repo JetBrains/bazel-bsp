@@ -18,13 +18,12 @@ fun <T> List<Result<T>>.sequence(): Result<List<T>> {
   return Result.success(successes)
 }
 
-fun <T, R> Result<T>.flatMap(block: (T) -> Result<R>): Result<R> {
-  return if (isFailure) {
+fun <T, R> Result<T>.flatMap(block: (T) -> Result<R>): Result<R> =
+  if (isFailure) {
     Result.failure(exceptionOrNull()!!)
   } else {
     block(getOrNull()!!)
   }
-}
 
 fun <T> Result<T>.toList(): List<T> {
   return if (isFailure) {
