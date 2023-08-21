@@ -25,15 +25,9 @@ fun <T, R> Result<T>.flatMap(block: (T) -> Result<R>): Result<R> =
     block(getOrNull()!!)
   }
 
-fun <T> Result<T>.toList(): List<T> {
-  return if (isFailure) {
+fun <T> Result<T>.toList(): List<T> =
+  if (isFailure) {
     emptyList()
   } else {
-    val value = getOrNull()
-    if (value == null) {
-      emptyList()
-    } else {
-      listOf(value)
-    }
+    listOfNotNull(getOrNull())
   }
-}
