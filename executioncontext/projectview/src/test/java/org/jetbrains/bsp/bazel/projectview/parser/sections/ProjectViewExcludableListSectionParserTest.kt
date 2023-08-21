@@ -27,7 +27,7 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
 
     private fun targetsSectionArguments(): Arguments {
       val parser = ProjectViewTargetsSectionParser
-      val rawIncludedElementConstructor = Function { seed: String -> "//target:$seed" }
+      val rawIncludedElementConstructor = { seed: String -> "//target:$seed" }
       val elementMapper =
         Function { s: String -> BuildTargetIdentifier(s) }
       val sectionConstructor =
