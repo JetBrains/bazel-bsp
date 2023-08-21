@@ -1,12 +1,11 @@
 package org.jetbrains.bsp.bazel.commons
 
-fun <T> Result.Companion.of(block: () -> T): Result<T> {
-  return try {
+fun <T> Result.Companion.of(block: () -> T): Result<T> =
+  try {
     success(block())
   } catch (e: Exception) {
     failure(e)
   }
-}
 
 fun <T> List<Result<T>>.sequence(): Result<List<T>> {
   val successes = mutableListOf<T>()
