@@ -22,9 +22,8 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
   
   companion object {
     @JvmStatic
-    fun data(): Stream<Arguments> {
-      return Stream.of(targetsSectionArguments())
-    }
+    fun data(): List<Arguments> =
+      listOf(targetsSectionArguments())
 
     private fun targetsSectionArguments(): Arguments {
       val parser = ProjectViewTargetsSectionParser
