@@ -28,8 +28,7 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
     private fun targetsSectionArguments(): Arguments {
       val parser = ProjectViewTargetsSectionParser
       val rawIncludedElementConstructor = { seed: String -> "//target:$seed" }
-      val elementMapper =
-        Function { s: String -> BuildTargetIdentifier(s) }
+      val elementMapper = { s: String -> BuildTargetIdentifier(s) }
       val sectionConstructor =
         createSectionConstructor({ values: List<BuildTargetIdentifier>, excludedValues: List<BuildTargetIdentifier> ->
           ProjectViewTargetsSection(
@@ -41,19 +40,19 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
       return Arguments.of(
         parser,
         rawIncludedElementConstructor,
-        Function { seed: String -> "-" + rawIncludedElementConstructor.apply(seed) },
+        { seed: String -> "-" + rawIncludedElementConstructor(seed) },
         sectionConstructor,
         sectionName
       )
     }
 
     private fun <V, T : ProjectViewExcludableListSection<V>?> createSectionConstructor(
-      sectionMapper: BiFunction<List<V>, List<V>, T>,
-      rawIncludedElementConstructor: Function<String, String>,
-      elementMapper: Function<String, V>
-    ): BiFunction<List<String>, List<String>, T> {
-      return BiFunction { includedElements: List<String>, excludedElements: List<String> ->
-        sectionMapper.apply(
+      sectionMapper: (List<V>, List<V>) -> T,
+      rawIncludedElementConstructor: (String) -> String,
+      elementMapper: (String) -> V
+    ): (List<String>, List<String>) -> T {
+      return { includedElements: List<String>, excludedElements: List<String> ->
+        sectionMapper(
           mapElements(rawIncludedElementConstructor, elementMapper, includedElements),
           mapElements(rawIncludedElementConstructor, elementMapper, excludedElements)
         )
