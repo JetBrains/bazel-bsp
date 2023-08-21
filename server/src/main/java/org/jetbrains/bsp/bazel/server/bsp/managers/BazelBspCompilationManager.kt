@@ -15,12 +15,12 @@ import java.util.concurrent.ThreadFactory
 import kotlin.system.exitProcess
 
 class BazelBspCompilationManager(
-    private val bazelRunner: BazelRunner, private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
+    private val bazelRunner: BazelRunner, private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>,
 ) {
     var client: BuildClient? = null
     var workspaceRoot: Path? = null
     fun buildTargetsWithBep(
-        cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String
+        cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String,
     ): BepBuildResult {
         return buildTargetsWithBep(cancelChecker, targetSpecs, emptyList(), originId)
     }
@@ -29,7 +29,7 @@ class BazelBspCompilationManager(
         cancelChecker: CancelChecker,
         targetSpecs: TargetsSpec,
         extraFlags: List<String>,
-        originId: String?
+        originId: String?,
     ): BepBuildResult {
         val bepServer = BepServer.newBepServer(
             client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId)
@@ -57,14 +57,13 @@ class BazelBspCompilationManager(
     }
 
     companion object {
-        private fun threadFactory(): ThreadFactory {
-            return ThreadFactoryBuilder()
+        private fun threadFactory(): ThreadFactory =
+            ThreadFactoryBuilder()
                 .setNameFormat("grpc-netty-pool-%d")
                 .setUncaughtExceptionHandler { _: Thread?, e: Throwable ->
                     e.printStackTrace()
                     exitProcess(1)
                 }
                 .build()
-        }
     }
 }

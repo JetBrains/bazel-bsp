@@ -49,12 +49,11 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
         return precondition.apply(methodName) ?: runAsync(methodName, supplier)
     }
 
-    fun <T> serverIsRunning(methodName: String): CompletableFuture<T>? {
-        return serverIsInitialized(methodName) ?: serverIsNotFinished(methodName)
-    }
+    fun <T> serverIsRunning(methodName: String): CompletableFuture<T>? =
+        serverIsInitialized(methodName) ?: serverIsNotFinished(methodName)
 
-    fun <T> serverIsInitialized(methodName: String): CompletableFuture<T>? {
-        return if (!serverLifetime.isInitialized()) {
+    fun <T> serverIsInitialized(methodName: String): CompletableFuture<T>? =
+        if (!serverLifetime.isInitialized()) {
             failure(
                 methodName,
                 ResponseError(
@@ -66,10 +65,9 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
         } else {
             null
         }
-    }
 
-    fun <T> serverIsNotFinished(methodName: String): CompletableFuture<T>? {
-        return if (serverLifetime.isFinished) {
+    fun <T> serverIsNotFinished(methodName: String): CompletableFuture<T>? =
+        if (serverLifetime.isFinished) {
             failure(
                 methodName,
                 ResponseError(
@@ -79,10 +77,9 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
         } else {
             null
         }
-    }
 
-    private fun <T> runAsync(methodName: String, request: Function<CancelChecker, T>): CompletableFuture<T> {
-        return CancellableFuture.from(CompletableFutures.computeAsync(request))
+    private fun <T> runAsync(methodName: String, request: Function<CancelChecker, T>): CompletableFuture<T> =
+        CancellableFuture.from(CompletableFutures.computeAsync(request))
             .thenApply<Either<Throwable, T>> { right: T -> Either.forRight(right) }
             .exceptionally { left: Throwable? -> Either.forLeft(left) }
             .thenCompose { either: Either<Throwable, T> ->
@@ -91,7 +88,6 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
                     either.left
                 ) else success<T>(methodName, either.right)
             }
-    }
 
     private fun <T> success(methodName: String, response: T): CompletableFuture<T> {
         LOGGER.info("{} call finishing successfully", methodName)

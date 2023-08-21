@@ -20,8 +20,8 @@ import java.util.stream.Stream
 class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V>> {
   companion object {
     @JvmStatic
-    fun data(): Stream<Arguments> {
-      return Stream.of(
+    fun data(): List<Arguments> {
+      return listOf(
         bazelBinarySectionArguments(),
         buildManualTargetsSectionArguments()
       )
@@ -29,8 +29,8 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
 
     private fun bazelBinarySectionArguments(): Arguments {
       val parser = ProjectViewBazelBinarySectionParser
-      val rawValueConstructor = Function { seed: String -> "/path/to/bazel/$seed" }
-      val elementMapper = Function { first: String -> Paths.get(first) }
+      val rawValueConstructor = { seed: String -> "/path/to/bazel/$seed" }
+      val elementMapper = { first: String -> Paths.get(first) }
       val sectionConstructor = createSectionConstructor(
         rawValueConstructor,
         { value: Path -> ProjectViewBazelBinarySection(value) },
@@ -42,26 +42,26 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
 
     private fun buildManualTargetsSectionArguments(): Arguments {
       val parser = ProjectViewBuildManualTargetsSectionParser
-      val rawValueConstructor = Function { seed: String -> "false" }
+      val rawValueConstructor = { _: String -> "false" }
       val sectionConstructor = createSectionConstructor(
         rawValueConstructor,
-        Function<Boolean, ProjectViewBuildManualTargetsSection> { value: Boolean ->
+        { value: Boolean ->
           ProjectViewBuildManualTargetsSection(
             value
           )
         },
-        Function { value: String -> value.toBoolean() }
+        { value: String -> value.toBoolean() }
       )
       val sectionName = parser.sectionName
       return Arguments.of(parser, rawValueConstructor, sectionConstructor, sectionName)
     }
 
-    private fun <V, T : ProjectViewSingletonSection<V>?> createSectionConstructor(
-      rawValueConstructor: Function<String, String>,
-      sectionMapper: Function<V, T>,
-      elementMapper: Function<String, V>,
-    ): Function<String, T> {
-      return Function { seed: String -> sectionMapper.apply(elementMapper.apply(rawValueConstructor.apply(seed))) }
+    private fun <V, T : ProjectViewSingletonSection<V>> createSectionConstructor(
+      rawValueConstructor: (String) -> String,
+      sectionMapper: (V) -> T,
+      elementMapper: (String) -> V,
+    ): (String) -> T {
+      return { seed: String -> sectionMapper(elementMapper(rawValueConstructor(seed))) }
     }
   }
 
@@ -72,8 +72,8 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
     @ParameterizedTest
     fun shouldReturnFailureForWrongSectionName(
       parser: ProjectViewSingletonSectionParser<V, T>,
-      rawValueConstructor: Function<String?, String?>?,
-      sectionConstructor: Function<String?, T>?,
+      rawValueConstructor: (String) -> String,
+      sectionConstructor: (String) -> T?,
       sectionName: String,
     ) {
       // given
@@ -95,8 +95,8 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
     @ParameterizedTest
     fun shouldReturnEmptyForEmptySectionBody(
       parser: ProjectViewSingletonSectionParser<V, T>,
-      rawValueConstructor: Function<String, String>,
-      sectionConstructor: Function<String, T>,
+      rawValueConstructor: (String) -> String,
+      sectionConstructor: (String) -> T,
       sectionName: String,
     ) {
       // given
@@ -116,13 +116,13 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
     @ParameterizedTest
     fun shouldReturnSectionWithTrimmedValue(
       parser: ProjectViewSingletonSectionParser<V, T>,
-      rawValueConstructor: Function<String?, String>,
-      sectionConstructor: Function<String?, T>,
-      sectionName: String?,
+      rawValueConstructor: (String) -> String,
+      sectionConstructor: (String) -> T,
+      sectionName: String,
     ) {
       // given
       val rawSection = ProjectViewRawSection(
-        sectionName!!, "  " + rawValueConstructor.apply("value") + "\t\n"
+        sectionName, "  " + rawValueConstructor("value") + "\t\n"
       )
 
       // when
@@ -130,7 +130,7 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
 
       // then
       assertTrue(sectionTry.isSuccess)
-      val expectedSection = sectionConstructor.apply("value")
+      val expectedSection = sectionConstructor("value")
       assertEquals(expectedSection, sectionTry.getOrNull())
     }
   }
@@ -142,18 +142,18 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
     @ParameterizedTest
     fun shouldReturnLastSectionWithoutExplicitDefault(
       parser: ProjectViewSingletonSectionParser<V, T>,
-      rawValueConstructor: Function<String?, String>,
-      sectionConstructor: Function<String?, T>,
-      sectionName: String?,
+      rawValueConstructor: (String) -> String,
+      sectionConstructor: (String) -> T,
+      sectionName: String,
     ) {
       // given
       val rawSection1 = ProjectViewRawSection("another_section1", "value1")
       val rawSection2 = ProjectViewRawSection(
-        sectionName!!, "  " + rawValueConstructor.apply("value2") + "\n"
+        sectionName, "  " + rawValueConstructor("value2") + "\n"
       )
       val rawSection3 = ProjectViewRawSection("another_section2", "\tvalue3\n")
       val rawSection4 = ProjectViewRawSection(
-        sectionName, """    ${rawValueConstructor.apply("value4")}
+        sectionName, """    ${rawValueConstructor("value4")}
   """
       )
       val rawSection5 = ProjectViewRawSection("another_section3", "\tvalue5\n")
@@ -165,7 +165,7 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
       val section = parser.parse(rawSections)
 
       // then
-      val expectedSection = sectionConstructor.apply("value4")
+      val expectedSection = sectionConstructor("value4")
       assertEquals(expectedSection, section)
     }
 
@@ -173,9 +173,9 @@ class ProjectViewSingletonSectionParserTest<V, T : ProjectViewSingletonSection<V
     @ParameterizedTest
     fun shouldReturnEmptyIfSectionDoesntExist(
       parser: ProjectViewSingletonSectionParser<V, T>,
-      rawValueConstructor: Function<String?, String?>?,
-      sectionConstructor: Function<String?, T>?,
-      sectionName: String?,
+      rawValueConstructor: (String) -> String,
+      sectionConstructor: (String) -> T?,
+      sectionName: String,
     ) {
       // given
       val rawSection1 = ProjectViewRawSection("another_section1", "value1")

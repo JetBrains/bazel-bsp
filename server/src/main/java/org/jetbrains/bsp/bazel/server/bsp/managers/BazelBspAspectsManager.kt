@@ -15,19 +15,16 @@ import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 
 class BazelBspAspectsManager(
     private val bazelBspCompilationManager: BazelBspCompilationManager,
-    private val aspectsResolver: InternalAspectsResolver
+    private val aspectsResolver: InternalAspectsResolver,
 ) {
     fun fetchFilesFromOutputGroups(
         cancelChecker: CancelChecker,
         targetSpecs: TargetsSpec,
         aspect: String,
-        outputGroups: List<String>
-    ): BepOutput {
-        return if (targetSpecs.values.isEmpty()) BepOutput(
-            HashMap(),
-            HashMap(),
-            HashSet()
-        ) else bazelBspCompilationManager
+        outputGroups: List<String>,
+    ): BepOutput =
+        if (targetSpecs.values.isEmpty()) BepOutput()
+        else bazelBspCompilationManager
             .buildTargetsWithBep(
                 cancelChecker,
                 targetSpecs,
@@ -45,5 +42,4 @@ class BazelBspAspectsManager(
                 null
             )
             .bepOutput
-    }
 }

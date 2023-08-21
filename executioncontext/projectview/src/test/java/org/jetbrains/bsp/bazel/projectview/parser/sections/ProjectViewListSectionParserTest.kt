@@ -11,23 +11,20 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.util.function.Function
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 class ProjectViewListSectionParserTest {
 
     companion object {
         @JvmStatic
-        fun data(): Stream<Arguments> {
-            return Stream.of(buildFlagsSectionArguments())
+        fun data(): List<Arguments> {
+            return listOf(buildFlagsSectionArguments())
         }
 
         private fun buildFlagsSectionArguments(): Arguments {
             val parser = ProjectViewBuildFlagsSectionParser
-            val rawElementConstructor = Function { seed: String -> "--flag_$seed=dummy_value" }
-            val elementMapper = Function { x: String -> x }
-            val sectionMapper = Function { values: List<String> ->
+            val rawElementConstructor = { seed: String -> "--flag_$seed=dummy_value" }
+            val elementMapper = { x: String -> x }
+            val sectionMapper = { values: List<String> ->
                 ProjectViewBuildFlagsSection(values)
             }
             val sectionConstructor =
@@ -37,12 +34,12 @@ class ProjectViewListSectionParserTest {
         }
 
         private fun <V, T : ProjectViewListSection<V>?> createSectionConstructor(
-            sectionMapper: Function<List<V>, T>,
-            rawIncludedElementConstructor: Function<String, String>,
-            elementMapper: Function<String, V>,
-        ): Function<List<String>, T> {
-            return Function { includedElements: List<String> ->
-                sectionMapper.apply(
+            sectionMapper: (List<V>) -> T,
+            rawIncludedElementConstructor: (String) -> String,
+            elementMapper: (String) -> V,
+        ): (List<String>) -> T =
+            { includedElements: List<String> ->
+                sectionMapper(
                     mapElements(
                         rawIncludedElementConstructor,
                         elementMapper,
@@ -50,18 +47,14 @@ class ProjectViewListSectionParserTest {
                     )
                 )
             }
-        }
 
         private fun <V> mapElements(
-            rawIncludedElementConstructor: Function<String, String>,
-            elementMapper: Function<String, V>,
+            rawIncludedElementConstructor: (String) -> String,
+            elementMapper: (String) -> V,
             rawElements: List<String>,
-        ): List<V> {
-            return rawElements.stream()
-                .map(rawIncludedElementConstructor)
-                .map(elementMapper)
-                .collect(Collectors.toList())
-        }
+        ): List<V> = rawElements
+            .map(rawIncludedElementConstructor)
+            .map(elementMapper)
     }
 
     @Nested
@@ -71,8 +64,8 @@ class ProjectViewListSectionParserTest {
         @ParameterizedTest
         fun shouldReturnFailureForWrongSectionName(
             parser: ProjectViewListSectionParser<V, T>,
-            rawElementConstructor: Function<String?, String?>?,
-            sectionConstructor: Function<List<String?>?, T>?,
+            rawElementConstructor: (String) -> String,
+            sectionConstructor: (List<String>) -> T?,
             sectionName: String,
         ) {
             // given
@@ -94,13 +87,13 @@ class ProjectViewListSectionParserTest {
         @ParameterizedTest
         fun shouldParseEmptySectionBody(
             parser: ProjectViewListSectionParser<V, T>,
-            rawElementConstructor: Function<String?, String?>?,
-            sectionConstructor: Function<List<String?>?, T>?,
-            sectionName: String?,
+            rawElementConstructor: (String) -> String,
+            sectionConstructor: (List<String>) -> T?,
+            sectionName: String,
         ) {
             // given
             val rawSection = ProjectViewRawSection(
-                sectionName!!, ""
+                sectionName, ""
             )
 
             // when
@@ -115,20 +108,19 @@ class ProjectViewListSectionParserTest {
         @ParameterizedTest
         fun shouldParseElements(
             parser: ProjectViewListSectionParser<V, T>,
-            rawElementConstructor: Function<String?, String>,
-            sectionConstructor: Function<List<String?>?, T>,
-            sectionName: String?,
+            rawElementConstructor: (String) -> String,
+            sectionConstructor: (List<String>) -> T,
+            sectionName: String,
         ) {
             // given
             val rawSection = ProjectViewRawSection(
-                sectionName!!,
-                "  "
-                    + rawElementConstructor.apply("element1")
-                    + "\n\t"
-                    + rawElementConstructor.apply("element2")
-                    + "\n"
-                    + rawElementConstructor.apply("element3")
-                    + "\n\n"
+                sectionName,
+                """
+                    |  ${rawElementConstructor("element1")}
+                    |  ${rawElementConstructor("element2")}
+                    |  ${rawElementConstructor("element3")}
+                    
+                """.trimMargin()
             )
 
             // when
@@ -136,7 +128,7 @@ class ProjectViewListSectionParserTest {
 
             // then
             assertTrue(sectionTry.isSuccess)
-            val expectedSection = sectionConstructor.apply(listOf("element1", "element2", "element3"))
+            val expectedSection = sectionConstructor(listOf("element1", "element2", "element3"))
             assertEquals(expectedSection, sectionTry.getOrNull())
         }
 
@@ -145,9 +137,9 @@ class ProjectViewListSectionParserTest {
         @ParameterizedTest
         fun shouldReturnEmptySectionIfThereIsNoSectionForParseWithoutDefault(
             parser: ProjectViewListSectionParser<V, T>,
-            rawElementConstructor: Function<String?, String?>?,
-            sectionConstructor: Function<List<String?>?, T>?,
-            sectionName: String?,
+            rawElementConstructor: (String) -> String,
+            sectionConstructor: (List<String>) -> T,
+            sectionName: String,
         ) {
             // given
             val rawSection1 = ProjectViewRawSection(
@@ -168,20 +160,20 @@ class ProjectViewListSectionParserTest {
         @ParameterizedTest
         fun shouldParseAllSectionElementsFromListWithoutDefault(
             parser: ProjectViewListSectionParser<V, T>,
-            rawElementConstructor: Function<String?, String>,
-            sectionConstructor: Function<List<String?>?, T>,
-            sectionName: String?,
+            rawElementConstructor: (String) -> String,
+            sectionConstructor: (List<String>) -> T,
+            sectionName: String,
         ) {
             // given
             val rawSection1 = ProjectViewRawSection("another_section1", "bodyelement1")
             val rawSection2 = ProjectViewRawSection(
-                sectionName!!,
-                """ ${rawElementConstructor.apply("element1")}
-${rawElementConstructor.apply("element2")}"""
+                sectionName,
+                """ ${rawElementConstructor("element1")}
+${rawElementConstructor("element2")}"""
             )
             val rawSection3 = ProjectViewRawSection("another_section2", "-bodyelement2")
             val rawSection4 = ProjectViewRawSection(
-                sectionName, "\n\t" + rawElementConstructor.apply("element3") + "\n\n\n"
+                sectionName, "\n\t" + rawElementConstructor("element3") + "\n\n\n"
             )
             val rawSections =
                 ProjectViewRawSections(listOf(rawSection1, rawSection2, rawSection3, rawSection4))
@@ -190,7 +182,7 @@ ${rawElementConstructor.apply("element2")}"""
             val section = parser.parse(rawSections)
 
             // then
-            val expectedSection = sectionConstructor.apply(listOf("element1", "element2", "element3"))
+            val expectedSection = sectionConstructor(listOf("element1", "element2", "element3"))
             assertEquals(expectedSection, section)
         }
     }
