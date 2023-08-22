@@ -31,7 +31,7 @@ class LanguagePluginServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    val bazelInfo = BasicBazelInfo("", Paths.get(""), BazelRelease.fromReleaseString("release 6.0.0"))
+    val bazelInfo = BasicBazelInfo("", Paths.get(""), Paths.get(""), BazelRelease.fromReleaseString("release 6.0.0"))
     val bazelPathsResolver = BazelPathsResolver(bazelInfo)
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
     val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)

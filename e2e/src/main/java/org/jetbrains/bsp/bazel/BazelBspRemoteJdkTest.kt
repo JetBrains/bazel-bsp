@@ -23,7 +23,7 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
         val exampleExampleJvmBuildTarget = JvmBuildTarget().also {
             it.javaVersion = "11"
-            it.javaHome = "file://\$BAZEL_CACHE/external/remotejdk11_linux/"
+            it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_linux/"
         }
 
         val exampleExampleBuildTarget = BuildTarget(

@@ -5,6 +5,7 @@ import java.nio.file.Path
 
 interface BazelInfo {
   val execRoot: String
+  val outputBase: Path
   val workspaceRoot: Path
   val release: BazelRelease
 }
@@ -28,6 +29,7 @@ data class BazelRelease(
 }
 data class BasicBazelInfo(
     override val execRoot: String,
+    override val outputBase: Path,
     override val workspaceRoot: Path,
     override val release: BazelRelease
 ) : BazelInfo
@@ -38,9 +40,13 @@ class LazyBazelInfo(bazelInfoSupplier: () -> BazelInfo) : BazelInfo {
 
   override val execRoot: String
     get() = bazelInfo.execRoot
+
+  override val outputBase: Path
+    get() = bazelInfo.outputBase
+
   override val workspaceRoot: Path
     get() = bazelInfo.workspaceRoot
+
   override val release: BazelRelease
     get() = bazelInfo.release
-
 }

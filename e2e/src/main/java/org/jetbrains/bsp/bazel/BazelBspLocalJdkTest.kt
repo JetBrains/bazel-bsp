@@ -22,7 +22,7 @@ object BazelBspLocalJdkTest : BazelBspTestBaseScenario() {
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
         val exampleExampleJvmBuildTarget = JvmBuildTarget().also {
-            it.javaHome = "file://\$BAZEL_CACHE/external/local_jdk/"
+            it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/local_jdk/"
             it.javaVersion = "17"
         }
 

@@ -158,7 +158,7 @@ sonatype_dependencies()
 
 git_repository(
     name = "testkit",
-    commit = "79298920c6b5d9150ae284293b88aef468e203f4",
+    commit = "ee5970a56498ff511f36a278e3c9a6bbc8f9fc6f",
     remote = "https://github.com/build-server-protocol/bsp-testkit2.git",
 )
 

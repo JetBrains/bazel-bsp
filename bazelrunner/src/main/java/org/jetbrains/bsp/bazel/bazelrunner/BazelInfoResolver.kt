@@ -30,6 +30,7 @@ class BazelInfoResolver(
 
     return BasicBazelInfo(
         execRoot = extract("execution_root"),
+        outputBase = Paths.get(extract("output_base")),
         workspaceRoot = Paths.get(extract("workspace")),
         release = BazelRelease.fromReleaseString(extract("release"))
     )
