@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
+import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.params.ParameterizedTest
@@ -75,12 +74,8 @@ class ProjectViewListSectionParserTest {
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isFailure)
-            assertEquals(
-                "Project view parsing failed! Expected '"
-                    + sectionName
-                    + "' section name, got 'wrongsection'!", sectionTry.exceptionOrNull()!!.message
-            )
+            sectionTry.isFailure shouldBe true
+            sectionTry.exceptionOrNull()!!.message shouldBe "Project view parsing failed! Expected '$sectionName' section name, got 'wrongsection'!"
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewListSectionParserTest#data")
@@ -100,8 +95,8 @@ class ProjectViewListSectionParserTest {
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isSuccess)
-            assertTrue(sectionTry.getOrNull() == null)
+            sectionTry.isSuccess shouldBe true
+            sectionTry.getOrNull() shouldBe null
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewListSectionParserTest#data")
@@ -127,9 +122,9 @@ class ProjectViewListSectionParserTest {
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isSuccess)
+            sectionTry.isSuccess shouldBe true
             val expectedSection = sectionConstructor(listOf("element1", "element2", "element3"))
-            assertEquals(expectedSection, sectionTry.getOrNull())
+            sectionTry.getOrNull() shouldBe expectedSection
         }
 
         // ProjectViewListSection parse(rawSections)
@@ -153,7 +148,7 @@ class ProjectViewListSectionParserTest {
             val section = parser.parse(rawSections)
 
             // then
-            assertTrue(section == null)
+            section shouldBe null
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewListSectionParserTest#data")
@@ -183,7 +178,7 @@ ${rawElementConstructor("element2")}"""
 
             // then
             val expectedSection = sectionConstructor(listOf("element1", "element2", "element3"))
-            assertEquals(expectedSection, section)
+            section shouldBe expectedSection
         }
     }
 }

@@ -6,8 +6,6 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableL
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.params.ParameterizedTest
@@ -87,12 +85,11 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isFailure)
-            assertTrue(sectionTry.exceptionOrNull()!! is IllegalArgumentException)
-            assertEquals(
-                "Project view parsing failed! Expected '$sectionName' section name, got 'wrongsection'!",
-                sectionTry.exceptionOrNull()!!.message
-            )
+            sectionTry.isFailure shouldBe true
+            (sectionTry.exceptionOrNull()!! is IllegalArgumentException) shouldBe true
+            sectionTry.exceptionOrNull()!!.message shouldBe
+                "Project view parsing failed! Expected '$sectionName' section name, got 'wrongsection'!"
+
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewExcludableListSectionParserTest#data")
@@ -113,8 +110,8 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isSuccess)
-            assertTrue(sectionTry.getOrNull() == null)
+            sectionTry.isSuccess shouldBe true
+            sectionTry.getOrNull() shouldBe null
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewExcludableListSectionParserTest#data")
@@ -140,10 +137,10 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isSuccess)
+            sectionTry.isSuccess shouldBe true
             val expectedSection =
                 sectionConstructor(listOf("included1", "included2", "included3"), listOf())
-            assertEquals(expectedSection, sectionTry.getOrNull())
+            sectionTry.getOrNull() shouldBe expectedSection
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewExcludableListSectionParserTest#data")
@@ -170,10 +167,10 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isSuccess)
+            sectionTry.isSuccess shouldBe true
             val expectedSection =
                 sectionConstructor(listOf(), listOf("excluded1", "excluded2", "excluded3"))
-            assertEquals(expectedSection, sectionTry.getOrNull())
+            sectionTry.getOrNull() shouldBe expectedSection
         }
 
         @MethodSource("org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewExcludableListSectionParserTest#data")
@@ -200,9 +197,9 @@ class ProjectViewExcludableListSectionParserTest<V, T : ProjectViewExcludableLis
             val sectionTry = parser.parse(rawSection)
 
             // then
-            assertTrue(sectionTry.isSuccess)
+            sectionTry.isSuccess shouldBe true
             val expectedSection = sectionConstructor(listOf("included1"), listOf("excluded1", "excluded2"))
-            assertEquals(expectedSection, sectionTry.getOrNull())
+            sectionTry.getOrNull() shouldBe expectedSection
         }
     }
 
