@@ -3,24 +3,22 @@ load("//aspects:rules/kt/kt_info.bzl", "extract_kotlin_info")
 load("//aspects:rules/cpp/cpp_info.bzl", "extract_cpp_info")
 load("//aspects:rules/scala/scala_info.bzl", "extract_scala_info", "extract_scala_toolchain_info")
 load("//aspects:rules/java/java_info.bzl", "JAVA_RUNTIME_TOOLCHAIN_TYPE", "extract_java_info", "extract_java_runtime", "extract_java_toolchain")
-load("//aspects:utils/utils.bzl", "create_struct", "file_location", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "abs", "create_struct", "file_location", "get_aspect_ids", "update_sync_output_groups")
 
-def get_aspect_ids(ctx, target):
-    """Returns the all aspect ids, filtering out self."""
-    aspect_ids = None
-    if hasattr(ctx, "aspect_ids"):
-        aspect_ids = ctx.aspect_ids
-    elif hasattr(target, "aspect_ids"):
-        aspect_ids = target.aspect_ids
-    else:
-        return None
-    return [aspect_id for aspect_id in aspect_ids if "bsp_target_info_aspect" not in aspect_id]
+EXTENSIONS = [
+    extract_java_info,
+    extract_kotlin_info,
+    extract_java_toolchain,
+    extract_java_runtime,
+    extract_scala_info,
+    extract_scala_toolchain_info,
+    extract_python_info,
+    extract_cpp_info,
+]
 
-def abs(num):
-    if num < 0:
-        return -num
-    else:
-        return num
+def create_all_extension_info(target, ctx, output_groups, dep_targets):
+    info = [create_extension_info(target = target, ctx = ctx, output_groups = output_groups, dep_targets = dep_targets) for create_extension_info in EXTENSIONS]
+    return [(file, data) for file, data in info if file != None]
 
 def _collect_target_from_attr(rule_attrs, attr_name, result):
     """Collects the targets from the given attr into the result."""
@@ -149,14 +147,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         for f in t.files.to_list()
     ]
 
-    java_target_info = extract_java_info(target, ctx, output_groups)
-    scala_toolchain_info = extract_scala_toolchain_info(target, ctx, output_groups)
-    scala_target_info = extract_scala_info(target, ctx, output_groups)
-    java_toolchain_info, java_toolchain_info_exported = extract_java_toolchain(target, ctx, dep_targets)
-    java_runtime_info, java_runtime_info_exported = extract_java_runtime(target, ctx, dep_targets)
-    cpp_target_info = extract_cpp_info(target, ctx)
-    kotlin_target_info = extract_kotlin_info(target, ctx)
-    python_target_info = extract_python_info(target, ctx)
+    aspect_ids = get_aspect_ids(ctx, target)
 
     result = dict(
         id = str(target.label),
@@ -165,23 +156,24 @@ def _bsp_target_info_aspect_impl(target, ctx):
         dependencies = list(all_deps),
         sources = sources,
         resources = resources,
-        scala_target_info = scala_target_info,
-        scala_toolchain_info = scala_toolchain_info,
-        java_target_info = java_target_info,
-        java_toolchain_info = java_toolchain_info,
-        java_runtime_info = java_runtime_info,
-        cpp_target_info = cpp_target_info,
-        kotlin_target_info = kotlin_target_info,
-        python_target_info = python_target_info,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )
 
+    extension_info = create_all_extension_info(target, ctx, output_groups, dep_targets)
+    extension_exported_properties = dict()
+    for (_, data) in extension_info:
+        if data != None:
+            extension_exported_properties.update(data)
+
+    info_files = [file for (file, _) in extension_info]
+    update_sync_output_groups(output_groups, "bsp-target-info", depset(info_files))
+
     file_name = target.label.name
     file_name = file_name + "-" + str(abs(hash(file_name)))
-    aspect_ids = get_aspect_ids(ctx, target)
     if aspect_ids:
         file_name = file_name + "-" + str(abs(hash(".".join(aspect_ids))))
+    file_name = "%s.general" % file_name
     file_name = "%s.bsp-info.textproto" % file_name
     info_file = ctx.actions.declare_file(file_name)
     ctx.actions.write(info_file, create_struct(**result).to_proto())
@@ -192,9 +184,8 @@ def _bsp_target_info_aspect_impl(target, ctx):
         kind = ctx.rule.kind,
         export_deps = export_deps,
         output_groups = output_groups,
+        **extension_exported_properties
     )
-    exported_properties.update(java_toolchain_info_exported)
-    exported_properties.update(java_runtime_info_exported)
 
     return struct(
         bsp_info = struct(**exported_properties),

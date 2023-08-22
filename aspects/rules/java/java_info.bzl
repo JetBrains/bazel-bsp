@@ -1,5 +1,5 @@
 load("//aspects:utils/java_utils.bzl", "get_java_provider")
-load("//aspects:utils/utils.bzl", "create_struct", "file_location", "is_external", "map", "to_file_location", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "file_location", "is_external", "map", "to_file_location", "update_sync_output_groups")
 
 def map_with_resolve_files(f, xs):
     results = []
@@ -91,17 +91,17 @@ def extract_compile_jars(provider):
 
     return compilation_info.compilation_classpath if compilation_info else transitive_compile_time_jars
 
-def extract_java_info(target, ctx, output_groups):
+def extract_java_info(target, ctx, output_groups, **kwargs):
     provider = get_java_provider(target)
     if not provider:
-        return None
+        return None, None
 
     if hasattr(provider, "java_outputs") and provider.java_outputs:
         java_outputs = provider.java_outputs
     elif hasattr(provider, "outputs") and provider.outputs:
         java_outputs = provider.outputs.jars
     else:
-        return None
+        return None, None
 
     resolve_files = []
 
@@ -130,7 +130,7 @@ def extract_java_info(target, ctx, output_groups):
     if (is_external(target)):
         update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
 
-    return create_struct(
+    info = create_struct(
         jars = jars,
         generated_jars = generated_jars,
         runtime_classpath = runtime_classpath,
@@ -142,7 +142,9 @@ def extract_java_info(target, ctx, output_groups):
         args = args,
     )
 
-def extract_java_toolchain(target, ctx, dep_targets):
+    return create_proto(target, ctx, info, "java_target_info"), None
+
+def extract_java_toolchain(target, ctx, dep_targets, **kwargs):
     toolchain = None
 
     if hasattr(target, "java_toolchain"):
@@ -166,13 +168,14 @@ def extract_java_toolchain(target, ctx, dep_targets):
                 break
 
     if toolchain_info != None:
-        return toolchain_info, dict(java_toolchain_info = toolchain_info)
+        info_file = create_proto(target, ctx, toolchain_info, "java_toolchain_info")
+        return info_file, dict(java_toolchain_info = toolchain_info)
     else:
-        return None, dict()
+        return None, None
 
 JAVA_RUNTIME_TOOLCHAIN_TYPE = "@bazel_tools//tools/jdk:runtime_toolchain_type"
 
-def extract_java_runtime(target, ctx, dep_targets):
+def extract_java_runtime(target, ctx, dep_targets, **kwargs):
     runtime = None
 
     if java_common.JavaRuntimeInfo in target:  # Bazel 5.4.0 way
@@ -195,6 +198,7 @@ def extract_java_runtime(target, ctx, dep_targets):
                 break
 
     if runtime_info != None:
-        return runtime_info, dict(java_runtime_info = runtime_info)
+        info_file = create_proto(target, ctx, runtime_info, "java_runtime_info")
+        return info_file, dict(java_runtime_info = runtime_info)
     else:
-        return None, dict()
+        return None, None

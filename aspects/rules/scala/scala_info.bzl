@@ -1,5 +1,5 @@
 load("//aspects:utils/java_utils.bzl", "get_java_provider")
-load("//aspects:utils/utils.bzl", "file_location", "is_external", "map", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "create_proto", "file_location", "is_external", "map", "update_sync_output_groups")
 
 def find_scalac_classpath(runfiles):
     result = []
@@ -13,13 +13,13 @@ def find_scalac_classpath(runfiles):
             result.append(file)
     return result if found_scala_compiler_jar and len(result) >= 3 else []
 
-def extract_scala_toolchain_info(target, ctx, output_groups):
+def extract_scala_toolchain_info(target, ctx, output_groups, **kwargs):
     runfiles = target.default_runfiles.files.to_list()
 
     classpath = find_scalac_classpath(runfiles)
 
     if not classpath:
-        return None
+        return None, None
 
     resolve_files = classpath
     compiler_classpath = map(file_location, classpath)
@@ -27,12 +27,14 @@ def extract_scala_toolchain_info(target, ctx, output_groups):
     if (is_external(target)):
         update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
 
-    return struct(compiler_classpath = compiler_classpath)
+    scala_toolchain_info = struct(compiler_classpath = compiler_classpath)
 
-def extract_scala_info(target, ctx, output_groups):
+    return create_proto(target, ctx, scala_toolchain_info, "scala_toolchain_info"), None
+
+def extract_scala_info(target, ctx, output_groups, **kwargs):
     provider = get_java_provider(target)
     if not provider:
-        return None
+        return None, None
 
     # proper solution, but it requires adding scala_toolchain to the aspect
     # SCALA_TOOLCHAIN = "@io_bazel_rules_scala//scala:toolchain_type"
@@ -64,4 +66,5 @@ def extract_scala_info(target, ctx, output_groups):
     scala_info = struct(
         scalac_opts = scalac_opts,
     )
-    return scala_info
+
+    return create_proto(target, ctx, scala_info, "scala_target_info"), None

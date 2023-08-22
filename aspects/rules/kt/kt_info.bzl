@@ -1,19 +1,19 @@
-load("//aspects:utils/utils.bzl", "create_struct")
+load("//aspects:utils/utils.bzl", "create_proto", "create_struct")
 
-def extract_kotlin_info(target, ctx):
+def extract_kotlin_info(target, ctx, **kwargs):
     # if KtJvmInfo not in target:
-    #    return None
+    #    return None, None
 
     # provider = target[KtJvmInfo]
 
     if not hasattr(target, "kt"):
-        return None
+        return None, None
 
     provider = target.kt
 
     # Only supports JVM platform now
     if not hasattr(provider, "language_version"):
-        return None
+        return None, None
 
     language_version = getattr(provider, "language_version", None)
     api_version = language_version
@@ -34,4 +34,7 @@ def extract_kotlin_info(target, ctx):
     if kotlinc_opts != None:
         kotlin_info["kotlinc_opts"] = kotlinc_opts
 
-    return create_struct(**kotlin_info)
+    kotlin_target_info = create_struct(**kotlin_info)
+    info_file = create_proto(target, ctx, kotlin_target_info, "kotlin_target_info")
+
+    return info_file, None
