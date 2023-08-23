@@ -52,10 +52,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
             .resolve(fileLocation.relativePath)
 
     private fun resolveOutput(fileLocation: FileLocation): Path =
-        bazelInfo
-            .workspaceRoot
-            .resolve(fileLocation.rootExecutionPathFragment)
-            .resolve(fileLocation.relativePath)
+        Paths.get(bazelInfo.execRoot, fileLocation.rootExecutionPathFragment, fileLocation.relativePath)
 
     private fun resolveSource(fileLocation: FileLocation): Path =
         bazelInfo.workspaceRoot.resolve(fileLocation.relativePath)
