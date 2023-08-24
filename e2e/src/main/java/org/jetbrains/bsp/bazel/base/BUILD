@@ -10,5 +10,9 @@ kt_jvm_library(
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@testkit//:bazel-testkit-client",
+        "//install/src/main/java/org/jetbrains/bsp/bazel/install",
     ],
+    runtime_deps = [
+        "//install",
+    ]
 )

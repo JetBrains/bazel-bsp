@@ -44,8 +44,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "sample-repo"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
         listOf(
             resolveProject(),
