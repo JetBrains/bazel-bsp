@@ -6,8 +6,8 @@ kt_jvm_library(
     resources = ["//aspects"],
     visibility = [
         "//bspcli:__subpackages__",
-        "//install:__subpackages__",
         "//e2e:__subpackages__",
+        "//install:__subpackages__",
     ],
     deps = [
         "//commons",

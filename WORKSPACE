@@ -173,7 +173,7 @@ http_archive(
     name = "rules_bazel_integration_test",
     sha256 = RULES_BAZEL_INTEGRATION_TEST_SHA,
     url = "https://github.com/bazel-contrib/rules_bazel_integration_test/releases/download/v{}/rules_bazel_integration_test.v{}.tar.gz"
-        .format(RULES_BAZEL_INTEGRATION_TEST_TAG, RULES_BAZEL_INTEGRATION_TEST_TAG)
+        .format(RULES_BAZEL_INTEGRATION_TEST_TAG, RULES_BAZEL_INTEGRATION_TEST_TAG),
 )
 
 # --------------------------------------------------------------------------------------------------------------------
