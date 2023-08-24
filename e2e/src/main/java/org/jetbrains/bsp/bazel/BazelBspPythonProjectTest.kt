@@ -25,8 +25,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "python-project"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
         workspaceBuildTargets(),
         dependencySourcesResults(),
