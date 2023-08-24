@@ -10,6 +10,8 @@ import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspEnvironmentManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.server.sync.*
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
@@ -53,7 +55,8 @@ class ServerContainer internal constructor(
             val bazelInfo = bazelDataResolver.resolveBazelInfo { }
 
             val aspectsResolver = InternalAspectsResolver(bspInfo)
-            val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)
+            val bazelBspEnvironmentManager = BazelBspEnvironmentManager(aspectsResolver, BazelExternalRulesQueryImpl(bazelRunner))
+            val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver, bazelBspEnvironmentManager)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)
             val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
             val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)

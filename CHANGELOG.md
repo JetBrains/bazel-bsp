@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+### Features 🎉
+- The server generates `extensions.bzl` based on languages (external rules) relevant to the project. 
+
 ## [3.0.0] - 09.08.2023
 
 ### BREAKING CHANGES 🚨

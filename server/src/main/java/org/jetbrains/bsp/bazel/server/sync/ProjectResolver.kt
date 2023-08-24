@@ -6,6 +6,7 @@ import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspEnvironmentManager
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider

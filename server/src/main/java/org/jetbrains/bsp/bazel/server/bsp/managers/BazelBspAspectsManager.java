@@ -13,16 +13,22 @@ import org.jetbrains.bsp.bazel.server.bep.BepOutput;
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
 
+import java.nio.file.Paths;
+import java.util.List;
+
 public class BazelBspAspectsManager {
 
   private final BazelBspCompilationManager bazelBspCompilationManager;
   private final InternalAspectsResolver aspectsResolver;
+  private final BazelBspEnvironmentManager bazelBspEnvironmentManager;
 
   public BazelBspAspectsManager(
       BazelBspCompilationManager bazelBspCompilationManager,
-      InternalAspectsResolver aspectResolver) {
+      InternalAspectsResolver aspectResolver,
+      BazelBspEnvironmentManager bazelBspEnvironmentManager) {
     this.bazelBspCompilationManager = bazelBspCompilationManager;
     this.aspectsResolver = aspectResolver;
+    this.bazelBspEnvironmentManager = bazelBspEnvironmentManager;
   }
 
   public BepOutput fetchFilesFromOutputGroups(
@@ -30,6 +36,8 @@ public class BazelBspAspectsManager {
       TargetsSpec targetSpecs,
       String aspect,
       List<String> outputGroups) {
+    bazelBspEnvironmentManager.generateLanguageExtensions(cancelChecker);
+
     if (targetSpecs.getValues().isEmpty()) return new BepOutput(new HashMap<>(), new HashMap<>(), new HashSet<>());
     return
         bazelBspCompilationManager

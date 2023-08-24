@@ -1,20 +1,6 @@
-load("//aspects:rules/python/python_info.bzl", "extract_python_info")
-load("//aspects:rules/kt/kt_info.bzl", "extract_kotlin_info")
-load("//aspects:rules/cpp/cpp_info.bzl", "extract_cpp_info")
-load("//aspects:rules/scala/scala_info.bzl", "extract_scala_info", "extract_scala_toolchain_info")
-load("//aspects:rules/java/java_info.bzl", "JAVA_RUNTIME_TOOLCHAIN_TYPE", "extract_java_info", "extract_java_runtime", "extract_java_toolchain")
 load("//aspects:utils/utils.bzl", "abs", "create_struct", "file_location", "get_aspect_ids", "update_sync_output_groups")
-
-EXTENSIONS = [
-    extract_java_info,
-    extract_kotlin_info,
-    extract_java_toolchain,
-    extract_java_runtime,
-    extract_scala_info,
-    extract_scala_toolchain_info,
-    extract_python_info,
-    extract_cpp_info,
-]
+load("//aspects:rules/java/java_info.bzl", "JAVA_RUNTIME_TOOLCHAIN_TYPE")
+load("//aspects:extensions.bzl", "EXTENSIONS")
 
 def create_all_extension_info(target, ctx, output_groups, dep_targets):
     info = [create_extension_info(target = target, ctx = ctx, output_groups = output_groups, dep_targets = dep_targets) for create_extension_info in EXTENSIONS]
