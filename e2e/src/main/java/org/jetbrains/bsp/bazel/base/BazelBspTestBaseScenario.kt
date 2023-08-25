@@ -17,9 +17,14 @@ abstract class BazelBspTestBaseScenario {
             .let {"""(?<=Build label: )\d+(?=[0-9.]+)""".toRegex().find(it)!!.value.toInt() }
             .let { if(it < 6) "" else "@" }
 
-    protected val testClient = createClient()
+    protected val testClient: BazelTestClient
 
-    private fun createClient(): BazelTestClient {
+    init {
+        installServer()
+        testClient = createClient()
+    }
+
+    private fun installServer() {
         Install.main(
             arrayOf(
                 "-d", workspaceDir,
@@ -27,9 +32,8 @@ abstract class BazelBspTestBaseScenario {
                 "-t", "//...",
             )
         )
-
-        val bazelWorkspace = Path.of(workspaceDir)
-
+    }
+    private fun createClient(): BazelTestClient {
         log.info("Testing repo workspace path: $workspaceDir")
         log.info("Creating TestClient...")
 
@@ -42,7 +46,7 @@ abstract class BazelBspTestBaseScenario {
             workspaceDir,
             capabilities
         )
-        return BazelTestClient(bazelWorkspace, initializeBuildParams)
+        return BazelTestClient(Path.of(workspaceDir), initializeBuildParams)
             .also { log.info("Created TestClient done.") }
     }
 
