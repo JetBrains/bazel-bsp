@@ -120,12 +120,16 @@ def _bsp_target_info_aspect_impl(target, ctx):
     for k, v in output_groups.items():
         output_groups[k] = depset(transitive = v)
 
-    sources = [
-        file_location(f)
-        for t in getattr(ctx.rule.attr, "srcs", [])
-        for f in t.files.to_list()
-        if f.is_source
-    ]
+    srcs_attr = getattr(ctx.rule.attr, "srcs", [])
+    sources = []
+
+    if type(srcs_attr) == "list":
+        sources = [
+            file_location(f)
+            for t in srcs_attr
+            for f in t.files.to_list()
+            if f.is_source
+        ]
 
     resources = [
         file_location(f)

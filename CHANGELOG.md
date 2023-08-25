@@ -6,7 +6,12 @@
 ## [Unreleased]
 
 ### Features 🎉
+
 - The server generates `extensions.bzl` based on languages (external rules) relevant to the project. 
+
+### Fixes 🛠️
+
+- aspects dont fail if target contains another target as `srcs` attribute
 
 ## [3.0.0] - 09.08.2023
 
