@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.install.cli
 
-import io.kotest.matchers.maps.containAnyKeys
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -205,7 +204,7 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 val expectedJavaPath = Paths.get("/path/to/java")
-                cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
+                cliOptions.javaPath shouldBe expectedJavaPath
             }
 
             @Test
@@ -222,8 +221,8 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 val expectedJavaPath = Paths.get("path/to/java").toAbsolutePath()
-                cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
-                cliOptions.projectViewCliOptions?.javaPath?.isAbsolute shouldBe true
+                cliOptions.javaPath shouldBe expectedJavaPath
+                cliOptions.javaPath?.isAbsolute shouldBe true
             }
 
             @Test
@@ -244,14 +243,14 @@ class CliOptionsProviderTest {
                         .parent
                         .parent
                         .resolve("path/to/java")
-                cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
-                cliOptions.projectViewCliOptions?.javaPath?.isAbsolute shouldBe true
+                cliOptions.javaPath shouldBe expectedJavaPath
+                cliOptions.javaPath?.isAbsolute shouldBe true
             }
         }
 
         @Nested
-        @DisplayName("cliOptions.projectViewCliOptions.bazelPath tests")
-        inner class BazelPathTest {
+        @DisplayName("cliOptions.projectViewCliOptions.bazelBinary tests")
+        inner class BazelBinaryTest {
 
             @Test
             fun `should return success and null if path is not specified`() {
@@ -266,7 +265,7 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                cliOptions.projectViewCliOptions?.bazelPath shouldBe null
+                cliOptions.projectViewCliOptions?.bazelBinary shouldBe null
             }
 
             @Test
@@ -282,8 +281,8 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                val expectedBazelPath = Paths.get("/path/to/bazel")
-                cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
+                val expectedBazelBinary = Paths.get("/path/to/bazel")
+                cliOptions.projectViewCliOptions?.bazelBinary shouldBe expectedBazelBinary
             }
 
             @Test
@@ -299,9 +298,9 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                val expectedBazelPath = Paths.get("path/to/bazel").toAbsolutePath()
-                cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
-                cliOptions.projectViewCliOptions?.bazelPath?.isAbsolute shouldBe true
+                val expectedBazelBinary = Paths.get("path/to/bazel").toAbsolutePath()
+                cliOptions.projectViewCliOptions?.bazelBinary shouldBe expectedBazelBinary
+                cliOptions.projectViewCliOptions?.bazelBinary?.isAbsolute shouldBe true
             }
 
             @Test
@@ -317,13 +316,13 @@ class CliOptionsProviderTest {
                 cliOptionsTry.isSuccess shouldBe true
                 val cliOptions = cliOptionsTry.get()
 
-                val expectedBazelPath = Paths.get("")
+                val expectedBazelBinary = Paths.get("")
                         .toAbsolutePath()
                         .parent
                         .parent
                         .resolve("path/to/bazel")
-                cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
-                cliOptions.projectViewCliOptions?.bazelPath?.isAbsolute shouldBe true
+                cliOptions.projectViewCliOptions?.bazelBinary shouldBe expectedBazelBinary
+                cliOptions.projectViewCliOptions?.bazelBinary?.isAbsolute shouldBe true
             }
         }
 
@@ -345,7 +344,7 @@ class CliOptionsProviderTest {
                 val cliOptions = cliOptionsTry.get()
 
                 val expectedDebuggerAddress = "host:8000"
-                cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+                cliOptions.debuggerAddress shouldBe expectedDebuggerAddress
             }
         }
 
@@ -678,13 +677,13 @@ class CliOptionsProviderTest {
             cliOptions.projectViewFilePath?.isAbsolute shouldBe true
 
             val expectedJavaPath = Paths.get("/path/to/java")
-            cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
+            cliOptions.javaPath shouldBe expectedJavaPath
 
-            val expectedBazelPath = Paths.get("/path/to/bazel")
-            cliOptions.projectViewCliOptions?.bazelPath shouldBe expectedBazelPath
+            val expectedBazelBinary = Paths.get("/path/to/bazel")
+            cliOptions.projectViewCliOptions?.bazelBinary shouldBe expectedBazelBinary
 
             val expectedDebuggerAddress = "host:8000"
-            cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+            cliOptions.debuggerAddress shouldBe expectedDebuggerAddress
 
             val expectedTargets = listOf(
                     "//included_target1",
@@ -749,10 +748,10 @@ class CliOptionsProviderTest {
             cliOptions.workspaceRootDir shouldBe expectedWorkspaceRootDir
 
             val expectedJavaPath = Paths.get("/path/to/java")
-            cliOptions.projectViewCliOptions?.javaPath shouldBe expectedJavaPath
+            cliOptions.javaPath shouldBe expectedJavaPath
 
             val expectedDebuggerAddress = "host:8000"
-            cliOptions.projectViewCliOptions?.debuggerAddress shouldBe expectedDebuggerAddress
+            cliOptions.debuggerAddress shouldBe expectedDebuggerAddress
 
             val expectedBuildFlags = listOf("--build_flag1=value1", "--build_flag1=value2", "--build_flag1=value3")
             cliOptions.projectViewCliOptions?.buildFlags shouldBe expectedBuildFlags

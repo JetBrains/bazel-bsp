@@ -1,12 +1,27 @@
 package org.jetbrains.bsp.bazel.server.sync.languages
 
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.createTempDirectory
 import kotlin.io.path.writeText
 
 class JVMLanguagePluginParserTest {
+
+    private lateinit var tempRoot: Path
+
+    @BeforeEach
+    fun beforeEach() {
+        tempRoot = createTempDirectory("test-temp-root")
+    }
+
+    @AfterEach
+    fun afterEach() {
+        tempRoot.toFile().deleteRecursively()
+    }
 
     @Test
     fun `should return source dir for empty package`() {
@@ -18,7 +33,7 @@ class JVMLanguagePluginParserTest {
             |
         """.trimMargin()
 
-        val sourceRoot = DopeTemp.createTempPath("path/to/source/")
+        val sourceRoot = tempRoot.resolve("path/to/source/")
         val sourceDir = Files.createDirectories(sourceRoot.resolve("dir1/dir2/dir3/"))
 
         val sourceFile = Files.createFile(sourceDir.resolve("File.java"))
@@ -43,7 +58,7 @@ class JVMLanguagePluginParserTest {
             |
         """.trimMargin()
 
-        val sourceRoot = DopeTemp.createTempPath("path/to/source/")
+        val sourceRoot = tempRoot.resolve("path/to/source/")
         val sourceDir = Files.createDirectories(sourceRoot.resolve("dir1/dir2/dir3/"))
 
         val sourceFile = Files.createFile(sourceDir.resolve("File.java"))
@@ -68,7 +83,7 @@ class JVMLanguagePluginParserTest {
             |
         """.trimMargin()
 
-        val sourceRoot = DopeTemp.createTempPath("path/to/source/")
+        val sourceRoot = tempRoot.resolve("path/to/source/")
         val sourceDir = Files.createDirectories(sourceRoot.resolve("dir1/dir2/dir3/"))
 
         val sourceFile = Files.createFile(sourceDir.resolve("File.java"))
@@ -93,7 +108,7 @@ class JVMLanguagePluginParserTest {
             |
         """.trimMargin()
 
-        val sourceRoot = DopeTemp.createTempPath("path/to/source/")
+        val sourceRoot = tempRoot.resolve("path/to/source/")
         val sourceDir = Files.createDirectories(sourceRoot.resolve("dir1/dir2/dir3/"))
 
         val sourceFile = Files.createFile(sourceDir.resolve("File.java"))

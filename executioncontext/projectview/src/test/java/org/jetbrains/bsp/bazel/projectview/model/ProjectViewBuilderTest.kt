@@ -3,10 +3,8 @@ package org.jetbrains.bsp.bazel.projectview.model
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import io.vavr.control.Try
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
@@ -66,15 +64,12 @@ class ProjectViewBuilderTest {
 
             val expectedProjectView = ProjectView(
                 targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -100,9 +95,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target2"),
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                     directories = ProjectViewDirectoriesSection(
@@ -113,7 +106,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(0),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(true)
                 ).build()
 
             // then
@@ -132,9 +124,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
@@ -145,7 +135,6 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -166,9 +155,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
@@ -181,7 +168,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(0),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(true),
                 )
             .build()
 
@@ -204,9 +190,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target1.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
@@ -217,7 +201,6 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -234,9 +217,7 @@ class ProjectViewBuilderTest {
                     targets = ProjectViewTargetsSection(
                         listOf(BuildTargetIdentifier("//included_target1")), emptyList()
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1=value1", "--build_flag2=value2")
                     ),
@@ -249,7 +230,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(0),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(true),
                 ).build()
 
             // then
@@ -260,9 +240,7 @@ class ProjectViewBuilderTest {
                 targets = ProjectViewTargetsSection(
                     listOf(BuildTargetIdentifier("//included_target1")), emptyList()
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag1=value1", "--build_flag2=value2")),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
@@ -273,7 +251,6 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -294,9 +271,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported/path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("imported/path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
@@ -309,7 +284,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(1),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(false),
 
             ).build()
 
@@ -328,9 +302,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target2.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag2.1=value2.1", "--build_flag2.2=value2.2")
                     ),
@@ -343,8 +315,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(2),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(true),
-
             ).build()
 
             // then
@@ -368,9 +338,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target2.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("127.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -394,7 +362,6 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(2),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -416,9 +383,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported1/path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("imported1/path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported1/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
@@ -434,7 +399,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(1),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(false),
                 ).build()
 
             val importedProjectViewTry2 =
@@ -465,9 +429,7 @@ class ProjectViewBuilderTest {
                         ),
                         emptyList()
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag3.1=value3.1")
                     ),
@@ -511,7 +473,6 @@ class ProjectViewBuilderTest {
                         )
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             ).build()
 
             // then
@@ -539,9 +500,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -573,7 +532,6 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -595,9 +553,7 @@ class ProjectViewBuilderTest {
                             BuildTargetIdentifier("//excluded_target1.2")
                         )
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported1/path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("imported1/path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported1/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf("--build_flag1.1=value1.1", "--build_flag1.2=value1.2")
                     ),
@@ -614,7 +570,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(1),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(true),
                 ).build()
 
             val importedProjectViewTry2 =
@@ -645,9 +600,7 @@ class ProjectViewBuilderTest {
                         ),
                         emptyList()
                     ),
-                    bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
-                    debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
-                    javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
+                    bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                     buildFlags = ProjectViewBuildFlagsSection(listOf("--build_flag3.1=value3.1")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                     directories = ProjectViewDirectoriesSection(
@@ -661,7 +614,6 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = ProjectViewImportDepthSection(3),
-                    produceTraceLog = ProjectViewProduceTraceLogSection(true),
                 ).build()
 
             val importedProjectViewTry4 = ProjectView.Builder().build()
@@ -721,9 +673,7 @@ class ProjectViewBuilderTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("imported3/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("imported3/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("imported3/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -755,7 +705,6 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }

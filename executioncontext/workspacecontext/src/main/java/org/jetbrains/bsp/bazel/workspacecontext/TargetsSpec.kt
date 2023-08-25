@@ -17,7 +17,7 @@ data class TargetsSpec(
 ) : ExecutionContextExcludableListEntity<BuildTargetIdentifier>()
 
 private val defaultTargetsSpec = TargetsSpec(
-    values = listOf(BuildTargetIdentifier("//...")),
+    values = emptyList(),
     excludedValues = emptyList(),
 )
 

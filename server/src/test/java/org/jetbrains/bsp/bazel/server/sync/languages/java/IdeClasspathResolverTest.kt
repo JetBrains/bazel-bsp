@@ -13,16 +13,18 @@ import java.nio.file.Paths
 // TODO we should add more tests for the "default" behavior
 class IdeClasspathResolverTest {
 
-  private val execRoot = "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b/execroot/bazel_bsp"
+  private val outputBase = "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b"
+  private val execRoot = "$outputBase/execroot/bazel_bsp"
   private lateinit var bazelPathsResolver: BazelPathsResolver
 
   @BeforeEach
   fun beforeEach() {
     // given
     val bazelInfo = BasicBazelInfo(
-      execRoot = execRoot,
-      workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
-      release = BazelRelease.fromReleaseString("release 6.0.0")
+        execRoot = execRoot,
+        outputBase = Paths.get(outputBase),
+        workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
+        release = BazelRelease.fromReleaseString("release 6.0.0")
     )
 
     bazelPathsResolver = BazelPathsResolver(bazelInfo)

@@ -6,8 +6,10 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import java.lang.System
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.Path
 
 class CliOptionsProvider(private val args: Array<String>) {
 
@@ -75,25 +77,22 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(buildFlagsOption)
 
-        val bazelPathOption = Option.builder(BAZEL_PATH_SHORT_OPT)
-            .longOpt("bazel-path")
+        val bazelBinaryOption = Option.builder(BAZEL_BINARY_SHORT_OPT)
+            .longOpt("bazel-binary")
             .hasArg()
             .argName("path")
             .desc(
                 "Add bazel path to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_path."
+                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#bazel_binary."
             )
             .build()
-        cliParserOptions.addOption(bazelPathOption)
+        cliParserOptions.addOption(bazelBinaryOption)
 
         val debuggerAddressOption = Option.builder(DEBUGGER_ADDRESS_SHORT_OPT)
             .longOpt("debugger-address")
             .hasArg()
             .argName("address")
-            .desc(
-                "Add debugger address to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#debugger_address."
-            )
+            .desc("Add debugger address to the server invocation.")
             .build()
         cliParserOptions.addOption(debuggerAddressOption)
 
@@ -101,10 +100,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             .longOpt("java-path")
             .hasArg()
             .argName("path")
-            .desc(
-                "Add java path to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#java_path."
-            )
+            .desc("Add java path to the server invocation.")
             .build()
         cliParserOptions.addOption(javaPathOption)
 
@@ -160,12 +156,6 @@ class CliOptionsProvider(private val args: Array<String>) {
             .build()
         cliParserOptions.addOption(importDepthOption)
 
-        val useBloopOption = Option.builder(USE_BLOOP_SHORT_OPT)
-            .longOpt("use-bloop")
-            .desc("Use bloop as the BSP server rather than bazel-bsp.")
-            .build()
-        cliParserOptions.addOption(useBloopOption)
-
         val bazelWorkspaceRootDirOption = Option.builder(BAZEL_WORKSPACE_ROOT_DIR_OPT)
             .longOpt("bazel-workspace")
             .hasArg()
@@ -175,10 +165,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
         val produceTraceLogOption = Option.builder(PRODUCE_TRACE_LOG_OPT)
             .longOpt("produce-trace-log")
-            .desc(
-                "Add produce_trace_log to the generated project view file, you can read more about it here: " +
-                        "https://github.com/JetBrains/bazel-bsp/tree/master/executioncontext/projectview#produce_trace_log."
-            )
+            .desc("Server will create trace log file.")
             .build()
         cliParserOptions.addOption(produceTraceLogOption)
     }
@@ -191,11 +178,12 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun createCliOptions(cmd: CommandLine): CliOptions =
         CliOptions(
+            javaPath = javaPath(cmd),
+            debuggerAddress = debuggerAddress(cmd),
             helpCliOptions = createHelpCliOptions(cmd),
             workspaceRootDir = workspaceRootDir(cmd),
             projectViewFilePath = projectViewFilePath(cmd),
             projectViewCliOptions = createProjectViewCliOptions(cmd),
-            bloopCliOptions = createBloopCliOptions(cmd),
             bazelWorkspaceRootDir = bazelWorkspaceRootDir(cmd),
         )
 
@@ -216,8 +204,6 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun isHelpOptionUsed(cmd: CommandLine): Boolean = cmd.hasOption(HELP_SHORT_OPT)
 
-    private fun useBloop(cmd: CommandLine): Boolean = cmd.hasOption(USE_BLOOP_SHORT_OPT)
-
     private fun printHelp() {
         val formatter = HelpFormatter()
         formatter.width = 160
@@ -234,15 +220,10 @@ class CliOptionsProvider(private val args: Array<String>) {
         )
     }
 
-    private fun createBloopCliOptions(cmd: CommandLine): BloopCliOptions =
-        BloopCliOptions(useBloop = useBloop(cmd))
-
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
-                javaPath = javaPath(cmd),
-                bazelPath = bazelPath(cmd),
-                debuggerAddress = debuggerAddress(cmd),
+                bazelBinary = bazelBinary(cmd),
                 targets = targets(cmd),
                 excludedTargets = excludedTargets(cmd),
                 buildFlags = buildFlags(cmd),
@@ -258,9 +239,7 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun isAnyGenerationFlagSet(cmd: CommandLine): Boolean =
         cmd.hasOption(TARGETS_SHORT_OPT) or
                 cmd.hasOption(EXCLUDED_TARGETS_LONG_OPT) or
-                cmd.hasOption(JAVA_PATH_SHORT_OPT) or
-                cmd.hasOption(BAZEL_PATH_SHORT_OPT) or
-                cmd.hasOption(DEBUGGER_ADDRESS_SHORT_OPT) or
+                cmd.hasOption(BAZEL_BINARY_SHORT_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
                 cmd.hasOption(BUILD_MANUAL_TARGETS_OPT) or
                 cmd.hasOption(BUILD_FLAGS_SHORT_OPT) or
@@ -272,7 +251,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
-    private fun bazelPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_PATH_SHORT_OPT)
+    private fun bazelBinary(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, BAZEL_BINARY_SHORT_OPT)
 
     private fun getOptionValueAndMapToAbsolutePath(cmd: CommandLine, shortOpt: String): Path? =
         cmd.getOptionValue(shortOpt)?.let(Paths::get)
@@ -291,7 +270,11 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun buildFlags(cmd: CommandLine): List<String>? = cmd.getOptionValues(BUILD_FLAGS_SHORT_OPT)?.toList()
 
-    private fun calculateCurrentAbsoluteDirectory(): Path = Paths.get("").toAbsolutePath()
+    private fun calculateCurrentAbsoluteDirectory(): Path = calculateCurrentDir().toAbsolutePath()
+
+    private fun calculateCurrentDir(): Path =
+        System.getenv("BUILD_WORKING_DIRECTORY")
+            ?.let { Path(it) } ?: Path("")
 
     private fun directories(cmd: CommandLine): List<String>? = cmd.getOptionValues(DIRECTORIES_SHORT_OPT)?.toList()
 
@@ -308,7 +291,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val TARGETS_SHORT_OPT = "t"
         private const val EXCLUDED_TARGETS_LONG_OPT = "excluded-targets"
         private const val BUILD_FLAGS_SHORT_OPT = "f"
-        private const val BAZEL_PATH_SHORT_OPT = "b"
+        private const val BAZEL_BINARY_SHORT_OPT = "b"
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
         private const val BUILD_MANUAL_TARGETS_OPT = "m"
@@ -316,7 +299,6 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val EXCLUDED_DIRECTORIES_LONG_OPT = "excluded-directories"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
-        private const val USE_BLOOP_SHORT_OPT = "u"
         private const val BAZEL_WORKSPACE_ROOT_DIR_OPT ="w"
         private const val PRODUCE_TRACE_LOG_OPT ="l"
 

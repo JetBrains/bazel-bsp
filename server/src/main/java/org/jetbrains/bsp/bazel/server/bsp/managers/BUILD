@@ -1,8 +1,11 @@
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-java_library(
+kt_jvm_library(
     name = "managers",
-    srcs = glob(["*.java"]),
+    srcs = glob([
+        "*.java",
+        "*.kt",
+    ]),
     visibility = ["//server:__subpackages__"],
     deps = [
         "//bazelrunner",
@@ -12,6 +15,7 @@ java_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/bsp/utils",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/diagnostics",
         "@io_bazel//third_party/grpc:grpc-jar_checked_in",
+        "@maven//:com_google_guava_guava",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
     ],
 )

@@ -34,6 +34,9 @@ import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.OutputPathsParams;
 import ch.epfl.scala.bsp4j.OutputPathsResult;
+import ch.epfl.scala.bsp4j.PythonBuildServer;
+import ch.epfl.scala.bsp4j.PythonOptionsParams;
+import ch.epfl.scala.bsp4j.PythonOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
@@ -54,11 +57,20 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
+import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
-    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, RustBuildServer {
+    implements BuildServer,
+        JvmBuildServer,
+        ScalaBuildServer,
+        JavaBuildServer,
+        CppBuildServer,
+        BazelBuildServer,
+        PythonBuildServer,
+        RustBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -184,11 +196,6 @@ public class BspServerApi
   }
 
   @Override
-  public void onConnectWithClient(BuildClient buildClient) {
-    BuildServer.super.onConnectWithClient(buildClient);
-  }
-
-  @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams params) {
     return runner.handleRequest(
@@ -223,16 +230,28 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<JvmRunEnvironmentResult> jvmRunEnvironment(
+  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(
+      PythonOptionsParams params) {
+    return runner.handleRequest(
+        "buildTargetPythonOptions", projectSyncService::buildTargetPythonOptions, params);
+  }
+
+  @Override
+  public CompletableFuture<JvmRunEnvironmentResult> buildTargetJvmRunEnvironment(
       JvmRunEnvironmentParams params) {
     return runner.handleRequest("jvmRunEnvironment", projectSyncService::jvmRunEnvironment, params);
   }
 
   @Override
-  public CompletableFuture<JvmTestEnvironmentResult> jvmTestEnvironment(
+  public CompletableFuture<JvmTestEnvironmentResult> buildTargetJvmTestEnvironment(
       JvmTestEnvironmentParams params) {
     return runner.handleRequest(
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
+  }
+
+  @Override
+  public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
+    return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
   }
 
   @Override

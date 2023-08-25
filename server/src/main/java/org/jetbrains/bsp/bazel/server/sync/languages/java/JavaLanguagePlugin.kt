@@ -39,9 +39,9 @@ class JavaLanguagePlugin(
                 it.interfaceJarsList + it.binaryJarsList
             }.map(bazelPathsResolver::resolveUri)
             val mainClass = getMainClass(this)
-            val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList)
-            val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList + generatedJarsList.flatMap { it.binaryJarsList })
-            val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList)
+            val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList, true)
+            val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList + generatedJarsList.flatMap { it.binaryJarsList }, true)
+            val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList, true)
             val ideClasspath = resolveIdeClasspath(Label(targetInfo.id),
                 bazelPathsResolver,
                 runtimeClasspath.asSequence(), compileClasspath.asSequence()
@@ -106,7 +106,10 @@ class JavaLanguagePlugin(
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
         val jdk = javaModule.jdk
         val javaHome = jdk.javaHome?.toString()
-        return JvmBuildTarget(javaHome, jdk.version)
+        return JvmBuildTarget().also {
+            it.javaVersion = jdk.version
+            it.javaHome = javaHome
+        }
     }
 
     fun toJvmEnvironmentItem(module: Module, javaModule: JavaModule): JvmEnvironmentItem =

@@ -58,6 +58,6 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
             0
         }
         private val VERSION_PATTERN =
-            Pattern.compile("scala-(?:library|compiler|reflect)-([.\\d]+)\\.jar")
+            Pattern.compile("(?:processed_)?scala-(?:library|compiler|reflect)-([.\\d]+)\\.jar")
     }
 }

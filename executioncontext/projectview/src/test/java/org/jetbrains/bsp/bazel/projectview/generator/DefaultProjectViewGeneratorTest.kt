@@ -3,21 +3,20 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
-import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.Path
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.createTempFile
+import kotlin.io.path.writeText
 
 class DefaultProjectViewGeneratorTest {
 
@@ -30,15 +29,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             // when
@@ -63,15 +59,12 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             // when
@@ -96,15 +89,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             // when
@@ -113,63 +103,7 @@ class DefaultProjectViewGeneratorTest {
             // then
             val expectedGeneratedString =
                 """
-                bazel_path: /path/to/bazel
-
-                """.trimIndent()
-            generatedString shouldBe expectedGeneratedString
-        }
-
-        @Test
-        fun `should return pretty string only with debugger address for project view only with debugger address`() {
-            // given
-            val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = null,
-                buildFlags = null,
-                buildManualTargets = null,
-                directories = null,
-                deriveTargetsFromDirectories = null,
-                importDepth = null,
-                produceTraceLog = null,
-            )
-
-            // when
-            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
-
-            // then
-            val expectedGeneratedString =
-                """
-                debugger_address: localhost:8000
-
-                """.trimIndent()
-            generatedString shouldBe expectedGeneratedString
-        }
-
-        @Test
-        fun `should return pretty string only with java path for project view only with java path`() {
-            // given
-            val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
-                buildFlags = null,
-                buildManualTargets = null,
-                directories = null,
-                deriveTargetsFromDirectories = null,
-                importDepth = null,
-                produceTraceLog = null,
-            )
-
-            // when
-            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
-
-            // then
-            val expectedGeneratedString =
-                """
-                java_path: /path/to/java
+                bazel_binary: /path/to/bazel
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -180,9 +114,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -194,7 +126,6 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             // when
@@ -217,9 +148,7 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                     targets = null,
-                    bazelPath = null,
-                    debuggerAddress = null,
-                    javaPath = null,
+                    bazelBinary = null,
                     buildFlags = null,
                     buildManualTargets = null,
                     directories = ProjectViewDirectoriesSection(
@@ -235,7 +164,6 @@ class DefaultProjectViewGeneratorTest {
                     ),
                     deriveTargetsFromDirectories = null,
                     importDepth = null,
-                    produceTraceLog = null,
             )
 
             // when
@@ -260,15 +188,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                     targets = null,
-                    bazelPath = null,
-                    debuggerAddress = null,
-                    javaPath = null,
+                    bazelBinary = null,
                     buildFlags = null,
                     buildManualTargets = null,
                     directories = null,
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = null,
-                    produceTraceLog = null,
             )
 
             // when
@@ -288,15 +213,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = null,
             )
 
             // when
@@ -316,15 +238,12 @@ class DefaultProjectViewGeneratorTest {
             // given
             val projectView = ProjectView(
                 targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             // when
@@ -340,47 +259,16 @@ class DefaultProjectViewGeneratorTest {
         }
 
         @Test
-        fun `should return pretty string only with produce trace log for project view only with produce trace log flag`() {
-            // given
-            val projectView = ProjectView(
-                targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
-                buildFlags = null,
-                buildManualTargets = null,
-                directories = null,
-                deriveTargetsFromDirectories = null,
-                importDepth = null,
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
-            )
-
-            // when
-            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
-
-            // then
-            val expectedGeneratedString =
-                """
-                produce_trace_log: false
-
-                """.trimIndent()
-            generatedString shouldBe expectedGeneratedString
-        }
-
-        @Test
         fun `should return pretty string with project view for project view with empty list sections`() {
             // given
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(emptyList(), emptyList()),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -391,11 +279,7 @@ class DefaultProjectViewGeneratorTest {
                 """
                 targets:
 
-                bazel_path: /path/to/bazel
-
-                debugger_address: localhost:8000
-
-                java_path: /path/to/java
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                 
@@ -406,8 +290,6 @@ class DefaultProjectViewGeneratorTest {
                 derive_targets_from_directories: true
 
                 import_depth: 3
-
-                produce_trace_log: true
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -424,9 +306,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//included_target3"),
                     ), emptyList()
                 ),
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = null,
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -438,7 +318,6 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
 
             // when
@@ -452,14 +331,10 @@ class DefaultProjectViewGeneratorTest {
                     //included_target2
                     //included_target3
 
-                java_path: /path/to/java
-
                 build_flags:
                     --build_flag1=value1
                     --build_flag2=value2
                     --build_flag3=value3
-
-                produce_trace_log: false
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -480,9 +355,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -504,7 +377,6 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -520,11 +392,7 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target1
                     -//excluded_target2
 
-                bazel_path: /path/to/bazel
-
-                debugger_address: localhost:8000
-
-                java_path: /path/to/java
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                     --build_flag1=value1
@@ -543,8 +411,6 @@ class DefaultProjectViewGeneratorTest {
                 derive_targets_from_directories: true
 
                 import_depth: 3
-
-                produce_trace_log: true
 
                 """.trimIndent()
             generatedString shouldBe expectedGeneratedString
@@ -555,10 +421,22 @@ class DefaultProjectViewGeneratorTest {
     @DisplayName("fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> tests")
     inner class GeneratePrettyStringAndSaveInFileTest {
 
+        private lateinit var tempRoot: Path
+
+        @BeforeEach
+        fun beforeEach() {
+            tempRoot = createTempDirectory("test-temp-root")
+        }
+
+        @AfterEach
+        fun afterEach() {
+            tempRoot.toFile().deleteRecursively()
+        }
+
         @Test
         fun `should return success and save project view in the file`() {
             // given
-            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
+            val filePath = tempRoot.resolve("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -572,9 +450,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -596,7 +472,6 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -614,11 +489,7 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target1
                     -//excluded_target2
 
-                bazel_path: /path/to/bazel
-
-                debugger_address: localhost:8000
-
-                java_path: /path/to/java
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                     --build_flag1=value1
@@ -638,8 +509,6 @@ class DefaultProjectViewGeneratorTest {
                 
                 import_depth: 3
                 
-                produce_trace_log: true
-
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -647,8 +516,8 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and override project view in the file`() {
             // given
-            val filePath = DopeTemp.createTempFile("path/to/projectview.bazelproject")
-            Files.writeString(filePath, "some random things, maybe previous project view")
+            val filePath = createTempFile("projectview", ".bazelproject")
+            filePath.writeText("some random things, maybe previous project view")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -662,9 +531,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -686,7 +553,6 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             // when
@@ -704,11 +570,7 @@ class DefaultProjectViewGeneratorTest {
                     -//excluded_target1
                     -//excluded_target2
 
-                bazel_path: /path/to/bazel
-
-                debugger_address: localhost:8000
-
-                java_path: /path/to/java
+                bazel_binary: /path/to/bazel
 
                 build_flags:
                     --build_flag1=value1
@@ -728,8 +590,6 @@ class DefaultProjectViewGeneratorTest {
                 
                 import_depth: 3
                 
-                produce_trace_log: true
-
                 """.trimIndent()
             Files.readString(filePath) shouldBe expectedFileContent
         }
@@ -737,19 +597,16 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view with empty list sections in the file which should be parsable by the parser`() {
             // given
-            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
+            val filePath = tempRoot.resolve("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(emptyList(), emptyList()),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(emptyList()),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
 
             val parser = DefaultProjectViewParser()
@@ -764,15 +621,12 @@ class DefaultProjectViewGeneratorTest {
 
             val expectedProjectView = ProjectView(
                 targets = null,
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = null,
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             parsedProjectViewTry.get() shouldBe expectedProjectView
         }
@@ -780,7 +634,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save partly filled project view in the file which should be parsable by the parser`() {
             // given
-            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
+            val filePath = tempRoot.resolve("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -790,9 +644,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//included_target3"),
                     ), emptyList()
                 ),
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = null,
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -804,7 +656,6 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -823,7 +674,7 @@ class DefaultProjectViewGeneratorTest {
         @Test
         fun `should return success and save project view in the file which should be parsable by the parser`() {
             // given
-            val filePath = DopeTemp.createTempPath("path/to/projectview.bazelproject")
+            val filePath = tempRoot.resolve("path/to/projectview.bazelproject")
 
             val projectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -837,9 +688,7 @@ class DefaultProjectViewGeneratorTest {
                         BuildTargetIdentifier("//excluded_target2"),
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Paths.get("/path/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("localhost:8000"),
-                javaPath = ProjectViewJavaPathSection(Paths.get("/path/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1=value1",
@@ -861,7 +710,6 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
 
             val parser = DefaultProjectViewParser()

@@ -6,9 +6,12 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
+import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspEnvironmentManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.server.sync.*
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
@@ -17,6 +20,8 @@ import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
@@ -39,7 +44,8 @@ class ServerContainer internal constructor(
                 bspClientLogger: BspClientLogger,
                 bspClientTestNotifier: BspClientTestNotifier,
                 bazelRunner: BazelRunner,
-                compilationManager: BazelBspCompilationManager
+                compilationManager: BazelBspCompilationManager,
+                metricsLogger: MetricsLogger?
         ): ServerContainer {
             val bazelInfoStorage = BazelInfoStorage(bspInfo)
             val bazelDataResolver =
@@ -50,16 +56,19 @@ class ServerContainer internal constructor(
             val bazelInfo = bazelDataResolver.resolveBazelInfo { }
 
             val aspectsResolver = InternalAspectsResolver(bspInfo)
-            val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver)
+            val bazelBspEnvironmentManager = BazelBspEnvironmentManager(aspectsResolver, BazelExternalRulesQueryImpl(bazelRunner))
+            val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver, bazelBspEnvironmentManager)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)
             val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
             val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
             val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
             val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
-            val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
+            val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
             val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
+            val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
+            val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
             val languagePluginsService = LanguagePluginsService(
-                scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin, rustLanguagePlugin
+                scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin, rustLanguagePlugin
             )
             val targetKindResolver = TargetKindResolver()
             val bazelProjectMapper =
@@ -71,7 +80,8 @@ class ServerContainer internal constructor(
                 bazelProjectMapper,
                 bspClientLogger,
                 targetInfoReader,
-                bazelInfo
+                bazelInfo,
+                metricsLogger
             )
             val finalProjectStorage = projectStorage ?: FileProjectStorage(bspInfo, bspClientLogger)
             val projectProvider = ProjectProvider(projectResolver, finalProjectStorage)

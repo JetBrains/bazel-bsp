@@ -34,7 +34,6 @@ java_binary(
 scala_test(
     name = "scala_test",
     srcs = ["ScalaTest.scala"],
-    main_class = "manual_target.ScalaTest",
     tags = ["manual"],
     visibility = ["//visibility:public"],
 )

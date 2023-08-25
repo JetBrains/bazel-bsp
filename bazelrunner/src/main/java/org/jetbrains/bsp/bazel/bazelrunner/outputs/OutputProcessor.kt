@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.bazelrunner.outputs
 
+import com.google.common.base.Charsets
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import java.io.BufferedReader
 import java.io.IOException
@@ -30,13 +31,13 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
   protected fun start(inputStream: InputStream, vararg handlers: OutputHandler) {
     val runnable = Runnable {
       try {
-        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+        BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8)).use { reader ->
+          var prevLine: String? = null
+
           while (!Thread.currentThread().isInterrupted) {
-            // TODO: bazel process output doesn't capture replaceable logs (displayed for example for fetching
-            //  repositories) returning a duplicated log line instead. Passing duplicated lines allows us not
-            //  to exceed client timeout. The duplicates filtering should be restored with the introduction of
-            //  servers heartbeat
             val line = reader.readLine() ?: return@Runnable
+            if (line == prevLine) continue
+            prevLine = line
             if (isRunning()) {
               handlers.forEach { it.onNextLine(line) }
             } else {

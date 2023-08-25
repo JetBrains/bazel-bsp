@@ -22,11 +22,15 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
-import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathItem
-import ch.epfl.scala.bsp4j.OutputPathsItem
 import ch.epfl.scala.bsp4j.OutputPathItemKind
+import ch.epfl.scala.bsp4j.OutputPathsItem
+import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathsResult
+import ch.epfl.scala.bsp4j.PythonBuildTarget
+import ch.epfl.scala.bsp4j.PythonOptionsItem
+import ch.epfl.scala.bsp4j.PythonOptionsParams
+import ch.epfl.scala.bsp4j.PythonOptionsResult
 import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
@@ -86,6 +90,15 @@ class BspProjectMapper(
         return WorkspaceBuildTargetsResult(buildTargets)
     }
 
+    fun workspaceLibraries(project: Project): WorkspaceLibrariesResult {
+        val libraries = project.libraries.values.map { LibraryItem(
+                BuildTargetIdentifier(it.label),
+                it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
+                it.outputs.map { uri -> uri.toString() }
+        ) }
+        return WorkspaceLibrariesResult(libraries)
+    }
+
     private fun toBuildTarget(module: Module): BuildTarget {
         val label = BspMappings.toBspId(module)
         val dependencies =
@@ -111,7 +124,7 @@ class BspProjectMapper(
         val canCompile = !module.tags.contains(Tag.NO_BUILD) && isBuildableIfManual(module)
         val canTest = module.tags.contains(Tag.TEST) && !module.tags.contains(Tag.MANUAL)
         val canRun = module.tags.contains(Tag.APPLICATION) && !module.tags.contains(Tag.MANUAL)
-        return BuildTargetCapabilities(canCompile, canTest, canRun)
+        return BuildTargetCapabilities().also { it.canCompile = canCompile; it.canTest = canTest; it.canRun = canRun; it.canDebug = false }
     }
 
     private fun isBuildableIfManual(module: Module): Boolean =
@@ -262,6 +275,18 @@ class BspProjectMapper(
         val items = modules.mapNotNull(::extractCppOptionsItem)
         return CppOptionsResult(items)
     }
+
+
+    fun buildTargetPythonOptions(project: Project, params: PythonOptionsParams): PythonOptionsResult {
+        val modules = BspMappings.getModules(project, params.targets)
+        val items = modules.mapNotNull(::extractPythonOptionsItem)
+        return PythonOptionsResult(items)
+    }
+
+    private fun extractPythonOptionsItem(module: Module): PythonOptionsItem? =
+        languagePluginsService.extractPythonModule(module)?.let {
+            languagePluginsService.pythonLanguagePlugin.toPythonOptionsItem(module, it)
+        }
 
 
     fun buildTargetScalacOptions(

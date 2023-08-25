@@ -1,10 +1,17 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
+import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
@@ -15,9 +22,12 @@ public class BazelBspCompilationManager {
   private final BazelRunner bazelRunner;
   private BuildClient client;
   private Path workspaceRoot;
+  private Map<String, Set<TextDocumentIdentifier>> hasAnyProblems;
 
-  public BazelBspCompilationManager(BazelRunner bazelRunner) {
+  public BazelBspCompilationManager(
+      BazelRunner bazelRunner, Map<String, Set<TextDocumentIdentifier>> hasAnyProblems) {
     this.bazelRunner = bazelRunner;
+    this.hasAnyProblems = hasAnyProblems;
   }
 
   public BepBuildResult buildTargetsWithBep(
@@ -30,8 +40,12 @@ public class BazelBspCompilationManager {
       TargetsSpec targetSpecs,
       Seq<String> extraFlags,
       String originId) {
-    var bepServer = BepServer.newBepServer(client, workspaceRoot);
-    var nettyServer = BepServer.nettyServerBuilder().addService(bepServer).build();
+    var bepServer =
+        BepServer.newBepServer(
+            client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId));
+    var executor = Executors.newFixedThreadPool(4, threadFactory());
+    var nettyServer =
+        BepServer.nettyServerBuilder().addService(bepServer).executor(executor).build();
     try {
       nettyServer.start();
     } catch (IOException e) {
@@ -49,7 +63,19 @@ public class BazelBspCompilationManager {
       return new BepBuildResult(result, bepServer.getBepOutput());
     } finally {
       nettyServer.shutdown();
+      executor.shutdown();
     }
+  }
+
+  private static ThreadFactory threadFactory() {
+    return new ThreadFactoryBuilder()
+        .setNameFormat("grpc-netty-pool-%d")
+        .setUncaughtExceptionHandler(
+            (t, e) -> {
+              e.printStackTrace();
+              System.exit(1);
+            })
+        .build();
   }
 
   public void setClient(BuildClient client) {

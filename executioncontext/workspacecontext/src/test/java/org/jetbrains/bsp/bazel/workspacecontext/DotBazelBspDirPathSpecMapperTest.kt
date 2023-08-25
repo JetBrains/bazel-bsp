@@ -26,8 +26,8 @@ class DotBazelBspDirPathSpecMapperTest {
             dotBazelBspDirPathSpecTry.isSuccess shouldBe true
             val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.get()
 
-            val expectedBazelPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
-            dotBazelBspDirPathSpec shouldBe expectedBazelPathSpec
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec
         }
     }
 
@@ -45,8 +45,8 @@ class DotBazelBspDirPathSpecMapperTest {
             dotBazelBspDirPathSpecTry.isSuccess shouldBe true
             val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.get()
 
-            val expectedBazelPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
-            dotBazelBspDirPathSpec shouldBe expectedBazelPathSpec
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec
         }
     }
 }

@@ -5,13 +5,95 @@
 
 ## [Unreleased]
 
-### Fixes
--  Add class jars generated during annotation processing
+### Features 🎉
+
+- The server generates `extensions.bzl` based on languages (external rules) relevant to the project. 
+
+### Fixes 🛠️
+
+- aspects dont fail if target contains another target as `srcs` attribute
+
+## [3.0.0] - 09.08.2023
+
+### BREAKING CHANGES 🚨
+
+- The server no longer builds the project on initial sync -
+  in order to generate and collect generated sources build + resync is required.
+  | [ba44564](https://github.com/JetBrains/bazel-bsp/commit/ba445645a3b6d41777dc7ce43f1e821e323f4045)
+- Project view `targets` has its default value changed from all targets (`//...`) to no targets.
+  | [779fade](https://github.com/JetBrains/bazel-bsp/commit/779fade5dadf2c411a4147412c017e25c316e5eb).
+- Bloop support has been dropped.
+  | [3d23205](https://github.com/JetBrains/bazel-bsp/commit/3d23205d82e5a877a31c452c27fc89370780657b)
+- Project view file is obligatory now! Server requires path to the file in `argv` in `.bsp/bazelbsp.json`.
+  Debugger address (`debugger_address`), java path (`java_path`) and flag for trace log (`produce_trace_log`) are *no 
+  longer* fields in project view files! They can be set *only* using installer flags (check [README](install/README.md)).
+  | [f2423bb](https://github.com/JetBrains/bazel-bsp/commit/f2423bb8093ad186ac4b7eff925e50818348ca72)
+- Project view `bazel_path` has been renamed to `bazel_binary`
+  (now it's compatible with https://ij.bazel.build/docs/project-views.html#bazel_binary).
+  | [5bd2a06](https://github.com/JetBrains/bazel-bsp/commit/5bd2a060d9f0172c91904fe9464900048ab93834)
+
+### Features 🎉
+
+- Support for Python targets, including `buildTarget/pythonOptions` endpoint
+  (a big thank you to the students of the University of Warsaw!).
+  | [8152cc2](https://github.com/JetBrains/bazel-bsp/commit/8152cc23b4ea26bfe6180b77ae8e45ae48e157e4)
+- Enhance support for Kotlin by providing Kotlin target's specific info
+  | [c06acc6](https://github.com/JetBrains/bazel-bsp/commit/c06acc6a577f4d146a63d81d529627aaaeb66fee)
+- Experimental `workspace/libraries` endpoint that returns list of external libraries.
+  | [3360353](https://github.com/JetBrains/bazel-bsp/commit/3360353d9a2d12931972ea3f6bf80e2b04cfa237)
+
+### Fixes 🛠️
+- Now we report the failure of the whole test target and binaries are reporting stdout.
+  | [224c1ec](https://github.com/JetBrains/bazel-bsp/commit/224c1ec08fc1111f90431926bf7d6dd1aa7f6ab3)
+- Aspects don't throw an exception for kotlin rules if an attr doesn't exist.
+  | [f08fe8b](https://github.com/JetBrains/bazel-bsp/commit/f08fe8bc2e1862b2c8de0a213b2d1a3042e250d2)
+- Fix 'this.bepLogger is null' error on project sync.
+  | [956bc00](https://github.com/JetBrains/bazel-bsp/commit/956bc000455b10466fb2f84f8c54dfe28109501b)
+
+### Other changes 🔁
+- Aspects now are more structured - each rule support has been extracted to separate files.
+  | [b11e3a1](https://github.com/JetBrains/bazel-bsp/commit/b11e3a1e1c5206689cda8d68cf7eb4d14ff6340f)
+
+## [2.7.2]
+
+### Fixes 🛠️
+- Collect scalac options from the toolchain
+  | [#433](https://github.com/JetBrains/bazel-bsp/pull/433)
+- Add support for Scala SDK provided by rules_jvm_external
+  | [#403](https://github.com/JetBrains/bazel-bsp/pull/403)
+
+### Performance
+-  Reduce peak memory footprint
+   | [#428](https://github.com/JetBrains/bazel-bsp/pull/428)
+
+## [2.7.1]
+
+### Fixes 🛠️
+-  Publish `build/publishDiagnostics` with an empty array of diagnostics to clear former diagnotics.
+   | [#381](https://github.com/JetBrains/bazel-bsp/pull/381)
+-  Prioritize most frequently used JDKs when selecting the project JDK.
+   | [#420](https://github.com/JetBrains/bazel-bsp/pull/420)
+-  Fix ide classpath computation for recent rules_jvm_external.
+   | [#421](https://github.com/JetBrains/bazel-bsp/pull/421)
+-  Process exit instead of hang in case of uncaught exception in pooled threads
+   | [#425](https://github.com/JetBrains/bazel-bsp/pull/425),
+   [#426](https://github.com/JetBrains/bazel-bsp/pull/426)
+
+## [2.7.0]
+
+### Features 🎉
+- Server uses BEP to log bazel progress.
+  | [ae52b8f](https://github.com/JetBrains/bazel-bsp/commit/ae52b8f401b793ba15e84d492ba0f72a462b74dc)
+
+### Fixes 🛠️
+-  Add class jars generated during annotation processing.
   | [#372](https://github.com/JetBrains/bazel-bsp/pull/372)
-- Set PublishDiagnosticsParams.reset to be true
+- Set PublishDiagnosticsParams.reset to be true.
   | [#377](https://github.com/JetBrains/bazel-bsp/pull/377)
-- Update document about how to use projectview
+- Update document about how to use projectview.
   | [#383](https://github.com/JetBrains/bazel-bsp/pull/383)
+- Fixup failed target names from BEP in bazel 6+ in the bloop mode.
+  | [#402](https://github.com/JetBrains/bazel-bsp/pull/402)
 
 ## [2.6.1]
 
@@ -355,7 +437,15 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/3.0.0...HEAD
+
+[3.0.0]: https://github.com/JetBrains/bazel-bsp/compare/2.7.2...3.0.0
+
+[2.7.2]: https://github.com/JetBrains/bazel-bsp/compare/2.7.1..2.7.2
+
+[2.7.1]: https://github.com/JetBrains/bazel-bsp/compare/2.7.0..2.7.1
+
+[2.7.0]: https://github.com/JetBrains/bazel-bsp/compare/2.6.1..2.7.0
 
 [2.6.1]: https://github.com/JetBrains/bazel-bsp/compare/2.6.0..2.6.1
 
