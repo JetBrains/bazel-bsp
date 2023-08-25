@@ -5,9 +5,14 @@ bazel_integration_tests(
     name = "sample_repo_test",
     timeout = "eternal",
     bazel_versions = bazel_binaries.versions.all,
+    env = {
+        "foo1": "invalid_val1",
+        "foo2": "invalid_val2",
+        "foo3": "val3",
+        "foo4": "val4",
+    },
     test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspSampleRepoTest",
     workspace_path = "test-resources/sample-repo",
-    env = { "foo1": "invalid_val1", "foo2" : "invalid_val2", "foo3" : "val3" , "foo4" : "val4" }
 )
 
 bazel_integration_tests(
