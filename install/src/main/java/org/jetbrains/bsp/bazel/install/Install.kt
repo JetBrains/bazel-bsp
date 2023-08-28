@@ -12,7 +12,7 @@ object Install {
     @JvmStatic
     fun main(args: Array<String>) {
         val cliOptionsProvider = CliOptionsProvider(args)
-        val cliOptions = cliOptionsProvider.getOptions().get()
+        val cliOptions = cliOptionsProvider.getOptions()
 
         if (cliOptions.helpCliOptions.isHelpOptionUsed) {
             cliOptions.helpCliOptions.printHelp()
@@ -43,12 +43,12 @@ object Install {
 
     private fun createBspConnectionDetails(installationContext: InstallationContext, createTraceLog: Boolean): BspConnectionDetails {
         val bspConnectionDetailsCreator = BspConnectionDetailsCreator(installationContext, createTraceLog)
-        return bspConnectionDetailsCreator.create().get()
+        return bspConnectionDetailsCreator.create()
     }
 
     private fun createEnvironment(details: BspConnectionDetails, cliOptions: CliOptions) {
         val environmentCreator = BazelBspEnvironmentCreator(cliOptions.workspaceRootDir, details)
-        environmentCreator.create().get()
+        environmentCreator.create()
     }
 
     private fun printSuccess(workspaceRootDir: Path) {

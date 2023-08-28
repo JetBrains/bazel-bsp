@@ -1,13 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils
 
 import io.kotest.matchers.shouldBe
-import org.assertj.core.api.Assertions
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class InternalAspectsResolverTest {
-    
+
     @Test
     fun `should resolve label for bsp root at workspace root`() {
         // given

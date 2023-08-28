@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.executioncontext.api
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 
 /**
@@ -18,15 +17,11 @@ abstract class ExecutionContext
  * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
  *
  * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
- * @see org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
- * @see org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityNullableMapper
+ * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractor
  */
 interface ExecutionContextConstructor<T : ExecutionContext> {
 
-    fun construct(projectViewTry: Try<ProjectView>): Try<T> =
-        projectViewTry.flatMap(::construct)
+    fun construct(projectView: ProjectView): T
 
-    fun construct(projectView: ProjectView): Try<T>
-
-    fun constructDefault(): Try<T>
+    fun constructDefault(): T
 }

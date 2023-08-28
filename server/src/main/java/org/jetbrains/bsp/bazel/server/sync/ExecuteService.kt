@@ -128,13 +128,13 @@ class ExecuteService(
         return CleanCacheResult(true)
     }
 
-    private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String?): BazelProcessResult {
+    private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targetsSpec = TargetsSpec(bspIds, emptyList())
         return compilationManager.buildTargetsWithBep(
                 cancelChecker,
             targetsSpec,
             originId
-        ).processResult()
+        ).processResult
     }
 
     private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {

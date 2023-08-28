@@ -1,8 +1,7 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
-import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractor
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -11,11 +10,11 @@ data class DotBazelBspDirPathSpec(
     override val value: Path
 ) : ExecutionContextSingletonEntity<Path>()
 
-internal object DotBazelBspDirPathSpecMapper : ProjectViewToExecutionContextEntityMapper<DotBazelBspDirPathSpec> {
+internal object DotBazelBspDirPathSpecExtractor : ExecutionContextEntityExtractor<DotBazelBspDirPathSpec> {
 
-    override fun map(projectView: ProjectView): Try<DotBazelBspDirPathSpec> = default()
+    override fun fromProjectView(projectView: ProjectView): DotBazelBspDirPathSpec = default()
 
-    override fun default(): Try<DotBazelBspDirPathSpec> = Try.success(calculatePathToDorBazelBspDirAndMap())
+    override fun default(): DotBazelBspDirPathSpec = calculatePathToDorBazelBspDirAndMap()
 
     private fun calculatePathToDorBazelBspDirAndMap(): DotBazelBspDirPathSpec =
         DotBazelBspDirPathSpec(

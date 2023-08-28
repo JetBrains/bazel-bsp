@@ -1,8 +1,7 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextListEntity
-import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractor
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 
@@ -14,12 +13,12 @@ private val defaultBuildFlagsSpec = BuildFlagsSpec(
     values = emptyList()
 )
 
-internal object BuildFlagsSpecMapper : ProjectViewToExecutionContextEntityMapper<BuildFlagsSpec> {
+internal object BuildFlagsSpecExtractor : ExecutionContextEntityExtractor<BuildFlagsSpec> {
 
-    override fun map(projectView: ProjectView): Try<BuildFlagsSpec> =
+    override fun fromProjectView(projectView: ProjectView): BuildFlagsSpec =
         when (projectView.buildFlags) {
-            null -> Try.success(defaultBuildFlagsSpec)
-            else -> Try.success(mapNotEmptySection(projectView.buildFlags!!))
+            null -> defaultBuildFlagsSpec
+            else -> mapNotEmptySection(projectView.buildFlags!!)
         }
 
     private fun mapNotEmptySection(targetsSection: ProjectViewBuildFlagsSection): BuildFlagsSpec =
@@ -27,5 +26,5 @@ internal object BuildFlagsSpecMapper : ProjectViewToExecutionContextEntityMapper
             values = targetsSection.values
         )
 
-    override fun default(): Try<BuildFlagsSpec> = Try.success(defaultBuildFlagsSpec)
+    override fun default(): BuildFlagsSpec = defaultBuildFlagsSpec
 }

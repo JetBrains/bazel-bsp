@@ -1,9 +1,8 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextSingletonEntity
-import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapper
-import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractor
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractorException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import java.io.File
@@ -13,24 +12,23 @@ data class BazelBinarySpec(
     override val value: Path
 ) : ExecutionContextSingletonEntity<Path>()
 
-internal object BazelBinarySpecMapper : ProjectViewToExecutionContextEntityMapper<BazelBinarySpec> {
+internal object BazelBinarySpecExtractor : ExecutionContextEntityExtractor<BazelBinarySpec> {
 
-    override fun map(projectView: ProjectView): Try<BazelBinarySpec> =
+    override fun fromProjectView(projectView: ProjectView): BazelBinarySpec =
         when (projectView.bazelBinary) {
             null -> findBazelOnPath()
-            else -> Try.success(map(projectView.bazelBinary!!))
+            else -> map(projectView.bazelBinary!!)
         }
 
-    override fun default(): Try<BazelBinarySpec> = findBazelOnPath()
+    override fun default(): BazelBinarySpec = findBazelOnPath()
 
-    private fun findBazelOnPath(): Try<BazelBinarySpec> =
-        findBazelOnPathOrNull()?.let { Try.success(it) }
-            ?: Try.failure(
-                ProjectViewToExecutionContextEntityMapperException(
+    private fun findBazelOnPath(): BazelBinarySpec =
+        findBazelOnPathOrNull()
+            ?: throw
+                ExecutionContextEntityExtractorException(
                     "bazel path",
                     "Could not find bazel on your PATH"
                 )
-            )
 
     private fun findBazelOnPathOrNull(): BazelBinarySpec? =
         splitPath()

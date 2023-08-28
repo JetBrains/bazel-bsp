@@ -28,7 +28,7 @@ object InstallationContextProvider {
     fun generateAndSaveProjectViewFileIfNeeded(cliOptions: CliOptions) {
         val generatedProjectViewFilePath = calculateGeneratedProjectViewPath(cliOptions)
         if (!generatedProjectViewFilePath.isFileExisted() || cliOptions.projectViewCliOptions != null) {
-            ProjectViewCLiOptionsProvider.generateProjectViewAndSave(cliOptions, generatedProjectViewFilePath).get()
+            ProjectViewCLiOptionsProvider.generateProjectViewAndSave(cliOptions, generatedProjectViewFilePath)
         }
     }
 

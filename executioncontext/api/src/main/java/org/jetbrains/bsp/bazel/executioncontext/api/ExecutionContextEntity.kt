@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.executioncontext.api
 
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 
 /**
@@ -39,15 +38,8 @@ abstract class ExecutionContextSingletonEntity<T> : ExecutionContextEntity() {
 
 
 /** `ProjectViewToExecutionContextEntityMapper` mapping failed? Return ('throw') it. */
-class ProjectViewToExecutionContextEntityMapperException(entityName: String, message: String) :
+class ExecutionContextEntityExtractorException(entityName: String, message: String) :
     Exception("Mapping project view into '$entityName' failed! $message")
-
-
-interface ProjectViewToExecutionContextEntityBaseMapper<T> {
-    fun map(projectView: ProjectView): Try<T>
-
-    fun default(): Try<T>
-}
 
 
 /**
@@ -56,24 +48,11 @@ interface ProjectViewToExecutionContextEntityBaseMapper<T> {
  * you may want to use multiple `ProjectView` sections.
  *
  * @param <T> type of the mapped entity
- * @see org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityBaseMapper
  * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntity
  * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
  */
-interface ProjectViewToExecutionContextEntityMapper<T : ExecutionContextEntity> :
-    ProjectViewToExecutionContextEntityBaseMapper<T>
+interface ExecutionContextEntityExtractor<T> {
+    fun fromProjectView(projectView: ProjectView): T
 
-
-/**
- * Maps `ProjectView` into `ExecutionContextEntity?`.
- * It takes entire `ProjectView` because sometimes in order to create one
- * `ExecutionContextEntity?` you may want to use multiple
- * `ProjectView` sections and the result might be empty.
- *
- * @param <T> type of the mapped entity
- * @see org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityBaseMapper
- * @see org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntity
- * @see org.jetbrains.bsp.bazel.projectview.model.ProjectView
- */
-interface ProjectViewToExecutionContextEntityNullableMapper<T : ExecutionContextEntity> :
-    ProjectViewToExecutionContextEntityBaseMapper<T?>
+    fun default(): T
+}

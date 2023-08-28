@@ -1,8 +1,9 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractorException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
@@ -15,7 +16,7 @@ import kotlin.io.path.Path
 class TargetsSpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<TargetsSpec> tests")
+    @DisplayName("fun map(projectView): TargetsSpec tests")
     inner class MapTest {
 
         @Nested
@@ -24,15 +25,12 @@ class TargetsSpecMapperTest {
             @Test
             fun `should return success with default spec if targets are null`() {
                 // given
-                val projectView = ProjectView.Builder(targets = null).build().get()
+                val projectView = ProjectView.Builder(targets = null).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
@@ -45,15 +43,12 @@ class TargetsSpecMapperTest {
                                 emptyList(),
                                 emptyList()
                         )
-                ).build().get()
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
@@ -69,15 +64,15 @@ class TargetsSpecMapperTest {
                                         BuildTargetIdentifier("//excluded_target2"),
                                 )
                         )
-                ).build().get()
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val exception = shouldThrow<ExecutionContextEntityExtractorException> {
+                    TargetsSpecExtractor.fromProjectView(projectView)
+                }
 
                 // then
-                targetsSpecTry.isFailure shouldBe true
-                targetsSpecTry.cause::class shouldBe ProjectViewToExecutionContextEntityMapperException::class
-                targetsSpecTry.cause.message shouldBe "Mapping project view into 'targets' failed! 'targets' section has no included targets."
+                exception.message shouldBe "Mapping project view into 'targets' failed! 'targets' section has no included targets."
             }
 
             @Test
@@ -96,15 +91,12 @@ class TargetsSpecMapperTest {
                                                 BuildTargetIdentifier("//excluded_target2"),
                                         ),
                                 )
-                        ).build().get()
+                        ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargets =
                         TargetsSpec(
                                 listOf(
@@ -129,15 +121,13 @@ class TargetsSpecMapperTest {
                 // given
                 val projectView = ProjectView.Builder(
                         targets = null,
-                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)).build().get()
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
@@ -151,15 +141,12 @@ class TargetsSpecMapperTest {
                                 emptyList()
                         ),
                         deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
-                ).build().get()
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
@@ -176,15 +163,15 @@ class TargetsSpecMapperTest {
                                 )
                         ),
                         deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
-                ).build().get()
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val exception = shouldThrow<ExecutionContextEntityExtractorException> {
+                    TargetsSpecExtractor.fromProjectView(projectView)
+                }
 
                 // then
-                targetsSpecTry.isFailure shouldBe true
-                targetsSpecTry.cause::class shouldBe ProjectViewToExecutionContextEntityMapperException::class
-                targetsSpecTry.cause.message shouldBe "Mapping project view into 'targets' failed! 'targets' section has no included targets."
+                exception.message shouldBe "Mapping project view into 'targets' failed! 'targets' section has no included targets."
             }
 
             @Test
@@ -204,15 +191,12 @@ class TargetsSpecMapperTest {
                                         ),
                                 ),
                                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false)
-                        ).build().get()
+                        ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargets =
                         TargetsSpec(
                                 listOf(
@@ -238,15 +222,13 @@ class TargetsSpecMapperTest {
                 val projectView = ProjectView.Builder(
                         targets = null,
                         directories = null,
-                        deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)).build().get()
+                    deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
@@ -264,15 +246,12 @@ class TargetsSpecMapperTest {
                                 emptyList()
                         ),
                         deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
-                ).build().get()
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
                 targetsSpec shouldBe expectedTargetsSpec
             }
@@ -295,15 +274,15 @@ class TargetsSpecMapperTest {
                                         Path("excluded_target2"),)
                         ),
                         deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
-                ).build().get()
+                ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val exception = shouldThrow<ExecutionContextEntityExtractorException> {
+                    TargetsSpecExtractor.fromProjectView(projectView)
+                }
 
                 // then
-                targetsSpecTry.isFailure shouldBe true
-                targetsSpecTry.cause::class shouldBe ProjectViewToExecutionContextEntityMapperException::class
-                targetsSpecTry.cause.message shouldBe "Mapping project view into 'targets' failed! 'directories' section has no included targets."
+                exception.message shouldBe "Mapping project view into 'targets' failed! 'directories' section has no included targets."
             }
 
             @Test
@@ -327,15 +306,12 @@ class TargetsSpecMapperTest {
                                         ),
                                 ),
                                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
-                        ).build().get()
+                        ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargets =
                         TargetsSpec(
                                 listOf(
@@ -379,15 +355,12 @@ class TargetsSpecMapperTest {
                                         ),
                                 ),
                                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
-                        ).build().get()
+                        ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargets =
                         TargetsSpec(
                                 listOf(
@@ -429,15 +402,12 @@ class TargetsSpecMapperTest {
                                         ),
                                 ),
                                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true)
-                        ).build().get()
+                        ).build()
 
                 // when
-                val targetsSpecTry = TargetsSpecMapper.map(projectView)
+                val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
 
                 // then
-                targetsSpecTry.isSuccess shouldBe true
-                val targetsSpec = targetsSpecTry.get()
-
                 val expectedTargets =
                         TargetsSpec(
                                 listOf(
@@ -456,7 +426,7 @@ class TargetsSpecMapperTest {
     }
 
     @Nested
-    @DisplayName("fun default(): Try<TargetsSpec> tests")
+    @DisplayName("fun default(): TargetsSpec tests")
     inner class DefaultTest {
 
         @Test
@@ -464,12 +434,9 @@ class TargetsSpecMapperTest {
             // given
 
             // when
-            val targetsSpecTry = TargetsSpecMapper.default()
+            val targetsSpec = TargetsSpecExtractor.default()
 
             // then
-            targetsSpecTry.isSuccess shouldBe true
-            val targetsSpec = targetsSpecTry.get()
-
             val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
             targetsSpec shouldBe expectedTargetsSpec
         }

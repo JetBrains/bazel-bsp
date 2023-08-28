@@ -1,19 +1,16 @@
 package org.jetbrains.bsp.bazel.projectview.parser
 
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelBinarySectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManualTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDeriveTargetsFromDirectoriesSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDirectoriesSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewImportDepthSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewSectionSplitter
-import java.nio.file.Files
-import java.nio.file.Path
 import kotlin.io.path.Path
 
 /**
@@ -26,17 +23,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
 
     private val log = LogManager.getLogger(DefaultProjectViewParser::class.java)
 
-    override fun parse(projectViewFilePath: Path): Try<ProjectView> {
-        log.info("Parsing project view from {}.", projectViewFilePath)
-
-        return Try.of { Files.readString(projectViewFilePath) }
-            .onFailure { log.error("Failed to read file {}. Parsing failed!", projectViewFilePath, it) }
-            .flatMap(this::parse)
-            .onSuccess { log.info("Project view from {} parsed!\n{}", projectViewFilePath, it) }
-            .onFailure { log.error("Failed to parse file {}. Parsing failed!", projectViewFilePath, it) }
-    }
-
-    override fun parse(projectViewFileContent: String): Try<ProjectView> {
+    override fun parse(projectViewFileContent: String): ProjectView {
         log.debug("Parsing project view for the content:\n'{}'.", projectViewFileContent)
 
         val rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent)
@@ -53,7 +40,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
         ).build()
     }
 
-    private fun findImportedProjectViews(rawSections: ProjectViewRawSections): List<Try<ProjectView>> =
+    private fun findImportedProjectViews(rawSections: ProjectViewRawSections): List<ProjectView> =
         rawSections
             .getAllWithName(IMPORT_STATEMENT)
             .asSequence()
