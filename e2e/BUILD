@@ -1,71 +1,48 @@
-# we cannot use `bazel test ...` because testrunner blocks bazel deamon,
-# but testing server needs it for queries and etc
+load("@bazel_binaries//:defs.bzl", "bazel_binaries")
+load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "bazel_integration_tests")
 
-sh_binary(
-    name = "BazelBspSampleRepoTest",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspSampleRepoTest",
-        "e2e/test-resources/sample-repo",
-    ],
+bazel_integration_tests(
+    name = "sample_repo_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    env = {
+        "foo1": "invalid_val1",
+        "foo2": "invalid_val2",
+        "foo3": "val3",
+        "foo4": "val4",
+    },
+    test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspSampleRepoTest",
+    workspace_path = "test-resources/sample-repo",
 )
 
-sh_binary(
-    name = "BazelBspActionGraphV1Test",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspActionGraphV1Test",
-        "e2e/test-resources/sample-repo",
-    ],
+bazel_integration_tests(
+    name = "local_jdk_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspLocalJdkTest",
+    workspace_path = "test-resources/local-jdk-project",
 )
 
-sh_binary(
-    name = "BazelBspActionGraphV2Test",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspActionGraphV2Test",
-        "e2e/test-resources/action-graph-v2",
-    ],
+bazel_integration_tests(
+    name = "remote_jdk_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspRemoteJdkTest",
+    workspace_path = "test-resources/remote-jdk-project",
 )
 
-sh_binary(
-    name = "BazelBspLocalJdkTest",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspLocalJdkTest",
-        "e2e/test-resources/local-jdk-project",
-    ],
+bazel_integration_tests(
+    name = "cpp_project_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspCppProjectTest",
+    workspace_path = "test-resources/cpp-project",
 )
 
-sh_binary(
-    name = "BazelBspRemoteJdkTest",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspRemoteJdkTest",
-        "e2e/test-resources/remote-jdk-project",
-    ],
-)
-
-sh_binary(
-    name = "BazelBspCppProjectTest",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspCppProjectTest",
-        "e2e/test-resources/cpp-project",
-    ],
-)
-
-sh_binary(
-    name = "BazelBspPythonProjectTest",
-    srcs = ["runTest.sh"],
-    args = [
-        "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspPythonProjectTest",
-        "e2e/test-resources/python-project",
-    ],
-)
-
-# simply a wrapper for the bash script to keep the convention
-sh_binary(
-    name = "all",
-    srcs = ["runAll.sh"],
+bazel_integration_tests(
+    name = "python_project_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspPythonProjectTest",
+    workspace_path = "test-resources/python-project",
 )

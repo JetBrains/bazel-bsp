@@ -163,6 +163,43 @@ git_repository(
 )
 
 # ======================================================================================================================
+# e2e tests
+
+RULES_BAZEL_INTEGRATION_TEST_TAG = "0.15.1"
+
+RULES_BAZEL_INTEGRATION_TEST_SHA = "c8ce8080e55857526da8d8bae2c41074177b869b398d2ec22c6be7e8d22614a3"
+
+http_archive(
+    name = "rules_bazel_integration_test",
+    sha256 = RULES_BAZEL_INTEGRATION_TEST_SHA,
+    url = "https://github.com/bazel-contrib/rules_bazel_integration_test/releases/download/v{}/rules_bazel_integration_test.v{}.tar.gz"
+        .format(RULES_BAZEL_INTEGRATION_TEST_TAG, RULES_BAZEL_INTEGRATION_TEST_TAG),
+)
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@rules_bazel_integration_test//bazel_integration_test:deps.bzl", "bazel_integration_test_rules_dependencies")
+
+bazel_integration_test_rules_dependencies()
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@cgrindel_bazel_starlib//:deps.bzl", "bazel_starlib_dependencies")
+
+bazel_starlib_dependencies()
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "bazel_binaries")
+
+bazel_binaries(versions = [
+    "6.3.2",
+    "5.3.2",
+])
+
+# ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
 # ======================================================================================================================
 # maven

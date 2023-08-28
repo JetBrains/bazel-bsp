@@ -3,24 +3,38 @@ package org.jetbrains.bsp.bazel.base
 import ch.epfl.scala.bsp4j.BuildClientCapabilities
 import ch.epfl.scala.bsp4j.InitializeBuildParams
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.testkit.client.bazel.BazelTestClient
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario {
-    val targetPrefix = Runtime.getRuntime().exec("bazel version").inputStream.bufferedReader().readText()
+
+    private val binary = System.getenv("BIT_BAZEL_BINARY")
+    private val workspaceDir = System.getenv("BIT_WORKSPACE_DIR")
+
+    val targetPrefix = Runtime.getRuntime().exec("$binary version").inputStream.bufferedReader().readText()
             .let {"""(?<=Build label: )\d+(?=[0-9.]+)""".toRegex().find(it)!!.value.toInt() }
             .let { if(it < 6) "" else "@" }
 
-    protected val testClient = createClient()
+    protected val testClient: BazelTestClient
 
+    init {
+        installServer()
+        testClient = createClient()
+    }
+
+    private fun installServer() {
+        Install.main(
+            arrayOf(
+                "-d", workspaceDir,
+                "-b", binary,
+                "-t", "//...",
+            )
+        )
+    }
     private fun createClient(): BazelTestClient {
-        val workspaceDir = System.getenv("BUILD_WORKSPACE_DIRECTORY")
-        val bazelWorkspace = Path.of(workspaceDir, TEST_RESOURCES_DIR, repoName())
-        val testRepoWorkspaceDir = System.getenv("BSP_WORKSPACE").let { Paths.get(it) }
-
-        log.info("Testing repo workspace path: $testRepoWorkspaceDir")
+        log.info("Testing repo workspace path: $workspaceDir")
         log.info("Creating TestClient...")
 
         // TODO: capabilities should be configurable
@@ -29,14 +43,12 @@ abstract class BazelBspTestBaseScenario {
             "BspTestClient",
             "1.0.0",
             "2.0.0",
-            testRepoWorkspaceDir.toString(),
+            workspaceDir,
             capabilities
         )
-        return BazelTestClient(bazelWorkspace, initializeBuildParams)
+        return BazelTestClient(Path.of(workspaceDir), initializeBuildParams)
             .also { log.info("Created TestClient done.") }
     }
-
-    protected abstract fun repoName(): String
 
     fun executeScenario() {
         log.info("Running scenario...")
@@ -67,6 +79,5 @@ abstract class BazelBspTestBaseScenario {
 
         private const val SUCCESS_EXIT_CODE = 0
         private const val FAIL_EXIT_CODE = 1
-        private const val TEST_RESOURCES_DIR = "e2e/test-resources"
     }
 }
