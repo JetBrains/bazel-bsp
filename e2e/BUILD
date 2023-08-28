@@ -18,6 +18,7 @@ bazel_integration_tests(
 bazel_integration_tests(
     name = "local_jdk_test",
     timeout = "eternal",
+    additional_env_inherit = ["JAVA_HOME"],
     bazel_versions = bazel_binaries.versions.all,
     test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspLocalJdkTest",
     workspace_path = "test-resources/local-jdk-project",
