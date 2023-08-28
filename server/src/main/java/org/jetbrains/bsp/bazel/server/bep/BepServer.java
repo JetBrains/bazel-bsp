@@ -13,10 +13,8 @@ import com.google.devtools.build.v1.PublishBuildToolEventStreamRequest;
 import com.google.devtools.build.v1.PublishBuildToolEventStreamResponse;
 import com.google.devtools.build.v1.PublishLifecycleEventRequest;
 import com.google.protobuf.Empty;
-import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,10 +59,6 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems), originId);
   }
 
-  public static NettyServerBuilder nettyServerBuilder() {
-    return NettyServerBuilder.forAddress(new InetSocketAddress("localhost", 0));
-  }
-
   @Override
   public void publishLifecycleEvent(
       PublishLifecycleEventRequest request, StreamObserver<Empty> responseObserver) {
@@ -85,17 +79,21 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
       LOGGER.trace("Got event {}", event);
 
-      processBuildStartedEvent(event);
-      processProgressEvent(event);
-      processBuildMetrics(event);
-      processFinishedEvent(event);
-      processActionCompletedEvent(event);
-      fetchNamedSet(event);
-      processCompletedEvent(event);
-      processAbortedEvent(event);
+      handleBuildEventStreamProtosEvent(event);
     } catch (IOException e) {
       LOGGER.error("Error deserializing BEP proto: {}", e.toString());
     }
+  }
+
+  public void handleBuildEventStreamProtosEvent(BuildEventStreamProtos.BuildEvent event) {
+    processBuildStartedEvent(event);
+    processProgressEvent(event);
+    processBuildMetrics(event);
+    processFinishedEvent(event);
+    processActionCompletedEvent(event);
+    fetchNamedSet(event);
+    processCompletedEvent(event);
+    processAbortedEvent(event);
   }
 
   private void fetchNamedSet(BuildEventStreamProtos.BuildEvent event) {
@@ -114,7 +112,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processProgressEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasProgress()) {
-      bepLogger.onProgress(event.getProgress());
+      // todo uncomment `onProgress` call back.
+      // I had to revert this change because BEP events do not come deterministically when you use file-based BEP
+
+      // bepLogger.onProgress(event.getProgress());
     }
   }
 

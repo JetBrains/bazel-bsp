@@ -2,20 +2,18 @@ package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec;
+
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class BazelBspCompilationManager {
 
@@ -36,46 +34,30 @@ public class BazelBspCompilationManager {
   }
 
   public BepBuildResult buildTargetsWithBep(
-      CancelChecker cancelChecker,
-      TargetsSpec targetSpecs,
-      Seq<String> extraFlags,
-      String originId) {
-    var bepServer =
-        BepServer.newBepServer(
-            client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId));
-    var executor = Executors.newFixedThreadPool(4, threadFactory());
-    var nettyServer =
-        BepServer.nettyServerBuilder().addService(bepServer).executor(executor).build();
+          CancelChecker cancelChecker,
+          TargetsSpec targetSpecs,
+          Seq<String> extraFlags,
+          String originId) {
+    var bepServer = BepServer.newBepServer(client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId));
+    var bepReader = new BepReader(bepServer);
     try {
-      nettyServer.start();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    try {
+      bepReader.start();
       var result =
-          bazelRunner
-              .commandBuilder()
-              .build()
-              .withFlags(extraFlags.asJava())
-              .withTargets(targetSpecs)
-              .executeBazelBesCommand(originId, nettyServer.getPort())
-              .waitAndGetResult(cancelChecker, true);
+              bazelRunner
+                      .commandBuilder()
+                      .build()
+                      .withFlags(extraFlags.asJava())
+                      .withTargets(targetSpecs)
+                      .executeBazelBesCommand(originId, bepReader.getEventFile().toPath().toAbsolutePath())
+                      .waitAndGetResult(cancelChecker, true);
+      bepReader.finishBuild();
+      bepReader.await();
       return new BepBuildResult(result, bepServer.getBepOutput());
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
     } finally {
-      nettyServer.shutdown();
-      executor.shutdown();
+      bepReader.finishBuild();
     }
-  }
-
-  private static ThreadFactory threadFactory() {
-    return new ThreadFactoryBuilder()
-        .setNameFormat("grpc-netty-pool-%d")
-        .setUncaughtExceptionHandler(
-            (t, e) -> {
-              e.printStackTrace();
-              System.exit(1);
-            })
-        .build();
   }
 
   public void setClient(BuildClient client) {

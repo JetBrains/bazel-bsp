@@ -32,15 +32,18 @@ class BazelRunner private constructor(
         flags: List<String>,
         arguments: List<String>,
         originId: String?,
-        besBackendPort: Int,
+        eventTextFile: Path,
     ): BazelProcess {
         fun besFlags() = listOf(
-            "--bes_backend=grpc://localhost:${besBackendPort}",
+            "--build_event_binary_file=${eventTextFile.toAbsolutePath()}",
             "--bes_outerr_buffer_size=10",
             "--isatty=true",
         )
 
-        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, false)
+        // todo set parseProcessOutput to false back.
+        // I had to revert this change because BEP events do not come deterministically when you use file-based BEP
+        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, true
+        )
     }
 
     fun runBazelCommand(

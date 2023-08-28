@@ -24,6 +24,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
@@ -39,15 +40,10 @@ class ExecuteService(
     private val bspClientTestNotifier: BspClientTestNotifier,
     private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
 ) {
-    private fun <T> withBepServer(body : (Server) -> T) :T {
+    private fun <T> withBepServer(body : (BepReader) -> T) :T {
         val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems, Optional.empty())
-        val nettyServer = BepServer.nettyServerBuilder().addService(server).build()
-        nettyServer.start()
-        try {
-            return body(nettyServer)
-        } finally {
-            nettyServer.shutdown()
-        }
+        val bepReader = BepReader(server);
+        return body(bepReader)
     }
 
     fun compile(cancelChecker: CancelChecker, params: CompileParams): CompileResult {
@@ -125,9 +121,9 @@ class ExecuteService(
     }
 
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
-        withBepServer { server ->
+        withBepServer { bepReader ->
             bazelRunner.commandBuilder().clean()
-                .executeBazelBesCommand(bazelBesPort = server.port).waitAndGetResult(cancelChecker)
+                .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath()).waitAndGetResult(cancelChecker)
         }
         return CleanCacheResult(true)
     }

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
+import java.nio.file.Path
 
 open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
@@ -86,7 +87,7 @@ open class BazelRunnerBuilder internal constructor(
         return bazelRunner.runBazelCommand(bazelCommand, flags, arguments, originId)
     }
 
-    fun executeBazelBesCommand(originId: String? = null, bazelBesPort: Int): BazelProcess {
-        return bazelRunner.runBazelCommandBes(bazelCommand, flags, arguments, originId, bazelBesPort)
+    fun executeBazelBesCommand(originId: String? = null, buildEventFile: Path): BazelProcess {
+        return bazelRunner.runBazelCommandBes(bazelCommand, flags, arguments, originId, buildEventFile.toAbsolutePath())
     }
 }
