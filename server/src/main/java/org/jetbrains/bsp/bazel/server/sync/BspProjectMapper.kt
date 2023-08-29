@@ -87,11 +87,14 @@ class BspProjectMapper(
     }
 
     fun workspaceLibraries(project: Project): WorkspaceLibrariesResult {
-        val libraries = project.libraries.values.map { LibraryItem(
-                BuildTargetIdentifier(it.label),
-                it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
-                it.outputs.map { uri -> uri.toString() }
-        ) }
+        val libraries = project.libraries.values.map {
+            LibraryItem(
+                id = BuildTargetIdentifier(it.label),
+                dependencies = it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
+                jars = it.outputs.map { uri -> uri.toString() },
+                sourceJars = it.sources.map { uri -> uri.toString() },
+            )
+        }
         return WorkspaceLibrariesResult(libraries)
     }
 

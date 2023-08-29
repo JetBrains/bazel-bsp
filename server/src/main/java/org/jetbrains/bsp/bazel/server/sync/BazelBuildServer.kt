@@ -7,7 +7,8 @@ import java.util.concurrent.CompletableFuture
 data class LibraryItem(
         val id: BuildTargetIdentifier,
         val dependencies: List<BuildTargetIdentifier>,
-        val jars: List<String>
+        val jars: List<String>,
+        val sourceJars: List<String>,
 )
 
 data class WorkspaceLibrariesResult(

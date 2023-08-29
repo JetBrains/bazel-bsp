@@ -62,12 +62,13 @@ class BazelProjectMapper(
             .associate { targetInfo ->
                 targetInfo.id to
                     Library(
-                        targetInfo.id + "_generated",
-                        targetInfo.javaTargetInfo.generatedJarsList
+                        label = targetInfo.id + "_generated",
+                        outputs = targetInfo.javaTargetInfo.generatedJarsList
                             .flatMap { it.binaryJarsList }
                             .map { bazelPathsResolver.resolveUri(it) }
                             .toSet(),
-                        emptyList()
+                        sources = emptySet(),
+                        dependencies = emptyList(),
                     )
             }
             .map { it.key to listOf(it.value) }
@@ -91,7 +92,8 @@ class BazelProjectMapper(
                 .filter { it.isKotlinStdlibPath() }
                 .map { bazelPathsResolver.resolveUri(it) }
                 .toSet(),
-            dependencies = emptyList()
+            sources = emptySet(),
+            dependencies = emptyList(),
         )
 
     private fun FileLocation.isKotlinStdlibPath() =
@@ -104,18 +106,26 @@ class BazelProjectMapper(
             val targetId = entry.key
             val targetInfo = entry.value
             Library(
-                targetId,
-                getTargetJarUris(targetInfo),
-                targetInfo.dependenciesList.map { it.id }
+                label = targetId,
+                outputs = getTargetJarUris(targetInfo),
+                sources = getSourceJarUris(targetInfo),
+                dependencies = targetInfo.dependenciesList.map { it.id },
             )
         }
     }
 
+    private fun List<FileLocation>.resolveUris() =
+        map { bazelPathsResolver.resolve(it).toUri() }.toSet()
+
     private fun getTargetJarUris(targetInfo: TargetInfo) =
         targetInfo.javaTargetInfo.jarsList
             .flatMap { it.binaryJarsList }
-            .map { bazelPathsResolver.resolve(it).toUri() }
-            .toSet()
+            .resolveUris()
+
+    private fun getSourceJarUris(targetInfo: TargetInfo) =
+        targetInfo.javaTargetInfo.jarsList
+            .flatMap { it.sourceJarsList }
+            .resolveUris()
 
     private fun selectTargetsToImport(
         workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
