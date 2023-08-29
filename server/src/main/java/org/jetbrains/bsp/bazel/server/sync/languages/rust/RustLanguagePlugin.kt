@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.RustToolchain
+import ch.epfl.scala.bsp4j.RustToolchainItem
 import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.RustcInfo
@@ -147,15 +147,17 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         return RustToolchainResult(toolchains)
     }
 
-    private fun resolveRustToolchain(rustModule: Module): RustToolchain? {
+    private fun resolveRustToolchain(rustModule: Module): RustToolchainItem? {
         val rustData = rustModule.languageData as? RustModule ?: return null
         val rustc = resolveRustc(rustData)
 
-        return RustToolchain(
-            rustc,
-            prependWorkspacePath(rustData.cargoBinPath),
-            prependWorkspacePath(rustData.procMacroSrv), 
+        val toolchainItem = RustToolchainItem(
+                prependWorkspacePath(rustData.cargoBinPath),
+                prependWorkspacePath(rustData.procMacroSrv),
         )
+        toolchainItem.rustStdLib = rustc
+
+        return toolchainItem
     }
 
     private fun resolveRustc(rustData: RustModule): RustcInfo? =

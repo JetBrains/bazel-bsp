@@ -14,7 +14,8 @@ enum class Language(private val fileName: String, val functions: List<String>) {
     Scala("//aspects:rules/scala/scala_info.bzl", listOf("extract_scala_info", "extract_scala_toolchain_info")),
     Cpp("//aspects:rules/cpp/cpp_info.bzl", listOf("extract_cpp_info")),
     Kotlin("//aspects:rules/kt/kt_info.bzl", listOf("extract_kotlin_info")),
-    Python("//aspects:rules/python/python_info.bzl", listOf("extract_python_info"));
+    Python("//aspects:rules/python/python_info.bzl", listOf("extract_python_info")),
+    Rust("//aspects:rules/rust/rust_info.bzl", listOf("extract_rust_crate_info"));
 
     fun toLoadStatement(): String =
         this.functions.joinToString(
@@ -46,7 +47,8 @@ class BazelBspEnvironmentManager(
             checkForLanguage(listOf("rules_cc"), Language.Cpp),
             checkForLanguage(listOf("io_bazel_rules_kotlin"), Language.Kotlin),
             checkForLanguage(listOf("io_bazel_rules_scala"), Language.Scala),
-            checkForLanguage(listOf("rules_java"), Language.Java)
+            checkForLanguage(listOf("rules_java"), Language.Java),
+            checkForLanguage(listOf("rules_rust"), Language.Rust)
         )
     }
 

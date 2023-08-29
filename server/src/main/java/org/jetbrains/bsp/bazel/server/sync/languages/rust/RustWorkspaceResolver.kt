@@ -1,13 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
-import ch.epfl.scala.bsp4j.RustDepKindInfo
+import ch.epfl.scala.bsp4j.*
 import ch.epfl.scala.bsp4j.RustDependency
-import ch.epfl.scala.bsp4j.RustEnvData
-import ch.epfl.scala.bsp4j.RustFeature
-import ch.epfl.scala.bsp4j.RustPackage
-import ch.epfl.scala.bsp4j.RustProcMacroArtifact
-import ch.epfl.scala.bsp4j.RustRawDependency
-import ch.epfl.scala.bsp4j.RustTarget
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -31,7 +25,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
     fun rustDependencies(
         rustPackages: List<RustPackage>,
         rustBspTargets: List<Module>
-    ): Pair<List<RustDependency>, List<RustRawDependency>> {
+    ): Pair<Map<String, List<RustDependency>>, Map<String, List<RustRawDependency>>> {
 
         val associatedBspTargets = groupBspTargetsByPackage(rustBspTargets, rustPackages)
         val associatedRawBspTargets = groupBspRawTargetsByPackage(rustBspTargets, rustPackages)
@@ -99,11 +93,11 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
     private fun resolvePackageOrigin(isFromWorkspace: Boolean): String = if (isFromWorkspace) {
         "WORKSPACE"
     } else {
-        "DEP"
+        "DEPENDENCY"
     }
 
-    private fun resolvePackageEdition(rustTargets: List<RustTargetModule>): String =
-        rustTargets.map { (_, rustData) -> rustData.edition }.maxOf { it }
+    private fun resolvePackageEdition(rustTargets: List<RustTargetModule>): Int =
+        rustTargets.map { (_, rustData) -> rustData.edition.toInt() }.maxOf { it }
 
     private fun resolvePackageSource(isFromWorkspace: Boolean): String? = if (isFromWorkspace) {
         null
@@ -118,24 +112,44 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         return baseDirs.first()
     }
 
-    private fun parseSingleTarget(module: RustTargetModule): RustTarget {
+    private fun parseSingleTarget(module: RustTargetModule): RustBuildTarget {
         val (genericData, rustData) = module
-        return RustTarget(
-            resolvePackage(genericData).targetName,
-            rustData.crateRoot,
-            genericData.baseDirectory.toString(),
-            rustData.kind,
-            rustData.edition,
-            false,                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
-            rustData.crateFeatures
+        val buildTarget = RustBuildTarget(
+                resolvePackage(genericData).targetName,
+                rustData.crateRoot,
+                genericData.baseDirectory.toString(),
+                parseTargetKind(rustData.kind),
+                rustData.edition.toInt(),
+                false,                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
         )
+        buildTarget.requiredFeatures = rustData.crateFeatures
+        buildTarget.crateTypes = parseCrateTypes(rustData.kind)
+        return buildTarget
     }
 
-    private fun resolveProcMacroArtifact(rustTargets: List<RustTargetModule>): RustProcMacroArtifact? =
+    private fun parseTargetKind(kind: String): RustTargetKind {
+        return when (kind) {
+            "bin" -> RustTargetKind.BIN
+            "test" -> RustTargetKind.TEST
+            "rlib" -> RustTargetKind.LIB
+            "proc-macro" -> RustTargetKind.LIB
+            else -> RustTargetKind.UNKNOWN
+        }
+    }
+
+    private fun parseCrateTypes(kind: String): List<RustCrateType> {
+        return when (kind) {
+            "rlib" -> listOf(RustCrateType.RLIB)
+            "proc-macro" -> listOf(RustCrateType.PROC_MACRO)
+            else -> emptyList()
+        }
+    }
+
+    private fun resolveProcMacroArtifact(rustTargets: List<RustTargetModule>): String? =
         rustTargets
             .flatMap { (_, rustData) -> rustData.procMacroArtifacts }
             .map { bazelPathsResolver.pathToDirectoryUri(it) }
-            .map { RustProcMacroArtifact(it.path, "") }
+            .map { it.path }
             .firstOrNull()
     // TODO: ^^^^^ Cargo does not allow for more then one library in a single package so no more than one proc macro.
 
@@ -149,29 +163,28 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         return Pair(allFeaturesAsStrings, allFeatures)
     }
 
-    private fun resolvePackageEnv(rustPackage: String, pkgBaseDir: String, version: String): List<RustEnvData> {
+    private fun resolvePackageEnv(rustPackage: String, pkgBaseDir: String, version: String): Map<String, String> {
         val (major, minor, patch) = splitVersion(version)
-        val envMap = mapOf(
-            "CARGO_MANIFEST_DIR" to "$pkgBaseDir${rustPackage.drop(1)}",
-            "CARGO" to "cargo",
-            "CARGO_PKG_VERSION" to version,
-            "CARGO_PKG_VERSION_MAJOR" to major,
-            "CARGO_PKG_VERSION_MINOR" to minor,
-            "CARGO_PKG_VERSION_PATCH" to patch,
-            "CARGO_PKG_VERSION_PRE" to "",
-            "CARGO_PKG_AUTHORS" to "",
-            "CARGO_PKG_NAME" to rustPackage,
-            "CARGO_PKG_DESCRIPTION" to "",
-            "CARGO_PKG_REPOSITORY" to "",
-            "CARGO_PKG_LICENSE" to "",
-            "CARGO_PKG_LICENSE_FILE" to "",
-            "CARGO_CRATE_NAME" to rustPackage,
+        return mapOf(
+                "CARGO_MANIFEST_DIR" to "$pkgBaseDir${rustPackage.drop(1)}",
+                "CARGO" to "cargo",
+                "CARGO_PKG_VERSION" to version,
+                "CARGO_PKG_VERSION_MAJOR" to major,
+                "CARGO_PKG_VERSION_MINOR" to minor,
+                "CARGO_PKG_VERSION_PATCH" to patch,
+                "CARGO_PKG_VERSION_PRE" to "",
+                "CARGO_PKG_AUTHORS" to "",
+                "CARGO_PKG_NAME" to rustPackage,
+                "CARGO_PKG_DESCRIPTION" to "",
+                "CARGO_PKG_REPOSITORY" to "",
+                "CARGO_PKG_LICENSE" to "",
+                "CARGO_PKG_LICENSE_FILE" to "",
+                "CARGO_CRATE_NAME" to rustPackage,
         )
-        return envMap.map { RustEnvData(it.key, it.value) }
     }
 
     private fun resolveSinglePackage(packageData: Map.Entry<String, List<Module>>): RustPackage {
-        val (rustPackage, rustTargets) = packageData
+        val (rustPackageId, rustTargets) = packageData
         val allRustTargetsWithData = serveTargetWithRustData(rustTargets)
         // With removed `duplicates` for the same crate root
         val rustTargetsWithData = removeConflictingRustTargets(allRustTargetsWithData)
@@ -188,23 +201,24 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         val targets = rustTargetsWithData.map(::parseSingleTarget)
         val allTargets = allRustTargetsWithData.map(::parseSingleTarget)
         val (allFeaturesAsString, allFeatures) = resolvePackageFeatures(rustTargetsWithData)
-        val env = resolvePackageEnv(rustPackage, pkgBaseDir, version)
+        val env = resolvePackageEnv(rustPackageId, pkgBaseDir, version)
 
-        return RustPackage(
-            rustPackage,
-            version,
-            origin,
-            edition,
-            source,
-            targets,
-            allTargets,
-            allFeatures,
-            allFeaturesAsString,
-            null,
-            env,
-            null,
-            procMacroArtifact
-        )
+        val rustPackage = RustPackage(
+                rustPackageId,
+                rustPackageId,
+                version,
+                origin,
+                edition,
+                targets,
+                allTargets,
+                allFeatures,
+                allFeaturesAsString,
+                )
+        rustPackage.source = source
+        rustPackage.env = env
+        rustPackage.procMacroArtifact = procMacroArtifact
+
+        return rustPackage
     }
 
     private fun groupBspTargetsByPackage(
@@ -226,53 +240,48 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         rustBspTargets.filter { resolvePackage(it).packageName == pkg.id }
     }
 
-    private fun resolveDependencies(associatedBspTargets: Map<RustPackage, List<Module>>): List<RustDependency> =
+    private fun resolveDependencies(associatedBspTargets: Map<RustPackage, List<Module>>): Map<String, List<RustDependency>> =
         associatedBspTargets
             .flatMap { (rustPackage, bspTargets) ->
-                bspTargets.flatMap { bspTarget ->
+                bspTargets.map { bspTarget ->
                     resolveBspDependencies(rustPackage, bspTarget.directDependencies)
                 }
-            }
-            .filter { it.source != it.target }
+            }.toMap()
+
 
     private fun resolveBspDependencies(
         rustPackage: RustPackage,
         directDependencies: List<Label>
-    ): List<RustDependency> =
-        directDependencies
-            .map { label -> resolvePackage(label) }
-            .map {
-                RustDependency(
-                    rustPackage.id,
-                    it.packageName,
-                    it.targetName,
-                    listOf(
-                        RustDepKindInfo("normal", null)
-                    )
-                )
-            }
+    ): Pair<String, List<RustDependency>> {
+        val dependencies = directDependencies
+                .map { label -> resolvePackage(label) }
+                .map {
+                    val dep = RustDependency(it.packageName)
+                    dep.name = it.targetName
+                    dep.depKinds = listOf(RustDepKindInfo(RustDepKind.NORMAL))
+                    dep
+                }
+                .filter { rustPackage.id != it.pkg }
+        return Pair(rustPackage.id, dependencies)
+    }
 
-    private fun resolveRawDependencies(associatedRawBspTargets: Map<RustPackage, List<Module>>): List<RustRawDependency> =
+    private fun resolveRawDependencies(associatedRawBspTargets: Map<RustPackage, List<Module>>): Map<String, List<RustRawDependency>> =
         associatedRawBspTargets.flatMap { (rustPackage, bspTargets) ->
-            bspTargets.flatMap { bspTarget ->
+            bspTargets.map { bspTarget ->
                 resolveRawBspDependencies(rustPackage, bspTarget.directDependencies)
             }
-        }
+        }.toMap()
 
     private fun resolveRawBspDependencies(
         rustPackage: RustPackage,
         directDependencies: List<Label>
-    ): List<RustRawDependency> =
-        directDependencies.map {
+    ): Pair<String, List<RustRawDependency>> =
+        Pair(rustPackage.id, directDependencies.map {
             RustRawDependency(
-                rustPackage.id,
                 it.value,
-                null,
-                null,
-                null,
                 false,
                 true,
                 listOf<String>()
             )
-        }
+        })
 }

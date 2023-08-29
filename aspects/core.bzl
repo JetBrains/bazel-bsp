@@ -1,5 +1,6 @@
 load("//aspects:utils/utils.bzl", "abs", "create_struct", "file_location", "get_aspect_ids", "update_sync_output_groups")
 load("//aspects:rules/java/java_info.bzl", "JAVA_RUNTIME_TOOLCHAIN_TYPE")
+load("//aspects:rules/rust/rust_info.bzl", "RUST_TOOLCHAINS_TYPES")
 load("//aspects:extensions.bzl", "EXTENSIONS")
 
 def create_all_extension_info(target, ctx, output_groups, dep_targets):
@@ -33,6 +34,7 @@ COMPILE_DEPS = [
     "deps",
     "jars",
     "exports",
+    "proc_macro_deps",
 ]
 
 PRIVATE_COMPILE_DEPS = [
@@ -186,5 +188,5 @@ bsp_target_info_aspect = aspect(
     implementation = _bsp_target_info_aspect_impl,
     required_aspect_providers = [[JavaInfo]],
     attr_aspects = ALL_DEPS,
-    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE],
+    toolchains = [JAVA_RUNTIME_TOOLCHAIN_TYPE] + RUST_TOOLCHAINS_TYPES,
 )
