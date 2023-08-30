@@ -1,22 +1,14 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
 import io.kotest.matchers.equals.shouldBeEqual
-import io.kotest.matchers.shouldBe
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
-import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createTempDirectory
-import kotlin.io.path.createTempFile
-import kotlin.io.path.readLines
 
 class BazelBspEnvironmentManagerTest {
 
@@ -32,22 +24,27 @@ class BazelBspEnvironmentManagerTest {
         override fun checkCanceled() {}
     }
 
-    private val emptyFileContent = "EXTENSIONS=[]"
+    private val emptyFileContent = "EXTENSIONS=[]TOOLCHAINS=[]"
     private val javaFileContent =
-        """load("//aspects:rules/java/java_info.bzl","extract_java_info","extract_java_toolchain","extract_java_runtime")""" +
-            """EXTENSIONS=[extract_java_info,extract_java_toolchain,extract_java_runtime]"""
-    private val someExtensionsFileContent =
+        """load("//aspects:rules/java/java_info.bzl","extract_java_toolchain","extract_java_runtime")""" +
+            """load("//aspects:rules/jvm/jvm_info.bzl","extract_jvm_info")""" +
+            """EXTENSIONS=[extract_java_toolchain,extract_java_runtime,extract_jvm_info]""" +
+            """TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type"]"""
+    private val nonJvmExtensionsFileContent =
         """load("//aspects:rules/python/python_info.bzl","extract_python_info")""" +
             """load("//aspects:rules/cpp/cpp_info.bzl","extract_cpp_info")""" +
-            """EXTENSIONS=[extract_python_info,extract_cpp_info]"""
+            """EXTENSIONS=[extract_python_info,extract_cpp_info]""" +
+            """TOOLCHAINS=[]"""
     private val allExtensionsFileContent =
         """load("//aspects:rules/python/python_info.bzl","extract_python_info")""" +
             """load("//aspects:rules/cpp/cpp_info.bzl","extract_cpp_info")""" +
             """load("//aspects:rules/kt/kt_info.bzl","extract_kotlin_info")""" +
             """load("//aspects:rules/scala/scala_info.bzl","extract_scala_info","extract_scala_toolchain_info")""" +
-            """load("//aspects:rules/java/java_info.bzl","extract_java_info","extract_java_toolchain","extract_java_runtime")""" +
+            """load("//aspects:rules/java/java_info.bzl","extract_java_toolchain","extract_java_runtime")""" +
+            """load("//aspects:rules/jvm/jvm_info.bzl","extract_jvm_info")""" +
             """EXTENSIONS=[extract_python_info,extract_cpp_info,extract_kotlin_info,extract_scala_info,extract_scala_toolchain_info,""" +
-            """extract_java_info,extract_java_toolchain,extract_java_runtime]"""
+            """extract_java_toolchain,extract_java_runtime,extract_jvm_info]""" +
+            """TOOLCHAINS=["@io_bazel_rules_scala//scala:toolchain_type","@bazel_tools//tools/jdk:runtime_toolchain_type"]"""
 
     private lateinit var dotBazelBspAspectsPath: Path
     private lateinit var internalAspectsResolverMock: InternalAspectsResolver
@@ -66,7 +63,7 @@ class BazelBspEnvironmentManagerTest {
     }
 
     @Test
-    fun `should create the extensions dot bzl file with no imports`() {
+    fun `should create the extensions dot bzl file with no imports and no toolchains`() {
         // given
         val bazelExternalRulesQuery = BazelExternalRulesQueryMock(emptyList())
         val bazelBspEnvironmentManager =
@@ -81,7 +78,7 @@ class BazelBspEnvironmentManagerTest {
     }
 
     @Test
-    fun `should create the extensions dot bzl file with one import (java)`() {
+    fun `should create the extensions dot bzl file with one import and one toolchain (java)`() {
         // given
         val bazelExternalRulesQuery = BazelExternalRulesQueryMock(listOf("rules_java"))
         val bazelBspEnvironmentManager =
@@ -96,7 +93,7 @@ class BazelBspEnvironmentManagerTest {
     }
 
     @Test
-    fun `should create the extensions dot bzl file with some imports`() {
+    fun `should create the extensions dot bzl file with non-jvm imports and without any toolchains`() {
         // given
         val bazelExternalRulesQuery = BazelExternalRulesQueryMock(
             listOf(
@@ -112,11 +109,11 @@ class BazelBspEnvironmentManagerTest {
 
         // then
         val fileContent = getExtensionsFileContent()
-        fileContent shouldBeEqual someExtensionsFileContent
+        fileContent shouldBeEqual nonJvmExtensionsFileContent
     }
 
     @Test
-    fun `should create the extensions dot bzl file with all possible imports`() {
+    fun `should create the extensions dot bzl file with all possible imports and toolchains`() {
         // given
         val bazelExternalRulesQuery = BazelExternalRulesQueryMock(
             listOf(

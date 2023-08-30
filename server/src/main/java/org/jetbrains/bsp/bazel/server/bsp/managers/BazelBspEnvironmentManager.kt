@@ -7,10 +7,8 @@ import java.nio.file.Paths
 import kotlin.io.path.writeText
 
 enum class Language(private val fileName: String, val functions: List<String>) {
-    Java(
-        "//aspects:rules/java/java_info.bzl",
-        listOf("extract_java_info", "extract_java_toolchain", "extract_java_runtime")
-    ),
+    Java("//aspects:rules/java/java_info.bzl", listOf("extract_java_toolchain", "extract_java_runtime")),
+    Jvm("//aspects:rules/jvm/jvm_info.bzl", listOf("extract_jvm_info")),
     Scala("//aspects:rules/scala/scala_info.bzl", listOf("extract_scala_info", "extract_scala_toolchain_info")),
     Cpp("//aspects:rules/cpp/cpp_info.bzl", listOf("extract_cpp_info")),
     Kotlin("//aspects:rules/kt/kt_info.bzl", listOf("extract_kotlin_info")),
@@ -46,7 +44,8 @@ class BazelBspEnvironmentManager(
             checkForLanguage(listOf("rules_cc"), Language.Cpp),
             checkForLanguage(listOf("io_bazel_rules_kotlin"), Language.Kotlin),
             checkForLanguage(listOf("io_bazel_rules_scala"), Language.Scala),
-            checkForLanguage(listOf("rules_java"), Language.Java)
+            checkForLanguage(listOf("rules_java"), Language.Java),
+            checkForLanguage(listOf("rules_java", "io_bazel_rules_kotlin", "io_bazel_rules_scala"), Language.Jvm)
         )
     }
 
@@ -63,7 +62,8 @@ class BazelBspEnvironmentManager(
         listOf(
             "# This is a generated file, do not edit it",
             createLoadStatementsString(languages),
-            createExtensionListString(languages)
+            createExtensionListString(languages),
+            createToolchainListString(languages)
         ).joinToString(
             separator = "\n",
             postfix = "\n"
@@ -78,6 +78,17 @@ class BazelBspEnvironmentManager(
         val functionNames = languages.flatMap { it.functions }
         return functionNames.joinToString(prefix = "EXTENSIONS = [\n", postfix = "\n]", separator = ",\n ") { "\t$it" }
     }
+
+    private fun createToolchainListString(languages: List<Language>): String =
+        languages.mapNotNull {
+            when (it) {
+                Language.Scala -> """"@io_bazel_rules_scala//scala:toolchain_type""""
+                Language.Java -> """"@bazel_tools//tools/jdk:runtime_toolchain_type""""
+                else -> null
+            }
+        }
+            .joinToString(prefix = "TOOLCHAINS = [\n", postfix = "\n]", separator = ",\n ") { "\t$it" }
+
 
     private fun createNewExtensionsFile(fileContent: String) {
         val aspectsPath = Paths.get(internalAspectsResolver.bazelBspRoot, Constants.ASPECTS_ROOT)

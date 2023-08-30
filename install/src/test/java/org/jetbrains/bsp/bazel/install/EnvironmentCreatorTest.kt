@@ -42,8 +42,8 @@ class EnvironmentCreatorTest {
             dotBazelBsp.resolve("aspects/rules").isDirectory() shouldBeEqual true
             dotBazelBsp.resolve("aspects/utils").isDirectory() shouldBeEqual true
             dotBazelBsp.resolve("aspects/utils/utils.bzl").exists() shouldBeEqual true
-            dotBazelBsp.resolve("aspects/utils/java_utils.bzl").exists() shouldBeEqual true
             dotBazelBsp.resolve("aspects/rules/java/java_info.bzl").exists() shouldBeEqual true
+            dotBazelBsp.resolve("aspects/rules/jvm/jvm_info.bzl").exists() shouldBeEqual true
             dotBazelBsp.resolve("aspects/rules/kt/kt_info.bzl").exists() shouldBeEqual true
             dotBazelBsp.resolve("aspects/rules/python/python_info.bzl").exists() shouldBeEqual true
             dotBazelBsp.resolve("aspects/rules/scala/scala_info.bzl").exists() shouldBeEqual true

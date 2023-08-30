@@ -22,15 +22,15 @@ class ThriftLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) :
             .map(bazelPathsResolver::resolveUri)
             .toHashSet()
 
-        val directSourceDeps = sourcesFromJavaTargetInfo(targetInfo)
+        val directSourceDeps = sourcesFromJvmTargetInfo(targetInfo)
 
         return transitiveSourceDeps + directSourceDeps
     }
 
-    private fun sourcesFromJavaTargetInfo(targetInfo: BspTargetInfo.TargetInfo): HashSet<URI> =
-        if (targetInfo.hasJavaTargetInfo()) {
+    private fun sourcesFromJvmTargetInfo(targetInfo: BspTargetInfo.TargetInfo): HashSet<URI> =
+        if (targetInfo.hasJvmTargetInfo()) {
             targetInfo
-                .javaTargetInfo
+                .jvmTargetInfo
                 .jarsList
                 .flatMap { it.sourceJarsList }
                 .map(bazelPathsResolver::resolveUri)

@@ -58,12 +58,12 @@ class BazelProjectMapper(
 
     private fun annotationProcessorLibraries(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
         return targetsToImport
-            .filter { it.javaTargetInfo.generatedJarsList.isNotEmpty() }
+            .filter { it.jvmTargetInfo.generatedJarsList.isNotEmpty() }
             .associate { targetInfo ->
                 targetInfo.id to
                     Library(
                         label = targetInfo.id + "_generated",
-                        outputs = targetInfo.javaTargetInfo.generatedJarsList
+                        outputs = targetInfo.jvmTargetInfo.generatedJarsList
                             .flatMap { it.binaryJarsList }
                             .map { bazelPathsResolver.resolveUri(it) }
                             .toSet(),
@@ -78,7 +78,7 @@ class BazelProjectMapper(
     private fun calculateKotlinStdlibsMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
         val projectLevelKotlinStdlibs = calculateProjectLevelKotlinStdlibs(targetsToImport)
         val rulesKotlinTargets = targetsToImport
-            .filter { targetInfo -> targetInfo.javaTargetInfo.compileClasspathList.any { it.isKotlinStdlibPath() } }
+            .filter { targetInfo -> targetInfo.jvmTargetInfo.compileClasspathList.any { it.isKotlinStdlibPath() } }
             .map { it.id }
             .toSet()
         return rulesKotlinTargets.associateWith { listOf(projectLevelKotlinStdlibs) }
@@ -88,7 +88,7 @@ class BazelProjectMapper(
         Library(
             label = "rules_kotlin_kotlin-stdlibs",
             outputs = targets
-                .flatMap { it.javaTargetInfo.compileClasspathList }
+                .flatMap { it.jvmTargetInfo.compileClasspathList }
                 .filter { it.isKotlinStdlibPath() }
                 .map { bazelPathsResolver.resolveUri(it) }
                 .toSet(),
@@ -118,12 +118,12 @@ class BazelProjectMapper(
         map { bazelPathsResolver.resolve(it).toUri() }.toSet()
 
     private fun getTargetJarUris(targetInfo: TargetInfo) =
-        targetInfo.javaTargetInfo.jarsList
+        targetInfo.jvmTargetInfo.jarsList
             .flatMap { it.binaryJarsList }
             .resolveUris()
 
     private fun getSourceJarUris(targetInfo: TargetInfo) =
-        targetInfo.javaTargetInfo.jarsList
+        targetInfo.jvmTargetInfo.jarsList
             .flatMap { it.sourceJarsList }
             .resolveUris()
 

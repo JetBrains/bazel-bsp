@@ -27,7 +27,7 @@ message JvmOutputs {
   repeated FileLocation source_jars = 3;
 }
 
-message JavaTargetInfo {
+message JvmTargetInfo {
   repeated JvmOutputs jars = 1;
   repeated JvmOutputs generated_jars = 2;
   repeated FileLocation runtime_classpath = 3;
@@ -112,7 +112,7 @@ message TargetInfo {
   repeated FileLocation resources = 60;
   map <string, string> env = 70;
   repeated string env_inherit = 80;
-  JavaTargetInfo java_target_info = 1000;
+  JvmTargetInfo jvm_target_info = 1000;
   JavaToolchainInfo java_toolchain_info = 2000;
   JavaRuntimeInfo java_runtime_info = 3000;
   ScalaTargetInfo scala_target_info = 4000;
