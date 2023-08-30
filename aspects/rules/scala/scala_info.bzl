@@ -6,12 +6,12 @@ def find_scalac_classpath(runfiles):
     found_scala_compiler_jar = False
     for file in runfiles:
         name = file.basename
-        if file.extension == "jar" and "scala-compiler" in name:
+        if file.extension == "jar" and ("scala3-compiler" in name or "scala-compiler" in name):
             found_scala_compiler_jar = True
             result.append(file)
-        elif file.extension == "jar" and ("scala-library" in name or "scala-reflect" in name):
+        elif file.extension == "jar" and ("scala3-library" in name or "scala3-reflect" in name or "scala-library" in name or "scala-reflect" in name):
             result.append(file)
-    return result if found_scala_compiler_jar and len(result) >= 3 else []
+    return result if found_scala_compiler_jar and len(result) >= 2 else []
 
 def extract_scala_toolchain_info(target, ctx, output_groups, **kwargs):
     runfiles = target.default_runfiles.files.to_list()

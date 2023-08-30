@@ -11,7 +11,8 @@
 
 ### Fixes 🛠️
 
-- aspects dont fail if target contains another target as `srcs` attribute
+- aspects don't fail if target contains another target as `srcs` attribute
+- now server can obtain scala 3 compiler
 
 ## [3.0.0] - 09.08.2023
 
