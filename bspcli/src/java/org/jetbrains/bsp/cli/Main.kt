@@ -33,16 +33,21 @@ interface Api: BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, C
 
 data class Args(
         val workspace: Path,
-        val metricsFile: Path?
+        val metricsFile: Path?,
+        val target: String
 )
 
 fun parseArgs(args: Array<String>): Args {
     if (args.size == 1) {
-        return Args(workspace = Paths.get(args[0]), metricsFile = null)
+        return Args(workspace = Paths.get(args[0]), metricsFile = null, target = "//...")
     }
     if (args.size == 2) {
-        return Args(workspace = Paths.get(args[0]), metricsFile = Paths.get(args[1]))
+        return Args(workspace = Paths.get(args[0]), metricsFile = Paths.get(args[1]), target = "//...")
     }
+    if (args.size == 3) {
+        return Args(workspace = Paths.get(args[0]), metricsFile = Paths.get(args[1]), target = args[2])
+    }
+
 
     println("Invalid number of arguments. Just pass path to your workspace as a CLI argument to this app")
     exitProcess(1)
@@ -61,7 +66,7 @@ fun main(args0: Array<String>) {
     Install.main(arrayOf(
             "--bazel-workspace", args.workspace.toString(),
             "--directory", installationDirectory.toString(),
-            "--targets", "//..."
+            "--targets", args.target
     ))
 
     val serverOut = PipedInputStream()
