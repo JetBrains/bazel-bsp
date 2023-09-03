@@ -30,6 +30,7 @@ class LanguagePluginsService(
         cppLanguagePlugin.prepareSync(targetInfos)
         thriftLanguagePlugin.prepareSync(targetInfos)
         pythonLanguagePlugin.prepareSync(targetInfos)
+        rustLanguagePlugin.prepareSync(targetInfos)
     }
 
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =

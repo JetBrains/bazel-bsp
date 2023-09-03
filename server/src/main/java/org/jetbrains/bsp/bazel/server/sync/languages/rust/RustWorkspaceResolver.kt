@@ -96,8 +96,8 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         "DEPENDENCY"
     }
 
-    private fun resolvePackageEdition(rustTargets: List<RustTargetModule>): Int =
-        rustTargets.map { (_, rustData) -> rustData.edition.toInt() }.maxOf { it }
+    private fun resolvePackageEdition(rustTargets: List<RustTargetModule>): String =
+        rustTargets.map { (_, rustData) -> rustData.edition }.maxOf { it }
 
     private fun resolvePackageSource(isFromWorkspace: Boolean): String? = if (isFromWorkspace) {
         null
@@ -117,9 +117,8 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         val buildTarget = RustBuildTarget(
                 resolvePackage(genericData).targetName,
                 rustData.crateRoot,
-                genericData.baseDirectory.toString(),
                 parseTargetKind(rustData.kind),
-                rustData.edition.toInt(),
+                rustData.edition,
                 false,                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
         )
         buildTarget.requiredFeatures = rustData.crateFeatures
@@ -152,6 +151,11 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
             .map { it.path }
             .firstOrNull()
     // TODO: ^^^^^ Cargo does not allow for more then one library in a single package so no more than one proc macro.
+
+    private fun resolvePackageRootUrl(rustTargets: List<RustTargetModule>): String =
+       rustTargets
+            .map { (genericData, _) -> genericData.baseDirectory.toString() }
+               .firstOrNull() ?: "Missing package root path"
 
     private fun resolvePackageFeatures(
         rustTargets: List<RustTargetModule>
@@ -197,6 +201,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
         val source = resolvePackageSource(isFromWorkspace)
         val pkgBaseDir = resolvePackageBaseDir(rustTargetsWithData)
         val procMacroArtifact = resolveProcMacroArtifact(rustTargetsWithData)
+        val rootUrl = resolvePackageRootUrl(rustTargetsWithData)
 
         val targets = rustTargetsWithData.map(::parseSingleTarget)
         val allTargets = allRustTargetsWithData.map(::parseSingleTarget)
@@ -205,6 +210,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
         val rustPackage = RustPackage(
                 rustPackageId,
+                rootUrl,
                 rustPackageId,
                 version,
                 origin,
