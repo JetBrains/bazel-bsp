@@ -24,27 +24,26 @@ class BazelBspEnvironmentManagerTest {
         override fun checkCanceled() {}
     }
 
-    private val emptyFileContent = "EXTENSIONS=[]TOOLCHAINS=[]"
+    private val defaultFileContent =
+        """load("//aspects:rules/java/java_info.bzl","extract_java_toolchain","extract_java_runtime")""" +
+            """load("//aspects:rules/jvm/jvm_info.bzl","extract_jvm_info")""" +
+            """EXTENSIONS=[extract_java_toolchain,extract_java_runtime,extract_jvm_info]""" +
+            """TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type"]"""
     private val javaFileContent =
         """load("//aspects:rules/java/java_info.bzl","extract_java_toolchain","extract_java_runtime")""" +
             """load("//aspects:rules/jvm/jvm_info.bzl","extract_jvm_info")""" +
             """EXTENSIONS=[extract_java_toolchain,extract_java_runtime,extract_jvm_info]""" +
             """TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type"]"""
-    private val nonJvmExtensionsFileContent =
-        """load("//aspects:rules/python/python_info.bzl","extract_python_info")""" +
-            """load("//aspects:rules/cpp/cpp_info.bzl","extract_cpp_info")""" +
-            """EXTENSIONS=[extract_python_info,extract_cpp_info]""" +
-            """TOOLCHAINS=[]"""
     private val allExtensionsFileContent =
-        """load("//aspects:rules/python/python_info.bzl","extract_python_info")""" +
+        """load("//aspects:rules/java/java_info.bzl","extract_java_toolchain","extract_java_runtime")""" +
+            """load("//aspects:rules/jvm/jvm_info.bzl","extract_jvm_info")""" +
+            """load("//aspects:rules/python/python_info.bzl","extract_python_info")""" +
             """load("//aspects:rules/cpp/cpp_info.bzl","extract_cpp_info")""" +
             """load("//aspects:rules/kt/kt_info.bzl","extract_kotlin_info")""" +
             """load("//aspects:rules/scala/scala_info.bzl","extract_scala_info","extract_scala_toolchain_info")""" +
-            """load("//aspects:rules/java/java_info.bzl","extract_java_toolchain","extract_java_runtime")""" +
-            """load("//aspects:rules/jvm/jvm_info.bzl","extract_jvm_info")""" +
-            """EXTENSIONS=[extract_python_info,extract_cpp_info,extract_kotlin_info,extract_scala_info,extract_scala_toolchain_info,""" +
-            """extract_java_toolchain,extract_java_runtime,extract_jvm_info]""" +
-            """TOOLCHAINS=["@io_bazel_rules_scala//scala:toolchain_type","@bazel_tools//tools/jdk:runtime_toolchain_type"]"""
+            """EXTENSIONS=[extract_java_toolchain,extract_java_runtime,extract_jvm_info,extract_python_info,""" +
+            """extract_cpp_info,extract_kotlin_info,extract_scala_info,extract_scala_toolchain_info]""" +
+            """TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type","@io_bazel_rules_scala//scala:toolchain_type"]"""
 
     private lateinit var dotBazelBspAspectsPath: Path
     private lateinit var internalAspectsResolverMock: InternalAspectsResolver
@@ -63,7 +62,7 @@ class BazelBspEnvironmentManagerTest {
     }
 
     @Test
-    fun `should create the extensions dot bzl file with no imports and no toolchains`() {
+    fun `should create the extensions dot bzl file with default imports and default toolchains`() {
         // given
         val bazelExternalRulesQuery = BazelExternalRulesQueryMock(emptyList())
         val bazelBspEnvironmentManager =
@@ -74,7 +73,7 @@ class BazelBspEnvironmentManagerTest {
 
         // then
         val fileContent = getExtensionsFileContent()
-        fileContent shouldBeEqual emptyFileContent
+        fileContent shouldBeEqual defaultFileContent
     }
 
     @Test
@@ -90,26 +89,6 @@ class BazelBspEnvironmentManagerTest {
         // then
         val fileContent = getExtensionsFileContent()
         fileContent shouldBeEqual javaFileContent
-    }
-
-    @Test
-    fun `should create the extensions dot bzl file with non-jvm imports and without any toolchains`() {
-        // given
-        val bazelExternalRulesQuery = BazelExternalRulesQueryMock(
-            listOf(
-                "rules_cc",
-                "rules_python"
-            )
-        )
-        val bazelBspEnvironmentManager =
-            BazelBspEnvironmentManager(internalAspectsResolverMock, bazelExternalRulesQuery)
-
-        // when
-        bazelBspEnvironmentManager.generateLanguageExtensions(CancelCheckerMock())
-
-        // then
-        val fileContent = getExtensionsFileContent()
-        fileContent shouldBeEqual nonJvmExtensionsFileContent
     }
 
     @Test
@@ -190,6 +169,6 @@ class BazelBspEnvironmentManagerTest {
 
         // then
         fileContent = getExtensionsFileContent()
-        fileContent shouldBeEqual emptyFileContent
+        fileContent shouldBeEqual defaultFileContent
     }
 }
