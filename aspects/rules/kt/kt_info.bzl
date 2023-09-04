@@ -9,7 +9,7 @@ def extract_kotlin_info(target, ctx, **kwargs):
     # provider = target[KtJvmInfo]
 
     if not hasattr(target, "kt"):
-        return None
+        return None, None
 
     provider = target.kt
 
