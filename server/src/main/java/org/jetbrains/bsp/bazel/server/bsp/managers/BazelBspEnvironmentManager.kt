@@ -28,33 +28,35 @@ class BazelBspEnvironmentManager(
 ) {
 
     fun generateLanguageExtensions(cancelChecker: CancelChecker) {
-        val ruleNames = bazelExternalRulesQuery.fetchExternalRuleNames(cancelChecker)
-        val languages = getProjectLanguages(ruleNames)
+        val externalLanguageRuleNames = bazelExternalRulesQuery.fetchExternalRuleNames(cancelChecker)
+        val languages = getProjectLanguages(externalLanguageRuleNames)
         val fileContent = prepareFileContent(languages)
 
         createNewExtensionsFile(fileContent)
     }
 
     private fun getProjectLanguages(allRuleNames: List<String>): List<Language> {
-        fun checkForLanguage(languageRuleNames: List<String>, language: Language) =
-            checkForLanguageRules(allRuleNames, languageRuleNames, language)
+        fun checkForLanguage(externalLanguageRuleNames: List<String>, language: Language) =
+            checkForLanguageRules(allRuleNames, externalLanguageRuleNames, language)
 
         return listOfNotNull(
+            // Bundled in Bazel
+            Language.Java,
+            Language.Jvm,
+
             checkForLanguage(listOf("rules_python"), Language.Python),
             checkForLanguage(listOf("rules_cc"), Language.Cpp),
             checkForLanguage(listOf("io_bazel_rules_kotlin"), Language.Kotlin),
             checkForLanguage(listOf("io_bazel_rules_scala"), Language.Scala),
-            checkForLanguage(listOf("rules_java"), Language.Java),
-            checkForLanguage(listOf("rules_java", "io_bazel_rules_kotlin", "io_bazel_rules_scala"), Language.Jvm)
         )
     }
 
     private fun checkForLanguageRules(
         allRuleNames: List<String>,
-        languageRuleNames: List<String>,
+        externalLanguageRuleNames: List<String>,
         language: Language
     ): Language? =
-        if (languageRuleNames.any { allRuleNames.contains(it) })
+        if (externalLanguageRuleNames.any { allRuleNames.contains(it) })
             language
         else null
 
