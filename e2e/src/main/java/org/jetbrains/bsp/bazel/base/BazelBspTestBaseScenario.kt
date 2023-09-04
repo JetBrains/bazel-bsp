@@ -43,7 +43,6 @@ abstract class BazelBspTestBaseScenario {
         log.info("Testing repo workspace path: $workspaceDir")
         log.info("Creating TestClient...")
 
-        // TODO: capabilities should be configurable
         val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
         val initializeBuildParams = InitializeBuildParams(
             "BspTestClient",

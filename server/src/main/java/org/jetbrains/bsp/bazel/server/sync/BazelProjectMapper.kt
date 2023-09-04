@@ -231,7 +231,6 @@ class BazelProjectMapper(
     private fun modifyModules(
         modulesFromBazel: Sequence<Module>, workspaceRoot: URI, workspaceContext: WorkspaceContext
     ): Sequence<Module> {
-        // TODO make this feature configurable with flag in project view file
         return IntelliJProjectTreeViewFix(bazelPathsResolver, bazelInfo).createModules(
             workspaceRoot,
             modulesFromBazel,

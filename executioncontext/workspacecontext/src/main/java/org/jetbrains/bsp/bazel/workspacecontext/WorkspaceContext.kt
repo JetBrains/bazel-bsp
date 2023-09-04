@@ -40,7 +40,6 @@ data class WorkspaceContext(
      */
     val buildManualTargets: BuildManualTargetsSpec,
 
-    // TODO replace `BspInfo`
     /**
      * Path to the `.bazelbsp` dir in the project root
      *

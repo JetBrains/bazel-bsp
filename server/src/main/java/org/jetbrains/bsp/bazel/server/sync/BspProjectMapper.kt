@@ -155,8 +155,6 @@ class BspProjectMapper(
         fun emptySourcesItem(label: Label): SourcesItem =
             SourcesItem(BspMappings.toBspId(label), emptyList())
 
-        // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
-        // we need a use case with some generated files and then figure out how to handle it
         val labels = BspMappings.toLabels(sourcesParams.targets)
         val sourcesItems = labels.map {
             project.findModule(it)?.let(::toSourcesItem) ?: emptySourcesItem(it)

@@ -45,7 +45,7 @@ public class BepLogger extends BspClientLogger {
   }
 
   public void onBuildMetrics(BuildEventStreamProtos.BuildMetrics metrics) {
-    // TODO: We potentially might want to obtain more metrics data than just running time
+    // TODO: https://youtrack.jetbrains.com/issue/BAZEL-621
     Duration duration = Duration.ofMillis(metrics.getTimingMetrics().getWallTimeInMs());
     logMessage(String.format("Command completed in %s", Format.duration(duration)));
   }

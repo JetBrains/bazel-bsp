@@ -144,11 +144,9 @@ public class ProjectSyncService {
     return bspMapper.buildTargetScalaMainClasses(project, params);
   }
 
-  // TODO implement this endpoint to return libraries with maven coordinates that target depends on
-  // this should be helpful for 3rd party shared indexes in IntelliJ, however the endpoint is not
-  // yet used in the client
   public DependencyModulesResult buildTargetDependencyModules(
       CancelChecker cancelChecker, DependencyModulesParams params) {
+    // TODO https://youtrack.jetbrains.com/issue/BAZEL-616
     return new DependencyModulesResult(Collections.emptyList());
   }
 }

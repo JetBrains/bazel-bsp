@@ -1,5 +1,4 @@
 package org.jetbrains.bsp.bazel.server.sync
-// TODO - rethink the location
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.TaskId

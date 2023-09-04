@@ -112,9 +112,7 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private void processProgressEvent(BuildEventStreamProtos.BuildEvent event) {
     if (event.hasProgress()) {
-      // todo uncomment `onProgress` call back.
-      // I had to revert this change because BEP events do not come deterministically when you use file-based BEP
-
+      // TODO https://youtrack.jetbrains.com/issue/BAZEL-622
       // bepLogger.onProgress(event.getProgress());
     }
   }

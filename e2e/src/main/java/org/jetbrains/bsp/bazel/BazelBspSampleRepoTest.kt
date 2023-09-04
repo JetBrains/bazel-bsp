@@ -55,16 +55,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             scalaMainClasses(),
             scalaTestClasses(),
             jvmRunEnvironment(),
-            jvmTestEnvironment() // TODO
-            //  new BazelBspServerSingleTest(
-            //      "targets run unsuccessfully",
-            //      client::testTargetsRunUnsuccessfully),
-            //  new BazelBspServerSingleTest(
-            //      "targets test unsuccessfully",
-            //      client::testTargetsTestUnsuccessfully),
-            //      new BazelBspServerSingleTest(
-            //          "target capabilities",
-            //          client::testTargetCapabilities)
+            jvmTestEnvironment()
         )
 
     private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(

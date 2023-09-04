@@ -17,7 +17,7 @@ class BazelBinarySpecMapperTest {
     @DisplayName("fun map(projectView): BazelBinarySpec tests")
     inner class MapTest {
 
-        // TODO https://youtrack.jetbrains.com/issue/BAZEL-58 + framework to test envs
+        // TODO https://youtrack.jetbrains.com/issue/BAZEL-619
         @Disabled("for now we don't have a framework to change classpath, i'll fix it later")
         @Test
         fun `should return failure if it isn't possible to deduct bazel path from PATH and bazel path is null`() {

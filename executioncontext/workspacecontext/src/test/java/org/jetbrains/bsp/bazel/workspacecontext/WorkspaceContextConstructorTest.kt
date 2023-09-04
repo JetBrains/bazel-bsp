@@ -95,7 +95,7 @@ class WorkspaceContextConstructorTest {
             val expectedWorkspaceContext = WorkspaceContext(
                 targets = TargetsSpec(emptyList(), emptyList()),
                 buildFlags = BuildFlagsSpec(emptyList()),
-                // TODO - for now we don't have a framework to change classpath, i'll fix it later
+                // TODO https://youtrack.jetbrains.com/issue/BAZEL-619
                 bazelBinary = BazelBinarySpecExtractor.default(),
                 dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
                 buildManualTargets = BuildManualTargetsSpec(false),

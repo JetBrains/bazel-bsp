@@ -40,10 +40,8 @@ class BazelRunner private constructor(
             "--isatty=true",
         )
 
-        // todo set parseProcessOutput to false back.
-        // I had to revert this change because BEP events do not come deterministically when you use file-based BEP
-        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, true
-        )
+        // TODO https://youtrack.jetbrains.com/issue/BAZEL-617
+        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, true)
     }
 
     fun runBazelCommand(

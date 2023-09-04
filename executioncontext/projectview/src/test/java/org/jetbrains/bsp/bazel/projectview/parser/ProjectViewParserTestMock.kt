@@ -20,7 +20,6 @@ object ProjectViewParserTestMock : DefaultProjectViewParser() {
         return createTempFileWithContentIfContentExists(resourcesFile, resourcesFileContent)
     }
 
-    // TODO @abrams27 - move to utils
     private fun readFileContent(filePath: Path): String? {
         // we read file content instead of passing plain file due to bazel resources packaging
         val inputStream: InputStream? =
