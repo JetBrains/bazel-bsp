@@ -88,7 +88,4 @@ internal object TargetsSpecExtractor : ExecutionContextEntityExtractor<TargetsSp
             BuildTargetIdentifier("//...")
         else
             BuildTargetIdentifier("//" + buildDirectoryIdentifier.pathString + "/...")
-
-
-    override fun default(): TargetsSpec = defaultTargetsSpec
 }

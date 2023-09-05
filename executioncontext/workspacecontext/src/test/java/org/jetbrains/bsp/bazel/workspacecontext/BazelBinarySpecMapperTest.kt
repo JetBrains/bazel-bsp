@@ -63,21 +63,4 @@ class BazelBinarySpecMapperTest {
             bazelBinarySpec shouldBe expectedBazelBinarySpec
         }
     }
-
-    @Nested
-    @DisplayName("fun default(): BazelBinarySpec tests")
-    inner class DefaultTest {
-
-        @Disabled("for now we don't have a framework to change classpath, i'll fix it later")
-        @Test
-        fun `should return success with deducted bazel path from PATH`() {
-            // given
-            // when
-            val bazelBinarySpec = BazelBinarySpecExtractor.default()
-
-            // then
-            val expectedBazelBinarySpec = BazelBinarySpec(Path("/usr/local/bin/bazel"))
-            bazelBinarySpec shouldBe expectedBazelBinarySpec
-        }
-    }
 }

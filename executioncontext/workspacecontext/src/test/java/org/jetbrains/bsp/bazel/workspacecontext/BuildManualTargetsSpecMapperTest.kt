@@ -46,20 +46,4 @@ class BuildManualTargetsSpecMapperTest {
             buildManualTargetsSpec shouldBe expectedBuildManualTargetsSpec
         }
     }
-
-    @Nested
-    @DisplayName("fun default(): BuildManualTargetsSpec tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success and default spec with false`() {
-            // given
-            // when
-            val buildManualTargetsSpec = BuildManualTargetsSpecExtractor.default()
-
-            // then
-            val expectedBuildFlagsSpec = BuildManualTargetsSpec(false)
-            buildManualTargetsSpec shouldBe expectedBuildFlagsSpec
-        }
-    }
 }

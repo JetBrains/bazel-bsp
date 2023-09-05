@@ -39,20 +39,4 @@ class ImportDepthSpecMapperTest {
             importDepthSpec shouldBe expectedImportDepthSpec
         }
     }
-
-    @Nested
-    @DisplayName("fun default(): ImportDepthSpec tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success with default import depth`() {
-            // given
-            // when
-            val importDepthSpec = ImportDepthSpecExtractor.default()
-
-            // then
-            val expectedImportDepthSpec = ImportDepthSpec(0)
-            importDepthSpec shouldBe expectedImportDepthSpec
-        }
-    }
 }

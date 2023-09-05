@@ -25,6 +25,4 @@ internal object BuildFlagsSpecExtractor : ExecutionContextEntityExtractor<BuildF
         BuildFlagsSpec(
             values = targetsSection.values
         )
-
-    override fun default(): BuildFlagsSpec = defaultBuildFlagsSpec
 }

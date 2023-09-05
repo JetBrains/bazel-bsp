@@ -54,20 +54,4 @@ class BuildFlagsSpecMapperTest {
             buildFlagsSpec shouldBe expectedBuildFlagsSpec
         }
     }
-
-    @Nested
-    @DisplayName("fun default(): BuildFlagsSpec tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success and default spec with empty list`() {
-            // given
-            // when
-            val buildFlagsSpec = BuildFlagsSpecExtractor.default()
-
-            // then
-            val expectedBuildFlagsSpec = BuildFlagsSpec(emptyList())
-            buildFlagsSpec shouldBe expectedBuildFlagsSpec
-        }
-    }
 }

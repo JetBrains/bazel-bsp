@@ -20,8 +20,6 @@ internal object BazelBinarySpecExtractor : ExecutionContextEntityExtractor<Bazel
             else -> map(projectView.bazelBinary!!)
         }
 
-    override fun default(): BazelBinarySpec = findBazelOnPath()
-
     private fun findBazelOnPath(): BazelBinarySpec =
         findBazelOnPathOrNull()
             ?: throw

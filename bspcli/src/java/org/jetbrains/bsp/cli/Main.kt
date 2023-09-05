@@ -135,7 +135,10 @@ private fun startServer(serverIn: PrintStream,
                         metricsLogger: MetricsLogger): Launcher<ch.epfl.scala.bsp4j.BuildClient> {
     val bspInfo = BspInfo(directory)
     val bspIntegrationData = BspIntegrationData(serverIn, clientOut, serverExecutor, null)
-    val workspaceContextProvider = DefaultWorkspaceContextProvider(directory.resolve("projectview.bazelproject"))
+    val workspaceContextProvider = DefaultWorkspaceContextProvider(
+      workspaceRoot = workspace,
+      projectViewPath = directory.resolve("projectview.bazelproject")
+    )
     val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspace, metricsLogger)
     bspServer.startServer(bspIntegrationData)
     return bspIntegrationData.launcher

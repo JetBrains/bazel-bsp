@@ -4,7 +4,6 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
-import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
@@ -49,7 +48,10 @@ object ServerInitializer {
             val rootDir = bspInfo.bazelBspDir()
             Files.createDirectories(rootDir)
             val traceFile = rootDir.resolve(Constants.BAZELBSP_TRACE_JSON_FILE_NAME)
-            val workspaceContextProvider = getWorkspaceContextProvider(cliArgs.projectViewPath)
+            val workspaceContextProvider = DefaultWorkspaceContextProvider(
+                workspaceRoot = Path(cliArgs.bazelWorkspaceRoot),
+                projectViewPath = Path(cliArgs.projectViewPath)
+            )
             val bspIntegrationData = BspIntegrationData(
                 stdout,
                 stdin,
@@ -83,7 +85,4 @@ object ServerInitializer {
                 )
             )
         } else null
-
-    private fun getWorkspaceContextProvider(projectViewPath: String): WorkspaceContextProvider =
-        DefaultWorkspaceContextProvider(Path(projectViewPath))
 }

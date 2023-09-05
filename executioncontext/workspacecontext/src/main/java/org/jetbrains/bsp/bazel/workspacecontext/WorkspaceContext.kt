@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextConstructor
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import java.nio.file.Path
 
 /**
  * Representation of `ExecutionContext` used during server lifetime.
@@ -15,7 +16,8 @@ data class WorkspaceContext(
      * Targets (included and excluded) on which the user wants to work.
      *
      *
-     * Obtained from `ProjectView` simply by mapping 'targets' section.
+     * Obtained from `ProjectView` simply by mapping 'targets' section
+     * or derived from 'directories' if 'derive_targets_from_directories' is true.
      */
     val targets: TargetsSpec,
 
@@ -55,39 +57,20 @@ data class WorkspaceContext(
     val importDepth: ImportDepthSpec,
 ) : ExecutionContext()
 
+class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstructor<WorkspaceContext> {
 
-object WorkspaceContextConstructor : ExecutionContextConstructor<WorkspaceContext> {
-
+    private val dotBazelBspDirPathSpecExtractor = DotBazelBspDirPathSpecExtractor(workspaceRoot)
     private val log = LogManager.getLogger(WorkspaceContextConstructor::class.java)
 
     override fun construct(projectView: ProjectView): WorkspaceContext {
         log.info("Constructing workspace context for: {}.", projectView)
 
-        // maybe TRY is not that good xd
         val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
         val buildFlagsSpec = BuildFlagsSpecExtractor.fromProjectView(projectView)
         val bazelBinarySpec = BazelBinarySpecExtractor.fromProjectView(projectView)
-        val dotBazelBspDirPathSpec = DotBazelBspDirPathSpecExtractor.fromProjectView(projectView)
+        val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecExtractor.fromProjectView(projectView)
         val buildManualTargetsSpec = BuildManualTargetsSpecExtractor.fromProjectView(projectView)
         val importDepthSpec = ImportDepthSpecExtractor.fromProjectView(projectView)
-        return WorkspaceContext(
-            targets = targetsSpec,
-            buildFlags = buildFlagsSpec,
-            bazelBinary = bazelBinarySpec,
-            dotBazelBspDirPath = dotBazelBspDirPathSpec,
-            buildManualTargets = buildManualTargetsSpec,
-            importDepth = importDepthSpec,
-        )
-    }
-
-
-    override fun constructDefault(): WorkspaceContext {
-        val targetsSpec = TargetsSpecExtractor.default()
-        val buildFlagsSpec = BuildFlagsSpecExtractor.default()
-        val bazelBinarySpec = BazelBinarySpecExtractor.default()
-        val dotBazelBspDirPathSpec = DotBazelBspDirPathSpecExtractor.default()
-        val buildManualTargetsSpec = BuildManualTargetsSpecExtractor.default()
-        val importDepthSpec = ImportDepthSpecExtractor.default()
         return WorkspaceContext(
             targets = targetsSpec,
             buildFlags = buildFlagsSpec,

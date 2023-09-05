@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
 
-
 class DotBazelBspDirPathSpecMapperTest {
 
     @Nested
@@ -17,29 +16,15 @@ class DotBazelBspDirPathSpecMapperTest {
         @Test
         fun `should return success with deducted dir path skipping project view`() {
             // given
+            val workspaceRoot = Path("path/to/workspace")
             val projectView = ProjectView.Builder().build()
+            val extractor = DotBazelBspDirPathSpecExtractor(workspaceRoot)
 
             // when
-            val dotBazelBspDirPathSpec = DotBazelBspDirPathSpecExtractor.fromProjectView(projectView)
+            val dotBazelBspDirPathSpec = extractor.fromProjectView(projectView)
 
             // then
-            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
-            dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec
-        }
-    }
-
-    @Nested
-    @DisplayName("fun default(): DotBazelBspDirPathSpec tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success with deducted dir path`() {
-            // given
-            // when
-            val dotBazelBspDirPathSpec = DotBazelBspDirPathSpecExtractor.default()
-
-            // then
-            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(workspaceRoot.toAbsolutePath().resolve(".bazelbsp"))
             dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec
         }
     }

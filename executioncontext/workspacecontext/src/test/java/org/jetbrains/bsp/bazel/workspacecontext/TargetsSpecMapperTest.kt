@@ -424,21 +424,4 @@ class TargetsSpecMapperTest {
             }
         }
     }
-
-    @Nested
-    @DisplayName("fun default(): TargetsSpec tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success with default spec`() {
-            // given
-
-            // when
-            val targetsSpec = TargetsSpecExtractor.default()
-
-            // then
-            val expectedTargetsSpec = TargetsSpec(emptyList(), emptyList())
-            targetsSpec shouldBe expectedTargetsSpec
-        }
-    }
 }

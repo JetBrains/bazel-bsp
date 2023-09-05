@@ -21,6 +21,8 @@ class WorkspaceContextConstructorTest {
         @Test
         fun `should return success if project view is valid`() {
             // given
+            val workspaceRoot = Path("path/to/workspace")
+            val constructor = WorkspaceContextConstructor(workspaceRoot)
             val projectView =
                 ProjectView.Builder(
                     targets =
@@ -45,7 +47,7 @@ class WorkspaceContextConstructorTest {
                 ).build()
 
             // when
-            val workspaceContext = WorkspaceContextConstructor.construct(projectView)
+            val workspaceContext = constructor.construct(projectView)
 
             // then
             val expectedTargets =
@@ -70,7 +72,7 @@ class WorkspaceContextConstructorTest {
             val expectedBazelBinarySpec = BazelBinarySpec(Path("/path/to/bazel"))
             workspaceContext.bazelBinary shouldBe expectedBazelBinarySpec
 
-            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(workspaceRoot.toAbsolutePath().resolve(".bazelbsp"))
             workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
 
             val expectedBuildManualTargetsSpec = BuildManualTargetsSpec(false)
@@ -78,30 +80,6 @@ class WorkspaceContextConstructorTest {
 
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
-        }
-    }
-
-    @Nested
-    @DisplayName("fun constructDefault(): WorkspaceContext tests")
-    inner class ConstructDefaultTest {
-
-        @Test
-        fun `should return success and default workspace context`() {
-            // given
-            // when
-            val workspaceContext = WorkspaceContextConstructor.constructDefault()
-
-            // then
-            val expectedWorkspaceContext = WorkspaceContext(
-                targets = TargetsSpec(emptyList(), emptyList()),
-                buildFlags = BuildFlagsSpec(emptyList()),
-                // TODO https://youtrack.jetbrains.com/issue/BAZEL-619
-                bazelBinary = BazelBinarySpecExtractor.default(),
-                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
-                buildManualTargets = BuildManualTargetsSpec(false),
-                importDepth = ImportDepthSpec(0),
-            )
-            workspaceContext shouldBe expectedWorkspaceContext
         }
     }
 }

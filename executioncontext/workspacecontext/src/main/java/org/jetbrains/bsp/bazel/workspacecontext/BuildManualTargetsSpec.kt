@@ -14,11 +14,9 @@ private val defaultBuildManualTargetsSpec = BuildManualTargetsSpec(
 internal object BuildManualTargetsSpecExtractor : ExecutionContextEntityExtractor<BuildManualTargetsSpec> {
 
     override fun fromProjectView(projectView: ProjectView): BuildManualTargetsSpec =
-        if (projectView.buildManualTargets == null) default()
+        if (projectView.buildManualTargets == null) defaultBuildManualTargetsSpec
         else map(projectView.buildManualTargets!!)
 
     private fun map(buildManualTargetsSection: ProjectViewBuildManualTargetsSection): BuildManualTargetsSpec =
             BuildManualTargetsSpec(buildManualTargetsSection.value)
-
-    override fun default(): BuildManualTargetsSpec = defaultBuildManualTargetsSpec
 }

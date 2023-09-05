@@ -22,6 +22,4 @@ abstract class ExecutionContext
 interface ExecutionContextConstructor<T : ExecutionContext> {
 
     fun construct(projectView: ProjectView): T
-
-    fun constructDefault(): T
 }

@@ -10,17 +10,15 @@ data class DotBazelBspDirPathSpec(
     override val value: Path
 ) : ExecutionContextSingletonEntity<Path>()
 
-internal object DotBazelBspDirPathSpecExtractor : ExecutionContextEntityExtractor<DotBazelBspDirPathSpec> {
+internal class DotBazelBspDirPathSpecExtractor(
+    private val workspaceRoot: Path,
+) : ExecutionContextEntityExtractor<DotBazelBspDirPathSpec> {
 
-    override fun fromProjectView(projectView: ProjectView): DotBazelBspDirPathSpec = default()
-
-    override fun default(): DotBazelBspDirPathSpec = calculatePathToDorBazelBspDirAndMap()
-
-    private fun calculatePathToDorBazelBspDirAndMap(): DotBazelBspDirPathSpec =
+    override fun fromProjectView(projectView: ProjectView): DotBazelBspDirPathSpec =
         DotBazelBspDirPathSpec(
             value = calculatePathToDotBazelBspDir()
         )
 
     private fun calculatePathToDotBazelBspDir(): Path =
-        Path("").toAbsolutePath().normalize().resolve(".bazelbsp")
+        workspaceRoot.toAbsolutePath().normalize().resolve(".bazelbsp")
 }

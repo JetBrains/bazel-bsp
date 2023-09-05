@@ -53,6 +53,4 @@ class ExecutionContextEntityExtractorException(entityName: String, message: Stri
  */
 interface ExecutionContextEntityExtractor<T> {
     fun fromProjectView(projectView: ProjectView): T
-
-    fun default(): T
 }
