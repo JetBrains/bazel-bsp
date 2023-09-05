@@ -28,37 +28,29 @@ class BazelBspEnvironmentManager(
 ) {
 
     fun generateLanguageExtensions(cancelChecker: CancelChecker) {
-        val externalLanguageRuleNames = bazelExternalRulesQuery.fetchExternalRuleNames(cancelChecker)
-        val languages = getProjectLanguages(externalLanguageRuleNames)
+        val allExternalRuleNames = bazelExternalRulesQuery.fetchExternalRuleNames(cancelChecker)
+        val languages = getProjectLanguages(allExternalRuleNames)
         val fileContent = prepareFileContent(languages)
 
         createNewExtensionsFile(fileContent)
     }
 
-    private fun getProjectLanguages(allRuleNames: List<String>): List<Language> {
-        fun checkForLanguage(externalLanguageRuleNames: List<String>, language: Language) =
-            checkForLanguageRules(allRuleNames, externalLanguageRuleNames, language)
+    private fun getProjectLanguages(allExternalRuleNames: List<String>): List<Language> {
+        data class RuleLanguage(val ruleNames: List<String>, val language: Language)
 
-        return listOfNotNull(
-            // Bundled in Bazel
-            Language.Java,
-            Language.Jvm,
-
-            checkForLanguage(listOf("rules_python"), Language.Python),
-            checkForLanguage(listOf("rules_cc"), Language.Cpp),
-            checkForLanguage(listOf("io_bazel_rules_kotlin"), Language.Kotlin),
-            checkForLanguage(listOf("io_bazel_rules_scala"), Language.Scala),
+        val ruleLanguages = listOf(
+            RuleLanguage(listOf(), Language.Java),  // Bundled in Bazel
+            RuleLanguage(listOf(), Language.Jvm),  // Bundled in Bazel
+            RuleLanguage(listOf("rules_python"), Language.Python),
+            RuleLanguage(listOf("rules_cc"), Language.Cpp),
+            RuleLanguage(listOf("io_bazel_rules_kotlin"), Language.Kotlin),
+            RuleLanguage(listOf("io_bazel_rules_scala"), Language.Scala)
         )
-    }
 
-    private fun checkForLanguageRules(
-        allRuleNames: List<String>,
-        externalLanguageRuleNames: List<String>,
-        language: Language
-    ): Language? =
-        if (externalLanguageRuleNames.any { allRuleNames.contains(it) })
-            language
-        else null
+        return ruleLanguages.mapNotNull { (ruleNames, language) ->
+            if (ruleNames.isEmpty() || ruleNames.any { allExternalRuleNames.contains(it) }) language else null
+        }
+    }
 
     private fun prepareFileContent(languages: List<Language>) =
         listOf(
