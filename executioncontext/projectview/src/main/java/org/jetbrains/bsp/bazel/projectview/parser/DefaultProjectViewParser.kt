@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelBinarySectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
@@ -24,7 +25,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
     private val log = LogManager.getLogger(DefaultProjectViewParser::class.java)
 
     override fun parse(projectViewFileContent: String): ProjectView {
-        log.debug("Parsing project view for the content:\n'{}'.", projectViewFileContent)
+        log.trace("Parsing project view for the content: '{}'", projectViewFileContent.escapeNewLines())
 
         val rawSections = ProjectViewSectionSplitter.getRawSectionsForFileContent(projectViewFileContent)
 

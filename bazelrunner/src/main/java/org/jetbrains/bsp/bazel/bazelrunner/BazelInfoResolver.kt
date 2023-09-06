@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import java.nio.file.Paths
 
 class BazelInfoResolver(
@@ -26,7 +27,8 @@ class BazelInfoResolver(
 
     fun extract(name: String): String =
         outputMap[name]
-            ?: throw RuntimeException("Failed to resolve ${name} from bazel info in ${bazelRunner.workspaceRoot}. Bazel Info output:\n${bazelProcessResult.stdout}\n")
+            ?: error("Failed to resolve $name from bazel info in ${bazelRunner.workspaceRoot}. " +
+                "Bazel Info output: '${bazelProcessResult.stdout.escapeNewLines()}'")
 
     return BasicBazelInfo(
         execRoot = extract("execution_root"),
