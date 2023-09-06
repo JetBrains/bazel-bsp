@@ -18,13 +18,14 @@ class BazelExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelE
 
     override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =
         bazelRunner.commandBuilder().query()
-            .withArgument("\"//external:*\"")
+            .withArgument("//external:*")
             .withFlags(listOf("--output=xml", "--order_output=no"))
             .executeBazelCommand()
             .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
             .stdout
             .readXML()
-            .calculateEligibleRules()
+            ?.calculateEligibleRules()
+            ?: listOf()
 
     private fun String.readXML(): Document? =
         DocumentBuilderFactory
@@ -32,16 +33,14 @@ class BazelExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelE
             .newDocumentBuilder()
             .parse(InputSource(StringReader(this)))
 
-
-    private fun Document?.calculateEligibleRules(): List<String> =
-        this?.let { doc ->
-            val xPath = XPathFactory.newInstance().newXPath()
-            val expression = "/query/rule[not(.//string[@name='generator_function'])]//string[@name='name']"
-            val eligibleItems = xPath.evaluate(expression, doc, XPathConstants.NODESET) as NodeList
-            val returnList = mutableListOf<String>()
-            for (i in 0 until eligibleItems.length) {
-                eligibleItems.item(i).attributes.getNamedItem("value")?.nodeValue?.let { returnList.add(it) }
-            }
-            returnList.toList()
-        } ?: listOf()
+    private fun Document.calculateEligibleRules(): List<String> {
+        val xPath = XPathFactory.newInstance().newXPath()
+        val expression = "/query/rule[not(.//string[@name='generator_function'])]//string[@name='name']"
+        val eligibleItems = xPath.evaluate(expression, this, XPathConstants.NODESET) as NodeList
+        val returnList = mutableListOf<String>()
+        for (i in 0 until eligibleItems.length) {
+            eligibleItems.item(i).attributes.getNamedItem("value")?.nodeValue?.let { returnList.add(it) }
+        }
+        return returnList.toList()
+    }
 }
