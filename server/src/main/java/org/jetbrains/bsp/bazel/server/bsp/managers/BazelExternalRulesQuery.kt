@@ -20,7 +20,7 @@ class BazelExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelE
         bazelRunner.commandBuilder().query()
             .withArgument("//external:*")
             .withFlags(listOf("--output=xml", "--order_output=no"))
-            .executeBazelCommand()
+            .executeBazelCommand(parseProcessOutput = false)
             .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
             .stdout
             .readXML()

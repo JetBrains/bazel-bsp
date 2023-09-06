@@ -48,8 +48,8 @@ class BazelRunner private constructor(
         command: String,
         flags: List<String>,
         arguments: List<String>,
-        originId: String? = null,
-        parseProcessOutput: Boolean = true,
+        originId: String?,
+        parseProcessOutput: Boolean,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
         val processArgs =
