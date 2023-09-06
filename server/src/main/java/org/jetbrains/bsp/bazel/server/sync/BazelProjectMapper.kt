@@ -124,7 +124,7 @@ class BazelProjectMapper(
         workspaceContext.importDepth.value, rootTargets
     ).asSequence().filter(::isWorkspaceTarget)
 
-    private fun hasJavaSources(targetInfo: TargetInfo) =
+    private fun hasKnownSources(targetInfo: TargetInfo) =
         targetInfo.sourcesList.any {
             it.relativePath.endsWith(".java") ||
                 it.relativePath.endsWith(".kt") ||
@@ -136,8 +136,8 @@ class BazelProjectMapper(
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean =
         target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix()) &&
-            (hasJavaSources(target) ||
-                target.kind in setOf("java_library", "java_binary", "kt_jvm_library", "kt_jvm_binary"))
+            (hasKnownSources(target) ||
+                target.kind in setOf("java_library", "java_binary", "kt_jvm_library", "kt_jvm_binary", "rust_test"))
 
     private fun isRustTarget(target: TargetInfo): Boolean = target.rustCrateInfo != null
 
