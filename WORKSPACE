@@ -165,9 +165,9 @@ git_repository(
 # ======================================================================================================================
 # e2e tests
 
-RULES_BAZEL_INTEGRATION_TEST_TAG = "0.15.1"
+RULES_BAZEL_INTEGRATION_TEST_TAG = "0.16.1"
 
-RULES_BAZEL_INTEGRATION_TEST_SHA = "c8ce8080e55857526da8d8bae2c41074177b869b398d2ec22c6be7e8d22614a3"
+RULES_BAZEL_INTEGRATION_TEST_SHA = "2deacd4b56f429966e41d738c361e812e29320f46eea57a099b1528bdf2af295"
 
 http_archive(
     name = "rules_bazel_integration_test",
