@@ -40,7 +40,7 @@ class BazelExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelE
         val eligibleItems = xPath.evaluate(expression, this, XPathConstants.NODESET) as NodeList
         return eligibleItems
             .asSequence()
-            .mapNotNull { attributes.getNamedItem("values").nodeValue }
+            .mapNotNull { attributes?.getNamedItem("values")?.nodeValue }
             .toList()
     }
 
