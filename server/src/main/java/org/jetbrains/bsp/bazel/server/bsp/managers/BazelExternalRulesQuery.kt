@@ -3,7 +3,6 @@ package org.jetbrains.bsp.bazel.server.bsp.managers
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.w3c.dom.Document
-import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import java.io.StringReader
@@ -38,17 +37,10 @@ class BazelExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelE
         val xPath = XPathFactory.newInstance().newXPath()
         val expression = "/query/rule[not(.//string[@name='generator_function'])]//string[@name='name']"
         val eligibleItems = xPath.evaluate(expression, this, XPathConstants.NODESET) as NodeList
-        return eligibleItems
-            .asSequence()
-            .mapNotNull { attributes?.getNamedItem("values")?.nodeValue }
-            .toList()
-    }
-
-    private fun NodeList.asSequence(): Sequence<Node> = object : Sequence<Node> {
-        override fun iterator(): Iterator<Node> = object : Iterator<Node> {
-            var index = 0
-            override fun hasNext() = (index < length)
-            override fun next() = item(index++)
+        val returnList = mutableListOf<String>()
+        for (i in 0 until eligibleItems.length) {
+            eligibleItems.item(i).attributes.getNamedItem("value")?.nodeValue?.let { returnList.add(it) }
         }
+        return returnList.toList()
     }
 }
