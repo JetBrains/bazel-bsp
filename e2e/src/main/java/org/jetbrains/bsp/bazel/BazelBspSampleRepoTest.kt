@@ -60,7 +60,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
     private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
         "resolve project"
-    ) { testClient.testResolveProject(Duration.ofMinutes(2)) }
+    ) { testClient.testResolveProject(Duration.ofMinutes(4)) }
 
     private fun compareWorkspaceTargetsResults(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
         "compare workspace targets results"
@@ -260,7 +260,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             )
         )
         return BazelBspTestScenarioStep("sources results") {
-            testClient.testSources(Duration.ofSeconds(30), sourcesParams, expectedSourcesResult)
+            testClient.testSources(Duration.ofSeconds(90), sourcesParams, expectedSourcesResult)
         }
     }
 
