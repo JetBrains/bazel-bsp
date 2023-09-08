@@ -218,7 +218,7 @@ maven_install(
         "org.junit.jupiter:junit-jupiter:5.10.0",
         "com.fasterxml.jackson.core:jackson-databind:2.15.2",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
-        "com.google.protobuf:protobuf-java:3.24.2",
+        "com.google.protobuf:protobuf-java:3.24.3",
         "io.grpc:grpc-stub:1.58.0",
 
         # tests
