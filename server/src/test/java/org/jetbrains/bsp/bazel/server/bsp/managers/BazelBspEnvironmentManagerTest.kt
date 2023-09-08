@@ -45,7 +45,7 @@ class BazelBspEnvironmentManagerTest {
             load("//aspects:rules/kt/kt_info.bzl","extract_kotlin_info")
             load("//aspects:rules/scala/scala_info.bzl","extract_scala_info","extract_scala_toolchain_info")
             EXTENSIONS=[extract_java_toolchain,extract_java_runtime,extract_jvm_info,extract_python_info,extract_cpp_info,extract_kotlin_info,extract_scala_info,extract_scala_toolchain_info]
-            TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type","@io_bazel_rules_scala//scala:toolchain_type"]
+            TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type","@io_bazel_rules_kotlin//kotlin/internal:kt_toolchain_type","@io_bazel_rules_scala//scala:toolchain_type"]
         """.replace(" ", "").replace("\n", "")
     private lateinit var dotBazelBspAspectsPath: Path
     private lateinit var internalAspectsResolverMock: InternalAspectsResolver

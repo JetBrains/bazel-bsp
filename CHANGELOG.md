@@ -8,6 +8,7 @@
 ### Features 🎉
 
 - The server generates `extensions.bzl` based on languages (external rules) relevant to the project. 
+- Enhance Kotlinc Opts support.
 
 ### Fixes 🛠️
 

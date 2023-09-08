@@ -65,30 +65,30 @@ message CppTargetInfo {
 }
 
 message KotlincOpts {
-  string include_stdlibs = 1;
-  bool java_parameters = 2;
-  string jvm_target = 3;
-  string warn = 4;
-  bool x_allow_result_return_type = 5;
-  int32 x_backend_threads = 6;
-  bool x_emit_jvm_type_annotations = 7;
-  bool x_enable_incremental_compilation = 8;
-  string x_explicit_api_mode = 9;
-  bool x_inline_classes = 10;
-  string x_jvm_default = 11;
-  string x_lambdas = 12;
-  bool x_multi_platform = 13;
-  bool x_no_call_assertions = 14;
-  bool x_no_optimize = 15;
-  bool x_no_optimized_callable_references = 16;
-  bool x_no_param_assertions = 18;
-  bool x_no_receiver_assertions = 19;
+  optional string include_stdlibs = 1;
+  optional bool java_parameters = 2;
+  optional string jvm_target = 3;
+  optional string warn = 4;
+  optional bool x_allow_result_return_type = 5;
+  optional int32 x_backend_threads = 6;
+  optional bool x_emit_jvm_type_annotations = 7;
+  optional bool x_enable_incremental_compilation = 8;
+  optional string x_explicit_api_mode = 9;
+  optional bool x_inline_classes = 10;
+  optional string x_jvm_default = 11;
+  optional string x_lambdas = 12;
+  optional bool x_multi_platform = 13;
+  optional bool x_no_call_assertions = 14;
+  optional bool x_no_optimize = 15;
+  optional bool x_no_optimized_callable_references = 16;
+  optional bool x_no_param_assertions = 18;
+  optional bool x_no_receiver_assertions = 19;
   repeated string x_optin = 20;
-  bool x_report_perf = 21;
-  string x_sam_conversions = 22;
-  bool x_skip_prerelease_check = 23;
-  bool x_use_fir_lt = 24;
-  bool x_use_k2 = 25;
+  optional bool x_report_perf = 21;
+  optional string x_sam_conversions = 22;
+  optional bool x_skip_prerelease_check = 23;
+  optional bool x_use_fir_lt = 24;
+  optional bool x_use_k2 = 25;
 }
 
 message KotlinTargetInfo {

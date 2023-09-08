@@ -86,3 +86,14 @@ def create_proto(target, ctx, data, name):
 
 def is_external(target):
     return not str(target.label).startswith("@//") and not str(target.label).startswith("//")
+
+def convert_struct_to_dict(s):
+    attrs = dir(s)
+
+    # two deprecated methods of struct
+    if "to_json" in attrs:
+        attrs.remove("to_json")
+    if "to_proto" in attrs:
+        attrs.remove("to_proto")
+
+    return {key: getattr(s, key) for key in attrs}
