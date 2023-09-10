@@ -128,7 +128,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         val packages = rustWorkspaceResolver.rustPackages(modules)
         val (dependencies, rawDependencies) = rustWorkspaceResolver.rustDependencies(packages, modules)
         val resolvedTargets = packages.filter { it.origin == "WORKSPACE" }
-                                        .flatMap { it.targets.map { it2 -> it.id + ':' + it2.name }}
+                                        .flatMap { it.resolvedTargets.map { it2 -> it.id + ':' + it2.name }}
                                         .map { BuildTargetIdentifier(it) }
         
         

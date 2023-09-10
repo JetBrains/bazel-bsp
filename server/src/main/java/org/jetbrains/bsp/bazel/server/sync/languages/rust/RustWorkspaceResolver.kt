@@ -217,7 +217,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                 edition,
                 targets,
                 allTargets,
-                allFeatures,
+                allFeatures.toSet(),
                 allFeaturesAsString,
                 )
         rustPackage.source = source
@@ -233,7 +233,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
     ): Map<RustPackage, List<Module>> {
         val rustBspTargetsMappedToLabel = rustBspTargets.associateBy { it.label.value }
         return rustPackages.associateWith {
-            it.targets.mapNotNull { pkgTarget ->
+            it.resolvedTargets.mapNotNull { pkgTarget ->
                 rustBspTargetsMappedToLabel["${it.id}:${pkgTarget.name}"]
             }
         }
