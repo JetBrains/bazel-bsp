@@ -20,6 +20,7 @@ kt_jvm_library(
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync/dependencytree",
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",
         "@com_google_protobuf//:protobuf_java",
+        "@io_bazel//src/main/protobuf:deps_java_proto",
         "@maven//:ch_epfl_scala_bsp4j_2_13",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",

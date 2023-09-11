@@ -111,6 +111,9 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     else:
         return None, None
 
+    # I don't know why, but it seems that the "java_outputs" variable can have a different type, depending on language
+    jdeps = get_jdeps(target)
+
     resolve_files = []
 
     jars, resolve_files_jars = map_with_resolve_files(to_jvm_outputs, java_outputs)
@@ -148,6 +151,12 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
         jvm_flags = jvm_flags,
         main_class = main_class,
         args = args,
+        jdeps = [file_location(j) for j in jdeps],
     )
 
     return create_proto(target, ctx, info, "jvm_target_info"), None
+
+def get_jdeps(target):
+    if JavaInfo in target:
+        return [jo.jdeps for jo in target[JavaInfo].java_outputs if jo.jdeps != None]
+    return []

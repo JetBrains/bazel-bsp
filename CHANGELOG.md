@@ -4,6 +4,7 @@
 
 
 ## [Unreleased]
+- Include libraries defined in `jdeps` files during sync
 
 ### Features 🎉
 

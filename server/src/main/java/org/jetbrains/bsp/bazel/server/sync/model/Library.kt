@@ -7,4 +7,5 @@ data class Library(
         val outputs: Set<URI>,
         val sources: Set<URI>,
         val dependencies: List<String>,
+        val interfaceJars: Set<URI> = emptySet(),
 )

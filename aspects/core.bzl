@@ -32,6 +32,7 @@ COMPILE_DEPS = [
     "deps",
     "jars",
     "exports",
+    "associates",
 ]
 
 PRIVATE_COMPILE_DEPS = [

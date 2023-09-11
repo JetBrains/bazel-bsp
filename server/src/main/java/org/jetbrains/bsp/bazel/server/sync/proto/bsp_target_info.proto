@@ -37,6 +37,7 @@ message JvmTargetInfo {
   repeated string jvm_flags = 7;
   string main_class = 8;
   repeated string args = 9;
+  repeated FileLocation jdeps = 10;
 }
 
 message JavaToolchainInfo {
