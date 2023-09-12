@@ -51,9 +51,11 @@ class TargetInfoReader {
 
     private fun addExtensionInfo(uri: URI, builderMap: ConcurrentHashMap<String, TargetInfo.Builder>) {
         val path = uri.toPath()
-        val targetPathPrefix = "${path.parent}/${path.name.substringBefore('.')}"
+        val cleanPathName = path.name.substringBefore(".bsp-info.textproto")
 
-        val ruleName = path.name.substringAfter('.').substringBefore(".bsp-info.textproto")
+        val targetPathPrefix = "${path.parent}/${cleanPathName.substringBeforeLast('.')}"
+
+        val ruleName = cleanPathName.substringAfterLast('.')
 
         val builder = builderMap.getOrPut(targetPathPrefix) { TargetInfo.newBuilder() }
         addExtensionInfoToTarget(ruleName, uri, builder)
