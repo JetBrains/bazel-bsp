@@ -2,10 +2,10 @@ package org.jetbrains.bsp.bazel.projectview.parser.sections
 
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -25,7 +25,6 @@ abstract class ProjectViewSingletonSectionParser<V, T : ProjectViewSingletonSect
     override fun parse(rawSections: ProjectViewRawSections): T? =
         rawSections.getLastSectionWithName(sectionName)
             ?.let { parse(it) }
-            ?.get()
             .also { log.debug("Parsed '$sectionName' section. Result:\n$it") }
 
     override fun parse(sectionBody: String): T? =

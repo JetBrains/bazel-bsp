@@ -25,8 +25,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "python-project"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
         workspaceBuildTargets(),
         dependencySourcesResults(),
@@ -49,7 +47,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         val examplePythonBuildTarget =
             PythonBuildTarget().also {
                 it.version = "PY3"
-                it.interpreter = "file://\$BAZEL_CACHE/external/python3_9_x86_64-unknown-linux-gnu/bin/python3"
+                it.interpreter = "file://\$BAZEL_OUTPUT_BASE_PATH/external/python3_9_x86_64-unknown-linux-gnu/bin/python3"
             }
 
         val exampleExampleBuildTarget = BuildTarget(
@@ -115,7 +113,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
     private fun dependencySourcesResults(): BazelBspTestScenarioStep {
         val expectedPythonDependencySourcesItems = expectedWorkspaceBuildTargetsResult().targets.map {
             if (it.id == BuildTargetIdentifier("$targetPrefix//lib:example_library"))
-                DependencySourcesItem(it.id, listOf("file://\$BAZEL_CACHE/external/pip_deps_numpy/site-packages/"))
+                DependencySourcesItem(it.id, listOf("file://\$BAZEL_OUTPUT_BASE_PATH/external/pip_deps_numpy/site-packages/"))
             else
                 DependencySourcesItem(it.id, emptyList())
         }

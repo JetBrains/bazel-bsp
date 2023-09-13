@@ -27,11 +27,10 @@ class CppLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : La
     }
 
     override fun applyModuleData(moduleData: CppModule, buildTarget: BuildTarget) {
-        // TODO retrieve real information about cpp compiler
+        // TODO https://youtrack.jetbrains.com/issue/BAZEL-612
         val cppBuildTarget = CppBuildTarget().also { it.version = null; it.compiler = "compiler"; it.cCompiler = "/bin/gcc"; it.cppCompiler= "/bin/gcc" }
         buildTarget.data = cppBuildTarget
         buildTarget.dataKind = BuildTargetDataKind.CPP
-
     }
 
     private fun TargetInfo.getCppTargetInfoOrNull(): BspTargetInfo.CppTargetInfo? =

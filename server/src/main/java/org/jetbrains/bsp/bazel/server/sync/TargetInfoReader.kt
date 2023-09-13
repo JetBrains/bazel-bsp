@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.CppTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaRuntimeInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaToolchainInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.KotlinTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
@@ -46,15 +46,17 @@ class TargetInfoReader {
             // is run. In order to correctly address this issue, we would have to provide separate
             // entities (TargetInfos) for each target and each ruleset (or language) instead of just
             // entity-per-label. As long as we don't have it, in case of a conflict we just take the entity
-            // that contains JavaTargetInfo as currently it's the most important one for us.
-            .mapValues { it.value.find(TargetInfo::hasJavaTargetInfo) ?: it.value.first() }
+            // that contains JvmTargetInfo as currently it's the most important one for us.
+            .mapValues { it.value.find(TargetInfo::hasJvmTargetInfo) ?: it.value.first() }
     }
 
     private fun addExtensionInfo(uri: URI, builderMap: ConcurrentHashMap<String, TargetInfo.Builder>) {
         val path = uri.toPath()
-        val targetPathPrefix = "${path.parent}/${path.name.substringBefore('.')}"
+        val cleanPathName = path.name.substringBefore(".bsp-info.textproto")
 
-        val ruleName = path.name.substringAfter('.').substringBefore(".bsp-info.textproto")
+        val targetPathPrefix = "${path.parent}/${cleanPathName.substringBeforeLast('.')}"
+
+        val ruleName = cleanPathName.substringAfterLast('.')
 
         val builder = builderMap.getOrPut(targetPathPrefix) { TargetInfo.newBuilder() }
         addExtensionInfoToTarget(ruleName, uri, builder)
@@ -63,10 +65,10 @@ class TargetInfoReader {
     private fun addExtensionInfoToTarget(
         extensionName: String, uri: URI, targetInfoBuilder: TargetInfo.Builder
     ): TargetInfo.Builder = when (extensionName) {
-        "java_target_info" -> {
-            val builder = readFromFile(uri, JavaTargetInfo.newBuilder())
+        "jvm_target_info" -> {
+            val builder = readFromFile(uri, JvmTargetInfo.newBuilder())
             val info = builder.build()
-            targetInfoBuilder.setJavaTargetInfo(info)
+            targetInfoBuilder.setJvmTargetInfo(info)
         }
 
         "scala_target_info" -> {

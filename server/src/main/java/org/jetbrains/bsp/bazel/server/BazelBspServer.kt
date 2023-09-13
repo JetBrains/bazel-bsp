@@ -75,8 +75,8 @@ class BazelBspServer(
         val client = launcher.remoteProxy
         bspClientLogger.initialize(client)
         bspClientTestNotifier.initialize(client)
-        compilationManager.setClient(client)
-        compilationManager.setWorkspaceRoot(workspaceRoot)
+        compilationManager.client = client
+        compilationManager.workspaceRoot = workspaceRoot
     }
 
     private fun createLauncher(bspIntegrationData: BspIntegrationData): Launcher.Builder<BuildClient> {

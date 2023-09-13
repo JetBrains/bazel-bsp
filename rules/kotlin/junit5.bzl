@@ -21,9 +21,6 @@ def kt_test(name, src, classname = "", deps = [], runtime_deps = [], **kwargs):
             "@maven//:io_kotest_kotest_assertions_core_jvm",
             "@maven//:io_kotest_kotest_assertions_shared_jvm",
             "@maven//:io_kotest_kotest_common_jvm",
-
-            # TODO: to remove
-            "@maven//:org_assertj_assertj_core",
         ],
         **kwargs
     )

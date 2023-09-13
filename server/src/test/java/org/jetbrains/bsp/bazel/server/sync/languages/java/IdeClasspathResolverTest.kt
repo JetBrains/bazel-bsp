@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.net.URI
 import java.nio.file.Paths
 
-// TODO we should add more tests for the "default" behavior
 class IdeClasspathResolverTest {
 
   private val outputBase = "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b"

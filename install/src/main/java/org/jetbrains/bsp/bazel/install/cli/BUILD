@@ -7,11 +7,8 @@ kt_jvm_library(
         "//install/src/main/java/org/jetbrains/bsp/bazel/install:__subpackages__",
         "//install/src/test/java/org/jetbrains/bsp/bazel/install/cli:__pkg__",
     ],
-    exports = [
-        "@maven//:io_vavr_vavr",
-    ],
     deps = [
+        "//commons",
         "@maven//:commons_cli_commons_cli",
-        "@maven//:io_vavr_vavr",
     ],
 )

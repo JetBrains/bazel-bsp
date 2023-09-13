@@ -8,8 +8,6 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="io.grpc.netty" level="error"/>
-        <Logger name="io.netty" level="error"/>
         <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>

@@ -91,11 +91,14 @@ class BspProjectMapper(
     }
 
     fun workspaceLibraries(project: Project): WorkspaceLibrariesResult {
-        val libraries = project.libraries.values.map { LibraryItem(
-                BuildTargetIdentifier(it.label),
-                it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
-                it.outputs.map { uri -> uri.toString() }
-        ) }
+        val libraries = project.libraries.values.map {
+            LibraryItem(
+                id = BuildTargetIdentifier(it.label),
+                dependencies = it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
+                jars = it.outputs.map { uri -> uri.toString() },
+                sourceJars = it.sources.map { uri -> uri.toString() },
+            )
+        }
         return WorkspaceLibrariesResult(libraries)
     }
 
@@ -156,8 +159,6 @@ class BspProjectMapper(
         fun emptySourcesItem(label: Label): SourcesItem =
             SourcesItem(BspMappings.toBspId(label), emptyList())
 
-        // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
-        // we need a use case with some generated files and then figure out how to handle it
         val labels = BspMappings.toLabels(sourcesParams.targets)
         val sourcesItems = labels.map {
             project.findModule(it)?.let(::toSourcesItem) ?: emptySourcesItem(it)

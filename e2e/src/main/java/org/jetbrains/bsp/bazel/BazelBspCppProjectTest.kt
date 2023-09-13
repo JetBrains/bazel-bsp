@@ -20,8 +20,6 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "cpp-project"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
         listOf(compareWorkspaceTargetsResults(), cppOptions())
 

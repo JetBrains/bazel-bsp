@@ -8,7 +8,7 @@ import ch.epfl.scala.bsp4j.JvmEnvironmentItem
 import ch.epfl.scala.bsp4j.JvmMainClass
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
@@ -33,7 +33,7 @@ class JavaLanguagePlugin(
     }
 
     override fun resolveModule(targetInfo: TargetInfo): JavaModule? =
-        targetInfo.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo?.run {
+        targetInfo.takeIf(TargetInfo::hasJvmTargetInfo)?.jvmTargetInfo?.run {
             val mainOutput = bazelPathsResolver.resolveUri(getJars(0).getBinaryJars(0))
             val allOutputs = jarsList.flatMap {
                 it.interfaceJarsList + it.binaryJarsList
@@ -68,8 +68,8 @@ class JavaLanguagePlugin(
     override fun calculateSourceRoot(source: Path): Path =
         JVMLanguagePluginParser.calculateJVMSourceRoot(source)
 
-    private fun getMainClass(javaTargetInfo: JavaTargetInfo): String? =
-        javaTargetInfo.mainClass.takeUnless { javaTargetInfo.mainClass.isBlank() }
+    private fun getMainClass(jvmTargetInfo: JvmTargetInfo): String? =
+        jvmTargetInfo.mainClass.takeUnless { jvmTargetInfo.mainClass.isBlank() }
 
     private fun getJdk(): Jdk = jdk ?: throw RuntimeException("Failed to resolve JDK for project")
 
@@ -81,7 +81,7 @@ class JavaLanguagePlugin(
     override fun dependencySources(
         targetInfo: TargetInfo, dependencyTree: DependencyTree
     ): Set<URI> =
-        targetInfo.getJavaTargetInfoOrNull()?.run {
+        targetInfo.getJvmTargetInfoOrNull()?.run {
             dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getSourceJars)
                 .map(bazelPathsResolver::resolveUri)
@@ -89,13 +89,13 @@ class JavaLanguagePlugin(
         }.orEmpty()
 
     private fun getSourceJars(targetInfo: TargetInfo): List<FileLocation> =
-        targetInfo.getJavaTargetInfoOrNull()
+        targetInfo.getJvmTargetInfoOrNull()
             ?.run {  jarsOrBuilderList + generatedJarsList }
             ?.flatMap(JvmOutputsOrBuilder::getSourceJarsList)
             .orEmpty()
 
-    private fun TargetInfo.getJavaTargetInfoOrNull(): JavaTargetInfo? =
-        this.takeIf(TargetInfo::hasJavaTargetInfo)?.javaTargetInfo
+    private fun TargetInfo.getJvmTargetInfoOrNull(): JvmTargetInfo? =
+        this.takeIf(TargetInfo::hasJvmTargetInfo)?.jvmTargetInfo
 
     override fun applyModuleData(moduleData: JavaModule, buildTarget: BuildTarget) {
         val jvmBuildTarget = toJvmBuildTarget(moduleData)

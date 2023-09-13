@@ -1,25 +1,23 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
-import io.vavr.collection.Seq
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 
 /**
  * Representation of the project view file.
  *
  * @link https://ij.bazel.build/docs/project-views.html
  */
-data class ProjectView constructor(
+data class ProjectView(
     /** targets included and excluded from the project  */
     val targets: ProjectViewTargetsSection?,
     /** bazel path used to invoke bazel from the code  */
@@ -36,8 +34,8 @@ data class ProjectView constructor(
     val importDepth: ProjectViewImportDepthSection?,
 ) {
 
-    data class Builder constructor(
-        private val imports: List<Try<ProjectView>> = emptyList(),
+    data class Builder(
+        private val imports: List<ProjectView> = emptyList(),
         private val targets: ProjectViewTargetsSection? = null,
         private val bazelBinary: ProjectViewBazelBinarySection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
@@ -47,13 +45,10 @@ data class ProjectView constructor(
         private val importDepth: ProjectViewImportDepthSection? = null,
     ) {
 
-        fun build(): Try<ProjectView> {
+        fun build(): ProjectView {
             log.debug("Building project view for: {}", this)
 
-            return Try.sequence(imports)
-                .map(Seq<ProjectView>::toJavaList)
-                .map(MutableList<ProjectView>::toList)
-                .map(::buildWithImports)
+            return buildWithImports(imports)
         }
 
         private fun buildWithImports(importedProjectViews: List<ProjectView>): ProjectView {

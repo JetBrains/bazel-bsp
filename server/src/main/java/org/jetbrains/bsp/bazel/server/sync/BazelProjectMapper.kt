@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import com.google.common.hash.Hashing
+import com.google.devtools.build.lib.view.proto.Deps
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
@@ -14,6 +16,10 @@ import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.model.*
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 const val KOTLIN_STDLIB_ROOT_EXECUTION = "external/com_github_jetbrains_kotlin"
 const val KOTLIN_STDLIB_RELATIVE_PATH_PREFIX = "lib/"
@@ -35,16 +41,16 @@ class BazelProjectMapper(
         val targetsAsLibraries = targets - targetsToImport.map { it.id }.toSet()
         val annotationProcessorLibraries = annotationProcessorLibraries(targetsToImport)
         val kotlinStdlibsMapper = calculateKotlinStdlibsMapper(targetsToImport)
-        val allLibraries = concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
+        val librariesFromDeps = concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
+        val librariesFromDepsAndTargets = createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().associateBy { it.label }
+        val extraLibrariesFromJdeps = jdepsLibraries(targetsToImport.associateBy { it.id }, librariesFromDeps, librariesFromDepsAndTargets)
         val rustExternalTargetsToImport = selectRustExternalTargetsToImport(rootTargets, dependencyTree)
-        val modulesFromBazel = createModules(targetsToImport, dependencyTree, allLibraries)
-        val rustExternalModules = createModules(rustExternalTargetsToImport, dependencyTree, allLibraries)
-        val librariesToImport = createLibraries(targetsAsLibraries) +
-            allLibraries.values.flatten().associateBy { it.label }
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
+        val modulesFromBazel = createModules(targetsToImport, dependencyTree, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
         val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
         val sourceToTarget = buildReverseSourceMapping(modifiedModules)
-        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport, rustExternalModules.toList())
+        val librariesToImport = librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
+        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport)
     }
 
     private fun <K, V> concatenateMaps(
@@ -54,16 +60,18 @@ class BazelProjectMapper(
 
     private fun annotationProcessorLibraries(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
         return targetsToImport
-            .filter { it.javaTargetInfo.generatedJarsList.isNotEmpty() }
+            .filter { it.jvmTargetInfo.generatedJarsList.isNotEmpty() }
             .associate { targetInfo ->
                 targetInfo.id to
                     Library(
-                        targetInfo.id + "_generated",
-                        targetInfo.javaTargetInfo.generatedJarsList
+                        label = targetInfo.id + "_generated",
+                        outputs = targetInfo.jvmTargetInfo.generatedJarsList
                             .flatMap { it.binaryJarsList }
                             .map { bazelPathsResolver.resolveUri(it) }
                             .toSet(),
-                        emptyList()
+                        sources = emptySet(),
+                        dependencies = emptyList(),
+                        interfaceJars = emptySet(),
                     )
             }
             .map { it.key to listOf(it.value) }
@@ -73,21 +81,114 @@ class BazelProjectMapper(
     private fun calculateKotlinStdlibsMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
         val projectLevelKotlinStdlibs = calculateProjectLevelKotlinStdlibs(targetsToImport)
         val rulesKotlinTargets = targetsToImport
-            .filter { targetInfo -> targetInfo.javaTargetInfo.compileClasspathList.any { it.isKotlinStdlibPath() } }
+            .filter { targetInfo -> targetInfo.jvmTargetInfo.compileClasspathList.any { it.isKotlinStdlibPath() } }
             .map { it.id }
             .toSet()
         return rulesKotlinTargets.associateWith { listOf(projectLevelKotlinStdlibs) }
+    }
+
+    /**
+     * In some cases, the jar dependencies of a target might be injected by bazel or rules and not are not
+     * available via `deps` field of a target. For this reason, we read JavaOutputInfo's jdeps file and
+     * filter out jars that have not been included in the target's `deps` list.
+     *
+     * The old Bazel Plugin performs similar step here
+     * https://github.com/bazelbuild/intellij/blob/b68ec8b33aa54ead6d84dd94daf4822089b3b013/java/src/com/google/idea/blaze/java/sync/importer/BlazeJavaWorkspaceImporter.java#L256
+     */
+    private fun jdepsLibraries(targetsToImport: Map<String, TargetInfo>, libraryDependencies: Map<String, List<Library>>, librariesToImport: Map<String, Library>):
+            Map<String, List<Library>> {
+        val targetsToJdepsJars = getAllJdepsDependencies(targetsToImport, libraryDependencies, librariesToImport)
+        val libraryNameToLibraryValueMap = HashMap<String, Library>()
+        return targetsToJdepsJars.mapValues {
+            it.value.map { lib ->
+                val label = syntheticLabel(lib.toString())
+                libraryNameToLibraryValueMap.computeIfAbsent(label) { _ ->
+                    Library(
+                            label = label,
+                            dependencies = emptyList(),
+                            interfaceJars = emptySet(),
+                            outputs = setOf(bazelPathsResolver.resolveUri(lib)),
+                            sources = emptySet())
+                }
+            }
+        }
+    }
+
+    private fun getAllJdepsDependencies(targetsToImport: Map<String, TargetInfo>,
+                                        libraryDependencies: Map<String, List<Library>>,
+                                        librariesToImport: Map<String, Library>): Map<String, Set<Path>> =
+            targetsToImport
+                    .filter { targetSupportsJdeps(it.value) }
+                    .mapValues { targetInfo ->
+                        val jarsFromDirectDependencies = getAllOutputJarsFromTransitiveDeps(targetInfo,
+                                targetsToImport,
+                                libraryDependencies,
+                                librariesToImport)
+                        val jarsFromJdeps = dependencyJarsFromJdepsFiles(targetInfo.value)
+                        jarsFromJdeps - jarsFromDirectDependencies
+                    }
+                    .filterValues { it.isNotEmpty() }
+
+    private fun getAllOutputJarsFromTransitiveDeps(
+            targetInfo: Map.Entry<String, TargetInfo>,
+            targetsToImport: Map<String, TargetInfo>,
+            libraryDependencies: Map<String, List<Library>>,
+            librariesToImport: Map<String, Library>): Set<Path> {
+        return getAllTransitiveDependencies(targetInfo.value, targetsToImport, libraryDependencies, librariesToImport)
+                .flatMap { dep ->
+                    val jarsFromTargets = targetsToImport[dep]?.let { getTargetOutputJars(it) + getTargetInterfaceJars(it) }.orEmpty()
+                    val jarsFromLibraries = librariesToImport[dep]?.let { it.outputs + it.interfaceJars }.orEmpty().map { Paths.get(it.path) }
+                    jarsFromTargets + jarsFromLibraries
+                }.toSet()
+    }
+
+    private fun getAllTransitiveDependencies(target: TargetInfo,
+                                             targetsToImport: Map<String, TargetInfo>,
+                                             libraryDependencies: Map<String, List<Library>>,
+                                             allLibraries: Map<String, Library>): HashSet<String> {
+        var toVisit = target.dependenciesList.map { it.id } + libraryDependencies[target.id].orEmpty().map { it.label }
+        val visited = HashSet<String>()
+        while (toVisit.isNotEmpty()) {
+            val current = toVisit.first()
+            val dependencyLabels = targetsToImport[current]?.dependenciesList.orEmpty().map { it.id } + allLibraries[current]?.dependencies.orEmpty()
+            visited += current
+            toVisit = toVisit + dependencyLabels - current - visited
+        }
+        return visited
+    }
+    private fun dependencyJarsFromJdepsFiles(targetInfo: TargetInfo): Set<Path> =
+            targetInfo.jvmTargetInfo.jdepsList.flatMap {
+                val path = bazelPathsResolver.resolve(it)
+                if (path.toFile().exists()) {
+                    val bytes = Files.readAllBytes(path)
+                    Deps.Dependencies.parseFrom(bytes).dependencyList.map { dependency ->
+                        bazelPathsResolver.resolveOutput(Paths.get(dependency.path))
+                    }
+                } else {
+                    emptySet()
+                }
+            }.toSet()
+
+    private fun targetSupportsJdeps(targetInfo: TargetInfo): Boolean {
+        val languages = inferLanguages(targetInfo)
+        return setOf(Language.JAVA, Language.KOTLIN).containsAll(languages)
+    }
+
+    private fun syntheticLabel(lib: String): String {
+        val shaOfPath = Hashing.sha256().hashString(lib, StandardCharsets.UTF_8) // just in case of a conflict in filename
+        return Paths.get(lib).fileName.toString().replace("[^0-9a-zA-Z]".toRegex(), "-") + "-" + shaOfPath
     }
 
     private fun calculateProjectLevelKotlinStdlibs(targets: Sequence<TargetInfo>) =
         Library(
             label = "rules_kotlin_kotlin-stdlibs",
             outputs = targets
-                .flatMap { it.javaTargetInfo.compileClasspathList }
+                .flatMap { it.jvmTargetInfo.compileClasspathList }
                 .filter { it.isKotlinStdlibPath() }
                 .map { bazelPathsResolver.resolveUri(it) }
                 .toSet(),
-            dependencies = emptyList()
+            sources = emptySet(),
+            dependencies = emptyList(),
         )
 
     private fun FileLocation.isKotlinStdlibPath() =
@@ -100,18 +201,39 @@ class BazelProjectMapper(
             val targetId = entry.key
             val targetInfo = entry.value
             Library(
-                targetId,
-                getTargetJarUris(targetInfo),
-                targetInfo.dependenciesList.map { it.id }
+                label = targetId,
+                outputs = getTargetJarUris(targetInfo),
+                sources = getSourceJarUris(targetInfo),
+                dependencies = targetInfo.dependenciesList.map { it.id },
+                interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
             )
         }
     }
 
+    private fun List<FileLocation>.resolveUris() =
+        map { bazelPathsResolver.resolve(it).toUri() }.toSet()
+
     private fun getTargetJarUris(targetInfo: TargetInfo) =
-        targetInfo.javaTargetInfo.jarsList
+        targetInfo.jvmTargetInfo.jarsList
             .flatMap { it.binaryJarsList }
-            .map { bazelPathsResolver.resolve(it).toUri() }
-            .toSet()
+            .resolveUris()
+
+    private fun getSourceJarUris(targetInfo: TargetInfo) =
+        targetInfo.jvmTargetInfo.jarsList
+            .flatMap { it.sourceJarsList }
+            .resolveUris()
+
+    private fun getTargetOutputJars(targetInfo: TargetInfo) =
+            targetInfo.jvmTargetInfo.jarsList
+                    .flatMap { it.binaryJarsList }
+                    .map { bazelPathsResolver.resolve(it) }
+                    .toSet()
+
+    private fun getTargetInterfaceJars(targetInfo: TargetInfo) =
+            targetInfo.jvmTargetInfo.jarsList
+                    .flatMap { it.interfaceJarsList }
+                    .map { bazelPathsResolver.resolve(it) }
+                    .toSet()
 
     private fun selectRustExternalTargetsToImport(
             rootTargets: Set<String>, tree: DependencyTree
@@ -225,7 +347,6 @@ class BazelProjectMapper(
     private fun modifyModules(
         modulesFromBazel: Sequence<Module>, workspaceRoot: URI, workspaceContext: WorkspaceContext
     ): Sequence<Module> {
-        // TODO make this feature configurable with flag in project view file
         return IntelliJProjectTreeViewFix(bazelPathsResolver, bazelInfo).createModules(
             workspaceRoot,
             modulesFromBazel,

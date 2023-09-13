@@ -4,14 +4,17 @@
 
 
 ## [Unreleased]
+- Include libraries defined in `jdeps` files during sync
 
 ### Features 🎉
 
 - The server generates `extensions.bzl` based on languages (external rules) relevant to the project. 
+- Enhance Kotlinc Opts support.
 
 ### Fixes 🛠️
 
-- aspects dont fail if target contains another target as `srcs` attribute
+- aspects don't fail if target contains another target as `srcs` attribute
+- now server can obtain scala 3 compiler
 
 ## [3.0.0] - 09.08.2023
 

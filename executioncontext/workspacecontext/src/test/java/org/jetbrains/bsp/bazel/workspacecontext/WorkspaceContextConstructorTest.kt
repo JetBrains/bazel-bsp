@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.workspacecontext
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
@@ -15,33 +14,15 @@ import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
 
 class WorkspaceContextConstructorTest {
-
     @Nested
-    @DisplayName("fun construct(projectViewTry: Try<ProjectView>): Try<WorkspaceContext> tests")
-    inner class ConstructTryTest {
-
-        @Test
-        fun `should return failure if project view is failure`() {
-            // given
-            val projectViewTry = Try.failure<ProjectView>(Exception("exception message"))
-
-            // when
-            val workspaceContextTry = WorkspaceContextConstructor.construct(projectViewTry)
-
-            // then
-            workspaceContextTry.isFailure shouldBe true
-            workspaceContextTry.cause::class shouldBe Exception::class
-            workspaceContextTry.cause.message shouldBe "exception message"
-        }
-    }
-
-    @Nested
-    @DisplayName("fun construct(projectView: ProjectView): Try<WorkspaceContext> tests")
+    @DisplayName("fun construct(projectView: ProjectView): WorkspaceContext tests")
     inner class ConstructTest {
 
         @Test
         fun `should return success if project view is valid`() {
             // given
+            val workspaceRoot = Path("path/to/workspace")
+            val constructor = WorkspaceContextConstructor(workspaceRoot)
             val projectView =
                 ProjectView.Builder(
                     targets =
@@ -61,17 +42,14 @@ class WorkspaceContextConstructorTest {
                         )
                     ),
                     bazelBinary = ProjectViewBazelBinarySection(Path("/path/to/bazel")),
-                    buildManualTargets = ProjectViewBuildManualTargetsSection(false) ,
+                    buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                     importDepth = ProjectViewImportDepthSection(3),
                 ).build()
 
             // when
-            val workspaceContextTry = WorkspaceContextConstructor.construct(projectView)
+            val workspaceContext = constructor.construct(projectView)
 
             // then
-            workspaceContextTry.isSuccess shouldBe true
-            val workspaceContext = workspaceContextTry.get()
-
             val expectedTargets =
                 TargetsSpec(
                     listOf(
@@ -94,7 +72,7 @@ class WorkspaceContextConstructorTest {
             val expectedBazelBinarySpec = BazelBinarySpec(Path("/path/to/bazel"))
             workspaceContext.bazelBinary shouldBe expectedBazelBinarySpec
 
-            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(workspaceRoot.toAbsolutePath().resolve(".bazelbsp"))
             workspaceContext.dotBazelBspDirPath shouldBe expectedDotBazelBspDirPathSpec
 
             val expectedBuildManualTargetsSpec = BuildManualTargetsSpec(false)
@@ -102,33 +80,6 @@ class WorkspaceContextConstructorTest {
 
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
-        }
-    }
-
-    @Nested
-    @DisplayName("fun constructDefault(): Try<WorkspaceContext> tests")
-    inner class ConstructDefaultTest {
-
-        @Test
-        fun `should return success and default workspace context`() {
-            // given
-            // when
-            val workspaceContextTry = WorkspaceContextConstructor.constructDefault()
-
-            // then
-            workspaceContextTry.isSuccess shouldBe true
-            val workspaceContext = workspaceContextTry.get()
-
-            val expectedWorkspaceContext = WorkspaceContext(
-                targets = TargetsSpec(emptyList(), emptyList()),
-                buildFlags = BuildFlagsSpec(emptyList()),
-                // TODO - for now we don't have a framework to change classpath, i'll fix it later
-                bazelBinary = BazelBinarySpecMapper.default().get(),
-                dotBazelBspDirPath = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp")),
-                buildManualTargets = BuildManualTargetsSpec(false),
-                importDepth = ImportDepthSpec(0),
-            )
-            workspaceContext shouldBe expectedWorkspaceContext
         }
     }
 }

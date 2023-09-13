@@ -2,16 +2,16 @@ package org.jetbrains.bsp.bazel.projectview.model
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.IOException
 import java.nio.file.Paths
 import kotlin.io.path.Path
 
@@ -23,44 +23,11 @@ class ProjectViewBuilderTest {
     inner class BuilderImportsTest {
 
         @Test
-        fun `should return failure with first cause for builder with failure imports`() {
-            // given
-            val importedProjectViewTry1 = ProjectView.Builder().build()
-
-            val importedProjectViewTry2 =
-                Try.failure<ProjectView>(IOException("doesnt/exist/projectview2.bazelproject file does not exist!"))
-
-            val importedProjectViewTry3 = ProjectView.Builder(imports = emptyList()).build()
-
-            val importedProjectViewTry4 =
-                Try.failure<ProjectView>(IOException("doesnt/exist/projectview4.bazelproject file does not exist!"))
-
-            // when
-            val projectViewTry =
-                ProjectView.Builder(
-                    imports =
-                    listOf(
-                        importedProjectViewTry1,
-                        importedProjectViewTry2,
-                        importedProjectViewTry3,
-                        importedProjectViewTry4,
-                    )
-                ).build()
-
-            // then
-            projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe IOException::class
-            projectViewTry.cause.message shouldBe "doesnt/exist/projectview2.bazelproject file does not exist!"
-        }
-
-        @Test
         fun `should return empty values for empty builder`() {
             // given & when
-            val projectViewTry = ProjectView.Builder().build()
+            val projectView = ProjectView.Builder().build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = null,
@@ -82,7 +49,7 @@ class ProjectViewBuilderTest {
         @Test
         fun `should build project view without imports`() {
             // given & when
-            val projectViewTry =
+            val projectView =
                 ProjectView.Builder(
                     targets = ProjectViewTargetsSection(
                         listOf(
@@ -109,8 +76,6 @@ class ProjectViewBuilderTest {
                 ).build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -142,7 +107,7 @@ class ProjectViewBuilderTest {
         @Test
         fun `should return imported singleton values and list values`() {
             // given
-            val importedProjectViewTry =
+            val importedProjectView =
                 ProjectView.Builder(
                     targets = ProjectViewTargetsSection(
                         listOf(
@@ -172,11 +137,9 @@ class ProjectViewBuilderTest {
             .build()
 
             // when
-            val projectViewTry = ProjectView.Builder(imports = listOf(importedProjectViewTry)).build()
+            val projectView = ProjectView.Builder(imports = listOf(importedProjectView)).build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -211,7 +174,7 @@ class ProjectViewBuilderTest {
             val importedProjectViewTry = ProjectView.Builder().build()
 
             // when
-            val projectViewTry =
+            val projectView =
                 ProjectView.Builder(
                     imports = listOf(importedProjectViewTry),
                     targets = ProjectViewTargetsSection(
@@ -233,8 +196,6 @@ class ProjectViewBuilderTest {
                 ).build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -288,7 +249,7 @@ class ProjectViewBuilderTest {
             ).build()
 
             // when
-            val projectViewTry =
+            val projectView =
                 ProjectView.Builder(
                     imports = listOf(importedProjectViewTry),
                     targets = ProjectViewTargetsSection(
@@ -318,8 +279,6 @@ class ProjectViewBuilderTest {
             ).build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -447,7 +406,7 @@ class ProjectViewBuilderTest {
                 ).build()
 
             // when
-            val projectViewTry = ProjectView.Builder(
+            val projectView = ProjectView.Builder(
                 imports = listOf(importedProjectViewTry1, importedProjectViewTry2, importedProjectViewTry3),
                 targets = ProjectViewTargetsSection(
                     listOf(
@@ -476,8 +435,6 @@ class ProjectViewBuilderTest {
             ).build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -619,7 +576,7 @@ class ProjectViewBuilderTest {
             val importedProjectViewTry4 = ProjectView.Builder().build()
 
             // when
-            val projectViewTry =
+            val projectView =
                 ProjectView.Builder(
                     imports = listOf(importedProjectViewTry3, importedProjectViewTry4),
                     targets = ProjectViewTargetsSection(
@@ -649,8 +606,6 @@ class ProjectViewBuilderTest {
                 ).build()
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(

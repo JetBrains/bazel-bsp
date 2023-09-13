@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.projectview.parser
 
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -12,9 +11,8 @@ import kotlin.io.path.createTempFile
 
 object ProjectViewParserTestMock : DefaultProjectViewParser() {
 
-    override fun parse(projectViewFilePath: Path): Try<ProjectView> =
-        Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
-            .flatMap { super.parse(it) }
+    override fun parse(projectViewFilePath: Path): ProjectView =
+        copyResourcesFileToTmpFile(projectViewFilePath).let { super.parse(it) }
 
     private fun copyResourcesFileToTmpFile(resourcesFile: Path): Path {
         val resourcesFileContent = readFileContent(resourcesFile)
@@ -22,7 +20,6 @@ object ProjectViewParserTestMock : DefaultProjectViewParser() {
         return createTempFileWithContentIfContentExists(resourcesFile, resourcesFileContent)
     }
 
-    // TODO @abrams27 - move to utils
     private fun readFileContent(filePath: Path): String? {
         // we read file content instead of passing plain file due to bazel resources packaging
         val inputStream: InputStream? =

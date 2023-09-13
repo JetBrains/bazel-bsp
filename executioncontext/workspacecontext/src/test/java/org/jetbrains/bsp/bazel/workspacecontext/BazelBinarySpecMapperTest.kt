@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.executioncontext.api.ProjectViewToExecutionContextEntityMapperException
+import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextEntityExtractorException
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.junit.jupiter.api.Disabled
@@ -13,38 +14,35 @@ import kotlin.io.path.Path
 class BazelBinarySpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<BazelBinarySpec> tests")
+    @DisplayName("fun map(projectView): BazelBinarySpec tests")
     inner class MapTest {
 
-        // TODO https://youtrack.jetbrains.com/issue/BAZEL-58 + framework to test envs
+        // TODO https://youtrack.jetbrains.com/issue/BAZEL-619
         @Disabled("for now we don't have a framework to change classpath, i'll fix it later")
         @Test
         fun `should return failure if it isn't possible to deduct bazel path from PATH and bazel path is null`() {
            // given
-           val projectView = ProjectView.Builder(bazelBinary = null).build().get()
+            val projectView = ProjectView.Builder(bazelBinary = null).build()
 
            // when
-           val bazelBinarySpecTry = BazelBinarySpecMapper.map(projectView)
+            val exception = shouldThrow<ExecutionContextEntityExtractorException> {
+                BazelBinarySpecExtractor.fromProjectView(projectView)
+            }
 
            // then
-           bazelBinarySpecTry.isFailure shouldBe true
-           bazelBinarySpecTry.cause::cause shouldBe ProjectViewToExecutionContextEntityMapperException::class
-           bazelBinarySpecTry.cause.message shouldBe "Mapping project view into 'bazel path' failed! Could not find bazel on your PATH"
+            exception.message shouldBe "Mapping project view into 'bazel path' failed! Could not find bazel on your PATH"
         }
 
         @Disabled("for now we don't have a framework to change classpath, i'll fix it later")
         @Test
         fun `should return success with deducted bazel path from PATH if bazel path is null`() {
             // given
-            val projectView = ProjectView.Builder(bazelBinary = null).build().get()
+            val projectView = ProjectView.Builder(bazelBinary = null).build()
 
             // when
-            val bazelBinarySpecTry = BazelBinarySpecMapper.map(projectView)
+            val bazelBinarySpec = BazelBinarySpecExtractor.fromProjectView(projectView)
 
             // then
-            bazelBinarySpecTry.isSuccess shouldBe true
-            val bazelBinarySpec = bazelBinarySpecTry.get()
-
             val expectedBazelBinarySpec = BazelBinarySpec(Path("/usr/local/bin/bazel"))
             bazelBinarySpec shouldBe expectedBazelBinarySpec
         }
@@ -55,36 +53,13 @@ class BazelBinarySpecMapperTest {
             val projectView =
                 ProjectView.Builder(
                     bazelBinary = ProjectViewBazelBinarySection(Path("/path/to/bazel"))
-                ).build().get()
+                ).build()
 
             // when
-            val bazelBinarySpecTry = BazelBinarySpecMapper.map(projectView)
+            val bazelBinarySpec = BazelBinarySpecExtractor.fromProjectView(projectView)
 
             // then
-            bazelBinarySpecTry.isSuccess shouldBe true
-            val bazelBinarySpec = bazelBinarySpecTry.get()
-
             val expectedBazelBinarySpec = BazelBinarySpec(Path("/path/to/bazel"))
-            bazelBinarySpec shouldBe expectedBazelBinarySpec
-        }
-    }
-
-    @Nested
-    @DisplayName("fun default(): Try<BazelBinarySpec> tests")
-    inner class DefaultTest {
-
-        @Disabled("for now we don't have a framework to change classpath, i'll fix it later")
-        @Test
-        fun `should return success with deducted bazel path from PATH`() {
-            // given
-            // when
-            val bazelBinarySpecTry = BazelBinarySpecMapper.default()
-
-            // then
-            bazelBinarySpecTry.isSuccess shouldBe true
-            val bazelBinarySpec = bazelBinarySpecTry.get()
-
-            val expectedBazelBinarySpec = BazelBinarySpec(Path("/usr/local/bin/bazel"))
             bazelBinarySpec shouldBe expectedBazelBinarySpec
         }
     }

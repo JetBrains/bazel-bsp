@@ -44,8 +44,6 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "sample-repo"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
         listOf(
             resolveProject(),
@@ -57,16 +55,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
             scalaMainClasses(),
             scalaTestClasses(),
             jvmRunEnvironment(),
-            jvmTestEnvironment() // TODO
-            //  new BazelBspServerSingleTest(
-            //      "targets run unsuccessfully",
-            //      client::testTargetsRunUnsuccessfully),
-            //  new BazelBspServerSingleTest(
-            //      "targets test unsuccessfully",
-            //      client::testTargetsTestUnsuccessfully),
-            //      new BazelBspServerSingleTest(
-            //          "target capabilities",
-            //          client::testTargetCapabilities)
+            jvmTestEnvironment()
         )
 
     private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(

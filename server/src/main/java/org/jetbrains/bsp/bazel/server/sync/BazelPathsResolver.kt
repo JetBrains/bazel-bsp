@@ -45,14 +45,24 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     private fun resolveAbsolute(fileLocation: FileLocation): Path =
         Paths.get(fileLocation.relativePath)
 
-    private fun resolveExternal(fileLocation: FileLocation): Path =
-        bazelInfo
-            .outputBase
-            .resolve(fileLocation.rootExecutionPathFragment)
-            .resolve(fileLocation.relativePath)
+    private fun resolveExternal(fileLocation: FileLocation): Path {
+        val outputBaseRelativePath = Paths.get(fileLocation.rootExecutionPathFragment, fileLocation.relativePath)
+        return resolveExternal(outputBaseRelativePath)
+    }
 
-    private fun resolveOutput(fileLocation: FileLocation): Path =
-        Paths.get(bazelInfo.execRoot, fileLocation.rootExecutionPathFragment, fileLocation.relativePath)
+    private fun resolveExternal(outputBaseRelativePath: Path): Path = bazelInfo
+            .outputBase
+            .resolve(outputBaseRelativePath)
+
+    private fun resolveOutput(fileLocation: FileLocation): Path {
+        val execRootRelativePath = Paths.get(fileLocation.rootExecutionPathFragment, fileLocation.relativePath)
+        return resolveOutput(execRootRelativePath)
+    }
+
+    fun resolveOutput(execRootRelativePath: Path): Path = when {
+        execRootRelativePath.startsWith("external") -> resolveExternal(execRootRelativePath)
+        else -> Paths.get(bazelInfo.execRoot).resolve(execRootRelativePath)
+    }
 
     private fun resolveSource(fileLocation: FileLocation): Path =
         bazelInfo.workspaceRoot.resolve(fileLocation.relativePath)

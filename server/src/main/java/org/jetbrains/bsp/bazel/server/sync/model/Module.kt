@@ -5,7 +5,6 @@ import java.net.URI
 
 data class Module(
     val label: Label,
-    // TODO do not build synthetic modules
     val isSynthetic: Boolean,
     val directDependencies: List<Label>,
     val languages: Set<Language>,

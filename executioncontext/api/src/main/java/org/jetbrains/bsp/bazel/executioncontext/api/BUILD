@@ -6,10 +6,8 @@ kt_jvm_library(
     visibility = ["//executioncontext/api:__pkg__"],
     exports = [
         "//executioncontext/projectview:model",
-        "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//executioncontext/projectview:model",
-        "@maven//:io_vavr_vavr",
     ],
 )

@@ -3,7 +3,13 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -418,7 +424,7 @@ class DefaultProjectViewGeneratorTest {
     }
 
     @Nested
-    @DisplayName("fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Try<Void> tests")
+    @DisplayName("fun generatePrettyStringAndSaveInFile(projectView: ProjectView, filePath: Path): Unit tests")
     inner class GeneratePrettyStringAndSaveInFileTest {
 
         private lateinit var tempRoot: Path
@@ -475,11 +481,9 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
 
             // then
-            result.isSuccess shouldBe true
-
             val expectedFileContent =
                 """
                 targets:
@@ -556,11 +560,9 @@ class DefaultProjectViewGeneratorTest {
             )
 
             // when
-            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
 
             // then
-            result.isSuccess shouldBe true
-
             val expectedFileContent =
                 """
                 targets:
@@ -612,13 +614,10 @@ class DefaultProjectViewGeneratorTest {
             val parser = DefaultProjectViewParser()
 
             // when
-            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
-            val parsedProjectViewTry = parser.parse(filePath)
+            DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val parsedProjectView = parser.parse(filePath)
 
             // then
-            result.isSuccess shouldBe true
-            parsedProjectViewTry.isSuccess shouldBe true
-
             val expectedProjectView = ProjectView(
                 targets = null,
                 bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
@@ -628,7 +627,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
             )
-            parsedProjectViewTry.get() shouldBe expectedProjectView
+            parsedProjectView shouldBe expectedProjectView
         }
 
         @Test
@@ -661,14 +660,11 @@ class DefaultProjectViewGeneratorTest {
             val parser = DefaultProjectViewParser()
 
             // when
-            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
-            val parsedProjectViewTry = parser.parse(filePath)
+            DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val parsedProjectView = parser.parse(filePath)
 
             // then
-            result.isSuccess shouldBe true
-            parsedProjectViewTry.isSuccess shouldBe true
-
-            parsedProjectViewTry.get() shouldBe projectView
+            parsedProjectView shouldBe projectView
         }
 
         @Test
@@ -715,14 +711,11 @@ class DefaultProjectViewGeneratorTest {
             val parser = DefaultProjectViewParser()
 
             // when
-            val result = DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
-            val parsedProjectViewTry = parser.parse(filePath)
+            DefaultProjectViewGenerator.generatePrettyStringAndSaveInFile(projectView, filePath)
+            val parsedProjectView = parser.parse(filePath)
 
             // then
-            result.isSuccess shouldBe true
-            parsedProjectViewTry.isSuccess shouldBe true
-
-            parsedProjectViewTry.get() shouldBe projectView
+            parsedProjectView shouldBe projectView
         }
     }
 }

@@ -9,10 +9,8 @@ kt_jvm_library(
     ],
     exports = [
         "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
     deps = [
         "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
-        "@maven//:io_vavr_vavr",
     ],
 )

@@ -10,21 +10,18 @@ import org.junit.jupiter.api.Test
 class ImportDepthSpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<ImportDepthSpec> tests")
+    @DisplayName("fun map(projectView): ImportDepthSpec tests")
     inner class MapTest {
 
         @Test
         fun `should return success with default import depth for empty project view`() {
             // given
-            val projectView = ProjectView.Builder().build().get()
+            val projectView = ProjectView.Builder().build()
 
             // when
-            val importDepthSpecTry = ImportDepthSpecMapper.map(projectView)
+            val importDepthSpec = ImportDepthSpecExtractor.fromProjectView(projectView)
 
             // then
-            importDepthSpecTry.isSuccess shouldBe true
-            val importDepthSpec = importDepthSpecTry.get()
-
             val expectedImportDepthSpec = ImportDepthSpec(0)
             importDepthSpec shouldBe expectedImportDepthSpec
         }
@@ -34,32 +31,11 @@ class ImportDepthSpecMapperTest {
             // given
             val projectView = ProjectView.Builder(
                 importDepth = ProjectViewImportDepthSection(3),
-            ).build().get()
+            ).build()
             // when
-            val importDepthSpecTry = ImportDepthSpecMapper.map(projectView)
+            val importDepthSpec = ImportDepthSpecExtractor.fromProjectView(projectView)
             // then
-            importDepthSpecTry.isSuccess shouldBe true
-            val importDepthSpec = importDepthSpecTry.get()
             val expectedImportDepthSpec = ImportDepthSpec(3)
-            importDepthSpec shouldBe expectedImportDepthSpec
-        }
-    }
-
-    @Nested
-    @DisplayName("fun default(): Try<ImportDepthSpec> tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success with default import depth`() {
-            // given
-            // when
-            val importDepthSpecTry = ImportDepthSpecMapper.default()
-
-            // then
-            importDepthSpecTry.isSuccess shouldBe true
-            val importDepthSpec = importDepthSpecTry.get()
-
-            val expectedImportDepthSpec = ImportDepthSpec(0)
             importDepthSpec shouldBe expectedImportDepthSpec
         }
     }
