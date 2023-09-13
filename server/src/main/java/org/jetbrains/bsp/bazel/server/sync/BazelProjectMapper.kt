@@ -44,13 +44,14 @@ class BazelProjectMapper(
         val librariesFromDeps = concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
         val librariesFromDepsAndTargets = createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().associateBy { it.label }
         val extraLibrariesFromJdeps = jdepsLibraries(targetsToImport.associateBy { it.id }, librariesFromDeps, librariesFromDepsAndTargets)
-        val rustExternalTargetsToImport = selectRustExternalTargetsToImport(rootTargets, dependencyTree)
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
         val modulesFromBazel = createModules(targetsToImport, dependencyTree, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
         val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
         val sourceToTarget = buildReverseSourceMapping(modifiedModules)
         val librariesToImport = librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
-        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport)
+        val rustExternalTargetsToImport = selectRustExternalTargetsToImport(rootTargets, dependencyTree)
+        val rustExternalModules = createModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
+        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport, rustExternalModules.toList())
     }
 
     private fun <K, V> concatenateMaps(
