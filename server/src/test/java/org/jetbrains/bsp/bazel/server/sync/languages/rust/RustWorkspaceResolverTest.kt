@@ -17,7 +17,8 @@ import java.nio.file.Paths
 
 class RustWorkspaceResolverTest {
 
-  private val execRoot = "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b/execroot/bazel_bsp"
+  private val outputBase = "/private/var/tmp/_bazel/125c7a6ca879ed16a4b4b1a74bc5f27b"
+  private val execRoot = "$outputBase/execroot/bazel_bsp"
   private lateinit var bazelPathsResolver: BazelPathsResolver
   private lateinit var resolver: RustWorkspaceResolver
 
@@ -26,6 +27,7 @@ class RustWorkspaceResolverTest {
     // given
     val bazelInfo = BasicBazelInfo(
       execRoot = execRoot,
+      outputBase = Paths.get(outputBase),
       workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
       release = BazelRelease.fromReleaseString("release 6.0.0")
     )
@@ -85,22 +87,22 @@ class RustWorkspaceResolverTest {
     pkg.features.map { it.name } shouldContainExactlyInAnyOrder features
     pkg.enabledFeatures shouldContainExactlyInAnyOrder features
 
-    pkg.targets shouldNotBe null
-    pkg.targets shouldBe pkg.allTargets
-    pkg.targets.size shouldBe 1
+    pkg.resolvedTargets shouldNotBe null
+    pkg.resolvedTargets shouldBe pkg.allTargets
+    pkg.resolvedTargets.size shouldBe 1
 
-    val target = pkg.targets[0]
+    val target = pkg.resolvedTargets[0]
     target.name shouldBe module.label.value.split(":")[1]
     target.crateRootUrl shouldBe rustModule.crateRoot
-    target.kind shouldBe rustModule.kind
+    target.kind.toString().lowercase() shouldBe rustModule.kind
     target.edition shouldBe rustModule.edition
     target.requiredFeatures shouldContainExactlyInAnyOrder features
 
     dependencies shouldNotBe null
-    dependencies shouldBe emptyList()
+    dependencies shouldBe emptyMap()
 
     rawDependencies shouldNotBe null
-    rawDependencies shouldBe emptyList()
+    rawDependencies shouldBe emptyMap()
   }
 
   @Test
@@ -114,10 +116,10 @@ class RustWorkspaceResolverTest {
 
     // then
     dependencies shouldNotBe null
-    dependencies shouldBe emptyList()
+    dependencies shouldBe emptyMap()
 
     rawDependencies shouldNotBe null
-    rawDependencies shouldBe emptyList()
+    rawDependencies shouldBe emptyMap()
   }
 
   @Test
@@ -167,16 +169,16 @@ class RustWorkspaceResolverTest {
     // then
     dependencies.size shouldBe 1
 
-    val dependency = dependencies[0]
-    dependency.source shouldBe moduleB.label.value.split(":")[0]
-    dependency.target shouldBe moduleA.label.value.split(":")[0]
-    dependency.name shouldBe moduleA.label.value.split(":")[1]
+    val dependency = dependencies.entries.first()
+    dependency.key shouldBe moduleB.label.value.split(":")[0]
+    dependency.value[0].pkg shouldBe moduleA.label.value.split(":")[0]
+    dependency.value[0].name shouldBe moduleA.label.value.split(":")[1]
 
     rawDependencies.size shouldBe 1
 
-    val rawDependency = rawDependencies[0]
-    rawDependency.name shouldBe moduleA.label.value
-    rawDependency.packageId shouldBe moduleB.label.value.split(":")[0]
+    val rawDependency = rawDependencies.entries.first()
+    rawDependency.value[0].name shouldBe moduleA.label.value
+    rawDependency.key shouldBe moduleB.label.value.split(":")[0]
   }
 
   @Test
@@ -195,11 +197,10 @@ class RustWorkspaceResolverTest {
     val (dependencies, rawDependencies) = resolver.rustDependencies(packages, modules)
 
     // then
-    dependencies.map { it.source }.toSet() shouldContainExactlyInAnyOrder
+    dependencies.keys.toSet() shouldContainExactlyInAnyOrder
         listOf("A", "B", "C", "D", "E").map { "@//pkg$it" }
 
     val dependenciesNames = dependencies
-        .groupBy { it.source }
         .mapValues { (_, deps) -> deps.map { it.name } }
     val trueDependenciesNames = mapOf(
         "A" to listOf("D", "E"),
@@ -210,11 +211,10 @@ class RustWorkspaceResolverTest {
     ).mapKeys { (name, _) -> "@//pkg$name" }
     dependenciesNames shouldContainExactly trueDependenciesNames
 
-    rawDependencies.map { it.packageId }.toSet() shouldContainExactlyInAnyOrder
+    rawDependencies.keys.toSet() shouldContainExactlyInAnyOrder
         listOf("A", "B", "C", "D", "E").map { "@//pkg$it" }
 
     val rawDependenciesNames = rawDependencies
-        .groupBy { it.packageId }
         .mapValues { (_, deps) -> deps.map { it.name } }
     val trueRawDependenciesNames = trueDependenciesNames
         .mapValues { (_, names) -> names.map { "@//pkg$it:$it" } }

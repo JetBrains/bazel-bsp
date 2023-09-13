@@ -173,7 +173,7 @@ maven_install(
     artifacts = [
         "com.google.code.gson:gson:2.10.1",
         "com.google.guava:guava:31.0.1-jre",
-        "com.github.zpp-This-is-fine:build-server-protocol:changed-rust-dep-kind",
+        "com.github.zpp-This-is-fine:build-server-protocol:cargo-extension-features",
         "commons-cli:commons-cli:jar:1.5.0",
         # TODO: we need to remove it
         "io.vavr:vavr:0.10.4",

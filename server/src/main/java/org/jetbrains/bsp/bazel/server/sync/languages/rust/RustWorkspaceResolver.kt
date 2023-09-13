@@ -121,7 +121,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                 rustData.edition,
                 false,                  // TODO: check it somehow. I even know where to look for it :/  http://bazelbuild.github.io/rules_rust/rust_doc.html
         )
-        buildTarget.requiredFeatures = rustData.crateFeatures
+        buildTarget.requiredFeatures = rustData.crateFeatures.toSet()
         buildTarget.crateTypes = parseCrateTypes(rustData.kind)
         return buildTarget
     }
@@ -159,12 +159,11 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
     private fun resolvePackageFeatures(
         rustTargets: List<RustTargetModule>
-    ): Pair<List<String>, List<RustFeature>> {
+    ): Map<String, Set<String>> {
         val allFeaturesAsStrings = rustTargets.flatMap { (_, rustData) ->
             rustData.crateFeatures
         }
-        val allFeatures = allFeaturesAsStrings.map { RustFeature(it, listOf()) }
-        return Pair(allFeaturesAsStrings, allFeatures)
+        return allFeaturesAsStrings.associate { Pair(it, setOf()) }
     }
 
     private fun resolvePackageEnv(rustPackage: String, pkgBaseDir: String, version: String): Map<String, String> {
@@ -205,7 +204,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
 
         val targets = rustTargetsWithData.map(::parseSingleTarget)
         val allTargets = allRustTargetsWithData.map(::parseSingleTarget)
-        val (allFeaturesAsString, allFeatures) = resolvePackageFeatures(rustTargetsWithData)
+        val allFeatures = resolvePackageFeatures(rustTargetsWithData)
         val env = resolvePackageEnv(rustPackageId, pkgBaseDir, version)
 
         val rustPackage = RustPackage(
@@ -217,8 +216,8 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                 edition,
                 targets,
                 allTargets,
-                allFeatures.toSet(),
-                allFeaturesAsString,
+                allFeatures,
+                allFeatures.keys.toSet(),
                 )
         rustPackage.source = source
         rustPackage.env = env
@@ -252,8 +251,9 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                 bspTargets.map { bspTarget ->
                     resolveBspDependencies(rustPackage, bspTarget.directDependencies)
                 }
-            }.toMap()
-
+            }
+            .toMap()
+            .filter { (_, value) -> value.isNotEmpty() }
 
     private fun resolveBspDependencies(
         rustPackage: RustPackage,
@@ -276,7 +276,9 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
             bspTargets.map { bspTarget ->
                 resolveRawBspDependencies(rustPackage, bspTarget.directDependencies)
             }
-        }.toMap()
+        }
+        .toMap()
+        .filter { (_, value) -> value.isNotEmpty() }
 
     private fun resolveRawBspDependencies(
         rustPackage: RustPackage,
@@ -287,7 +289,7 @@ class RustWorkspaceResolver(val bazelPathsResolver: BazelPathsResolver) {
                 it.value,
                 false,
                 true,
-                listOf<String>()
+                setOf<String>()
             )
         })
 }

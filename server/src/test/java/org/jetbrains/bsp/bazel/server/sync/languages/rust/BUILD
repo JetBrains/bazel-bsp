@@ -1,4 +1,4 @@
-load("//:junit5.bzl", "kt_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
@@ -11,22 +11,20 @@ kt_jvm_library(
 )
 
 
-kt_junit5_test(
+kt_test(
     name = "RustWorkspaceResolverTest",
     size = "small",
-    srcs = ["RustWorkspaceResolverTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.server.sync.languages.rust",
+    src = "RustWorkspaceResolverTest.kt",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "RustTestUtils",
     ],
 )
 
-kt_junit5_test(
+kt_test(
     name = "RustLanguagePluginTest",
     size = "small",
-    srcs = ["RustLanguagePluginTest.kt"],
-    test_package = "org.jetbrains.bsp.bazel.server.sync.languages.rust",
+    src = "RustLanguagePluginTest.kt",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "RustTestUtils",
