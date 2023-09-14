@@ -74,7 +74,10 @@ class BazelProjectMapper(
                             .flatMap { it.binaryJarsList }
                             .map { bazelPathsResolver.resolveUri(it) }
                             .toSet(),
-                        sources = emptySet(),
+                        sources = targetInfo.jvmTargetInfo.generatedJarsList
+                            .flatMap { it.sourceJarsList }
+                            .map { bazelPathsResolver.resolveUri(it) }
+                            .toSet(),
                         dependencies = emptyList(),
                         interfaceJars = emptySet(),
                     )
