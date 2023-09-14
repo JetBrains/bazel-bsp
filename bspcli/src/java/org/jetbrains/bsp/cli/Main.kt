@@ -94,14 +94,15 @@ fun main(args0: Array<String>) {
     println(buildInitializeResponse)
     proxy.onBuildInitialized()
     proxy.workspaceBuildTargets().get().let { println(it) }
+
+    clientExecutor.shutdown()
+    serverExecutor.shutdown()
+
     clientIn.close()
     serverIn.close()
 
     clientAliveFuture.get()
     serverAlveFuture.get()
-
-    clientExecutor.shutdown()
-    serverExecutor.shutdown()
 
     args.metricsFile?.let {
         it.writeText(metricsLogger.dump())
