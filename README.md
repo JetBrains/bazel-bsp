@@ -69,8 +69,10 @@ Check [project view readme](executioncontext/projectview/README.md) for more inf
 
 `e2e` directory contains end-2-end tests that check various scenarios of server usage.
 
-- `bazel run //e2e:all` - to run all tests
-- `bazel run //e2e:<specific test>` - to run a specific test (to see all possible tests, check the `e2e/BUILD` file)
+_Tests are marked as `manual` so they won't be executed on `bazel test //...`_
+
+`bazel test //e2e:<test name>_bazel_<bazel version>` - to run a specific test 
+  (to see all possible tests, check the `e2e/BUILD` file), e.g. `bazel test //e2e:sample_repo_test_bazel_6_3_2`
 
 ### Unit tests
 
