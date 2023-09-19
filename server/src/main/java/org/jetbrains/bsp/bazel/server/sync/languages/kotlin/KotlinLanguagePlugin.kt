@@ -35,43 +35,12 @@ class KotlinLanguagePlugin(
     if (!targetInfo.hasKotlinTargetInfo()) return null
 
     val kotlinTargetInfo = targetInfo.kotlinTargetInfo
-    var kotlincOptsRes: KotlincOpts? = null
-    if (kotlinTargetInfo.hasKotlincOpts()) {
-      val kotlincOpts = kotlinTargetInfo.kotlincOpts
-      with(kotlincOpts) {
-        kotlincOptsRes = KotlincOpts(
-          includeStdlibs = if (hasIncludeStdlibs()) includeStdlibs else null,
-          javaParameters = if (hasJavaParameters()) javaParameters else null,
-          jvmTarget = if (hasJvmTarget()) jvmTarget else null,
-          warn = if (hasWarn()) warn else null,
-          xAllowResultReturnType = if (hasXAllowResultReturnType()) xAllowResultReturnType else null,
-          xBackendThreads = if (hasXBackendThreads()) xBackendThreads else null,
-          xEmitJvmTypeAnnotations = if (hasXEmitJvmTypeAnnotations()) xEmitJvmTypeAnnotations else null,
-          xEnableIncrementalCompilation = if (hasXEnableIncrementalCompilation()) xEnableIncrementalCompilation else null,
-          xExplicitApiMode = if (hasXExplicitApiMode()) xExplicitApiMode else null,
-          xInlineClasses = if (hasXInlineClasses()) xInlineClasses else null,
-          xJvmDefault = if (hasXJvmDefault()) xJvmDefault else null,
-          xLambdas = if (hasXLambdas()) xLambdas else null,
-          xMultiPlatform = if (hasXMultiPlatform()) xMultiPlatform else null,
-          xNoCallAssertions = if (hasXNoCallAssertions()) xNoCallAssertions else null,
-          xNoOptimize = if (hasXNoOptimize()) xNoOptimize else null,
-          xNoOptimizedCallableReferences = if (hasXNoOptimizedCallableReferences()) xNoOptimizedCallableReferences else null,
-          xNoParamAssertions = if (hasXNoParamAssertions()) xNoParamAssertions else null,
-          xNoReceiverAssertions = if (hasXNoReceiverAssertions()) xNoReceiverAssertions else null,
-          xOptinList = xOptinList.ifEmpty { null },
-          xReportPerf = if (hasXReportPerf()) xReportPerf else null,
-          xSamConversions = if (hasXSamConversions()) xSamConversions else null,
-          xSkipPrereleaseCheck = if (hasXSkipPrereleaseCheck()) xSkipPrereleaseCheck else null,
-          xUseFirLt = if (hasXUseFirLt()) xUseFirLt else null,
-          xUseK2 = if (hasXUseK2()) xUseK2 else null
-        )
-      }
-    }
+
     return KotlinModule(
         languageVersion = kotlinTargetInfo.languageVersion,
         apiVersion = kotlinTargetInfo.apiVersion,
         associates = kotlinTargetInfo.associatesList.map { BuildTargetIdentifier(it) },
-        kotlincOptions = kotlincOptsRes,
+        kotlincOptions = kotlinTargetInfo.kotlincOptsList,
         javaModule = javaLanguagePlugin.resolveModule(targetInfo)
     )
   }

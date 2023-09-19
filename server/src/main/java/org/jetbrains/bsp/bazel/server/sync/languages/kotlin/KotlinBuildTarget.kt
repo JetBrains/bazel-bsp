@@ -6,7 +6,7 @@ import ch.epfl.scala.bsp4j.JvmBuildTarget
 data class KotlinBuildTarget(
     val languageVersion: String,
     val apiVersion: String,
-    val kotlincOptions: KotlincOpts?,
+    val kotlincOptions: List<String>,
     val associates: List<BuildTargetIdentifier>,
     var jvmBuildTarget: JvmBuildTarget? = null
 )
