@@ -70,7 +70,7 @@ class ServerContainer internal constructor(
             )
             val targetKindResolver = TargetKindResolver()
             val bazelProjectMapper =
-                BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver, bazelInfo)
+                BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver, bazelInfo, bspClientLogger, metricsLogger)
             val targetInfoReader = TargetInfoReader()
             val projectResolver = ProjectResolver(
                 bazelBspAspectsManager,

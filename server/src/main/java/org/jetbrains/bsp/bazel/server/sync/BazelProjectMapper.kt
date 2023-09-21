@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
@@ -31,30 +32,60 @@ const val KOTLIN_STDLIB_ROOT_EXECUTION = "external/com_github_jetbrains_kotlin"
 const val KOTLIN_STDLIB_RELATIVE_PATH_PREFIX = "lib/"
 
 class BazelProjectMapper(
-    private val languagePluginsService: LanguagePluginsService,
-    private val bazelPathsResolver: BazelPathsResolver,
-    private val targetKindResolver: TargetKindResolver,
-    private val bazelInfo: BazelInfo
+        private val languagePluginsService: LanguagePluginsService,
+        private val bazelPathsResolver: BazelPathsResolver,
+        private val targetKindResolver: TargetKindResolver,
+        private val bazelInfo: BazelInfo,
+        private val bspClientLogger: BspClientLogger,
+        private val metricsLogger: MetricsLogger?
 ) {
+
+    private fun <T> measure(description: String, body: () -> T): T =
+            Measurements.measure(body, description, metricsLogger, bspClientLogger)
+
     fun createProject(
-        targets: Map<String, TargetInfo>,
-        rootTargets: Set<String>,
-        workspaceContext: WorkspaceContext
+            targets: Map<String, TargetInfo>,
+            rootTargets: Set<String>,
+            workspaceContext: WorkspaceContext
     ): Project {
         languagePluginsService.prepareSync(targets.values.asSequence())
-        val dependencyTree = DependencyTree(rootTargets, targets)
-        val targetsToImport = selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
-        val targetsAsLibraries = targets - targetsToImport.map { it.id }.toSet()
-        val annotationProcessorLibraries = annotationProcessorLibraries(targetsToImport)
-        val kotlinStdlibsMapper = calculateKotlinStdlibsMapper(targetsToImport)
-        val librariesFromDeps = concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
-        val librariesFromDepsAndTargets = createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().associateBy { it.label }
-        val extraLibrariesFromJdeps = jdepsLibraries(targetsToImport.associateBy { it.id }, librariesFromDeps, librariesFromDepsAndTargets)
+        val dependencyTree = measure("Build dependency tree") {
+            DependencyTree(rootTargets, targets)
+        }
+        val targetsToImport = measure("Select targets") {
+            selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
+        }
+        val targetsAsLibraries = measure("Targets as libraries") {
+            targets - targetsToImport.map { it.id }.toSet()
+        }
+        val annotationProcessorLibraries = measure("Create AP libraries") {
+            annotationProcessorLibraries(targetsToImport)
+        }
+        val kotlinStdlibsMapper = measure("Create kotlin stdlibs") {
+            calculateKotlinStdlibsMapper(targetsToImport)
+        }
+        val librariesFromDeps = measure("Merge libraries from deps") {
+            concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
+        }
+        val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
+            createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().associateBy { it.label }
+        }
+        val extraLibrariesFromJdeps = measure("Libraries from jdeps") {
+            jdepsLibraries(targetsToImport.associateBy { it.id }, librariesFromDeps, librariesFromDepsAndTargets)
+        }
         val workspaceRoot = bazelPathsResolver.workspaceRoot()
-        val modulesFromBazel = createModules(targetsToImport, dependencyTree, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
-        val modifiedModules = modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
-        val sourceToTarget = buildReverseSourceMapping(modifiedModules)
-        val librariesToImport = librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
+        val modulesFromBazel = measure("Create modules") {
+            createModules(targetsToImport, dependencyTree, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
+        }
+        val modifiedModules = measure("Apply project tree view fix") {
+            modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
+        }
+        val sourceToTarget = measure("Build reverse sources") {
+            buildReverseSourceMapping(modifiedModules)
+        }
+        val librariesToImport = measure("Merge all libraries") {
+            librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
+        }
         return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport)
     }
 

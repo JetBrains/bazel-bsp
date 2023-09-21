@@ -2,16 +2,12 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
-import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspEnvironmentManager
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.net.URI
-import java.util.Locale
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -24,14 +20,7 @@ class ProjectResolver(
         private val metricsLogger: MetricsLogger?
 ) {
     private fun <T> measured(description: String, f: () -> T): T {
-        val sw = Stopwatch.start()
-        val result = f()
-        val duration = sw.stop()
-        val taskKey = description.lowercase(Locale.getDefault()).replace("\\s+".toRegex(), ".")
-        metricsLogger?.logMemory("$taskKey.memory.mb")
-        metricsLogger?.log("$taskKey.time.ms", duration.toMillis())
-        bspLogger.logDuration(description, duration)
-        return result
+        return Measurements.measure(f, description, metricsLogger, bspLogger)
     }
 
     fun resolve(cancelChecker: CancelChecker): Project {
@@ -43,7 +32,7 @@ class ProjectResolver(
         val bepOutput = measured(
             "Building project with aspect"
         ) { buildProjectWithAspect(cancelChecker, workspaceContext) }
-        val aspectOutputs = measured<Set<URI>>(
+        val aspectOutputs = measured(
             "Reading aspect output paths"
         ) { bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
         val rootTargets = when(bazelInfo.release.major){
