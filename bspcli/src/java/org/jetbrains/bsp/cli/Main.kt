@@ -35,11 +35,11 @@ import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import java.nio.file.attribute.PosixFilePermissions
 import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.absolute
 import kotlin.io.path.writeText
 import kotlin.system.exitProcess
@@ -135,9 +135,9 @@ class FixedThreadPipedOutputStream : OutputStream() {
     val inputStream = PipedInputStream()
     private val outputStream = PrintStream(PipedOutputStream(inputStream), true)
     private val queue = ArrayBlockingQueue<Int>(10000)
-    private val _stop = CompletableFuture<Boolean>()
+    private val _stop = AtomicBoolean(false)
     private val thread = Thread {
-        while (!_stop.isDone) {
+        while (!_stop.get()) {
             queue.poll(100, TimeUnit.MILLISECONDS)
                     ?.let { outputStream.write(it) }
         }
@@ -146,7 +146,7 @@ class FixedThreadPipedOutputStream : OutputStream() {
     fun stop() {
         outputStream.close()
         inputStream.close()
-        _stop.complete(true)
+        _stop.set(true)
         thread.join()
     }
 
