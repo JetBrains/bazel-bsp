@@ -27,6 +27,8 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
+import kotlin.io.path.notExists
 
 const val KOTLIN_STDLIB_ROOT_EXECUTION = "external/com_github_jetbrains_kotlin"
 const val KOTLIN_STDLIB_RELATIVE_PATH_PREFIX = "lib/"
@@ -364,12 +366,20 @@ class BazelProjectMapper(
         language.binary_targets.contains(kind)
 
     private fun resolveSourceSet(target: TargetInfo, languagePlugin: LanguagePlugin<*>): SourceSet {
-        val sources = target.sourcesList.asSequence().map(bazelPathsResolver::resolve)
+        val sources = target.sourcesList.toSet()
+            .map(bazelPathsResolver::resolve)
+            .onEach { if (it.notExists()) it.logNonExistingFile(target.id) }
+            .filter { it.exists() }
         val sourceRoots = sources.mapNotNull(languagePlugin::calculateSourceRoot)
         return SourceSet(
             sources.map(bazelPathsResolver::resolveUri).toSet(),
             sourceRoots.map(bazelPathsResolver::resolveUri).toSet()
         )
+    }
+
+    private fun Path.logNonExistingFile(targetId: String) {
+        val message = "[WARN] target $targetId: $this does not exist."
+        bspClientLogger.error(message)
     }
 
     private fun resolveResources(target: TargetInfo): Set<URI> =
