@@ -5,6 +5,6 @@ kt_test(
     size = "small",
     src = "FormatTest.kt",
     deps = [
-        "//commons/src/main/java/org/jetbrains/bsp/bazel/commons",
+        "//commons/src/main/kotlin/org/jetbrains/bsp/bazel/commons",
     ],
 )

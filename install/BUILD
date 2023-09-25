@@ -4,7 +4,7 @@ kt_jvm_library(
     name = "install-lib",
     visibility = ["//visibility:public"],
     exports = [
-        "//install/src/main/java/org/jetbrains/bsp/bazel/install",
+        "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install",
     ],
 )
 
@@ -16,6 +16,6 @@ kt_jvm_binary(
     runtime_deps = [
         "//commons",
         "//install:install-lib",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server",
     ],
 )

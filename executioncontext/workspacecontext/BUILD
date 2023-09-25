@@ -4,6 +4,6 @@ java_library(
     name = "workspacecontext",
     visibility = ["//visibility:public"],
     exports = [
-        "//executioncontext/workspacecontext/src/main/java/org/jetbrains/bsp/bazel/workspacecontext",
+        "//executioncontext/workspacecontext/src/main/kotlin/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )

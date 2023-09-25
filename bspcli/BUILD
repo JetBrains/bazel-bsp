@@ -11,7 +11,7 @@ filegroup(
 
 kt_jvm_binary(
     name = "bspcli",
-    srcs = ["src/java/org/jetbrains/bsp/cli/Main.kt"],
+    srcs = ["src/main/kotlin/org/jetbrains/bsp/cli/Main.kt"],
     jvm_flags = [
         "-Xmx4g",
         "-Dlog4j.configurationFile=classpath:{}".format(LOG4J_CONFIG),
@@ -21,8 +21,8 @@ kt_jvm_binary(
     visibility = ["//visibility:public"],
     deps = [
         "//executioncontext/workspacecontext",
-        "//install/src/main/java/org/jetbrains/bsp/bazel/install",
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server",
+        "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server",
         "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
