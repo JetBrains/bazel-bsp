@@ -19,7 +19,6 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
         workspaceBuildTargets(),
         // TODO: rustWorkspacePackaging(),
-        // TODO: rustToolchains(),
     )
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {

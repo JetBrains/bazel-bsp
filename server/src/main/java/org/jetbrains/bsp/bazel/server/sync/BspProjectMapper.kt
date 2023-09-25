@@ -35,8 +35,6 @@ import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunProvider
-import ch.epfl.scala.bsp4j.RustToolchainParams
-import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceParams
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
@@ -327,16 +325,6 @@ class BspProjectMapper(
             project,
             params.targets,
             languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
-        )
-
-    fun rustToolchain(
-        project: Project,
-        params: RustToolchainParams
-    ): RustToolchainResult =
-        collectRustTargets(
-            project,
-            params.targets,
-            languagePluginsService.rustLanguagePlugin::toRustToolchains
         )
 
     private fun <T> collectRustTargets(

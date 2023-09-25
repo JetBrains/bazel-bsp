@@ -2,10 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.RustToolchainItem
-import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
-import ch.epfl.scala.bsp4j.RustcInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -44,12 +41,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 crateRoot = crateRoot,
                 version = rustCrateInfo.version,
                 procMacroArtifacts = rustCrateInfo.procMacroArtifactsList,
-                procMacroSrv = rustCrateInfo.procMacroSrv,
-                rustcSysroot = rustCrateInfo.rustcSysroot,
-                rustcSrcSysroot = rustCrateInfo.rustcSrcSysroot,
-                cargoBinPath = rustCrateInfo.cargoBinPath,
-                rustcVersion = rustCrateInfo.rustcVersion,
-                rustcHost = rustCrateInfo.rustcHost,
             )
         }
 
@@ -139,38 +130,6 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             resolvedTargets
         )
     }
-
-    fun toRustToolchains(requestTargets: List<Module>, allTargets: List<Module>): RustToolchainResult {
-        val allRelatedTargets = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val toolchains = allRelatedTargets.mapNotNull { resolveRustToolchain(it) }
-
-        return RustToolchainResult(toolchains)
-    }
-
-    private fun resolveRustToolchain(rustModule: Module): RustToolchainItem? {
-        val rustData = rustModule.languageData as? RustModule ?: return null
-        val rustc = resolveRustc(rustData)
-
-        val toolchainItem = RustToolchainItem(
-                prependWorkspacePath(rustData.cargoBinPath),
-                prependWorkspacePath(rustData.procMacroSrv),
-        )
-        toolchainItem.rustStdLib = rustc
-
-        return toolchainItem
-    }
-
-    private fun resolveRustc(rustData: RustModule): RustcInfo? =
-        if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
-            null
-        } else {
-            RustcInfo(
-                prependWorkspacePath(rustData.rustcSysroot),
-                prependWorkspacePath(rustData.rustcSrcSysroot),
-                rustData.rustcVersion,
-                rustData.rustcHost
-            )
-        }
 
     private fun prependWorkspacePath(path: String): String =
         bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()

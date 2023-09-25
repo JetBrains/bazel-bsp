@@ -81,8 +81,7 @@ class BazelBspEnvironmentManager(
                 Language.Scala -> """"@io_bazel_rules_scala//scala:toolchain_type""""
                 Language.Java -> """"@bazel_tools//tools/jdk:runtime_toolchain_type""""
                 Language.Kotlin -> """"@io_bazel_rules_kotlin//kotlin/internal:kt_toolchain_type""""
-                Language.Rust -> """"@rules_rust//rust:toolchain_type",
-                    "@rules_rust//rust/rust_analyzer:toolchain_type""""
+                Language.Rust -> """"@rules_rust//rust:toolchain_type""""
                 else -> null
             }
         }

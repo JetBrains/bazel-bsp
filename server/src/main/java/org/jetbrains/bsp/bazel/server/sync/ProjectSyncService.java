@@ -21,8 +21,6 @@ import ch.epfl.scala.bsp4j.PythonOptionsParams;
 import ch.epfl.scala.bsp4j.PythonOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
-import ch.epfl.scala.bsp4j.RustToolchainParams;
-import ch.epfl.scala.bsp4j.RustToolchainResult;
 import ch.epfl.scala.bsp4j.RustWorkspaceParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
@@ -162,11 +160,5 @@ public class ProjectSyncService {
         CancelChecker cancelChecker, RustWorkspaceParams params) {
       var project = projectProvider.get(cancelChecker);
       return bspMapper.rustWorkspace(project, params);
-    }
-
-    public RustToolchainResult rustToolchain(
-        CancelChecker cancelChecker, RustToolchainParams params) {
-      var project = projectProvider.get(cancelChecker);
-      return bspMapper.rustToolchain(project, params);
     }
 }

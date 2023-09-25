@@ -48,12 +48,6 @@ fun createRustModule(
         crateRoot = crateRoot,
         version = "1.2.3",
         procMacroArtifacts = procMacroArtifacts,
-        procMacroSrv = "/path/to/procMacroSrv",
-        rustcSysroot = "/path/to/rustcSysroot",
-        rustcSrcSysroot = "/path/to/rustcSrcSysroot",
-        cargoBinPath = "/path/to/cargoBinPath",
-        rustcVersion = "rustcVersion",
-        rustcHost = "x86_64-unknown-linux-gnu",
     )
 
 fun createTarget(
