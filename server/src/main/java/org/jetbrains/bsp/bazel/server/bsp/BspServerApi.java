@@ -32,6 +32,7 @@ import ch.epfl.scala.bsp4j.OutputPathsResult;
 import ch.epfl.scala.bsp4j.PythonBuildServer;
 import ch.epfl.scala.bsp4j.PythonOptionsParams;
 import ch.epfl.scala.bsp4j.PythonOptionsResult;
+import ch.epfl.scala.bsp4j.ReadParams;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
@@ -250,6 +251,12 @@ public class BspServerApi
   @Override
   public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
     return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
+  }
+
+  // TODO handle properly
+  @Override
+  public void onRunReadStdin(ReadParams params) {
+    runner.handleNotification("onRunReadStdin", executeService::readStdin);
   }
 
   @Override

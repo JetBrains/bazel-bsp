@@ -233,6 +233,14 @@ private class MockBspClient : BuildClient {
     // ignore
   }
 
+  override fun onRunPrintStdout(params: PrintParams?) {
+    // ignore
+  }
+
+  override fun onRunPrintStderr(params: PrintParams?) {
+    // ignore
+  }
+
   private fun <T> stackPeekOrNull(stack: Stack<T>) =
     if (stack.isNotEmpty()) stack.peek() else null
 

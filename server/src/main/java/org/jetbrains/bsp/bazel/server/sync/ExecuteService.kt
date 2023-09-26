@@ -128,6 +128,9 @@ class ExecuteService(
         return CleanCacheResult(true)
     }
 
+    // TODO handle properly
+    public fun readStdin() {}
+
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targetsSpec = TargetsSpec(bspIds, emptyList())
         return compilationManager.buildTargetsWithBep(
