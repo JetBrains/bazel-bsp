@@ -14,7 +14,11 @@ class BazelInfoResolver(
   }
 
   private fun bazelInfoFromBazel(cancelChecker: CancelChecker): BazelInfo {
-    val processResult = bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult(cancelChecker,true)
+    val processResult = bazelRunner
+          .commandBuilder()
+          .info()
+          .executeBazelCommand()
+          .waitAndGetResult(cancelChecker,true)
     return parseBazelInfo(processResult).also { storage.store(it) }
   }
 

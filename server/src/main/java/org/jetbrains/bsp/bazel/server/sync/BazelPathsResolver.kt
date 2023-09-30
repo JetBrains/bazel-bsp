@@ -74,13 +74,9 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         fileLocation.rootExecutionPathFragment.startsWith("external/")
 
     fun labelToDirectoryUri(label: Label): URI {
-        val absolutePath = if (isRelativeWorkspacePath(label.value)) {
-            relativePathToWorkspaceAbsolute(extractRelativePath(label.value))
-        } else {
-            relativePathToExecRootAbsolute(extractExternalPath(label.value))
-        }
-
-        return resolveUri(absolutePath)
+        val isWorkspace = isRelativeWorkspacePath(label.value)
+        val path = if (isWorkspace) extractRelativePath(label.value) else extractExternalPath(label.value)
+        return pathToDirectoryUri(path, isWorkspace)
     }
 
     fun pathToDirectoryUri(path: String, isWorkspace: Boolean = true): URI {

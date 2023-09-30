@@ -129,7 +129,7 @@ class ExecuteService(
     }
 
     // TODO handle properly
-    public fun readStdin() {}
+    fun readStdin() {}
 
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targetsSpec = TargetsSpec(bspIds, emptyList())

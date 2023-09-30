@@ -14,6 +14,7 @@ open class BazelRunnerBuilder internal constructor(
 
     private val flags = mutableListOf<String>()
     private val arguments = mutableListOf<String>()
+    private val environmentVariables = mutableMapOf<String, String>()
 
     fun withFlag(bazelFlag: String): BazelRunnerBuilder {
         flags.add(bazelFlag)
@@ -83,11 +84,30 @@ open class BazelRunnerBuilder internal constructor(
         return this
     }
 
+    fun withEnvironment(environmentVariable: Pair<String, String>): BazelRunnerBuilder {
+        environmentVariables.putAll(listOf(environmentVariable))
+        return this
+    }
+
     fun executeBazelCommand(originId: String? = null, parseProcessOutput: Boolean = true): BazelProcess {
-        return bazelRunner.runBazelCommand(bazelCommand, flags, arguments, originId, parseProcessOutput)
+        return bazelRunner.runBazelCommand(
+            bazelCommand,
+            flags,
+            arguments,
+            environmentVariables,
+            originId,
+            parseProcessOutput
+        )
     }
 
     fun executeBazelBesCommand(originId: String? = null, buildEventFile: Path): BazelProcess {
-        return bazelRunner.runBazelCommandBes(bazelCommand, flags, arguments, originId, buildEventFile.toAbsolutePath())
+        return bazelRunner.runBazelCommandBes(
+            bazelCommand,
+            flags,
+            arguments,
+            environmentVariables,
+            originId,
+            buildEventFile.toAbsolutePath()
+        )
     }
 }

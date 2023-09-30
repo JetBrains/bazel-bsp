@@ -260,7 +260,7 @@ class BazelProjectMapper(
     private fun isWorkspaceTarget(target: TargetInfo): Boolean =
         target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix()) &&
             (hasKnownSources(target) ||
-                target.kind in setOf("java_library", "java_binary", "kt_jvm_library", "kt_jvm_binary", "rust_test"))
+                target.kind in setOf("java_library", "java_binary", "kt_jvm_library", "kt_jvm_binary", "rust_test", "rust_doc", "rust_doc_test"))
 
     private fun isRustTarget(target: TargetInfo): Boolean = target.rustCrateInfo != null
 

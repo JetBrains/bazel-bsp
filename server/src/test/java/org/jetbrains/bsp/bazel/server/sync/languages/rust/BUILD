@@ -10,11 +10,20 @@ kt_jvm_library(
     ],
 )
 
+kt_test(
+    name = "RustPackageResolverTest",
+    size = "small",
+    src = "RustPackageResolverTest.kt",
+    deps = [
+        "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "RustTestUtils",
+    ],
+)
 
 kt_test(
-    name = "RustWorkspaceResolverTest",
+    name = "RustDependencyResolverTest",
     size = "small",
-    src = "RustWorkspaceResolverTest.kt",
+    src = "RustDependencyResolverTest.kt",
     deps = [
         "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
         "RustTestUtils",

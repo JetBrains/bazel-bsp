@@ -15,8 +15,6 @@ class BazelRunner private constructor(
     companion object {
         private val LOGGER = LogManager.getLogger(BazelRunner::class.java)
 
-        private val CARGO_BAZEL_REPIN_ENV_VAR = "CARGO_BAZEL_REPIN" to "1"
-
         @JvmStatic
         fun of(
             workspaceContextProvider: WorkspaceContextProvider,
@@ -33,6 +31,7 @@ class BazelRunner private constructor(
         command: String,
         flags: List<String>,
         arguments: List<String>,
+        environment: Map<String, String>,
         originId: String?,
         eventTextFile: Path,
     ): BazelProcess {
@@ -43,23 +42,30 @@ class BazelRunner private constructor(
         )
 
         // TODO https://youtrack.jetbrains.com/issue/BAZEL-617
-        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, true)
+        return runBazelCommand(
+            command,
+            flags = besFlags() + flags,
+            arguments,
+            environment,
+            originId,
+            true
+        )
     }
 
     fun runBazelCommand(
         command: String,
         flags: List<String>,
         arguments: List<String>,
+        environment: Map<String, String>,
         originId: String?,
         parseProcessOutput: Boolean,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
         val processArgs =
             listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flags + arguments
-        val processEnv = mapOf(CARGO_BAZEL_REPIN_ENV_VAR)
-        logInvocation(processArgs, processEnv, originId)
+        logInvocation(processArgs, environment, originId)
         val processBuilder = ProcessBuilder(processArgs)
-        processBuilder.environment() += processEnv
+        processBuilder.environment() += environment
         val outputLogger = bspClientLogger.takeIf { parseProcessOutput }
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
         val process = processBuilder.start()
@@ -70,8 +76,8 @@ class BazelRunner private constructor(
         )
     }
 
-    private fun envToString(processEnv: Map<String, String>): String =
-        processEnv.entries.joinToString(" ") { "${it.key}=${it.value}" }
+    private fun envToString(environment: Map<String, String>): String =
+        environment.entries.joinToString(" ") { "${it.key}=${it.value}" }
 
     private fun logInvocation(processArgs: List<String>, processEnv: Map<String, String>, originId: String?) {
         "Invoking: ${envToString(processEnv)} ${processArgs.joinToString(" ")}"

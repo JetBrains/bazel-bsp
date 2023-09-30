@@ -320,23 +320,13 @@ class BspProjectMapper(
     fun rustWorkspace(
         project: Project,
         params: RustWorkspaceParams
-    ): RustWorkspaceResult =
-        collectRustTargets(
-            project,
-            params.targets,
-            languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
-        )
-
-    private fun <T> collectRustTargets(
-        project: Project,
-        requestedTargets: List<BuildTargetIdentifier>,
-        resolver: (List<Module>, List<Module>) -> T
-    ): T {
+    ): RustWorkspaceResult {
         val allRustModules = project.findModulesByLanguage(Language.RUST)
         val externalModules = project.rustExternalModules.toList()
-        val requestedModules = BspMappings.getModules(project, requestedTargets)
-            .filter { Language.RUST in it.languages }
+        val requestedModules = BspMappings.getModules(project, params.targets)
+                .filter { Language.RUST in it.languages }
+        val toRustWorkspaceResult = languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
 
-        return resolver(requestedModules, allRustModules + externalModules)
+        return toRustWorkspaceResult(requestedModules, allRustModules + externalModules)
     }
 }
