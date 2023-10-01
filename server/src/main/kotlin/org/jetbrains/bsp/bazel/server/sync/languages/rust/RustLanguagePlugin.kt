@@ -35,7 +35,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 kind = rustCrateInfo.kind,
                 edition = rustCrateInfo.edition,
                 crateFeatures = rustCrateInfo.crateFeaturesList,
-                dependencies_crate_ids = rustCrateInfo.dependenciesCrateIdsList,
+                dependenciesCrateIds = rustCrateInfo.dependenciesCrateIdsList,
                 crateRoot = crateRoot,
                 version = rustCrateInfo.version,
                 procMacroArtifacts = rustCrateInfo.procMacroArtifactsList,

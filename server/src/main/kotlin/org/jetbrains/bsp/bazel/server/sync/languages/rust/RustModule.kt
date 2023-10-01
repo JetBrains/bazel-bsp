@@ -19,7 +19,7 @@ data class RustModule(
     val kind: String,
     val edition: String,
     val crateFeatures: List<String>,
-    val dependencies_crate_ids: List<String>,
+    val dependenciesCrateIds: List<String>,
     val crateRoot: String,
     val version: String,
     val procMacroArtifacts: List<String>,

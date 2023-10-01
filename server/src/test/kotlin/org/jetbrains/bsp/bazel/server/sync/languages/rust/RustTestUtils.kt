@@ -44,7 +44,7 @@ fun createRustModule(
         kind = "bin",
         edition = "2018",
         crateFeatures = crateFeatures,
-        dependencies_crate_ids = dependencies,
+        dependenciesCrateIds = dependencies,
         crateRoot = crateRoot,
         version = "1.2.3",
         procMacroArtifacts = procMacroArtifacts,
