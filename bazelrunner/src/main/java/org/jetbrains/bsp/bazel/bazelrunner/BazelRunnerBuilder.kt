@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
+import java.nio.file.Path
 
 open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
@@ -13,6 +14,7 @@ open class BazelRunnerBuilder internal constructor(
 
     private val flags = mutableListOf<String>()
     private val arguments = mutableListOf<String>()
+    private val environmentVariables = mutableMapOf<String, String>()
 
     fun withFlag(bazelFlag: String): BazelRunnerBuilder {
         flags.add(bazelFlag)
@@ -82,11 +84,30 @@ open class BazelRunnerBuilder internal constructor(
         return this
     }
 
-    fun executeBazelCommand(): BazelProcess {
-        return bazelRunner.runBazelCommand(bazelCommand, flags, arguments)
+    fun withEnvironment(environmentVariable: Pair<String, String>): BazelRunnerBuilder {
+        environmentVariables.putAll(listOf(environmentVariable))
+        return this
     }
 
-    fun executeBazelBesCommand(originId: String? = null, bazelBesPort: Int): BazelProcess {
-        return bazelRunner.runBazelCommandBes(bazelCommand, flags, arguments, originId, bazelBesPort)
+    fun executeBazelCommand(originId: String? = null, parseProcessOutput: Boolean = true): BazelProcess {
+        return bazelRunner.runBazelCommand(
+            bazelCommand,
+            flags,
+            arguments,
+            environmentVariables,
+            originId,
+            parseProcessOutput
+        )
+    }
+
+    fun executeBazelBesCommand(originId: String? = null, buildEventFile: Path): BazelProcess {
+        return bazelRunner.runBazelCommandBes(
+            bazelCommand,
+            flags,
+            arguments,
+            environmentVariables,
+            originId,
+            buildEventFile.toAbsolutePath()
+        )
     }
 }

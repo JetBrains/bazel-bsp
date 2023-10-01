@@ -186,14 +186,14 @@ private class MockBspClient : BuildClient {
 
   override fun onBuildTaskStart(params: TaskStartParams?) {
     when (params?.dataKind) {
-      TaskDataKind.TEST_START -> {
+      TaskStartDataKind.TEST_START -> {
         val testStart = params.data as? TestStart
         val isSuite = params.message.startsWith("<S>")
         val displayName = testStart?.displayName
         if (isSuite) startedSuiteStack.push(displayName)
         else startedTest = displayName
       }
-      TaskDataKind.TEST_TASK -> {
+      TaskStartDataKind.TEST_TASK -> {
         // ignore
       }
     }
@@ -205,7 +205,7 @@ private class MockBspClient : BuildClient {
 
   override fun onBuildTaskFinish(params: TaskFinishParams?) {
     when (params?.dataKind) {
-      TaskDataKind.TEST_FINISH -> {
+      TaskFinishDataKind.TEST_FINISH -> {
         val testFinish = params.data as TestFinish
         val isSuite = params.message.startsWith("<S>")
         val displayName = testFinish.displayName
@@ -218,7 +218,7 @@ private class MockBspClient : BuildClient {
         }
       }
 
-      TaskDataKind.TEST_REPORT -> {
+      TaskFinishDataKind.TEST_REPORT -> {
         val report = params.data as? TestReport
         duration = (report?.time) ?: -1
       }
@@ -230,6 +230,14 @@ private class MockBspClient : BuildClient {
   }
 
   override fun onBuildTargetDidChange(params: DidChangeBuildTarget?) {
+    // ignore
+  }
+
+  override fun onRunPrintStdout(params: PrintParams?) {
+    // ignore
+  }
+
+  override fun onRunPrintStderr(params: PrintParams?) {
     // ignore
   }
 

@@ -25,7 +25,7 @@ class FileProjectStorage(private val path: Path, private val logger: BspClientLo
         try {
             return@timed mapper.readValue(path.toFile(), Project::class.java)
         } catch (e: IOException) {
-            // TODO figure out why this error is otherwise not propagated to bsp client
+            // TODO https://youtrack.jetbrains.com/issue/BAZEL-620
             logger.error(e.toString())
             throw RuntimeException(e)
         }

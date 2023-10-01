@@ -9,6 +9,8 @@ import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
@@ -30,16 +32,18 @@ class LanguagePluginServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    val bazelInfo = BasicBazelInfo("", Paths.get(""), BazelRelease.fromReleaseString("release 6.0.0"))
+    val bazelInfo = BasicBazelInfo("", Paths.get(""), Paths.get(""), BazelRelease.fromReleaseString("release 6.0.0"))
     val bazelPathsResolver = BazelPathsResolver(bazelInfo)
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
     val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
     val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
+    val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
+    val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
     val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
     languagePluginsService = LanguagePluginsService(
-      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, thriftLanguagePlugin, rustLanguagePlugin
+      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin, rustLanguagePlugin
     )
   }
 
@@ -60,12 +64,12 @@ class LanguagePluginServiceTest {
     }
 
     @Test
-    fun `should return JavaLanguagePlugin for Kotlin Language`() {
+    fun `should return KotlinLanguagePlugin for Kotlin Language`() {
       // given
       val languages: Set<Language> = hashSetOf(Language.KOTLIN)
 
       // when
-      val plugin = languagePluginsService.getPlugin(languages) as? JavaLanguagePlugin
+      val plugin = languagePluginsService.getPlugin(languages) as? KotlinLanguagePlugin
 
       // then
       plugin shouldNotBe null

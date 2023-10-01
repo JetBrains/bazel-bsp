@@ -19,13 +19,16 @@ abstract class ProjectViewListSectionParser<V, T : ProjectViewListSection<V>> pr
     override val sectionName: String,
 ) : ProjectViewSectionParser<T>() {
 
-    override fun parse(rawSections: ProjectViewRawSections): T? =
+    override fun parse(rawSections: ProjectViewRawSections): T? = try {
         parseAllSectionsAndMerge(rawSections)?.also { log.debug("Parsed '$sectionName' section. Result:\n$it") }
+    } catch (e: Exception) {
+        log.error("Failed to parse '$sectionName' section.", e)
+        null
+    }
 
     private fun parseAllSectionsAndMerge(rawSections: ProjectViewRawSections): T? =
         rawSections.getAllWithName(sectionName)
-            .flatMap { parse(it) }
-            .filterNotNull()
+            .mapNotNull { parse(it) }
             .reduceOrNull(::concatSectionsItems)
 
     protected open fun concatSectionsItems(section1: T, section2: T): T =

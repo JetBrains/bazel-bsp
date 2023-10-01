@@ -10,13 +10,11 @@ kt_jvm_library(
     exports = [
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
-        "@maven//:io_vavr_vavr",
     ],
     deps = [
         "//commons",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/model",
         "//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/splitter",
-        "@maven//:io_vavr_vavr",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
     ],

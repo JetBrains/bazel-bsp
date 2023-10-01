@@ -2,10 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
 import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.RustToolchain
-import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
-import ch.epfl.scala.bsp4j.RustcInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -17,20 +14,18 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 
 class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<RustModule>() {
 
-    private val rustWorkspaceResolver = RustWorkspaceResolver(bazelPathsResolver)
+    private val rustPackageResolver = RustPackageResolver(bazelPathsResolver)
+    private val rustDependencyResolver = RustDependencyResolver(rustPackageResolver)
 
     private fun TargetInfo.getRustCrateInfoOrNull(): RustCrateInfo? =
         this.takeIf(TargetInfo::hasRustCrateInfo)?.rustCrateInfo
 
-    override fun applyModuleData(moduleData: RustModule, buildTarget: BuildTarget) {
-        // TODO
-    }
+    override fun applyModuleData(moduleData: RustModule, buildTarget: BuildTarget) {}
 
     override fun resolveModule(targetInfo: TargetInfo): RustModule? =
         targetInfo.getRustCrateInfoOrNull()?.let { rustCrateInfo ->
             val location = resolveTargetLocation(rustCrateInfo)
             val crateRoot = resolveTargetCrateRoot(rustCrateInfo, location)
-            val dependencies = resolveTargetDependencies(rustCrateInfo)
 
             RustModule(
                 crateId = rustCrateInfo.crateId,
@@ -40,24 +35,10 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 kind = rustCrateInfo.kind,
                 edition = rustCrateInfo.edition,
                 crateFeatures = rustCrateInfo.crateFeaturesList,
-                dependencies = dependencies,
+                dependencies_crate_ids = rustCrateInfo.dependenciesCrateIdsList,
                 crateRoot = crateRoot,
                 version = rustCrateInfo.version,
                 procMacroArtifacts = rustCrateInfo.procMacroArtifactsList,
-                procMacroSrv = rustCrateInfo.procMacroSrv,
-                rustcSysroot = rustCrateInfo.rustcSysroot,
-                rustcSrcSysroot = rustCrateInfo.rustcSrcSysroot,
-                cargoBinPath = rustCrateInfo.cargoBinPath,
-                rustcVersion = rustCrateInfo.rustcVersion,
-                rustcHost = rustCrateInfo.rustcHost,
-            )
-        }
-
-    private fun resolveTargetDependencies(rustCrateInfo: RustCrateInfo): List<RustDependency> =
-        rustCrateInfo.dependenciesList.map { depInfo ->
-            RustDependency(
-                crateId = depInfo.crateId,
-                rename = depInfo.rename,
             )
         }
 
@@ -125,10 +106,10 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
 
     fun toRustWorkspaceResult(requestTargets: List<Module>, allTargets: List<Module>): RustWorkspaceResult {
         val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val packages = rustWorkspaceResolver.rustPackages(modules)
-        val (dependencies, rawDependencies) = rustWorkspaceResolver.rustDependencies(packages, modules)
+        val packages = rustPackageResolver.rustPackages(modules)
+        val (dependencies, rawDependencies) = rustDependencyResolver.rustDependencies(packages, modules)
         val resolvedTargets = packages.filter { it.origin == "WORKSPACE" }
-                                        .flatMap { it.targets.map { it2 -> it.id + ':' + it2.name }}
+                                        .flatMap { it.resolvedTargets.map { it2 -> it.id + ':' + it2.name }}
                                         .map { BuildTargetIdentifier(it) }
         
         
@@ -139,37 +120,4 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             resolvedTargets
         )
     }
-
-    fun toRustToolchains(requestTargets: List<Module>, allTargets: List<Module>): RustToolchainResult {
-        val allRelatedTargets = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val toolchains = allRelatedTargets.mapNotNull { resolveRustToolchain(it) }
-
-        return RustToolchainResult(toolchains)
-    }
-
-    private fun resolveRustToolchain(rustModule: Module): RustToolchain? {
-        val rustData = rustModule.languageData as? RustModule ?: return null
-        val rustc = resolveRustc(rustData)
-
-        return RustToolchain(
-            rustc,
-            prependWorkspacePath(rustData.cargoBinPath),
-            prependWorkspacePath(rustData.procMacroSrv), 
-        )
-    }
-
-    private fun resolveRustc(rustData: RustModule): RustcInfo? =
-        if (rustData.rustcSysroot.isEmpty() || rustData.rustcSrcSysroot.isEmpty()) {
-            null
-        } else {
-            RustcInfo(
-                prependWorkspacePath(rustData.rustcSysroot),
-                prependWorkspacePath(rustData.rustcSrcSysroot),
-                rustData.rustcVersion,
-                rustData.rustcHost
-            )
-        }
-
-    private fun prependWorkspacePath(path: String): String =
-        bazelPathsResolver.relativePathToExecRootAbsolute(path).toString()
 }

@@ -1,10 +1,9 @@
-load("//:junit5.bzl", "java_junit5_test")
+load("@//rules/kotlin:junit5.bzl", "kt_test")
 
-java_junit5_test(
+kt_test(
     name = "FormatTest",
     size = "small",
-    srcs = ["FormatTest.java"],
-    test_package = "org.jetbrains.bsp.bazel.commons.test",
+    src = "FormatTest.kt",
     deps = [
         "//commons/src/main/java/org/jetbrains/bsp/bazel/commons",
     ],

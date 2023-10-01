@@ -1,15 +1,16 @@
 package org.jetbrains.bsp.bazel.projectview.parser
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -37,12 +38,10 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/does/not/exist.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val exception = shouldThrow<NoSuchFileException> { parser.parse(projectViewFilePath) }
 
             // then
-            projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe NoSuchFileException::class
-            projectViewTry.cause.message shouldBe "/does/not/exist.bazelproject"
+            exception.message shouldBe "/does/not/exist.bazelproject"
         }
 
         @Test
@@ -51,12 +50,10 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file9ImportsNotExisting.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val exception = shouldThrow<NoSuchFileException> { parser.parse(projectViewFilePath) }
 
             // then
-            projectViewTry.isFailure shouldBe true
-            projectViewTry.cause::class shouldBe NoSuchFileException::class
-            projectViewTry.cause.message shouldBe "/projectview/does/not/exist.bazelproject"
+            exception.message shouldBe "/projectview/does/not/exist.bazelproject"
         }
 
         @Test
@@ -65,43 +62,23 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/without/targets.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
             projectView.targets shouldBe null
         }
 
         @Test
         fun `should return empty bazel path for file without bazel path section`() {
             // given
-            val projectViewFilePath = Path("/projectview/without/bazelpath.bazelproject")
+            val projectViewFilePath = Path("/projectview/without/bazelbinary.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
-            projectView.bazelPath shouldBe null
-        }
-
-        @Test
-        fun `should return empty debugger address for file without debugger address section`() {
-            // given
-            val projectViewFilePath = Path("/projectview/without/debuggeraddress.bazelproject")
-
-            // when
-            val projectViewTry = parser.parse(projectViewFilePath)
-
-            // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
-            projectView.debuggerAddress shouldBe null
+            projectView.bazelBinary shouldBe null
         }
 
         @Test
@@ -110,28 +87,11 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/without/importdepth.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             projectView.importDepth shouldBe null
-        }
-
-        @Test
-        fun `should return empty java path section for file without java path section`() {
-            // given
-            val projectViewFilePath = Path("/projectview/without/javapath.bazelproject")
-
-            // when
-            val projectViewTry = parser.parse(projectViewFilePath)
-
-            // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
-            projectView.javaPath shouldBe null
         }
 
         @Test
@@ -140,11 +100,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/without/buildflags.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             projectView.buildFlags shouldBe null
         }
@@ -155,11 +113,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/without/build_manual_targets.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             projectView.buildManualTargets shouldBe null
         }
@@ -170,11 +126,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/without/directories.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             projectView.directories shouldBe null
         }
@@ -185,28 +139,11 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/without/derive_targets_from_directories.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             projectView.deriveTargetsFromDirectories shouldBe null
-        }
-
-        @Test
-        fun `should return empty produce_trace_log section for file without produce_trace_log section`() {
-            // given
-            val projectViewFilePath = Path("/projectview/without/produce_trace_log.bazelproject")
-
-            // when
-            val projectViewTry = parser.parse(projectViewFilePath)
-
-            // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
-
-            projectView.produceTraceLog shouldBe null
         }
 
         @Test
@@ -215,23 +152,18 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/empty.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = null,
-                bazelPath = null,
-                debuggerAddress = null,
-                javaPath = null,
+                bazelBinary = null,
                 buildFlags = null,
                 buildManualTargets = null,
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                produceTraceLog = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -243,11 +175,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file1.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -259,9 +189,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target1.1")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path1/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path1/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1", "--build_flag1.2=value1.2"
@@ -279,7 +207,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -290,11 +217,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file4ImportsFile1.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -308,9 +233,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path1/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path1/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -322,20 +245,19 @@ class DefaultProjectViewParserTest {
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
-                        listOf(
-                            Path("included_dir1.1"),
-                            Path("included_dir1.2"),
-                            Path("included_dir4.1"),
-                            Path("included_dir4.2")
-                        ),
-                        listOf(
-                            Path("excluded_dir1.1"),
-                            Path("excluded_dir4.1")
-                        )
+                    listOf(
+                        Path("included_dir1.1"),
+                        Path("included_dir1.2"),
+                        Path("included_dir4.1"),
+                        Path("included_dir4.2")
+                    ),
+                    listOf(
+                        Path("excluded_dir1.1"),
+                        Path("excluded_dir4.1")
+                    )
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }
@@ -346,12 +268,10 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file7ImportsFile1.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            print(projectViewTry)
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
+            print(projectView)
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -365,9 +285,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target7.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path7/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.7:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path7/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path7/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -379,17 +297,16 @@ class DefaultProjectViewParserTest {
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(true),
                 directories = ProjectViewDirectoriesSection(
-                        listOf(
-                            Path("included_dir1.1"),
-                            Path("included_dir1.2")
-                        ),
-                        listOf(
-                            Path("excluded_dir1.1")
-                        )
+                    listOf(
+                        Path("included_dir1.1"),
+                        Path("included_dir1.2")
+                    ),
+                    listOf(
+                        Path("excluded_dir1.1")
+                    )
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(7),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -400,11 +317,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file8ImportsEmpty.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -412,9 +327,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target8.1"), BuildTargetIdentifier("//excluded_target8.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path8/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.8:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path8/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path8/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag8.1=value8.1",
@@ -434,7 +347,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(8),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -445,11 +357,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file5ImportsFile1File2File3.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -465,9 +375,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target5.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path3/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.3:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path3/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path3/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag1.1=value1.1",
@@ -481,21 +389,20 @@ class DefaultProjectViewParserTest {
                 ),
                 buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                 directories = ProjectViewDirectoriesSection(
-                        listOf(
-                            Path("included_dir1.1"),
-                            Path("included_dir1.2"),
-                            Path("included_dir2.1"),
-                            Path("included_dir3.1")
-                        ),
-                        listOf(
-                            Path("excluded_dir1.1"),
-                            Path("excluded_dir2.1"),
-                            Path("excluded_dir3.1"),
-                        )
+                    listOf(
+                        Path("included_dir1.1"),
+                        Path("included_dir1.2"),
+                        Path("included_dir2.1"),
+                        Path("included_dir3.1")
+                    ),
+                    listOf(
+                        Path("excluded_dir1.1"),
+                        Path("excluded_dir2.1"),
+                        Path("excluded_dir3.1"),
+                    )
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(3),
-                produceTraceLog = ProjectViewProduceTraceLogSection(true),
             )
             projectView shouldBe expectedProjectView
         }
@@ -506,11 +413,9 @@ class DefaultProjectViewParserTest {
             val projectViewFilePath = Path("/projectview/file6ImportsFile2File3File4.bazelproject")
 
             // when
-            val projectViewTry = parser.parse(projectViewFilePath)
+            val projectView = parser.parse(projectViewFilePath)
 
             // then
-            projectViewTry.isSuccess shouldBe true
-            val projectView = projectViewTry.get()
 
             val expectedProjectView = ProjectView(
                 targets = ProjectViewTargetsSection(
@@ -527,9 +432,7 @@ class DefaultProjectViewParserTest {
                         BuildTargetIdentifier("//excluded_target4.2")
                     )
                 ),
-                bazelPath = ProjectViewBazelPathSection(Path("path1/to/bazel")),
-                debuggerAddress = ProjectViewDebuggerAddressSection("0.0.0.1:8000"),
-                javaPath = ProjectViewJavaPathSection(Path("path1/to/java")),
+                bazelBinary = ProjectViewBazelBinarySection(Path("path1/to/bazel")),
                 buildFlags = ProjectViewBuildFlagsSection(
                     listOf(
                         "--build_flag2.1=value2.1",
@@ -561,7 +464,6 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
-                produceTraceLog = ProjectViewProduceTraceLogSection(false),
             )
             projectView shouldBe expectedProjectView
         }

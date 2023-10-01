@@ -1,7 +1,5 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
-import io.vavr.control.Try
-import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSection
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
@@ -12,28 +10,22 @@ abstract class ProjectViewSectionParser<T : ProjectViewSection> {
 
     abstract fun parse(rawSections: ProjectViewRawSections): T?
 
-    fun parse(rawSection: ProjectViewRawSection): Try<T?> =
-        getSectionBodyOrFailureIfNameIsWrong(rawSection)
-            .onFailure {
-                log.error(
-                    "Failed to parse section with '${rawSection.sectionName}'. Expected name: '$sectionName'. Parsing failed!",
-                    it
-                )
-            }
-            .map { parse(it) }
-
-    private fun getSectionBodyOrFailureIfNameIsWrong(rawSection: ProjectViewRawSection): Try<String> {
+    /**
+     * Parses a raw section of a project view and returns the parsed result.
+     *
+     * @param rawSection the raw section to be parsed
+     * @return the parsed result of the raw section, or null if parsing fails
+     * @throws IllegalArgumentException if the section name of the raw section does not match the expected section name
+     */
+    fun parse(rawSection: ProjectViewRawSection): T? {
         if (rawSection.sectionName != sectionName) {
             val exceptionMessage =
-                "Project view parsing failed! Expected '$sectionName' section name, got '${rawSection.sectionName}'!"
-            return Try.failure(IllegalArgumentException(exceptionMessage))
+                "Project view parsing failed. Expected '$sectionName' section name, got '${rawSection.sectionName}'."
+            throw IllegalArgumentException(exceptionMessage)
         }
-        return Try.success(rawSection.sectionBody)
+        return parse(rawSection.sectionBody)
+
     }
 
     protected abstract fun parse(sectionBody: String): T?
-
-    companion object {
-        private val log = LogManager.getLogger(ProjectViewSectionParser::class.java)
-    }
 }

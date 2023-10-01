@@ -1,36 +1,27 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
-import io.vavr.collection.Seq
-import io.vavr.control.Try
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDebuggerAddressSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewJavaPathSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelPathSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewProduceTraceLogSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 
 /**
  * Representation of the project view file.
  *
  * @link https://ij.bazel.build/docs/project-views.html
  */
-data class ProjectView constructor(
+data class ProjectView(
     /** targets included and excluded from the project  */
     val targets: ProjectViewTargetsSection?,
     /** bazel path used to invoke bazel from the code  */
-    val bazelPath: ProjectViewBazelPathSection?,
-    /** debugger address which can be added to the server run command (as a flag to java)  */
-    val debuggerAddress: ProjectViewDebuggerAddressSection?,
-    /** path to java to run a server  */
-    val javaPath: ProjectViewJavaPathSection?,
+    val bazelBinary: ProjectViewBazelBinarySection?,
     /** bazel flags added to all bazel command invocations  */
     val buildFlags: ProjectViewBuildFlagsSection?,
     /** flag for building manual targets. */
@@ -41,79 +32,58 @@ data class ProjectView constructor(
     val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
     /** level of depth for importing inherited targets */
     val importDepth: ProjectViewImportDepthSection?,
-    /** if set to true, json-rpc server will produce .trace.json file */
-    val produceTraceLog: ProjectViewProduceTraceLogSection?,
 ) {
 
-    data class Builder constructor(
-        private val imports: List<Try<ProjectView>> = emptyList(),
+    data class Builder(
+        private val imports: List<ProjectView> = emptyList(),
         private val targets: ProjectViewTargetsSection? = null,
-        private val bazelPath: ProjectViewBazelPathSection? = null,
-        private val debuggerAddress: ProjectViewDebuggerAddressSection? = null,
-        private val javaPath: ProjectViewJavaPathSection? = null,
+        private val bazelBinary: ProjectViewBazelBinarySection? = null,
         private val buildFlags: ProjectViewBuildFlagsSection? = null,
         private val buildManualTargets: ProjectViewBuildManualTargetsSection? = null,
         private val directories: ProjectViewDirectoriesSection? = null,
         private val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
         private val importDepth: ProjectViewImportDepthSection? = null,
-        private val produceTraceLog: ProjectViewProduceTraceLogSection? = null,
     ) {
 
-        fun build(): Try<ProjectView> {
+        fun build(): ProjectView {
             log.debug("Building project view for: {}", this)
 
-            return Try.sequence(imports)
-                .map(Seq<ProjectView>::toJavaList)
-                .map(MutableList<ProjectView>::toList)
-                .map(::buildWithImports)
+            return buildWithImports(imports)
         }
 
         private fun buildWithImports(importedProjectViews: List<ProjectView>): ProjectView {
             val targets = combineTargetsSection(importedProjectViews)
-            val bazelPath = combineBazelPathSection(importedProjectViews)
-            val debuggerAddress = combineDebuggerAddressSection(importedProjectViews)
-            val javaPath = combineJavaPathSection(importedProjectViews)
+            val bazelBinary = combineBazelBinarySection(importedProjectViews)
             val buildFlags = combineBuildFlagsSection(importedProjectViews)
             val buildManualTargets = combineManualTargetsSection(importedProjectViews)
             val directories = combineDirectoriesSection(importedProjectViews)
             val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
             val importDepth = combineImportDepthSection(importedProjectViews)
-            val produceTraceLog =
-                produceTraceLog ?: getLastImportedSingletonValue(importedProjectViews) { it.produceTraceLog }
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
-                        + " bazel path: {},"
-                        + " debugger address: {},"
-                        + " java path: {},"
+                        + " bazel binary: {},"
+                        + " build flags: {}"
                         + " build manual targets {},"
-                        + " java path: {},"
                         + " directories: {},"
                         + " deriveTargetsFlag: {}."
-                        + " import depth: {},"
-                        + " produce trace log: {}.",
+                        + " import depth: {},",
                 targets,
-                bazelPath,
-                debuggerAddress,
-                javaPath,
-                buildManualTargets,
-                javaPath,
-                directories,
-                deriveTargetsFromDirectories,
-                importDepth,
-                produceTraceLog,
-            )
-            return ProjectView(
-                targets,
-                bazelPath,
-                debuggerAddress,
-                javaPath,
+                bazelBinary,
                 buildFlags,
                 buildManualTargets,
                 directories,
                 deriveTargetsFromDirectories,
                 importDepth,
-                produceTraceLog
+            )
+            return ProjectView(
+                targets,
+                bazelBinary,
+                buildFlags,
+                buildManualTargets,
+                directories,
+                deriveTargetsFromDirectories,
+                importDepth,
             )
         }
 
@@ -198,14 +168,8 @@ data class ProjectView constructor(
             values: List<V>, constructor: (List<V>) -> T
         ): T? = if (values.isEmpty()) null else constructor(values)
 
-        private fun combineBazelPathSection(importedProjectViews: List<ProjectView>): ProjectViewBazelPathSection? =
-            bazelPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::bazelPath)
-
-        private fun combineDebuggerAddressSection(importedProjectViews: List<ProjectView>): ProjectViewDebuggerAddressSection? =
-            debuggerAddress ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::debuggerAddress)
-
-        private fun combineJavaPathSection(importedProjectViews: List<ProjectView>): ProjectViewJavaPathSection? =
-            javaPath ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::javaPath)
+        private fun combineBazelBinarySection(importedProjectViews: List<ProjectView>): ProjectViewBazelBinarySection? =
+            bazelBinary ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::bazelBinary)
 
         private fun combineManualTargetsSection(importedProjectViews: List<ProjectView>): ProjectViewBuildManualTargetsSection? =
             buildManualTargets

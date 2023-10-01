@@ -53,6 +53,20 @@ kt_jvm_binary(
 )
 
 kt_jvm_binary(
+    name = "BazelBspPythonProjectTest",
+    srcs = ["BazelBspPythonProjectTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspPythonProjectTest",
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//e2e:__subpackages__"],
+    deps = [
+        "//commons",
+        "//e2e/src/main/java/org/jetbrains/bsp/bazel/base",
+        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+    ],
+)
+
+
+kt_jvm_binary(
     name = "BazelBspRustProjectTest",
     srcs = ["BazelBspRustProjectTest.kt"],
     main_class = "org.jetbrains.bsp.bazel.BazelBspRustProjectTest",

@@ -2,19 +2,17 @@ package org.jetbrains.bsp.bazel.projectview.parser
 
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.utils.dope.DopeFiles
-import org.jetbrains.bsp.bazel.utils.dope.DopeTemp
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createTempFile
 
 object ProjectViewParserTestMock : DefaultProjectViewParser() {
 
-    override fun parse(projectViewFilePath: Path): Try<ProjectView> =
-        Try.success(copyResourcesFileToTmpFile(projectViewFilePath))
-            .flatMap { super.parse(it) }
+    override fun parse(projectViewFilePath: Path): ProjectView =
+        copyResourcesFileToTmpFile(projectViewFilePath).let { super.parse(it) }
 
     private fun copyResourcesFileToTmpFile(resourcesFile: Path): Path {
         val resourcesFileContent = readFileContent(resourcesFile)
@@ -22,7 +20,6 @@ object ProjectViewParserTestMock : DefaultProjectViewParser() {
         return createTempFileWithContentIfContentExists(resourcesFile, resourcesFileContent)
     }
 
-    // TODO @abrams27 - move to utils
     private fun readFileContent(filePath: Path): String? {
         // we read file content instead of passing plain file due to bazel resources packaging
         val inputStream: InputStream? =
@@ -34,11 +31,13 @@ object ProjectViewParserTestMock : DefaultProjectViewParser() {
     }
 
     private fun createTempFileWithContentIfContentExists(path: Path, content: String?): Path =
-        content?.let { createTempFileWithContent(path, it) } ?: path
+        content?.let { createTempFileWithContent(it) } ?: path
 
-    private fun createTempFileWithContent(path: Path, content: String): Path {
-        val tempFile = DopeTemp.createTempFile(path.toString())
-        DopeFiles.writeText(tempFile, content)
+    private fun createTempFileWithContent(content: String): Path {
+        val tempFile = createTempFile("ProjectViewParserTestMock")
+
+        Files.createDirectories(tempFile.parent)
+        Files.writeString(tempFile, content)
 
         return tempFile
     }

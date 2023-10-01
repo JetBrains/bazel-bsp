@@ -23,21 +23,23 @@ import ch.epfl.scala.bsp4j.JavaBuildServer;
 import ch.epfl.scala.bsp4j.JavacOptionsParams;
 import ch.epfl.scala.bsp4j.JavacOptionsResult;
 import ch.epfl.scala.bsp4j.JvmBuildServer;
-import ch.epfl.scala.bsp4j.RustBuildServer;
-import ch.epfl.scala.bsp4j.RustToolchainParams;
-import ch.epfl.scala.bsp4j.RustToolchainResult;
-import ch.epfl.scala.bsp4j.RustWorkspaceParams;
-import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.OutputPathsParams;
 import ch.epfl.scala.bsp4j.OutputPathsResult;
+import ch.epfl.scala.bsp4j.PythonBuildServer;
+import ch.epfl.scala.bsp4j.PythonOptionsParams;
+import ch.epfl.scala.bsp4j.PythonOptionsResult;
+import ch.epfl.scala.bsp4j.ReadParams;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
 import ch.epfl.scala.bsp4j.RunResult;
+import ch.epfl.scala.bsp4j.RustBuildServer;
+import ch.epfl.scala.bsp4j.RustWorkspaceParams;
+import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
@@ -54,11 +56,20 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
+import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
-    implements BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, RustBuildServer {
+    implements BuildServer,
+        JvmBuildServer,
+        ScalaBuildServer,
+        JavaBuildServer,
+        CppBuildServer,
+        BazelBuildServer,
+        PythonBuildServer,
+        RustBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -184,11 +195,6 @@ public class BspServerApi
   }
 
   @Override
-  public void onConnectWithClient(BuildClient buildClient) {
-    BuildServer.super.onConnectWithClient(buildClient);
-  }
-
-  @Override
   public CompletableFuture<ScalacOptionsResult> buildTargetScalacOptions(
       ScalacOptionsParams params) {
     return runner.handleRequest(
@@ -223,25 +229,38 @@ public class BspServerApi
   }
 
   @Override
-  public CompletableFuture<JvmRunEnvironmentResult> jvmRunEnvironment(
+  public CompletableFuture<PythonOptionsResult> buildTargetPythonOptions(
+      PythonOptionsParams params) {
+    return runner.handleRequest(
+        "buildTargetPythonOptions", projectSyncService::buildTargetPythonOptions, params);
+  }
+
+  @Override
+  public CompletableFuture<JvmRunEnvironmentResult> buildTargetJvmRunEnvironment(
       JvmRunEnvironmentParams params) {
     return runner.handleRequest("jvmRunEnvironment", projectSyncService::jvmRunEnvironment, params);
   }
 
   @Override
-  public CompletableFuture<JvmTestEnvironmentResult> jvmTestEnvironment(
+  public CompletableFuture<JvmTestEnvironmentResult> buildTargetJvmTestEnvironment(
       JvmTestEnvironmentParams params) {
     return runner.handleRequest(
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
   }
 
   @Override
-  public CompletableFuture<RustWorkspaceResult> rustWorkspace(RustWorkspaceParams params) {
-    return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace, params);
+  public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
+    return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
+  }
+
+  // TODO handle properly
+  @Override
+  public void onRunReadStdin(ReadParams params) {
+    runner.handleNotification("onRunReadStdin", executeService::readStdin);
   }
 
   @Override
-  public CompletableFuture<RustToolchainResult> rustToolchain(RustToolchainParams params) {
-    return runner.handleRequest("rustToolchain", projectSyncService::rustToolchain, params);
+  public CompletableFuture<RustWorkspaceResult> rustWorkspace(RustWorkspaceParams params) {
+    return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace, params);
   }
 }

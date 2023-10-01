@@ -7,46 +7,25 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.io.path.Path
 
-
 class DotBazelBspDirPathSpecMapperTest {
 
     @Nested
-    @DisplayName("fun map(projectView): Try<DotBazelBspDirPathSpec> tests")
+    @DisplayName("fun map(projectView): DotBazelBspDirPathSpec tests")
     inner class MapTest {
 
         @Test
         fun `should return success with deducted dir path skipping project view`() {
             // given
-            val projectView = ProjectView.Builder().build().get()
+            val workspaceRoot = Path("path/to/workspace")
+            val projectView = ProjectView.Builder().build()
+            val extractor = DotBazelBspDirPathSpecExtractor(workspaceRoot)
 
             // when
-            val dotBazelBspDirPathSpecTry = DotBazelBspDirPathSpecMapper.map(projectView)
+            val dotBazelBspDirPathSpec = extractor.fromProjectView(projectView)
 
             // then
-            dotBazelBspDirPathSpecTry.isSuccess shouldBe true
-            val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.get()
-
-            val expectedBazelPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
-            dotBazelBspDirPathSpec shouldBe expectedBazelPathSpec
-        }
-    }
-
-    @Nested
-    @DisplayName("fun default(): Try<DotBazelBspDirPathSpec> tests")
-    inner class DefaultTest {
-
-        @Test
-        fun `should return success with deducted dir path`() {
-            // given
-            // when
-            val dotBazelBspDirPathSpecTry = DotBazelBspDirPathSpecMapper.default()
-
-            // then
-            dotBazelBspDirPathSpecTry.isSuccess shouldBe true
-            val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecTry.get()
-
-            val expectedBazelPathSpec = DotBazelBspDirPathSpec(Path("").toAbsolutePath().resolve(".bazelbsp"))
-            dotBazelBspDirPathSpec shouldBe expectedBazelPathSpec
+            val expectedDotBazelBspDirPathSpec = DotBazelBspDirPathSpec(workspaceRoot.toAbsolutePath().resolve(".bazelbsp"))
+            dotBazelBspDirPathSpec shouldBe expectedDotBazelBspDirPathSpec
         }
     }
 }

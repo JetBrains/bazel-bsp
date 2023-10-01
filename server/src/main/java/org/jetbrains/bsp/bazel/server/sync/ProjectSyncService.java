@@ -17,11 +17,12 @@ import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams;
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult;
 import ch.epfl.scala.bsp4j.OutputPathsParams;
 import ch.epfl.scala.bsp4j.OutputPathsResult;
+import ch.epfl.scala.bsp4j.PythonOptionsParams;
+import ch.epfl.scala.bsp4j.PythonOptionsResult;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
-import ch.epfl.scala.bsp4j.RustToolchainParams;
-import ch.epfl.scala.bsp4j.RustToolchainResult;
 import ch.epfl.scala.bsp4j.RustWorkspaceParams;
+import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams;
@@ -30,7 +31,6 @@ import ch.epfl.scala.bsp4j.ScalacOptionsParams;
 import ch.epfl.scala.bsp4j.ScalacOptionsResult;
 import ch.epfl.scala.bsp4j.SourcesParams;
 import ch.epfl.scala.bsp4j.SourcesResult;
-import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 
 import java.util.Collections;
@@ -65,6 +65,11 @@ public class ProjectSyncService {
   public WorkspaceBuildTargetsResult workspaceBuildTargets(CancelChecker cancelChecker) {
     var project = projectProvider.refreshAndGet(cancelChecker);
     return bspMapper.workspaceTargets(project);
+  }
+
+  public WorkspaceLibrariesResult workspaceBuildLibraries(CancelChecker cancelChecker) {
+    var project = projectProvider.get(cancelChecker);
+    return bspMapper.workspaceLibraries(project);
   }
 
   public SourcesResult buildTargetSources(
@@ -121,6 +126,12 @@ public class ProjectSyncService {
     return bspMapper.buildTargetCppOptions(project, params);
   }
 
+  public PythonOptionsResult buildTargetPythonOptions(
+          CancelChecker cancelChecker, PythonOptionsParams params) {
+    var project = projectProvider.get(cancelChecker);
+    return bspMapper.buildTargetPythonOptions(project, params);
+  }
+
   public ScalacOptionsResult buildTargetScalacOptions(
       CancelChecker cancelChecker, ScalacOptionsParams params) {
     var project = projectProvider.get(cancelChecker);
@@ -139,11 +150,9 @@ public class ProjectSyncService {
     return bspMapper.buildTargetScalaMainClasses(project, params);
   }
 
-  // TODO implement this endpoint to return libraries with maven coordinates that target depends on
-  // this should be helpful for 3rd party shared indexes in IntelliJ, however the endpoint is not
-  // yet used in the client
   public DependencyModulesResult buildTargetDependencyModules(
       CancelChecker cancelChecker, DependencyModulesParams params) {
+    // TODO https://youtrack.jetbrains.com/issue/BAZEL-616
     return new DependencyModulesResult(Collections.emptyList());
   }
 
@@ -151,11 +160,5 @@ public class ProjectSyncService {
         CancelChecker cancelChecker, RustWorkspaceParams params) {
       var project = projectProvider.get(cancelChecker);
       return bspMapper.rustWorkspace(project, params);
-    }
-
-    public RustToolchainResult rustToolchain(
-        CancelChecker cancelChecker, RustToolchainParams params) {
-      var project = projectProvider.get(cancelChecker);
-      return bspMapper.rustToolchain(project, params);
     }
 }

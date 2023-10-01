@@ -33,7 +33,7 @@ fun createRustModule(
     crateRoot: String,
     location: RustCrateLocation = RustCrateLocation.EXEC_ROOT,
     crateFeatures: List<String> = emptyList(),
-    dependencies: List<RustDependency>,
+    dependencies: List<String> = emptyList(),
     procMacroArtifacts: List<String> = emptyList()
 ): RustModule =
     RustModule(
@@ -44,117 +44,129 @@ fun createRustModule(
         kind = "bin",
         edition = "2018",
         crateFeatures = crateFeatures,
-        dependencies = dependencies,
+        dependencies_crate_ids = dependencies,
         crateRoot = crateRoot,
         version = "1.2.3",
         procMacroArtifacts = procMacroArtifacts,
-        procMacroSrv = "/path/to/procMacroSrv",
-        rustcSysroot = "/path/to/rustcSysroot",
-        rustcSrcSysroot = "/path/to/rustcSrcSysroot",
-        cargoBinPath = "/path/to/cargoBinPath",
-        rustcVersion = "rustcVersion",
-        rustcHost = "x86_64-unknown-linux-gnu",
     )
 
 fun createTarget(
-    packageName: String,
-    targetName: String,
+    moduleName: String,
     directDependencies: List<String>,
-    sources: Set<String>,
-    crateRoot: String,
-    baseDirectory: String
-): Module =
-    createModule(
-        label = "$packageName:$targetName",
+): Module {
+    val pathPrefix = "file:///path/to/targets"
+    val crateRoot = "$pathPrefix/dir$moduleName/src/lib.rs"
+
+    return createModule(
+        label = "@//pkg$moduleName:$moduleName",
         directDependencies = directDependencies.map { Label(it) },
         rustModule = createRustModule(
-            crateId = targetName,
+            crateId = moduleName,
             crateRoot = crateRoot,
-            dependencies = directDependencies.map { RustDependency(it, it) },
+            dependencies = directDependencies,
         ),
-        sources = sources.map { URI.create(it) }.toSet(),
-        baseDirectory = URI.create(baseDirectory)
+        sources = setOf(URI.create(crateRoot)),
+        baseDirectory = URI.create("$pathPrefix/dir$moduleName/")
+    )
+}
+
+fun getModuleWithoutDependencies(features: List<String> = emptyList()): Pair<RustModule, Module> {
+    val rustModule = createRustModule(
+        crateId = "sample_target/src/lib.rs",
+        crateRoot = "file:///path/to/sample_target/src/lib.rs",
+        crateFeatures = features
+    )
+    val module = createModule(
+        label = "@//sample_target:sample_target",
+        directDependencies = emptyList(),
+        sources = setOf<URI>(
+            URI.create("file:///path/to/sample_target/src/lib.rs")
+        ),
+        baseDirectory = URI.create("file:///path/to/sample_target/"),
+        rustModule = rustModule
     )
 
+    return Pair(rustModule, module)
+}
+
+fun getModulesWithDependency(): List<Module> {
+    //   B
+    //   |
+    //   A
+
+    val rustModuleA = createRustModule(
+        crateId = "dirA/src/lib.rs",
+        crateRoot = "file:///path/to/targetA/src/lib.rs"
+    )
+    val moduleA = createModule(
+        label = "@//dirA:targetA",
+        directDependencies = emptyList(),
+        sources = setOf(URI.create("file:///path/to/dirA/src/lib.rs")),
+        baseDirectory = URI.create("file:///path/to/dirA/"),
+        rustModule = rustModuleA
+    )
+
+    val rustModuleB = createRustModule(
+        crateId = "dirB/src/lib.rs",
+        crateRoot = "file:///path/to/dirB/src/lib.rs",
+        dependencies = listOf(rustModuleA.crateId)
+    )
+    val moduleB = createModule(
+        label = "@//dirB:targetB",
+        directDependencies = listOf(moduleA.label),
+        sources = setOf(URI.create("file:///path/to/dirB/src/lib.rs")),
+        baseDirectory = URI.create("file:///path/to/dirB/"),
+        rustModule = rustModuleB
+    )
+
+    return listOf(moduleA, moduleB)
+}
+
 fun getSampleModules(): Pair<List<Module>, Map<String, Module>> {
-  // B    A
-  // | \ / \
-  // C  D   E
-  // \ /  \ | \
-  //  F     G  H
+    // B    A
+    // | \ / \
+    // C  D   E
+    // \ /  \ | \
+    //  F     G  H
 
-  val pathPrefix = "file:///path/to/targets"
+    val moduleA = createTarget(
+        moduleName = "A",
+        directDependencies = listOf("@//pkgD:D", "@//pkgE:E")
+    )
+    val moduleB = createTarget(
+        moduleName = "B",
+        directDependencies = listOf("@//pkgC:C", "@//pkgD:D")
+    )
+    val moduleC = createTarget(
+        moduleName = "C",
+        directDependencies = listOf("@//pkgF:F")
+    )
+    val moduleD = createTarget(
+        moduleName = "D",
+        directDependencies = listOf("@//pkgF:F", "@//pkgG:G")
+    )
+    val moduleE = createTarget(
+        moduleName = "E",
+        directDependencies = listOf("@//pkgG:G", "@//pkgH:H")
+    )
+    val moduleF = createTarget(
+        moduleName = "F",
+        directDependencies = emptyList()
+    )
+    val moduleG = createTarget(
+        moduleName = "G",
+        directDependencies = emptyList()
+    )
+    val moduleH = createTarget(
+        moduleName = "H",
+        directDependencies = emptyList()
+    )
 
-  val moduleA = createTarget(
-      packageName = "@//pkgA",
-      targetName = "A",
-      directDependencies = listOf("@//pkgD:D", "@//pkgE:E"),
-      sources = setOf("$pathPrefix/dirA/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirA/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirA/"
-  )
-  val moduleB = createTarget(
-      packageName = "@//pkgB",
-      targetName = "B",
-      directDependencies = listOf("@//pkgC:C", "@//pkgD:D"),
-      sources = setOf("$pathPrefix/dirB/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirB/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirB/"
-  )
-  val moduleC = createTarget(
-      packageName = "@//pkgC",
-      targetName = "C",
-      directDependencies = listOf("@//pkgF:F"),
-      sources = setOf("$pathPrefix/dirC/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirC/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirC/"
-  )
-  val moduleD = createTarget(
-      packageName = "@//pkgD",
-      targetName = "D",
-      directDependencies = listOf("@//pkgF:F", "@//pkgG:G"),
-      sources = setOf("$pathPrefix/dirD/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirD/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirD/"
-  )
-  val moduleE = createTarget(
-      packageName = "@//pkgE",
-      targetName = "E",
-      directDependencies = listOf("@//pkgG:G", "@//pkgH:H"),
-      sources = setOf("$pathPrefix/dirE/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirE/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirE/"
-  )
-  val moduleF = createTarget(
-      packageName = "@//pkgF",
-      targetName = "F",
-      directDependencies = emptyList(),
-      sources = setOf("$pathPrefix/dirF/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirF/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirF/"
-  )
-  val moduleG = createTarget(
-      packageName = "@//pkgG",
-      targetName = "G",
-      directDependencies = emptyList(),
-      sources = setOf("$pathPrefix/dirG/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirG/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirG/"
-  )
-  val moduleH = createTarget(
-      packageName = "@//pkgH",
-      targetName = "H",
-      directDependencies = emptyList(),
-      sources = setOf("$pathPrefix/dirH/src/lib.rs"),
-      crateRoot = "$pathPrefix/dirH/src/lib.rs",
-      baseDirectory = "$pathPrefix/dirH/"
-  )
+    val modules = listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG, moduleH)
+    val modulesMap = mapOf(
+        "A" to moduleA, "B" to moduleB, "C" to moduleC, "D" to moduleD, "E" to moduleE,
+        "F" to moduleF, "G" to moduleG, "H" to moduleH
+    )
 
-  val modules = listOf(moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG, moduleH)
-  val modulesMap = mapOf(
-      "A" to moduleA, "B" to moduleB, "C" to moduleC, "D" to moduleD, "E" to moduleE,
-      "F" to moduleF, "G" to moduleG, "H" to moduleH
-  )
-
-  return Pair(modules, modulesMap)
+    return Pair(modules, modulesMap)
 }

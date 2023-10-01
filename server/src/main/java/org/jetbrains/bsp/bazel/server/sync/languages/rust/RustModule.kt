@@ -19,15 +19,9 @@ data class RustModule(
     val kind: String,
     val edition: String,
     val crateFeatures: List<String>,
-    val dependencies: List<RustDependency>,
+    val dependencies_crate_ids: List<String>,
     val crateRoot: String,
     val version: String,
     val procMacroArtifacts: List<String>,
-    val procMacroSrv: String,
-    val rustcSysroot: String,
-    val rustcSrcSysroot: String,
-    val cargoBinPath: String,
-    val rustcVersion: String,
-    val rustcHost: String,
 ) : LanguageData
 

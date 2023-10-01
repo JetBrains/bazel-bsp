@@ -10,12 +10,8 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
-import kotlin.io.path.Path
 import kotlin.io.path.name
 import kotlin.io.path.toPath
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.isSymbolicLink
-import kotlin.io.path.readSymbolicLink
 
 class IntelliJProjectTreeViewFix(
     private val bazelPathsResolver: BazelPathsResolver,
@@ -58,28 +54,14 @@ class IntelliJProjectTreeViewFix(
 
     private fun computeSymlinksToExclude(workspaceRoot: URI): Set<URI> {
         val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
-        val execRoot = Path(bazelInfo.execRoot)
-        val execRootSymlinkNames = execRoot.name.let { name ->
-            // newer bazel versions put workspace name as last component of exec root
-            // still, the symlink to this directory is in form of bazel-<sanitized-workspace-name>
-            // it seems to not accept '_' as a character, and it is replaced with '-'
-            //
-            // In older bazel versions, the exec root directory is named __main__ and I am using
-            // less efficient heuristic: finding all bazel-* files that are symlinks that point to
-            // exec root
-            if (name != "__main__") {
-                setOf("bazel-" + name.replace("[^A-Za-z0-9]".toRegex(), "-"))
-            } else {
-                workspaceRoot.toPath()
-                    .listDirectoryEntries("bazel-*")
-                    .filterNot { it.name in stableSymlinkNames }
-                    .filter { it.isSymbolicLink() && it.readSymbolicLink() == execRoot }
-                    .map { it.name }
-            }
-        }
+        val workspaceRootPath = workspaceRoot.toPath()
+        val sanitizedWorkspaceRootPath = workspaceRootPath
+            .name
+            .replace("[^A-Za-z0-9]".toRegex(), "-")
+        val workspaceSymlinkNames = setOf("bazel-$sanitizedWorkspaceRootPath")
 
-        return (stableSymlinkNames + execRootSymlinkNames).map {
-            workspaceRoot.toPath().resolve(it).toUri()
+        return (stableSymlinkNames + workspaceSymlinkNames).map {
+            workspaceRootPath.resolve(it).toUri()
         }.toSet()
     }
 

@@ -8,9 +8,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # rules_jvm_external - for maven dependencies
 
-RULES_JVM_EXTERNAL_TAG = "5.2"
+RULES_JVM_EXTERNAL_TAG = "5.3"
 
-RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
+RULES_JVM_EXTERNAL_SHA = "d31e369b854322ca5098ea12c69d7175ded971435e55c18dd9dd5f29cc5249ac"
 
 http_archive(
     name = "rules_jvm_external",
@@ -22,9 +22,9 @@ http_archive(
 # ======================================================================================================================
 # kotlin
 
-IO_BAZEL_KOTLIN_RULES_TAG = "v1.7.1"
+IO_BAZEL_KOTLIN_RULES_TAG = "v1.8.1"
 
-IO_BAZEL_KOTLIN_RULES_SHA = "fd92a98bd8a8f0e1cdcb490b93f5acef1f1727ed992571232d33de42395ca9b3"
+IO_BAZEL_KOTLIN_RULES_SHA = "a630cda9fdb4f56cf2dc20a4bf873765c41cf00e9379e8d59cd07b24730f4fde"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -44,9 +44,9 @@ register_toolchains("//:kotlin_toolchain")
 # ======================================================================================================================
 # bazel_skylib - starlark functions
 
-BAZEL_SKYLIB_TAG = "1.4.1"
+BAZEL_SKYLIB_TAG = "1.4.2"
 
-BAZEL_SKYLIB_SHA = "b8a1527901774180afc798aeb28c4634bdccf19c4d98e7bdd1ce79d1fe9aaad7"
+BAZEL_SKYLIB_SHA = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa"
 
 http_archive(
     name = "bazel_skylib",
@@ -57,9 +57,9 @@ http_archive(
 # ======================================================================================================================
 # io_bazel_rules_scala - required by bazel_sonatype
 
-IO_BAZEL_RULES_SCALA_TAG = "5.0.0"
+IO_BAZEL_RULES_SCALA_TAG = "6.1.0"
 
-IO_BAZEL_RULES_SCALA_SHA = "141a3919b37c80a846796f792dcf6ea7cd6e7b7ca4297603ca961cd22750c951"
+IO_BAZEL_RULES_SCALA_SHA = "cc590e644b2d5c6a87344af5e2c683017fdc85516d9d64b37f15d33badf2e84c"
 
 http_archive(
     name = "io_bazel_rules_scala",
@@ -154,33 +154,50 @@ load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
 sonatype_dependencies()
 
 # ======================================================================================================================
-# junit5
-
-load("//:junit5.bzl", "junit_jupiter_java_repositories", "junit_platform_java_repositories")
-
-JUNIT_JUPITER_VERSION = "5.9.2"
-
-JUNIT_PLATFORM_VERSION = "1.9.2"
-
-junit_jupiter_java_repositories(
-    version = JUNIT_JUPITER_VERSION,
-)
-
-junit_platform_java_repositories(
-    version = JUNIT_PLATFORM_VERSION,
-)
-
-# ======================================================================================================================
 # the new testkit
-# todo: merge into the bsp repo?
 
 git_repository(
     name = "testkit",
-    commit = "36bb3467d3df351780d0092dadfd9f3313787e8d",
-    patch_args = ["-p1"],
-    patches = ["//e2e:testkit.patch"],
-    remote = "https://github.com/agluszak/bsp-testkit2.git",
+    commit = "ee5970a56498ff511f36a278e3c9a6bbc8f9fc6f",
+    remote = "https://github.com/build-server-protocol/bsp-testkit2.git",
 )
+
+# ======================================================================================================================
+# e2e tests
+
+RULES_BAZEL_INTEGRATION_TEST_TAG = "0.17.0"
+
+RULES_BAZEL_INTEGRATION_TEST_SHA = "d6dada79939533a8127000d2aafa125f29a4a97f720e01c050fdeb81b1080b08"
+
+http_archive(
+    name = "rules_bazel_integration_test",
+    sha256 = RULES_BAZEL_INTEGRATION_TEST_SHA,
+    url = "https://github.com/bazel-contrib/rules_bazel_integration_test/releases/download/v{}/rules_bazel_integration_test.v{}.tar.gz"
+        .format(RULES_BAZEL_INTEGRATION_TEST_TAG, RULES_BAZEL_INTEGRATION_TEST_TAG),
+)
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@rules_bazel_integration_test//bazel_integration_test:deps.bzl", "bazel_integration_test_rules_dependencies")
+
+bazel_integration_test_rules_dependencies()
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@cgrindel_bazel_starlib//:deps.bzl", "bazel_starlib_dependencies")
+
+bazel_starlib_dependencies()
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "bazel_binaries")
+
+bazel_binaries(versions = [
+    "6.3.2",
+    "5.3.2",
+])
 
 # ======================================================================================================================
 # ----------------------------------------------------------------------------------------------------------------------
@@ -191,23 +208,28 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     artifacts = [
-        "com.google.code.gson:gson:2.8.9",
+        "com.google.code.gson:gson:2.10.1",
         "com.google.guava:guava:31.0.1-jre",
-        "ch.epfl.scala:bsp-testkit_2.13:2.0.0",
+        "com.github.zpp-This-is-fine:build-server-protocol:deleted-rust-build-target",
         "commons-cli:commons-cli:jar:1.5.0",
-        "io.vavr:vavr:0.10.4",
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
-        "org.junit.jupiter:junit-jupiter:5.9.2",
-        "com.fasterxml.jackson.core:jackson-databind:2.15.0",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2",
-        "ch.epfl.scala:bloop-config_2.13:1.5.0",
-        "org.scala-lang:scala-library:2.13.10",
-        "com.github.zpp-This-is-fine:build-server-protocol:resolved-targets-workspace",
-        "com.google.protobuf:protobuf-java:3.22.3",
-        "io.grpc:grpc-stub:1.54.1",
-        "io.grpc:grpc-netty:1.54.1",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
+        "org.junit.jupiter:junit-jupiter:5.10.0",
+        "com.fasterxml.jackson.core:jackson-databind:2.15.2",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
+        "com.google.protobuf:protobuf-java:3.24.3",
+        "io.grpc:grpc-stub:1.58.0",
+
+        # tests
+        "org.junit.jupiter:junit-jupiter-api:5.10.0",
+        "org.junit.jupiter:junit-jupiter-engine:5.10.0",
+        "org.junit.jupiter:junit-jupiter-params:5.10.0",
+        "org.junit.platform:junit-platform-console:1.10.0",
+        "io.kotest:kotest-assertions-api-jvm:5.7.2",
+        "io.kotest:kotest-assertions-core-jvm:5.7.2",
+        "io.kotest:kotest-assertions-shared-jvm:5.7.2",
+        "io.kotest:kotest-common-jvm:5.7.2",
     ],
     fetch_sources = True,
     repositories = [

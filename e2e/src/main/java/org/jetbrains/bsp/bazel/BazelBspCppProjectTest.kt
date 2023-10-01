@@ -20,13 +20,11 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "cpp-project"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> =
         listOf(compareWorkspaceTargetsResults(), cppOptions())
 
     private fun compareWorkspaceTargetsResults(): BazelBspTestScenarioStep {
-        val exampleExampleCppBuildTarget = CppBuildTarget(null, "compiler", "/bin/gcc", "/bin/gcc")
+        val exampleExampleCppBuildTarget = CppBuildTarget().also { it.version = null; it.compiler = "compiler"; it.cCompiler = "/bin/gcc"; it.cppCompiler= "/bin/gcc" }
 
         val exampleExampleBuildTarget =
             BuildTarget(
@@ -34,7 +32,12 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
                 ImmutableList.of("application"),
                 ImmutableList.of(Constants.CPP),
                 ImmutableList.of(BuildTargetIdentifier("@com_google_googletest//:gtest_main")),
-                BuildTargetCapabilities(true, false, true)
+                BuildTargetCapabilities().also {
+                    it.canCompile = true
+                    it.canTest = false
+                    it.canRun = true
+                    it.canDebug = false
+                }
             )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
@@ -47,7 +50,7 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
                 ImmutableList.of(),
                 ImmutableList.of(),
                 ImmutableList.of(),
-                BuildTargetCapabilities(false, false, false)
+               BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
             )
         bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"

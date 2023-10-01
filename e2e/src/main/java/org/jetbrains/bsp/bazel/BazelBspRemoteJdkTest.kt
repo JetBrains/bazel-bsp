@@ -16,22 +16,20 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "remote-jdk-project"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
-        val exampleExampleJvmBuildTarget = JvmBuildTarget(
-            "file://\$BAZEL_CACHE/external/remotejdk11_linux/",
-            "11"
-        )
+        val exampleExampleJvmBuildTarget = JvmBuildTarget().also {
+            it.javaVersion = "11"
+            it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_linux/"
+        }
 
         val exampleExampleBuildTarget = BuildTarget(
             BuildTargetIdentifier("$targetPrefix//example:example"),
             listOf("application"),
             listOf("java"),
             emptyList(),
-            BuildTargetCapabilities(true, false, true, false)
+            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"

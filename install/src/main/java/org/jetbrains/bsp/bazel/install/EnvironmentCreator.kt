@@ -2,75 +2,85 @@ package org.jetbrains.bsp.bazel.install
 
 import ch.epfl.scala.bsp4j.BspConnectionDetails
 import com.google.gson.GsonBuilder
-import io.vavr.control.Try
 import org.jetbrains.bsp.bazel.commons.Constants
-import java.io.InputStream
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import java.nio.file.Paths
+import kotlin.io.path.copyTo
 
 abstract class EnvironmentCreator(private val projectRootDir: Path) {
 
-    abstract fun create(): Try<Void>
+    abstract fun create()
 
-    protected fun createDotBazelBsp(): Try<Path> {
+    protected fun createDotBazelBsp(): Path {
+        removeOldDotBazelBspIfExists()
+
         val bazelBspDir = createDir(projectRootDir, Constants.DOT_BAZELBSP_DIR_NAME)
-        return bazelBspDir.flatMap(::createDotBazelBspFiles)
-            .flatMap { bazelBspDir }
+        createDotBazelBspFiles(bazelBspDir)
+        return bazelBspDir
     }
 
-    private fun createDotBazelBspFiles(dotBazelBspDir: Path): Try<Void> =
+    private fun removeOldDotBazelBspIfExists() {
+        val oldBazelBspDir = projectRootDir.resolve(Constants.DOT_BAZELBSP_DIR_NAME)
+        oldBazelBspDir.toFile().deleteRecursively()
+    }
+
+    private fun createDotBazelBspFiles(dotBazelBspDir: Path) {
         copyAspects(dotBazelBspDir)
-            .flatMap { createEmptyBuildFile(dotBazelBspDir) }
-
-    private fun copyAspects(dotBazelBspDir: Path): Try<Void> {
-        val resourcesAspectsPath = "/" + Constants.ASPECTS_FILE_NAME
-        val destinationAspectsPath = dotBazelBspDir.resolve(Constants.ASPECTS_FILE_NAME)
-
-        return copyFileFromResources(resourcesAspectsPath, destinationAspectsPath)
+        createEmptyBuildFile(dotBazelBspDir)
     }
 
-    private fun createEmptyBuildFile(dotBazelBspDir: Path): Try<Void> {
+    private fun copyAspects(dotBazelBspDir: Path) {
+        val destinationAspectsPath = dotBazelBspDir.resolve(Constants.ASPECTS_ROOT)
+        copyAspectsFromResources("/" + Constants.ASPECTS_ROOT, destinationAspectsPath)
+    }
+
+    private fun createEmptyBuildFile(dotBazelBspDir: Path) {
         val destinationBuildFilePath = dotBazelBspDir.resolve(Constants.BUILD_FILE_NAME)
         val destinationWorkspaceFilePath = dotBazelBspDir.resolve(Constants.WORKSPACE_FILE_NAME)
-        return Try.run {
             destinationBuildFilePath.toFile().createNewFile()
             destinationWorkspaceFilePath.toFile().createNewFile()
-        }
     }
 
-    private fun copyFileFromResources(resourcesPath: String, destinationPath: Path): Try<Void> =
-        Try.withResources { BazelBspEnvironmentCreator::class.java.getResourceAsStream(resourcesPath) }
-            .of { copyFile(it, destinationPath) }
-            .flatMap { it }
+    private fun copyAspectsFromResources(aspectsJarPath: String, destinationPath: Path) =
+        javaClass.getResource(aspectsJarPath)?.let {
+            val fileSystem = FileSystems.newFileSystem(it.toURI(), emptyMap<String, String>())
+            copyFileTree(fileSystem.getPath(aspectsJarPath), destinationPath)
+        } ?: error("Missing aspects resource")
 
-    private fun copyFile(inputStream: InputStream, destinationPath: Path): Try<Void> =
-        Try.run { Files.copy(inputStream, destinationPath, StandardCopyOption.REPLACE_EXISTING) }
 
-    protected fun createDotBsp(discoveryDetails: BspConnectionDetails): Try<Void> =
-        createDir(projectRootDir, Constants.DOT_BSP_DIR_NAME)
-            .flatMap { createBspDiscoveryDetailsFile(it, discoveryDetails) }
+    private fun copyFileTree(source: Path, destination: Path): Unit =
+        Files.walk(source).forEach { copyUsingRelativePath(source, it, destination) }
 
-    protected fun createDir(rootDir: Path, name: String): Try<Path> {
+    private fun copyUsingRelativePath(sourcePrefix: Path, source: Path, destination: Path) {
+        val sourceRelativePath = sourcePrefix.relativize(source).toString()
+        val destinationAbsolutePath = Paths.get(destination.toString(), sourceRelativePath)
+        source.copyTo(destinationAbsolutePath, overwrite = true)
+    }
+
+    protected fun createDotBsp(discoveryDetails: BspConnectionDetails) {
+        val dir = createDir(projectRootDir, Constants.DOT_BSP_DIR_NAME)
+        createBspDiscoveryDetailsFile(dir, discoveryDetails)
+    }
+
+    private fun createDir(rootDir: Path, name: String): Path {
         val dir = rootDir.resolve(name)
 
-        return Try.of { Files.createDirectories(dir) }
+        return Files.createDirectories(dir)
     }
 
     private fun createBspDiscoveryDetailsFile(
         dotBspDir: Path,
-        discoveryDetails: BspConnectionDetails
-    ): Try<Void> {
+        discoveryDetails: BspConnectionDetails,
+    ) {
         val destinationBspDiscoveryFilePath = dotBspDir.resolve(Constants.BAZELBSP_JSON_FILE_NAME)
-        return writeJsonToFile(destinationBspDiscoveryFilePath, discoveryDetails)
+        writeJsonToFile(destinationBspDiscoveryFilePath, discoveryDetails)
     }
 
-    protected fun <T> writeJsonToFile(destinationPath: Path, data: T): Try<Void> {
+    private fun <T> writeJsonToFile(destinationPath: Path, data: T) {
         val fileContent = GsonBuilder().setPrettyPrinting().create().toJson(data)
-        return writeStringToFile(destinationPath, fileContent)
+        Files.writeString(destinationPath, fileContent)
     }
-
-    protected fun writeStringToFile(destinationPath: Path, string: String): Try<Void> =
-        Try.run { Files.writeString(destinationPath, string) }
 
 }

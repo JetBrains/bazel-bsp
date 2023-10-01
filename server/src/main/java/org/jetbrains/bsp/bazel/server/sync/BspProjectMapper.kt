@@ -22,17 +22,19 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
-import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathItem
-import ch.epfl.scala.bsp4j.OutputPathsItem
 import ch.epfl.scala.bsp4j.OutputPathItemKind
+import ch.epfl.scala.bsp4j.OutputPathsItem
+import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathsResult
+import ch.epfl.scala.bsp4j.PythonBuildTarget
+import ch.epfl.scala.bsp4j.PythonOptionsItem
+import ch.epfl.scala.bsp4j.PythonOptionsParams
+import ch.epfl.scala.bsp4j.PythonOptionsResult
 import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunProvider
-import ch.epfl.scala.bsp4j.RustToolchainParams
-import ch.epfl.scala.bsp4j.RustToolchainResult
 import ch.epfl.scala.bsp4j.RustWorkspaceParams
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
@@ -86,6 +88,18 @@ class BspProjectMapper(
         return WorkspaceBuildTargetsResult(buildTargets)
     }
 
+    fun workspaceLibraries(project: Project): WorkspaceLibrariesResult {
+        val libraries = project.libraries.values.map {
+            LibraryItem(
+                id = BuildTargetIdentifier(it.label),
+                dependencies = it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
+                jars = it.outputs.map { uri -> uri.toString() },
+                sourceJars = it.sources.map { uri -> uri.toString() },
+            )
+        }
+        return WorkspaceLibrariesResult(libraries)
+    }
+
     private fun toBuildTarget(module: Module): BuildTarget {
         val label = BspMappings.toBspId(module)
         val dependencies =
@@ -111,7 +125,7 @@ class BspProjectMapper(
         val canCompile = !module.tags.contains(Tag.NO_BUILD) && isBuildableIfManual(module)
         val canTest = module.tags.contains(Tag.TEST) && !module.tags.contains(Tag.MANUAL)
         val canRun = module.tags.contains(Tag.APPLICATION) && !module.tags.contains(Tag.MANUAL)
-        return BuildTargetCapabilities(canCompile, canTest, canRun)
+        return BuildTargetCapabilities().also { it.canCompile = canCompile; it.canTest = canTest; it.canRun = canRun; it.canDebug = false }
     }
 
     private fun isBuildableIfManual(module: Module): Boolean =
@@ -143,8 +157,6 @@ class BspProjectMapper(
         fun emptySourcesItem(label: Label): SourcesItem =
             SourcesItem(BspMappings.toBspId(label), emptyList())
 
-        // TODO handle generated sources. google's plugin doesn't ever mark source root as generated
-        // we need a use case with some generated files and then figure out how to handle it
         val labels = BspMappings.toLabels(sourcesParams.targets)
         val sourcesItems = labels.map {
             project.findModule(it)?.let(::toSourcesItem) ?: emptySourcesItem(it)
@@ -264,6 +276,18 @@ class BspProjectMapper(
     }
 
 
+    fun buildTargetPythonOptions(project: Project, params: PythonOptionsParams): PythonOptionsResult {
+        val modules = BspMappings.getModules(project, params.targets)
+        val items = modules.mapNotNull(::extractPythonOptionsItem)
+        return PythonOptionsResult(items)
+    }
+
+    private fun extractPythonOptionsItem(module: Module): PythonOptionsItem? =
+        languagePluginsService.extractPythonModule(module)?.let {
+            languagePluginsService.pythonLanguagePlugin.toPythonOptionsItem(module, it)
+        }
+
+
     fun buildTargetScalacOptions(
         project: Project,
         params: ScalacOptionsParams
@@ -296,33 +320,13 @@ class BspProjectMapper(
     fun rustWorkspace(
         project: Project,
         params: RustWorkspaceParams
-    ): RustWorkspaceResult =
-        collectRustTargets(
-            project,
-            params.targets,
-            languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
-        )
-
-    fun rustToolchain(
-        project: Project,
-        params: RustToolchainParams
-    ): RustToolchainResult =
-        collectRustTargets(
-            project,
-            params.targets,
-            languagePluginsService.rustLanguagePlugin::toRustToolchains
-        )
-
-    private fun <T> collectRustTargets(
-        project: Project,
-        requestedTargets: List<BuildTargetIdentifier>,
-        resolver: (List<Module>, List<Module>) -> T
-    ): T {
+    ): RustWorkspaceResult {
         val allRustModules = project.findModulesByLanguage(Language.RUST)
         val externalModules = project.rustExternalModules.toList()
-        val requestedModules = BspMappings.getModules(project, requestedTargets)
-            .filter { Language.RUST in it.languages }
+        val requestedModules = BspMappings.getModules(project, params.targets)
+                .filter { Language.RUST in it.languages }
+        val toRustWorkspaceResult = languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
 
-        return resolver(requestedModules, allRustModules + externalModules)
+        return toRustWorkspaceResult(requestedModules, allRustModules + externalModules)
     }
 }
