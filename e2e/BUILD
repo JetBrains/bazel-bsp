@@ -52,6 +52,6 @@ bazel_integration_tests(
     name = "rust_project_test",
     timeout = "eternal",
     bazel_versions = bazel_binaries.versions.all,
-    test_runner = "//e2e/src/main/java/org/jetbrains/bsp/bazel:BazelBspRustProjectTest",
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspRustProjectTest",
     workspace_path = "test-resources/rust-project",
 )

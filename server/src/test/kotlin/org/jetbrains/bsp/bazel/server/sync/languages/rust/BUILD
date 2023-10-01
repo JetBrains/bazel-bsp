@@ -6,7 +6,7 @@ kt_jvm_library(
     srcs = ["RustTestUtils.kt"],
     visibility = ["//visibility:public"],
     deps = [
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
     ],
 )
 
@@ -15,7 +15,7 @@ kt_test(
     size = "small",
     src = "RustPackageResolverTest.kt",
     deps = [
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
         "RustTestUtils",
     ],
 )
@@ -25,7 +25,7 @@ kt_test(
     size = "small",
     src = "RustDependencyResolverTest.kt",
     deps = [
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
         "RustTestUtils",
     ],
 )
@@ -35,7 +35,7 @@ kt_test(
     size = "small",
     src = "RustLanguagePluginTest.kt",
     deps = [
-        "//server/src/main/java/org/jetbrains/bsp/bazel/server/sync",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
         "RustTestUtils",
     ],
 )
