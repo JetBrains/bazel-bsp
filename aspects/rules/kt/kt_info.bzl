@@ -31,7 +31,16 @@ def extract_kotlin_info(target, ctx, **kwargs):
     if not kotlinc_opts_dict.get("jvm_target"):
         kotlinc_opts_dict["jvm_target"] = getattr(kotlin_toolchain, "jvm_target", "")
 
-    kotlin_info["kotlinc_opts"] = create_struct(**kotlinc_opts_dict)
+    kotlinc_opts_list = []
+    for k, v in kotlinc_opts_dict.items():
+        serialized_v = v
+        if type(v) == "list":
+            serialized_v = ",".join(v)
+        if type(v) == "bool":
+            serialized_v = "true" if v else "false"
+        kotlinc_opts_list.append("{}={}".format(k, serialized_v))
+
+    kotlin_info["kotlinc_opts"] = kotlinc_opts_list
 
     kotlin_target_info = create_struct(**kotlin_info)
     info_file = create_proto(target, ctx, kotlin_target_info, "kotlin_target_info")

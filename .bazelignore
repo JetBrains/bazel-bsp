@@ -1,0 +1,5 @@
+e2e/test-resources/sample-repo/bazel-sample-repo
+e2e/test-resources/remote-jdk-project/bazel-remote-jdk-project
+e2e/test-resources/local-jdk-project/bazel-local-jdk-project
+e2e/test-resources/python-project/bazel-python-project
+e2e/test-resources/cpp-project/bazel-cpp-project

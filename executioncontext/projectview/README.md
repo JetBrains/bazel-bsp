@@ -46,15 +46,15 @@ A list of bazel target expressions, they support `/...` notation.
 
 Targets are built during the server lifetime, so the more targets you have, the slower your IDE experience might be. You
 can use negative targets to have server ignore certain targets (
-e.g. `-//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...`).
+e.g. `-//executioncontext/projectview/src/main/kotlin/org/jetbrains/bsp/bazel/projectview/parser/...`).
 
 ##### example:
 
 ```
 targets:
-  //install/src/main/java/org/jetbrains/bsp/bazel/install
+  //install/src/main/kotlin/org/jetbrains/bsp/bazel/install
   //executioncontext/projectview/...
-  -//executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...
+  -//executioncontext/projectview/src/main/kotlin/org/jetbrains/bsp/bazel/projectview/parser/...
 ```
 
 ##### default:
@@ -88,15 +88,15 @@ The server will deduct bazel path from `$PATH`
 A list of directories to be mapped into bazel targets.
 
 You can use negative directories to have server ignore certain directories (
-e.g. `-executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser/...`).
+e.g. `-executioncontext/projectview/src/main/kotlin/org/jetbrains/bsp/bazel/projectview/parser/...`).
 
 ##### example:
 
 ```
 directories:
-  install/src/main/java/org/jetbrains/bsp/bazel/install
+  install/src/main/kotlin/org/jetbrains/bsp/bazel/install
   executioncontext/projectview/
-  -executioncontext/projectview/src/main/java/org/jetbrains/bsp/bazel/projectview/parser
+  -executioncontext/projectview/src/main/kotlin/org/jetbrains/bsp/bazel/projectview/parser
 ```
 
 ##### default:

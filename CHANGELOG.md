@@ -1,20 +1,44 @@
 # Changelog
 
-<!-- Keep a Changelog guide -> https://keepachangelog.com -->
-
 
 ## [Unreleased]
-- Include libraries defined in `jdeps` files during sync
+ 
+## [3.1.0] - 18.09.2023
+
+### Security 🚨
+
+- Bsp cli uses the right permissions for bspcli tmp directory.
+  | [7fded76](https://github.com/JetBrains/bazel-bsp/commit/7fded7603a53931c3b50a43e5e6345f683d4a4be)
+- Server does not use TCP sockets to connect with BES.
+  | [aac294d](https://github.com/JetBrains/bazel-bsp/commit/aac294d7c9d41d4ace2c01aba33d1bfe8cfabd0b)
 
 ### Features 🎉
 
-- The server generates `extensions.bzl` based on languages (external rules) relevant to the project. 
+- The server generates `extensions.bzl` based on languages (external rules) relevant to the project.
+  | [a29c1da](https://github.com/JetBrains/bazel-bsp/commit/a29c1dab6a91888a5358557414f48a0bb0c44c9d)
+- Adding available sources to libraries for workspace/libraries call.
+  | [2e17ea0](https://github.com/JetBrains/bazel-bsp/commit/2e17ea0ee212d362b1569631e6b979a73ba1e013)
 - Enhance Kotlinc Opts support.
+  | [6b45eb6](https://github.com/JetBrains/bazel-bsp/commit/6b45eb61fb90c143b845cae69e2f69c6c1b4460d)
+- Include libraries defined in `jdeps` files during sync.
+  | [bb47e49](https://github.com/JetBrains/bazel-bsp/commit/bb47e493fc595ddf21438f454cee7a6cd756fc0b)
 
 ### Fixes 🛠️
 
-- aspects don't fail if target contains another target as `srcs` attribute
-- now server can obtain scala 3 compiler
+- Avoid using execroot if there are alternative options.
+  | [6a8a7ac](https://github.com/JetBrains/bazel-bsp/commit/6a8a7ac4d3b823695fd58312f96bcb683582b55f)
+- Fixed `resolveOutput` implementation - now should work with projects without symlinks like bazel-bin, bazel-out.
+  | [eb5df0a](https://github.com/JetBrains/bazel-bsp/commit/eb5df0a90555cf4e99d3332de1f0cbc749d95f0c)
+- Aspects don't fail if target contains another target as `srcs` attribute.
+  | [637f0d9](https://github.com/JetBrains/bazel-bsp/commit/637f0d966ab96dc92ad32b028c82d2c207be8288)
+- Server can obtain scala 3 compiler.
+  | [c4a6701](https://github.com/JetBrains/bazel-bsp/commit/c4a67011f76d76ab3de37e8e1592ebbece76b04b)
+- Correctly find symlink names even after folder renaming.
+  | [f4fb71b](https://github.com/JetBrains/bazel-bsp/commit/f4fb71b019515574376f3a10c297f300acde4701)
+- Server does not omit targets that contain dots.
+  | [1c51f02](https://github.com/JetBrains/bazel-bsp/commit/1c51f02a4331c331a0d7d4cc412bfd1e36daf77e)
+- Server adds sources to generated libs.
+  | [eaa5161](https://github.com/JetBrains/bazel-bsp/commit/eaa5161fe4193268c21c324f27786f5f17f79afd)
 
 ## [3.0.0] - 09.08.2023
 
@@ -440,7 +464,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/3.1.0...HEAD
+
+[3.1.0]: https://github.com/JetBrains/bazel-bsp/compare/3.0.0...3.1.0
 
 [3.0.0]: https://github.com/JetBrains/bazel-bsp/compare/2.7.2...3.0.0
 

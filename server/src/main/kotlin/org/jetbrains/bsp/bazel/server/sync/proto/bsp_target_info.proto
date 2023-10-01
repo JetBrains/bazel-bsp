@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package bazelbsp;
+
+option java_package = "org.jetbrains.bsp.bazel.info";
+
+message FileLocation {
+  string relative_path = 1;
+  bool is_source = 2;
+  bool is_external = 3;
+  string root_execution_path_fragment = 4;
+}
+
+message Dependency {
+  enum DependencyType {
+    COMPILE = 0;
+    RUNTIME = 1;
+  }
+
+  string id = 1;
+  DependencyType dependency_type = 2;
+}
+
+message JvmOutputs {
+  repeated FileLocation binary_jars = 1;
+  repeated FileLocation interface_jars = 2;
+  repeated FileLocation source_jars = 3;
+}
+
+message JvmTargetInfo {
+  repeated JvmOutputs jars = 1;
+  repeated JvmOutputs generated_jars = 2;
+  repeated FileLocation runtime_classpath = 3;
+  repeated FileLocation compile_classpath = 4;
+  repeated FileLocation source_classpath = 5;
+  repeated string javac_opts = 6;
+  repeated string jvm_flags = 7;
+  string main_class = 8;
+  repeated string args = 9;
+  repeated FileLocation jdeps = 10;
+}
+
+message JavaToolchainInfo {
+  string source_version = 1;
+  string target_version = 2;
+  FileLocation java_home = 3;
+}
+
+message JavaRuntimeInfo {
+  FileLocation java_home = 1;
+}
+
+message ScalaTargetInfo {
+  repeated string scalac_opts = 1;
+}
+
+message ScalaToolchainInfo {
+  repeated FileLocation compiler_classpath = 1;
+}
+
+message CppTargetInfo {
+  repeated string copts = 1;
+  repeated string defines = 2;
+  repeated string link_opts = 3;
+  bool link_shared = 4;
+}
+
+message KotlinTargetInfo {
+  string language_version = 1;
+  string api_version = 2;
+  repeated string associates = 3;
+  repeated string kotlinc_opts = 4;
+}
+
+message PythonTargetInfo {
+  FileLocation interpreter = 1;
+  string version = 2;
+}
+
+enum RustCrateLocation {
+  WORKSPACE_DIR = 0;
+  EXEC_ROOT = 1;
+}
+
+message RustCrateInfo {
+  string crate_id = 1;
+  RustCrateLocation location = 2;
+  bool from_workspace = 3;
+  string name = 4;
+  string kind = 5;
+  string edition = 6;
+  string out_dir = 7;
+  repeated string crate_features = 8;
+  repeated string dependencies_crate_ids = 9;
+  string crate_root = 10;
+  string version = 11;
+  repeated string proc_macro_artifacts = 12;
+}
+
+message TargetInfo {
+  string id = 10;
+  string kind = 20;
+  repeated string tags = 30;
+  repeated Dependency dependencies = 40;
+  repeated FileLocation sources = 50;
+  repeated FileLocation resources = 60;
+  map <string, string> env = 70;
+  repeated string env_inherit = 80;
+  JvmTargetInfo jvm_target_info = 1000;
+  JavaToolchainInfo java_toolchain_info = 2000;
+  JavaRuntimeInfo java_runtime_info = 3000;
+  ScalaTargetInfo scala_target_info = 4000;
+  ScalaToolchainInfo scala_toolchain_info = 5000;
+  CppTargetInfo cpp_target_info = 6000;
+  KotlinTargetInfo kotlin_target_info = 7000;
+  PythonTargetInfo python_target_info = 8000;
+  RustCrateInfo rust_crate_info = 9000;
+}

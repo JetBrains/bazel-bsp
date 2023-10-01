@@ -42,11 +42,11 @@ Might be useful during development
 1. Have [coursier](https://get-coursier.io/docs/cli-installation) installed
 2. Be inside this project
 3. **Change** the project version - `maven_coordinates` attribute in
-   the `server/src/main/java/org/jetbrains/bsp/bazel/BUILD` file
+   the `server/src/main/kotlin/org/jetbrains/bsp/bazel/BUILD` file
 4. Publish a new version:
 
 ```shell
-bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src/main/java/org/jetbrains/bsp/bazel:bsp.publish
+bazel run --stamp --define "maven_repo=file://$HOME/.m2/repository" //server/src/main/kotlin/org/jetbrains/bsp/bazel:bsp.publish
 ```
 
 7. Enter directory where Bazel BSP should be installed
@@ -69,8 +69,10 @@ Check [project view readme](executioncontext/projectview/README.md) for more inf
 
 `e2e` directory contains end-2-end tests that check various scenarios of server usage.
 
-- `bazel run //e2e:all` - to run all tests
-- `bazel run //e2e:<specific test>` - to run a specific test (to see all possible tests, check the `e2e/BUILD` file)
+_Tests are marked as `manual` so they won't be executed on `bazel test //...`_
+
+`bazel test //e2e:<test name>_bazel_<bazel version>` - to run a specific test 
+  (to see all possible tests, check the `e2e/BUILD` file), e.g. `bazel test //e2e:sample_repo_test_bazel_6_3_2`
 
 ### Unit tests
 
