@@ -23,5 +23,5 @@ data class RustModule(
     val crateRoot: String,
     val version: String,
     val procMacroArtifacts: List<String>,
+    var isExternalModule: Boolean = false
 ) : LanguageData
-

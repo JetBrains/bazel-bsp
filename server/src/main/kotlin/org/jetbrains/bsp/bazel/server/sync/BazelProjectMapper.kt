@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Library
@@ -92,9 +93,10 @@ class BazelProjectMapper(
             selectRustExternalTargetsToImport(rootTargets, dependencyTree)
         }
         val rustExternalModules = measure("Create Rust external modules") {
-            createModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
+            createRustExternalModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
         }
-        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport, rustExternalModules.toList())
+        val allModules = modifiedModules + rustExternalModules
+        return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport)
     }
 
     private fun <K, V> concatenateMaps(
@@ -425,5 +427,19 @@ class BazelProjectMapper(
 
     private fun collectInheritedEnvs(targetInfo: TargetInfo): Map<String, String> =
         targetInfo.envInheritList.associateWith { System.getenv(it) }
+
+    private fun createRustExternalModules(
+        targetsToImport: Sequence<TargetInfo>,
+        dependencyTree: DependencyTree,
+        generatedLibraries: Map<String, Collection<Library>>,
+    ): Sequence<Module> {
+        val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
+        return modules.map { module ->
+            if (module.languageData is RustModule) {
+                (module.languageData as RustModule).isExternalModule = true
+            }
+            module
+        }
+    }
 
 }
