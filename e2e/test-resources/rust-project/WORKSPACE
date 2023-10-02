@@ -1,4 +1,7 @@
+workspace(name = "rust_test")
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 http_archive(
     name = "rules_rust",
     sha256 = "25209daff2ba21e818801c7b2dab0274c43808982d6aea9f796d899db6319146",
@@ -41,7 +44,7 @@ crates_repository(
     },
     # Setting the default package name to `""` forces the use of the macros defined in this repository
     # to always use the root package when looking for dependencies or aliases. This should be considered
-    # optional as the repository also exposes alises for easy access to all dependencies.
+    # optional as the repository also exposes aliases for easy access to all dependencies.
     render_config = render_config(
         default_package_name = ""
     ),

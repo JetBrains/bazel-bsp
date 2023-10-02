@@ -14,8 +14,6 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
     @JvmStatic
     fun main(args: Array<String>) = executeScenario()
 
-    override fun repoName(): String = "rust-project"
-
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
         workspaceBuildTargets(),
         // TODO: rustWorkspacePackaging(),
@@ -46,7 +44,7 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
                 ImmutableList.of(),
                 ImmutableList.of(),
                 ImmutableList.of(),
-                BuildTargetCapabilities(false, false, false)
+                BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
             )
         bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
@@ -63,7 +61,7 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
             listOf("library"),
             listOf("rust"),
             exampleExampleLibRustBuildTargetDependencies,
-            BuildTargetCapabilities(true, false, false, false)
+            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
         )
         exampleExampleLibRustBuildTarget.displayName = "$targetPrefix//example-lib:example_lib"
         exampleExampleLibRustBuildTarget.baseDirectory = "file://\$WORKSPACE/example-lib/"
@@ -80,7 +78,7 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
             listOf("application"),
             listOf("rust"),
             exampleExampleRustBuildTargetDependencies,
-            BuildTargetCapabilities(true, false, true, false)
+            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
         )
         exampleExampleRustBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleRustBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"
@@ -98,7 +96,7 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
             listOf("application"),
             listOf("rust"),
             exampleExampleFeatureRustBuildTargetDependencies,
-            BuildTargetCapabilities(true, false, true, false)
+            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
         )
         exampleExampleFeatureRustBuildTarget.displayName = "$targetPrefix//example:example_foo"
         exampleExampleFeatureRustBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"

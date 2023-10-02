@@ -158,8 +158,8 @@ sonatype_dependencies()
 
 git_repository(
     name = "testkit",
-    commit = "ee5970a56498ff511f36a278e3c9a6bbc8f9fc6f",
-    remote = "https://github.com/build-server-protocol/bsp-testkit2.git",
+    commit = "cf9bcb989e9ad440c5b638f8e5c1799edbf0a326",
+    remote = "https://github.com/ZPP-This-is-fine/bsp-testkit2",
 )
 
 # ======================================================================================================================
