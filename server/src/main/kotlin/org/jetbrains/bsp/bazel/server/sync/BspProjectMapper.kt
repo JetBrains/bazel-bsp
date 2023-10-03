@@ -57,6 +57,10 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import java.net.URI
+import java.nio.file.Path
+import kotlin.io.path.name
+import kotlin.io.path.toPath
 
 class BspProjectMapper(
     private val languagePluginsService: LanguagePluginsService,
@@ -97,6 +101,37 @@ class BspProjectMapper(
         }
         return WorkspaceLibrariesResult(libraries)
     }
+
+    fun workspaceDirectories(project: Project): WorkspaceDirectoriesResult {
+        val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
+        val directoriesSection = workspaceContext.directories
+
+        val symlinksToExclude = computeSymlinksToExclude(project.workspaceRoot)
+        val directoriesToExclude = directoriesSection.excludedValues + symlinksToExclude
+
+        return WorkspaceDirectoriesResult(
+            includedDirectories = directoriesSection.values.map { it.toDirectoryItem() },
+            excludedDirectories = directoriesToExclude.map { it.toDirectoryItem() }
+        )
+    }
+
+    // copied from IntelliJProjectTreeViewFix, but it will be removed with:
+    // https://youtrack.jetbrains.com/issue/BAZEL-665
+    private fun computeSymlinksToExclude(workspaceRoot: URI): List<Path> {
+        val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
+        val workspaceRootPath = workspaceRoot.toPath()
+        val sanitizedWorkspaceRootPath = workspaceRootPath
+            .name
+            .replace("[^A-Za-z0-9]".toRegex(), "-")
+        val workspaceSymlinkNames = setOf("bazel-$sanitizedWorkspaceRootPath")
+
+        return (stableSymlinkNames + workspaceSymlinkNames).map { workspaceRootPath.resolve(it) }
+    }
+
+    private fun Path.toDirectoryItem() =
+        DirectoryItem(
+            uri = this.toUri().toString()
+        )
 
     private fun toBuildTarget(module: Module): BuildTarget {
         val label = BspMappings.toBspId(module)

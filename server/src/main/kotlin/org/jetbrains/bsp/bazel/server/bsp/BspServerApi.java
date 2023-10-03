@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bsp;
 
-import ch.epfl.scala.bsp4j.BuildClient;
 import ch.epfl.scala.bsp4j.BuildServer;
 import ch.epfl.scala.bsp4j.CleanCacheParams;
 import ch.epfl.scala.bsp4j.CleanCacheResult;
@@ -54,6 +53,7 @@ import java.util.function.Supplier;
 import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+import org.jetbrains.bsp.bazel.server.sync.WorkspaceDirectoriesResult;
 import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
@@ -245,5 +245,10 @@ public class BspServerApi
   @Override
   public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
     return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
+  }
+
+  @Override
+  public CompletableFuture<WorkspaceDirectoriesResult> workspaceDirectories() {
+    return runner.handleRequest("libraries", projectSyncService::workspaceDirectories);
   }
 }

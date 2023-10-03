@@ -62,3 +62,12 @@ kt_test(
         "//executioncontext/workspacecontext/src/main/kotlin/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )
+
+kt_test(
+    name = "DirectoriesSpecExtractorTest",
+    size = "small",
+    src = "DirectoriesSpecExtractorTest.kt",
+    associates = [
+        "//executioncontext/workspacecontext/src/main/kotlin/org/jetbrains/bsp/bazel/workspacecontext",
+    ],
+)
