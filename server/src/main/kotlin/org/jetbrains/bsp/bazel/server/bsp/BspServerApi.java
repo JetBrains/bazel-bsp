@@ -249,6 +249,6 @@ public class BspServerApi
 
   @Override
   public CompletableFuture<WorkspaceDirectoriesResult> workspaceDirectories() {
-    return runner.handleRequest("libraries", projectSyncService::workspaceDirectories);
+    return runner.handleRequest("directories", projectSyncService::workspaceDirectories);
   }
 }
