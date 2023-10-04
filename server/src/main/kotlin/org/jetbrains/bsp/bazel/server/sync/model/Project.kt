@@ -24,7 +24,7 @@ data class Project(
     fun findNonExternalModules(): List<Module> {
         val rustExternalModules = modules.filter {
             it.languageData is RustModule &&
-            (it.languageData as RustModule).isExternalModule
+            it.languageData.isExternalModule
         }
         return modules - rustExternalModules
     }

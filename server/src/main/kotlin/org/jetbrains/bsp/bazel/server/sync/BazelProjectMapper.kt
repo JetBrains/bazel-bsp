@@ -437,7 +437,7 @@ class BazelProjectMapper(
         val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
         return modules.map { module ->
             if (module.languageData is RustModule) {
-                (module.languageData as RustModule).isExternalModule = true
+                module.languageData.isExternalModule = true
             }
             module
         }

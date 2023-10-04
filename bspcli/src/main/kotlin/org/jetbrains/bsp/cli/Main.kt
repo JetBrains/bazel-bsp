@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.JavaBuildServer
 import ch.epfl.scala.bsp4j.JvmBuildServer
 import ch.epfl.scala.bsp4j.LogMessageParams
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
+import ch.epfl.scala.bsp4j.PrintParams
 import ch.epfl.scala.bsp4j.ScalaBuildServer
 import ch.epfl.scala.bsp4j.ShowMessageParams
 import ch.epfl.scala.bsp4j.TaskFinishParams
@@ -206,5 +207,9 @@ class BuildClient : ch.epfl.scala.bsp4j.BuildClient {
     override fun onBuildPublishDiagnostics(params: PublishDiagnosticsParams?) {}
 
     override fun onBuildTargetDidChange(params: DidChangeBuildTarget?) {}
+
+    override fun onRunPrintStdout(params: PrintParams?) {}
+
+    override fun onRunPrintStderr(params: PrintParams?) {}
 
 }
