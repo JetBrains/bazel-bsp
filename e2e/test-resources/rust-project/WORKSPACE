@@ -13,10 +13,10 @@ load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_regi
 rules_rust_dependencies()
 
 rust_register_toolchains(
+    edition = "2018",
     versions = [
         "1.69.0",
     ],
-    edition = "2018"
 )
 
 load("@rules_rust//crate_universe:defs.bzl", "crate", "crates_repository", "render_config")
@@ -33,10 +33,10 @@ crates_repository(
             version = "1.0",
         ),
         "serde": crate.spec(
-            version = "1.0",
             features = [
                 "derive",
             ],
+            version = "1.0",
         ),
         "serde_json": crate.spec(
             version = "1.0",
@@ -46,7 +46,7 @@ crates_repository(
     # to always use the root package when looking for dependencies or aliases. This should be considered
     # optional as the repository also exposes aliases for easy access to all dependencies.
     render_config = render_config(
-        default_package_name = ""
+        default_package_name = "",
     ),
 )
 

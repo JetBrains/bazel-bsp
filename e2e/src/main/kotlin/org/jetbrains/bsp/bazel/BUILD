@@ -65,7 +65,6 @@ kt_jvm_binary(
     ],
 )
 
-
 kt_jvm_binary(
     name = "BazelBspRustProjectTest",
     srcs = ["BazelBspRustProjectTest.kt"],
