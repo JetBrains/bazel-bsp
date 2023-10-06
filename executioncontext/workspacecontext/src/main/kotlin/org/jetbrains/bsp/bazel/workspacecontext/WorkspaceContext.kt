@@ -22,6 +22,14 @@ data class WorkspaceContext(
     val targets: TargetsSpec,
 
     /**
+     * Directories (included and excluded) in the project.
+     *
+     * Obtained from 'ProjectView' simply by mapping 'directories' section if not null,
+     * otherwise the whole project is included (project root is included).
+     */
+    val directories: DirectoriesSpec,
+
+    /**
      * Build flags which should be added to each bazel call.
      *
      * Obtained from `ProjectView` simply by mapping `build_flags` section.
@@ -60,24 +68,21 @@ data class WorkspaceContext(
 class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstructor<WorkspaceContext> {
 
     private val dotBazelBspDirPathSpecExtractor = DotBazelBspDirPathSpecExtractor(workspaceRoot)
+    private val directoriesSpecExtractor = DirectoriesSpecExtractor(workspaceRoot)
+
     private val log = LogManager.getLogger(WorkspaceContextConstructor::class.java)
 
     override fun construct(projectView: ProjectView): WorkspaceContext {
         log.info("Constructing workspace context for: {}.", projectView)
 
-        val targetsSpec = TargetsSpecExtractor.fromProjectView(projectView)
-        val buildFlagsSpec = BuildFlagsSpecExtractor.fromProjectView(projectView)
-        val bazelBinarySpec = BazelBinarySpecExtractor.fromProjectView(projectView)
-        val dotBazelBspDirPathSpec = dotBazelBspDirPathSpecExtractor.fromProjectView(projectView)
-        val buildManualTargetsSpec = BuildManualTargetsSpecExtractor.fromProjectView(projectView)
-        val importDepthSpec = ImportDepthSpecExtractor.fromProjectView(projectView)
         return WorkspaceContext(
-            targets = targetsSpec,
-            buildFlags = buildFlagsSpec,
-            bazelBinary = bazelBinarySpec,
-            dotBazelBspDirPath = dotBazelBspDirPathSpec,
-            buildManualTargets = buildManualTargetsSpec,
-            importDepth = importDepthSpec,
+            targets = TargetsSpecExtractor.fromProjectView(projectView),
+            directories = directoriesSpecExtractor.fromProjectView(projectView),
+            buildFlags = BuildFlagsSpecExtractor.fromProjectView(projectView),
+            bazelBinary = BazelBinarySpecExtractor.fromProjectView(projectView),
+            dotBazelBspDirPath = dotBazelBspDirPathSpecExtractor.fromProjectView(projectView),
+            buildManualTargets = BuildManualTargetsSpecExtractor.fromProjectView(projectView),
+            importDepth = ImportDepthSpecExtractor.fromProjectView(projectView),
         )
     }
 }

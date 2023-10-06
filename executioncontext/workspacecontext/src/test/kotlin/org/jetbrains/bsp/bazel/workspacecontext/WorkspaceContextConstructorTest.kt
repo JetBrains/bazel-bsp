@@ -6,6 +6,7 @@ import org.jetbrains.bsp.bazel.projectview.model.ProjectView
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
@@ -34,6 +35,15 @@ class WorkspaceContextConstructorTest {
                         ),
                         listOf(BuildTargetIdentifier("//excluded_target1")),
                     ),
+                    directories = ProjectViewDirectoriesSection(
+                        values = listOf(
+                            Path("path/to/included1"),
+                            Path("path/to/included2"),
+                        ),
+                        excludedValues = listOf(
+                            Path("path/to/excluded"),
+                        )
+                    ),
                     buildFlags = ProjectViewBuildFlagsSection(
                         listOf(
                             "--build_flag1=value1",
@@ -60,6 +70,16 @@ class WorkspaceContextConstructorTest {
                 )
             workspaceContext.targets shouldBe expectedTargets
 
+            val expectedDirectories = DirectoriesSpec(
+                values = listOf(
+                    workspaceRoot.resolve("path/to/included1"),
+                    workspaceRoot.resolve("path/to/included2")
+                ),
+                excludedValues = listOf(
+                    workspaceRoot.resolve("path/to/excluded"),
+                )
+            )
+            workspaceContext.directories shouldBe expectedDirectories
             val expectedBuildFlagsSpec = BuildFlagsSpec(
                 listOf(
                     "--build_flag1=value1",
