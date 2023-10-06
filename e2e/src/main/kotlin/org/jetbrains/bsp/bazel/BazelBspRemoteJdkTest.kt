@@ -50,11 +50,5 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
         return WorkspaceBuildTargetsResult(
             listOf(exampleExampleBuildTarget)
         )
-        return BazelBspTestScenarioStep("workspace build targets") {
-            testClient.testWorkspaceTargets(
-                Duration.ofSeconds(60),
-                workspaceBuildTargetsResult
-            )
-        }
     }
 }
