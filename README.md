@@ -22,7 +22,7 @@ Bazel.
 2. Run in the directory where Bazel BSP should be installed:
 
 ```shell
-cs launch org.jetbrains.bsp:bazel-bsp:<version> -M org.jetbrains.bsp.bazel.install.Install
+cs launch org.jetbrains.bsp:bazel-bsp:<version> -M org.jetbrains.bsp.bazel.install.Install -- --targets //...
 ```
 
 Please check [release](https://github.com/JetBrains/bazel-bsp/releases) to find the newest available version
