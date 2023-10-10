@@ -58,6 +58,22 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
         return bazelPathsResolver.resolveUri(path).toString()
     }
 
+    fun toRustWorkspaceResult(requestTargets: List<Module>, allTargets: List<Module>): RustWorkspaceResult {
+        val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
+        val packages = rustPackageResolver.rustPackages(modules)
+        val (dependencies, rawDependencies) = rustDependencyResolver.rustDependencies(packages, modules)
+        val resolvedTargets = packages.filter { it.origin == "WORKSPACE" }
+                .flatMap { it.resolvedTargets.map { it2 -> it.id + ':' + it2.name }}
+                .map { BuildTargetIdentifier(it) }
+
+        return RustWorkspaceResult(
+            packages,
+            rawDependencies,
+            dependencies,
+            resolvedTargets
+        )
+    }
+
     /**
      * Find all targets that are needed to be resolved.
      * It includes all targets from `targets` and all their dependencies.
@@ -103,21 +119,4 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
             .mapNotNull { allModules[it] }
             .filter { it.label !in visited }
             .filter { Language.RUST in it.languages }
-
-    fun toRustWorkspaceResult(requestTargets: List<Module>, allTargets: List<Module>): RustWorkspaceResult {
-        val modules = findAllRelatedRustTargets(requestTargets, allTargets.associateBy { it.label })
-        val packages = rustPackageResolver.rustPackages(modules)
-        val (dependencies, rawDependencies) = rustDependencyResolver.rustDependencies(packages, modules)
-        val resolvedTargets = packages.filter { it.origin == "WORKSPACE" }
-                                        .flatMap { it.resolvedTargets.map { it2 -> it.id + ':' + it2.name }}
-                                        .map { BuildTargetIdentifier(it) }
-        
-        
-        return RustWorkspaceResult(
-            packages,
-            rawDependencies,
-            dependencies,
-            resolvedTargets
-        )
-    }
 }

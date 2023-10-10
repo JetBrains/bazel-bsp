@@ -26,19 +26,13 @@ crates_repository(
     cargo_lockfile = "//:Cargo.lock",
     lockfile = "//:Cargo.Bazel.lock",
     packages = {
+        "instant": crate.spec(
+            version = "0.1.12",
+        ),
         "itertools": crate.spec(
             version = "0.10",
         ),
         "itoa": crate.spec(
-            version = "1.0",
-        ),
-        "serde": crate.spec(
-            features = [
-                "derive",
-            ],
-            version = "1.0",
-        ),
-        "serde_json": crate.spec(
             version = "1.0",
         ),
     },

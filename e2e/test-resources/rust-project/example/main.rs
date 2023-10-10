@@ -12,6 +12,6 @@ fn main() {
     #[cfg(feature = "foo")]
     sub::foo();
 
-    example_lib::serde_go();
+    example_lib::execute();
     println!("The answer is {}", example_lib::answer());
 }

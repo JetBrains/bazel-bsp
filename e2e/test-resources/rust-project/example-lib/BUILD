@@ -5,7 +5,6 @@ rust_library(
     srcs = ["lib.rs"],
     visibility = ["//visibility:public"],
     deps = [
-        "@crate_index//:serde",
-        "@crate_index//:serde_json",
+        "@crate_index//:instant",
     ],
 )
