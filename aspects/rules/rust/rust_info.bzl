@@ -1,11 +1,5 @@
 load("@rules_rust//rust:rust_common.bzl", "BuildInfo", "CrateInfo")
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "filter", "map")
-
-def flatten(xss):
-    return [x for xs in xss for x in xs]
-
-def flatmap(f, xs):
-    return flatten(map(f, xs))
+load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "filter", "map", "flatmap")
 
 # This is supposed to be enum, but Starlark does not support enums.
 # See bsp_target_info.proto:RustCrateLocation.

@@ -45,10 +45,8 @@ class RustDependencyResolverTest {
         val (dependencies, rawDependencies) = resolver.rustDependencies(packages, modules)
 
         // then
-        dependencies shouldNotBe null
         dependencies shouldBe emptyMap()
 
-        rawDependencies shouldNotBe null
         rawDependencies shouldBe emptyMap()
     }
 
@@ -63,10 +61,8 @@ class RustDependencyResolverTest {
         val (dependencies, rawDependencies) = resolver.rustDependencies(packages, modules)
 
         // then
-        dependencies shouldNotBe null
         dependencies shouldBe emptyMap()
 
-        rawDependencies shouldNotBe null
         rawDependencies shouldBe emptyMap()
     }
 

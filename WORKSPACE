@@ -210,7 +210,7 @@ maven_install(
     artifacts = [
         "com.google.code.gson:gson:2.10.1",
         "com.google.guava:guava:31.0.1-jre",
-        "com.github.zpp-This-is-fine:build-server-protocol:deleted-rust-build-target",
+        "com.github.zpp-This-is-fine:build-server-protocol:fix-typos",
         "commons-cli:commons-cli:jar:1.5.0",
         "org.apache.logging.log4j:log4j-api:2.20.0",
         "org.apache.logging.log4j:log4j-core:2.20.0",
