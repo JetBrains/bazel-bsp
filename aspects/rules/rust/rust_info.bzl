@@ -1,5 +1,5 @@
 load("@rules_rust//rust:rust_common.bzl", "BuildInfo", "CrateInfo")
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "filter", "map", "flatmap")
+load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "filter", "flatmap")
 
 # This is supposed to be enum, but Starlark does not support enums.
 # See bsp_target_info.proto:RustCrateLocation.
