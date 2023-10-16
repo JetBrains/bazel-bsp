@@ -25,6 +25,11 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
     override fun resolveModule(targetInfo: TargetInfo): RustModule? =
         targetInfo.getRustCrateInfoOrNull()?.let { rustCrateInfo ->
             val location = resolveTargetLocation(rustCrateInfo)
+            val kind = if (targetInfo.kind == "rust_test") {
+                "test"
+            } else {
+                rustCrateInfo.kind
+            }
             val crateRoot = resolveTargetCrateRoot(rustCrateInfo, location)
 
             RustModule(
@@ -32,7 +37,7 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
                 location = location,
                 fromWorkspace = rustCrateInfo.fromWorkspace,
                 name = rustCrateInfo.name,
-                kind = rustCrateInfo.kind,
+                kind = kind,
                 edition = rustCrateInfo.edition,
                 crateFeatures = rustCrateInfo.crateFeaturesList,
                 dependenciesCrateIds = rustCrateInfo.dependenciesCrateIdsList,
