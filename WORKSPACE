@@ -216,8 +216,8 @@ maven_install(
         "org.apache.logging.log4j:log4j-core:2.20.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
         "org.junit.jupiter:junit-jupiter:5.10.0",
-        "com.fasterxml.jackson.core:jackson-databind:2.15.2",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
+        "com.fasterxml.jackson.core:jackson-databind:2.15.3",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3",
         "com.google.protobuf:protobuf-java:3.24.3",
         "io.grpc:grpc-stub:1.58.0",
 
