@@ -50,13 +50,20 @@ def get_generated_jars(provider):
         return map_with_resolve_files(to_generated_jvm_outputs, provider.java_outputs)
 
     if hasattr(provider, "annotation_processing") and provider.annotation_processing and provider.annotation_processing.enabled:
-        class_jar = provider.annotation_processing.class_jar
-        source_jar = provider.annotation_processing.source_jar
+        class_jars = [provider.annotation_processing.class_jar]
+        source_jars = [provider.annotation_processing.source_jar]
+
+        # Additional info from `rules_kotlin`'s `KtJvmInfo`
+        if hasattr(provider, "additional_generated_source_jars"):
+            source_jars = source_jars + [jar for jar in provider.additional_generated_source_jars]
+        if hasattr(provider, "all_output_jars"):
+            class_jars = class_jars + [jar for jar in provider.all_output_jars]
+
         output = struct(
-            binary_jars = [file_location(class_jar)],
-            source_jars = [file_location(source_jar)],
+            binary_jars = [file_location(jar) for jar in class_jars],
+            source_jars = [file_location(jar) for jar in source_jars],
         )
-        resolve_files = [class_jar, source_jar]
+        resolve_files = class_jars + source_jars
         return [output], resolve_files
 
     return [], []
