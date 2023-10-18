@@ -54,7 +54,7 @@ class ServerContainer internal constructor(
                 )
             val bazelInfo = bazelDataResolver.resolveBazelInfo { }
 
-            val aspectsResolver = InternalAspectsResolver(bspInfo)
+            val aspectsResolver = InternalAspectsResolver(bspInfo, bazelInfo.release)
             val bazelBspEnvironmentManager = BazelBspEnvironmentManager(aspectsResolver, BazelExternalRulesQueryImpl(bazelRunner))
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver, bazelBspEnvironmentManager)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)
