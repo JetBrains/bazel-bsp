@@ -2,7 +2,11 @@
 
 
 ## [Unreleased]
- 
+
+### Fixes 🛠️
+
+- Project cache correctly deserializes kotlin modules.
+
 ## [3.1.0] - 18.09.2023
 
 ### Security 🚨
