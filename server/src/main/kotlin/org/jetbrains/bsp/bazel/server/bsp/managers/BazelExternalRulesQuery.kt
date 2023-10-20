@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.managers
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
@@ -20,12 +21,13 @@ class BazelExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelE
         bazelRunner.commandBuilder().query()
             .withArgument("//external:*")
             .withFlags(listOf("--output=xml", "--order_output=no"))
-            .executeBazelCommand(parseProcessOutput = false)
-            .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
-            .stdout
-            .readXML()
-            ?.calculateEligibleRules()
-            ?: listOf()
+            .executeBazelCommand(parseProcessOutput = false, useBuildFlags = false)
+            .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
+                if (result.isNotSuccess)
+                    error("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
+                else
+                    result.stdout.readXML()?.calculateEligibleRules()
+            } ?: listOf()
 
     private fun String.readXML(): Document? =
         DocumentBuilderFactory

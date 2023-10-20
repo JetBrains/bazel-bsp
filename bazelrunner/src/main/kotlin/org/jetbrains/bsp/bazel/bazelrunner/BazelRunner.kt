@@ -50,10 +50,12 @@ class BazelRunner private constructor(
         arguments: List<String>,
         originId: String?,
         parseProcessOutput: Boolean,
+        useBuildFlags: Boolean = true,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
+        val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
         val processArgs =
-            listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flags + arguments
+            listOf(bazel(workspaceContext), command) + usedBuildFlags + flags + arguments
         logInvocation(processArgs, originId)
         val processBuilder = ProcessBuilder(processArgs)
         val outputLogger = bspClientLogger.takeIf { parseProcessOutput }

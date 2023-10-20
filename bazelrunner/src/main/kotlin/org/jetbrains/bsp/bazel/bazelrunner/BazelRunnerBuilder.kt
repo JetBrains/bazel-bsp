@@ -83,8 +83,12 @@ open class BazelRunnerBuilder internal constructor(
         return this
     }
 
-    fun executeBazelCommand(originId: String? = null, parseProcessOutput: Boolean = true): BazelProcess {
-        return bazelRunner.runBazelCommand(bazelCommand, flags, arguments, originId, parseProcessOutput)
+    fun executeBazelCommand(
+        originId: String? = null,
+        parseProcessOutput: Boolean = true,
+        useBuildFlags: Boolean = true,
+    ): BazelProcess {
+        return bazelRunner.runBazelCommand(bazelCommand, flags, arguments, originId, parseProcessOutput, useBuildFlags)
     }
 
     fun executeBazelBesCommand(originId: String? = null, buildEventFile: Path): BazelProcess {

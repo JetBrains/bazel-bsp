@@ -14,7 +14,9 @@ class BazelInfoResolver(
   }
 
   private fun bazelInfoFromBazel(cancelChecker: CancelChecker): BazelInfo {
-    val processResult = bazelRunner.commandBuilder().info().executeBazelCommand().waitAndGetResult(cancelChecker,true)
+    val processResult = bazelRunner.commandBuilder()
+        .info().executeBazelCommand(useBuildFlags = false)
+        .waitAndGetResult(cancelChecker,true)
     return parseBazelInfo(processResult).also { storage.store(it) }
   }
 
@@ -25,10 +27,12 @@ class BazelInfoResolver(
           InfoLinePattern.matchEntire(line)?.let { it.groupValues[1] to it.groupValues[2] }
         }.toMap()
 
+    fun BazelProcessResult.meaningfulOutput() = if (isNotSuccess) stderr else stdout
+
     fun extract(name: String): String =
         outputMap[name]
             ?: error("Failed to resolve $name from bazel info in ${bazelRunner.workspaceRoot}. " +
-                "Bazel Info output: '${bazelProcessResult.stdout.escapeNewLines()}'")
+                "Bazel Info output: '${bazelProcessResult.meaningfulOutput().escapeNewLines()}'")
 
     return BasicBazelInfo(
         execRoot = extract("execution_root"),
