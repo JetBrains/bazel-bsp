@@ -29,7 +29,7 @@ IO_BAZEL_KOTLIN_RULES_SHA = "5766f1e599acf551aa56f49dab9ab9108269b03c557496c54ac
 http_archive(
     name = "io_bazel_rules_kotlin",
     sha256 = IO_BAZEL_KOTLIN_RULES_SHA,
-    url = "https://github.com/bazelbuild/rules_kotlin/releases/download/{}/rules_kotlin_release.tgz".format(IO_BAZEL_KOTLIN_RULES_TAG),
+    url = "https://github.com/bazelbuild/rules_kotlin/releases/download/{0}/rules_kotlin-{0}.tar.gz".format(IO_BAZEL_KOTLIN_RULES_TAG),
 )
 
 # ----------------------------------------------------------------------------------------------------------------------
