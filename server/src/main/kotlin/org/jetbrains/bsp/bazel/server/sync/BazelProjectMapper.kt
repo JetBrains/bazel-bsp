@@ -212,7 +212,7 @@ class BazelProjectMapper(
 
     private fun targetSupportsJdeps(targetInfo: TargetInfo): Boolean {
         val languages = inferLanguages(targetInfo)
-        return setOf(Language.JAVA, Language.KOTLIN).containsAll(languages)
+        return setOf(Language.JAVA, Language.KOTLIN, Language.SCALA).containsAll(languages)
     }
 
     private fun syntheticLabel(lib: String): String {
@@ -294,7 +294,14 @@ class BazelProjectMapper(
     private fun isWorkspaceTarget(target: TargetInfo): Boolean =
         target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix()) &&
             (hasJavaSources(target) ||
-                target.kind in setOf("java_library", "java_binary", "kt_jvm_library", "kt_jvm_binary"))
+                target.kind in setOf("java_library",
+                "java_binary",
+                "kt_jvm_library",
+                "kt_jvm_binary",
+                "scala_library",
+                "scala_binary",
+                )
+            )
 
     private fun createModules(
         targetsToImport: Sequence<TargetInfo>,
