@@ -34,11 +34,14 @@ class BazelInfoResolver(
             ?: error("Failed to resolve $name from bazel info in ${bazelRunner.workspaceRoot}. " +
                 "Bazel Info output: '${bazelProcessResult.meaningfulOutput().escapeNewLines()}'")
 
+    fun obtainBazelReleaseVersion() = BazelRelease.fromReleaseString(extract("release")) ?:
+      bazelRunner.workspaceRoot?.let { BazelRelease.fromBazelVersionFile(it) }.orLatestSupported()
+
     return BasicBazelInfo(
         execRoot = extract("execution_root"),
         outputBase = Paths.get(extract("output_base")),
         workspaceRoot = Paths.get(extract("workspace")),
-        release = BazelRelease.fromReleaseString(extract("release"))
+        release = obtainBazelReleaseVersion()
     )
   }
 

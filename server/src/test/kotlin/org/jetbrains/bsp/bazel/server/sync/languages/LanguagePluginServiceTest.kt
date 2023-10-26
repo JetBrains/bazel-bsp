@@ -4,6 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
@@ -31,7 +32,12 @@ class LanguagePluginServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    val bazelInfo = BasicBazelInfo("", Paths.get(""), Paths.get(""), BazelRelease.fromReleaseString("release 6.0.0"))
+    val bazelInfo = BasicBazelInfo(
+      execRoot = "",
+      outputBase = Paths.get(""),
+      workspaceRoot = Paths.get(""),
+      release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
+    )
     val bazelPathsResolver = BazelPathsResolver(bazelInfo)
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
     val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)

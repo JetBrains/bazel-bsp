@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.java
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +24,7 @@ class IdeClasspathResolverTest {
         execRoot = execRoot,
         outputBase = Paths.get(outputBase),
         workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
-        release = BazelRelease.fromReleaseString("release 6.0.0")
+        release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported()
     )
 
     bazelPathsResolver = BazelPathsResolver(bazelInfo)

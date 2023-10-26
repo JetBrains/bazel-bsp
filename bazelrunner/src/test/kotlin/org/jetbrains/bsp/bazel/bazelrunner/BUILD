@@ -13,6 +13,7 @@ kt_test(
     name = "BazelReleaseTest",
     size = "small",
     src = "BazelReleaseTest.kt",
+    resources = ["//bazelrunner/src/test/resources:workspace"],
     deps = [
         "//bazelrunner/src/main/kotlin/org/jetbrains/bsp/bazel/bazelrunner",
     ],
