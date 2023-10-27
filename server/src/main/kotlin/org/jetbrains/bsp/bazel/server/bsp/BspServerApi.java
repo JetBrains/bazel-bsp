@@ -49,10 +49,11 @@ import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
+import org.jetbrains.bsp.bazel.server.sync.RunWithDebugParams;
 import org.jetbrains.bsp.bazel.server.sync.WorkspaceDirectoriesResult;
 import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
@@ -164,6 +165,12 @@ public class BspServerApi
     return runner.handleRequest("buildTargetRun", executeService::run, params);
   }
 
+  @NotNull
+  @Override
+  public CompletableFuture<RunResult> buildTargetRunWithDebug(@NotNull RunWithDebugParams params) {
+    return runner.handleRequest("buildTargetRunWithDebug", executeService::runWithDebug, params);
+  }
+
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(CleanCacheParams params) {
     return runner.handleRequest("buildTargetCleanCache", executeService::clean, params);
@@ -242,6 +249,7 @@ public class BspServerApi
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
   }
 
+  @NotNull
   @Override
   public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
     return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);

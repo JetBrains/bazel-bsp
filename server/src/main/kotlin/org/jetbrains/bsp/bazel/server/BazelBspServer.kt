@@ -56,6 +56,7 @@ class BazelBspServer(
             serverContainer.projectProvider,
             bazelRunner,
             workspaceContextProvider,
+            bspClientLogger,
             bspClientTestNotifier,
             bspState,
         )

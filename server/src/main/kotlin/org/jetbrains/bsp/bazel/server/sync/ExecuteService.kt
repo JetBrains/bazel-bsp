@@ -13,7 +13,6 @@ import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.TestStatus
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
-import io.grpc.Server
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
@@ -21,6 +20,7 @@ import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
@@ -37,12 +37,17 @@ class ExecuteService(
     private val projectProvider: ProjectProvider,
     private val bazelRunner: BazelRunner,
     private val workspaceContextProvider: WorkspaceContextProvider,
+    private val bspClientLogger: BspClientLogger,
     private val bspClientTestNotifier: BspClientTestNotifier,
     private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
 ) {
-    private fun <T> withBepServer(body : (BepReader) -> T) :T {
+    private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
+        bspClientLogger.withOriginId(originId).error(message)
+    }
+
+    private fun <T> withBepServer(body : (BepReader) -> T): T {
         val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems, Optional.empty())
-        val bepReader = BepReader(server);
+        val bepReader = BepReader(server)
         return body(bepReader)
     }
 
@@ -95,16 +100,7 @@ class ExecuteService(
 
     fun run(cancelChecker: CancelChecker, params: RunParams): RunResult {
         val targets = selectTargets(cancelChecker, listOf(params.target))
-        if (targets.isEmpty()) {
-            throw ResponseErrorException(
-                ResponseError(
-                    ResponseErrorCode.InvalidRequest,
-                    "No supported target found for " + params.target.uri,
-                    null
-                )
-            )
-        }
-        val bspId = targets.single()
+        val bspId = targets.singleOrResponseError(params.target)
         val result = build(cancelChecker, targets, params.originId)
         if (result.isNotSuccess) {
             return RunResult(result.statusCode)
@@ -120,6 +116,18 @@ class ExecuteService(
         return RunResult(bazelProcessResult.statusCode).apply { originId = originId }
     }
 
+    fun runWithDebug(cancelChecker: CancelChecker, params: RunWithDebugParams): RunResult {
+        val modules = selectModules(cancelChecker, listOf(params.runParams.target))
+        val singleModule = modules.singleOrResponseError(params.runParams.target)
+        val bspId = toBspId(singleModule)
+        val result = build(cancelChecker, listOf(bspId), params.originId)
+        if (result.isNotSuccess) {
+            return RunResult(result.statusCode)
+        }
+        return debugRunner.runWithDebug(cancelChecker, params, singleModule)
+    }
+
+    @Suppress("UNUSED_PARAMETER")  // params is used by BspRequestsRunner.handleRequest
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
         withBepServer { bepReader ->
             bazelRunner.commandBuilder().clean()
@@ -137,11 +145,13 @@ class ExecuteService(
         ).processResult
     }
 
-    private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> {
+    private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> =
+            selectModules(cancelChecker, targets).map { toBspId(it) }
+
+    private fun selectModules(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<Module> {
         val project = projectProvider.get(cancelChecker)
         val modules = BspMappings.getModules(project, targets)
-        val modulesToBuild = modules.filter { isBuildable(it) }
-        return modulesToBuild.map(::toBspId)
+        return modules.filter { isBuildable(it) }
     }
 
     private fun isBuildable(m: Module): Boolean =
@@ -153,3 +163,17 @@ class ExecuteService(
                 workspaceContextProvider.currentWorkspaceContext().buildManualTargets.value)
 
 }
+
+private fun <T> List<T>.singleOrResponseError(
+    requestedTarget: BuildTargetIdentifier,
+): T =
+    when {
+        this.isEmpty() -> throwResponseError("No supported target found for ${requestedTarget.uri}")
+        this.size == 1 -> this.single()
+        else -> throwResponseError("More than one supported target found for ${requestedTarget.uri}")
+    }
+
+private fun throwResponseError(message: String, data: Any? = null): Nothing =
+    throw ResponseErrorException(
+        ResponseError(ResponseErrorCode.InvalidRequest, message, data)
+    )

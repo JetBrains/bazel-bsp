@@ -15,14 +15,6 @@ import ch.epfl.scala.bsp4j.TestTask
 
 class BspClientTestNotifier {
   private lateinit var bspClient: BuildClient
-  private var originId: String? = null
-
-  fun withOriginId(originId: String?): BspClientTestNotifier {
-    val bspClientTestNotifier = BspClientTestNotifier()
-    bspClientTestNotifier.originId = originId
-    bspClientTestNotifier.bspClient = bspClient
-    return bspClientTestNotifier
-  }
 
   /**
    * Notifies the client about starting a single test or a test suite
