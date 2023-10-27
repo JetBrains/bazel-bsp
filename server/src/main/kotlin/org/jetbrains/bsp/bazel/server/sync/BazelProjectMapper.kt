@@ -48,6 +48,7 @@ class BazelProjectMapper(
     fun createProject(
             targets: Map<String, TargetInfo>,
             rootTargets: Set<String>,
+            allTargetNames: List<String>,
             workspaceContext: WorkspaceContext
     ): Project {
         languagePluginsService.prepareSync(targets.values.asSequence())
@@ -88,7 +89,10 @@ class BazelProjectMapper(
         val librariesToImport = measure("Merge all libraries") {
             librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
         }
-        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport)
+        val invalidTargets = measure("Save invalid target labels") {
+            (removeDotBazelBspTarget(allTargetNames)  - targetsToImport.map(TargetInfo::getId).toList()).map { Label(it) }
+        }
+        return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
     }
 
     private fun <K, V> concatenateMaps(
@@ -419,4 +423,8 @@ class BazelProjectMapper(
     private fun collectInheritedEnvs(targetInfo: TargetInfo): Map<String, String> =
         targetInfo.envInheritList.associateWith { System.getenv(it) }
 
+    private fun removeDotBazelBspTarget(targets: List<String>): List<String> {
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix() + ".bazelbsp"
+        return targets.filter { !it.startsWith(prefix) }
+    }
 }

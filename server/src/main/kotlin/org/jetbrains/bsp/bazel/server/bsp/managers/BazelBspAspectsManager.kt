@@ -13,6 +13,8 @@ import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 
+data class BazelBspAspectsManagerResult(val bepOutput: BepOutput, val isFailure: Boolean)
+
 class BazelBspAspectsManager(
     private val bazelBspCompilationManager: BazelBspCompilationManager,
     private val aspectsResolver: InternalAspectsResolver,
@@ -23,10 +25,10 @@ class BazelBspAspectsManager(
         targetSpecs: TargetsSpec,
         aspect: String,
         outputGroups: List<String>,
-    ): BepOutput {
+    ): BazelBspAspectsManagerResult {
         bazelBspEnvironmentManager.generateLanguageExtensions(cancelChecker)
 
-        return if (targetSpecs.values.isEmpty()) BepOutput()
+        return if (targetSpecs.values.isEmpty()) BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
         else bazelBspCompilationManager
             .buildTargetsWithBep(
                 cancelChecker,
@@ -43,7 +45,8 @@ class BazelBspAspectsManager(
                     curses(false)
                 ),
                 null
-            )
-            .bepOutput
+            ).let {
+                BazelBspAspectsManagerResult(it.bepOutput, it.processResult.isNotSuccess)
+            }
     }
 }

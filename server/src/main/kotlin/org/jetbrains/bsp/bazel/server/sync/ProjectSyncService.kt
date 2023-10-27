@@ -62,6 +62,11 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
     return bspMapper.workspaceDirectories(project)
   }
 
+  fun workspaceInvalidTargets(cancelChecker: CancelChecker): WorkspaceInvalidTargetsResult {
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.workspaceInvalidTargets(project)
+  }
+
   fun buildTargetSources(cancelChecker: CancelChecker, sourcesParams: SourcesParams): SourcesResult {
     val project = projectProvider.get(cancelChecker)
     return bspMapper.sources(project, sourcesParams)

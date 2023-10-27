@@ -11,6 +11,7 @@ import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspEnvironmentManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.server.sync.*
@@ -56,6 +57,7 @@ class ServerContainer internal constructor(
 
             val aspectsResolver = InternalAspectsResolver(bspInfo, bazelInfo.release)
             val bazelBspEnvironmentManager = BazelBspEnvironmentManager(aspectsResolver, BazelExternalRulesQueryImpl(bazelRunner))
+            val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
             val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver, bazelBspEnvironmentManager)
             val bazelPathsResolver = BazelPathsResolver(bazelInfo)
             val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
@@ -74,6 +76,7 @@ class ServerContainer internal constructor(
             val targetInfoReader = TargetInfoReader()
             val projectResolver = ProjectResolver(
                 bazelBspAspectsManager,
+                bazelBspFallbackAspectsManager,
                 workspaceContextProvider,
                 bazelProjectMapper,
                 bspClientLogger,

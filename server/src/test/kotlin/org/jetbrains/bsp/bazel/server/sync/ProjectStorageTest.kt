@@ -67,6 +67,7 @@ class ProjectStorageTest {
             ),
             mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
             emptyMap(),
+            emptyList(),
         )
         storage.store(project)
         val loaded = storage.load()

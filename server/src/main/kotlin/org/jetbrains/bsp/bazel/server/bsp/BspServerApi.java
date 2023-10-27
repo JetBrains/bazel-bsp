@@ -55,6 +55,7 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
 import org.jetbrains.bsp.bazel.server.sync.RunWithDebugParams;
 import org.jetbrains.bsp.bazel.server.sync.WorkspaceDirectoriesResult;
+import org.jetbrains.bsp.bazel.server.sync.WorkspaceInvalidTargetsResult;
 import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
@@ -253,6 +254,11 @@ public class BspServerApi
   @Override
   public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
     return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
+  }
+
+  @Override
+  public CompletableFuture<WorkspaceInvalidTargetsResult> workspaceInvalidTargets() {
+    return runner.handleRequest("invalidTargets", projectSyncService::workspaceInvalidTargets);
   }
 
   @Override

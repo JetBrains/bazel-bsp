@@ -90,6 +90,9 @@ class BspProjectMapper(
         return WorkspaceBuildTargetsResult(buildTargets)
     }
 
+    fun workspaceInvalidTargets(project: Project): WorkspaceInvalidTargetsResult =
+        WorkspaceInvalidTargetsResult(project.invalidTargets.map { BuildTargetIdentifier(it.value) })
+
     fun workspaceLibraries(project: Project): WorkspaceLibrariesResult {
         val libraries = project.libraries.values.map {
             LibraryItem(

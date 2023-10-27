@@ -17,6 +17,10 @@ data class WorkspaceLibrariesResult(
         val libraries: List<LibraryItem>
 )
 
+data class WorkspaceInvalidTargetsResult(
+    val targets: List<BuildTargetIdentifier>
+)
+
 data class DirectoryItem(
   val uri: String,
 )
@@ -41,6 +45,9 @@ data class RunWithDebugParams(
 interface BazelBuildServer {
     @JsonRequest("workspace/libraries")
     fun workspaceLibraries(): CompletableFuture<WorkspaceLibrariesResult>
+
+    @JsonRequest("workspace/invalidTargets")
+    fun workspaceInvalidTargets(): CompletableFuture<WorkspaceInvalidTargetsResult>
 
     @JsonRequest("workspace/directories")
     fun workspaceDirectories(): CompletableFuture<WorkspaceDirectoriesResult>

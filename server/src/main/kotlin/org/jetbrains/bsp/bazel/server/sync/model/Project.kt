@@ -7,7 +7,8 @@ data class Project(
     val workspaceRoot: URI,
     val modules: List<Module>,
     val sourceToTarget: Map<URI, Label>,
-    val libraries: Map<String, Library>
+    val libraries: Map<String, Library>,
+    val invalidTargets: List<Label>,
 ) {
     private val moduleMap: Map<Label, Module> = modules.associateBy(Module::label)
 
