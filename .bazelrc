@@ -6,3 +6,10 @@ build --javacopt="-Xep:WildcardImport:ERROR"
 # `bazel run @rules_bazel_integration_test//tools:update_deleted_packages`
 build --deleted_packages=e2e/test-resources/cpp-project/example,e2e/test-resources/local-jdk-project/example,e2e/test-resources/python-project/example,e2e/test-resources/python-project/lib,e2e/test-resources/python-project/test,e2e/test-resources/remote-jdk-project/example,e2e/test-resources/sample-repo/environment_variables,e2e/test-resources/sample-repo/java_targets,e2e/test-resources/sample-repo/java_targets/subpackage,e2e/test-resources/sample-repo/manual_target,e2e/test-resources/sample-repo/scala_targets,e2e/test-resources/sample-repo/target_with_dependency,e2e/test-resources/sample-repo/target_with_resources,e2e/test-resources/sample-repo/target_without_args,e2e/test-resources/sample-repo/target_without_jvm_flags,e2e/test-resources/sample-repo/target_without_main_class
 query --deleted_packages=e2e/test-resources/cpp-project/example,e2e/test-resources/local-jdk-project/example,e2e/test-resources/python-project/example,e2e/test-resources/python-project/lib,e2e/test-resources/python-project/test,e2e/test-resources/remote-jdk-project/example,e2e/test-resources/sample-repo/environment_variables,e2e/test-resources/sample-repo/java_targets,e2e/test-resources/sample-repo/java_targets/subpackage,e2e/test-resources/sample-repo/manual_target,e2e/test-resources/sample-repo/scala_targets,e2e/test-resources/sample-repo/target_with_dependency,e2e/test-resources/sample-repo/target_with_resources,e2e/test-resources/sample-repo/target_without_args,e2e/test-resources/sample-repo/target_without_jvm_flags,e2e/test-resources/sample-repo/target_without_main_class
+
+# From https://blog.aspect.dev/bazelrc-flags
+build --incompatible_strict_action_env
+startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
+build --noexperimental_check_output_files
+build --noexperimental_check_external_repository_files
+build --experimental_reuse_sandbox_directories
