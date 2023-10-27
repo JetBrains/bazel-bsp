@@ -211,7 +211,7 @@ maven_install(
         "com.google.code.gson:gson:2.10.1",
         "com.google.guava:guava:31.0.1-jre",
         "ch.epfl.scala:bsp4j_2.13:2.1.0-M6.alpha",
-        "commons-cli:commons-cli:jar:1.5.0",
+        "commons-cli:commons-cli:jar:1.6.0",
         "org.apache.logging.log4j:log4j-api:2.21.1",
         "org.apache.logging.log4j:log4j-core:2.21.1",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
