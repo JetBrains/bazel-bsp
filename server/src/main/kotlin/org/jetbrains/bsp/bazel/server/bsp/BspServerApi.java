@@ -96,7 +96,7 @@ public class BspServerApi
 
   @Override
   public void onBuildInitialized() {
-    runner.handleNotification("onBuildInitialized", serverLifetime::setInitializedComplete);
+    runner.handleNotification("onBuildInitialized", serverLifetime::initialize);
   }
 
   @Override
@@ -104,7 +104,7 @@ public class BspServerApi
     return runner.handleRequest(
         "buildShutdown",
         cancelChecker -> {
-          serverLifetime.setFinishedComplete();
+          serverLifetime.finish();
           return new Object();
         },
         runner::serverIsInitialized);

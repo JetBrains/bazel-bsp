@@ -64,3 +64,16 @@ kt_jvm_binary(
         "@maven//:ch_epfl_scala_bsp4j_2_13",
     ],
 )
+
+kt_jvm_binary(
+    name = "ServerDownloadsBazeliskTest",
+    srcs = ["ServerDownloadsBazeliskTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.ServerDownloadsBazeliskTest",
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//e2e:__subpackages__"],
+    deps = [
+        "//commons",
+        "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
+        "@maven//:ch_epfl_scala_bsp4j_2_13",
+    ],
+)

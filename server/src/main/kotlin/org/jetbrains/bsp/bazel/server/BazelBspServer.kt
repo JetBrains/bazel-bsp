@@ -60,7 +60,7 @@ class BazelBspServer(
             bspClientTestNotifier,
             bspState,
         )
-        val serverLifetime = BazelBspServerLifetime()
+        val serverLifetime = BazelBspServerLifetime(workspaceContextProvider)
         val bspRequestsRunner = BspRequestsRunner(serverLifetime)
         return BazelServices(
             serverLifetime,

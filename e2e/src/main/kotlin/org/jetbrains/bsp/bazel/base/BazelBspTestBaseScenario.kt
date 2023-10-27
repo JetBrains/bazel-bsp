@@ -12,8 +12,8 @@ import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario {
 
-    private val binary = System.getenv("BIT_BAZEL_BINARY")
-    private val workspaceDir = System.getenv("BIT_WORKSPACE_DIR")
+    protected val binary = System.getenv("BIT_BAZEL_BINARY")
+    protected val workspaceDir = System.getenv("BIT_WORKSPACE_DIR")
 
     val targetPrefix = calculateTargetPrefix()
     protected val testClient: BazelTestClient
@@ -30,7 +30,7 @@ abstract class BazelBspTestBaseScenario {
         return if (majorVersion < 6) "" else "@"
     }
 
-    private fun installServer() {
+    protected open fun installServer() {
         Install.main(
             arrayOf(
                 "-d", workspaceDir,

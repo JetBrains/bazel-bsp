@@ -47,3 +47,14 @@ bazel_integration_tests(
     test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspPythonProjectTest",
     workspace_path = "test-resources/python-project",
 )
+
+bazel_integration_tests(
+    name = "server_downloads_bazelisk_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    env = {
+        "PATH": "",  # To ensure that the server won't find Bazel in PATH
+    },
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:ServerDownloadsBazeliskTest",
+    workspace_path = "test-resources/sample-repo",
+)

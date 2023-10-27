@@ -3,6 +3,9 @@
 
 ## [Unreleased]
 
+### Features
+- The server will now download bazelisk if Bazel is not found in the PATH.
+
 ### Fixes 🛠️
 
 - Project cache correctly deserializes kotlin modules.
