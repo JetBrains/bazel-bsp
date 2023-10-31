@@ -6,6 +6,7 @@ kt_test(
     src = "BazelBspEnvironmentManagerTest.kt",
     deps = [
         "//commons",
+        "//install:install-lib",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/managers",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
     ],

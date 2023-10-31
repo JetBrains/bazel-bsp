@@ -19,6 +19,8 @@ kt_jvm_library(
         "@io_bazel//third_party/grpc:grpc-jar_checked_in",
         "@maven//:com_google_guava_guava",
         "@maven//:org_apache_logging_log4j_log4j_api",
+        "@maven//:org_apache_velocity_velocity_engine_core",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json",
     ],
 )

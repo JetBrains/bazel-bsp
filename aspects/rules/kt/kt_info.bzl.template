@@ -1,8 +1,8 @@
-load("@io_bazel_rules_kotlin//kotlin/internal:defs.bzl", "KtJvmInfo")
-load("@io_bazel_rules_kotlin//kotlin/internal:opts.bzl", "KotlincOptions")
+load("@${ruleName}//kotlin/internal:defs.bzl", "KtJvmInfo")
+load("@${ruleName}//kotlin/internal:opts.bzl", "KotlincOptions")
 load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_proto", "create_struct")
 
-KOTLIN_TOOLCHAIN_TYPE = "@io_bazel_rules_kotlin//kotlin/internal:kt_toolchain_type"
+KOTLIN_TOOLCHAIN_TYPE = "@${ruleName}//kotlin/internal:kt_toolchain_type"
 
 def extract_kotlin_info(target, ctx, **kwargs):
     if KtJvmInfo not in target:

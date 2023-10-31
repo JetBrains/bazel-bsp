@@ -9,7 +9,7 @@ import java.nio.file.Path
 
 open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
-    private val bazelCommand: String
+    private val bazelCommand: List<String>,
 ) {
 
     private val flags = mutableListOf<String>()

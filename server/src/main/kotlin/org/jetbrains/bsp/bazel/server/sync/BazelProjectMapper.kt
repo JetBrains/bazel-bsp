@@ -296,7 +296,7 @@ class BazelProjectMapper(
         }
 
     private fun isWorkspaceTarget(target: TargetInfo): Boolean =
-        target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix()) &&
+        target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)) &&
             (hasJavaSources(target) ||
                 target.kind in setOf("java_library",
                 "java_binary",
@@ -424,7 +424,7 @@ class BazelProjectMapper(
         targetInfo.envInheritList.associateWith { System.getenv(it) }
 
     private fun removeDotBazelBspTarget(targets: List<String>): List<String> {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix() + ".bazelbsp"
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled) + ".bazelbsp"
         return targets.filter { !it.startsWith(prefix) }
     }
 }

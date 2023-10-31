@@ -79,7 +79,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     }
 
     fun extractRelativePath(label: String): String {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
         require(label.startsWith(prefix)) {
             String.format(
                 "%s didn't start with %s", label, prefix

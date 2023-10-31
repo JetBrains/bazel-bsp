@@ -17,7 +17,7 @@ class BazelReleaseTest {
 
     // then
     release?.major shouldBe 4
-    release?.mainRepositoryReferencePrefix() shouldBe "//"
+    release?.mainRepositoryReferencePrefix(false) shouldBe "//"
   }
 
   @Test
@@ -27,7 +27,7 @@ class BazelReleaseTest {
 
     // then
     release?.major shouldBe 6
-    release?.mainRepositoryReferencePrefix() shouldBe "@//"
+    release?.mainRepositoryReferencePrefix(false) shouldBe "@//"
   }
 
   @Test

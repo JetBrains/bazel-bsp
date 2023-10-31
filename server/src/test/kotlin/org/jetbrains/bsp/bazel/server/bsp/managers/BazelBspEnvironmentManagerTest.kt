@@ -2,17 +2,24 @@ package org.jetbrains.bsp.bazel.server.bsp.managers
 
 import io.kotest.matchers.equals.shouldBeEqual
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.install.EnvironmentCreator
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import java.nio.file.Path
-import kotlin.io.path.createDirectory
 import kotlin.io.path.createTempDirectory
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BazelBspEnvironmentManagerTest {
+
+    class MockEnvironmentCreator(projectRootDir: Path) : EnvironmentCreator(projectRootDir) {
+        override fun create(): Unit = Unit
+
+        fun testCreateDotBazelBsp() = createDotBazelBsp()
+    }
 
     internal class BspInfoMock(private val dotBazelBspPath: Path) : BspInfo() {
         override fun bazelBspDir(): Path = dotBazelBspPath
@@ -57,11 +64,14 @@ class BazelBspEnvironmentManagerTest {
             .joinToString(separator = "")
             .filterNot { it.isWhitespace() }
 
-    @BeforeEach
+    @BeforeAll
     fun before() {
-        val dotBazelBspPath = createTempDirectory(".bazelbsp")
+        val tempRoot = createTempDirectory("test-workspace-root")
+        tempRoot.toFile().deleteOnExit()
+        val dotBazelBspPath = MockEnvironmentCreator(tempRoot).testCreateDotBazelBsp()
 
-        dotBazelBspAspectsPath = dotBazelBspPath.resolve("aspects").createDirectory()
+
+        dotBazelBspAspectsPath = dotBazelBspPath.resolve("aspects")
         internalAspectsResolverMock = InternalAspectsResolver(BspInfoMock(dotBazelBspPath), BazelRelease(5))
     }
 

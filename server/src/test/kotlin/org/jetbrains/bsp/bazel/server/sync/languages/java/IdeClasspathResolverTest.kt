@@ -21,10 +21,11 @@ class IdeClasspathResolverTest {
   fun beforeEach() {
     // given
     val bazelInfo = BasicBazelInfo(
-        execRoot = execRoot,
-        outputBase = Paths.get(outputBase),
-        workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
-        release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported()
+      execRoot = execRoot,
+      outputBase = Paths.get(outputBase),
+      workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
+      release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
+      false
     )
 
     bazelPathsResolver = BazelPathsResolver(bazelInfo)

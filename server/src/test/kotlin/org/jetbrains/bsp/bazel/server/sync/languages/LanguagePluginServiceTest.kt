@@ -37,6 +37,7 @@ class LanguagePluginServiceTest {
       outputBase = Paths.get(""),
       workspaceRoot = Paths.get(""),
       release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
+      false
     )
     val bazelPathsResolver = BazelPathsResolver(bazelInfo)
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())

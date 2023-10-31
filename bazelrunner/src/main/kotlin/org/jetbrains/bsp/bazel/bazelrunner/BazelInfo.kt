@@ -9,16 +9,19 @@ interface BazelInfo {
   val outputBase: Path
   val workspaceRoot: Path
   val release: BazelRelease
+  val isBzlModEnabled: Boolean
 }
 
 data class BazelRelease(
   val major: Int
 ) {
 
-  fun mainRepositoryReferencePrefix() = when(major) {
+  fun mainRepositoryReferencePrefix(isBzlModEnabled: Boolean) = when (major) {
     in 0..3 -> throw RuntimeException("Unsupported Bazel version, use Bazel 4 or newer")
     in 4..5 -> "//"
-    else -> "@//"
+    else ->
+      if (isBzlModEnabled) "@@//"
+      else "@//"
   }
 
   companion object {
@@ -44,15 +47,16 @@ data class BazelRelease(
   }
 }
 
+
 fun BazelRelease?.orLatestSupported() = this ?: BazelRelease.LATEST_SUPPORTED_MAJOR
 
 data class BasicBazelInfo(
-    override val execRoot: String,
-    override val outputBase: Path,
-    override val workspaceRoot: Path,
-    override val release: BazelRelease
+  override val execRoot: String,
+  override val outputBase: Path,
+  override val workspaceRoot: Path,
+  override val release: BazelRelease,
+  override val isBzlModEnabled: Boolean,
 ) : BazelInfo
-
 
 class LazyBazelInfo(bazelInfoSupplier: () -> BazelInfo) : BazelInfo {
   private val bazelInfo: BazelInfo by lazy { bazelInfoSupplier() }
@@ -68,4 +72,7 @@ class LazyBazelInfo(bazelInfoSupplier: () -> BazelInfo) : BazelInfo {
 
   override val release: BazelRelease
     get() = bazelInfo.release
+
+  override val isBzlModEnabled: Boolean
+    get() = bazelInfo.isBzlModEnabled
 }
