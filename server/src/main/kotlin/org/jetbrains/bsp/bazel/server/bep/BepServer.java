@@ -16,6 +16,7 @@ import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -176,22 +177,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     }
   }
 
+  @SuppressWarnings("LiteByteStringUtf8")
   private void consumeUnsuccessfulActionCompletedEvent(
       BuildEventStreamProtos.ActionExecuted actionEvent, String label) {
-    if (actionEvent.getStderr().getFileCase() == BuildEventStreamProtos.File.FileCase.URI) {
-      try {
-        var path = Paths.get(URI.create(actionEvent.getStderr().getUri()));
-        String stdErrText = Files.readString(path);
-        processDiagnosticText(stdErrText, label);
-      } catch (IOException e) {
-        // noop
-      }
-    } else if (actionEvent.getStderr().getFileCase()
-        == BuildEventStreamProtos.File.FileCase.CONTENTS) {
-      processDiagnosticText(actionEvent.getStderr().getContents().toStringUtf8(), label);
-    } else {
-      processDiagnosticText("", label);
-    }
+    String stdErrText = actionEvent.getStderr().toByteString().toStringUtf8();
+    processDiagnosticText(stdErrText, label);
   }
 
   private void processDiagnosticText(String stdErrText, String targetLabel) {
