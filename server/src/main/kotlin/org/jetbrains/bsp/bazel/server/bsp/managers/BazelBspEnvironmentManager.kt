@@ -69,7 +69,7 @@ class BazelBspEnvironmentManager(
     val ruleLanguages = listOf(
       RuleLanguage(listOf(), Language.Java),  // Bundled in Bazel
       RuleLanguage(listOf(), Language.Jvm),  // Bundled in Bazel
-      RuleLanguage(listOf("rules_python"), Language.Python),
+      RuleLanguage(listOf(), Language.Python), // Bundled in Bazel
       RuleLanguage(listOf("rules_cc"), Language.Cpp),
       RuleLanguage(listOf("io_bazel_rules_kotlin", "rules_kotlin"), Language.Kotlin),
       RuleLanguage(listOf("io_bazel_rules_scala"), Language.Scala)

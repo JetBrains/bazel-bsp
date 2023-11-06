@@ -9,6 +9,7 @@
 ### Fixes 🛠️
 
 - Project cache correctly deserializes kotlin modules.
+- Python extension is always loaded and projects created using native python rules get their Python data collected.
 
 ## [3.1.0] - 18.09.2023
 
