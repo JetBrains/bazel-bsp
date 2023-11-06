@@ -228,7 +228,7 @@ maven_install(
         "org.junit.jupiter:junit-jupiter-api:5.10.1",
         "org.junit.jupiter:junit-jupiter-engine:5.10.1",
         "org.junit.jupiter:junit-jupiter-params:5.10.1",
-        "org.junit.platform:junit-platform-console:1.10.0",
+        "org.junit.platform:junit-platform-console:1.10.1",
         "io.kotest:kotest-assertions-api-jvm:5.7.2",
         "io.kotest:kotest-assertions-core-jvm:5.7.2",
         "io.kotest:kotest-assertions-shared-jvm:5.7.2",
