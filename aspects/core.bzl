@@ -131,11 +131,15 @@ def _bsp_target_info_aspect_impl(target, ctx):
             if f.is_source
         ]
 
-    resources = [
-        file_location(f)
-        for t in getattr(ctx.rule.attr, "resources", [])
-        for f in t.files.to_list()
-    ]
+    resources_attr = getattr(ctx.rule.attr, "resources", [])
+    resources = []
+
+    if type(resources_attr) == "list":
+        resources = [
+            file_location(f)
+            for t in resources_attr
+            for f in t.files.to_list()
+        ]
 
     aspect_ids = get_aspect_ids(ctx, target)
 
