@@ -1,20 +1,11 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.contentOrNull
 import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
-import org.xml.sax.InputSource
-import java.io.StringReader
-import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
@@ -25,11 +16,16 @@ interface BazelExternalRulesQuery {
 class BazelExternalRulesQueryImpl(
   private val bazelRunner: BazelRunner,
   private val isBzlModEnabled: Boolean) : BazelExternalRulesQuery {
+  override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> = when (isBzlModEnabled) {
+    true -> BazelBzlModExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker) +
+      BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
 
+    false -> BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
+  }
+}
+
+class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelExternalRulesQuery {
   override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =
-    fetchWorkspaceExternalRuleNames(cancelChecker) + fetchBzlModExternalRuleNames(cancelChecker)
-
-  private fun fetchWorkspaceExternalRuleNames(cancelChecker: CancelChecker): List<String> =
     bazelRunner.commandBuilder().query()
       .withArgument("//external:*")
       .withFlags(listOf("--output=xml", "--order_output=no"))
@@ -38,18 +34,8 @@ class BazelExternalRulesQueryImpl(
         if (result.isNotSuccess)
           error("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
         else
-          result.stdout.readXML()?.calculateEligibleRules()
+          result.stdout.readXML(log)?.calculateEligibleRules()
       } ?: listOf()
-
-  private fun String.readXML(): Document? = try {
-    DocumentBuilderFactory
-      .newInstance()
-      .newDocumentBuilder()
-      .parse(InputSource(StringReader(this)))
-  } catch (e: Exception) {
-    log.error("Failed to parse string to xml", e)
-    null
-  }
 
   private fun Document.calculateEligibleRules(): List<String> {
     val xPath = XPathFactory.newInstance().newXPath()
@@ -62,51 +48,27 @@ class BazelExternalRulesQueryImpl(
     return returnList.toList()
   }
 
-  private fun fetchBzlModExternalRuleNames(cancelChecker: CancelChecker): List<String> =
-    if (!isBzlModEnabled) listOf()
-    else {
-      val jsonElement = bazelRunner.commandBuilder().graph()
-        .withFlag("--output=json")
-        .executeBazelCommand(parseProcessOutput = false)
-        .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
-          if (result.isNotSuccess)
-            error("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
-          else result.stdout.toJson()
-        }
-      extractValuesFromKey(jsonElement, "key")
-        .map { it.substringBefore('@') } // the element has the format <DEP_NAME>@<DEP_VERSION>
-        .distinct()
-    }
-
-  private fun String.toJson(): JsonElement? = try {
-    Json.parseToJsonElement(this)
-  } catch (e: Exception) {
-    log.error("Failed to parse string to json", e)
-    null
+  companion object {
+    private val log = LogManager.getLogger(BazelExternalRulesQueryImpl::class.java)
   }
+}
 
-  private fun extractValuesFromKey(jsonElement: JsonElement?, key: String): MutableList<String> {
-    val res = mutableListOf<String>()
-    extractValuesFromKeyRecursively(jsonElement, key, res)
-    return res
-  }
-
-  private fun extractValuesFromKeyRecursively(jsonElement: JsonElement?, key: String, res: MutableList<String>) {
-    when (jsonElement) {
-      is JsonObject -> jsonElement.entries.forEach { (k, v) ->
-        if ((k == key) && v is JsonPrimitive && v.contentOrNull != null) {
-          res.add(v.content)
-        } else {
-          extractValuesFromKeyRecursively(v, key, res)
-        }
+class BazelBzlModExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelExternalRulesQuery {
+  override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> {
+    val jsonElement = bazelRunner.commandBuilder().graph()
+      .withFlag("--output=json")
+      .executeBazelCommand(parseProcessOutput = false)
+      .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
+        if (result.isNotSuccess)
+          error("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
+        else result.stdout.toJson(log)
       }
-
-      is JsonArray -> jsonElement.forEach { extractValuesFromKeyRecursively(it, key, res) }
-      else -> {}
-    }
+    return jsonElement.extractValuesFromKey("key")
+      .map { it.substringBefore('@') } // the element has the format <DEP_NAME>@<DEP_VERSION>
+      .distinct()
   }
 
   companion object {
-    private val log = LogManager.getLogger(BazelExternalRulesQueryImpl::class.java)
+    private val log = LogManager.getLogger(BazelBzlModExternalRulesQueryImpl::class.java)
   }
 }

@@ -13,7 +13,7 @@ import java.nio.file.Path
 import kotlin.io.path.createTempDirectory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BazelBspEnvironmentManagerTest {
+class BazelBspLanguageExtensionsGeneratorTest {
 
     class MockEnvironmentCreator(projectRootDir: Path) : EnvironmentCreator(projectRootDir) {
         override fun create(): Unit = Unit
@@ -58,6 +58,12 @@ class BazelBspEnvironmentManagerTest {
             EXTENSIONS=[extract_java_toolchain,extract_java_runtime,extract_jvm_info,extract_python_info,extract_cpp_info,extract_kotlin_info,extract_scala_info,extract_scala_toolchain_info]
             TOOLCHAINS=["@bazel_tools//tools/jdk:runtime_toolchain_type","@io_bazel_rules_kotlin//kotlin/internal:kt_toolchain_type","@io_bazel_rules_scala//scala:toolchain_type"]
         """.replace(" ", "").replace("\n", "")
+    private val defaultRuleLanguages =
+      listOf(
+        RuleLanguage(null, Language.Java),
+        RuleLanguage(null, Language.Jvm),
+        RuleLanguage(null, Language.Python)
+      )
     private lateinit var dotBazelBspAspectsPath: Path
     private lateinit var internalAspectsResolverMock: InternalAspectsResolver
 
@@ -80,12 +86,12 @@ class BazelBspEnvironmentManagerTest {
     @Test
     fun `should create the extensions dot bzl file with default imports and default toolchains`() {
         // given
-        val bazelExternalRulesQuery = BazelExternalRulesQueryMock(emptyList())
-        val bazelBspEnvironmentManager =
-            BazelBspEnvironmentManager(internalAspectsResolverMock, bazelExternalRulesQuery)
+        val ruleLanguages = defaultRuleLanguages
+        val bazelBspLanguageExtensionsGenerator =
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
 
         // when
-        bazelBspEnvironmentManager.generateLanguageExtensions(CancelCheckerMock())
+        bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
 
         // then
         val fileContent = getExtensionsFileContent()
@@ -95,12 +101,15 @@ class BazelBspEnvironmentManagerTest {
     @Test
     fun `should create the extensions dot bzl file with one import and one toolchain (cpp)`() {
         // given
-        val bazelExternalRulesQuery = BazelExternalRulesQueryMock(listOf("rules_cc"))
-        val bazelBspEnvironmentManager =
-            BazelBspEnvironmentManager(internalAspectsResolverMock, bazelExternalRulesQuery)
+        val ruleLanguages = defaultRuleLanguages + listOf(
+          RuleLanguage("rules_cc", Language.Cpp)
+        )
+        BazelExternalRulesQueryMock(listOf("rules_cc"))
+        val bazelBspLanguageExtensionsGenerator =
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
 
         // when
-        bazelBspEnvironmentManager.generateLanguageExtensions(CancelCheckerMock())
+        bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
 
         // then
         val fileContent = getExtensionsFileContent()
@@ -110,45 +119,16 @@ class BazelBspEnvironmentManagerTest {
     @Test
     fun `should create the extensions dot bzl file with all possible imports and toolchains`() {
         // given
-        val bazelExternalRulesQuery = BazelExternalRulesQueryMock(
-            listOf(
-                "rules_java",
-                "io_bazel_rules_kotlin",
-                "io_bazel_rules_scala",
-                "rules_cc",
-                "rules_python"
-            )
+        val ruleLanguages = defaultRuleLanguages + listOf(
+          RuleLanguage("rules_cc", Language.Cpp),
+          RuleLanguage("io_bazel_rules_kotlin", Language.Kotlin),
+          RuleLanguage("io_bazel_rules_scala", Language.Scala),
         )
-        val bazelBspEnvironmentManager =
-            BazelBspEnvironmentManager(internalAspectsResolverMock, bazelExternalRulesQuery)
+        val bazelBspLanguageExtensionsGenerator =
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
 
         // when
-        bazelBspEnvironmentManager.generateLanguageExtensions(CancelCheckerMock())
-
-        // then
-        val fileContent = getExtensionsFileContent()
-        fileContent shouldBeEqual allExtensionsFileContent
-    }
-
-    @Test
-    fun `should create the extensions dot bzl file with all possible imports, ignoring unknown Bazel rules`() {
-        // given
-        val bazelExternalRulesQuery = BazelExternalRulesQueryMock(
-            listOf(
-                "rules_java",
-                "unknown_rule_1",
-                "io_bazel_rules_kotlin",
-                "io_bazel_rules_scala",
-                "rules_cc",
-                "rules_python",
-                "unknown_rule_2"
-            )
-        )
-        val bazelBspEnvironmentManager =
-            BazelBspEnvironmentManager(internalAspectsResolverMock, bazelExternalRulesQuery)
-
-        // when
-        bazelBspEnvironmentManager.generateLanguageExtensions(CancelCheckerMock())
+        bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
 
         // then
         val fileContent = getExtensionsFileContent()
@@ -158,30 +138,26 @@ class BazelBspEnvironmentManagerTest {
     @Test
     fun `should correctly overwrite the extensions dot bzl file`() {
         // given
-        val cancelCheckerMock = CancelCheckerMock()
-        val emptyBazelBspEnvironmentManager =
-            BazelBspEnvironmentManager(internalAspectsResolverMock, BazelExternalRulesQueryMock(emptyList()))
-        val allBazelBspEnvironmentManager = BazelBspEnvironmentManager(
-            internalAspectsResolverMock, BazelExternalRulesQueryMock(
-                listOf(
-                    "rules_java",
-                    "io_bazel_rules_kotlin",
-                    "io_bazel_rules_scala",
-                    "rules_cc",
-                    "rules_python"
-                )
-            )
+        val ruleLanguages = defaultRuleLanguages + listOf(
+          RuleLanguage("rules_cc", Language.Cpp),
+          RuleLanguage("io_bazel_rules_kotlin", Language.Kotlin),
+          RuleLanguage("io_bazel_rules_scala", Language.Scala),
+        )
+        val emptyBazelBspLanguageExtensionsGenerator =
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
+        val allBazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(
+          internalAspectsResolverMock
         )
 
         // when
-        allBazelBspEnvironmentManager.generateLanguageExtensions(cancelCheckerMock)
+        allBazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
         var fileContent = getExtensionsFileContent()
 
         // then
         fileContent shouldBeEqual allExtensionsFileContent
 
         // when
-        emptyBazelBspEnvironmentManager.generateLanguageExtensions(cancelCheckerMock)
+        emptyBazelBspLanguageExtensionsGenerator.generateLanguageExtensions(defaultRuleLanguages)
 
         // then
         fileContent = getExtensionsFileContent()

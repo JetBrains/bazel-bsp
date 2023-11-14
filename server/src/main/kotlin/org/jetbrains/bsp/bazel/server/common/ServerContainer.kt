@@ -10,7 +10,7 @@ import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspEnvironmentManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
@@ -63,9 +63,12 @@ class ServerContainer internal constructor(
       val bazelInfo = bazelDataResolver.resolveBazelInfo { }
 
       val aspectsResolver = InternalAspectsResolver(bspInfo, bazelInfo.release)
-      val bazelBspEnvironmentManager = BazelBspEnvironmentManager(aspectsResolver, BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled))
+      val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver)
       val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
-      val bazelBspAspectsManager = BazelBspAspectsManager(compilationManager, aspectsResolver, bazelBspEnvironmentManager)
+      val bazelBspAspectsManager = BazelBspAspectsManager(
+        bazelBspCompilationManager = compilationManager,
+        aspectsResolver = aspectsResolver
+      )
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
       val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
@@ -82,14 +85,16 @@ class ServerContainer internal constructor(
         BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver, bazelInfo, bspClientLogger, metricsLogger)
       val targetInfoReader = TargetInfoReader()
       val projectResolver = ProjectResolver(
-        bazelBspAspectsManager,
-        bazelBspFallbackAspectsManager,
-        workspaceContextProvider,
-        bazelProjectMapper,
-        bspClientLogger,
-        targetInfoReader,
-        bazelInfo,
-        metricsLogger
+        bazelBspAspectsManager = bazelBspAspectsManager,
+        bazelExternalRulesQuery = BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled),
+        bazelBspLanguageExtensionsGenerator = bazelBspLanguageExtensionsGenerator,
+        bazelBspFallbackAspectsManager = bazelBspFallbackAspectsManager,
+        workspaceContextProvider = workspaceContextProvider,
+        bazelProjectMapper = bazelProjectMapper,
+        bspLogger = bspClientLogger,
+        targetInfoReader = targetInfoReader,
+        bazelInfo = bazelInfo,
+        metricsLogger = metricsLogger
       )
       val finalProjectStorage = projectStorage ?: FileProjectStorage(bspInfo, bspClientLogger)
       val projectProvider = ProjectProvider(projectResolver, finalProjectStorage)

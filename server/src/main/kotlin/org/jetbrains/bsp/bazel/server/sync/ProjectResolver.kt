@@ -6,6 +6,8 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManagerResult
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQuery
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
@@ -13,6 +15,8 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
   private val bazelBspAspectsManager: BazelBspAspectsManager,
+  private val bazelExternalRulesQuery: BazelExternalRulesQuery,
+  private val bazelBspLanguageExtensionsGenerator: BazelBspLanguageExtensionsGenerator,
   private val bazelBspFallbackAspectsManager: BazelBspFallbackAspectsManager,
   private val workspaceContextProvider: WorkspaceContextProvider,
   private val bazelProjectMapper: BazelProjectMapper,
@@ -31,6 +35,23 @@ class ProjectResolver(
       "Reading project view and creating workspace context",
       workspaceContextProvider::currentWorkspaceContext
     )
+
+    val externalRuleNames = measured(
+      "Discovering supported external rules"
+    ) { bazelExternalRulesQuery.fetchExternalRuleNames(cancelChecker) }
+
+    val ruleLanguages = measured(
+      "Mapping rule names to languages"
+    ) { bazelBspAspectsManager.calculateRuleLanguages(externalRuleNames) }
+
+    measured("Realizing language aspect files from templates") {
+      bazelBspAspectsManager.generateAspectsFromTemplates(ruleLanguages)
+    }
+
+    measured("Generating language extensions file") {
+      bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
+    }
+
     val buildAspectResult = measured(
       "Building project with aspect"
     ) { buildProjectWithAspect(cancelChecker, workspaceContext) }
@@ -38,7 +59,7 @@ class ProjectResolver(
       if (buildAspectResult.isFailure)
         measured(
           "Fetching all possible target names"
-        ) { bazelBspFallbackAspectsManager.getAllPossibleTargets(cancelChecker).let { formatTargetsIfNeeded(it) } }
+        ) { formatTargetsIfNeeded(bazelBspFallbackAspectsManager.getAllPossibleTargets(cancelChecker)) }
       else
         emptyList()
     val aspectOutputs = measured(
