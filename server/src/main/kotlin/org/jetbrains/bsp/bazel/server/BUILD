@@ -24,7 +24,7 @@ kt_jvm_library(
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/common",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/diagnostics",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
     ],
 )

@@ -10,7 +10,7 @@ kt_jvm_library(
     ],
     deps = [
         "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
         "@testkit//:bazel-testkit-client",

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.BuildServerCapabilities
 import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
@@ -48,6 +47,12 @@ import ch.epfl.scala.bsp4j.SourcesParams
 import ch.epfl.scala.bsp4j.SourcesResult
 import ch.epfl.scala.bsp4j.TestProvider
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
+import org.jetbrains.bsp.BazelBuildServerCapabilities
+import org.jetbrains.bsp.DirectoryItem
+import org.jetbrains.bsp.LibraryItem
+import org.jetbrains.bsp.WorkspaceDirectoriesResult
+import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
+import org.jetbrains.bsp.WorkspaceLibrariesResult
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
@@ -69,17 +74,21 @@ class BspProjectMapper(
 
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {
         val languageNames = supportedLanguages.map { it.id }
-        val capabilities = BuildServerCapabilities().apply {
-            compileProvider = CompileProvider(languageNames)
-            runProvider = RunProvider(languageNames)
-            testProvider = TestProvider(languageNames)
-            outputPathsProvider = true
-            dependencySourcesProvider = true
-            inverseSourcesProvider = true
-            resourcesProvider = true
-            jvmRunEnvironmentProvider = true
-            jvmTestEnvironmentProvider = true
-        }
+        val capabilities = BazelBuildServerCapabilities(
+            compileProvider = CompileProvider(languageNames),
+            runProvider = RunProvider(languageNames),
+            testProvider = TestProvider(languageNames),
+            outputPathsProvider = true,
+            dependencySourcesProvider = true,
+            inverseSourcesProvider = true,
+            resourcesProvider = true,
+            jvmRunEnvironmentProvider = true,
+            jvmTestEnvironmentProvider = true,
+            workspaceLibrariesProvider = true,
+            workspaceDirectoriesProvider = true,
+            workspaceInvalidTargetsProvider = true,
+            runWithDebugProvider = true
+        )
         return InitializeBuildResult(
             Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities
         )

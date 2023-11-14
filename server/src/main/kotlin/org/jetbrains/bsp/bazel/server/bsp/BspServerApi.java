@@ -31,6 +31,7 @@ import ch.epfl.scala.bsp4j.OutputPathsResult;
 import ch.epfl.scala.bsp4j.PythonBuildServer;
 import ch.epfl.scala.bsp4j.PythonOptionsParams;
 import ch.epfl.scala.bsp4j.PythonOptionsResult;
+import ch.epfl.scala.bsp4j.ReadParams;
 import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
@@ -50,13 +51,13 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
+import org.jetbrains.bsp.BazelBuildServer;
+import org.jetbrains.bsp.RunWithDebugParams;
+import org.jetbrains.bsp.WorkspaceDirectoriesResult;
+import org.jetbrains.bsp.WorkspaceInvalidTargetsResult;
+import org.jetbrains.bsp.WorkspaceLibrariesResult;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
-import org.jetbrains.bsp.bazel.server.sync.RunWithDebugParams;
-import org.jetbrains.bsp.bazel.server.sync.WorkspaceDirectoriesResult;
-import org.jetbrains.bsp.bazel.server.sync.WorkspaceInvalidTargetsResult;
-import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
     implements BuildServer,
@@ -176,6 +177,9 @@ public class BspServerApi
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(CleanCacheParams params) {
     return runner.handleRequest("buildTargetCleanCache", executeService::clean, params);
   }
+
+  @Override
+  public void onRunReadStdin(ReadParams readParams) {}
 
   @Override
   public CompletableFuture<DependencyModulesResult> buildTargetDependencyModules(

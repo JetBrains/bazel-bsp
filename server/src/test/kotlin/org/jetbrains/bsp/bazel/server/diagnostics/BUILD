@@ -6,6 +6,6 @@ kt_test(
     src = "DiagnosticsServiceTest.kt",
     deps = [
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/diagnostics",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

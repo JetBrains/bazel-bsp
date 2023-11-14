@@ -9,7 +9,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -22,7 +22,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -35,7 +35,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -48,7 +48,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -61,7 +61,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -74,6 +74,6 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

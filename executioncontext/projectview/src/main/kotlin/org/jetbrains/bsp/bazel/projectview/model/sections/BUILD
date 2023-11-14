@@ -8,9 +8,9 @@ kt_jvm_library(
         "//executioncontext/projectview/src/test/kotlin/org/jetbrains/bsp/bazel/projectview/model/sections:__pkg__",
     ],
     exports = [
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
     deps = [
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

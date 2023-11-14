@@ -22,8 +22,9 @@ kt_jvm_binary(
     deps = [
         "//executioncontext/workspacecontext",
         "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install",
+        "//protocol",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 

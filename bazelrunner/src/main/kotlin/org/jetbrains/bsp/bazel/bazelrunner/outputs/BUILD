@@ -8,6 +8,6 @@ kt_jvm_library(
         "//bazelrunner/src/main/kotlin/org/jetbrains/bsp/bazel/bazelrunner/utils",
         "//commons",
         "//logger",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

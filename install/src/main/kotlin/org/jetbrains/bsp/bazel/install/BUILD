@@ -15,7 +15,7 @@ kt_jvm_library(
         "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",
         "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install/cli",
-        "@maven//:ch_epfl_scala_bsp4j_2_13",
+        "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
         "@maven//:commons_cli_commons_cli",
     ],

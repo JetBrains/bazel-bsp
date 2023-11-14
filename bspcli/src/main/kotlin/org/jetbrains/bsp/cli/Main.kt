@@ -8,6 +8,7 @@ import ch.epfl.scala.bsp4j.InitializeBuildParams
 import ch.epfl.scala.bsp4j.JavaBuildServer
 import ch.epfl.scala.bsp4j.JvmBuildServer
 import ch.epfl.scala.bsp4j.LogMessageParams
+import ch.epfl.scala.bsp4j.PrintParams
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.ScalaBuildServer
 import ch.epfl.scala.bsp4j.ShowMessageParams
@@ -17,11 +18,11 @@ import ch.epfl.scala.bsp4j.TaskStartParams
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.eclipse.lsp4j.jsonrpc.Launcher.Builder
+import org.jetbrains.bsp.BazelBuildServer
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.bazel.server.BazelBspServer
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer
 import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import java.io.OutputStream
@@ -191,8 +192,6 @@ private fun startServer(serverIn: OutputStream,
 
 
 class BuildClient : ch.epfl.scala.bsp4j.BuildClient {
-
-
     override fun onBuildShowMessage(params: ShowMessageParams?) {}
 
     override fun onBuildLogMessage(params: LogMessageParams?) {}
@@ -203,8 +202,11 @@ class BuildClient : ch.epfl.scala.bsp4j.BuildClient {
 
     override fun onBuildTaskFinish(params: TaskFinishParams?) {}
 
+    override fun onRunPrintStdout(p0: PrintParams?) {}
+
+    override fun onRunPrintStderr(p0: PrintParams?) {}
+
     override fun onBuildPublishDiagnostics(params: PublishDiagnosticsParams?) {}
 
     override fun onBuildTargetDidChange(params: DidChangeBuildTarget?) {}
-
 }

@@ -3,9 +3,10 @@ package org.jetbrains.bsp.bazel.logger
 import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.StatusCode
-import ch.epfl.scala.bsp4j.TaskDataKind
+import ch.epfl.scala.bsp4j.TaskFinishDataKind
 import ch.epfl.scala.bsp4j.TaskFinishParams
 import ch.epfl.scala.bsp4j.TaskId
+import ch.epfl.scala.bsp4j.TaskStartDataKind
 import ch.epfl.scala.bsp4j.TaskStartParams
 import ch.epfl.scala.bsp4j.TestFinish
 import ch.epfl.scala.bsp4j.TestReport
@@ -26,7 +27,7 @@ class BspClientTestNotifier {
   fun startTest(isSuite: Boolean, displayName: String?, taskId: TaskId?) {
     val testStart = TestStart(displayName)
     val taskStartParams = TaskStartParams(taskId)
-    taskStartParams.dataKind = TaskDataKind.TEST_START
+    taskStartParams.dataKind = TaskStartDataKind.TEST_START
     taskStartParams.data = testStart
     taskStartParams.message = if (isSuite) SUITE_TAG else TEST_TAG
     bspClient.onBuildTaskStart(taskStartParams)
@@ -59,7 +60,7 @@ class BspClientTestNotifier {
     val testFinish = TestFinish(displayName, status)
     testFinish.message = message
     val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
-    taskFinishParams.dataKind = TaskDataKind.TEST_FINISH
+    taskFinishParams.dataKind = TaskFinishDataKind.TEST_FINISH
     taskFinishParams.data = testFinish
     taskFinishParams.message = if (isSuite) SUITE_TAG else TEST_TAG
     bspClient.onBuildTaskFinish(taskFinishParams)
@@ -74,7 +75,7 @@ class BspClientTestNotifier {
   fun beginTestTarget(targetIdentifier: BuildTargetIdentifier?, taskId: TaskId?) {
     val testingBegin = TestTask(targetIdentifier)
     val taskStartParams = TaskStartParams(taskId)
-    taskStartParams.dataKind = TaskDataKind.TEST_TASK
+    taskStartParams.dataKind = TaskStartDataKind.TEST_TASK
     taskStartParams.data = testingBegin
     bspClient.onBuildTaskStart(taskStartParams)
   }
@@ -87,7 +88,7 @@ class BspClientTestNotifier {
    */
   fun endTestTarget(testReport: TestReport?, taskId: TaskId?) {
     val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
-    taskFinishParams.dataKind = TaskDataKind.TEST_REPORT
+    taskFinishParams.dataKind = TaskFinishDataKind.TEST_REPORT
     taskFinishParams.data = testReport
     bspClient.onBuildTaskFinish(taskFinishParams)
   }
