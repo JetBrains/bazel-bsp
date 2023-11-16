@@ -219,8 +219,8 @@ maven_install(
         "org.apache.velocity:velocity-engine-core:2.3",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
         "org.junit.jupiter:junit-jupiter:5.10.1",
-        "com.fasterxml.jackson.core:jackson-databind:2.15.3",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3",
+        "com.fasterxml.jackson.core:jackson-databind:2.16.0",
+        "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0",
         "com.google.protobuf:protobuf-java:3.25.0",
         "io.grpc:grpc-stub:1.59.0",
 
