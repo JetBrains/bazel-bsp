@@ -6,6 +6,20 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import org.apache.logging.log4j.Logger
+import org.w3c.dom.Document
+import org.xml.sax.InputSource
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
+
+fun String.readXML(log: Logger? = null): Document? = try {
+  DocumentBuilderFactory
+    .newInstance()
+    .newDocumentBuilder()
+    .parse(InputSource(StringReader(this)))
+} catch (e: Exception) {
+  log?.error("Failed to parse string to xml", e)
+  null
+}
 
 fun String.toJson(log: Logger? = null): JsonElement? = try {
   JsonParser.parseString(this)
