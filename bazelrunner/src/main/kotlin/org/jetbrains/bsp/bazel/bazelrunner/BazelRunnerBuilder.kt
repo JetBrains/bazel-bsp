@@ -14,6 +14,12 @@ open class BazelRunnerBuilder internal constructor(
 
     private val flags = mutableListOf<String>()
     private val arguments = mutableListOf<String>()
+    private var useBuildFlags = false
+
+    fun withUseBuildFlags(useBuildFlags: Boolean = true): BazelRunnerBuilder {
+        this.useBuildFlags = useBuildFlags
+        return this
+    }
 
     fun withFlag(bazelFlag: String): BazelRunnerBuilder {
         flags.add(bazelFlag)
@@ -86,7 +92,6 @@ open class BazelRunnerBuilder internal constructor(
     fun executeBazelCommand(
         originId: String? = null,
         parseProcessOutput: Boolean = true,
-        useBuildFlags: Boolean = true,
     ): BazelProcess {
         return bazelRunner.runBazelCommand(bazelCommand, flags, arguments, originId, parseProcessOutput, useBuildFlags)
     }

@@ -30,7 +30,7 @@ class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner)
     bazelRunner.commandBuilder().query()
       .withArgument("//external:*")
       .withFlags(listOf("--output=xml", "--order_output=no"))
-      .executeBazelCommand(parseProcessOutput = false, useBuildFlags = false)
+      .executeBazelCommand(parseProcessOutput = false)
       .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
         if (result.isNotSuccess) {
           log.warn("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
@@ -61,7 +61,7 @@ class BazelBzlModExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : 
   override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> {
     val jsonElement = bazelRunner.commandBuilder().graph()
       .withFlag("--output=json")
-      .executeBazelCommand(parseProcessOutput = false, useBuildFlags = false)
+      .executeBazelCommand(parseProcessOutput = false)
       .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
         if (result.isNotSuccess) {
           log.warn("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")

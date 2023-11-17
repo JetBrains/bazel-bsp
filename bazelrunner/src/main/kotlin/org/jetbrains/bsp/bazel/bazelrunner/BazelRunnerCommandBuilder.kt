@@ -5,7 +5,7 @@ class BazelRunnerCommandBuilder internal constructor(private val bazelRunner: Ba
   fun clean()  = BazelRunnerBuilder(bazelRunner, listOf("clean"))
   fun fetch()  = BazelRunnerBuilder(bazelRunner, listOf("fetch"))
   fun info()   = BazelRunnerBuilder(bazelRunner, listOf("info"))
-  fun run()    = BazelRunnerBuilder(bazelRunner, listOf("run"))
+  fun run()    = BazelRunnerBuilder(bazelRunner, listOf("run")).withUseBuildFlags()
   fun mod(subcommand: String) = BazelRunnerBuilder(bazelRunner, listOf("mod", subcommand))
   fun graph() = mod("graph")
   fun deps() = mod("deps")
@@ -15,6 +15,6 @@ class BazelRunnerCommandBuilder internal constructor(private val bazelRunner: Ba
   fun showRepo() = mod("show_repo")
   fun showExtension() = mod("show_extension")
   fun query()  = BazelRunnerBuilder(bazelRunner, listOf("query"))
-  fun build()  = BazelRunnerBuildBuilder(bazelRunner, listOf("build"))
-  fun test()   = BazelRunnerBuildBuilder(bazelRunner, listOf("test"))
+  fun build()  = BazelRunnerBuildBuilder(bazelRunner, listOf("build")).withUseBuildFlags()
+  fun test()   = BazelRunnerBuildBuilder(bazelRunner, listOf("test")).withUseBuildFlags()
 }
