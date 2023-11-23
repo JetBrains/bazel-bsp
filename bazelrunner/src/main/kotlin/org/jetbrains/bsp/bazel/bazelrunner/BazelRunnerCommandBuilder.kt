@@ -15,6 +15,8 @@ class BazelRunnerCommandBuilder internal constructor(private val bazelRunner: Ba
   fun showRepo() = mod("show_repo")
   fun showExtension() = mod("show_extension")
   fun query()  = BazelRunnerBuilder(bazelRunner, listOf("query"))
+  fun cquery()  = BazelRunnerBuilder(bazelRunner, listOf("cquery"))
+
   fun build()  = BazelRunnerBuildBuilder(bazelRunner, listOf("build")).withUseBuildFlags()
   fun test()   = BazelRunnerBuildBuilder(bazelRunner, listOf("test")).withUseBuildFlags()
 }

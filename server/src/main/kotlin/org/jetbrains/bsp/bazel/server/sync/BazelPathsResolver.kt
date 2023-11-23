@@ -17,6 +17,8 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
 
     fun resolveUri(path: Path): URI = uris.computeIfAbsent(path, Path::toUri)
 
+    fun unresolvedWorkspaceRoot(): Path = bazelInfo.workspaceRoot
+
     fun workspaceRoot(): URI = resolveUri(bazelInfo.workspaceRoot.toAbsolutePath())
 
     fun resolveUris(fileLocations: List<FileLocation>, shouldFilterExisting: Boolean = false): List<URI> =

@@ -103,12 +103,12 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun jvmRunEnvironment(cancelChecker: CancelChecker, params: JvmRunEnvironmentParams): JvmRunEnvironmentResult {
     val project = projectProvider.get(cancelChecker)
-    return bspMapper.jvmRunEnvironment(project, params)
+    return bspMapper.jvmRunEnvironment(project, params, cancelChecker)
   }
 
   fun jvmTestEnvironment(cancelChecker: CancelChecker, params: JvmTestEnvironmentParams): JvmTestEnvironmentResult {
     val project = projectProvider.get(cancelChecker)
-    return bspMapper.jvmTestEnvironment(project, params)
+    return bspMapper.jvmTestEnvironment(project, params, cancelChecker)
   }
 
   fun buildTargetJavacOptions(cancelChecker: CancelChecker, params: JavacOptionsParams): JavacOptionsResult {

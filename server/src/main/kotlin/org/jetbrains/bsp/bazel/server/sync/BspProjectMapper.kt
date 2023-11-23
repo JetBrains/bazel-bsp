@@ -17,6 +17,7 @@ import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
+import ch.epfl.scala.bsp4j.JvmMainClass
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
@@ -26,7 +27,6 @@ import ch.epfl.scala.bsp4j.OutputPathItemKind
 import ch.epfl.scala.bsp4j.OutputPathsItem
 import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathsResult
-import ch.epfl.scala.bsp4j.PythonBuildTarget
 import ch.epfl.scala.bsp4j.PythonOptionsItem
 import ch.epfl.scala.bsp4j.PythonOptionsParams
 import ch.epfl.scala.bsp4j.PythonOptionsResult
@@ -47,13 +47,16 @@ import ch.epfl.scala.bsp4j.SourcesParams
 import ch.epfl.scala.bsp4j.SourcesResult
 import ch.epfl.scala.bsp4j.TestProvider
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.BazelBuildServerCapabilities
 import org.jetbrains.bsp.DirectoryItem
 import org.jetbrains.bsp.LibraryItem
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
 import org.jetbrains.bsp.WorkspaceLibrariesResult
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
@@ -64,12 +67,16 @@ import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.name
 import kotlin.io.path.toPath
 
 class BspProjectMapper(
-    private val languagePluginsService: LanguagePluginsService,
-    private val workspaceContextProvider: WorkspaceContextProvider
+        private val languagePluginsService: LanguagePluginsService,
+        private val workspaceContextProvider: WorkspaceContextProvider,
+        private val bazelPathsResolver: BazelPathsResolver,
+        private val bazelRunner: BazelRunner,
+        private val bspInfo: BspInfo,
 ) {
 
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {
@@ -269,33 +276,60 @@ class BspProjectMapper(
     }
 
     fun jvmRunEnvironment(
-        project: Project, params: JvmRunEnvironmentParams
+            project: Project, params: JvmRunEnvironmentParams, cancelChecker: CancelChecker
     ): JvmRunEnvironmentResult {
         val targets = params.targets
-        val result = getJvmEnvironmentItems(project, targets)
+        val result = getJvmEnvironmentItems(project, targets, cancelChecker)
         return JvmRunEnvironmentResult(result)
     }
 
     fun jvmTestEnvironment(
-        project: Project, params: JvmTestEnvironmentParams
+            project: Project, params: JvmTestEnvironmentParams, cancelChecker: CancelChecker
     ): JvmTestEnvironmentResult {
         val targets = params.targets
-        val result = getJvmEnvironmentItems(project, targets)
+        val result = getJvmEnvironmentItems(project, targets, cancelChecker)
         return JvmTestEnvironmentResult(result)
     }
 
     private fun getJvmEnvironmentItems(
-        project: Project, targets: List<BuildTargetIdentifier>
+            project: Project, targets: List<BuildTargetIdentifier>, cancelChecker: CancelChecker
     ): List<JvmEnvironmentItem> {
-        fun extractJvmEnvironmentItem(module: Module): JvmEnvironmentItem? =
-            module.javaModule?.let {
-                languagePluginsService.javaLanguagePlugin.toJvmEnvironmentItem(module, it)
+        fun extractJvmEnvironmentItem(module: Module, runtimeClasspath: List<URI>): JvmEnvironmentItem? {
+            return module.javaModule?.let { javaModule ->
+                JvmEnvironmentItem(
+                        BspMappings.toBspId(module),
+                        runtimeClasspath.map { it.toString() },
+                        javaModule.jvmOps.toList(),
+                        bazelPathsResolver.unresolvedWorkspaceRoot().toString(),
+                        module.environmentVariables
+                ).apply {
+                    mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
+                }
             }
-
-        val labels = BspMappings.toLabels(targets)
-        return labels.mapNotNull {
-            project.findModule(it)?.let(::extractJvmEnvironmentItem)
         }
+
+        return targets.mapNotNull {
+            val label = Label(it.uri)
+            val module = project.findModule(label)
+            val runtimeClasspath = getRuntimeClasspath(cancelChecker, it)
+            module?.let { extractJvmEnvironmentItem(module, runtimeClasspath) }
+        }
+    }
+
+    private fun getRuntimeClasspath(cancelChecker: CancelChecker, target: BuildTargetIdentifier): List<URI> {
+        val queryFile = bspInfo.bazelBspDir().resolve("aspects/runtime_classpath_query.bzl")
+        val cqueryResult = bazelRunner.commandBuilder().cquery()
+                .withTargets(listOf(target.uri))
+                .withFlags(listOf("--starlark:file=$queryFile", "--output=starlark"))
+                .executeBazelCommand(parseProcessOutput = false)
+                .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
+        if (cqueryResult.isNotSuccess) throw RuntimeException("Could not query target '${target.uri}' for runtime classpath")
+        val runtimeClasspath = cqueryResult.stdoutLines
+                .filterNot { it.isEmpty() }
+                .map { bazelPathsResolver.resolveOutput(Paths.get(it))}
+                .filter { it.toFile().exists() } // I'm surprised this is needed, but we literally test it in e2e tests
+                .map { it.toUri() }
+        return runtimeClasspath
     }
 
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams): JavacOptionsResult {

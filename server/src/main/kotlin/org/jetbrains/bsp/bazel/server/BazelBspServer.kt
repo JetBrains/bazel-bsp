@@ -47,7 +47,11 @@ class BazelBspServer(
         )
 
         val bspProjectMapper = BspProjectMapper(
-            serverContainer.languagePluginsService, workspaceContextProvider
+                serverContainer.languagePluginsService,
+                workspaceContextProvider,
+                serverContainer.bazelPathsResolver,
+                bazelRunner,
+                bspInfo
         )
         val projectSyncService =
             ProjectSyncService(bspProjectMapper, serverContainer.projectProvider)

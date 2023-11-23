@@ -40,7 +40,6 @@ class ProjectStorageTest {
                 emptyList(),
                 emptyList(),
                 emptyList(),
-                emptyList(),
                 emptyList()
             )
         )

@@ -40,7 +40,8 @@ class ServerContainer internal constructor(
   val bazelInfo: BazelInfo,
   val bazelRunner: BazelRunner,
   val compilationManager: BazelBspCompilationManager,
-  val languagePluginsService: LanguagePluginsService
+  val languagePluginsService: LanguagePluginsService,
+  val bazelPathsResolver: BazelPathsResolver,
 ) {
   companion object {
     @JvmStatic
@@ -105,7 +106,8 @@ class ServerContainer internal constructor(
         bazelInfo,
         bazelRunner,
         compilationManager,
-        languagePluginsService
+        languagePluginsService,
+        bazelPathsResolver,
       )
     }
   }

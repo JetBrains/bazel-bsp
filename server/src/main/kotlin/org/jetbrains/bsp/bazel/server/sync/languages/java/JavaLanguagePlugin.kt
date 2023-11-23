@@ -57,7 +57,6 @@ class JavaLanguagePlugin(
                 allOutputs,
                 mainClass,
                 argsList,
-                runtimeClasspath,
                 compileClasspath,
                 sourcesClasspath,
                 ideClasspath
@@ -111,17 +110,6 @@ class JavaLanguagePlugin(
             it.javaHome = javaHome
         }
     }
-
-    fun toJvmEnvironmentItem(module: Module, javaModule: JavaModule): JvmEnvironmentItem =
-        JvmEnvironmentItem(
-            BspMappings.toBspId(module),
-            javaModule.runtimeClasspath.map { it.toString() }.toList(),
-            javaModule.jvmOps.toList(),
-            bazelInfo.workspaceRoot.toString(),
-            module.environmentVariables
-        ).apply {
-            mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
-        }
 
     fun toJavacOptionsItem(module: Module, javaModule: JavaModule): JavacOptionsItem =
         JavacOptionsItem(
