@@ -311,26 +311,16 @@ class BspProjectMapper(
         return targets.mapNotNull {
             val label = Label(it.uri)
             val module = project.findModule(label)
-            val runtimeClasspath = getRuntimeClasspath(cancelChecker, it)
-            module?.let { extractJvmEnvironmentItem(module, runtimeClasspath) }
+            val cqueryResult = ClasspathQuery.classPathQuery(it, cancelChecker, bspInfo, bazelRunner).runtime_classpath
+            val resolvedClasspath = resolveClasspath(cqueryResult)
+            module?.let { extractJvmEnvironmentItem(module, resolvedClasspath) }
         }
     }
 
-    private fun getRuntimeClasspath(cancelChecker: CancelChecker, target: BuildTargetIdentifier): List<URI> {
-        val queryFile = bspInfo.bazelBspDir().resolve("aspects/runtime_classpath_query.bzl")
-        val cqueryResult = bazelRunner.commandBuilder().cquery()
-                .withTargets(listOf(target.uri))
-                .withFlags(listOf("--starlark:file=$queryFile", "--output=starlark"))
-                .executeBazelCommand(parseProcessOutput = false)
-                .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
-        if (cqueryResult.isNotSuccess) throw RuntimeException("Could not query target '${target.uri}' for runtime classpath")
-        val runtimeClasspath = cqueryResult.stdoutLines
-                .filterNot { it.isEmpty() }
-                .map { bazelPathsResolver.resolveOutput(Paths.get(it))}
-                .filter { it.toFile().exists() } // I'm surprised this is needed, but we literally test it in e2e tests
-                .map { it.toUri() }
-        return runtimeClasspath
-    }
+    private fun resolveClasspath(cqueryResult: List<String>) = cqueryResult
+            .map { bazelPathsResolver.resolveOutput(Paths.get(it)) }
+            .filter { it.toFile().exists() } // I'm surprised this is needed, but we literally test it in e2e tests
+            .map { it.toUri() }
 
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams): JavacOptionsResult {
         fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
