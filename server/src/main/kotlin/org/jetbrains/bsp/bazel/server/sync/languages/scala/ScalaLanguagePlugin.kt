@@ -7,7 +7,6 @@ import ch.epfl.scala.bsp4j.ScalaMainClass
 import ch.epfl.scala.bsp4j.ScalaMainClassesItem
 import ch.epfl.scala.bsp4j.ScalaPlatform
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem
-import ch.epfl.scala.bsp4j.ScalacOptionsItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
@@ -72,17 +71,6 @@ class ScalaLanguagePlugin(
     override fun calculateSourceRoot(source: Path): Path? {
         return JVMLanguagePluginParser.calculateJVMSourceRoot(source, true)
     }
-
-    fun toScalacOptionsItem(module: Module): ScalacOptionsItem? =
-        withScalaAndJavaModules(module) { scalaModule: ScalaModule, javaModule: JavaModule ->
-            val javacOptions = javaLanguagePlugin.toJavacOptionsItem(module, javaModule)
-            ScalacOptionsItem(
-                javacOptions.target,
-                scalaModule.scalacOpts,
-                javacOptions.classpath,
-                javacOptions.classDirectory
-            )
-        }
 
     fun toScalaTestClassesItem(module: Module): ScalaTestClassesItem? =
         if (!module.tags.contains(Tag.TEST) || !module.languages

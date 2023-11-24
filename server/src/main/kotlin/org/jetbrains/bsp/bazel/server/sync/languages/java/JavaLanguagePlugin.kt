@@ -39,13 +39,7 @@ class JavaLanguagePlugin(
                 it.interfaceJarsList + it.binaryJarsList
             }.map(bazelPathsResolver::resolveUri)
             val mainClass = getMainClass(this)
-            val runtimeClasspath = bazelPathsResolver.resolveUris(runtimeClasspathList, true)
             val compileClasspath = bazelPathsResolver.resolveUris(compileClasspathList + generatedJarsList.flatMap { it.binaryJarsList }, true)
-            val sourcesClasspath = bazelPathsResolver.resolveUris(sourceClasspathList, true)
-            val ideClasspath = resolveIdeClasspath(Label(targetInfo.id),
-                bazelPathsResolver,
-                runtimeClasspath.asSequence(), compileClasspath.asSequence()
-            )
             val runtimeJdk = jdkResolver.resolveJdk(targetInfo)
 
             JavaModule(
@@ -57,9 +51,7 @@ class JavaLanguagePlugin(
                 allOutputs,
                 mainClass,
                 argsList,
-                compileClasspath,
-                sourcesClasspath,
-                ideClasspath
+                compileClasspath
             )
         }
 
@@ -111,11 +103,4 @@ class JavaLanguagePlugin(
         }
     }
 
-    fun toJavacOptionsItem(module: Module, javaModule: JavaModule): JavacOptionsItem =
-        JavacOptionsItem(
-            BspMappings.toBspId(module),
-            javaModule.javacOpts.toList(),
-            javaModule.ideClasspath.map { it.toString() }.toList(),
-            javaModule.mainOutput.toString()
-        )
 }

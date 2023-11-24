@@ -30,9 +30,7 @@ message JvmOutputs {
 message JvmTargetInfo {
   repeated JvmOutputs jars = 1;
   repeated JvmOutputs generated_jars = 2;
-  repeated FileLocation runtime_classpath = 3;
   repeated FileLocation compile_classpath = 4;
-  repeated FileLocation source_classpath = 5;
   repeated string javac_opts = 6;
   repeated string jvm_flags = 7;
   string main_class = 8;

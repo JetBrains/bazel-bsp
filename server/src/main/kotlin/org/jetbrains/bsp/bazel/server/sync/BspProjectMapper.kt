@@ -38,6 +38,7 @@ import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
 import ch.epfl.scala.bsp4j.ScalaTestClassesResult
+import ch.epfl.scala.bsp4j.ScalacOptionsItem
 import ch.epfl.scala.bsp4j.ScalacOptionsParams
 import ch.epfl.scala.bsp4j.ScalacOptionsResult
 import ch.epfl.scala.bsp4j.SourceItem
@@ -58,7 +59,10 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.java.IdeClasspathResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
+import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -322,14 +326,34 @@ class BspProjectMapper(
             .filter { it.toFile().exists() } // I'm surprised this is needed, but we literally test it in e2e tests
             .map { it.toUri() }
 
-    fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams): JavacOptionsResult {
-        fun extractJavacOptionsItem(module: Module): JavacOptionsItem? =
-            module.javaModule?.let {
-                languagePluginsService.javaLanguagePlugin.toJavacOptionsItem(module, it)
+    private fun toJavacOptionsItem(module: Module, javaModule: JavaModule, ideClasspath: List<URI>): JavacOptionsItem =
+            JavacOptionsItem(
+                    BspMappings.toBspId(module),
+                    javaModule.javacOpts.toList(),
+                    ideClasspath.map { it.toString() }.toList(),
+                    javaModule.mainOutput.toString()
+            )
+    private fun toScalacOptionsItem(module: Module, ideClasspath: List<URI>): ScalacOptionsItem? =
+            (module.languageData as? ScalaModule)?.let {scalaModule ->
+                return scalaModule.javaModule?.let {javaModule ->
+                    val javacOptions = toJavacOptionsItem(module, javaModule, ideClasspath)
+                    return ScalacOptionsItem(
+                            javacOptions.target,
+                            scalaModule.scalacOpts,
+                            javacOptions.classpath,
+                            javacOptions.classDirectory
+                    )
+                }
             }
 
-        val modules = BspMappings.getModules(project, params.targets)
-        val items = modules.mapNotNull(::extractJavacOptionsItem)
+    fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams, cancelChecker: CancelChecker): JavacOptionsResult {
+        val items = params.targets.map { targetIdentifier ->
+            val label = Label(targetIdentifier.uri)
+            val module = project.findModule(label)
+                    ?: return@map null // This is a silent failure, equivalent of .mapNotNull used previously
+            val ideClasspath = readIdeClasspath(targetIdentifier, cancelChecker)
+            module.javaModule?.let { toJavacOptionsItem(module, it, ideClasspath) }
+        }.filterNotNull()
         return JavacOptionsResult(items)
     }
 
@@ -356,16 +380,29 @@ class BspProjectMapper(
             languagePluginsService.pythonLanguagePlugin.toPythonOptionsItem(module, it)
         }
 
-
     fun buildTargetScalacOptions(
-        project: Project,
-        params: ScalacOptionsParams
+            project: Project,
+            params: ScalacOptionsParams,
+            cancelChecker: CancelChecker
     ): ScalacOptionsResult {
-        val labels = params.targets.map(BuildTargetIdentifier::getUri).map(::Label)
-        val modules = labels.mapNotNull(project::findModule)
-        val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
-        val items = modules.mapNotNull(scalaLanguagePlugin::toScalacOptionsItem)
+        val items = params.targets.map { targetIdentifier ->
+            val label = Label(targetIdentifier.uri)
+            val module = project.findModule(label) ?: return@map null // This is a silent failure, equivalent of .mapNotNull used previously
+            val ideClasspath = readIdeClasspath(targetIdentifier, cancelChecker)
+            toScalacOptionsItem(module, ideClasspath)
+        }.filterNotNull()
         return ScalacOptionsResult(items)
+    }
+
+    private fun readIdeClasspath(targetIdentifier: BuildTargetIdentifier, cancelChecker: CancelChecker): List<URI> {
+        val label = Label(targetIdentifier.uri)
+        val classPathFromQuery = ClasspathQuery.classPathQuery(targetIdentifier, cancelChecker, bspInfo, bazelRunner)
+        val ideClasspath = IdeClasspathResolver.resolveIdeClasspath(
+                label = label,
+                bazelPathsResolver = bazelPathsResolver,
+                runtimeClasspath = resolveClasspath(classPathFromQuery.runtime_classpath),
+                compileClasspath = resolveClasspath(classPathFromQuery.compile_classpath))
+        return ideClasspath
     }
 
     fun buildTargetScalaTestClasses(

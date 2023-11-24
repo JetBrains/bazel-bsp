@@ -136,9 +136,7 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     resolve_files += compile_jars
     resolve_files += source_jars
 
-    runtime_classpath = map(file_location, runtime_jars)
     compile_classpath = map(file_location, compile_jars)
-    source_classpath = map(file_location, source_jars)
 
     javac_opts = getattr(ctx.rule.attr, "javacopts", [])
     jvm_flags = getattr(ctx.rule.attr, "jvm_flags", [])
@@ -151,9 +149,7 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     info = create_struct(
         jars = jars,
         generated_jars = generated_jars,
-        runtime_classpath = runtime_classpath,
         compile_classpath = compile_classpath,
-        source_classpath = source_classpath,
         javac_opts = javac_opts,
         jvm_flags = jvm_flags,
         main_class = main_class,
