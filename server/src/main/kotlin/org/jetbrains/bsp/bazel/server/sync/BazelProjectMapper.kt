@@ -30,10 +30,6 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.notExists
 
-val KOTLIN_STDLIB_ROOT_EXECUTION_REGEX =
-  """external/(rules_kotlin~.*~rules_kotlin_extensions~|)com_github_jetbrains_kotlin""".toRegex()
-const val KOTLIN_STDLIB_RELATIVE_PATH_PREFIX = "lib/"
-
 class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
   private val bazelPathsResolver: BazelPathsResolver,
@@ -125,13 +121,33 @@ class BazelProjectMapper(
   }
 
   private fun calculateKotlinStdlibsMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
-    val projectLevelKotlinStdlibs = calculateProjectLevelKotlinStdlibs(targetsToImport)
-    val rulesKotlinTargets = targetsToImport
-      .filter { targetInfo -> targetInfo.jvmTargetInfo.compileClasspathList.any { it.isKotlinStdlibPath() } }
-      .map { it.id }
-      .toSet()
-    return rulesKotlinTargets.associateWith { listOf(projectLevelKotlinStdlibs) }
+    val projectLevelKotlinStdlibsLibrary = calculateProjectLevelKotlinStdlibsLibrary(targetsToImport)
+    val kotlinTargetsIds = targetsToImport.filter { it.hasKotlinTargetInfo() }.map { it.id }
+
+    return projectLevelKotlinStdlibsLibrary
+      ?.let { stdlibsLibrary -> kotlinTargetsIds.associateWith { listOf(stdlibsLibrary) } }
+      .orEmpty()
   }
+
+  private fun calculateProjectLevelKotlinStdlibsLibrary(targetsToImport: Sequence<TargetInfo>): Library? {
+    val kotlinStdlibsJars = calculateProjectLevelKotlinStdlibsJars(targetsToImport)
+
+    return if (kotlinStdlibsJars.isNotEmpty()) {
+      Library(
+        label = "rules_kotlin_kotlin-stdlibs",
+        outputs = kotlinStdlibsJars,
+        sources = emptySet(),
+        dependencies = emptyList(),
+      )
+    } else null
+  }
+
+  private fun calculateProjectLevelKotlinStdlibsJars(targetsToImport: Sequence<TargetInfo>): Set<URI> =
+    targetsToImport
+      .filter { it.hasKotlinTargetInfo() }
+      .map { it.kotlinTargetInfo.stdlibsList }
+      .flatMap { it.resolveUris() }
+      .toSet()
 
   /**
    * In some cases, the jar dependencies of a target might be injected by bazel or rules and not are not
@@ -225,23 +241,6 @@ class BazelProjectMapper(
     val shaOfPath = Hashing.sha256().hashString(lib, StandardCharsets.UTF_8) // just in case of a conflict in filename
     return Paths.get(lib).fileName.toString().replace("[^0-9a-zA-Z]".toRegex(), "-") + "-" + shaOfPath
   }
-
-  private fun calculateProjectLevelKotlinStdlibs(targets: Sequence<TargetInfo>) =
-    Library(
-      label = "rules_kotlin_kotlin-stdlibs",
-      outputs = targets
-        .flatMap { it.jvmTargetInfo.compileClasspathList }
-        .filter { it.isKotlinStdlibPath() }
-        .map { bazelPathsResolver.resolveUri(it) }
-        .toSet(),
-      sources = emptySet(),
-      dependencies = emptyList(),
-    )
-
-  private fun FileLocation.isKotlinStdlibPath() =
-    KOTLIN_STDLIB_ROOT_EXECUTION_REGEX.matches(this.rootExecutionPathFragment) &&
-      this.relativePath.startsWith(KOTLIN_STDLIB_RELATIVE_PATH_PREFIX)
-
 
   private fun createLibraries(targets: Map<String, TargetInfo>): Map<String, Library> {
     return targets.mapValues { entry ->

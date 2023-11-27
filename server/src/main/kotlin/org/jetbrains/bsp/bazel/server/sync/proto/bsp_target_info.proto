@@ -30,7 +30,6 @@ message JvmOutputs {
 message JvmTargetInfo {
   repeated JvmOutputs jars = 1;
   repeated JvmOutputs generated_jars = 2;
-  repeated FileLocation compile_classpath = 4;
   repeated string javac_opts = 6;
   repeated string jvm_flags = 7;
   string main_class = 8;
@@ -68,6 +67,7 @@ message KotlinTargetInfo {
   string api_version = 2;
   repeated string associates = 3;
   repeated string kotlinc_opts = 4;
+  repeated FileLocation stdlibs = 5;
 }
 
 message PythonTargetInfo {

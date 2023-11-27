@@ -1,6 +1,6 @@
 load("@${ruleName}//kotlin/internal:defs.bzl", "KtJvmInfo")
 load("@${ruleName}//kotlin/internal:opts.bzl", "KotlincOptions")
-load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_proto", "create_struct")
+load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_proto", "create_struct", "map", "file_location")
 
 KOTLIN_TOOLCHAIN_TYPE = "@${ruleName}//kotlin/internal:kt_toolchain_type"
 
@@ -21,10 +21,14 @@ def extract_kotlin_info(target, ctx, **kwargs):
     kotlinc_opts_target = getattr(ctx.rule.attr, "kotlinc_opts", None)
     kotlinc_opts = kotlinc_opts_target[KotlincOptions] if kotlinc_opts_target and KotlincOptions in kotlinc_opts_target else toolchain_kotlinc_opts
 
+    stdlibs_files = kotlin_toolchain.jvm_stdlibs.compile_jars.to_list()
+    stdlibs = map(file_location, stdlibs_files)
+
     kotlin_info = dict(
         language_version = language_version,
         api_version = api_version,
         associates = associates_labels,
+        stdlibs = stdlibs,
     )
 
     kotlinc_opts_dict = convert_struct_to_dict(kotlinc_opts)
