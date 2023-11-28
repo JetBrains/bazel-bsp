@@ -32,9 +32,9 @@ class LanguagePluginsService(
 
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
         when {
+            languages.contains(Language.KOTLIN) -> kotlinLanguagePlugin
             languages.contains(Language.SCALA) -> scalaLanguagePlugin
             languages.contains(Language.JAVA) -> javaLanguagePlugin
-            languages.contains(Language.KOTLIN) -> kotlinLanguagePlugin
             languages.contains(Language.CPP) -> cppLanguagePlugin
             languages.contains(Language.THRIFT) -> thriftLanguagePlugin
             languages.contains(Language.PYTHON) -> pythonLanguagePlugin

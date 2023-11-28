@@ -160,7 +160,7 @@ class BspProjectMapper(
         val label = BspMappings.toBspId(module)
         val dependencies =
             module.directDependencies.map(BspMappings::toBspId)
-        val languages = module.languages.flatMap(Language::allNames)
+        val languages = module.languages.flatMap(Language::allNames).distinct()
         val capabilities = inferCapabilities(module)
         val tags = module.tags.mapNotNull(BspMappings::toBspTag)
         val baseDirectory = BspMappings.toBspUri(module.baseDirectory)
