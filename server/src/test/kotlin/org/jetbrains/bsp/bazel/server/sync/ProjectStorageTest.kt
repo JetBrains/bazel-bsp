@@ -38,7 +38,6 @@ class ProjectStorageTest {
                 emptyList(),
                 null,
                 emptyList(),
-                emptyList(),
             )
         )
         val project = Project(

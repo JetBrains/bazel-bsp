@@ -1,11 +1,9 @@
 package org.jetbrains.bsp.bazel.server.common
 
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
@@ -35,11 +33,6 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 
 class ServerContainer internal constructor(
   val projectProvider: ProjectProvider,
-  val bspClientLogger: BspClientLogger,
-  val bspClientTestNotifier: BspClientTestNotifier,
-  val bazelInfo: BazelInfo,
-  val bazelRunner: BazelRunner,
-  val compilationManager: BazelBspCompilationManager,
   val languagePluginsService: LanguagePluginsService,
   val bazelPathsResolver: BazelPathsResolver,
 ) {
@@ -50,7 +43,6 @@ class ServerContainer internal constructor(
       workspaceContextProvider: WorkspaceContextProvider,
       projectStorage: ProjectStorage?,
       bspClientLogger: BspClientLogger,
-      bspClientTestNotifier: BspClientTestNotifier,
       bazelRunner: BazelRunner,
       compilationManager: BazelBspCompilationManager,
       metricsLogger: MetricsLogger?
@@ -72,7 +64,7 @@ class ServerContainer internal constructor(
       )
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
-      val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver, bazelInfo)
+      val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver)
       val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
       val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
       val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
@@ -101,11 +93,6 @@ class ServerContainer internal constructor(
       val projectProvider = ProjectProvider(projectResolver, finalProjectStorage)
       return ServerContainer(
         projectProvider,
-        bspClientLogger,
-        bspClientTestNotifier,
-        bazelInfo,
-        bazelRunner,
-        compilationManager,
         languagePluginsService,
         bazelPathsResolver,
       )

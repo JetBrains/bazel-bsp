@@ -2,29 +2,21 @@ package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetDataKind
-import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JvmBuildTarget
-import ch.epfl.scala.bsp4j.JvmEnvironmentItem
-import ch.epfl.scala.bsp4j.JvmMainClass
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Module
 import java.net.URI
 import java.nio.file.Path
 
 class JavaLanguagePlugin(
     private val bazelPathsResolver: BazelPathsResolver,
     private val jdkResolver: JdkResolver,
-    private val bazelInfo: BazelInfo
 ) : LanguagePlugin<JavaModule>() {
     private var jdk: Jdk? = null
 
@@ -39,7 +31,6 @@ class JavaLanguagePlugin(
                 it.interfaceJarsList + it.binaryJarsList
             }.map(bazelPathsResolver::resolveUri)
             val mainClass = getMainClass(this)
-            val compileClasspath = bazelPathsResolver.resolveUris(generatedJarsList.flatMap { it.binaryJarsList }, true)
             val runtimeJdk = jdkResolver.resolveJdk(targetInfo)
 
             JavaModule(
@@ -51,7 +42,6 @@ class JavaLanguagePlugin(
                 allOutputs,
                 mainClass,
                 argsList,
-                compileClasspath
             )
         }
 
@@ -63,11 +53,6 @@ class JavaLanguagePlugin(
         jvmTargetInfo.mainClass.takeUnless { jvmTargetInfo.mainClass.isBlank() }
 
     private fun getJdk(): Jdk = jdk ?: throw RuntimeException("Failed to resolve JDK for project")
-
-    private fun resolveIdeClasspath(
-        targetId: Label,
-        bazelPathsResolver: BazelPathsResolver, runtimeClasspath: Sequence<URI>, compileClasspath: Sequence<URI>
-    ): List<URI> = IdeClasspathResolver(targetId, bazelPathsResolver, runtimeClasspath, compileClasspath).resolve().toList()
 
     override fun dependencySources(
         targetInfo: TargetInfo, dependencyTree: DependencyTree
@@ -102,5 +87,4 @@ class JavaLanguagePlugin(
             it.javaHome = javaHome
         }
     }
-
 }

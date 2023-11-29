@@ -238,7 +238,6 @@ class BspProjectMapper(
         return ResourcesResult(resourcesItems)
     }
 
-
     fun inverseSources(
         project: Project, inverseSourcesParams: InverseSourcesParams
     ): InverseSourcesResult {
@@ -298,8 +297,8 @@ class BspProjectMapper(
     private fun getJvmEnvironmentItems(
             project: Project, targets: List<BuildTargetIdentifier>, cancelChecker: CancelChecker
     ): List<JvmEnvironmentItem> {
-        fun extractJvmEnvironmentItem(module: Module, runtimeClasspath: List<URI>): JvmEnvironmentItem? {
-            return module.javaModule?.let { javaModule ->
+        fun extractJvmEnvironmentItem(module: Module, runtimeClasspath: List<URI>): JvmEnvironmentItem? =
+            module.javaModule?.let { javaModule ->
                 JvmEnvironmentItem(
                         BspMappings.toBspId(module),
                         runtimeClasspath.map { it.toString() },
@@ -310,7 +309,6 @@ class BspProjectMapper(
                     mainClasses = javaModule.mainClass?.let { listOf(JvmMainClass(it, javaModule.args)) }.orEmpty()
                 }
             }
-        }
 
         return targets.mapNotNull {
             val label = Label(it.uri)
@@ -321,39 +319,10 @@ class BspProjectMapper(
         }
     }
 
-    private fun resolveClasspath(cqueryResult: List<String>) = cqueryResult
-            .map { bazelPathsResolver.resolveOutput(Paths.get(it)) }
-            .filter { it.toFile().exists() } // I'm surprised this is needed, but we literally test it in e2e tests
-            .map { it.toUri() }
-
-    private fun toJavacOptionsItem(module: Module, javaModule: JavaModule, ideClasspath: List<URI>): JavacOptionsItem =
-            JavacOptionsItem(
-                    BspMappings.toBspId(module),
-                    javaModule.javacOpts.toList(),
-                    ideClasspath.map { it.toString() }.toList(),
-                    javaModule.mainOutput.toString()
-            )
-    private fun toScalacOptionsItem(module: Module, ideClasspath: List<URI>): ScalacOptionsItem? =
-            (module.languageData as? ScalaModule)?.let {scalaModule ->
-                return scalaModule.javaModule?.let {javaModule ->
-                    val javacOptions = toJavacOptionsItem(module, javaModule, ideClasspath)
-                    return ScalacOptionsItem(
-                            javacOptions.target,
-                            scalaModule.scalacOpts,
-                            javacOptions.classpath,
-                            javacOptions.classDirectory
-                    )
-                }
-            }
-
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams, cancelChecker: CancelChecker): JavacOptionsResult {
-        val items = params.targets.map { targetIdentifier ->
-            val label = Label(targetIdentifier.uri)
-            val module = project.findModule(label)
-                    ?: return@map null // This is a silent failure, equivalent of .mapNotNull used previously
-            val ideClasspath = readIdeClasspath(targetIdentifier, cancelChecker)
+        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
             module.javaModule?.let { toJavacOptionsItem(module, it, ideClasspath) }
-        }.filterNotNull()
+        }
         return JavacOptionsResult(items)
     }
 
@@ -367,7 +336,6 @@ class BspProjectMapper(
         val items = modules.mapNotNull(::extractCppOptionsItem)
         return CppOptionsResult(items)
     }
-
 
     fun buildTargetPythonOptions(project: Project, params: PythonOptionsParams): PythonOptionsResult {
         val modules = BspMappings.getModules(project, params.targets)
@@ -385,25 +353,56 @@ class BspProjectMapper(
             params: ScalacOptionsParams,
             cancelChecker: CancelChecker
     ): ScalacOptionsResult {
-        val items = params.targets.map { targetIdentifier ->
-            val label = Label(targetIdentifier.uri)
-            val module = project.findModule(label) ?: return@map null // This is a silent failure, equivalent of .mapNotNull used previously
-            val ideClasspath = readIdeClasspath(targetIdentifier, cancelChecker)
+        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
             toScalacOptionsItem(module, ideClasspath)
-        }.filterNotNull()
+        }
         return ScalacOptionsResult(items)
     }
 
-    private fun readIdeClasspath(targetIdentifier: BuildTargetIdentifier, cancelChecker: CancelChecker): List<URI> {
-        val label = Label(targetIdentifier.uri)
+    private fun <T> List<BuildTargetIdentifier>.collectClasspathForTargetsAndApply(
+        project: Project,
+        cancelChecker: CancelChecker,
+        mapper: (Module, List<URI>) -> T?
+    ): List<T> =
+        this.mapNotNull { project.findModule(Label(it.uri)) }
+            .mapNotNull { mapper(it, readIdeClasspath(it.label, cancelChecker)) }
+
+    private fun readIdeClasspath(targetLabel: Label, cancelChecker: CancelChecker): List<URI> {
+        val targetIdentifier = BspMappings.toBspId(targetLabel)
         val classPathFromQuery = ClasspathQuery.classPathQuery(targetIdentifier, cancelChecker, bspInfo, bazelRunner)
         val ideClasspath = IdeClasspathResolver.resolveIdeClasspath(
-                label = label,
-                bazelPathsResolver = bazelPathsResolver,
-                runtimeClasspath = resolveClasspath(classPathFromQuery.runtime_classpath),
-                compileClasspath = resolveClasspath(classPathFromQuery.compile_classpath))
+            label = targetLabel,
+            bazelPathsResolver = bazelPathsResolver,
+            runtimeClasspath = resolveClasspath(classPathFromQuery.runtime_classpath),
+            compileClasspath = resolveClasspath(classPathFromQuery.compile_classpath))
         return ideClasspath
     }
+
+    private fun resolveClasspath(cqueryResult: List<String>) = cqueryResult
+        .map { bazelPathsResolver.resolveOutput(Paths.get(it)) }
+        .filter { it.toFile().exists() } // I'm surprised this is needed, but we literally test it in e2e tests
+        .map { it.toUri() }
+
+    private fun toScalacOptionsItem(module: Module, ideClasspath: List<URI>): ScalacOptionsItem? =
+        (module.languageData as? ScalaModule)?.let { scalaModule ->
+            scalaModule.javaModule?.let { javaModule ->
+                val javacOptions = toJavacOptionsItem(module, javaModule, ideClasspath)
+                ScalacOptionsItem(
+                    javacOptions.target,
+                    scalaModule.scalacOpts,
+                    javacOptions.classpath,
+                    javacOptions.classDirectory
+                )
+            }
+        }
+
+    private fun toJavacOptionsItem(module: Module, javaModule: JavaModule, ideClasspath: List<URI>): JavacOptionsItem =
+        JavacOptionsItem(
+            BspMappings.toBspId(module),
+            javaModule.javacOpts.toList(),
+            ideClasspath.map { it.toString() },
+            javaModule.mainOutput.toString()
+        )
 
     fun buildTargetScalaTestClasses(
         project: Project, params: ScalaTestClassesParams
