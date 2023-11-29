@@ -129,19 +129,18 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     generated_jars, resolve_files_generated_jars = get_generated_jars(provider)
     resolve_files += resolve_files_generated_jars
 
-    runtime_jars = extract_runtime_jars(target, provider).to_list()
-    compile_jars = extract_compile_jars(provider).to_list()
-    source_jars = getattr(provider, "transitive_source_jars", depset()).to_list()
-    resolve_files += runtime_jars
-    resolve_files += compile_jars
-    resolve_files += source_jars
-
     javac_opts = getattr(ctx.rule.attr, "javacopts", [])
     jvm_flags = getattr(ctx.rule.attr, "jvm_flags", [])
     args = getattr(ctx.rule.attr, "args", [])
     main_class = getattr(ctx.rule.attr, "main_class", None)
 
     if (is_external(target)):
+        runtime_jars = extract_runtime_jars(target, provider).to_list()
+        compile_jars = extract_compile_jars(provider).to_list()
+        source_jars = getattr(provider, "transitive_source_jars", depset()).to_list()
+        resolve_files += runtime_jars
+        resolve_files += compile_jars
+        resolve_files += source_jars
         update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
 
     info = create_struct(
