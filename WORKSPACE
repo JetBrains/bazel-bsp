@@ -212,7 +212,7 @@ maven_install(
         "com.google.guava:guava:31.0.1-jre",
         "ch.epfl.scala:bsp4j_2.13:2.1.0-M6.alpha",  # required until testkit is updated
         "ch.epfl.scala:bsp4j:2.2.0-M1",
-        "commons-io:commons-io:jar:2.15.0",
+        "commons-io:commons-io:jar:2.15.1",
         "commons-cli:commons-cli:jar:1.6.0",
         "org.apache.logging.log4j:log4j-api:2.22.0",
         "org.apache.logging.log4j:log4j-core:2.22.0",
