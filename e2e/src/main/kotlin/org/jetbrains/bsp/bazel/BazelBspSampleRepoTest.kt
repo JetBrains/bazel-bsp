@@ -37,6 +37,8 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
@@ -60,11 +62,11 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
 
   private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
     "resolve project"
-  ) { testClient.testResolveProject(Duration.ofMinutes(2)) }
+  ) { testClient.testResolveProject(2.minutes) }
 
   private fun compareWorkspaceTargetsResults(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
     "compare workspace targets results"
-  ) { testClient.testWorkspaceTargets(Duration.ofSeconds(30), expectedWorkspaceBuildTargetsResult()) }
+  ) { testClient.testWorkspaceTargets(30.seconds, expectedWorkspaceBuildTargetsResult()) }
 
   private fun sourcesResults(): BazelBspTestScenarioStep {
     val targetWithoutJvmFlagsExampleScala = SourceItem(
@@ -260,7 +262,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       )
     )
     return BazelBspTestScenarioStep("sources results") {
-      testClient.testSources(Duration.ofSeconds(30), sourcesParams, expectedSourcesResult)
+      testClient.testSources(30.seconds, sourcesParams, expectedSourcesResult)
     }
   }
 
@@ -341,7 +343,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     return BazelBspTestScenarioStep(
       "resources results"
     ) {
-      testClient.testResources(Duration.ofSeconds(30), resourcesParams, expectedResourcesResult)
+      testClient.testResources(30.seconds, resourcesParams, expectedResourcesResult)
     }
   }
 
@@ -354,7 +356,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       "inverse sources results"
     ) {
       testClient.testInverseSources(
-        Duration.ofSeconds(30), inverseSourcesParams, expectedInverseSourcesResult
+        30.seconds, inverseSourcesParams, expectedInverseSourcesResult
       )
     }
   }
@@ -401,7 +403,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       "Scala main classes"
     ) {
       testClient.testScalaMainClasses(
-        Duration.ofSeconds(30), scalaMainClassesParams, expectedScalaMainClassesResult
+        30.seconds, scalaMainClassesParams, expectedScalaMainClassesResult
       )
     }
   }
@@ -427,7 +429,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       "Scala test classes"
     ) {
       testClient.testScalaTestClasses(
-        Duration.ofSeconds(30), scalaTestClassesParams, expectedScalaTestClassesResult
+        30.seconds, scalaTestClassesParams, expectedScalaTestClassesResult
       )
     }
   }
@@ -521,7 +523,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       "dependency sources results"
     ) {
       testClient.testDependencySources(
-        Duration.ofSeconds(30), dependencySourcesParams, expectedDependencies
+        30.seconds, dependencySourcesParams, expectedDependencies
       )
     }
   }
@@ -753,7 +755,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     )
     return BazelBspTestScenarioStep(
       "jvm run environment results"
-    ) { testClient.testJvmRunEnvironment(Duration.ofSeconds(30), params, expectedResult) }
+    ) { testClient.testJvmRunEnvironment(30.seconds, params, expectedResult) }
   }
 
   // FIXME: Should this return only targets that are actually testable?
@@ -981,7 +983,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     )
     return BazelBspTestScenarioStep(
       "jvm test environment results"
-    ) { testClient.testJvmTestEnvironment(Duration.ofSeconds(30), params, expectedResult) }
+    ) { testClient.testJvmTestEnvironment(30.seconds, params, expectedResult) }
   }
 
   private fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =

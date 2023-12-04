@@ -5,6 +5,7 @@ import ch.epfl.scala.bsp4j.InitializeBuildParams
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.testkit.client.bazel.BazelTestClient
+import java.lang.RuntimeException
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.name
@@ -26,7 +27,10 @@ abstract class BazelBspTestBaseScenario {
     // check: https://github.com/bazelbuild/intellij/blob/adb358670a7fc6ad51808486dc03f4605f83dcd3/aspect/testing/tests/src/com/google/idea/blaze/aspect/integration/BazelInvokingIntegrationTestRunner.java#L132
     private fun calculateTargetPrefix(): String {
         val dirName = Path(binary).parent.name
-        val majorVersion = dirName.split("_")[3].toInt()
+        // With bzlmod enabled the directory name is something like:
+        // rules_bazel_integration_test~0.18.0~bazel_binaries~build_bazel_bazel_6_3_2
+        val bazelPart = if (dirName.contains("~")) dirName.split("~")[3] else dirName
+        val majorVersion = bazelPart.split("_")[3].toInt()
         return if (majorVersion < 6) "" else "@"
     }
 
@@ -39,6 +43,21 @@ abstract class BazelBspTestBaseScenario {
             )
         )
     }
+
+    private fun processBazelOutput(vararg args: String): String {
+        val command = arrayOf<String>(binary, *args)
+        val process = ProcessBuilder(*command)
+            .directory(Path(workspaceDir).toFile())
+            .start()
+        val output = process.inputStream.bufferedReader().readText().trim()
+        val exitCode = process.waitFor()
+        if (exitCode != 0) {
+            val error = process.errorStream.bufferedReader().readText().trim()
+            throw RuntimeException("Command '${command.joinToString(" ")}' failed with exit code $exitCode.\n$error")
+        }
+        return output
+    }
+
     private fun createClient(): BazelTestClient {
         log.info("Testing repo workspace path: $workspaceDir")
         log.info("Creating TestClient...")
@@ -51,7 +70,11 @@ abstract class BazelBspTestBaseScenario {
             workspaceDir,
             capabilities
         )
-        return BazelTestClient(Path.of(workspaceDir), initializeBuildParams)
+
+        val bazelCache = Path(processBazelOutput("info", "execution_root"))
+        val bazelOutputBase = Path(processBazelOutput("info", "output_base"))
+
+        return BazelTestClient(Path.of(workspaceDir), initializeBuildParams, bazelCache, bazelOutputBase)
             .also { log.info("Created TestClient done.") }
     }
 

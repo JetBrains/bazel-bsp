@@ -28,7 +28,7 @@ bazel_integration_tests(
     name = "remote_jdk_test",
     timeout = "eternal",
     bazel_versions = bazel_binaries.versions.all,
-    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspRemoteJdkTest",
+    test_runner = "@//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspRemoteJdkTest",
     workspace_path = "test-resources/remote-jdk-project",
 )
 

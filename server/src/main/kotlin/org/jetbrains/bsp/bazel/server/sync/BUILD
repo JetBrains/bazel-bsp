@@ -1,4 +1,4 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
     name = "sync",
@@ -20,11 +20,12 @@ kt_jvm_library(
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/utils",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync/dependencytree",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",
-        "@com_google_protobuf//:protobuf_java",
-        "@io_bazel//src/main/protobuf:deps_java_proto",
+        "@bazel_bep//jar",
         "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:io_grpc_grpc_stub",
         "@maven//:org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
     ],

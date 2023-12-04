@@ -1,0 +1,52 @@
+# This file contains only non-bzlmod dependencies. We want to get rid of it as soon as possible.
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+# ======================================================================================================================
+# io_bazel_rules_scala - required by bazel_sonatype
+
+IO_BAZEL_RULES_SCALA_TAG = "6.2.1"
+
+IO_BAZEL_RULES_SCALA_SHA = "71324bef9bc5a885097e2960d5b8effed63399b55572219919d25f43f468c716"
+
+http_archive(
+    name = "io_bazel_rules_scala",
+    sha256 = IO_BAZEL_RULES_SCALA_SHA,
+    strip_prefix = "rules_scala-{}".format(IO_BAZEL_RULES_SCALA_TAG),
+    url = "https://github.com/bazelbuild/rules_scala/archive/refs/tags/v{}.tar.gz".format(IO_BAZEL_RULES_SCALA_TAG),
+)
+
+# ----------------------------------------------------------------------------------------------------------------------
+load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
+
+scala_config(scala_version = "2.13.12")
+
+# ----------------------------------------------------------------------------------------------------------------------
+load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
+
+scala_register_toolchains()
+
+# ----------------------------------------------------------------------------------------------------------------------
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+
+scala_repositories()
+
+# ======================================================================================================================
+# bazel_sonatype - for publish
+
+BAZEL_SONATYPE_TAG = "1.1.1"
+
+BAZEL_SONATYPE_SHA = "6d1bc7da15dae958274df944eb46e9757e14187cda6decd66fc1aeeb1ea21758"
+
+http_archive(
+    name = "bazel_sonatype",
+    sha256 = BAZEL_SONATYPE_SHA,
+    strip_prefix = "bazel-sonatype-{}".format(BAZEL_SONATYPE_TAG),
+    url = "https://github.com/JetBrains/bazel-sonatype/archive/v{}.zip".format(BAZEL_SONATYPE_TAG),
+)
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@bazel_sonatype//:defs.bzl", "sonatype_dependencies")
+
+sonatype_dependencies()

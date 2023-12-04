@@ -1,5 +1,5 @@
 load("@//rules/kotlin:junit5.bzl", "kt_test")
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_test(
     name = "DefaultProjectViewParserTest",

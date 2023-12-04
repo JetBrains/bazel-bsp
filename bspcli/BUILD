@@ -1,6 +1,6 @@
 load("@rules_python//python:defs.bzl", "py_binary")
 load(":integration_test.bzl", "bsp_cli_on_large_project", "synthetic_bazel_project")
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
 
 LOG4J_CONFIG = "log4j2_bspcli.xml"
 

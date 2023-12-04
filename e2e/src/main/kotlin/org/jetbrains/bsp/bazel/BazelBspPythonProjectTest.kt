@@ -19,6 +19,8 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 
 import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
@@ -104,7 +106,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
-                Duration.ofSeconds(60),
+                1.minutes,
                 workspaceBuildTargetsResult
             )
         }
@@ -126,7 +128,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             "dependency sources results"
         ) {
             testClient.testDependencySources(
-                Duration.ofSeconds(30), dependencySourcesParams, expectedDependencies
+                30.seconds, dependencySourcesParams, expectedDependencies
             )
         }
     }
@@ -140,7 +142,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         return BazelBspTestScenarioStep(
             "pythonOptions results"
         ) {
-            testClient.testPythonOptions(Duration.ofSeconds(30), pythonOptionsParams, expectedPythonOptionsResult)
+            testClient.testPythonOptions(30.seconds, pythonOptionsParams, expectedPythonOptionsResult)
         }
     }
 
@@ -153,7 +155,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         return BazelBspTestScenarioStep(
             "resources results"
         ) {
-            testClient.testResources(Duration.ofSeconds(30), resourcesParams, expectedResourcesResult)
+            testClient.testResources(30.seconds, resourcesParams, expectedResourcesResult)
         }
     }
 

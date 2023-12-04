@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import org.jetbrains.bsp.bazel.install.Install
-import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 object ServerDownloadsBazeliskTest : BazelBspTestBaseScenario() {
     @JvmStatic
@@ -24,5 +24,5 @@ object ServerDownloadsBazeliskTest : BazelBspTestBaseScenario() {
 
     private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
         "resolve project"
-    ) { testClient.testResolveProject(Duration.ofMinutes(2)) }
+    ) { testClient.testResolveProject(2.minutes) }
 }

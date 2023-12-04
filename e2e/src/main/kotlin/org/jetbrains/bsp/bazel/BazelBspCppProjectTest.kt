@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import org.jetbrains.bsp.bazel.commons.Constants
 import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
 
@@ -58,7 +59,7 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
             WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget))
 
         return BazelBspTestScenarioStep("cpp project") {
-            testClient.testWorkspaceTargets(Duration.ofSeconds(20), expectedWorkspaceBuildTargetsResult)
+            testClient.testWorkspaceTargets(20.seconds, expectedWorkspaceBuildTargetsResult)
         }
     }
 
@@ -78,7 +79,7 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
             CppOptionsResult(ImmutableList.of(exampleExampleCppOptionsItem))
 
         return BazelBspTestScenarioStep("cpp options") {
-            testClient.testCppOptions(Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult)
+            testClient.testCppOptions(20.seconds, cppOptionsParams, expectedCppOptionsResult)
         }
     }
 }
