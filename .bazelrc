@@ -14,4 +14,6 @@ build --incompatible_strict_action_env
 startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
 build --noexperimental_check_output_files
 build --noexperimental_check_external_repository_files
-build --experimental_reuse_sandbox_directories
+# Enable again once we update to bazel 7
+# https://github.com/bazelbuild/bazel/issues/19217
+#build --experimental_reuse_sandbox_directories
