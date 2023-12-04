@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaSdkResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Library
@@ -28,6 +29,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.notExists
 
 class BazelProjectMapper(
@@ -64,8 +66,15 @@ class BazelProjectMapper(
     val kotlinStdlibsMapper = measure("Create kotlin stdlibs") {
       calculateKotlinStdlibsMapper(targetsToImport)
     }
+    val scalaLibrariesMapper = measure("Create scala libraries") {
+      calculateScalaLibrariesMapper(targetsToImport)
+    }
     val librariesFromDeps = measure("Merge libraries from deps") {
-      concatenateMaps(annotationProcessorLibraries, kotlinStdlibsMapper)
+      concatenateMaps(
+        annotationProcessorLibraries,
+        kotlinStdlibsMapper,
+        scalaLibrariesMapper
+      )
     }
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
       createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().associateBy { it.label }
@@ -92,10 +101,13 @@ class BazelProjectMapper(
     return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
   }
 
-  private fun <K, V> concatenateMaps(
-    left: Map<K, List<V>>,
-    right: Map<K, List<V>>
-  ) = (left.keys + right.keys).associateWith { left[it].orEmpty() + right[it].orEmpty() }
+  private fun <K, V> concatenateMaps(vararg maps: Map<K, List<V>>): Map<K, List<V>> =
+    maps
+      .flatMap { it.keys }
+      .distinct()
+      .associateWith { key ->
+        maps.flatMap { it[key].orEmpty() }
+      }
 
   private fun annotationProcessorLibraries(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
     return targetsToImport
@@ -148,6 +160,33 @@ class BazelProjectMapper(
       .map { it.kotlinTargetInfo.stdlibsList }
       .flatMap { it.resolveUris() }
       .toSet()
+
+  private fun calculateScalaLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
+    val projectLevelScalaSdkLibraries = calculateProjectLevelScalaLibraries()
+    val scalaTargets = targetsToImport.filter { it.hasScalaTargetInfo() }.map { it.id }
+    return projectLevelScalaSdkLibraries
+      ?.let { libraries -> scalaTargets.associateWith { libraries } }
+      .orEmpty()
+  }
+
+  private fun calculateProjectLevelScalaLibraries(): List<Library>? {
+    val scalaSdkLibrariesJars = getProjectLevelScalaSdkLibrariesJars()
+    return if (scalaSdkLibrariesJars.isNotEmpty()) {
+      scalaSdkLibrariesJars.map {
+        Library(
+          label = Paths.get(it).name,
+          outputs = setOf(it),
+          sources = emptySet(),
+          dependencies = emptyList()
+        )
+      }
+    } else null
+  }
+
+  private fun getProjectLevelScalaSdkLibrariesJars(): Set<URI> =
+    languagePluginsService.scalaLanguagePlugin.scalaSdk
+      ?.compilerJars
+      ?.toSet().orEmpty()
 
   /**
    * In some cases, the jar dependencies of a target might be injected by bazel or rules and not are not

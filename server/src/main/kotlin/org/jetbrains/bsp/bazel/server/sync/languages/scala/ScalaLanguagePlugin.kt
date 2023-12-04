@@ -26,7 +26,7 @@ class ScalaLanguagePlugin(
     private val bazelPathsResolver: BazelPathsResolver
 ) : LanguagePlugin<ScalaModule>() {
 
-    private var scalaSdk: ScalaSdk? = null
+    var scalaSdk: ScalaSdk? = null
 
     override fun prepareSync(targets: Sequence<BspTargetInfo.TargetInfo>) {
         scalaSdk = ScalaSdkResolver(bazelPathsResolver).resolve(targets)
@@ -37,12 +37,12 @@ class ScalaLanguagePlugin(
             return null
         }
         val scalaTargetInfo = targetInfo.scalaTargetInfo
-        val sdk = getScalaSdk()
+        val sdk = getScalaSdkOrThrow()
         val scalacOpts = scalaTargetInfo.scalacOptsList
         return ScalaModule(sdk, scalacOpts, javaLanguagePlugin.resolveModule(targetInfo))
     }
 
-    private fun getScalaSdk(): ScalaSdk =
+    private fun getScalaSdkOrThrow(): ScalaSdk =
         scalaSdk ?: throw RuntimeException("Failed to resolve Scala SDK for project")
 
     override fun dependencySources(
