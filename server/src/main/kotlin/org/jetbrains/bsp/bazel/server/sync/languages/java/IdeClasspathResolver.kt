@@ -62,5 +62,15 @@ class IdeClasspathResolver(
 
   companion object {
     private val JAR_PATTERN = ("((-[hi]jar)|(\\.abi))\\.jar\$").toRegex()
+
+    fun resolveIdeClasspath(label: Label,
+                            bazelPathsResolver: BazelPathsResolver,
+                            runtimeClasspath: List<URI>,
+                            compileClasspath: List<URI>) =
+            IdeClasspathResolver(
+                    label,
+                    bazelPathsResolver,
+                    runtimeClasspath.asSequence(),
+                    compileClasspath.asSequence()).resolve().toList()
   }
 }

@@ -54,12 +54,14 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-
-import org.jetbrains.bsp.bazel.server.sync.BazelBuildServer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.bsp.BazelBuildServer;
+import org.jetbrains.bsp.RunWithDebugParams;
+import org.jetbrains.bsp.WorkspaceDirectoriesResult;
+import org.jetbrains.bsp.WorkspaceInvalidTargetsResult;
+import org.jetbrains.bsp.WorkspaceLibrariesResult;
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService;
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService;
-import org.jetbrains.bsp.bazel.server.sync.WorkspaceDirectoriesResult;
-import org.jetbrains.bsp.bazel.server.sync.WorkspaceLibrariesResult;
 
 public class BspServerApi
     implements BuildServer,
@@ -100,7 +102,7 @@ public class BspServerApi
 
   @Override
   public void onBuildInitialized() {
-    runner.handleNotification("onBuildInitialized", serverLifetime::setInitializedComplete);
+    runner.handleNotification("onBuildInitialized", serverLifetime::initialize);
   }
 
   @Override
@@ -108,7 +110,7 @@ public class BspServerApi
     return runner.handleRequest(
         "buildShutdown",
         cancelChecker -> {
-          serverLifetime.setFinishedComplete();
+          serverLifetime.finish();
           return new Object();
         },
         runner::serverIsInitialized);
@@ -170,10 +172,19 @@ public class BspServerApi
     return runner.handleRequest("buildTargetRun", executeService::run, params);
   }
 
+  @NotNull
+  @Override
+  public CompletableFuture<RunResult> buildTargetRunWithDebug(@NotNull RunWithDebugParams params) {
+    return runner.handleRequest("buildTargetRunWithDebug", executeService::runWithDebug, params);
+  }
+
   @Override
   public CompletableFuture<CleanCacheResult> buildTargetCleanCache(CleanCacheParams params) {
     return runner.handleRequest("buildTargetCleanCache", executeService::clean, params);
   }
+
+  @Override
+  public void onRunReadStdin(ReadParams readParams) {}
 
   @Override
   public CompletableFuture<DependencyModulesResult> buildTargetDependencyModules(
@@ -248,9 +259,15 @@ public class BspServerApi
         "jvmTestEnvironment", projectSyncService::jvmTestEnvironment, params);
   }
 
+  @NotNull
   @Override
   public CompletableFuture<WorkspaceLibrariesResult> workspaceLibraries() {
     return runner.handleRequest("libraries", projectSyncService::workspaceBuildLibraries);
+  }
+
+  @Override
+  public CompletableFuture<WorkspaceInvalidTargetsResult> workspaceInvalidTargets() {
+    return runner.handleRequest("invalidTargets", projectSyncService::workspaceInvalidTargets);
   }
 
   @Override

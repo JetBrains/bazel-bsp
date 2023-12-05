@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.base
 
 import org.apache.logging.log4j.LogManager
+import kotlinx.coroutines.test.runTest
 
 class BazelBspTestScenarioStep(private val testName: String, private val testkitCall: () -> Unit) {
     fun executeAndReturnResult(): Boolean {

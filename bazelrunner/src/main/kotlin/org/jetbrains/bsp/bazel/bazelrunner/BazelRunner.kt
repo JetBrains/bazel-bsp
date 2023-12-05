@@ -28,7 +28,7 @@ class BazelRunner private constructor(
     fun commandBuilder(): BazelRunnerCommandBuilder = BazelRunnerCommandBuilder(this)
 
     fun runBazelCommandBes(
-        command: String,
+        command: List<String>,
         flags: List<String>,
         arguments: List<String>,
         environment: Map<String, String>,
@@ -53,16 +53,18 @@ class BazelRunner private constructor(
     }
 
     fun runBazelCommand(
-        command: String,
+        command: List<String>,
         flags: List<String>,
         arguments: List<String>,
         environment: Map<String, String>,
         originId: String?,
         parseProcessOutput: Boolean,
+        useBuildFlags: Boolean = true,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
+        val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
         val processArgs =
-            listOf(bazel(workspaceContext), command) + buildFlags(workspaceContext) + flags + arguments
+            listOf(bazel(workspaceContext)) + command + usedBuildFlags + flags + arguments
         logInvocation(processArgs, environment, originId)
         val processBuilder = ProcessBuilder(processArgs)
         processBuilder.environment() += environment

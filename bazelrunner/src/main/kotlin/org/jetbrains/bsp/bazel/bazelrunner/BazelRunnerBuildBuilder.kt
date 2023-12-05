@@ -6,7 +6,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 
 class BazelRunnerBuildBuilder(
     bazelRunner: BazelRunner,
-    bazelBuildCommand: String
+    bazelBuildCommand: List<String>
 ) : BazelRunnerBuilder(bazelRunner, bazelBuildCommand) {
 
   override fun withTargets(bazelTargets: List<String>): BazelRunnerBuilder {

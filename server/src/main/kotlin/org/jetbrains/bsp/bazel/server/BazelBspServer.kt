@@ -40,14 +40,17 @@ class BazelBspServer(
             workspaceContextProvider,
             null,
             bspClientLogger,
-            bspClientTestNotifier,
             bazelRunner,
             compilationManager,
             metricsLogger
         )
 
         val bspProjectMapper = BspProjectMapper(
-            serverContainer.languagePluginsService, workspaceContextProvider
+                serverContainer.languagePluginsService,
+                workspaceContextProvider,
+                serverContainer.bazelPathsResolver,
+                bazelRunner,
+                bspInfo
         )
         val projectSyncService =
             ProjectSyncService(bspProjectMapper, serverContainer.projectProvider)
@@ -56,10 +59,11 @@ class BazelBspServer(
             serverContainer.projectProvider,
             bazelRunner,
             workspaceContextProvider,
+            bspClientLogger,
             bspClientTestNotifier,
             bspState,
         )
-        val serverLifetime = BazelBspServerLifetime()
+        val serverLifetime = BazelBspServerLifetime(workspaceContextProvider)
         val bspRequestsRunner = BspRequestsRunner(serverLifetime)
         return BazelServices(
             serverLifetime,

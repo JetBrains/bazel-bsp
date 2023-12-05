@@ -3,10 +3,10 @@ package org.jetbrains.bsp.bazel.logger
 import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.StatusCode
-import ch.epfl.scala.bsp4j.TaskStartDataKind
 import ch.epfl.scala.bsp4j.TaskFinishDataKind
 import ch.epfl.scala.bsp4j.TaskFinishParams
 import ch.epfl.scala.bsp4j.TaskId
+import ch.epfl.scala.bsp4j.TaskStartDataKind
 import ch.epfl.scala.bsp4j.TaskStartParams
 import ch.epfl.scala.bsp4j.TestFinish
 import ch.epfl.scala.bsp4j.TestReport
@@ -16,14 +16,6 @@ import ch.epfl.scala.bsp4j.TestTask
 
 class BspClientTestNotifier {
   private lateinit var bspClient: BuildClient
-  private var originId: String? = null
-
-  fun withOriginId(originId: String?): BspClientTestNotifier {
-    val bspClientTestNotifier = BspClientTestNotifier()
-    bspClientTestNotifier.originId = originId
-    bspClientTestNotifier.bspClient = bspClient
-    return bspClientTestNotifier
-  }
 
   /**
    * Notifies the client about starting a single test or a test suite

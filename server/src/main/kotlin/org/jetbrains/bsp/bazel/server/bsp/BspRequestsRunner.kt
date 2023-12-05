@@ -53,7 +53,7 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
         serverIsInitialized(methodName) ?: serverIsNotFinished(methodName)
 
     fun <T> serverIsInitialized(methodName: String): CompletableFuture<T>? =
-        if (!serverLifetime.isInitialized()) {
+        if (!serverLifetime.isInitialized) {
             failure(
                 methodName,
                 ResponseError(

@@ -1,4 +1,4 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
     name = "install",
@@ -15,7 +15,7 @@ kt_jvm_library(
         "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",
         "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install/cli",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:com_google_code_gson_gson",
         "@maven//:commons_cli_commons_cli",
     ],

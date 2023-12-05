@@ -1,4 +1,4 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
     name = "utils",
@@ -8,6 +8,7 @@ kt_jvm_library(
     ]),
     visibility = ["//server:__subpackages__"],
     deps = [
+        "//bazelrunner",
         "//commons",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/info",
     ],

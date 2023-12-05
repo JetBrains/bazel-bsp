@@ -1,4 +1,4 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
 
 kt_jvm_binary(
     name = "BazelBspSampleRepoTest",
@@ -9,7 +9,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -22,7 +22,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -35,7 +35,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -48,7 +48,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -61,7 +61,20 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
+    ],
+)
+
+kt_jvm_binary(
+    name = "ServerDownloadsBazeliskTest",
+    srcs = ["ServerDownloadsBazeliskTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.ServerDownloadsBazeliskTest",
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//e2e:__subpackages__"],
+    deps = [
+        "//commons",
+        "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
 
@@ -74,6 +87,6 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

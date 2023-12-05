@@ -30,6 +30,10 @@ object SampleRepoBazel6E2ETest : BazelBspE2ETestsBuildType(
     targets = "//e2e:sample_repo_test_bazel_6_3_2",
 )
 
+object ServerDownloadsBazeliskTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:server_downloads_bazelisk_test_bazel_6_3_2",
+)
+
 object SampleRepoBazel5E2ETest : BazelBspE2ETestsBuildType(
     targets = "//e2e:sample_repo_test_bazel_5_3_2",
 )

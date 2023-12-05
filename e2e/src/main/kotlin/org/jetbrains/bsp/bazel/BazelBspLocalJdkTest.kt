@@ -9,6 +9,7 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 object BazelBspLocalJdkTest : BazelBspTestBaseScenario() {
 
@@ -23,7 +24,7 @@ object BazelBspLocalJdkTest : BazelBspTestBaseScenario() {
 
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
-                Duration.ofSeconds(60),
+                60.seconds,
                 workspaceBuildTargetsResult
             )
         }

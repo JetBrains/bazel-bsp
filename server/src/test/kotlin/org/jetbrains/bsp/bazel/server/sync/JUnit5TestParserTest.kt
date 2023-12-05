@@ -225,6 +225,14 @@ private class MockBspClient : BuildClient {
     }
   }
 
+  override fun onRunPrintStdout(p0: PrintParams?) {
+    // ignore
+  }
+
+  override fun onRunPrintStderr(p0: PrintParams?) {
+    // ignore
+  }
+
   override fun onBuildPublishDiagnostics(params: PublishDiagnosticsParams?) {
     // ignore
   }

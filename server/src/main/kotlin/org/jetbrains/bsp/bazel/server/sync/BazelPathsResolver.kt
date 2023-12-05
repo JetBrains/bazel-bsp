@@ -17,6 +17,8 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
 
     fun resolveUri(path: Path): URI = uris.computeIfAbsent(path, Path::toUri)
 
+    fun unresolvedWorkspaceRoot(): Path = bazelInfo.workspaceRoot
+
     fun workspaceRoot(): URI = resolveUri(bazelInfo.workspaceRoot.toAbsolutePath())
 
     fun resolveUris(fileLocations: List<FileLocation>, shouldFilterExisting: Boolean = false): List<URI> =
@@ -112,7 +114,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     }
 
     fun extractRelativePath(label: String): String {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
 
         require(isRelativeWorkspacePath(label)) { "$label didn't start with $prefix" }
         val labelWithoutPrefix = label.substring(prefix.length)

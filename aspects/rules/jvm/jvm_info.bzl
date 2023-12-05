@@ -50,13 +50,20 @@ def get_generated_jars(provider):
         return map_with_resolve_files(to_generated_jvm_outputs, provider.java_outputs)
 
     if hasattr(provider, "annotation_processing") and provider.annotation_processing and provider.annotation_processing.enabled:
-        class_jar = provider.annotation_processing.class_jar
-        source_jar = provider.annotation_processing.source_jar
+        class_jars = [provider.annotation_processing.class_jar]
+        source_jars = [provider.annotation_processing.source_jar]
+
+        # Additional info from `rules_kotlin`'s `KtJvmInfo`
+        if hasattr(provider, "additional_generated_source_jars"):
+            source_jars = source_jars + [jar for jar in provider.additional_generated_source_jars]
+        if hasattr(provider, "all_output_jars"):
+            class_jars = class_jars + [jar for jar in provider.all_output_jars]
+
         output = struct(
-            binary_jars = [file_location(class_jar)],
-            source_jars = [file_location(source_jar)],
+            binary_jars = [file_location(jar) for jar in class_jars],
+            source_jars = [file_location(jar) for jar in source_jars],
         )
-        resolve_files = [class_jar, source_jar]
+        resolve_files = class_jars + source_jars
         return [output], resolve_files
 
     return [], []
@@ -122,31 +129,23 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     generated_jars, resolve_files_generated_jars = get_generated_jars(provider)
     resolve_files += resolve_files_generated_jars
 
-    runtime_jars = extract_runtime_jars(target, provider).to_list()
-    compile_jars = extract_compile_jars(provider).to_list()
-    source_jars = getattr(provider, "transitive_source_jars", depset()).to_list()
-    resolve_files += runtime_jars
-    resolve_files += compile_jars
-    resolve_files += source_jars
-
-    runtime_classpath = map(file_location, runtime_jars)
-    compile_classpath = map(file_location, compile_jars)
-    source_classpath = map(file_location, source_jars)
-
     javac_opts = getattr(ctx.rule.attr, "javacopts", [])
     jvm_flags = getattr(ctx.rule.attr, "jvm_flags", [])
     args = getattr(ctx.rule.attr, "args", [])
     main_class = getattr(ctx.rule.attr, "main_class", None)
 
     if (is_external(target)):
+        runtime_jars = extract_runtime_jars(target, provider).to_list()
+        compile_jars = extract_compile_jars(provider).to_list()
+        source_jars = getattr(provider, "transitive_source_jars", depset()).to_list()
+        resolve_files += runtime_jars
+        resolve_files += compile_jars
+        resolve_files += source_jars
         update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
 
     info = create_struct(
         jars = jars,
         generated_jars = generated_jars,
-        runtime_classpath = runtime_classpath,
-        compile_classpath = compile_classpath,
-        source_classpath = source_classpath,
         javac_opts = javac_opts,
         jvm_flags = jvm_flags,
         main_class = main_class,

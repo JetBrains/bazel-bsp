@@ -9,12 +9,18 @@ import java.nio.file.Path
 
 open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
-    private val bazelCommand: String
+    private val bazelCommand: List<String>,
 ) {
 
     private val flags = mutableListOf<String>()
     private val arguments = mutableListOf<String>()
     private val environmentVariables = mutableMapOf<String, String>()
+    private var useBuildFlags = false
+
+    fun withUseBuildFlags(useBuildFlags: Boolean = true): BazelRunnerBuilder {
+        this.useBuildFlags = useBuildFlags
+        return this
+    }
 
     fun withFlag(bazelFlag: String): BazelRunnerBuilder {
         flags.add(bazelFlag)
@@ -96,7 +102,8 @@ open class BazelRunnerBuilder internal constructor(
             arguments,
             environmentVariables,
             originId,
-            parseProcessOutput
+            parseProcessOutput,
+            useBuildFlags
         )
     }
 

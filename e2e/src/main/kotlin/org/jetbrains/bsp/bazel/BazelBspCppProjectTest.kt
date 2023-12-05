@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import org.jetbrains.bsp.bazel.commons.Constants
 import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
 
@@ -82,7 +83,7 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
             CppOptionsResult(ImmutableList.of(exampleExampleCppOptionsItem))
 
         return BazelBspTestScenarioStep("cpp options") {
-            testClient.testCppOptions(Duration.ofSeconds(20), cppOptionsParams, expectedCppOptionsResult)
+            testClient.testCppOptions(20.seconds, cppOptionsParams, expectedCppOptionsResult)
         }
     }
 }

@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.model.Label
 import java.net.URI
 import java.nio.file.Path
 
@@ -19,7 +20,7 @@ class KotlinLanguagePlugin(
       KotlinBuildTarget(
           languageVersion = languageVersion,
           apiVersion = apiVersion,
-          associates = associates,
+          associates = associates.map { BuildTargetIdentifier(it.value) },
           kotlincOptions = kotlincOptions
       )
     }
@@ -39,7 +40,7 @@ class KotlinLanguagePlugin(
     return KotlinModule(
         languageVersion = kotlinTargetInfo.languageVersion,
         apiVersion = kotlinTargetInfo.apiVersion,
-        associates = kotlinTargetInfo.associatesList.map { BuildTargetIdentifier(it) },
+        associates = kotlinTargetInfo.associatesList.map { Label(it) },
         kotlincOptions = kotlinTargetInfo.kotlincOptsList,
         javaModule = javaLanguagePlugin.resolveModule(targetInfo)
     )

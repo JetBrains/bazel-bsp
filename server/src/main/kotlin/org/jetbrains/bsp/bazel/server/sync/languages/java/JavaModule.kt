@@ -18,8 +18,4 @@ data class JavaModule(
     val allOutputs: List<URI>,
     val mainClass: String?,
     val args: List<String>,
-    val runtimeClasspath: List<URI>,
-    val compileClasspath: List<URI>,
-    val sourcesClasspath: List<URI>,
-    val ideClasspath: List<URI>
 ) : LanguageData

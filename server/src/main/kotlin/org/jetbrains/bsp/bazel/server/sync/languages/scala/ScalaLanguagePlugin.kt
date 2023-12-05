@@ -7,7 +7,6 @@ import ch.epfl.scala.bsp4j.ScalaMainClass
 import ch.epfl.scala.bsp4j.ScalaMainClassesItem
 import ch.epfl.scala.bsp4j.ScalaPlatform
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem
-import ch.epfl.scala.bsp4j.ScalacOptionsItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
@@ -27,7 +26,7 @@ class ScalaLanguagePlugin(
     private val bazelPathsResolver: BazelPathsResolver
 ) : LanguagePlugin<ScalaModule>() {
 
-    private var scalaSdk: ScalaSdk? = null
+    var scalaSdk: ScalaSdk? = null
 
     override fun prepareSync(targets: Sequence<BspTargetInfo.TargetInfo>) {
         scalaSdk = ScalaSdkResolver(bazelPathsResolver).resolve(targets)
@@ -38,12 +37,12 @@ class ScalaLanguagePlugin(
             return null
         }
         val scalaTargetInfo = targetInfo.scalaTargetInfo
-        val sdk = getScalaSdk()
+        val sdk = getScalaSdkOrThrow()
         val scalacOpts = scalaTargetInfo.scalacOptsList
         return ScalaModule(sdk, scalacOpts, javaLanguagePlugin.resolveModule(targetInfo))
     }
 
-    private fun getScalaSdk(): ScalaSdk =
+    private fun getScalaSdkOrThrow(): ScalaSdk =
         scalaSdk ?: throw RuntimeException("Failed to resolve Scala SDK for project")
 
     override fun dependencySources(
@@ -72,17 +71,6 @@ class ScalaLanguagePlugin(
     override fun calculateSourceRoot(source: Path): Path? {
         return JVMLanguagePluginParser.calculateJVMSourceRoot(source, true)
     }
-
-    fun toScalacOptionsItem(module: Module): ScalacOptionsItem? =
-        withScalaAndJavaModules(module) { scalaModule: ScalaModule, javaModule: JavaModule ->
-            val javacOptions = javaLanguagePlugin.toJavacOptionsItem(module, javaModule)
-            ScalacOptionsItem(
-                javacOptions.target,
-                scalaModule.scalacOpts,
-                javacOptions.classpath,
-                javacOptions.classDirectory
-            )
-        }
 
     fun toScalaTestClassesItem(module: Module): ScalaTestClassesItem? =
         if (!module.tags.contains(Tag.TEST) || !module.languages

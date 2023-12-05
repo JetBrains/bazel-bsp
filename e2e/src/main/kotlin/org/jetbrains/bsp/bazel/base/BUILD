@@ -1,4 +1,4 @@
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
     name = "base",
@@ -10,9 +10,10 @@ kt_jvm_library(
     ],
     deps = [
         "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install",
-        "@maven//:com_github_zpp_This_is_fine_build_server_protocol_bsp4j",
+        "@maven//:ch_epfl_scala_bsp4j",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_test",
         "@testkit//:bazel-testkit-client",
     ],
 )
