@@ -4,11 +4,11 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
-
 
 class RustLanguagePluginTest {
 
@@ -24,7 +24,8 @@ class RustLanguagePluginTest {
       execRoot = execRoot,
       outputBase = Paths.get(outputBase),
       workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
-      release = BazelRelease.fromReleaseString("release 6.0.0")
+      release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
+      false
     )
 
     bazelPathsResolver = BazelPathsResolver(bazelInfo)

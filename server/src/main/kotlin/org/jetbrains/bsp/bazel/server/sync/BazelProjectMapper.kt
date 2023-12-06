@@ -328,10 +328,10 @@ class BazelProjectMapper(
       .map { bazelPathsResolver.resolve(it) }
       .toSet()
 
-    private fun selectRustExternalTargetsToImport(
-            rootTargets: Set<String>, tree: DependencyTree
-    ): Sequence<TargetInfo> =
-            tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
+  private fun selectRustExternalTargetsToImport(
+    rootTargets: Set<String>, tree: DependencyTree
+  ): Sequence<TargetInfo> =
+    tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
 
     private fun selectTargetsToImport(
     workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
@@ -365,8 +365,8 @@ class BazelProjectMapper(
       )
         )
 
-    private fun isRustTarget(target: TargetInfo): Boolean =
-            target.hasRustCrateInfo()
+  private fun isRustTarget(target: TargetInfo): Boolean =
+    target.hasRustCrateInfo()
 
   private fun createModules(
     targetsToImport: Sequence<TargetInfo>,
@@ -490,17 +490,17 @@ class BazelProjectMapper(
     return targets.filter { !it.startsWith(prefix) }
   }
 
-    private fun createRustExternalModules(
-        targetsToImport: Sequence<TargetInfo>,
-        dependencyTree: DependencyTree,
-        generatedLibraries: Map<String, Collection<Library>>,
-    ): Sequence<Module> {
-        val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
-        return modules.map { module ->
-            if (module.languageData is RustModule) {
-                module.languageData.isExternalModule = true
-            }
-            module
-        }
+  private fun createRustExternalModules(
+    targetsToImport: Sequence<TargetInfo>,
+    dependencyTree: DependencyTree,
+    generatedLibraries: Map<String, Collection<Library>>,
+  ): Sequence<Module> {
+    val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
+    return modules.map { module ->
+      if (module.languageData is RustModule) {
+        module.languageData.isExternalModule = true
+      }
+      module
     }
+  }
 }

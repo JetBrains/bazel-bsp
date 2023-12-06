@@ -16,7 +16,8 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import com.google.common.collect.ImmutableList
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
-import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
 
@@ -33,7 +34,7 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
 
         return BazelBspTestScenarioStep("workspace build targets") {
             testClient.testWorkspaceTargets(
-                Duration.ofSeconds(60),
+                1.minutes,
                 workspaceBuildTargetsResult
             )
         }
@@ -125,7 +126,7 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
             "rustWorkspace results"
         ) {
             testClient.testRustWorkspace(
-                Duration.ofSeconds(30),
+                30.seconds,
                 rustWorkspaceParams,
                 expectedRustWorkspaceResult
             )

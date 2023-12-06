@@ -97,7 +97,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         Paths.get(bazelInfo.execRoot, path)
 
     private fun isRelativeWorkspacePath(label: String): Boolean {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
         return label.startsWith(prefix)
     }
 

@@ -1,17 +1,15 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
-import ch.epfl.scala.bsp4j.RustPackage
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.net.URI
 import java.nio.file.Paths
 
 class RustPackageResolverTest {
@@ -28,7 +26,8 @@ class RustPackageResolverTest {
             execRoot = execRoot,
             outputBase = Paths.get(outputBase),
             workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
-            release = BazelRelease.fromReleaseString("release 6.0.0")
+            release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
+            false
         )
 
         bazelPathsResolver = BazelPathsResolver(bazelInfo)

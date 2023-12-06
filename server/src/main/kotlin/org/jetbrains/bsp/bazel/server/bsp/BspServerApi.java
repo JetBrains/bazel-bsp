@@ -275,12 +275,6 @@ public class BspServerApi
     return runner.handleRequest("directories", projectSyncService::workspaceDirectories);
   }
 
-  // TODO handle properly
-  @Override
-  public void onRunReadStdin(ReadParams params) {
-    runner.handleNotification("onRunReadStdin", executeService::readStdin);
-  }
-
   @Override
   public CompletableFuture<RustWorkspaceResult> rustWorkspace(RustWorkspaceParams params) {
     return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace, params);

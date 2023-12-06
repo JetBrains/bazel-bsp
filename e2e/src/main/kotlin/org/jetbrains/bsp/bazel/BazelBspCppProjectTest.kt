@@ -28,7 +28,7 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
         val expectedWorkspaceBuildTargetsResult = expectedWorkspaceBuildTargetsResult()
 
         return BazelBspTestScenarioStep("cpp project") {
-            testClient.testWorkspaceTargets(Duration.ofSeconds(20), expectedWorkspaceBuildTargetsResult)
+            testClient.testWorkspaceTargets(20.seconds, expectedWorkspaceBuildTargetsResult)
         }
     }
 
