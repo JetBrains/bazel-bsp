@@ -93,27 +93,30 @@ class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : L
      *
      * There is no need to revisit already visited targets - we can use `visited` set for that.
      * */
-    private fun findAllRelatedRustTargets(
+    private tailrec fun findAllRelatedRustTargets(
         targets: List<Module>,
         allModules: Map<Label, Module>,
-        visited: MutableSet<Label> = mutableSetOf()
+        visited: MutableSet<Label> = mutableSetOf(),
+        result: MutableList<Module> = mutableListOf()
     ): List<Module> {
-        visited.addAll(targets.map { it.label })
-        return targets.flatMap { module ->
-            listOf(module) + findAllRustTargetsRelatedToModule(module, allModules, visited)
-        }
-    }
+        if (targets.isEmpty()) return result
 
-    private fun findAllRustTargetsRelatedToModule(
-        module: Module,
-        allModules: Map<Label, Module>,
-        visited: MutableSet<Label>,
-    ): List<Module> =
-        findAllRelatedRustTargets(
-            filterVisitedRustDependencies(module.directDependencies, allModules, visited),
-            allModules,
-            visited
-        )
+        visited.addAll(targets.map { it.label })
+        result.addAll(targets)
+
+        val newTargets = targets
+            .asSequence()
+            .flatMap { module ->
+                filterVisitedRustDependencies(
+                    module.directDependencies,
+                    allModules,
+                    visited
+                ).asSequence()
+            }
+            .toList()
+
+        return findAllRelatedRustTargets(newTargets, allModules, visited, result)
+    }
 
     private fun filterVisitedRustDependencies(
         dependencies: List<Label>,
