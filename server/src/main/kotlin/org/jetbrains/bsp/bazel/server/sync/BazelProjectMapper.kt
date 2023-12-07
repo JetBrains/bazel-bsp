@@ -496,11 +496,10 @@ class BazelProjectMapper(
     generatedLibraries: Map<String, Collection<Library>>,
   ): Sequence<Module> {
     val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
-    return modules.map { module ->
-      if (module.languageData is RustModule) {
-        module.languageData.isExternalModule = true
+    return modules.onEach {
+      if (it.languageData is RustModule) {
+        it.languageData.isExternalModule = true
       }
-      module
     }
   }
 }
