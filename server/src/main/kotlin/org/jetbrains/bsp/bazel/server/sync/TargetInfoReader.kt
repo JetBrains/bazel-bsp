@@ -130,7 +130,7 @@ class TargetInfoReader {
         "go_target_info" -> {
             val builder: GoTargetInfo.Builder = readFromFile(uri, GoTargetInfo.newBuilder())
             val info = builder.build()
-            targetInfoBuilder.mergeFrom(info)
+            targetInfoBuilder.setGoTargetInfo(info)
         }
 
         "general" -> {
