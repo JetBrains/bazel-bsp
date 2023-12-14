@@ -26,7 +26,12 @@ def get_interface_jars(output):
 
 def get_source_jars(output):
     if hasattr(output, "source_jars"):
-        return output.source_jars
+        source_jars = output.source_jars
+        if type(source_jars) == "depset":
+            return source_jars.to_list()
+        else:
+            # assuming it returns sequence type here
+            return source_jars
     if hasattr(output, "source_jar"):
         return [output.source_jar]
     return []
