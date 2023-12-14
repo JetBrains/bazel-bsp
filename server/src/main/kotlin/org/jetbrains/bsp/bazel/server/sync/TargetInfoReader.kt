@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidSdkInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.CppTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.GoTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaRuntimeInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaToolchainInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
@@ -124,6 +125,12 @@ class TargetInfoReader {
             val builder = readFromFile(uri, AndroidSdkInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setAndroidSdkInfo(info)
+        }
+
+        "go_target_info" -> {
+            val builder: GoTargetInfo.Builder = readFromFile(uri, GoTargetInfo.newBuilder())
+            val info = builder.build()
+            targetInfoBuilder.mergeFrom(info)
         }
 
         "general" -> {
