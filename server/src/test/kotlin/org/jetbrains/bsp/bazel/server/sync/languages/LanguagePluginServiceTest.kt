@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.go.GoLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
@@ -49,8 +50,16 @@ class LanguagePluginServiceTest {
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
     val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
     val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
+    val goLanguagePlugin = GoLanguagePlugin(bazelPathsResolver)
     languagePluginsService = LanguagePluginsService(
-      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin, rustLanguagePlugin
+      scalaLanguagePlugin,
+      javaLanguagePlugin,
+      cppLanguagePlugin,
+      kotlinLanguagePlugin,
+      thriftLanguagePlugin,
+      pythonLanguagePlugin,
+      rustLanguagePlugin,
+      goLanguagePlugin
     )
   }
 
@@ -125,6 +134,18 @@ class LanguagePluginServiceTest {
 
       // when
       val plugin = languagePluginsService.getPlugin(languages) as? ThriftLanguagePlugin
+
+      // then
+      plugin shouldNotBe null
+    }
+
+    @Test
+    fun `should return GoLanguagePlugin for Go Language`() {
+      // given
+      val languages: Set<Language> = hashSetOf(Language.GO)
+
+      // when
+      val plugin = languagePluginsService.getPlugin(languages) as? GoLanguagePlugin
 
       // then
       plugin shouldNotBe null

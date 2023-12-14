@@ -12,7 +12,8 @@ enum class Language(
     CPP("cpp", hashSetOf(".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", "cxx", ".h", ".hpp")),
     PYTHON("python", hashSetOf(".py")),
     THRIFT("thrift", hashSetOf(".thrift")),
-    RUST("rust", hashSetOf(".rs"));
+    RUST("rust", hashSetOf(".rs")),
+    GO("go", hashSetOf(".go"));
 
     val allNames: Set<String> = dependentNames + id
 
