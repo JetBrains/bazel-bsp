@@ -2,8 +2,8 @@ package org.jetbrains.bsp.bazel.server.sync.languages.kotlin
 
 import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
+import org.jetbrains.bsp.KotlinBuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
