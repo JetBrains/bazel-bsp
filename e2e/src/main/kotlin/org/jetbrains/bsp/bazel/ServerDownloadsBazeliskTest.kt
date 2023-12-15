@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel
 
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 import org.jetbrains.bsp.bazel.install.Install
@@ -21,6 +22,9 @@ object ServerDownloadsBazeliskTest : BazelBspTestBaseScenario() {
     }
 
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(resolveProject())
+
+    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult =
+        WorkspaceBuildTargetsResult(listOf())
 
     private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
         "resolve project"

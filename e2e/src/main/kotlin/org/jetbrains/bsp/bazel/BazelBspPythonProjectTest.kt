@@ -34,7 +34,7 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
         resourcesResults()
     )
 
-    private fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
+    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
         val bspWorkspaceRootExampleBuildTarget =
             BuildTarget(
                 BuildTargetIdentifier("bsp-workspace-root"),
@@ -158,9 +158,4 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
             testClient.testResources(30.seconds, resourcesParams, expectedResourcesResult)
         }
     }
-
-    private fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =
-        expectedWorkspaceBuildTargetsResult()
-            .targets
-            .map { it.id }
 }

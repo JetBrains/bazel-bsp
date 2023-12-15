@@ -20,6 +20,17 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
     override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(workspaceBuildTargets())
 
     private fun workspaceBuildTargets(): BazelBspTestScenarioStep {
+        val workspaceBuildTargetsResult = expectedWorkspaceBuildTargetsResult()
+
+        return BazelBspTestScenarioStep("workspace build targets") {
+            testClient.testWorkspaceTargets(
+                1.minutes,
+                workspaceBuildTargetsResult
+            )
+        }
+    }
+
+    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
         val exampleExampleJvmBuildTarget = JvmBuildTarget().also {
             it.javaVersion = "11"
             it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_linux/"
@@ -37,14 +48,8 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
         exampleExampleBuildTarget.data = exampleExampleJvmBuildTarget
         exampleExampleBuildTarget.dataKind = BuildTargetDataKind.JVM
 
-        val workspaceBuildTargetsResult = WorkspaceBuildTargetsResult(
+        return WorkspaceBuildTargetsResult(
             listOf(exampleExampleBuildTarget)
         )
-        return BazelBspTestScenarioStep("workspace build targets") {
-            testClient.testWorkspaceTargets(
-                1.minutes,
-                workspaceBuildTargetsResult
-            )
-        }
     }
 }

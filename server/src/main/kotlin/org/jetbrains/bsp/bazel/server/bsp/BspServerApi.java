@@ -36,6 +36,9 @@ import ch.epfl.scala.bsp4j.ResourcesParams;
 import ch.epfl.scala.bsp4j.ResourcesResult;
 import ch.epfl.scala.bsp4j.RunParams;
 import ch.epfl.scala.bsp4j.RunResult;
+import ch.epfl.scala.bsp4j.RustBuildServer;
+import ch.epfl.scala.bsp4j.RustWorkspaceParams;
+import ch.epfl.scala.bsp4j.RustWorkspaceResult;
 import ch.epfl.scala.bsp4j.ScalaBuildServer;
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams;
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult;
@@ -48,6 +51,7 @@ import ch.epfl.scala.bsp4j.SourcesResult;
 import ch.epfl.scala.bsp4j.TestParams;
 import ch.epfl.scala.bsp4j.TestResult;
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +70,8 @@ public class BspServerApi
         JavaBuildServer,
         CppBuildServer,
         BazelBuildServer,
-        PythonBuildServer {
+        PythonBuildServer,
+        RustBuildServer {
 
   private final Supplier<BazelServices> bazelServicesBuilder;
   private BazelBspServerLifetime serverLifetime = null;
@@ -268,5 +273,10 @@ public class BspServerApi
   @Override
   public CompletableFuture<WorkspaceDirectoriesResult> workspaceDirectories() {
     return runner.handleRequest("directories", projectSyncService::workspaceDirectories);
+  }
+
+  @Override
+  public CompletableFuture<RustWorkspaceResult> rustWorkspace(RustWorkspaceParams params) {
+    return runner.handleRequest("rustWorkspace", projectSyncService::rustWorkspace, params);
   }
 }

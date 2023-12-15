@@ -23,7 +23,8 @@ class TargetKindResolver {
         private val ruleSuffixToTargetType = java.util.Map.of(
             "library", LIBRARY,
             "binary", hashSetOf(Tag.APPLICATION),
-            "test", hashSetOf(Tag.TEST)
+            "test", hashSetOf(Tag.TEST),
+            "proc_macro", LIBRARY,
         )
         private val NO_IDE: Set<Tag> = hashSetOf(Tag.NO_IDE)
     }

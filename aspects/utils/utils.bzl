@@ -10,6 +10,12 @@ def map(f, xs):
 def filter(f, xs):
     return [x for x in xs if f(x)]
 
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+def flatmap(f, xs):
+    return flatten(map(f, xs))
+
 def file_location(file):
     if file == None:
         return None

@@ -1,7 +1,9 @@
 package org.jetbrains.bsp.bazel.base
 
 import ch.epfl.scala.bsp4j.BuildClientCapabilities
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.InitializeBuildParams
+import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.testkit.client.bazel.BazelTestClient
@@ -99,6 +101,13 @@ abstract class BazelBspTestBaseScenario {
     private fun executeScenarioSteps(): Boolean = scenarioSteps()
         .map { it.executeAndReturnResult() }
         .all { it }
+
+    protected fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =
+        expectedWorkspaceBuildTargetsResult()
+            .targets
+            .map { it.id }
+
+    protected abstract fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult
 
     protected abstract fun scenarioSteps(): List<BazelBspTestScenarioStep>
 

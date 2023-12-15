@@ -25,6 +25,14 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
         listOf(compareWorkspaceTargetsResults(), cppOptions())
 
     private fun compareWorkspaceTargetsResults(): BazelBspTestScenarioStep {
+        val expectedWorkspaceBuildTargetsResult = expectedWorkspaceBuildTargetsResult()
+
+        return BazelBspTestScenarioStep("cpp project") {
+            testClient.testWorkspaceTargets(20.seconds, expectedWorkspaceBuildTargetsResult)
+        }
+    }
+
+    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
         val exampleExampleCppBuildTarget = CppBuildTarget().also { it.version = null; it.compiler = "compiler"; it.cCompiler = "/bin/gcc"; it.cppCompiler= "/bin/gcc" }
 
         val exampleExampleBuildTarget =
@@ -51,16 +59,12 @@ object BazelBspCppProjectTest : BazelBspTestBaseScenario() {
                 ImmutableList.of(),
                 ImmutableList.of(),
                 ImmutableList.of(),
-               BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+                BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
             )
         bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
         bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
-        val expectedWorkspaceBuildTargetsResult =
-            WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget))
 
-        return BazelBspTestScenarioStep("cpp project") {
-            testClient.testWorkspaceTargets(20.seconds, expectedWorkspaceBuildTargetsResult)
-        }
+        return WorkspaceBuildTargetsResult(ImmutableList.of(exampleExampleBuildTarget, bspWorkspaceRootExampleBuildTarget))
     }
 
     private fun cppOptions(): BazelBspTestScenarioStep {

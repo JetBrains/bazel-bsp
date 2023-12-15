@@ -34,6 +34,8 @@ import ch.epfl.scala.bsp4j.ResourcesItem
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunProvider
+import ch.epfl.scala.bsp4j.RustWorkspaceParams
+import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -106,7 +108,7 @@ class BspProjectMapper(
     }
 
     fun workspaceTargets(project: Project): WorkspaceBuildTargetsResult {
-        val buildTargets = project.modules.map(::toBuildTarget)
+        val buildTargets = project.findNonExternalModules().map(::toBuildTarget)
         return WorkspaceBuildTargetsResult(buildTargets)
     }
 
@@ -420,5 +422,17 @@ class BspProjectMapper(
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
         val items = modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
         return ScalaMainClassesResult(items)
+    }
+
+    fun rustWorkspace(
+        project: Project,
+        params: RustWorkspaceParams
+    ): RustWorkspaceResult {
+        val allRustModules = project.findModulesByLanguage(Language.RUST)
+        val requestedModules = BspMappings.getModules(project, params.targets)
+                .filter { Language.RUST in it.languages }
+        val toRustWorkspaceResult = languagePluginsService.rustLanguagePlugin::toRustWorkspaceResult
+
+        return toRustWorkspaceResult(requestedModules, allRustModules)
     }
 }

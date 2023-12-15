@@ -14,6 +14,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaSdkResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -98,7 +99,14 @@ class BazelProjectMapper(
     val invalidTargets = measure("Save invalid target labels") {
       (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toList()).map { Label(it) }
     }
-    return Project(workspaceRoot, modifiedModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
+    val rustExternalTargetsToImport = measure("Select external Rust targets") {
+      selectRustExternalTargetsToImport(rootTargets, dependencyTree)
+    }
+    val rustExternalModules = measure("Create Rust external modules") {
+      createRustExternalModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
+    }
+    val allModules = modifiedModules + rustExternalModules
+    return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
   }
 
   private fun <K, V> concatenateMaps(vararg maps: Map<K, List<V>>): Map<K, List<V>> =
@@ -320,24 +328,30 @@ class BazelProjectMapper(
       .map { bazelPathsResolver.resolve(it) }
       .toSet()
 
-  private fun selectTargetsToImport(
+  private fun selectRustExternalTargetsToImport(
+    rootTargets: Set<String>, tree: DependencyTree
+  ): Sequence<TargetInfo> =
+    tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
+
+    private fun selectTargetsToImport(
     workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
   ): Sequence<TargetInfo> = tree.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
   ).asSequence().filter(::isWorkspaceTarget)
 
-  private fun hasJavaSources(targetInfo: TargetInfo) =
+  private fun hasKnownSources(targetInfo: TargetInfo) =
     targetInfo.sourcesList.any {
       it.relativePath.endsWith(".java") ||
         it.relativePath.endsWith(".kt") ||
         it.relativePath.endsWith(".scala") ||
         it.relativePath.endsWith(".py") ||
-        it.relativePath.endsWith(".sh")
+        it.relativePath.endsWith(".sh") ||
+        it.relativePath.endsWith(".rs")
     }
 
   private fun isWorkspaceTarget(target: TargetInfo): Boolean =
     target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)) &&
-      (hasJavaSources(target) ||
+      (hasKnownSources(target) ||
         target.kind in setOf(
         "java_library",
         "java_binary",
@@ -345,8 +359,14 @@ class BazelProjectMapper(
         "kt_jvm_binary",
         "scala_library",
         "scala_binary",
+        "rust_test",
+        "rust_doc",
+        "rust_doc_test",
       )
         )
+
+  private fun isRustTarget(target: TargetInfo): Boolean =
+    target.hasRustCrateInfo()
 
   private fun createModules(
     targetsToImport: Sequence<TargetInfo>,
@@ -468,5 +488,18 @@ class BazelProjectMapper(
   private fun removeDotBazelBspTarget(targets: List<String>): List<String> {
     val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled) + ".bazelbsp"
     return targets.filter { !it.startsWith(prefix) }
+  }
+
+  private fun createRustExternalModules(
+    targetsToImport: Sequence<TargetInfo>,
+    dependencyTree: DependencyTree,
+    generatedLibraries: Map<String, Collection<Library>>,
+  ): Sequence<Module> {
+    val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
+    return modules.onEach {
+      if (it.languageData is RustModule) {
+        it.languageData.isExternalModule = true
+      }
+    }
   }
 }

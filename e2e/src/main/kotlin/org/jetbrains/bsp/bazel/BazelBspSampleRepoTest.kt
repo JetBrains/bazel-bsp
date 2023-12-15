@@ -986,16 +986,11 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     ) { testClient.testJvmTestEnvironment(30.seconds, params, expectedResult) }
   }
 
-  private fun expectedTargetIdentifiers(): List<BuildTargetIdentifier> =
-    expectedWorkspaceBuildTargetsResult()
-      .targets
-      .map { it.id }
-
-  private fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
-    val jvmBuildTarget = JvmBuildTarget().also {
-      it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_\$OS/"
-      it.javaVersion = "11"
-    }
+    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
+        val jvmBuildTarget = JvmBuildTarget().also {
+            it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_\$OS/"
+            it.javaVersion = "11"
+        }
 
     val javaTargetsJavaBinary = BuildTarget(
       BuildTargetIdentifier("$targetPrefix//java_targets:java_binary"),

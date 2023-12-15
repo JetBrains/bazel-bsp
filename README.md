@@ -12,7 +12,7 @@ Bazel.
 - Scala
 - Python
 - Thrift
-- Rust (coming soon!)
+- Rust
 
 ## Installation
 

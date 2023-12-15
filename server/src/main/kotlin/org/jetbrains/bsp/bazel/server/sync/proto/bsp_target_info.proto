@@ -75,6 +75,26 @@ message PythonTargetInfo {
   string version = 2;
 }
 
+enum RustCrateLocation {
+  WORKSPACE_DIR = 0;
+  EXEC_ROOT = 1;
+}
+
+message RustCrateInfo {
+  string crate_id = 1;
+  RustCrateLocation location = 2;
+  bool from_workspace = 3;
+  string name = 4;
+  string kind = 5;
+  string edition = 6;
+  string out_dir = 7;
+  repeated string crate_features = 8;
+  repeated string dependencies_crate_ids = 9;
+  string crate_root = 10;
+  string version = 11;
+  repeated string proc_macro_artifacts = 12;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -92,4 +112,5 @@ message TargetInfo {
   CppTargetInfo cpp_target_info = 6000;
   KotlinTargetInfo kotlin_target_info = 7000;
   PythonTargetInfo python_target_info = 8000;
+  RustCrateInfo rust_crate_info = 9000;
 }

@@ -79,7 +79,7 @@ class ProjectResolver(
       cancelChecker,
       workspaceContext.targets,
       ASPECT_NAME,
-      listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP)
+      listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP, RUST_ANALYZER_OUTPUT_GROUP)
     )
 
   private fun formatTargetsIfNeeded(targets: Collection<String>): List<String> =
@@ -98,5 +98,6 @@ class ProjectResolver(
     private const val ASPECT_NAME = "bsp_target_info_aspect"
     private const val BSP_INFO_OUTPUT_GROUP = "bsp-target-info-transitive-deps"
     private const val ARTIFACTS_OUTPUT_GROUP = "external-deps-resolve-transitive-deps"
+    private const val RUST_ANALYZER_OUTPUT_GROUP = "rust_analyzer_crate_spec"
   }
 }

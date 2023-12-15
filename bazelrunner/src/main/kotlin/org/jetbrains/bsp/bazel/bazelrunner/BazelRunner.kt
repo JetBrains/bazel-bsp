@@ -31,6 +31,7 @@ class BazelRunner private constructor(
         command: List<String>,
         flags: List<String>,
         arguments: List<String>,
+        environment: Map<String, String>,
         originId: String?,
         eventTextFile: Path,
     ): BazelProcess {
@@ -41,13 +42,21 @@ class BazelRunner private constructor(
         )
 
         // TODO https://youtrack.jetbrains.com/issue/BAZEL-617
-        return runBazelCommand(command, flags = besFlags() + flags, arguments, originId, true)
+        return runBazelCommand(
+            command,
+            flags = besFlags() + flags,
+            arguments,
+            environment,
+            originId,
+            true
+        )
     }
 
     fun runBazelCommand(
         command: List<String>,
         flags: List<String>,
         arguments: List<String>,
+        environment: Map<String, String>,
         originId: String?,
         parseProcessOutput: Boolean,
         useBuildFlags: Boolean = true,
@@ -56,8 +65,9 @@ class BazelRunner private constructor(
         val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
         val processArgs =
             listOf(bazel(workspaceContext)) + command + usedBuildFlags + flags + arguments
-        logInvocation(processArgs, originId)
+        logInvocation(processArgs, environment, originId)
         val processBuilder = ProcessBuilder(processArgs)
+        processBuilder.environment() += environment
         val outputLogger = bspClientLogger.takeIf { parseProcessOutput }
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
         val process = processBuilder.start()
@@ -68,8 +78,11 @@ class BazelRunner private constructor(
         )
     }
 
-    private fun logInvocation(processArgs: List<String>, originId: String?) {
-        "Invoking: ${processArgs.joinToString(" ")}"
+    private fun envToString(environment: Map<String, String>): String =
+        environment.entries.joinToString(" ") { "${it.key}=${it.value}" }
+
+    private fun logInvocation(processArgs: List<String>, processEnv: Map<String, String>, originId: String?) {
+        "Invoking: ${envToString(processEnv)} ${processArgs.joinToString(" ")}"
             .also { LOGGER.info(it) }
             .also { bspClientLogger.withOriginId(originId).message(it) }
     }

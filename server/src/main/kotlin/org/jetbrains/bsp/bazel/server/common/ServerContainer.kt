@@ -27,6 +27,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkVersionResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
@@ -70,8 +71,9 @@ class ServerContainer internal constructor(
       val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
       val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
       val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
+      val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
       val languagePluginsService = LanguagePluginsService(
-        scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin
+        scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin, rustLanguagePlugin
       )
       val targetKindResolver = TargetKindResolver()
       val bazelProjectMapper =

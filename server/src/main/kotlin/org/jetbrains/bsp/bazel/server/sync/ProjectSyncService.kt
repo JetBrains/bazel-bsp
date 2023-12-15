@@ -21,6 +21,8 @@ import ch.epfl.scala.bsp4j.PythonOptionsParams
 import ch.epfl.scala.bsp4j.PythonOptionsResult
 import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
+import ch.epfl.scala.bsp4j.RustWorkspaceParams
+import ch.epfl.scala.bsp4j.RustWorkspaceResult
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -153,5 +155,13 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
   ): DependencyModulesResult {
     // TODO https://youtrack.jetbrains.com/issue/BAZEL-616
     return DependencyModulesResult(emptyList())
+  }
+
+  fun rustWorkspace(
+    cancelChecker: CancelChecker,
+    params: RustWorkspaceParams
+  ): RustWorkspaceResult {
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.rustWorkspace(project, params)
   }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaToolchainInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.KotlinTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaToolchainInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -110,6 +111,12 @@ class TargetInfoReader {
             val builder: JavaToolchainInfo.Builder = readFromFile(uri, JavaToolchainInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setJavaToolchainInfo(info)
+        }
+
+        "rust_crate_info" -> {
+            val builder = readFromFile(uri, RustCrateInfo.newBuilder())
+            val info = builder.build()
+            targetInfoBuilder.setRustCrateInfo(info)
         }
 
         "general" -> {

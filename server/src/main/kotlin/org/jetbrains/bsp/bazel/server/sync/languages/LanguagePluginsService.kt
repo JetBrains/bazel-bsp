@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonModule
+import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -18,7 +19,8 @@ class LanguagePluginsService(
     val cppLanguagePlugin: CppLanguagePlugin,
     val kotlinLanguagePlugin: KotlinLanguagePlugin,
     private val thriftLanguagePlugin: ThriftLanguagePlugin,
-    val pythonLanguagePlugin: PythonLanguagePlugin
+    val pythonLanguagePlugin: PythonLanguagePlugin,
+    val rustLanguagePlugin: RustLanguagePlugin
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
@@ -28,6 +30,7 @@ class LanguagePluginsService(
         cppLanguagePlugin.prepareSync(targetInfos)
         thriftLanguagePlugin.prepareSync(targetInfos)
         pythonLanguagePlugin.prepareSync(targetInfos)
+        rustLanguagePlugin.prepareSync(targetInfos)
     }
 
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
@@ -38,6 +41,7 @@ class LanguagePluginsService(
             languages.contains(Language.CPP) -> cppLanguagePlugin
             languages.contains(Language.THRIFT) -> thriftLanguagePlugin
             languages.contains(Language.PYTHON) -> pythonLanguagePlugin
+            languages.contains(Language.RUST) -> rustLanguagePlugin
             else -> emptyLanguagePlugin
         }
 
