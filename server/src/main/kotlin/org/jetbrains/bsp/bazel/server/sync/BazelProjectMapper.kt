@@ -11,11 +11,11 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.reglob.Reglob
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
-import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaSdkResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Library
@@ -58,6 +58,7 @@ class BazelProjectMapper(
     val targetsToImport = measure("Select targets") {
       selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
     }
+    val globs = Reglob.getGlobs(targetsToImport.map { it.id }, bazelInfo.workspaceRoot)
     val targetsAsLibraries = measure("Targets as libraries") {
       targets - targetsToImport.map { it.id }.toSet()
     }
