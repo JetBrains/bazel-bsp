@@ -36,7 +36,6 @@ import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
-import java.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -986,11 +985,12 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
     ) { testClient.testJvmTestEnvironment(30.seconds, params, expectedResult) }
   }
 
-    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
-        val jvmBuildTarget = JvmBuildTarget().also {
-            it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_\$OS/"
-            it.javaVersion = "11"
-        }
+  override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
+    val jvmBuildTarget = JvmBuildTarget().also {
+      val architecturePart = if (System.getProperty("os.arch") == "aarch64") "_aarch64" else ""
+      it.javaHome = "file://\$BAZEL_OUTPUT_BASE_PATH/external/remotejdk11_\$OS${architecturePart}/"
+      it.javaVersion = "11"
+    }
 
     val javaTargetsJavaBinary = BuildTarget(
       BuildTargetIdentifier("$targetPrefix//java_targets:java_binary"),
