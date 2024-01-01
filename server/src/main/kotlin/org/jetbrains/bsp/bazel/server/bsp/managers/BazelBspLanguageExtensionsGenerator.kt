@@ -1,11 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
-import org.apache.velocity.app.VelocityEngine
-import org.jetbrains.bsp.bazel.commons.Constants
-import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import java.nio.file.Paths
 import java.util.Properties
 import kotlin.io.path.writeText
+import org.apache.velocity.app.VelocityEngine
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 
 enum class Language(private val fileName: String, val ruleNames: List<String>, val functions: List<String>, val isTemplate: Boolean) {
   Java("//aspects:rules/java/java_info.bzl", listOf(), listOf("extract_java_toolchain", "extract_java_runtime"), false),
@@ -14,7 +15,8 @@ enum class Language(private val fileName: String, val ruleNames: List<String>, v
   Scala("//aspects:rules/scala/scala_info.bzl", listOf("io_bazel_rules_scala"), listOf("extract_scala_info", "extract_scala_toolchain_info"), false),
   Cpp("//aspects:rules/cpp/cpp_info.bzl", listOf("rules_cc"), listOf("extract_cpp_info"), false),
   Kotlin("//aspects:rules/kt/kt_info.bzl", listOf("io_bazel_rules_kotlin", "rules_kotlin"), listOf("extract_kotlin_info"), true),
-  Rust("//aspects:rules/rust/rust_info.bzl", listOf("rules_rust"), listOf("extract_rust_crate_info"), false);
+  Rust("//aspects:rules/rust/rust_info.bzl", listOf("rules_rust"), listOf("extract_rust_crate_info"), false),
+  Android("//aspects:rules/android/android_info.bzl", listOf(), listOf("extract_android_sdk_info"), false);
 
   fun toLoadStatement(): String =
     this.functions.joinToString(
@@ -30,7 +32,7 @@ enum class Language(private val fileName: String, val ruleNames: List<String>, v
     "${toAspectRelativePath()}.template"
 }
 
-class BazelBspLanguageExtensionsGenerator(internalAspectsResolver: InternalAspectsResolver) {
+class BazelBspLanguageExtensionsGenerator(internalAspectsResolver: InternalAspectsResolver, private val bazelRelease: BazelRelease) {
 
   private val aspectsPath = Paths.get(internalAspectsResolver.bazelBspRoot, Constants.ASPECTS_ROOT)
   private val velocityEngine = VelocityEngine()
@@ -80,10 +82,16 @@ class BazelBspLanguageExtensionsGenerator(internalAspectsResolver: InternalAspec
         Language.Java -> """"@bazel_tools//tools/jdk:runtime_toolchain_type""""
         Language.Kotlin -> """"@${it.ruleName}//kotlin/internal:kt_toolchain_type""""
         Language.Rust -> """"@${it.ruleName}//rust:toolchain_type""""
+        Language.Android -> getAndroidToolchain()
         else -> null
       }
     }
       .joinToString(prefix = "TOOLCHAINS = [\n", postfix = "\n]", separator = ",\n ") { "\t$it" }
+
+  private fun getAndroidToolchain(): String? = when (bazelRelease.major) {
+    in 0..5 -> null  // No support for optional toolchains
+    else -> """config_common.toolchain_type("@bazel_tools//tools/android:sdk_toolchain_type", mandatory = False)"""
+  }
 
   private fun createNewExtensionsFile(fileContent: String) {
     val file = aspectsPath.resolve("extensions.bzl")

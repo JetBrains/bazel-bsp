@@ -2,6 +2,14 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import com.google.common.hash.Hashing
 import com.google.devtools.build.lib.view.proto.Deps
+import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.exists
+import kotlin.io.path.name
+import kotlin.io.path.notExists
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
@@ -15,7 +23,6 @@ import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
-import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaSdkResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Library
@@ -24,14 +31,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
-import java.net.URI
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.exists
-import kotlin.io.path.name
-import kotlin.io.path.notExists
 
 class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
@@ -70,11 +69,15 @@ class BazelProjectMapper(
     val scalaLibrariesMapper = measure("Create scala libraries") {
       calculateScalaLibrariesMapper(targetsToImport)
     }
+    val androidSdkLibrariesMapper = measure("Create Android SDK libraries") {
+      calculateAndroidSdkLibrariesMapper(targetsToImport)
+    }
     val librariesFromDeps = measure("Merge libraries from deps") {
       concatenateMaps(
         annotationProcessorLibraries,
         kotlinStdlibsMapper,
-        scalaLibrariesMapper
+        scalaLibrariesMapper,
+        androidSdkLibrariesMapper,
       )
     }
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
@@ -195,6 +198,32 @@ class BazelProjectMapper(
     languagePluginsService.scalaLanguagePlugin.scalaSdk
       ?.compilerJars
       ?.toSet().orEmpty()
+
+  private fun calculateAndroidSdkLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
+    val projectLevelAndroidSdkLibraries = calculateProjectLevelAndroidSdkLibraries(targetsToImport) ?: return emptyMap()
+    val androidTargetsIds = targetsToImport.filter { it.hasAndroidSdkInfo() }.map { it.id }
+    return androidTargetsIds.associateWith { listOf(projectLevelAndroidSdkLibraries) }
+  }
+
+  private fun calculateProjectLevelAndroidSdkLibraries(targetsToImport: Sequence<TargetInfo>): Library? {
+    val androidSdkLibrariesJars = calculateProjectLevelAndroidSdkLibrariesJars(targetsToImport)
+
+    return if (androidSdkLibrariesJars.isNotEmpty()) {
+      Library(
+        label = "android_sdk_libraries",
+        outputs = androidSdkLibrariesJars,
+        sources = emptySet(),
+        dependencies = emptyList(),
+      )
+    } else null
+  }
+
+  private fun calculateProjectLevelAndroidSdkLibrariesJars(targetsToImport: Sequence<TargetInfo>): Set<URI> =
+    targetsToImport
+      .filter { it.hasAndroidSdkInfo() }
+      .map { it.androidSdkInfo.androidJar }
+      .map { bazelPathsResolver.resolve(it).toUri() }
+      .toSet()
 
   /**
    * In some cases, the jar dependencies of a target might be injected by bazel or rules and not are not

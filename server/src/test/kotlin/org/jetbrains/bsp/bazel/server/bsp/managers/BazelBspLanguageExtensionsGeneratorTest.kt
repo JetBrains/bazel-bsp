@@ -1,6 +1,8 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
 import io.kotest.matchers.equals.shouldBeEqual
+import java.nio.file.Path
+import kotlin.io.path.createTempDirectory
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.install.EnvironmentCreator
@@ -9,8 +11,6 @@ import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.nio.file.Path
-import kotlin.io.path.createTempDirectory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BazelBspLanguageExtensionsGeneratorTest {
@@ -66,6 +66,7 @@ class BazelBspLanguageExtensionsGeneratorTest {
       )
     private lateinit var dotBazelBspAspectsPath: Path
     private lateinit var internalAspectsResolverMock: InternalAspectsResolver
+    private val bazelRelease = BazelRelease(5)
 
     private fun getExtensionsFileContent(): String =
         dotBazelBspAspectsPath.resolve("extensions.bzl").toFile().readLines().filterNot { it.startsWith('#') }
@@ -80,7 +81,7 @@ class BazelBspLanguageExtensionsGeneratorTest {
 
 
         dotBazelBspAspectsPath = dotBazelBspPath.resolve("aspects")
-        internalAspectsResolverMock = InternalAspectsResolver(BspInfoMock(dotBazelBspPath), BazelRelease(5))
+        internalAspectsResolverMock = InternalAspectsResolver(BspInfoMock(dotBazelBspPath), bazelRelease)
     }
 
     @Test
@@ -88,7 +89,7 @@ class BazelBspLanguageExtensionsGeneratorTest {
         // given
         val ruleLanguages = defaultRuleLanguages
         val bazelBspLanguageExtensionsGenerator =
-            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock, bazelRelease)
 
         // when
         bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
@@ -106,7 +107,7 @@ class BazelBspLanguageExtensionsGeneratorTest {
         )
         BazelExternalRulesQueryMock(listOf("rules_cc"))
         val bazelBspLanguageExtensionsGenerator =
-            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock, bazelRelease)
 
         // when
         bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
@@ -125,7 +126,7 @@ class BazelBspLanguageExtensionsGeneratorTest {
           RuleLanguage("io_bazel_rules_scala", Language.Scala),
         )
         val bazelBspLanguageExtensionsGenerator =
-            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock, bazelRelease)
 
         // when
         bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
@@ -144,9 +145,10 @@ class BazelBspLanguageExtensionsGeneratorTest {
           RuleLanguage("io_bazel_rules_scala", Language.Scala),
         )
         val emptyBazelBspLanguageExtensionsGenerator =
-            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock, bazelRelease)
         val allBazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(
-          internalAspectsResolverMock
+            internalAspectsResolverMock,
+            bazelRelease
         )
 
         // when
