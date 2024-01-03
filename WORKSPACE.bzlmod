@@ -6,9 +6,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # ======================================================================================================================
 # io_bazel_rules_scala - required by bazel_sonatype
 
-IO_BAZEL_RULES_SCALA_TAG = "6.2.1"
+IO_BAZEL_RULES_SCALA_TAG = "6.4.0"
 
-IO_BAZEL_RULES_SCALA_SHA = "71324bef9bc5a885097e2960d5b8effed63399b55572219919d25f43f468c716"
+IO_BAZEL_RULES_SCALA_SHA = "9a23058a36183a556a9ba7229b4f204d3e68c8c6eb7b28260521016b38ef4e00"
 
 http_archive(
     name = "io_bazel_rules_scala",
