@@ -11,6 +11,18 @@ java_binary(
     visibility = ["//visibility:public"],
 )
 
+java_binary(
+    name = "java_binary_with_flag",
+    srcs = ["JavaBinaryWithFlag.java"],
+    javacopts = [
+        "-Werror",
+        "-Xlint:all",
+        "-target 8",
+    ],
+    main_class = "java_targets.JavaBinaryWithFlag",
+    visibility = ["//visibility:public"],
+)
+
 java_library(
     name = "java_library",
     srcs = ["JavaLibrary.java"],
