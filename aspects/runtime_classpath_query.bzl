@@ -1,5 +1,8 @@
 def format(target):
-    provider = providers(target)["JavaInfo"]
+    provider = providers(target).get("@@_builtins//:common/java/java_info.bzl%JavaInfo")
+    if provider == None:
+        provider = providers(target)["JavaInfo"]  #bazel6
+
     compilation_info = getattr(provider, "compilation_info", None)
 
     runtime_classpath = []  #bazel5 default to [] because depset() not available
