@@ -47,6 +47,7 @@ abstract class EnvironmentCreator(private val projectRootDir: Path) {
         javaClass.getResource(aspectsJarPath)?.let {
             val fileSystem = FileSystems.newFileSystem(it.toURI(), emptyMap<String, String>())
             copyFileTree(fileSystem.getPath(aspectsJarPath), destinationPath)
+            fileSystem.close()
         } ?: error("Missing aspects resource")
 
 

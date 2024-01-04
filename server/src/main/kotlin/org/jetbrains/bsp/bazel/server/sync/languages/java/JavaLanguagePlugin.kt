@@ -79,11 +79,19 @@ class JavaLanguagePlugin(
         buildTarget.data = jvmBuildTarget
     }
 
+    private fun javaVersionFromJavacOpts(javacOpts: List<String>): String? =
+        javacOpts.mapNotNull {
+            val flagName = it.substringBefore(' ')
+            val argument = it.substringAfter(' ')
+            if (flagName == "-target" || flagName == "--target" || flagName == "--release") argument else null
+        }.firstOrNull()
+
+
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
         val jdk = javaModule.jdk
         val javaHome = jdk.javaHome?.toString()
         return JvmBuildTarget().also {
-            it.javaVersion = jdk.version
+            it.javaVersion = javaVersionFromJavacOpts(javaModule.javacOpts)?: jdk.version
             it.javaHome = javaHome
         }
     }

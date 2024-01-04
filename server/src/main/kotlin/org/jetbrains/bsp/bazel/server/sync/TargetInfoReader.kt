@@ -2,19 +2,6 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import com.google.protobuf.Message
 import com.google.protobuf.TextFormat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.CppTargetInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaRuntimeInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaToolchainInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.KotlinTargetInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaTargetInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaToolchainInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -24,6 +11,20 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.name
 import kotlin.io.path.toPath
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidSdkInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.CppTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaRuntimeInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaToolchainInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.KotlinTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaTargetInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaToolchainInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 
 class TargetInfoReader {
 
@@ -117,6 +118,12 @@ class TargetInfoReader {
             val builder = readFromFile(uri, RustCrateInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setRustCrateInfo(info)
+        }
+
+        "android_sdk_info" -> {
+            val builder = readFromFile(uri, AndroidSdkInfo.newBuilder())
+            val info = builder.build()
+            targetInfoBuilder.setAndroidSdkInfo(info)
         }
 
         "general" -> {

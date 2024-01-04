@@ -95,6 +95,10 @@ message RustCrateInfo {
   repeated string proc_macro_artifacts = 12;
 }
 
+message AndroidSdkInfo {
+  FileLocation android_jar = 1;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -113,4 +117,5 @@ message TargetInfo {
   KotlinTargetInfo kotlin_target_info = 7000;
   PythonTargetInfo python_target_info = 8000;
   RustCrateInfo rust_crate_info = 9000;
+  AndroidSdkInfo android_sdk_info = 10000;
 }

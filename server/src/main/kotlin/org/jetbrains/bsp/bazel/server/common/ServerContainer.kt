@@ -4,17 +4,17 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.FileProjectStorage
+import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.sync.ProjectProvider
 import org.jetbrains.bsp.bazel.server.sync.ProjectResolver
 import org.jetbrains.bsp.bazel.server.sync.ProjectStorage
@@ -57,7 +57,7 @@ class ServerContainer internal constructor(
       val bazelInfo = bazelDataResolver.resolveBazelInfo { }
 
       val aspectsResolver = InternalAspectsResolver(bspInfo, bazelInfo.release)
-      val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver)
+      val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver, bazelInfo.release)
       val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
       val bazelBspAspectsManager = BazelBspAspectsManager(
         bazelBspCompilationManager = compilationManager,
