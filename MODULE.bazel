@@ -11,7 +11,6 @@ use_repo(
 )
 
 bazel_dep(name = "rules_java", version = "7.3.2")
-bazel_dep(name = "protobuf", version = "21.7", repo_name = "com_google_protobuf")
 bazel_dep(name = "rules_proto", version = "5.3.0-21.7")
 bazel_dep(name = "rules_cc", version = "0.0.9")
 bazel_dep(name = "platforms", version = "0.0.8")
