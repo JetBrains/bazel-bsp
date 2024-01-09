@@ -134,7 +134,7 @@ class BazelBspLanguageExtensionsGeneratorTest {
         )
         BazelExternalRulesQueryMock(listOf("io_bazel_rules_go"))
         val bazelBspLanguageExtensionsGenerator =
-            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock)
+            BazelBspLanguageExtensionsGenerator(internalAspectsResolverMock, bazelRelease)
 
         // when
         bazelBspLanguageExtensionsGenerator.generateLanguageExtensions(ruleLanguages)
