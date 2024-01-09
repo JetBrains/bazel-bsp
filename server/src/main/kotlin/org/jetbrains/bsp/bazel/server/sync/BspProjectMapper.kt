@@ -132,7 +132,8 @@ class BspProjectMapper(
         val directoriesSection = workspaceContext.directories
 
         val symlinksToExclude = computeSymlinksToExclude(project.workspaceRoot)
-        val directoriesToExclude = directoriesSection.excludedValues + symlinksToExclude
+        val additionalDirectoriesToExclude = computeAdditionalDirectoriesToExclude()
+        val directoriesToExclude = directoriesSection.excludedValues + symlinksToExclude + additionalDirectoriesToExclude
 
         return WorkspaceDirectoriesResult(
             includedDirectories = directoriesSection.values.map { it.toDirectoryItem() },
@@ -152,6 +153,9 @@ class BspProjectMapper(
 
         return (stableSymlinkNames + workspaceSymlinkNames).map { workspaceRootPath.resolve(it) }
     }
+
+    private fun computeAdditionalDirectoriesToExclude(): List<Path> =
+        listOf(bspInfo.bazelBspDir())
 
     private fun Path.toDirectoryItem() =
         DirectoryItem(
