@@ -91,7 +91,7 @@ def create_proto(target, ctx, data, name):
     return info_file
 
 def is_external(target):
-    return not str(target.label).startswith("@//") and not str(target.label).startswith("//")
+    return not str(target.label).startswith("@@//") and not str(target.label).startswith("@//") and not str(target.label).startswith("//")
 
 def convert_struct_to_dict(s):
     attrs = dir(s)
