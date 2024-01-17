@@ -90,11 +90,8 @@ class BazelProjectMapper(
     val modulesFromBazel = measure("Create modules") {
       createModules(targetsToImport, dependencyTree, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
     }
-    val modifiedModules = measure("Apply project tree view fix") {
-      modifyModules(modulesFromBazel, workspaceRoot, workspaceContext)
-    }
     val sourceToTarget = measure("Build reverse sources") {
-      buildReverseSourceMapping(modifiedModules)
+      buildReverseSourceMapping(modulesFromBazel)
     }
     val librariesToImport = measure("Merge all libraries") {
       librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
@@ -108,7 +105,7 @@ class BazelProjectMapper(
     val rustExternalModules = measure("Create Rust external modules") {
       createRustExternalModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
     }
-    val allModules = modifiedModules + rustExternalModules
+    val allModules = modulesFromBazel + rustExternalModules
     return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
   }
 
@@ -486,16 +483,6 @@ class BazelProjectMapper(
 
   private fun resolveResources(target: TargetInfo): Set<URI> =
     bazelPathsResolver.resolveUris(target.resourcesList).toSet()
-
-  private fun modifyModules(
-    modulesFromBazel: Sequence<Module>, workspaceRoot: URI, workspaceContext: WorkspaceContext
-  ): Sequence<Module> {
-    return IntelliJProjectTreeViewFix(bazelPathsResolver, bazelInfo).createModules(
-      workspaceRoot,
-      modulesFromBazel,
-      workspaceContext,
-    )
-  }
 
   private fun buildReverseSourceMapping(modules: Sequence<Module>): Map<URI, Label> =
     modules.flatMap(::buildReverseSourceMappingForModule).toMap()

@@ -141,8 +141,6 @@ class BspProjectMapper(
         )
     }
 
-    // copied from IntelliJProjectTreeViewFix, but it will be removed with:
-    // https://youtrack.jetbrains.com/issue/BAZEL-665
     private fun computeSymlinksToExclude(workspaceRoot: URI): List<Path> {
         val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
         val workspaceRootPath = workspaceRoot.toPath()

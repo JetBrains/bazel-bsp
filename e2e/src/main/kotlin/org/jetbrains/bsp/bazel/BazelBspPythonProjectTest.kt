@@ -35,17 +35,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
     )
 
     override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
-        val bspWorkspaceRootExampleBuildTarget =
-            BuildTarget(
-                BuildTargetIdentifier("bsp-workspace-root"),
-                listOf(),
-                listOf(),
-                listOf(),
-               BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
-            )
-        bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
-        bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
-
         val examplePythonBuildTarget =
             PythonBuildTarget().also {
                 it.version = "PY3"
@@ -93,7 +82,6 @@ object BazelBspPythonProjectTest : BazelBspTestBaseScenario() {
 
         return WorkspaceBuildTargetsResult(
             listOf(
-                bspWorkspaceRootExampleBuildTarget,
                 exampleExampleBuildTarget,
                 exampleExampleLibBuildTarget,
                 exampleExampleTestBuildTarget,

@@ -43,26 +43,11 @@ object BazelBspRustProjectTest : BazelBspTestBaseScenario() {
     override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult =
         WorkspaceBuildTargetsResult(
             listOf(
-                makeRoot(),
                 makeExampleLib(),
                 makeExampleFeature(),
                 makeExample()
             )
         )
-
-    private fun makeRoot(): BuildTarget {
-        val bspWorkspaceRootExampleBuildTarget =
-            BuildTarget(
-                BuildTargetIdentifier("bsp-workspace-root"),
-                ImmutableList.of(),
-                ImmutableList.of(),
-                ImmutableList.of(),
-                BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
-            )
-        bspWorkspaceRootExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/"
-        bspWorkspaceRootExampleBuildTarget.displayName = "bsp-workspace-root"
-        return bspWorkspaceRootExampleBuildTarget
-    }
 
     private fun makeExampleLib(): BuildTarget {
         val exampleLibDependencies = listOf(
