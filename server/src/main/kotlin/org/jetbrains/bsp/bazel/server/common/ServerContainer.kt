@@ -5,11 +5,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
+import org.jetbrains.bsp.bazel.server.bsp.managers.*
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
@@ -79,9 +75,11 @@ class ServerContainer internal constructor(
       val bazelProjectMapper =
         BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver, bazelInfo, bspClientLogger, metricsLogger)
       val targetInfoReader = TargetInfoReader()
+      val currentContext = workspaceContextProvider.currentWorkspaceContext()
+      val bazelExternalRulesQuery = if (currentContext.enabledRules.values.isEmpty()) BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled) else BazelEnabledRulesQueryImpl(currentContext.enabledRules)
       val projectResolver = ProjectResolver(
         bazelBspAspectsManager = bazelBspAspectsManager,
-        bazelExternalRulesQuery = BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled),
+        bazelExternalRulesQuery = bazelExternalRulesQuery,
         bazelBspLanguageExtensionsGenerator = bazelBspLanguageExtensionsGenerator,
         bazelBspFallbackAspectsManager = bazelBspFallbackAspectsManager,
         workspaceContextProvider = workspaceContextProvider,

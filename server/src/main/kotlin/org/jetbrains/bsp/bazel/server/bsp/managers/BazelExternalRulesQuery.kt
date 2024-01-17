@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
+import org.jetbrains.bsp.bazel.workspacecontext.EnabledRulesSpec
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import javax.xml.xpath.XPathConstants
@@ -11,6 +12,13 @@ import javax.xml.xpath.XPathFactory
 
 interface BazelExternalRulesQuery {
   fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String>
+}
+
+class BazelEnabledRulesQueryImpl(
+        private val enabledRulesSpec: EnabledRulesSpec,
+) : BazelExternalRulesQuery {
+  override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =
+    enabledRulesSpec.values
 }
 
 class BazelExternalRulesQueryImpl(
@@ -41,8 +49,7 @@ class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner)
   private fun Document.calculateEligibleRules(): List<String> {
     val xPath = XPathFactory.newInstance().newXPath()
     val expression =
-      "/query/rule[contains(@class, 'http_archive') and " +
-        "(not(string[@name='generator_function']) or string[@name='generator_function' and contains(@value, 'http_archive')])" +
+      "/query/rule[contains(@class, 'http_archive')" +
         "]//string[@name='name']"
     val eligibleItems = xPath.evaluate(expression, this, XPathConstants.NODESET) as NodeList
     val returnList = mutableListOf<String>()

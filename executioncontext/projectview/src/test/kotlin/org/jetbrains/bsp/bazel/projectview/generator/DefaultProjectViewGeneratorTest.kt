@@ -3,13 +3,7 @@ package org.jetbrains.bsp.bazel.projectview.generator
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.jetbrains.bsp.bazel.projectview.parser.DefaultProjectViewParser
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -41,6 +35,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             // when
@@ -71,6 +66,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             // when
@@ -101,6 +97,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             // when
@@ -132,6 +129,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null
             )
 
             // when
@@ -170,6 +168,7 @@ class DefaultProjectViewGeneratorTest {
                     ),
                     deriveTargetsFromDirectories = null,
                     importDepth = null,
+                    enabledRules = null,
             )
 
             // when
@@ -200,6 +199,7 @@ class DefaultProjectViewGeneratorTest {
                     directories = null,
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = null,
+                    enabledRules = null,
             )
 
             // when
@@ -225,6 +225,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             // when
@@ -250,6 +251,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             // when
@@ -275,6 +277,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             // when
@@ -324,6 +327,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             // when
@@ -383,6 +387,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             // when
@@ -478,6 +483,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             // when
@@ -557,6 +563,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             // when
@@ -609,6 +616,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = ProjectViewDirectoriesSection(emptyList(), emptyList()),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -626,6 +634,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             parsedProjectView shouldBe expectedProjectView
         }
@@ -655,6 +664,7 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = null,
+                enabledRules = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -706,6 +716,7 @@ class DefaultProjectViewGeneratorTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
 
             val parser = DefaultProjectViewParser()

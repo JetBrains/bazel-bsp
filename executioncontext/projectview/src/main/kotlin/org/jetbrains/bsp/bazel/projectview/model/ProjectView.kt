@@ -1,16 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 
 /**
  * Representation of the project view file.
@@ -18,20 +9,22 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSect
  * @link https://ij.bazel.build/docs/project-views.html
  */
 data class ProjectView(
-    /** targets included and excluded from the project  */
+        /** targets included and excluded from the project  */
     val targets: ProjectViewTargetsSection?,
-    /** bazel path used to invoke bazel from the code  */
+        /** bazel path used to invoke bazel from the code  */
     val bazelBinary: ProjectViewBazelBinarySection?,
-    /** bazel flags added to all bazel command invocations  */
+        /** bazel flags added to all bazel command invocations  */
     val buildFlags: ProjectViewBuildFlagsSection?,
-    /** flag for building manual targets. */
+        /** flag for building manual targets. */
     val buildManualTargets: ProjectViewBuildManualTargetsSection?,
-    /** directories included and excluded from the project  */
+        /** directories included and excluded from the project  */
     val directories: ProjectViewDirectoriesSection?,
-    /** if set to true, relevant project targets will be automatically derived from the `directories` */
+        /** if set to true, relevant project targets will be automatically derived from the `directories` */
     val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
-    /** level of depth for importing inherited targets */
+        /** level of depth for importing inherited targets */
     val importDepth: ProjectViewImportDepthSection?,
+        /** manually enabled rules to overcome false negatives*/
+    val enabledRules: ProjectViewEnabledRulesSection?,
 ) {
 
     data class Builder(
@@ -43,6 +36,7 @@ data class ProjectView(
         private val directories: ProjectViewDirectoriesSection? = null,
         private val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
         private val importDepth: ProjectViewImportDepthSection? = null,
+        private val enabledRules: ProjectViewEnabledRulesSection? = null,
     ) {
 
         fun build(): ProjectView {
@@ -59,6 +53,7 @@ data class ProjectView(
             val directories = combineDirectoriesSection(importedProjectViews)
             val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
             val importDepth = combineImportDepthSection(importedProjectViews)
+            val enabledRules = combineManualRulesSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
@@ -67,7 +62,8 @@ data class ProjectView(
                         + " build manual targets {},"
                         + " directories: {},"
                         + " deriveTargetsFlag: {}."
-                        + " import depth: {},",
+                        + " import depth: {},"
+                        + " enabled rules: {},",
                 targets,
                 bazelBinary,
                 buildFlags,
@@ -75,6 +71,7 @@ data class ProjectView(
                 directories,
                 deriveTargetsFromDirectories,
                 importDepth,
+                enabledRules,
             )
             return ProjectView(
                 targets,
@@ -84,6 +81,7 @@ data class ProjectView(
                 directories,
                 deriveTargetsFromDirectories,
                 importDepth,
+                enabledRules,
             )
         }
 
@@ -183,6 +181,16 @@ data class ProjectView(
 
         private fun combineImportDepthSection(importedProjectViews: List<ProjectView>): ProjectViewImportDepthSection? =
             importDepth ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::importDepth)
+
+        private fun combineManualRulesSection(importedProjectViews: List<ProjectView>): ProjectViewEnabledRulesSection? {
+            val rules = combineListValuesWithImported(
+                    importedProjectViews,
+                    enabledRules,
+                    ProjectView::enabledRules,
+                    ProjectViewEnabledRulesSection::values,
+            )
+            return createInstanceOfListSectionOrNull(rules, ::ProjectViewEnabledRulesSection)
+        }
 
         private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
             importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?

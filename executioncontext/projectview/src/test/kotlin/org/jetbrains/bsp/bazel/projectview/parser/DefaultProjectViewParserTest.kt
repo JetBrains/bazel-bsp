@@ -4,13 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -164,6 +158,7 @@ class DefaultProjectViewParserTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -207,6 +202,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -258,6 +254,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -307,6 +304,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(7),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -347,6 +345,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(8),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -403,6 +402,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -464,6 +464,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }

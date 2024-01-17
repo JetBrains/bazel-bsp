@@ -5,13 +5,7 @@ import org.jetbrains.bsp.bazel.install.cli.CliOptions
 import org.jetbrains.bsp.bazel.install.cli.ProjectViewCliOptions
 import org.jetbrains.bsp.bazel.projectview.generator.DefaultProjectViewGenerator
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -32,6 +26,7 @@ object ProjectViewCLiOptionsProvider {
             deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions),
             importDepth = toImportDepthSection(projectViewCliOptions),
             buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
+            enabledRules = toEnabledRulesSection(projectViewCliOptions),
         )
 
     private fun toBazelBinarySection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelBinarySection? =
@@ -78,6 +73,9 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
         projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
+
+    private fun toEnabledRulesSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewEnabledRulesSection? =
+        projectViewCliOptions?.enabledRules?.let { ProjectViewEnabledRulesSection(it) }
 
     private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFromDirectoriesSection? =
         projectViewCliOptions?.deriveTargetsFromDirectories?.let(::ProjectViewDeriveTargetsFromDirectoriesSection)

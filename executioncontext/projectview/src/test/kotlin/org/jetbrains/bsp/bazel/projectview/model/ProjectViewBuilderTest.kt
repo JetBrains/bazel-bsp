@@ -2,13 +2,7 @@ package org.jetbrains.bsp.bazel.projectview.model
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
-import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -37,6 +31,7 @@ class ProjectViewBuilderTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -100,6 +95,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -164,6 +160,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -212,6 +209,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -321,6 +319,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(2),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -489,6 +488,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -660,6 +660,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
