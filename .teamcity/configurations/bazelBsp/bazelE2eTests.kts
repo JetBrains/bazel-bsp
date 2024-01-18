@@ -27,11 +27,11 @@ open class BazelBspE2ETestsBuildType(
 )
 
 object SampleRepoBazel6E2ETest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:sample_repo_test_bazel_6_3_2",
+    targets = "//e2e:sample_repo_test_bazel_6_4_0",
 )
 
 object ServerDownloadsBazeliskTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:server_downloads_bazelisk_test_bazel_6_3_2",
+    targets = "//e2e:server_downloads_bazelisk_test_bazel_6_4_0",
 )
 
 object SampleRepoBazel5E2ETest : BazelBspE2ETestsBuildType(
@@ -39,7 +39,7 @@ object SampleRepoBazel5E2ETest : BazelBspE2ETestsBuildType(
 )
 
 object BazelBspLocalBazel6JdkTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:local_jdk_test_bazel_6_3_2",
+    targets = "//e2e:local_jdk_test_bazel_6_4_0",
     steps = {
         script {
             this.name = "set JDK to 17"
@@ -69,7 +69,7 @@ object BazelBspLocalBazel5JdkTest : BazelBspE2ETestsBuildType(
 )
 
 object BazelBspRemoteBazel6JdkTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:remote_jdk_test_bazel_6_3_2",
+    targets = "//e2e:remote_jdk_test_bazel_6_4_0",
 )
 
 object BazelBspRemoteBazel5JdkTest : BazelBspE2ETestsBuildType(

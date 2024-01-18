@@ -40,7 +40,7 @@ bazel_binaries = use_extension(
     dev_dependency = True,
 )
 bazel_binaries.download(version_file = "//:.bazelversion")
-bazel_binaries.download(version = "6.3.2")
+bazel_binaries.download(version = "6.4.0")
 bazel_binaries.download(version = "5.3.2")
 use_repo(
     bazel_binaries,
@@ -48,7 +48,7 @@ use_repo(
     "bazel_binaries_bazelisk",
     "build_bazel_bazel_.bazelversion",
     "build_bazel_bazel_5_3_2",
-    "build_bazel_bazel_6_3_2",
+    "build_bazel_bazel_6_4_0",
 )
 
 bazel_dep(name = "rules_jvm_external", version = "5.3")
