@@ -72,6 +72,8 @@ internal object BazelBinarySpecExtractor : ExecutionContextEntityExtractor<Bazel
 
   private fun calculateBazeliskDownloadLink(): String? {
     // TODO: https://youtrack.jetbrains.com/issue/BAZEL-743
+    // Currently updates are checked on CI daily and automatic PR created on new version.
+    // Permanent solution should be done later.
     val base = "https://github.com/bazelbuild/bazelisk/releases/download/v1.19.0/bazelisk-"
     val os = System.getProperty("os.name").lowercase()
     val arch = System.getProperty("os.arch").lowercase()
