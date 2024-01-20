@@ -27,4 +27,3 @@ def extract_go_info(target, ctx, **kwargs):
     )
 
     return create_proto(target, ctx, go_target_info, "go_target_info"), None
-
