@@ -5,6 +5,7 @@ import org.jetbrains.bsp.GoBuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
+import java.net.URI
 
 class GoLanguagePlugin(
   private val bazelPathsResolver: BazelPathsResolver
@@ -26,8 +27,12 @@ class GoLanguagePlugin(
 
     val goTargetInfo = targetInfo.goTargetInfo
     return GoModule(
-      sdkHomePath = goTargetInfo.sdkHomePath,
+      sdkHomePath = calculateSdkURI(goTargetInfo.sdkHomePath),
       importPath = goTargetInfo.importpath,
     )
   }
+
+  private fun calculateSdkURI(sdk: BspTargetInfo.FileLocation?): URI? =
+    sdk?.takeUnless { it.relativePath.isNullOrEmpty() }
+      ?.let { bazelPathsResolver.resolveUri(it) }
 }

@@ -1,7 +1,9 @@
 package org.jetbrains.bsp
 
-public data class GoBuildTarget(
-  val sdkHomePath: String,
-  val importPath: String,
+import java.net.URI
+
+data class GoBuildTarget(
+  val sdkHomePath: URI?,
+  val importPath: String?,
 )
 

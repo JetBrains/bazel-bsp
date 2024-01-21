@@ -101,7 +101,7 @@ message AndroidSdkInfo {
 
 message GoTargetInfo {
   string importpath = 1;
-  string sdk_home_path = 2;
+  FileLocation sdk_home_path = 2;
 }
 
 message TargetInfo {
