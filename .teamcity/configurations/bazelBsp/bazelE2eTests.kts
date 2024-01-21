@@ -14,6 +14,7 @@ open class BazelBspE2ETestsBuildType(
     name = "[e2e tests] $targets test",
     vcsRoot = BaseConfiguration.BazelBspVcs,
     setupSteps = true,
+    artifactRules = "+:/home/teamcity/.cache/bazel/_bazel_teamcity/*/execroot/_main/bazel-out/k8-fastbuild/testlogs/e2e/** => testlogs.zip",
     steps = {
         steps?.invoke(this)
         bazel {
