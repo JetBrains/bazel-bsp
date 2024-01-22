@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.model
 
+import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import java.net.URI
 
@@ -10,6 +12,7 @@ data class Project(
     val sourceToTarget: Map<URI, Label>,
     val libraries: Map<String, Library>,
     val invalidTargets: List<Label>,
+    val bazelRelease: BazelRelease
 ) {
     private val moduleMap: Map<Label, Module> = modules.associateBy(Module::label)
 

@@ -48,7 +48,8 @@ class BazelProjectMapper(
     targets: Map<String, TargetInfo>,
     rootTargets: Set<String>,
     allTargetNames: List<String>,
-    workspaceContext: WorkspaceContext
+    workspaceContext: WorkspaceContext,
+    bazelInfo: BazelInfo
   ): Project {
     languagePluginsService.prepareSync(targets.values.asSequence())
     val dependencyTree = measure("Build dependency tree") {
@@ -106,7 +107,7 @@ class BazelProjectMapper(
       createRustExternalModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
     }
     val allModules = modulesFromBazel + rustExternalModules
-    return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
+    return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets, bazelInfo.release)
   }
 
   private fun <K, V> concatenateMaps(vararg maps: Map<K, List<V>>): Map<K, List<V>> =

@@ -75,6 +75,7 @@ import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.name
+import kotlin.io.path.relativeToOrNull
 import kotlin.io.path.toPath
 
 class BspProjectMapper(
@@ -243,13 +244,13 @@ class BspProjectMapper(
     }
 
     fun inverseSources(
-        project: Project, inverseSourcesParams: InverseSourcesParams
+        project: Project, inverseSourcesParams: InverseSourcesParams, cancelChecker: CancelChecker
     ): InverseSourcesResult {
         val documentUri = BspMappings.toUri(inverseSourcesParams.textDocument)
-        val targets = project.findTargetBySource(documentUri)
-            ?.let { listOf(BspMappings.toBspId(it)) }
-            .orEmpty()
-        return InverseSourcesResult(targets)
+        val documentRelativePath = documentUri
+            .toPath()
+            .relativeToOrNull(project.workspaceRoot.toPath()) ?: throw RuntimeException("File path outside of project root")
+        return InverseSourcesQuery.inverseSourcesQuery(documentRelativePath, bazelRunner, project.bazelRelease, cancelChecker)
     }
 
     fun dependencySources(

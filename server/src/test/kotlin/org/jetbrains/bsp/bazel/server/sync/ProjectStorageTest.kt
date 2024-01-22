@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import io.kotest.matchers.shouldBe
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import java.io.IOException
 import java.net.URI
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -64,6 +65,7 @@ class ProjectStorageTest {
             mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
             emptyMap(),
             emptyList(),
+            BazelRelease(7),
         )
         storage.store(project)
         val loaded = storage.load()
