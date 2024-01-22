@@ -16,7 +16,7 @@ object ServerDownloadsBazeliskTest : BazelBspTestBaseScenario() {
             arrayOf(
                 "-d", workspaceDir,
                 "-t", "//...",
-                "--produce-trace-log"
+//                "--produce-trace-log"
             )
         )
     }
