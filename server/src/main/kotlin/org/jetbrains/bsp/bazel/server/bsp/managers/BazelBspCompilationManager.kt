@@ -27,7 +27,8 @@ class BazelBspCompilationManager(
         extraFlags: List<String>,
         originId: String?,
     ): BepBuildResult {
-        val bepServer = BepServer.newBepServer(client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId))
+        val target = targetSpecs.values.firstOrNull()
+        val bepServer = BepServer.newBepServer(client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId), Optional.ofNullable(target))
         val bepReader = BepReader(bepServer)
         return try {
             bepReader.start()

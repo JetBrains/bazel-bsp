@@ -47,7 +47,7 @@ class ExecuteService(
     }
 
     private fun <T> withBepServer(body : (BepReader) -> T): T {
-        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems, Optional.empty())
+        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems, Optional.empty(), Optional.empty())
         val bepReader = BepReader(server)
         return body(bepReader)
     }
