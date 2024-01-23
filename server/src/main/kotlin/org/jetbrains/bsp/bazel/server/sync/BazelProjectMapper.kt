@@ -463,7 +463,7 @@ class BazelProjectMapper(
     }
 
   private fun isBinaryTargetOfLanguage(kind: String, language: Language): Boolean =
-    language.binary_targets.contains(kind)
+    language.binaryTargets.contains(kind)
 
   private fun resolveSourceSet(target: TargetInfo, languagePlugin: LanguagePlugin<*>): SourceSet {
     val sources = target.sourcesList.toSet()
