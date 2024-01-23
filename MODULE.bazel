@@ -30,7 +30,7 @@ git_override(
 
 bazel_dep(
     name = "rules_bazel_integration_test",
-    version = "0.22.0",
+    version = "0.23.0",
     dev_dependency = True,
 )
 
