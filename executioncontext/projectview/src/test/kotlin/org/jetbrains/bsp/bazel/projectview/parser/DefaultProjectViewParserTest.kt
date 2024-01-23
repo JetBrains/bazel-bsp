@@ -4,7 +4,14 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -481,14 +488,14 @@ class DefaultProjectViewParserTest {
             // then
 
             val expectedProjectView = ProjectView(
-                    targets = null,
-                    bazelBinary = null,
-                    buildFlags = null,
-                    buildManualTargets = null,
-                    directories = null,
-                    deriveTargetsFromDirectories = null,
-                    importDepth = null,
-                    enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala", "rules_jvm", "rules_java")),
+                targets = null,
+                bazelBinary = null,
+                buildFlags = null,
+                buildManualTargets = null,
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
+                enabledRules = ProjectViewEnabledRulesSection(listOf("io_bazel_rules_scala", "rules_jvm", "rules_java")),
             )
 
             projectView shouldBe expectedProjectView

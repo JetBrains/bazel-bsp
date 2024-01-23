@@ -4,16 +4,12 @@ import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetCapabilities
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
-import ch.epfl.scala.bsp4j.PythonBuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetDataKind
-import ch.epfl.scala.bsp4j.ScalaBuildTarget
 import ch.epfl.scala.bsp4j.ScalacOptionsItem
 import ch.epfl.scala.bsp4j.ScalacOptionsParams
 import ch.epfl.scala.bsp4j.ScalacOptionsResult
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
 
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
@@ -27,21 +23,29 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
 
     override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
         return WorkspaceBuildTargetsResult(
-            emptyList()
+           listOf(BuildTarget(BuildTargetIdentifier("@//scala_targets:library"), listOf("library"), listOf("scala"), emptyList(), BuildTargetCapabilities()))
         )
     }
 
 
     private fun scalaOptionsResults(): BazelBspTestScenarioStep {
         val expectedTargetIdentifiers = expectedTargetIdentifiers().filter { it.uri != "bsp-workspace-root" }
-        val expectedScalaOptionsItems = expectedTargetIdentifiers.map { ScalacOptionsItem(it, emptyList(), emptyList(), "") }
+        val expectedScalaOptionsItems = expectedTargetIdentifiers.map {
+            ScalacOptionsItem(
+                it,
+                emptyList(),
+                listOf(
+                    "file://\$BAZEL_OUTPUT_BASE_PATH/execroot/__main__/bazel-out/k8-fastbuild/bin/external/io_bazel_rules_scala_scala_library/io_bazel_rules_scala_scala_library.stamp/scala-library-2.13.6-stamped.jar",
+                    "file://\$BAZEL_OUTPUT_BASE_PATH/execroot/__main__/bazel-out/k8-fastbuild/bin/external/io_bazel_rules_scala_scala_reflect/io_bazel_rules_scala_scala_reflect.stamp/scala-reflect-2.13.6-stamped.jar"
+                ),
+                "file://\$BAZEL_OUTPUT_BASE_PATH/execroot/__main__/bazel-out/k8-fastbuild/bin/scala_targets/library.jar") }
         val expectedScalaOptionsResult = ScalacOptionsResult(expectedScalaOptionsItems)
-        val pythonOptionsParams = ScalacOptionsParams(expectedTargetIdentifiers)
+        val scalaOptionsParams = ScalacOptionsParams(expectedTargetIdentifiers)
 
         return BazelBspTestScenarioStep(
-            "scalaOptions results"
+           "scalaOptions results"
         ) {
-            testClient.testScalacOptions(30.seconds, pythonOptionsParams, expectedScalaOptionsResult)
+            testClient.testScalacOptions(60.seconds, scalaOptionsParams, expectedScalaOptionsResult)
         }
     }
 

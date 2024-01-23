@@ -7,7 +7,6 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.testkit.client.bazel.BazelTestClient
-import java.lang.RuntimeException
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.name

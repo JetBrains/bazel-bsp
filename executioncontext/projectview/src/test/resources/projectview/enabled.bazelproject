@@ -1,4 +1,4 @@
 enabled_rules:
-  rules_scala
+  io_bazel_rules_scala
   rules_jvm
   rules_java

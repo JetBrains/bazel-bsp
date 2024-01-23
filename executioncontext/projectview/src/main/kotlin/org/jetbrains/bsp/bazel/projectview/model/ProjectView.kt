@@ -1,7 +1,17 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
 import org.apache.logging.log4j.LogManager
-import org.jetbrains.bsp.bazel.projectview.model.sections.*
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 
 /**
  * Representation of the project view file.
@@ -9,21 +19,21 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.*
  * @link https://ij.bazel.build/docs/project-views.html
  */
 data class ProjectView(
-        /** targets included and excluded from the project  */
+    /** targets included and excluded from the project  */
     val targets: ProjectViewTargetsSection?,
-        /** bazel path used to invoke bazel from the code  */
+    /** bazel path used to invoke bazel from the code  */
     val bazelBinary: ProjectViewBazelBinarySection?,
-        /** bazel flags added to all bazel command invocations  */
+    /** bazel flags added to all bazel command invocations  */
     val buildFlags: ProjectViewBuildFlagsSection?,
-        /** flag for building manual targets. */
+    /** flag for building manual targets. */
     val buildManualTargets: ProjectViewBuildManualTargetsSection?,
-        /** directories included and excluded from the project  */
+    /** directories included and excluded from the project  */
     val directories: ProjectViewDirectoriesSection?,
-        /** if set to true, relevant project targets will be automatically derived from the `directories` */
+    /** if set to true, relevant project targets will be automatically derived from the `directories` */
     val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
-        /** level of depth for importing inherited targets */
+    /** level of depth for importing inherited targets */
     val importDepth: ProjectViewImportDepthSection?,
-        /** manually enabled rules to overcome false negatives*/
+    /** manually enabled rules to overcome false negatives*/
     val enabledRules: ProjectViewEnabledRulesSection?,
 ) {
 
@@ -184,10 +194,10 @@ data class ProjectView(
 
         private fun combineManualRulesSection(importedProjectViews: List<ProjectView>): ProjectViewEnabledRulesSection? {
             val rules = combineListValuesWithImported(
-                    importedProjectViews,
-                    enabledRules,
-                    ProjectView::enabledRules,
-                    ProjectViewEnabledRulesSection::values,
+                importedProjectViews,
+                enabledRules,
+                ProjectView::enabledRules,
+                ProjectViewEnabledRulesSection::values,
             )
             return createInstanceOfListSectionOrNull(rules, ::ProjectViewEnabledRulesSection)
         }

@@ -63,7 +63,7 @@ data class WorkspaceContext(
      * Obtained from `ProjectView` simply by mapping `import_depth` section.
      */
     val importDepth: ImportDepthSpec,
-        /**
+    /**
      * Parameter determining which rules should be used by Bazel BSP, if empty Bazel is queried.
      *
      * Obtained from `ProjectView` simply by mapping `import_depth` section.

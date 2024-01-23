@@ -23,15 +23,17 @@ class BazelEnabledRulesQueryImpl(
 
 class BazelExternalRulesQueryImpl(
   private val bazelRunner: BazelRunner,
-  private val isBzlModEnabled: Boolean
+  private val isBzlModEnabled: Boolean,
+  private val enabledRules: EnabledRulesSpec
 ) : BazelExternalRulesQuery {
-  override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> = when (isBzlModEnabled) {
-    true -> BazelBzlModExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker) +
-      BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
-
-    false -> BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
-  }
+    override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> = when {
+        enabledRules.isNotEmpty() -> BazelEnabledRulesQueryImpl(enabledRules).fetchExternalRuleNames(cancelChecker)
+        isBzlModEnabled -> BazelBzlModExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker) +
+                BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
+        else -> BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
+    }
 }
+
 
 class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelExternalRulesQuery {
   override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =
@@ -49,7 +51,8 @@ class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner)
   private fun Document.calculateEligibleRules(): List<String> {
     val xPath = XPathFactory.newInstance().newXPath()
     val expression =
-      "/query/rule[contains(@class, 'http_archive')" +
+      "/query/rule[contains(@class, 'http_archive') and " +
+        "(not(string[@name='generator_function']) or string[@name='generator_function' and contains(@value, 'http_archive')])" +
         "]//string[@name='name']"
     val eligibleItems = xPath.evaluate(expression, this, XPathConstants.NODESET) as NodeList
     val returnList = mutableListOf<String>()
