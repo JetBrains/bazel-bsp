@@ -243,7 +243,7 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(1),
-
+                    enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala"))
             ).build()
 
             // when
@@ -319,7 +319,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(2),
-                enabledRules = null,
+                enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala"))
             )
             projectView shouldBe expectedProjectView
         }

@@ -728,5 +728,37 @@ class DefaultProjectViewGeneratorTest {
             // then
             parsedProjectView shouldBe projectView
         }
+
+
+
+        @Test
+        fun `should return pretty string for project view only with bazel path and enabled rules`() {
+            // given
+            val projectView = ProjectView(
+                targets = null,
+                bazelBinary = ProjectViewBazelBinarySection(Paths.get("/path/to/bazel")),
+                buildFlags = null,
+                buildManualTargets = null,
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
+                enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala", "rules_jvm")),
+            )
+
+            // when
+            val generatedString = DefaultProjectViewGenerator.generatePrettyString(projectView)
+
+            // then
+            val expectedGeneratedString =
+                    """
+                bazel_binary: /path/to/bazel
+                
+                enabled_rules:
+                    rules_scala
+                    rules_jvm
+                
+                """.trimIndent()
+            generatedString shouldBe expectedGeneratedString
+        }
     }
 }

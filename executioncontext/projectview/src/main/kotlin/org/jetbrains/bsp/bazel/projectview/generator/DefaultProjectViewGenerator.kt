@@ -5,6 +5,7 @@ import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildFl
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewBuildManualTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewDeriveTargetsFromDirectoriesSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewDirectoriesSectionGenerator
+import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewEnabledRulesSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewImportDepthSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.generator.sections.ProjectViewTargetsSectionGenerator
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -27,5 +28,6 @@ object DefaultProjectViewGenerator : ProjectViewGenerator {
             ProjectViewDirectoriesSectionGenerator.generatePrettyString(projectView.directories),
             ProjectViewDeriveTargetsFromDirectoriesSectionGenerator.generatePrettyString(projectView.deriveTargetsFromDirectories),
             ProjectViewImportDepthSectionGenerator.generatePrettyString(projectView.importDepth),
+            ProjectViewEnabledRulesSectionGenerator.generatePrettyString(projectView.enabledRules),
         ).joinToString(separator = "\n\n", postfix = "\n")
 }

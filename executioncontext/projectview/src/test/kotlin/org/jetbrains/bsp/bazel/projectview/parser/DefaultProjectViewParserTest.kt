@@ -468,5 +468,30 @@ class DefaultProjectViewParserTest {
             )
             projectView shouldBe expectedProjectView
         }
+
+
+        @Test
+        fun `should parse enabled rules`() {
+            // given
+            val projectViewFilePath = Path("/projectview/enabled.bazelproject")
+
+            // when
+            val projectView = parser.parse(projectViewFilePath)
+
+            // then
+
+            val expectedProjectView = ProjectView(
+                    targets = null,
+                    bazelBinary = null,
+                    buildFlags = null,
+                    buildManualTargets = null,
+                    directories = null,
+                    deriveTargetsFromDirectories = null,
+                    importDepth = null,
+                    enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala", "rules_jvm", "rules_java")),
+            )
+
+            projectView shouldBe expectedProjectView
+        }
     }
 }
