@@ -33,7 +33,7 @@ data class ProjectView(
     val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection?,
     /** level of depth for importing inherited targets */
     val importDepth: ProjectViewImportDepthSection?,
-    /** manually enabled rules to overcome false negatives*/
+    /** manually enabled rules to override the automatic rules detection mechanism */
     val enabledRules: ProjectViewEnabledRulesSection?,
 ) {
 
@@ -63,7 +63,7 @@ data class ProjectView(
             val directories = combineDirectoriesSection(importedProjectViews)
             val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
             val importDepth = combineImportDepthSection(importedProjectViews)
-            val enabledRules = combineManualRulesSection(importedProjectViews)
+            val enabledRules = combineEnabledRulesSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
@@ -192,7 +192,7 @@ data class ProjectView(
         private fun combineImportDepthSection(importedProjectViews: List<ProjectView>): ProjectViewImportDepthSection? =
             importDepth ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::importDepth)
 
-        private fun combineManualRulesSection(importedProjectViews: List<ProjectView>): ProjectViewEnabledRulesSection? {
+        private fun combineEnabledRulesSection(importedProjectViews: List<ProjectView>): ProjectViewEnabledRulesSection? {
             val rules = combineListValuesWithImported(
                 importedProjectViews,
                 enabledRules,

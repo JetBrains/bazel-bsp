@@ -15,10 +15,7 @@ private val defaultEnabledRulesSpec = EnabledRulesSpec(values = emptyList())
 
 internal object EnabledRulesSpecExtractor : ExecutionContextEntityExtractor<EnabledRulesSpec> {
 
-    override fun fromProjectView(projectView: ProjectView): EnabledRulesSpec = when (projectView.enabledRules) {
-        null -> defaultEnabledRulesSpec
-        else -> mapNotEmptySection(projectView.enabledRules!!)
-    }
+    override fun fromProjectView(projectView: ProjectView): EnabledRulesSpec = EnabledRulesSpec(values = projectView.enabledRules?.values ?: emptyList())
 
     private fun mapNotEmptySection(enabledRulesSection: ProjectViewEnabledRulesSection): EnabledRulesSpec = EnabledRulesSpec(values = enabledRulesSection.values)
 }
