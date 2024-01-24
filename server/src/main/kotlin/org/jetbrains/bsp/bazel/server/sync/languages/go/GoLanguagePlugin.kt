@@ -6,6 +6,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import java.net.URI
+import kotlin.io.path.toPath
 
 class GoLanguagePlugin(
   private val bazelPathsResolver: BazelPathsResolver
@@ -34,5 +35,9 @@ class GoLanguagePlugin(
 
   private fun calculateSdkURI(sdk: BspTargetInfo.FileLocation?): URI? =
     sdk?.takeUnless { it.relativePath.isNullOrEmpty() }
-      ?.let { bazelPathsResolver.resolveUri(it) }
+      ?.let {
+        val goBinaryPath = bazelPathsResolver.resolveUri(it).toPath()
+        val goSdkDir = goBinaryPath.parent.parent
+        goSdkDir.toUri()
+      }
 }

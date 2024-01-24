@@ -5,7 +5,7 @@ def extract_sdk(ctx):
     go = go_context(ctx)
     if go == None:
         return None
-    return file_location(go.sdk.root_file)
+    return file_location(go.sdk.go)
 
 def extract_go_info(target, ctx, **kwargs):
     importpath = getattr(ctx.rule.attr, "importpath", [])
