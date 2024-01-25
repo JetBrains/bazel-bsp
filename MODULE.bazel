@@ -1,4 +1,7 @@
-module(name = "bazel_bsp", version = "")
+module(
+    name = "bazel_bsp",
+    version = "",
+)
 
 bazel_dep(name = "bazel_skylib", version = "1.5.0")
 bazel_dep(name = "rules_kotlin", version = "1.9.0")
@@ -18,10 +21,9 @@ bazel_dep(name = "rules_python", version = "0.29.0")
 
 bazel_dep(
     name = "bsp-testkit2",
-    repo_name = "testkit",
     dev_dependency = True,
+    repo_name = "testkit",
 )
-
 git_override(
     module_name = "bsp-testkit2",
     commit = "8ca184e8dc543c01b121a2535371c65dcf3c9e57",
@@ -56,8 +58,8 @@ bazel_dep(name = "rules_jvm_external", version = "5.3")
 # Required until there's a new release
 git_override(
     module_name = "rules_jvm_external",
-    remote = "https://github.com/bazelbuild/rules_jvm_external.git",
     commit = "679348a8da17a9f3954fb2cab10a95d5a5848c85",
+    remote = "https://github.com/bazelbuild/rules_jvm_external.git",
 )
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -92,15 +94,14 @@ maven.install(
         "io.kotest:kotest-assertions-shared-jvm:5.8.0",
         "io.kotest:kotest-common-jvm:5.8.0",
     ],
+    fail_if_repin_required = True,
     fetch_sources = True,
     lock_file = "//:maven_install.json",
-    fail_if_repin_required = True,
     repositories = [
         "https://maven.google.com",
         "https://repo.maven.apache.org/maven2",
     ],
 )
-
 use_repo(
     maven,
     "maven",

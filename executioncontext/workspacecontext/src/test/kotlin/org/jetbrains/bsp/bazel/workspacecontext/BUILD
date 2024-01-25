@@ -71,3 +71,12 @@ kt_test(
         "//executioncontext/workspacecontext/src/main/kotlin/org/jetbrains/bsp/bazel/workspacecontext",
     ],
 )
+
+kt_test(
+    name = "DefaultWorkspaceContextProviderTest",
+    size = "small",
+    src = "DefaultWorkspaceContextProviderTest.kt",
+    associates = [
+        "//executioncontext/workspacecontext/src/main/kotlin/org/jetbrains/bsp/bazel/workspacecontext",
+    ],
+)

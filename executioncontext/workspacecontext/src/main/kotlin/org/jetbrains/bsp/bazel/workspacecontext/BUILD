@@ -12,6 +12,7 @@ kt_jvm_library(
     ],
     deps = [
         "//executioncontext/api",
+        "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",
         "@maven//:commons_io_commons_io",
         "@maven//:org_apache_logging_log4j_log4j_api",
