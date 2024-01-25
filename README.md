@@ -65,18 +65,28 @@ Check [project view readme](executioncontext/projectview/README.md) for more inf
 
 ## Tests
 
+### Unit tests
+
+Run `bazel test //...` to execute all the unit tests.
+
 ### End-to-end tests
 
 `e2e` directory contains end-2-end tests that check various scenarios of server usage.
 
 _Tests are marked as `manual` so they won't be executed on `bazel test //...`_
 
-`bazel test //e2e:<test name>_bazel_<bazel version>` - to run a specific test 
-  (to see all possible tests, check the `e2e/BUILD` file), e.g. `bazel test //e2e:sample_repo_test_bazel_6_3_2`
 
-### Unit tests
+In order to run a specific test with specific bazel version you can use:
+`bazel test //e2e:<test name>_bazel_<bazel version_major>_x` 
+(`bazel test //e2e:<test name>_bazel_current` to use bazel version defined in `.bazelversion` file) or
+`bazel test //e2e:<test name>_bazel_<bazel version>`
 
-Run `bazel test //...` to execute all the unit tests.
+e.g. `bazel test //e2e:sample_repo_test_bazel_6_x` or `bazel test //e2e:sample_repo_test_bazel_current` or `bazel test //e2e:sample_repo_test_bazel_6_4_0`
+
+In order to run a specific test with all bazel versions you can use:
+`bazel test //e2e:<test name>`
+
+e.g. `bazel test //e2e:sample_repo_test`
 
 ## Contributing
 
