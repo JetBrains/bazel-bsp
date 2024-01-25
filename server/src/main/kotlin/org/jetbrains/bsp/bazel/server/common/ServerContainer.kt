@@ -79,9 +79,10 @@ class ServerContainer internal constructor(
       val bazelProjectMapper =
         BazelProjectMapper(languagePluginsService, bazelPathsResolver, targetKindResolver, bazelInfo, bspClientLogger, metricsLogger)
       val targetInfoReader = TargetInfoReader()
+      val currentContext = workspaceContextProvider.currentWorkspaceContext()
       val projectResolver = ProjectResolver(
         bazelBspAspectsManager = bazelBspAspectsManager,
-        bazelExternalRulesQuery = BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled),
+        bazelExternalRulesQuery = BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled, currentContext.enabledRules),
         bazelBspLanguageExtensionsGenerator = bazelBspLanguageExtensionsGenerator,
         bazelBspFallbackAspectsManager = bazelBspFallbackAspectsManager,
         workspaceContextProvider = workspaceContextProvider,

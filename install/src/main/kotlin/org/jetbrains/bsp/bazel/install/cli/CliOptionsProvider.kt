@@ -230,6 +230,7 @@ class CliOptionsProvider(private val args: Array<String>) {
                 deriveTargetsFromDirectories = deriveTargetsFlag(cmd),
                 importDepth = importDepth(cmd),
                 produceTraceLog = produceTraceLogFlag(cmd),
+                enabledRules = enabledRules(cmd)
             )
         else null
 
@@ -260,6 +261,8 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun buildManualTargets(cmd: CommandLine): Boolean = cmd.hasOption(BUILD_MANUAL_TARGETS_OPT)
 
     private fun importDepth(cmd: CommandLine): Int? = cmd.getOptionValue(IMPORT_DEPTH_SHORT_OPT)?.toInt()
+
+    private fun enabledRules(cmd: CommandLine): List<String>? = cmd.getOptionValues(ENABLED_RULES_OPT)?.toList()
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
@@ -292,6 +295,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
         private const val BUILD_MANUAL_TARGETS_OPT = "m"
+        private const val ENABLED_RULES_OPT = "enabled-rules"
         private const val DIRECTORIES_SHORT_OPT = "r"
         private const val EXCLUDED_DIRECTORIES_LONG_OPT = "excluded-directories"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"

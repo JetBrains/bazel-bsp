@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsS
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
@@ -37,6 +38,7 @@ class ProjectViewBuilderTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -100,6 +102,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -164,6 +167,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -212,6 +216,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -245,7 +250,7 @@ class ProjectViewBuilderTest {
                     ),
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                     importDepth = ProjectViewImportDepthSection(1),
-
+                    enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala"))
             ).build()
 
             // when
@@ -321,6 +326,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(2),
+                enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala"))
             )
             projectView shouldBe expectedProjectView
         }
@@ -489,6 +495,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -660,6 +667,7 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }

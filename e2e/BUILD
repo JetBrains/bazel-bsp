@@ -49,6 +49,14 @@ bazel_integration_tests(
 )
 
 bazel_integration_tests(
+    name = "enabled_rules_test",
+    timeout = "eternal",
+    bazel_versions = bazel_binaries.versions.all,
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspScalaProjectTest",
+    workspace_path = "test-resources/enabled-rules-project",
+)
+
+bazel_integration_tests(
     name = "server_downloads_bazelisk_test",
     timeout = "eternal",
     bazel_versions = bazel_binaries.versions.all,

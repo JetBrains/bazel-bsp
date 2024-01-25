@@ -8,6 +8,7 @@ import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlags
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManualTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDeriveTargetsFromDirectoriesSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDirectoriesSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewEnabledRulesSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewImportDepthSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
@@ -38,6 +39,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
             directories = ProjectViewDirectoriesSectionParser.parse(rawSections),
             deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
             importDepth = ProjectViewImportDepthSectionParser.parse(rawSections),
+            enabledRules = ProjectViewEnabledRulesSectionParser.parse(rawSections),
         ).build()
     }
 
