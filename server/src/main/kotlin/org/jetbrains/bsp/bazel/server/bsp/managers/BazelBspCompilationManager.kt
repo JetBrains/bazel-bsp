@@ -18,7 +18,7 @@ class BazelBspCompilationManager(
     fun buildTargetsWithBep(
         cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String,
     ): BepBuildResult {
-        return buildTargetsWithBep(cancelChecker, targetSpecs, emptyList(), originId)
+        return buildTargetsWithBep(cancelChecker, targetSpecs, emptyList(), originId, emptyList())
     }
 
     fun buildTargetsWithBep(
@@ -26,6 +26,7 @@ class BazelBspCompilationManager(
         targetSpecs: TargetsSpec,
         extraFlags: List<String>,
         originId: String?,
+        environment: List<Pair<String, String>>
     ): BepBuildResult {
         val bepServer = BepServer.newBepServer(client, workspaceRoot, hasAnyProblems, Optional.ofNullable(originId))
         val bepReader = BepReader(bepServer)
@@ -36,15 +37,7 @@ class BazelBspCompilationManager(
                 .build()
                 .withFlags(extraFlags)
                 .withTargets(targetSpecs)
-                // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
-                // (`Cargo.lock` file) based on dependencies specified in `manifest`
-                // (`Cargo.toml` file) and syncs `lockfile` (`Cargo.bazel.lock` file) with `cargo_lockfile`.
-                // Ensures that both Bazel and Cargo are using the same versions of dependencies.
-                // Mentioned `cargo_lockfile`, `lockfile` and `manifest` are defined in
-                // `crates_repository` from `rules_rust`,
-                // see: https://bazelbuild.github.io/rules_rust/crate_universe.html#crates_repository.
-                // In our server used only with `bazel build` command.
-                .withEnvironment(Pair("CARGO_BAZEL_REPIN", "1"))
+                .withEnvironment(environment)
                 .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
                 .waitAndGetResult(cancelChecker, true)
             bepReader.finishBuild()

@@ -64,7 +64,16 @@ class BazelBspAspectsManager(
           buildManualTests(),
           curses(false)
         ),
-        null
+        null,
+        // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
+        // (`Cargo.lock` file) based on dependencies specified in `manifest`
+        // (`Cargo.toml` file) and syncs `lockfile` (`Cargo.bazel.lock` file) with `cargo_lockfile`.
+        // Ensures that both Bazel and Cargo are using the same versions of dependencies.
+        // Mentioned `cargo_lockfile`, `lockfile` and `manifest` are defined in
+        // `crates_repository` from `rules_rust`,
+        // see: https://bazelbuild.github.io/rules_rust/crate_universe.html#crates_repository.
+        // In our server used only with `bazel build` command.
+        listOf(Pair("CARGO_BAZEL_REPIN", "1"))
       ).let {
         BazelBspAspectsManagerResult(it.bepOutput, it.processResult.isNotSuccess)
       }

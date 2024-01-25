@@ -90,8 +90,8 @@ open class BazelRunnerBuilder internal constructor(
         return this
     }
 
-    fun withEnvironment(environmentVariable: Pair<String, String>): BazelRunnerBuilder {
-        environmentVariables.putAll(listOf(environmentVariable))
+    fun withEnvironment(environment: List<Pair<String, String>>): BazelRunnerBuilder {
+        environmentVariables.putAll(environment)
         return this
     }
 
