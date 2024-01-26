@@ -41,14 +41,17 @@ bazel_binaries = use_extension(
     "bazel_binaries",
     dev_dependency = True,
 )
-bazel_binaries.download(version_file = "//:.bazelversion")
+
+# test project are too old for bazel 7
+# bazel_binaries.download(version_file = "//:.bazelversion")
 bazel_binaries.download(version = "6.4.0")
 bazel_binaries.download(version = "5.3.2")
 use_repo(
     bazel_binaries,
     "bazel_binaries",
     "bazel_binaries_bazelisk",
-    "build_bazel_bazel_.bazelversion",
+    # test project are too old for bazel 7
+    #     "build_bazel_bazel_.bazelversion",
     "build_bazel_bazel_5_3_2",
     "build_bazel_bazel_6_4_0",
 )
