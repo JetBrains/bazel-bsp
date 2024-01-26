@@ -31,8 +31,9 @@ abstract class BazelBspTestBaseScenario {
         // With bzlmod enabled the directory name is something like:
         // rules_bazel_integration_test~0.18.0~bazel_binaries~build_bazel_bazel_6_3_2
         val bazelPart = if (dirName.contains("~")) dirName.split("~")[3] else dirName
-        val majorVersion = bazelPart.split("_")[3].toInt()
-        return if (majorVersion < 6) "" else "@"
+        val majorVersion = bazelPart.split("_")[3].toIntOrNull()
+        // null for .bazelversion, we can assume that it's > 6, so we can return "@" anyway
+        return if (majorVersion != null && majorVersion < 6) "" else "@"
     }
 
     protected open fun installServer() {
