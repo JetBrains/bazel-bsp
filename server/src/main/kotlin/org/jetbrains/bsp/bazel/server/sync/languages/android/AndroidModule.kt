@@ -8,5 +8,8 @@ import java.net.URI
 data class AndroidModule(
   val androidJar: URI,
   val androidTargetType: AndroidTargetType,
+  val manifest: URI?,
+  val resources: List<URI>,
+  val resourceFolders: List<URI>,
   val javaModule: JavaModule?,
 ) : LanguageData

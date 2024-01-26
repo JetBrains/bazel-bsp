@@ -99,7 +99,8 @@ message AndroidTargetInfo {
   FileLocation android_jar = 1;
   FileLocation manifest = 2;
   repeated FileLocation resources = 3;
-  string kotlin_target_id = 4;
+  repeated FileLocation resource_folders = 4;
+  string kotlin_target_id = 5;
 }
 
 message TargetInfo {

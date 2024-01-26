@@ -20,6 +20,8 @@ class AndroidLanguagePlugin(
       AndroidBuildTarget(
         androidJar = androidJar,
         androidTargetType = androidTargetType,
+        manifest = manifest,
+        resourceFolders = resourceFolders,
       )
     }
     moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
@@ -35,10 +37,20 @@ class AndroidLanguagePlugin(
 
     val androidTargetInfo = targetInfo.androidTargetInfo
     val androidJar = bazelPathsResolver.resolveUri(androidTargetInfo.androidJar)
+    val manifest = if (androidTargetInfo.hasManifest()) {
+      bazelPathsResolver.resolveUri(androidTargetInfo.manifest)
+    } else {
+      null
+    }
+    val resources = bazelPathsResolver.resolveUris(androidTargetInfo.resourcesList)
+    val resourceFolders = bazelPathsResolver.resolveUris(androidTargetInfo.resourceFoldersList)
 
     return AndroidModule(
       androidJar = androidJar,
       androidTargetType = getAndroidTargetType(targetInfo),
+      manifest = manifest,
+      resources = resources,
+      resourceFolders = resourceFolders,
       javaModule = javaLanguagePlugin.resolveModule(targetInfo),
     )
   }

@@ -480,13 +480,7 @@ class BazelProjectMapper(
   private fun resolveAndroidResources(target: TargetInfo): Set<URI> {
     if (!target.hasAndroidTargetInfo()) return emptySet()
     val androidTargetInfo = target.androidTargetInfo
-
     if (!androidTargetInfo.hasManifest()) return emptySet()
-
-    if (target.kind == "android_binary") {
-      // This is a hack because the Android plugin wants a folder as opposed to the manifest file itself
-      return setOf(bazelPathsResolver.resolve(target.androidTargetInfo.manifest).parent.toUri())
-    }
 
     return bazelPathsResolver
       .resolveUris(listOf(target.androidTargetInfo.manifest) + target.androidTargetInfo.resourcesList).toSet()

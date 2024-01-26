@@ -15,5 +15,7 @@ public enum class AndroidTargetType(public val value: Int) {
 public data class AndroidBuildTarget(
   val androidJar: URI,
   val androidTargetType: AndroidTargetType,
+  val manifest: URI?,
+  val resourceFolders: List<URI>,
   var jvmBuildTarget: JvmBuildTarget? = null,
 )

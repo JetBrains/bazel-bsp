@@ -17,13 +17,27 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
     manifest = None
     if AndroidIdeInfo in target:
         android_ide_info = target[AndroidIdeInfo]
-        manifest = file_location(target[AndroidIdeInfo].manifest)
+        manifest = file_location(android_ide_info.manifest)
 
     resources = []
+    resource_folders_set = {}
     if hasattr(ctx.rule.attr, "resource_files"):
         for resource in ctx.rule.attr.resource_files:
             for resource_file in resource.files.to_list():
-                resources.append(file_location(resource_file))
+                resource_file_location = file_location(resource_file)
+                resources.append(resource_file_location)
+                resource_source_dir_relative_path = android_common.resource_source_directory(resource_file)
+                if resource_source_dir_relative_path == None:
+                    continue
+                resource_source_dir_location = struct(
+                    relative_path = resource_source_dir_relative_path,
+                    is_source = resource_file_location.is_source,
+                    is_external = resource_file_location.is_external,
+                    root_execution_path_fragment = resource_file_location.root_execution_path_fragment,
+                )
+
+                # Add to set
+                resource_folders_set[resource_source_dir_location] = None
 
     kotlin_target_id = None
     if ctx.rule.kind == "android_library" and str(target.label).endswith("_base") and not ctx.rule.attr.srcs:
@@ -36,6 +50,7 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         android_jar = android_jar,
         manifest = manifest,
         resources = resources,
+        resource_folders = resource_folders_set.keys(),
         kotlin_target_id = kotlin_target_id,
     )
 
