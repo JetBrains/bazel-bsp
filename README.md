@@ -73,7 +73,8 @@ Run `bazel test //...` to execute all the unit tests.
 
 `e2e` directory contains end-2-end tests that check various scenarios of server usage.
 
-_Tests are marked as `manual` so they won't be executed on `bazel test //...`_
+_Tests are marked as `manual` so they won't be executed on `bazel test //...`_ 
+but you can run all of them using: `bazel test //e2e:all_tests`
 
 
 In order to run a specific test with specific bazel version you can use:
