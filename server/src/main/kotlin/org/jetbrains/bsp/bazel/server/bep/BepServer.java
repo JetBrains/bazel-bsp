@@ -1,10 +1,15 @@
 package org.jetbrains.bsp.bazel.server.bep;
 
 import ch.epfl.scala.bsp4j.BuildClient;
+import ch.epfl.scala.bsp4j.BuildTargetIdentifier;
+import ch.epfl.scala.bsp4j.CompileReport;
+import ch.epfl.scala.bsp4j.CompileTask;
 import ch.epfl.scala.bsp4j.StatusCode;
 import ch.epfl.scala.bsp4j.TaskFinishParams;
+import ch.epfl.scala.bsp4j.TaskFinishDataKind;
 import ch.epfl.scala.bsp4j.TaskId;
 import ch.epfl.scala.bsp4j.TaskStartParams;
+import ch.epfl.scala.bsp4j.TaskStartDataKind;
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier;
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
 import com.google.devtools.build.v1.BuildEvent;
@@ -44,9 +49,12 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   private final DiagnosticsService diagnosticsService;
   private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
 
+  private final Optional<BuildTargetIdentifier> target;
+
   public BepServer(
-      BuildClient bspClient, DiagnosticsService diagnosticsService, Optional<String> originId) {
+      BuildClient bspClient, DiagnosticsService diagnosticsService, Optional<String> originId, Optional<BuildTargetIdentifier> target) {
     this.bspClient = bspClient;
+    this.target = target;
     this.diagnosticsService = diagnosticsService;
     this.originId = originId;
     this.bepLogger = new BepLogger(bspClient, originId);
@@ -56,8 +64,9 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
       BuildClient client,
       Path workspaceRoot,
       Map<String, Set<TextDocumentIdentifier>> hasAnyProblems,
-      Optional<String> originId) {
-    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems), originId);
+      Optional<String> originId,
+      Optional<BuildTargetIdentifier> target) {
+    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems), originId, target);
   }
 
   @Override
@@ -130,6 +139,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());
 
+    if (target.isPresent()) {
+      startParams.setDataKind(TaskStartDataKind.COMPILE_TASK);
+      CompileTask task = new CompileTask(target.get());
+      startParams.setData(task);
+    }
     bspClient.onBuildTaskStart(startParams);
     startedEvents.push(new AbstractMap.SimpleEntry<>(taskId, originId));
   }
@@ -154,6 +168,14 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     StatusCode exitCode = ExitCodeMapper.mapExitCode(buildFinished.getExitCode().getCode());
     TaskFinishParams finishParams = new TaskFinishParams(startedEvents.pop().getKey(), exitCode);
     finishParams.setEventTime(buildFinished.getFinishTimeMillis());
+
+    if (target.isPresent()) {
+      finishParams.setDataKind(TaskFinishDataKind.COMPILE_REPORT);
+      var isSuccess = exitCode.getValue() == 1;
+      var errors = isSuccess ? 0 : 1;
+      CompileReport report = new CompileReport(target.get(), errors, 0);
+      finishParams.setData(report);
+    }
     bspClient.onBuildTaskFinish(finishParams);
   }
 
@@ -208,7 +230,10 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
     var outputGroups = targetComplete.getOutputGroupList();
     LOGGER.trace("Consuming target completed event " + targetComplete);
     bepOutputBuilder.storeTargetOutputGroups(label, outputGroups);
-    if (targetComplete.getSuccess()) {
+
+    // We should clear diagnostics only on completed successful compilation
+    var shouldClearDiagnostics = outputGroups.stream().anyMatch(group -> group.getName().equals("default"));
+    if (targetComplete.getSuccess() && shouldClearDiagnostics) {
       // clear former diagnostics by publishing an empty array of diagnostics
       // why we do this on `target_completed` instead of `action_completed`?
       // because `action_completed` won't be published on build success for a target.
