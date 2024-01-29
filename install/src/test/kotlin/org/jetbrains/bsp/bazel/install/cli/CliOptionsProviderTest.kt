@@ -687,4 +687,17 @@ class CliOptionsProviderTest {
         }
 
     }
+
+    @Test
+    fun `should return success and enabled rules when specified`() {
+        // given
+        val args = arrayOf("-enabled-rules", "rule1", "rule2")
+
+        // when
+        val provider = CliOptionsProvider(args)
+        val cliOptions = provider.getOptions()
+
+        // then
+        arrayOf("rule1", "rule2") shouldBe cliOptions.projectViewCliOptions?.enabledRules
+    }
 }
