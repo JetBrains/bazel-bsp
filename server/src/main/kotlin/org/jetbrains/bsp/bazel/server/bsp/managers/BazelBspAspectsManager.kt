@@ -5,6 +5,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.aspect
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.buildManualTests
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalGoogleLegacyApi
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.repositoryOverride
@@ -62,7 +63,8 @@ class BazelBspAspectsManager(
           keepGoing(),
           color(true),
           buildManualTests(),
-          curses(false)
+          curses(false),
+          experimentalGoogleLegacyApi(),
         ),
         null,
         // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`

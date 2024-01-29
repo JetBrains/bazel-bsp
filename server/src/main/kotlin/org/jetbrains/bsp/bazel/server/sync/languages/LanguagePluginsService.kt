@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
+import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
@@ -15,12 +16,13 @@ import org.jetbrains.bsp.bazel.server.sync.model.Module
 
 class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,
-    val javaLanguagePlugin: JavaLanguagePlugin,
+    private val javaLanguagePlugin: JavaLanguagePlugin,
     val cppLanguagePlugin: CppLanguagePlugin,
-    val kotlinLanguagePlugin: KotlinLanguagePlugin,
+    private val kotlinLanguagePlugin: KotlinLanguagePlugin,
     private val thriftLanguagePlugin: ThriftLanguagePlugin,
     val pythonLanguagePlugin: PythonLanguagePlugin,
-    val rustLanguagePlugin: RustLanguagePlugin
+    val rustLanguagePlugin: RustLanguagePlugin,
+    private val androidLanguagePlugin: AndroidLanguagePlugin,
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
@@ -36,6 +38,7 @@ class LanguagePluginsService(
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
         when {
             languages.contains(Language.KOTLIN) -> kotlinLanguagePlugin
+            languages.contains(Language.ANDROID) -> androidLanguagePlugin
             languages.contains(Language.SCALA) -> scalaLanguagePlugin
             languages.contains(Language.JAVA) -> javaLanguagePlugin
             languages.contains(Language.CPP) -> cppLanguagePlugin

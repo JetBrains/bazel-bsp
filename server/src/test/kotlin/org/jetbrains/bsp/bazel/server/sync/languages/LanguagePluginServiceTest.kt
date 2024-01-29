@@ -6,6 +6,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
 import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
@@ -49,8 +50,16 @@ class LanguagePluginServiceTest {
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
     val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
     val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
+    val androidLanguagePlugin = AndroidLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     languagePluginsService = LanguagePluginsService(
-      scalaLanguagePlugin, javaLanguagePlugin, cppLanguagePlugin, kotlinLanguagePlugin, thriftLanguagePlugin, pythonLanguagePlugin, rustLanguagePlugin
+        scalaLanguagePlugin,
+        javaLanguagePlugin,
+        cppLanguagePlugin,
+        kotlinLanguagePlugin,
+        thriftLanguagePlugin,
+        pythonLanguagePlugin,
+        rustLanguagePlugin,
+        androidLanguagePlugin
     )
   }
 

@@ -25,6 +25,9 @@ object BazelFlag {
   @JvmStatic fun testOutputAll(): String =
     arg("test_output", "all")
 
+  @JvmStatic fun experimentalGoogleLegacyApi(): String =
+      flag("experimental_google_legacy_api")
+
   private fun arg(name: String, value: String) =
       String.format("--%s=%s", name, value)
 
