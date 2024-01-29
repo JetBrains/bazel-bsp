@@ -13,9 +13,7 @@ def kt_test(name, src, classname = "", deps = [], runtime_deps = [], **kwargs):
         args = ["--select-class=" + classname, "--fail-if-no-tests"],
         srcs = [src],
         deps = deps + [
-            "@maven//:org_junit_jupiter_junit_jupiter_api",
-            "@maven//:org_junit_jupiter_junit_jupiter_engine",
-            "@maven//:org_junit_jupiter_junit_jupiter_params",
+            "@maven//:org_junit_jupiter_junit_jupiter",
             "@maven//:org_junit_platform_junit_platform_console",
             "@maven//:io_kotest_kotest_assertions_api_jvm",
             "@maven//:io_kotest_kotest_assertions_core_jvm",

@@ -80,7 +80,6 @@ maven.install(
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
         "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
         "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2",
-        "org.junit.jupiter:junit-jupiter:5.10.1",
         "com.fasterxml.jackson.core:jackson-databind:2.16.1",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1",
         "com.google.protobuf:protobuf-java:3.25.2",
@@ -88,9 +87,7 @@ maven.install(
         "io.grpc:grpc-protobuf:1.61.0",
 
         # tests
-        "org.junit.jupiter:junit-jupiter-api:5.10.1",
-        "org.junit.jupiter:junit-jupiter-engine:5.10.1",
-        "org.junit.jupiter:junit-jupiter-params:5.10.1",
+        "org.junit.jupiter:junit-jupiter:5.10.1",
         "org.junit.platform:junit-platform-console:1.10.1",
         "io.kotest:kotest-assertions-api-jvm:5.8.0",
         "io.kotest:kotest-assertions-core-jvm:5.8.0",
@@ -101,7 +98,6 @@ maven.install(
     fetch_sources = True,
     lock_file = "//:maven_install.json",
     repositories = [
-        "https://maven.google.com",
         "https://repo.maven.apache.org/maven2",
     ],
 )
