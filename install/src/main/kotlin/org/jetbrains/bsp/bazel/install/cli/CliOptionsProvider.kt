@@ -166,6 +166,16 @@ class CliOptionsProvider(private val args: Array<String>) {
             .desc("Server will create trace log file.")
             .build()
         cliParserOptions.addOption(produceTraceLogOption)
+
+        val enabledRulesOption = Option.builder()
+            .longOpt(ENABLED_RULES_LONG_OPT)
+            .hasArgs()
+            .desc(
+                "Add manually enabled rules to override the automatic rules detection mechanism"
+            )
+            .build()
+        cliParserOptions.addOption(enabledRulesOption)
+
     }
 
     fun getOptions(): CliOptions {
@@ -208,7 +218,7 @@ class CliOptionsProvider(private val args: Array<String>) {
             INSTALLER_BINARY_NAME,
             null,
             cliParserOptions,
-            "If any generation flag (-b, -f, -j, -t, -x,-m ,-r, -v, -i) " +
+            "If any generation flag (-b, -f, -j, -t, -x,-m ,-r, -v, -i, -enabled-rules) " +
                     "is used, the installer will generate a new project view file with these sections. " +
                     "If --project_view_file (-p) flag is used as well, the new project view file " +
                     "will be created under this location (it will override the existing file if exists). " +
@@ -245,7 +255,8 @@ class CliOptionsProvider(private val args: Array<String>) {
                 cmd.hasOption(EXCLUDED_DIRECTORIES_LONG_OPT) or
                 cmd.hasOption(DERIVE_TARGETS_FLAG_SHORT_OPT) or
                 cmd.hasOption(IMPORT_DEPTH_SHORT_OPT) or
-                cmd.hasOption(PRODUCE_TRACE_LOG_OPT)
+                cmd.hasOption(PRODUCE_TRACE_LOG_OPT) or
+                cmd.hasOption(ENABLED_RULES_LONG_OPT)
 
     private fun javaPath(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, JAVA_PATH_SHORT_OPT)
 
@@ -262,7 +273,7 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun importDepth(cmd: CommandLine): Int? = cmd.getOptionValue(IMPORT_DEPTH_SHORT_OPT)?.toInt()
 
-    private fun enabledRules(cmd: CommandLine): List<String>? = cmd.getOptionValues(ENABLED_RULES_OPT)?.toList()
+    private fun enabledRules(cmd: CommandLine): List<String>? = cmd.getOptionValues(ENABLED_RULES_LONG_OPT)?.toList()
 
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
@@ -295,13 +306,13 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val DEBUGGER_ADDRESS_SHORT_OPT = "x"
         private const val JAVA_PATH_SHORT_OPT = "j"
         private const val BUILD_MANUAL_TARGETS_OPT = "m"
-        private const val ENABLED_RULES_OPT = "enabled-rules"
+        private const val ENABLED_RULES_LONG_OPT = "enabled-rules"
         private const val DIRECTORIES_SHORT_OPT = "r"
         private const val EXCLUDED_DIRECTORIES_LONG_OPT = "excluded-directories"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"
         private const val IMPORT_DEPTH_SHORT_OPT = "i"
-        private const val BAZEL_WORKSPACE_ROOT_DIR_OPT ="w"
-        private const val PRODUCE_TRACE_LOG_OPT ="l"
+        private const val BAZEL_WORKSPACE_ROOT_DIR_OPT = "w"
+        private const val PRODUCE_TRACE_LOG_OPT = "l"
 
         const val INSTALLER_BINARY_NAME = "bazelbsp-install"
     }
