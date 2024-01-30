@@ -35,6 +35,8 @@ message JvmTargetInfo {
   string main_class = 8;
   repeated string args = 9;
   repeated FileLocation jdeps = 10;
+  repeated string runtime_jars = 11;
+  repeated string compile_jars = 12;
 }
 
 message JavaToolchainInfo {

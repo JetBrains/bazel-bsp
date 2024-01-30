@@ -15,5 +15,7 @@ data class Module(
     val outputs: Set<URI>,
     val sourceDependencies: Set<URI>,
     val languageData: LanguageData?,
-    val environmentVariables: Map<String, String>
+    val environmentVariables: Map<String, String>,
+    val runtimeClasspath: List<String>,
+    val compileClasspath: List<String>,
 )

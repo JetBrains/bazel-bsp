@@ -318,7 +318,7 @@ class BspProjectMapper(
         return targets.mapNotNull {
             val label = Label(it.uri)
             val module = project.findModule(label)
-            val cqueryResult = ClasspathQuery.classPathQuery(it, cancelChecker, bspInfo, bazelRunner).runtime_classpath
+            val cqueryResult = module?.runtimeClasspath ?: emptyList()
             val resolvedClasspath = resolveClasspath(cqueryResult)
             module?.let { extractJvmEnvironmentItem(module, resolvedClasspath) }
         }
@@ -370,16 +370,15 @@ class BspProjectMapper(
         mapper: (Module, List<URI>) -> T?
     ): List<T> =
         this.mapNotNull { project.findModule(Label(it.uri)) }
-            .mapNotNull { mapper(it, readIdeClasspath(it.label, cancelChecker)) }
+            .mapNotNull { mapper(it, readIdeClasspath(it, cancelChecker)) }
 
-    private fun readIdeClasspath(targetLabel: Label, cancelChecker: CancelChecker): List<URI> {
-        val targetIdentifier = BspMappings.toBspId(targetLabel)
-        val classPathFromQuery = ClasspathQuery.classPathQuery(targetIdentifier, cancelChecker, bspInfo, bazelRunner)
+    private fun readIdeClasspath(module: Module, cancelChecker: CancelChecker): List<URI> {
+
         val ideClasspath = IdeClasspathResolver.resolveIdeClasspath(
-            label = targetLabel,
+            label = module.label,
             bazelPathsResolver = bazelPathsResolver,
-            runtimeClasspath = resolveClasspath(classPathFromQuery.runtime_classpath),
-            compileClasspath = resolveClasspath(classPathFromQuery.compile_classpath))
+            runtimeClasspath = resolveClasspath(module.runtimeClasspath),
+            compileClasspath = resolveClasspath(module.compileClasspath))
         return ideClasspath
     }
 

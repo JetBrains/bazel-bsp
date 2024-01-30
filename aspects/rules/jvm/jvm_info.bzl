@@ -156,6 +156,8 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
         main_class = main_class,
         args = args,
         jdeps = [file_location(j) for j in jdeps],
+        runtime_jars = [jar.path for jar in extract_runtime_jars(target, provider).to_list()],
+        compile_jars = [jar.path for jar in extract_compile_jars(provider).to_list()],
     )
 
     return create_proto(target, ctx, info, "jvm_target_info"), None

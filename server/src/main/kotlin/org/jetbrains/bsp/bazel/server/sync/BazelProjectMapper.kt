@@ -415,6 +415,8 @@ class BazelProjectMapper(
       sourceDependencies = sourceDependencies,
       languageData = languageData,
       environmentVariables = environment,
+      runtimeClasspath = target.jvmTargetInfo.runtimeJarsList,
+      compileClasspath = target.jvmTargetInfo.compileJarsList,
     )
   }
 
