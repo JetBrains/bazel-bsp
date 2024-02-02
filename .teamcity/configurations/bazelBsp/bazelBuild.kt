@@ -1,12 +1,13 @@
 package configurations.bazelBsp
 
-import configurations.BaseConfiguration
+import configurations.BaseBuildType
+import configurations.BazelBspVcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
 
-object BuildTheProject : BaseConfiguration.BaseBuildType(
+object BuildTheProject : BaseBuildType(
         name = "[build] build bazel-bsp",
         setupSteps = true,
-        vcsRoot = BaseConfiguration.BazelBspVcs,
+        vcsRoot = BazelBspVcs,
         steps = {
             bazel {
                 name = "build //..."
