@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
-import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import java.net.URI
 
 data class Jdk(

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 class BepOutputBuilder {
   private final Map<String, Set<String>> outputGroups = new HashMap<>();
@@ -46,6 +44,4 @@ class BepOutputBuilder {
   public BepOutput build() {
     return new BepOutput(outputGroups, textProtoFileSets, rootTargets);
   }
-
-  private final Logger LOGGER = LogManager.getLogger(BepOutputBuilder.class);
 }

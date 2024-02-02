@@ -6,11 +6,6 @@ enum class RustCrateLocation {
     WORKSPACE_DIR, EXEC_ROOT
 }
 
-data class RustDependency(
-    val crateId: String,
-    val rename: String,
-)
-
 data class RustModule(
     val crateId: String,
     val location: RustCrateLocation,

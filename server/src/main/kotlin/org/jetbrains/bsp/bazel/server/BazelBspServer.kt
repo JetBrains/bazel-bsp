@@ -19,7 +19,10 @@ import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 class BazelBspServer(
-    bspInfo: BspInfo, workspaceContextProvider: WorkspaceContextProvider, val workspaceRoot: Path, val metricsLogger: MetricsLogger?
+    bspInfo: BspInfo,
+    workspaceContextProvider: WorkspaceContextProvider,
+    private val workspaceRoot: Path,
+    private val metricsLogger: MetricsLogger?
 ) {
     private val bazelRunner: BazelRunner
     private val compilationManager: BazelBspCompilationManager

@@ -18,12 +18,8 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
         methodName: String, function: BiFunction<CancelChecker?, T, R>, arg: T,
     ): CompletableFuture<R> {
         LOGGER.info("{} call with param: {}", methodName, arg)
-        return serverIsRunning<R>(methodName)
-            ?: runAsync(
-                methodName,
-                Function { cancelChecker: CancelChecker? -> function.apply(cancelChecker, arg) })
+        return serverIsRunning(methodName) ?: runAsync(methodName) { function.apply(it, arg) }
     }
-
 
     fun <R> handleRequest(
         methodName: String, supplier: Function<CancelChecker, R>,
@@ -49,7 +45,7 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
         return precondition.apply(methodName) ?: runAsync(methodName, supplier)
     }
 
-    fun <T> serverIsRunning(methodName: String): CompletableFuture<T>? =
+    private fun <T> serverIsRunning(methodName: String): CompletableFuture<T>? =
         serverIsInitialized(methodName) ?: serverIsNotFinished(methodName)
 
     fun <T> serverIsInitialized(methodName: String): CompletableFuture<T>? =

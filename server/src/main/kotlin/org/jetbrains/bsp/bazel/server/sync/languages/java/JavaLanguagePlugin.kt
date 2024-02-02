@@ -80,12 +80,11 @@ class JavaLanguagePlugin(
     }
 
     private fun javaVersionFromJavacOpts(javacOpts: List<String>): String? =
-        javacOpts.mapNotNull {
+        javacOpts.firstNotNullOfOrNull {
             val flagName = it.substringBefore(' ')
             val argument = it.substringAfter(' ')
             if (flagName == "-target" || flagName == "--target" || flagName == "--release") argument else null
-        }.firstOrNull()
-
+        }
 
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
         val jdk = javaModule.jdk

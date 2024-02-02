@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync.model
 
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import java.net.URI
@@ -18,9 +17,6 @@ data class Project(
 
     fun findModule(label: Label): Module? =
         moduleMap[label]
-
-    fun findTargetBySource(documentUri: URI): Label? =
-        sourceToTarget[documentUri]
 
     fun findModulesByLanguage(language: Language): List<Module> =
         modules.filter { language in it.languages }
