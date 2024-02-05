@@ -3309,7 +3309,7 @@
       "general": {
         "bzlTransitiveDigest": "q/3hFFP0XekutkiqcPKS1PaCHEcxYQ3gyTeyeKh6JR8=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "9d1a3ec59b53bfdad5f20b1558866feaa2eb3f6c0d41e38cb1b9fb87d76e7c26",
+          "@@//:maven_install.json": "ac8ba6ea3dbb08b2a9b88759786fd5818ababb7aa5eec87fd5b8d03407431e59",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -4055,20 +4055,6 @@
               "downloaded_file_path": "net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7.jar"
             }
           },
-          "org_junit_platform_junit_platform_console_1_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_console_1_10_1",
-              "sha256": "21cfa2a03f5a7b3502bfcad3eba188aa1299d8a667ff636f813d2a267267c355",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1.jar"
-              ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1.jar"
-            }
-          },
           "org_ow2_asm_asm_9_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4094,6 +4080,20 @@
                 "https://maven.google.com/software/amazon/awssdk/apache-client/2.20.128/apache-client-2.20.128.jar"
               ],
               "downloaded_file_path": "software/amazon/awssdk/apache-client/2.20.128/apache-client-2.20.128.jar"
+            }
+          },
+          "org_junit_platform_junit_platform_console_1_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_console_1_10_2",
+              "sha256": "6648e0b08f3249bfdf9577241a187025060654b4b7c32e21cb4fa0e3957beab1",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2.jar"
+              ],
+              "downloaded_file_path": "org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2.jar"
             }
           },
           "io_grpc_grpc_stub_1_56_1": {
@@ -4794,18 +4794,18 @@
               "downloaded_file_path": "org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar"
             }
           },
-          "org_junit_platform_junit_platform_reporting_jar_sources_1_10_1": {
+          "org_junit_platform_junit_platform_reporting_jar_sources_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_reporting_jar_sources_1_10_1",
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_reporting_jar_sources_1_10_2",
               "sha256": "3da58799df48f4a280f4e4ea7a92d5e97d2e357ac1b98885afc04a4445457713",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1-sources.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
               ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1-sources.jar"
+              "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
             }
           },
           "io_grpc_grpc_alts_1_56_1": {
@@ -4944,18 +4944,18 @@
               "downloaded_file_path": "org/eclipse/xtend/org.eclipse.xtend.lib/2.28.0/org.eclipse.xtend.lib-2.28.0.jar"
             }
           },
-          "org_junit_platform_junit_platform_console_jar_sources_1_10_1": {
+          "org_junit_platform_junit_platform_console_jar_sources_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_console_jar_sources_1_10_1",
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_console_jar_sources_1_10_2",
               "sha256": "31abe626be8e567e99366667a1242e2d469e3e828d40efca65017662df4f61c6",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1-sources.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2-sources.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2-sources.jar"
               ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-console/1.10.1/junit-platform-console-1.10.1-sources.jar"
+              "downloaded_file_path": "org/junit/platform/junit-platform-console/1.10.2/junit-platform-console-1.10.2-sources.jar"
             }
           },
           "com_google_auth_google_auth_library_credentials_1_19_0": {
@@ -5216,20 +5216,6 @@
               "downloaded_file_path": "io/grpc/grpc-context/1.56.1/grpc-context-1.56.1.jar"
             }
           },
-          "org_junit_platform_junit_platform_reporting_1_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_reporting_1_10_1",
-              "sha256": "222245aba7091f6660aa72d491e8c621faf19146a58126d058249aa8abf151df",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1.jar"
-              ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.1/junit-platform-reporting-1.10.1.jar"
-            }
-          },
           "org_objenesis_objenesis_3_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5256,6 +5242,20 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar"
+            }
+          },
+          "org_junit_platform_junit_platform_reporting_1_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_reporting_1_10_2",
+              "sha256": "ea8f781f69b2205f5b70947eaa2182db5e7436e4abc9deae0277324ab258312d",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2.jar"
+              ],
+              "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2.jar"
             }
           },
           "com_google_protobuf_protobuf_java_3_25_2": {
@@ -5706,18 +5706,18 @@
               "downloaded_file_path": "org/ow2/asm/asm/9.0/asm-9.0-sources.jar"
             }
           },
-          "org_junit_platform_junit_platform_launcher_jar_sources_1_10_1": {
+          "org_junit_platform_junit_platform_launcher_jar_sources_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_launcher_jar_sources_1_10_1",
-              "sha256": "f98514c156fe6a257659e2c4e964193ffc1d68df1e003d0d0470b24b9055787e",
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_launcher_jar_sources_1_10_2",
+              "sha256": "d3c84fbec86b224e0d2bd49e9335978bdeb6aead9f17cbee4f0e2e8885c7ab89",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1-sources.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2-sources.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2-sources.jar"
               ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1-sources.jar"
+              "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2-sources.jar"
             }
           },
           "net_bytebuddy_byte_buddy_agent_1_12_7": {
@@ -6300,18 +6300,18 @@
               "downloaded_file_path": "software/amazon/awssdk/aws-query-protocol/2.20.128/aws-query-protocol-2.20.128.jar"
             }
           },
-          "org_junit_platform_junit_platform_launcher_1_10_1": {
+          "org_junit_platform_junit_platform_launcher_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_launcher_1_10_1",
-              "sha256": "ded414c504e88d02270331071969084e1b2fd9bcf8443f35d44da2c6e3301bc2",
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_launcher_1_10_2",
+              "sha256": "aed4f42fb90ada9b347c231f13656fc09121ba20dab6dc646a6bd9d4da31e4aa",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar"
               ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar"
+              "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar"
             }
           },
           "org_junit_platform_junit_platform_engine_1_10_2": {

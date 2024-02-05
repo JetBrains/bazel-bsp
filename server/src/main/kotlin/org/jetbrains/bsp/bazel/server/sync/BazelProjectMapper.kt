@@ -12,6 +12,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
@@ -395,7 +396,7 @@ class BazelProjectMapper(
     val directDependencies = resolveDirectDependencies(target) + extraLibraries.map { Label(it.label) }
     val languages = inferLanguages(target)
     val tags = targetKindResolver.resolveTags(target)
-    val baseDirectory = bazelPathsResolver.labelToDirectoryUri(label)
+    val baseDirectory = label.toDirectoryUri()
     val languagePlugin = languagePluginsService.getPlugin(languages)
     val sourceSet = resolveSourceSet(target, languagePlugin)
     val resources = resolveResources(target)
@@ -449,6 +450,12 @@ class BazelProjectMapper(
 
   private fun isDependencyOfLanguage(dependency: Dependency, language: Language): Boolean =
     language.dependencyRegex?.matches(dependency.id) == true
+
+  private fun Label.toDirectoryUri(): URI {
+    val isWorkspace = bazelPathsResolver.isRelativeWorkspacePath(value)
+    val path = if (isWorkspace) bazelPathsResolver.extractRelativePath(value) else bazelPathsResolver.extractExternalPath(value)
+    return bazelPathsResolver.pathToDirectoryUri(path, isWorkspace)
+  }
 
   private fun resolveSourceSet(target: TargetInfo, languagePlugin: LanguagePlugin<*>): SourceSet {
     val sources = target.sourcesList.toSet()

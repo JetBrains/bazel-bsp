@@ -60,6 +60,7 @@ import org.jetbrains.bsp.WorkspaceLibrariesResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.java.IdeClasspathResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
@@ -79,11 +80,11 @@ import kotlin.io.path.relativeToOrNull
 import kotlin.io.path.toPath
 
 class BspProjectMapper(
-        private val languagePluginsService: LanguagePluginsService,
-        private val workspaceContextProvider: WorkspaceContextProvider,
-        private val bazelPathsResolver: BazelPathsResolver,
-        private val bazelRunner: BazelRunner,
-        private val bspInfo: BspInfo,
+  private val languagePluginsService: LanguagePluginsService,
+  private val workspaceContextProvider: WorkspaceContextProvider,
+  private val bazelPathsResolver: BazelPathsResolver,
+  private val bazelRunner: BazelRunner,
+  private val bspInfo: BspInfo,
 ) {
 
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {

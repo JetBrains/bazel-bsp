@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
