@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "9a4e1474cea9d47d47b8021855799a61bc5b013e4e0cf90167691f7423219d63",
+  "moduleFileHash": "e3ab4bc6797b9cd1a1b200edd9f04e0eba3c7bf98834e2a4b062d00304fcf3e0",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -125,8 +125,8 @@
                   "com.fasterxml.jackson.core:jackson-databind:2.16.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1",
                   "com.google.protobuf:protobuf-java:3.25.2",
-                  "io.grpc:grpc-stub:1.61.0",
-                  "io.grpc:grpc-protobuf:1.61.0",
+                  "io.grpc:grpc-stub:1.61.1",
+                  "io.grpc:grpc-protobuf:1.61.1",
                   "org.junit.jupiter:junit-jupiter:5.10.1",
                   "org.junit.platform:junit-platform-console:1.10.1",
                   "io.kotest:kotest-assertions-api-jvm:5.8.0",
@@ -3917,8 +3917,8 @@
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.2\" }",
-                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.61.0\" }",
-                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.61.0\" }",
+                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.61.1\" }",
+                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.61.1\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.1\" }",
                 "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.0\" }",
@@ -6233,8 +6233,8 @@
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.2\" }",
-                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.61.0\" }",
-                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.61.0\" }",
+                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.61.1\" }",
+                "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.61.1\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.1\" }",
                 "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.0\" }",
