@@ -87,7 +87,7 @@ maven.install(
         "io.grpc:grpc-protobuf:1.61.1",
 
         # tests
-        "org.junit.jupiter:junit-jupiter:5.10.1",
+        "org.junit.jupiter:junit-jupiter:5.10.2",
         "org.junit.platform:junit-platform-console:1.10.1",
         "io.kotest:kotest-assertions-api-jvm:5.8.0",
         "io.kotest:kotest-assertions-core-jvm:5.8.0",
