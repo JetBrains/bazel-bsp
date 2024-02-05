@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "2c84457de78e1b8fb4225e9b9deef3a9dfc6d0072e60d5e7a132a7aaa0dbb563",
+  "moduleFileHash": "8c60550b018ef24ce40a82af97531501665ca20a5e4e3a5949b025ec555798b2",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -128,7 +128,7 @@
                   "io.grpc:grpc-stub:1.61.1",
                   "io.grpc:grpc-protobuf:1.61.1",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
-                  "org.junit.platform:junit-platform-console:1.10.1",
+                  "org.junit.platform:junit-platform-console:1.10.2",
                   "io.kotest:kotest-assertions-api-jvm:5.8.0",
                   "io.kotest:kotest-assertions-core-jvm:5.8.0",
                   "io.kotest:kotest-assertions-shared-jvm:5.8.0",
@@ -3309,7 +3309,7 @@
       "general": {
         "bzlTransitiveDigest": "q/3hFFP0XekutkiqcPKS1PaCHEcxYQ3gyTeyeKh6JR8=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "bcec5be975af5584b8e457bcd5be073ef1570569f65d6b75054295f53dec8766",
+          "@@//:maven_install.json": "9d1a3ec59b53bfdad5f20b1558866feaa2eb3f6c0d41e38cb1b9fb87d76e7c26",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3368,20 +3368,6 @@
               "downloaded_file_path": "software/amazon/awssdk/netty-nio-client/2.20.128/netty-nio-client-2.20.128.jar"
             }
           },
-          "org_junit_platform_junit_platform_engine_jar_sources_1_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_engine_jar_sources_1_10_1",
-              "sha256": "17ac74964fcd82c57130623afe72a99105ca107fc96cb53f169b3a8c9c444c83",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1-sources.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1-sources.jar"
-            }
-          },
           "software_amazon_awssdk_sdk_core_2_20_128": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3393,6 +3379,20 @@
                 "https://maven.google.com/software/amazon/awssdk/sdk-core/2.20.128/sdk-core-2.20.128.jar"
               ],
               "downloaded_file_path": "software/amazon/awssdk/sdk-core/2.20.128/sdk-core-2.20.128.jar"
+            }
+          },
+          "org_junit_platform_junit_platform_engine_jar_sources_1_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_engine_jar_sources_1_10_2",
+              "sha256": "17ac74964fcd82c57130623afe72a99105ca107fc96cb53f169b3a8c9c444c83",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2-sources.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2-sources.jar"
+              ],
+              "downloaded_file_path": "org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2-sources.jar"
             }
           },
           "org_eclipse_xtend_org_eclipse_xtend_lib_jar_sources_2_28_0": {
@@ -3815,6 +3815,20 @@
               "downloaded_file_path": "commons-io/commons-io/2.15.1/commons-io-2.15.1-sources.jar"
             }
           },
+          "org_junit_jupiter_junit_jupiter_api_5_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_api_5_10_2",
+              "sha256": "afff77c186cd317275803872fa5133aa801fd6ac40bd91c78a6cf8009b4b17cc",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar"
+              ],
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar"
+            }
+          },
           "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_7_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3827,20 +3841,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.7.3/kotlinx-coroutines-test-jvm-1.7.3.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.7.3/kotlinx-coroutines-test-jvm-1.7.3.jar"
-            }
-          },
-          "org_junit_jupiter_junit_jupiter_api_5_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_api_5_10_1",
-              "sha256": "60d5c398c32dc7039b99282514ad6064061d8417cf959a1f6bd2038cc907c913",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar"
-              ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar"
             }
           },
           "kotlin_rules_maven": {
@@ -3920,7 +3920,7 @@
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.61.1\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.61.1\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
-                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.1\" }",
+                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.0\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.8.0\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.0\" }",
@@ -3987,18 +3987,18 @@
               "downloaded_file_path": "org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0-sources.jar"
             }
           },
-          "org_junit_platform_junit_platform_commons_jar_sources_1_10_1": {
+          "org_junit_platform_junit_platform_commons_jar_sources_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_commons_jar_sources_1_10_1",
-              "sha256": "8ae867cc64b5f6bbb73e7786e0ac2a69ddf6f1e460e08274feef84b249036e53",
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_commons_jar_sources_1_10_2",
+              "sha256": "e1435cf8f4843619a16c2c1393d39a5170db1376af048a76cdcd7bf9aad72ad6",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1-sources.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2-sources.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2-sources.jar"
               ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1-sources.jar"
+              "downloaded_file_path": "org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2-sources.jar"
             }
           },
           "org_apiguardian_apiguardian_api_jar_sources_1_1_2": {
@@ -4137,18 +4137,18 @@
               "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2-sources.jar"
             }
           },
-          "org_junit_jupiter_junit_jupiter_5_10_1": {
+          "org_junit_jupiter_junit_jupiter_5_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_5_10_1",
-              "sha256": "c1a386e901fae28e493185a47c8cea988fb1a37422b353a0f8b4df2e6c5d6037",
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_5_10_2",
+              "sha256": "263e43447f4b40f126ad6b1dcbd7df379448413bdedb8e0d240c5bcbba7c7a4f",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar"
               ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.jar"
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar"
             }
           },
           "com_google_oauth_client_google_oauth_client_1_34_1": {
@@ -4311,20 +4311,6 @@
               "downloaded_file_path": "com/google/re2j/re2j/1.7/re2j-1.7.jar"
             }
           },
-          "org_junit_jupiter_junit_jupiter_api_jar_sources_5_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_api_jar_sources_5_10_1",
-              "sha256": "551e054c2e84b79d087f0410c8e6e3dd3e83ae54129593380d48550da441b5ef",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1-sources.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1-sources.jar"
-            }
-          },
           "org_apache_commons_commons_lang3_jar_sources_3_11": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4337,6 +4323,20 @@
                 "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11-sources.jar"
               ],
               "downloaded_file_path": "org/apache/commons/commons-lang3/3.11/commons-lang3-3.11-sources.jar"
+            }
+          },
+          "org_junit_jupiter_junit_jupiter_api_jar_sources_5_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_api_jar_sources_5_10_2",
+              "sha256": "551e054c2e84b79d087f0410c8e6e3dd3e83ae54129593380d48550da441b5ef",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2-sources.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2-sources.jar"
+              ],
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2-sources.jar"
             }
           },
           "software_amazon_awssdk_profiles_2_20_128": {
@@ -4633,6 +4633,20 @@
               "downloaded_file_path": "com/google/api/grpc/proto-google-cloud-storage-v2/2.26.1-alpha/proto-google-cloud-storage-v2-2.26.1-alpha.jar"
             }
           },
+          "org_junit_platform_junit_platform_commons_1_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_commons_1_10_2",
+              "sha256": "b56a5ec000a479df4973b18bba24c98fe0db8faa14c8907d3ef451d8c71fd8ae",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar"
+              ],
+              "downloaded_file_path": "org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar"
+            }
+          },
           "com_google_guava_guava_testlib_31_1_jre": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4659,20 +4673,6 @@
                 "https://repo1.maven.org/maven2/org/apache/velocity/velocity-engine-core/2.3/velocity-engine-core-2.3.jar"
               ],
               "downloaded_file_path": "org/apache/velocity/velocity-engine-core/2.3/velocity-engine-core-2.3.jar"
-            }
-          },
-          "org_junit_platform_junit_platform_commons_1_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_commons_1_10_1",
-              "sha256": "7d9855ee3f3f71f015eb1479559bf923783243c24fbfbd8b29bed8e8099b5672",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar"
-              ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar"
             }
           },
           "org_checkerframework_checker_qual_3_33_0": {
@@ -4780,18 +4780,18 @@
               "downloaded_file_path": "io/netty/netty-transport-classes-epoll/4.1.94.Final/netty-transport-classes-epoll-4.1.94.Final.jar"
             }
           },
-          "org_junit_jupiter_junit_jupiter_params_5_10_1": {
+          "org_junit_jupiter_junit_jupiter_params_5_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_params_5_10_1",
-              "sha256": "c8cf62debcbb354deefe1ffd0671eff785514907567d22a615ff8a8de4522b21",
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_params_5_10_2",
+              "sha256": "edb1e43ff0b8067626ffb55e5e9eeca1d9ab2478141a7c7f253d115b29cc7cf2",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar"
               ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1.jar"
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar"
             }
           },
           "org_junit_platform_junit_platform_reporting_jar_sources_1_10_1": {
@@ -5380,20 +5380,6 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2-sources.jar"
             }
           },
-          "org_junit_jupiter_junit_jupiter_params_jar_sources_5_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_params_jar_sources_5_10_1",
-              "sha256": "532dce2ef436152405567ea75f076dc908c4d21641224ecc53913c9f09bfb131",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1-sources.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-params/5.10.1/junit-jupiter-params-5.10.1-sources.jar"
-            }
-          },
           "software_amazon_awssdk_json_utils_2_20_128": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5419,6 +5405,20 @@
                 "https://repo1.maven.org/maven2/org/eclipse/lsp4j/org.eclipse.lsp4j.generator/0.20.1/org.eclipse.lsp4j.generator-0.20.1.jar"
               ],
               "downloaded_file_path": "org/eclipse/lsp4j/org.eclipse.lsp4j.generator/0.20.1/org.eclipse.lsp4j.generator-0.20.1.jar"
+            }
+          },
+          "org_junit_jupiter_junit_jupiter_params_jar_sources_5_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_params_jar_sources_5_10_2",
+              "sha256": "532dce2ef436152405567ea75f076dc908c4d21641224ecc53913c9f09bfb131",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2-sources.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2-sources.jar"
+              ],
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2-sources.jar"
             }
           },
           "org_eclipse_xtend_org_eclipse_xtend_lib_macro_2_28_0": {
@@ -5748,6 +5748,20 @@
               "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.22.1/log4j-api-2.22.1-sources.jar"
             }
           },
+          "org_junit_jupiter_junit_jupiter_engine_jar_sources_5_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_engine_jar_sources_5_10_2",
+              "sha256": "00ffb37a2d4a1f5ab224c4cf44b2d050b3d132ca650e9c4251605daf9cd6da9b",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2-sources.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2-sources.jar"
+              ],
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2-sources.jar"
+            }
+          },
           "software_amazon_awssdk_third_party_jackson_core_2_20_128": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5773,34 +5787,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2.jar"
-            }
-          },
-          "org_junit_jupiter_junit_jupiter_engine_jar_sources_5_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_engine_jar_sources_5_10_1",
-              "sha256": "00ffb37a2d4a1f5ab224c4cf44b2d050b3d132ca650e9c4251605daf9cd6da9b",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1-sources.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1-sources.jar"
-            }
-          },
-          "org_junit_jupiter_junit_jupiter_jar_sources_5_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_jar_sources_5_10_1",
-              "sha256": "bd628b06b83b0d8830b53747b7f466beebca12d4808f117660ac06e47af99d1c",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1-sources.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1-sources.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1-sources.jar"
-              ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1-sources.jar"
             }
           },
           "org_apache_httpcomponents_httpclient_4_5_14": {
@@ -5867,6 +5853,20 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-jdk8/1.7.0/kotlinx-coroutines-jdk8-1.7.0-sources.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-jdk8/1.7.0/kotlinx-coroutines-jdk8-1.7.0-sources.jar"
+            }
+          },
+          "org_junit_jupiter_junit_jupiter_jar_sources_5_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_jar_sources_5_10_2",
+              "sha256": "bd628b06b83b0d8830b53747b7f466beebca12d4808f117660ac06e47af99d1c",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2-sources.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2-sources.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2-sources.jar"
+              ],
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2-sources.jar"
             }
           },
           "software_amazon_awssdk_regions_2_20_128": {
@@ -6236,7 +6236,7 @@
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.61.1\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.61.1\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
-                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.1\" }",
+                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.0\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.8.0\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.0\" }",
@@ -6314,18 +6314,18 @@
               "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar"
             }
           },
-          "org_junit_platform_junit_platform_engine_1_10_1": {
+          "org_junit_platform_junit_platform_engine_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_engine_1_10_1",
-              "sha256": "baa48e470d6dee7369a0a8820c51da89c1463279eda6e13a304d11f45922c760",
+              "name": "rules_jvm_external~override~maven~org_junit_platform_junit_platform_engine_1_10_2",
+              "sha256": "905cba9b4998ccc29d1239085a7fb1fe0e28024d7526152356d810edec0a49a3",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar",
-                "https://maven.google.com/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar"
+                "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar",
+                "https://maven.google.com/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar"
               ],
-              "downloaded_file_path": "org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar"
+              "downloaded_file_path": "org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar"
             }
           },
           "com_google_http_client_google_http_client_jackson2_1_43_3": {
@@ -6367,6 +6367,20 @@
               "downloaded_file_path": "com/google/api/gax/2.32.0/gax-2.32.0.jar"
             }
           },
+          "org_junit_jupiter_junit_jupiter_engine_5_10_2": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_engine_5_10_2",
+              "sha256": "b6df35da750a546ae932376f11b3c0df841f0c90c7cb2944cd39adb432886e4b",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar",
+                "https://maven.google.com/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar",
+                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
+              ],
+              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
+            }
+          },
           "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_21": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6379,20 +6393,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21.jar"
-            }
-          },
-          "org_junit_jupiter_junit_jupiter_engine_5_10_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_junit_jupiter_junit_jupiter_engine_5_10_1",
-              "sha256": "02930dfe495f93fe70b26550ace3a28f7e1b900c84426c2e4626ce020c7282d6",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar",
-                "https://maven.google.com/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar",
-                "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar"
-              ],
-              "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar"
             }
           },
           "io_kotest_kotest_assertions_core_jvm_jar_sources_5_8_0": {
