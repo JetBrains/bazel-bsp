@@ -38,6 +38,12 @@ bazel_integration_test_all_versions(
     workspace_path = "test-resources/python-project",
 )
 
+bazel_integration_test_current_version(
+    name = "kotlin_project_test",
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspKotlinProjectTest",
+    workspace_path = "test-resources/kotlin-project",
+)
+
 bazel_integration_test_all_versions(
     name = "enabled_rules_test",
     test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspScalaProjectTest",
