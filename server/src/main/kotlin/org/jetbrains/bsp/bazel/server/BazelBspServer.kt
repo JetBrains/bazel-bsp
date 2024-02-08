@@ -62,18 +62,30 @@ class BazelBspServer(
     val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot)
     val bspState = ConcurrentHashMap<String, Set<TextDocumentIdentifier>>()
 
-    compilationManager = BazelBspCompilationManager(bazelRunner, bspState)
-    bspServerApi = BspServerApi { bspServerData(bspInfo, workspaceContextProvider, bazelRunner, bspState) }
+    val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
+    val bazelPathsResolver = BazelPathsResolver(bazelInfo)
+
+    compilationManager = BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState)
+    bspServerApi = BspServerApi {
+      bspServerData(
+        bspInfo = bspInfo,
+        bazelInfo = bazelInfo,
+        workspaceContextProvider = workspaceContextProvider,
+        bazelRunner = bazelRunner,
+        bazelPathsResolver = bazelPathsResolver,
+        bspState = bspState
+      )
+    }
   }
 
   private fun bspServerData(
     bspInfo: BspInfo,
+    bazelInfo: BazelInfo,
     workspaceContextProvider: WorkspaceContextProvider,
     bazelRunner: BazelRunner,
+    bazelPathsResolver: BazelPathsResolver,
     bspState: Map<String, Set<TextDocumentIdentifier>>
   ): BazelServices {
-    val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
-    val bazelPathsResolver = BazelPathsResolver(bazelInfo)
     val languagePluginsService = createLanguagePluginsService(bazelPathsResolver)
     val projectProvider = createProjectProvider(
       bspInfo = bspInfo,
@@ -101,6 +113,7 @@ class BazelBspServer(
       workspaceContextProvider = workspaceContextProvider,
       bspClientLogger = bspClientLogger,
       bspClientTestNotifier = bspClientTestNotifier,
+      bazelPathsResolver = bazelPathsResolver,
       hasAnyProblems = bspState,
     )
     return BazelServices(

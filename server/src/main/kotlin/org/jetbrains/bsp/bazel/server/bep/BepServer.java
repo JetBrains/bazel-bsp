@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.commons.Constants;
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper;
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService;
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver;
 
 public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
@@ -47,15 +48,16 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
 
   private final Deque<Map.Entry<TaskId, Optional<String>>> startedEvents = new ArrayDeque<>();
   private final DiagnosticsService diagnosticsService;
-  private BepOutputBuilder bepOutputBuilder = new BepOutputBuilder();
+  private final BepOutputBuilder bepOutputBuilder;
 
   private final Optional<BuildTargetIdentifier> target;
 
   public BepServer(
-      BuildClient bspClient, DiagnosticsService diagnosticsService, Optional<String> originId, Optional<BuildTargetIdentifier> target) {
+          BuildClient bspClient, DiagnosticsService diagnosticsService, BazelPathsResolver bazelPathsResolver, Optional<String> originId, Optional<BuildTargetIdentifier> target) {
     this.bspClient = bspClient;
     this.target = target;
     this.diagnosticsService = diagnosticsService;
+    this.bepOutputBuilder = new BepOutputBuilder(bazelPathsResolver);
     this.originId = originId;
     this.bepLogger = new BepLogger(bspClient, originId);
   }
@@ -63,10 +65,11 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   public static BepServer newBepServer(
       BuildClient client,
       Path workspaceRoot,
+      BazelPathsResolver bazelPathsResolver,
       Map<String, Set<TextDocumentIdentifier>> hasAnyProblems,
       Optional<String> originId,
       Optional<BuildTargetIdentifier> target) {
-    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems), originId, target);
+    return new BepServer(client, new DiagnosticsService(workspaceRoot, hasAnyProblems), bazelPathsResolver, originId, target);
   }
 
   @Override
@@ -134,7 +137,8 @@ public class BepServer extends PublishBuildEventGrpc.PublishBuildEventImplBase {
   }
 
   private void consumeBuildStartedEvent(BuildEventStreamProtos.BuildStarted buildStarted) {
-    bepOutputBuilder = new BepOutputBuilder();
+    bepOutputBuilder.clear();
+
     TaskId taskId = new TaskId(buildStarted.getUuid());
     TaskStartParams startParams = new TaskStartParams(taskId);
     startParams.setEventTime(buildStarted.getStartTimeMillis());

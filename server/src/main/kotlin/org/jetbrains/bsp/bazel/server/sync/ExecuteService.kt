@@ -26,6 +26,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
@@ -40,6 +41,7 @@ class ExecuteService(
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientLogger: BspClientLogger,
     private val bspClientTestNotifier: BspClientTestNotifier,
+    private val bazelPathsResolver: BazelPathsResolver,
     private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
 ) {
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
@@ -47,7 +49,7 @@ class ExecuteService(
     }
 
     private fun <T> withBepServer(body : (BepReader) -> T): T {
-        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, hasAnyProblems, Optional.empty(), Optional.empty())
+        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, bazelPathsResolver, hasAnyProblems, Optional.empty(), Optional.empty())
         val bepReader = BepReader(server)
         return body(bepReader)
     }
