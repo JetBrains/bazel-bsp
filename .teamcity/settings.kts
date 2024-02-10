@@ -5,18 +5,18 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 
 
-version = "2023.05"
+version = "2023.11"
 
 project(BazelBsp)
 
 object BazelBsp : Project({
 
-    vcsRoot(BaseConfiguration.BazelBspVcs)
+    vcsRoot(BazelBspVcs)
 
     // setup pipeline chain for bazel-bsp
     val allSteps = sequential {
 
-        buildType(BazelFormat.BuildifierFormat, options = {
+        buildType(BuildifierFormat, options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
@@ -26,18 +26,18 @@ object BazelBsp : Project({
             onDependencyCancel = FailureAction.CANCEL
 
         }) {
-            buildType(BazelBuild.BuildTheProject)
-            buildType(BazelUnitTests.UnitTests)
-            buildType(BazelE2eTests.SampleRepoBazel6E2ETest)
-            buildType(BazelE2eTests.SampleRepoBazel5E2ETest)
-            buildType(BazelE2eTests.BazelBspLocalBazel6JdkTest)
-            buildType(BazelE2eTests.BazelBspLocalBazel5JdkTest)
-            buildType(BazelE2eTests.BazelBspRemoteBazel6JdkTest)
-            buildType(BazelE2eTests.BazelBspRemoteBazel5JdkTest)
-            buildType(BazelE2eTests.ServerDownloadsBazeliskTest)
+            buildType(BuildTheProject)
+            buildType(UnitTests)
+            buildType(SampleRepoBazel6E2ETest)
+            buildType(SampleRepoBazel5E2ETest)
+            buildType(BazelBspLocalBazel6JdkTest)
+            buildType(BazelBspLocalBazel5JdkTest)
+            buildType(BazelBspRemoteBazel6JdkTest)
+            buildType(BazelBspRemoteBazel5JdkTest)
+            buildType(ServerDownloadsBazeliskTest)
         }
 
-        buildType(ResultsAggregator.BazelBspAggregator, options = {
+        buildType(BazelBspAggregator, options = {
             onDependencyFailure = FailureAction.ADD_PROBLEM
             onDependencyCancel = FailureAction.ADD_PROBLEM
         })

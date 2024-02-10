@@ -1,6 +1,7 @@
 package configurations.bazelBsp
 
-import configurations.BaseConfiguration
+import configurations.BaseBuildType
+import configurations.BazelBspVcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
@@ -8,10 +9,10 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
 open class BazelBspBenchmarkBuildType(
         projectSize: String,
-        ) : BaseConfiguration.BaseBuildType(
+        ) : BaseBuildType(
         artifactRules = "+:%system.teamcity.build.checkoutDir%/metrics.txt",
         name = "[benchmark] $projectSize targets",
-        vcsRoot = BaseConfiguration.BazelBspVcs,
+        vcsRoot = BazelBspVcs,
         setupSteps = true,
         steps = {
             bazel {

@@ -12,13 +12,13 @@ object BazelBspAggregator : BuildType({
     allowExternalStatus = true
 
     vcs {
-        root(BaseConfiguration.BazelBspVcs)
+        root(BazelBspVcs)
         showDependenciesChanges = false
     }
 
     features {
         pullRequests {
-            vcsRootExtId = "${BaseConfiguration.BazelBspVcs.id}"
+            vcsRootExtId = "${BazelBspVcs.id}"
             provider = github {
                 authType = token {
                     token = "credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6"
