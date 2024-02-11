@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>[format] buildifier</name>
+  <description />
+  <settings>
+    <options>
+      <option name="artifactRules" value="" />
+      <option name="executionTimeoutMin" value="60" />
+    </options>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_1" name="checking formatting with buildifier" type="simpleRunner">
+        <parameters>
+          <param name="plugin.docker.imageId" value="andrefmrocha/buildifier" />
+          <param name="plugin.docker.imagePlatform" value="linux" />
+          <param name="plugin.docker.pull.enabled" value="true" />
+          <param name="script.content"><![CDATA[buildifier -r .
+buildifier --lint=fix -r .
+git diff --exit-code]]></param>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use.custom.script" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="RootProjectId_BazelBspVcs" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers />
+    <build-extensions>
+      <extension id="BUILD_EXT_1" type="perfmon">
+        <parameters />
+      </extension>
+      <extension id="BUILD_EXT_2" type="commit-status-publisher">
+        <parameters>
+          <param name="github_authentication_type" value="token" />
+          <param name="github_host" value="https://api.github.com" />
+          <param name="github_oauth_user" value="hb-man" />
+          <param name="publisherId" value="githubStatusPublisher" />
+          <param name="secure:github_access_token" value="credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6" />
+        </parameters>
+      </extension>
+      <extension id="BUILD_EXT_3" type="pullRequests">
+        <parameters>
+          <param name="authenticationType" value="token" />
+          <param name="filterAuthorRole" value="EVERYBODY" />
+          <param name="providerType" value="github" />
+          <param name="secure:accessToken" value="credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6" />
+          <param name="vcsRootId" value="RootProjectId_BazelBspVcs" />
+        </parameters>
+      </extension>
+    </build-extensions>
+    <cleanup />
+  </settings>
+</build-type>
+
