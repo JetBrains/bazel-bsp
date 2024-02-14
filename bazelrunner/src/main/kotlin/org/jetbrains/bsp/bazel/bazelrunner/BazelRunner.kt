@@ -73,7 +73,7 @@ class BazelRunner private constructor(
         val process = processBuilder.start()
         return BazelProcess(
             process,
-            if (originId == null) outputLogger else outputLogger?.withOriginId(originId),
+            if (originId == null) outputLogger else outputLogger?.copy(originId = originId),
             originId
         )
     }
@@ -84,7 +84,7 @@ class BazelRunner private constructor(
     private fun logInvocation(processArgs: List<String>, processEnv: Map<String, String>, originId: String?) {
         "Invoking: ${envToString(processEnv)} ${processArgs.joinToString(" ")}"
             .also { LOGGER.info(it) }
-            .also { bspClientLogger.withOriginId(originId).message(it) }
+            .also { bspClientLogger.copy(originId = originId).message(it) }
     }
 
     private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelBinary.value.toString()

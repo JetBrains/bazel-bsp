@@ -15,7 +15,7 @@ import java.util.function.Function
 
 class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
     fun <T, R> handleRequest(
-        methodName: String, function: BiFunction<CancelChecker?, T, R>, arg: T,
+        methodName: String, function: BiFunction<CancelChecker, T, R>, arg: T,
     ): CompletableFuture<R> {
         LOGGER.info("{} call with param: {}", methodName, arg)
         return serverIsRunning(methodName) ?: runAsync(methodName) { function.apply(it, arg) }
@@ -39,7 +39,7 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
     fun <R> handleRequest(
         methodName: String,
         supplier: Function<CancelChecker, R>,
-        precondition: Function<String?, CompletableFuture<R>?>,
+        precondition: Function<String, CompletableFuture<R>?>,
     ): CompletableFuture<R> {
         LOGGER.info("{} call", methodName)
         return precondition.apply(methodName) ?: runAsync(methodName, supplier)
@@ -91,12 +91,12 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
     }
 
     private fun <T> failure(methodName: String, error: ResponseError): CompletableFuture<T> {
-        LOGGER.error("{} call finishing with error: {}", methodName, error.message)
+        LOGGER.error("{} call finishing with error: {}", methodName, error)
         return CompletableFuture.failedFuture(ResponseErrorException(error))
     }
 
     private fun <T> failure(methodName: String, throwable: Throwable): CompletableFuture<T> {
-        LOGGER.error("{} call finishing with error: {}", methodName, throwable.message)
+        LOGGER.error("$methodName call finishing with error", throwable)
         if (throwable is ResponseErrorException) {
             return CompletableFuture.failedFuture(throwable)
         }

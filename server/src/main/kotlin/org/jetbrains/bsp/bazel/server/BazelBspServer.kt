@@ -48,43 +48,21 @@ import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 class BazelBspServer(
-  bspInfo: BspInfo,
-  workspaceContextProvider: WorkspaceContextProvider,
+  private val bspInfo: BspInfo,
+  private val workspaceContextProvider: WorkspaceContextProvider,
   private val workspaceRoot: Path,
   private val metricsLogger: MetricsLogger?
 ) {
-  private val compilationManager: BazelBspCompilationManager
-  private val bspServerApi: BspServerApi
-  private val bspClientLogger: BspClientLogger = BspClientLogger()
-  private val bspClientTestNotifier: BspClientTestNotifier = BspClientTestNotifier()
-
-  init {
-    val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot)
-    val bspState = ConcurrentHashMap<String, Set<TextDocumentIdentifier>>()
-
-    val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
-    val bazelPathsResolver = BazelPathsResolver(bazelInfo)
-
-    compilationManager = BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState)
-    bspServerApi = BspServerApi {
-      bspServerData(
-        bspInfo = bspInfo,
-        bazelInfo = bazelInfo,
-        workspaceContextProvider = workspaceContextProvider,
-        bazelRunner = bazelRunner,
-        bazelPathsResolver = bazelPathsResolver,
-        bspState = bspState
-      )
-    }
-  }
+  private val bspState: MutableMap<String, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
 
   private fun bspServerData(
-    bspInfo: BspInfo,
+    bspClientLogger: BspClientLogger,
+    bspClientTestNotifier: BspClientTestNotifier,
+    bazelRunner: BazelRunner,
+    compilationManager: BazelBspCompilationManager,
     bazelInfo: BazelInfo,
     workspaceContextProvider: WorkspaceContextProvider,
-    bazelRunner: BazelRunner,
     bazelPathsResolver: BazelPathsResolver,
-    bspState: Map<String, Set<TextDocumentIdentifier>>
   ): BazelServices {
     val languagePluginsService = createLanguagePluginsService(bazelPathsResolver)
     val projectProvider = createProjectProvider(
@@ -93,7 +71,9 @@ class BazelBspServer(
       workspaceContextProvider = workspaceContextProvider,
       bazelRunner = bazelRunner,
       languagePluginsService = languagePluginsService,
-      bazelPathsResolver = bazelPathsResolver
+      bazelPathsResolver = bazelPathsResolver,
+      compilationManager = compilationManager,
+      bspClientLogger = bspClientLogger
     )
     val bspProjectMapper = BspProjectMapper(
       languagePluginsService = languagePluginsService,
@@ -159,7 +139,9 @@ class BazelBspServer(
     workspaceContextProvider: WorkspaceContextProvider,
     bazelRunner: BazelRunner,
     languagePluginsService: LanguagePluginsService,
-    bazelPathsResolver: BazelPathsResolver
+    bazelPathsResolver: BazelPathsResolver,
+    compilationManager: BazelBspCompilationManager,
+    bspClientLogger: BspClientLogger
   ): ProjectProvider {
     val aspectsResolver = InternalAspectsResolver(bspInfo, bazelInfo.release)
 
@@ -172,7 +154,6 @@ class BazelBspServer(
       BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled, currentContext.enabledRules)
     val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver, bazelInfo.release)
     val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
-
     val targetKindResolver = TargetKindResolver()
     val bazelProjectMapper = BazelProjectMapper(
       languagePluginsService,
@@ -201,26 +182,41 @@ class BazelBspServer(
     return ProjectProvider(projectResolver, projectStorage)
   }
 
-  fun startServer(bspIntegrationData: BspIntegrationData) {
-    val launcher = createLauncher(bspIntegrationData).create()
-    bspIntegrationData.launcher = launcher
-    val client = launcher.remoteProxy
-    bspClientLogger.initialize(client)
-    bspClientTestNotifier.initialize(client)
-    compilationManager.client = client
-    compilationManager.workspaceRoot = workspaceRoot
-  }
+  fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<BuildClient> {
+    val bspServerApi = BspServerApi { client: BuildClient ->
+      val bspClientLogger = BspClientLogger(client)
+      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot)
+      val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
+      val bazelPathsResolver = BazelPathsResolver(bazelInfo)
+      val compilationManager =
+        BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState, client, workspaceRoot)
+      val bspClientTestNotifier = BspClientTestNotifier(client)
+      bspServerData(
+        bspClientLogger,
+        bspClientTestNotifier,
+        bazelRunner,
+        compilationManager,
+        bazelInfo,
+        workspaceContextProvider,
+        bazelPathsResolver
+      )
+    }
 
-  private fun createLauncher(bspIntegrationData: BspIntegrationData): Launcher.Builder<BuildClient> {
     val builder = Launcher.Builder<BuildClient>()
       .setOutput(bspIntegrationData.stdout).setInput(bspIntegrationData.stdin)
       .setLocalService(bspServerApi).setRemoteInterface(BuildClient::class.java)
       .setExecutorService(bspIntegrationData.executor)
+      .let { builder ->
+        if (bspIntegrationData.traceWriter != null) {
+          builder.traceMessages(bspIntegrationData.traceWriter)
+        } else builder
+      }
 
-    if (bspIntegrationData.traceWriter != null) {
-      builder.traceMessages(bspIntegrationData.traceWriter)
-    }
+    val launcher = builder.create()
 
-    return builder
+    val client = launcher.remoteProxy
+    bspServerApi.init(client)
+
+    return launcher
   }
 }

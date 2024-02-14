@@ -10,7 +10,7 @@ import kotlin.io.path.Path
 
 data class TextProtoDepSet(val files: Collection<Path>, val children: Collection<String>)
 
-internal class BepOutputBuilder(private val bazelPathsResolver: BazelPathsResolver) {
+class BepOutputBuilder(private val bazelPathsResolver: BazelPathsResolver) {
   private val outputGroups: MutableMap<String, MutableSet<String>> = HashMap()
   private val textProtoFileSets: MutableMap<String, TextProtoDepSet> = HashMap()
   private val rootTargets: MutableSet<String> = HashSet()

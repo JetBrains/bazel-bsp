@@ -186,8 +186,8 @@ private fun startServer(serverIn: OutputStream,
       projectViewPath = directory.resolve("projectview.bazelproject")
     )
     val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspace, metricsLogger)
-    bspServer.startServer(bspIntegrationData)
-    return bspIntegrationData.launcher
+
+    return bspServer.buildServer(bspIntegrationData)
 }
 
 

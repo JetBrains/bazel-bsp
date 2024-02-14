@@ -9,11 +9,9 @@ common --enable_bzlmod
 build --deleted_packages=.bazelbsp,.bazelbsp/aspects,e2e/test-resources/cpp-project/example,e2e/test-resources/enabled-rules-project/langs,e2e/test-resources/enabled-rules-project/scala_targets,e2e/test-resources/kotlin-project,e2e/test-resources/kotlin-project/kotlinc_test,e2e/test-resources/local-jdk-project/example,e2e/test-resources/python-project/example,e2e/test-resources/python-project/lib,e2e/test-resources/python-project/test,e2e/test-resources/remote-jdk-project/example,e2e/test-resources/rust-project,e2e/test-resources/rust-project/example,e2e/test-resources/rust-project/example-lib,e2e/test-resources/sample-repo/environment_variables,e2e/test-resources/sample-repo/java_targets,e2e/test-resources/sample-repo/java_targets/subpackage,e2e/test-resources/sample-repo/manual_target,e2e/test-resources/sample-repo/scala_targets,e2e/test-resources/sample-repo/target_with_dependency,e2e/test-resources/sample-repo/target_with_resources,e2e/test-resources/sample-repo/target_without_args,e2e/test-resources/sample-repo/target_without_jvm_flags,e2e/test-resources/sample-repo/target_without_main_class
 query --deleted_packages=.bazelbsp,.bazelbsp/aspects,e2e/test-resources/cpp-project/example,e2e/test-resources/enabled-rules-project/langs,e2e/test-resources/enabled-rules-project/scala_targets,e2e/test-resources/kotlin-project,e2e/test-resources/kotlin-project/kotlinc_test,e2e/test-resources/local-jdk-project/example,e2e/test-resources/python-project/example,e2e/test-resources/python-project/lib,e2e/test-resources/python-project/test,e2e/test-resources/remote-jdk-project/example,e2e/test-resources/rust-project,e2e/test-resources/rust-project/example,e2e/test-resources/rust-project/example-lib,e2e/test-resources/sample-repo/environment_variables,e2e/test-resources/sample-repo/java_targets,e2e/test-resources/sample-repo/java_targets/subpackage,e2e/test-resources/sample-repo/manual_target,e2e/test-resources/sample-repo/scala_targets,e2e/test-resources/sample-repo/target_with_dependency,e2e/test-resources/sample-repo/target_with_resources,e2e/test-resources/sample-repo/target_without_args,e2e/test-resources/sample-repo/target_without_jvm_flags,e2e/test-resources/sample-repo/target_without_main_class
 
-# From https://blog.aspect.dev/bazelrc-flags
+# From https://docs.aspect.build/guides/bazelrc/
 build --incompatible_strict_action_env
 startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
 build --noexperimental_check_output_files
 build --noexperimental_check_external_repository_files
-# Enable again once we update to bazel 7
-# https://github.com/bazelbuild/bazel/issues/19217
-#build --experimental_reuse_sandbox_directories
+build --experimental_reuse_sandbox_directories

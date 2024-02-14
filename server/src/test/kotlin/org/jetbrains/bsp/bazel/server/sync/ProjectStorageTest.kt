@@ -1,9 +1,8 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import ch.epfl.scala.bsp4j.*
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
-import java.io.IOException
-import java.net.URI
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk
@@ -17,6 +16,8 @@ import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.io.IOException
+import java.net.URI
 
 class ProjectStorageTest {
     @Test
@@ -26,7 +27,36 @@ class ProjectStorageTest {
         file.delete()
         file.deleteOnExit()
         val path = file.toPath()
-        val storage = FileProjectStorage(path, BspClientLogger())
+        val mockBuildClient = object : BuildClient {
+            override fun onBuildShowMessage(p0: ShowMessageParams?) {
+            }
+
+            override fun onBuildLogMessage(p0: LogMessageParams?) {
+            }
+
+            override fun onBuildPublishDiagnostics(p0: PublishDiagnosticsParams?) {
+            }
+
+            override fun onBuildTargetDidChange(p0: DidChangeBuildTarget?) {
+            }
+
+            override fun onBuildTaskStart(p0: TaskStartParams?) {
+            }
+
+            override fun onBuildTaskProgress(p0: TaskProgressParams?) {
+            }
+
+            override fun onBuildTaskFinish(p0: TaskFinishParams?) {
+            }
+
+            override fun onRunPrintStdout(p0: PrintParams?) {
+            }
+
+            override fun onRunPrintStderr(p0: PrintParams?) {
+            }
+
+        }
+        val storage = FileProjectStorage(path, BspClientLogger(mockBuildClient))
         val empty = storage.load()
         empty shouldBe null
         val scalaModule = ScalaModule(

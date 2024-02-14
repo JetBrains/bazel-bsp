@@ -12,6 +12,4 @@ data class BspIntegrationData(
     val stdin: InputStream,
     val executor: ExecutorService,
     val traceWriter: PrintWriter?,
-) {
-    lateinit var launcher: Launcher<BuildClient>
-}
+)

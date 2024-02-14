@@ -147,9 +147,8 @@ class JUnit5TestParserTest {
       val collector = OutputCollector()
       outputString.lines().forEach { collector.onNextLine(it) }
       bazelProcessResult = BazelProcessResult(collector, OutputCollector(), 0)
-      val testNotifier = BspClientTestNotifier()
       bspClient = MockBspClient()
-      testNotifier.initialize(bspClient)
+      val testNotifier = BspClientTestNotifier(bspClient)
       jUnit5TestParser = JUnit5TestParser(testNotifier)
       jUnit5TestParser.processTestOutput(bazelProcessResult)
     }

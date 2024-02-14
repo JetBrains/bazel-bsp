@@ -26,6 +26,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
+import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -42,14 +43,15 @@ class ExecuteService(
     private val bspClientLogger: BspClientLogger,
     private val bspClientTestNotifier: BspClientTestNotifier,
     private val bazelPathsResolver: BazelPathsResolver,
-    private val hasAnyProblems: Map<String, Set<TextDocumentIdentifier>>
+    private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>
 ) {
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
-        bspClientLogger.withOriginId(originId).error(message)
+        bspClientLogger.copy(originId = originId).error(message)
     }
 
     private fun <T> withBepServer(body : (BepReader) -> T): T {
-        val server = BepServer.newBepServer(compilationManager.client, compilationManager.workspaceRoot, bazelPathsResolver, hasAnyProblems, Optional.empty(), Optional.empty())
+        val diagnosticsService = DiagnosticsService(compilationManager.workspaceRoot, hasAnyProblems)
+        val server = BepServer(compilationManager.client,  diagnosticsService, null, null, bazelPathsResolver)
         val bepReader = BepReader(server)
         return body(bepReader)
     }
@@ -77,7 +79,7 @@ class ExecuteService(
         bspClientTestNotifier.startTest(
             isSuite = false,
             displayName = displayName,
-            taskId = taskId
+            taskId = taskId,
         )
 
         result = bazelRunner.commandBuilder().test()
