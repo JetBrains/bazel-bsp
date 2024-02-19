@@ -62,7 +62,7 @@ object BazelBspKotlinProjectTest : BazelBspTestBaseScenario() {
                 it.canCompile = true
                 it.canTest = false
                 it.canRun = true
-                it.canDebug = false
+                it.canDebug = true
             }
         )
         buildTarget.displayName = "@//kotlinc_test:Foo"

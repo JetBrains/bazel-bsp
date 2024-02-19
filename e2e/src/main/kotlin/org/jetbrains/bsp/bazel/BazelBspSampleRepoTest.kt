@@ -1038,7 +1038,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("application"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     javaTargetsJavaBinary.displayName = "$targetPrefix//java_targets:java_binary"
     javaTargetsJavaBinary.baseDirectory = "file://\$WORKSPACE/java_targets/"
@@ -1050,7 +1050,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("application"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     javaTargetsJavaBinaryWithFlag.displayName = "$targetPrefix//java_targets:java_binary_with_flag"
     javaTargetsJavaBinaryWithFlag.baseDirectory = "file://\$WORKSPACE/java_targets/"
@@ -1079,7 +1079,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     scalaTargetsScalaBinary.displayName = "$targetPrefix//scala_targets:scala_binary"
     scalaTargetsScalaBinary.baseDirectory = "file://\$WORKSPACE/scala_targets/"
@@ -1119,7 +1119,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     targetWithoutJvmFlagsBinary.displayName = "$targetPrefix//target_without_jvm_flags:binary"
     targetWithoutJvmFlagsBinary.baseDirectory = "file://\$WORKSPACE/target_without_jvm_flags/"
@@ -1151,7 +1151,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     targetWithoutArgsBinary.displayName = "$targetPrefix//target_without_args:binary"
     targetWithoutArgsBinary.baseDirectory = "file://\$WORKSPACE/target_without_args/"
@@ -1167,7 +1167,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("@guava//:guava"),
         BuildTargetIdentifier("$targetPrefix//java_targets/subpackage:java_library")
       ),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     targetWithDependencyJavaBinary.displayName = "$targetPrefix//target_with_dependency:java_binary"
     targetWithDependencyJavaBinary.baseDirectory = "file://\$WORKSPACE/target_with_dependency/"
@@ -1183,7 +1183,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = true }
     )
     scalaTargetsScalaTest.displayName = "$targetPrefix//scala_targets:scala_test"
     scalaTargetsScalaTest.baseDirectory = "file://\$WORKSPACE/scala_targets/"
@@ -1195,7 +1195,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("application"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     targetWithResourcesJavaBinary.displayName = "$targetPrefix//target_with_resources:java_binary"
     targetWithResourcesJavaBinary.baseDirectory = "file://\$WORKSPACE/target_with_resources/"
@@ -1301,7 +1301,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("application"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
     )
     environmentVariablesJavaLibrary.displayName = "$targetPrefix//environment_variables:java_binary"
     environmentVariablesJavaLibrary.baseDirectory = "file://\$WORKSPACE/environment_variables/"
@@ -1313,7 +1313,7 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("test"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = true }
     )
     environmentVariablesJavaTest.displayName = "$targetPrefix//environment_variables:java_test"
     environmentVariablesJavaTest.baseDirectory = "file://\$WORKSPACE/environment_variables/"
