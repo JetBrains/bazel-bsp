@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "f135a041a9461abd785eae37072c1f3cc16b83d4cb3dc4920027b12d69dcf542",
+  "moduleFileHash": "ca884b4f890a01a1299537f33274920bc52782cbfd99214870b49fd81c500a3a",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -119,7 +119,7 @@
                   "org.apache.logging.log4j:log4j-api:2.22.1",
                   "org.apache.logging.log4j:log4j-core:2.22.1",
                   "org.apache.velocity:velocity-engine-core:2.3",
-                  "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
+                  "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
                   "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
                   "com.fasterxml.jackson.core:jackson-databind:2.16.1",
@@ -3382,7 +3382,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "4d53eb1a4b39c07a440c1e3e4ff9098ca11f7d6529381752cfdeecb53d8dab94",
+          "@@//:maven_install.json": "54752136aa9dac02cb91df1739e44f7757449e13d1fb61211590064ab5e23f48",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3657,20 +3657,6 @@
               "downloaded_file_path": "com/google/code/gson/gson/2.10.1/gson-2.10.1.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_1_9_21": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_1_9_21",
-              "sha256": "8e4454c1e63f21697eb1a752e63ce58365c3a55deb7e05b448270a330244664c",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21-sources.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21-sources.jar"
-            }
-          },
           "com_google_api_grpc_proto_google_iam_v1_1_18_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3695,6 +3681,20 @@
                 "https://maven.google.com/com/google/http-client/google-http-client-gson/1.43.3/google-http-client-gson-1.43.3.jar"
               ],
               "downloaded_file_path": "com/google/http-client/google-http-client-gson/1.43.3/google-http-client-gson-1.43.3.jar"
+            }
+          },
+          "org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_1_9_22": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_1_9_22",
+              "sha256": "e62b0391ff772e5126a80921fcd2c867347592a8014d23a162b9051f15786263",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22-sources.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22-sources.jar"
             }
           },
           "org_apache_logging_log4j_log4j_api_2_22_1": {
@@ -3847,20 +3847,6 @@
               "downloaded_file_path": "org/jetbrains/annotations/23.0.0/annotations-23.0.0-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_6_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_6_2",
-              "sha256": "7ed8d30dea309941472f9228b5b93333466e03f5134b98cb59c0e702c9a9f9d2",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2-sources.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2-sources.jar"
-            }
-          },
           "io_grpc_grpc_netty_shaded_1_56_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3872,6 +3858,20 @@
                 "https://maven.google.com/io/grpc/grpc-netty-shaded/1.56.1/grpc-netty-shaded-1.56.1.jar"
               ],
               "downloaded_file_path": "io/grpc/grpc-netty-shaded/1.56.1/grpc-netty-shaded-1.56.1.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_6_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_6_3",
+              "sha256": "018093c488ab4a2c2db876b44e27b8c296c294f8222c480a422187976aa89d5b",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3-sources.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3-sources.jar"
             }
           },
           "commons_io_commons_io_jar_sources_2_15_1": {
@@ -3984,7 +3984,7 @@
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.22.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.22.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.7.3\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
@@ -4492,18 +4492,18 @@
               "downloaded_file_path": "io/grpc/grpc-protobuf/1.61.1/grpc-protobuf-1.61.1.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_2": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_2",
-              "sha256": "f7734f5deb82f0a5a84893cfe42ef03844b60d26b2a95a6fe1987fbdd8d84014",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_3",
+              "sha256": "fb3096feff8e11b85d7ab179b5fcd47be628fe9193472005b67638638201cf85",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3-sources.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2-sources.jar"
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3-sources.jar"
             }
           },
           "com_google_api_client_google_api_client_2_2_0": {
@@ -5168,18 +5168,18 @@
               "downloaded_file_path": "software/amazon/awssdk/aws-core/2.20.128/aws-core-2.20.128.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_1_9_21": {
+          "org_jetbrains_kotlin_kotlin_stdlib_1_9_22": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_1_9_21",
-              "sha256": "3b479313ab6caea4e5e25d3dee8ca80c302c89ba73e1af4dafaa100f6ef9296a",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_1_9_22",
+              "sha256": "6abe146c27864138b874ccccfe5f534e3eb923c99a1b7b5d45494ee5694f3e0a",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar",
-                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar",
+                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar"
+              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar"
             }
           },
           "com_google_apis_google_api_services_storage_v1_rev20230617_2_0_0": {
@@ -5303,20 +5303,6 @@
               "downloaded_file_path": "org/objenesis/objenesis/3.2/objenesis-3.2.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_1_6_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_1_6_2",
-              "sha256": "e5a3e9fcb9469adc4e2542d688748c660fee70f946fa564fdde2533dc464e06b",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar"
-            }
-          },
           "com_google_protobuf_protobuf_java_3_25_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5370,6 +5356,20 @@
                 "https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8-sources.jar"
               ],
               "downloaded_file_path": "com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8-sources.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_1_6_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_1_6_3",
+              "sha256": "8c0016890a79ab5980dd520a5ab1a6738023c29aa3b6437c482e0e5fdc06dab1",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.jar"
             }
           },
           "software_amazon_awssdk_metrics_spi_2_20_128": {
@@ -5439,18 +5439,18 @@
               "downloaded_file_path": "software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_6_2": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_6_2",
-              "sha256": "78d6f251829c04b8b4ba695ac5c5a4738e701ade88e05ecaf6404d7a68dfaf1b",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_6_3",
+              "sha256": "5d873e2532ed1bb413a7698ddce0b85bc82a4018ad2b8a327fadf51c704cee8e",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2-sources.jar"
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar"
             }
           },
           "software_amazon_awssdk_json_utils_2_20_128": {
@@ -5618,18 +5618,18 @@
               "downloaded_file_path": "com/fasterxml/jackson/core/jackson-databind/2.16.1/jackson-databind-2.16.1.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_2": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_2",
-              "sha256": "8e6fc04e1a2efd2acbbc5503a1dc9d988166f99e4f1f51ef6b91c3a52077bdb1",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3",
+              "sha256": "29c821a8d4e25cbfe4f2ce96cdd4526f61f8f4e69a135f9612a34a81d93b65f1",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.2/kotlinx-serialization-core-jvm-1.6.2.jar"
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar"
             }
           },
           "io_netty_netty_transport_4_1_94_Final": {
@@ -5793,6 +5793,20 @@
               "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2-sources.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_6_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_6_3",
+              "sha256": "d3234179bcff1886d53d67c11eca47f7f3cf7b63c349d16965f6db51b7f3dd9a",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar"
+            }
+          },
           "net_bytebuddy_byte_buddy_agent_1_12_7": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5846,20 +5860,6 @@
                 "https://maven.google.com/software/amazon/awssdk/third-party-jackson-core/2.20.128/third-party-jackson-core-2.20.128.jar"
               ],
               "downloaded_file_path": "software/amazon/awssdk/third-party-jackson-core/2.20.128/third-party-jackson-core-2.20.128.jar"
-            }
-          },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_6_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_6_2",
-              "sha256": "8d2718bb042e830b12b7fb10af26d0fba43de1f1f9ffe0a6b131d4d251aac2cc",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.2/kotlinx-serialization-json-jvm-1.6.2.jar"
             }
           },
           "org_apache_httpcomponents_httpclient_4_5_14": {
@@ -6300,7 +6300,7 @@
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.22.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.22.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.7.3\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
@@ -6454,18 +6454,18 @@
               "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_21": {
+          "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_common_1_9_21",
-              "sha256": "ff43e59e31aca00fb4d3b678e447c62605b7c90d61376794481cfdcab53e3c35",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22",
+              "sha256": "60b53a3fc0ed19ff5568ad54372f102f51109b7480417e93c8f3418ae4f73188",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21.jar",
-                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar",
+                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-common/1.9.21/kotlin-stdlib-common-1.9.21.jar"
+              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar"
             }
           },
           "io_kotest_kotest_assertions_core_jvm_jar_sources_5_8_0": {
@@ -6551,6 +6551,20 @@
               "downloaded_file_path": "com/google/api/grpc/proto-google-common-protos/2.29.0/proto-google-common-protos-2.29.0-sources.jar"
             }
           },
+          "org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_22": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_22",
+              "sha256": "7e1405176c4c7f7b35a9cf446c300eacd0212eaf0006b2142a5f7a99b827ecb0",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22-sources.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22-sources.jar"
+            }
+          },
           "org_eclipse_lsp4j_org_eclipse_lsp4j_generator_jar_sources_0_20_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6605,20 +6619,6 @@
                 "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf-lite/1.61.1/grpc-protobuf-lite-1.61.1.jar"
               ],
               "downloaded_file_path": "io/grpc/grpc-protobuf-lite/1.61.1/grpc-protobuf-lite-1.61.1.jar"
-            }
-          },
-          "org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_21": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_21",
-              "sha256": "339b14455313369971926ffb6a9e6068a98151aa81bf1a553dfd06831f29ce51",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21-sources.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21-sources.jar"
             }
           },
           "commons_cli_commons_cli_jar_sources_1_6_0": {
