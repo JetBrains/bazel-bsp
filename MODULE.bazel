@@ -77,7 +77,7 @@ maven.install(
         "org.apache.logging.log4j:log4j-api:2.22.1",
         "org.apache.logging.log4j:log4j-core:2.22.1",
         "org.apache.velocity:velocity-engine-core:2.3",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
         "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
         "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
         "com.fasterxml.jackson.core:jackson-databind:2.16.1",
