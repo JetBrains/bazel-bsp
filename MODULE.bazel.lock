@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "ca884b4f890a01a1299537f33274920bc52782cbfd99214870b49fd81c500a3a",
+  "moduleFileHash": "45e71194487dd07bafa972530f11bbd8977d4b8e7368e7668d304eb1f3444454",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -120,7 +120,7 @@
                   "org.apache.logging.log4j:log4j-core:2.22.1",
                   "org.apache.velocity:velocity-engine-core:2.3",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
-                  "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
+                  "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
                   "com.fasterxml.jackson.core:jackson-databind:2.16.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1",
@@ -3382,7 +3382,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "54752136aa9dac02cb91df1739e44f7757449e13d1fb61211590064ab5e23f48",
+          "@@//:maven_install.json": "34bf2874ffb1bb66d901b0ee0db465fd23d806ebd5455d453a9042f749e07af2",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3412,6 +3412,20 @@
                 "https://maven.google.com/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar"
               ],
               "downloaded_file_path": "com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_1_8_0",
+              "sha256": "9860906a1937490bf5f3b06d2f0e10ef451e65b95b269f22daf68a3d1f5065c5",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0.jar"
             }
           },
           "io_kotest_kotest_assertions_api_jvm_jar_sources_5_8_0": {
@@ -3630,6 +3644,20 @@
               "downloaded_file_path": "ch/epfl/scala/bsp4j/2.2.0-M1/bsp4j-2.2.0-M1-sources.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_8_0",
+              "sha256": "451599ff2044e6a98f975b28d106891cc664ae69ad7a30c572dffb5413202179",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0-sources.jar"
+            }
+          },
           "com_fasterxml_jackson_core_jackson_core_2_15_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3819,20 +3847,6 @@
               "downloaded_file_path": "com/fasterxml/jackson/core/jackson-annotations/2.16.1/jackson-annotations-2.16.1.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_1_7_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_1_7_3",
-              "sha256": "1ab3acc38f3e7355c4f9d1ec62107a46fa73c899f3070d055e5d4373dfe67e12",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar"
-            }
-          },
           "org_jetbrains_annotations_jar_sources_23_0_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3985,7 +3999,7 @@
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.22.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.1\" }",
@@ -4302,20 +4316,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.20/kotlin-stdlib-jdk8-1.8.20.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.20/kotlin-stdlib-jdk8-1.8.20.jar"
-            }
-          },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_core_jar_sources_1_7_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_jar_sources_1_7_3",
-              "sha256": "86ce259182afe7dd82cfe97da50a736a6194a91cfe19b8336799890bbd0e81b1",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3-sources.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3-sources.jar"
             }
           },
           "software_amazon_awssdk_utils_2_20_128": {
@@ -5618,6 +5618,20 @@
               "downloaded_file_path": "com/fasterxml/jackson/core/jackson-databind/2.16.1/jackson-databind-2.16.1.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_coroutines_core_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_1_8_0",
+              "sha256": "20aa434b6a930ea66d2e61b00deefae09fea3d32f9640d2e0c271312880e0add",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar"
+            }
+          },
           "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6131,20 +6145,6 @@
               "downloaded_file_path": "org/apache/logging/log4j/log4j-core/2.22.1/log4j-core-2.22.1.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_core_1_7_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_1_7_3",
-              "sha256": "f9522095aedcc2a6ab32c7484061ea698352c71be1390adb403b59aa48a38fdc",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core/1.7.3/kotlinx-coroutines-core-1.7.3.jar"
-            }
-          },
           "com_google_errorprone_error_prone_annotations_2_18_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6301,7 +6301,7 @@
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.22.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.1\" }",
@@ -6438,6 +6438,20 @@
                 "https://maven.google.com/com/google/api/gax/2.32.0/gax-2.32.0.jar"
               ],
               "downloaded_file_path": "com/google/api/gax/2.32.0/gax-2.32.0.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_coroutines_core_jar_sources_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_jar_sources_1_8_0",
+              "sha256": "efbc32a6729c7f316c5348da147d42dacdfb1bc40ae3d661323ecf9ce0514c38",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0-sources.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0-sources.jar"
             }
           },
           "org_junit_jupiter_junit_jupiter_engine_5_10_2": {
@@ -6647,20 +6661,6 @@
                 "https://repo1.maven.org/maven2/org/mockito/mockito-core/4.3.1/mockito-core-4.3.1-sources.jar"
               ],
               "downloaded_file_path": "org/mockito/mockito-core/4.3.1/mockito-core-4.3.1-sources.jar"
-            }
-          },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_7_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_7_3",
-              "sha256": "efabad4b6a46957325d956487a226234f26c2f519cddfcb7480c61c79e3ad95b",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3-sources.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3-sources.jar"
             }
           },
           "io_grpc_grpc_api_1_61_1": {
