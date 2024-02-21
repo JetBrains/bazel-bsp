@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "4e2c1ba7791bb37479dad2b3d0fcb9ca26a1e9f4b234a5dbefdaec6b56f60a71",
+  "moduleFileHash": "f135a041a9461abd785eae37072c1f3cc16b83d4cb3dc4920027b12d69dcf542",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -121,7 +121,7 @@
                   "org.apache.velocity:velocity-engine-core:2.3",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
-                  "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2",
+                  "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
                   "com.fasterxml.jackson.core:jackson-databind:2.16.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1",
                   "com.google.protobuf:protobuf-java:3.25.3",
@@ -3382,7 +3382,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "ac8ba6ea3dbb08b2a9b88759786fd5818ababb7aa5eec87fd5b8d03407431e59",
+          "@@//:maven_install.json": "4d53eb1a4b39c07a440c1e3e4ff9098ca11f7d6529381752cfdeecb53d8dab94",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3986,7 +3986,7 @@
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.7.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.2\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
@@ -4182,6 +4182,20 @@
               "downloaded_file_path": "io/grpc/grpc-stub/1.56.1/grpc-stub-1.56.1.jar"
             }
           },
+          "com_google_protobuf_protobuf_java_jar_sources_3_25_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_jar_sources_3_25_3",
+              "sha256": "1bc9c4b7f5f5a89781ba06ca23ac651b979c3bfd93b2d60d8156ec2389017392",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar",
+                "https://maven.google.com/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar",
+                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar"
+              ],
+              "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar"
+            }
+          },
           "com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4194,20 +4208,6 @@
                 "https://repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
               ],
               "downloaded_file_path": "com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
-            }
-          },
-          "com_google_protobuf_protobuf_java_jar_sources_3_25_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_jar_sources_3_25_2",
-              "sha256": "cd428d36566e75c8d6079f70e0f3741eb12c33204fba732669669627e20d2ec7",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2-sources.jar",
-                "https://maven.google.com/com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2-sources.jar",
-                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2-sources.jar"
-              ],
-              "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2-sources.jar"
             }
           },
           "org_junit_jupiter_junit_jupiter_5_10_2": {
@@ -5317,6 +5317,20 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.2/kotlinx-serialization-json-1.6.2.jar"
             }
           },
+          "com_google_protobuf_protobuf_java_3_25_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_3_25_3",
+              "sha256": "e90d8ddb963b20a972a6a59b5093ade2b07cbe546cab3279aaf4383260385f58",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar",
+                "https://maven.google.com/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar",
+                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar"
+              ],
+              "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar"
+            }
+          },
           "org_junit_platform_junit_platform_reporting_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5329,20 +5343,6 @@
                 "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2.jar"
               ],
               "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2.jar"
-            }
-          },
-          "com_google_protobuf_protobuf_java_3_25_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_3_25_2",
-              "sha256": "cabe49981b86f5913b7fd130b4628e6ee11586e28ca069815d9744f929271902",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2.jar",
-                "https://maven.google.com/com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2.jar",
-                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2.jar"
-              ],
-              "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.2/protobuf-java-3.25.2.jar"
             }
           },
           "org_apache_maven_maven_artifact_3_9_4": {
@@ -6302,7 +6302,7 @@
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.7.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.2\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.1\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
