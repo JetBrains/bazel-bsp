@@ -1,8 +1,7 @@
-package org.jetbrains.bsp.bazel.server.sync
+package org.jetbrains.bsp.bazel.server.paths
 
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
-import org.jetbrains.bsp.bazel.server.sync.model.Label
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
@@ -75,12 +74,6 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     private fun isInExternalWorkspace(fileLocation: FileLocation): Boolean =
         fileLocation.rootExecutionPathFragment.startsWith("external/")
 
-    fun labelToDirectoryUri(label: Label): URI {
-        val isWorkspace = isRelativeWorkspacePath(label.value)
-        val path = if (isWorkspace) extractRelativePath(label.value) else extractExternalPath(label.value)
-        return pathToDirectoryUri(path, isWorkspace)
-    }
-
     fun pathToDirectoryUri(path: String, isWorkspace: Boolean = true): URI {
         val absolutePath = if (isWorkspace) {
             relativePathToWorkspaceAbsolute(path)
@@ -96,12 +89,12 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     fun relativePathToExecRootAbsolute(path: String): Path =
         Paths.get(bazelInfo.execRoot, path)
 
-    private fun isRelativeWorkspacePath(label: String): Boolean {
+    fun isRelativeWorkspacePath(label: String): Boolean {
         val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
         return label.startsWith(prefix)
     }
 
-    private fun extractExternalPath(label: String): String {
+    fun extractExternalPath(label: String): String {
         require(label[0] == '@')
         val externalName = label.substring(1)
         val externalSplit = externalName.split("//", limit = 2)

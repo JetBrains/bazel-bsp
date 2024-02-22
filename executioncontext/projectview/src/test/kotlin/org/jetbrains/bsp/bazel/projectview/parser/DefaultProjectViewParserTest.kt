@@ -9,6 +9,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsS
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.BeforeEach
@@ -164,6 +165,7 @@ class DefaultProjectViewParserTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
+                enabledRules = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -207,6 +209,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -258,6 +261,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -307,6 +311,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(7),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -347,6 +352,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(8),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -403,6 +409,7 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(3),
+                enabledRules = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -464,7 +471,33 @@ class DefaultProjectViewParserTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
+                enabledRules = null,
             )
+            projectView shouldBe expectedProjectView
+        }
+
+
+        @Test
+        fun `should parse enabled rules`() {
+            // given
+            val projectViewFilePath = Path("/projectview/enabled.bazelproject")
+
+            // when
+            val projectView = parser.parse(projectViewFilePath)
+
+            // then
+
+            val expectedProjectView = ProjectView(
+                targets = null,
+                bazelBinary = null,
+                buildFlags = null,
+                buildManualTargets = null,
+                directories = null,
+                deriveTargetsFromDirectories = null,
+                importDepth = null,
+                enabledRules = ProjectViewEnabledRulesSection(listOf("io_bazel_rules_scala", "rules_jvm", "rules_java")),
+            )
+
             projectView shouldBe expectedProjectView
         }
     }

@@ -71,7 +71,7 @@ class ProjectResolver(
     ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
     return measured(
       "Mapping to internal model"
-    ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext) }
+    ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }
   }
 
   private fun buildProjectWithAspect(cancelChecker: CancelChecker, workspaceContext: WorkspaceContext): BazelBspAspectsManagerResult =

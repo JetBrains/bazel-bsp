@@ -23,8 +23,8 @@ class BazelProcess internal constructor(
                 if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
                 else AsyncOutputProcessor(process, logger::message, LOGGER::info)
             } else {
-                if (ensureAllOutputRead) SyncOutputProcessor(process)
-                else AsyncOutputProcessor(process)
+                if (ensureAllOutputRead) SyncOutputProcessor(process, LOGGER::info)
+                else AsyncOutputProcessor(process, LOGGER::info)
             }
 
         val exitCode = outputProcessor.waitForExit(cancelChecker)
@@ -34,7 +34,7 @@ class BazelProcess internal constructor(
     }
 
     private fun logCompletion(exitCode: Int, duration: Duration) {
-        logger?.withOriginId(originId)
+        logger?.copy(originId = originId)
             ?.message("Command completed in %s (exit code %d)", Format.duration(duration), exitCode)
     }
 

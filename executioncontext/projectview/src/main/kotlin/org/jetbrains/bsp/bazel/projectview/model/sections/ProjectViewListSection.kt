@@ -11,3 +11,11 @@ data class ProjectViewBuildFlagsSection(override val values: List<String>) :
         const val SECTION_NAME = "build_flags"
     }
 }
+
+data class ProjectViewEnabledRulesSection(override val values: List<String>) :
+    ProjectViewListSection<String>(SECTION_NAME) {
+
+    companion object {
+        const val SECTION_NAME = "enabled_rules"
+    }
+}

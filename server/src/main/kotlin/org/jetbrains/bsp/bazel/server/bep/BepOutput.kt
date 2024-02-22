@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bep
 
 import com.google.common.collect.Queues
-import java.net.URI
+import java.nio.file.Path
 
 class BepOutput(
     private val outputGroups: Map<String, Set<String>> = emptyMap(),
@@ -12,12 +12,12 @@ class BepOutput(
         return rootTargets
     }
 
-    fun filesByOutputGroupNameTransitive(outputGroup: String): Set<URI> {
+    fun filesByOutputGroupNameTransitive(outputGroup: String): Set<Path> {
         val rootIds = outputGroups.getOrDefault(outputGroup, emptySet())
         if (rootIds.isEmpty()) {
             return emptySet()
         }
-        val result = HashSet<URI>(rootIds.size)
+        val result = HashSet<Path>(rootIds.size)
         val toVisit = Queues.newArrayDeque(rootIds)
         val visited = HashSet<String>(rootIds.size)
         while (!toVisit.isEmpty()) {

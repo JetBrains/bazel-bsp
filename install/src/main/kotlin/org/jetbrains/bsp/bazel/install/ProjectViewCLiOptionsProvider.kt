@@ -10,6 +10,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsS
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import java.nio.file.Path
@@ -32,6 +33,7 @@ object ProjectViewCLiOptionsProvider {
             deriveTargetsFromDirectories = toDeriveTargetFlagSection(projectViewCliOptions),
             importDepth = toImportDepthSection(projectViewCliOptions),
             buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
+            enabledRules = toEnabledRulesSection(projectViewCliOptions),
         )
 
     private fun toBazelBinarySection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelBinarySection? =
@@ -78,6 +80,9 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toBuildFlagsSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBuildFlagsSection? =
         projectViewCliOptions?.buildFlags?.let { ProjectViewBuildFlagsSection(it) }
+
+    private fun toEnabledRulesSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewEnabledRulesSection? =
+        projectViewCliOptions?.enabledRules?.let { ProjectViewEnabledRulesSection(it) }
 
     private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFromDirectoriesSection? =
         projectViewCliOptions?.deriveTargetsFromDirectories?.let(::ProjectViewDeriveTargetsFromDirectoriesSection)

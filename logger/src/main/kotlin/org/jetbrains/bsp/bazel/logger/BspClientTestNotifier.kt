@@ -14,9 +14,7 @@ import ch.epfl.scala.bsp4j.TestStart
 import ch.epfl.scala.bsp4j.TestStatus
 import ch.epfl.scala.bsp4j.TestTask
 
-class BspClientTestNotifier {
-  private lateinit var bspClient: BuildClient
-
+class BspClientTestNotifier(private val bspClient: BuildClient) {
   /**
    * Notifies the client about starting a single test or a test suite
    *
@@ -91,10 +89,6 @@ class BspClientTestNotifier {
     taskFinishParams.dataKind = TaskFinishDataKind.TEST_REPORT
     taskFinishParams.data = testReport
     bspClient.onBuildTaskFinish(taskFinishParams)
-  }
-
-  fun initialize(buildClient: BuildClient) {
-    bspClient = buildClient
   }
 
   companion object {

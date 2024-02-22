@@ -6,7 +6,7 @@ import ch.epfl.scala.bsp4j.CppBuildTarget
 import ch.epfl.scala.bsp4j.CppOptionsItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin

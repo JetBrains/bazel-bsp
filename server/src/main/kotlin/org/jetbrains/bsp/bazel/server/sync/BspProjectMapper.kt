@@ -60,6 +60,7 @@ import org.jetbrains.bsp.WorkspaceLibrariesResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.java.IdeClasspathResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
@@ -75,14 +76,15 @@ import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.name
+import kotlin.io.path.relativeToOrNull
 import kotlin.io.path.toPath
 
 class BspProjectMapper(
-        private val languagePluginsService: LanguagePluginsService,
-        private val workspaceContextProvider: WorkspaceContextProvider,
-        private val bazelPathsResolver: BazelPathsResolver,
-        private val bazelRunner: BazelRunner,
-        private val bspInfo: BspInfo,
+  private val languagePluginsService: LanguagePluginsService,
+  private val workspaceContextProvider: WorkspaceContextProvider,
+  private val bazelPathsResolver: BazelPathsResolver,
+  private val bazelRunner: BazelRunner,
+  private val bspInfo: BspInfo,
 ) {
 
     fun initializeServer(supportedLanguages: Set<Language>): InitializeBuildResult {
@@ -185,7 +187,8 @@ class BspProjectMapper(
         val canCompile = !module.tags.contains(Tag.NO_BUILD) && isBuildableIfManual(module)
         val canTest = module.tags.contains(Tag.TEST) && !module.tags.contains(Tag.MANUAL)
         val canRun = module.tags.contains(Tag.APPLICATION) && !module.tags.contains(Tag.MANUAL)
-        return BuildTargetCapabilities().also { it.canCompile = canCompile; it.canTest = canTest; it.canRun = canRun; it.canDebug = false }
+        val canDebug = canRun || canTest // runnable and testable targets should be debuggable
+        return BuildTargetCapabilities().also { it.canCompile = canCompile; it.canTest = canTest; it.canRun = canRun; it.canDebug = canDebug }
     }
 
     private fun isBuildableIfManual(module: Module): Boolean =
@@ -243,13 +246,13 @@ class BspProjectMapper(
     }
 
     fun inverseSources(
-        project: Project, inverseSourcesParams: InverseSourcesParams
+        project: Project, inverseSourcesParams: InverseSourcesParams, cancelChecker: CancelChecker
     ): InverseSourcesResult {
         val documentUri = BspMappings.toUri(inverseSourcesParams.textDocument)
-        val targets = project.findTargetBySource(documentUri)
-            ?.let { listOf(BspMappings.toBspId(it)) }
-            .orEmpty()
-        return InverseSourcesResult(targets)
+        val documentRelativePath = documentUri
+            .toPath()
+            .relativeToOrNull(project.workspaceRoot.toPath()) ?: throw RuntimeException("File path outside of project root")
+        return InverseSourcesQuery.inverseSourcesQuery(documentRelativePath, bazelRunner, project.bazelRelease, cancelChecker)
     }
 
     fun dependencySources(

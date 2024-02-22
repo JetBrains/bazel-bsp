@@ -18,6 +18,7 @@ data class ProjectViewCliOptions internal constructor(
         val deriveTargetsFromDirectories: Boolean?,
         val importDepth: Int?,
         val produceTraceLog: Boolean?,
+        val enabledRules: List<String>?,
 )
 
 data class CliOptions internal constructor(

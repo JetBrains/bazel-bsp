@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.thrift
 import ch.epfl.scala.bsp4j.BuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import java.net.URI

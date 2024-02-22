@@ -1,4 +1,7 @@
-module(name = "bazel_bsp", version = "")
+module(
+    name = "bazel_bsp",
+    version = "",
+)
 
 bazel_dep(name = "bazel_skylib", version = "1.5.0")
 bazel_dep(name = "rules_kotlin", version = "1.9.0")
@@ -10,18 +13,17 @@ use_repo(
     "bazel_bep",
 )
 
-bazel_dep(name = "rules_java", version = "7.3.2")
+bazel_dep(name = "rules_java", version = "7.4.0")
 bazel_dep(name = "rules_proto", version = "5.3.0-21.7")
 bazel_dep(name = "rules_cc", version = "0.0.9")
 bazel_dep(name = "platforms", version = "0.0.8")
-bazel_dep(name = "rules_python", version = "0.28.0")
+bazel_dep(name = "rules_python", version = "0.31.0")
 
 bazel_dep(
     name = "bsp-testkit2",
-    repo_name = "testkit",
     dev_dependency = True,
+    repo_name = "testkit",
 )
-
 git_override(
     module_name = "bsp-testkit2",
     commit = "8ca184e8dc543c01b121a2535371c65dcf3c9e57",
@@ -30,7 +32,7 @@ git_override(
 
 bazel_dep(
     name = "rules_bazel_integration_test",
-    version = "0.22.0",
+    version = "0.23.0",
     dev_dependency = True,
 )
 
@@ -39,14 +41,17 @@ bazel_binaries = use_extension(
     "bazel_binaries",
     dev_dependency = True,
 )
-bazel_binaries.download(version_file = "//:.bazelversion")
+
+# test project are too old for bazel 7
+# bazel_binaries.download(version_file = "//:.bazelversion")
 bazel_binaries.download(version = "6.4.0")
 bazel_binaries.download(version = "5.3.2")
 use_repo(
     bazel_binaries,
     "bazel_binaries",
     "bazel_binaries_bazelisk",
-    "build_bazel_bazel_.bazelversion",
+    # test project are too old for bazel 7
+    #     "build_bazel_bazel_.bazelversion",
     "build_bazel_bazel_5_3_2",
     "build_bazel_bazel_6_4_0",
 )
@@ -56,8 +61,8 @@ bazel_dep(name = "rules_jvm_external", version = "5.3")
 # Required until there's a new release
 git_override(
     module_name = "rules_jvm_external",
-    remote = "https://github.com/bazelbuild/rules_jvm_external.git",
     commit = "679348a8da17a9f3954fb2cab10a95d5a5848c85",
+    remote = "https://github.com/bazelbuild/rules_jvm_external.git",
 )
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -72,35 +77,30 @@ maven.install(
         "org.apache.logging.log4j:log4j-api:2.22.1",
         "org.apache.logging.log4j:log4j-core:2.22.1",
         "org.apache.velocity:velocity-engine-core:2.3",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3",
-        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2",
-        "org.junit.jupiter:junit-jupiter:5.10.1",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
         "com.fasterxml.jackson.core:jackson-databind:2.16.1",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1",
-        "com.google.protobuf:protobuf-java:3.25.2",
-        "io.grpc:grpc-stub:1.61.0",
-        "io.grpc:grpc-protobuf:1.61.0",
+        "com.google.protobuf:protobuf-java:3.25.3",
+        "io.grpc:grpc-stub:1.61.1",
+        "io.grpc:grpc-protobuf:1.61.1",
 
         # tests
-        "org.junit.jupiter:junit-jupiter-api:5.10.1",
-        "org.junit.jupiter:junit-jupiter-engine:5.10.1",
-        "org.junit.jupiter:junit-jupiter-params:5.10.1",
-        "org.junit.platform:junit-platform-console:1.10.1",
+        "org.junit.jupiter:junit-jupiter:5.10.2",
+        "org.junit.platform:junit-platform-console:1.10.2",
         "io.kotest:kotest-assertions-api-jvm:5.8.0",
         "io.kotest:kotest-assertions-core-jvm:5.8.0",
         "io.kotest:kotest-assertions-shared-jvm:5.8.0",
         "io.kotest:kotest-common-jvm:5.8.0",
     ],
+    fail_if_repin_required = True,
     fetch_sources = True,
     lock_file = "//:maven_install.json",
-    fail_if_repin_required = True,
     repositories = [
-        "https://maven.google.com",
         "https://repo.maven.apache.org/maven2",
     ],
 )
-
 use_repo(
     maven,
     "maven",

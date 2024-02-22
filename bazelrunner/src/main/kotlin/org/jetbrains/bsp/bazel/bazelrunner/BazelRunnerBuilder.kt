@@ -28,7 +28,7 @@ open class BazelRunnerBuilder internal constructor(
     }
 
     fun withFlags(bazelFlags: List<String>?): BazelRunnerBuilder {
-        flags.addAll(bazelFlags!!)
+        flags.addAll(bazelFlags.orEmpty())
         return this
     }
 
@@ -38,7 +38,7 @@ open class BazelRunnerBuilder internal constructor(
     }
 
     fun withArguments(bazelArguments: List<String>?): BazelRunnerBuilder {
-        arguments.addAll(bazelArguments!!)
+        arguments.addAll(bazelArguments.orEmpty())
         return this
     }
 
@@ -90,8 +90,8 @@ open class BazelRunnerBuilder internal constructor(
         return this
     }
 
-    fun withEnvironment(environmentVariable: Pair<String, String>): BazelRunnerBuilder {
-        environmentVariables.putAll(listOf(environmentVariable))
+    fun withEnvironment(environment: List<Pair<String, String>>): BazelRunnerBuilder {
+        environmentVariables.putAll(environment)
         return this
     }
 

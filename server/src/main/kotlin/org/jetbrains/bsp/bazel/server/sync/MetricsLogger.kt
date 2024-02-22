@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import java.util.concurrent.ConcurrentHashMap
 
-class MetricsLogger(val logMemory: Boolean) {
+class MetricsLogger(private val logMemory: Boolean) {
 
     private val logs: ConcurrentHashMap<String, Long> = ConcurrentHashMap()
 

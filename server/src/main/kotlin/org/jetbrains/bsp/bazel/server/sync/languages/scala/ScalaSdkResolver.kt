@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.scala
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.nio.file.Path
 import java.util.regex.Pattern
 import kotlin.math.min

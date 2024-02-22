@@ -16,7 +16,7 @@ enum class Language(private val fileName: String, val ruleNames: List<String>, v
   Cpp("//aspects:rules/cpp/cpp_info.bzl", listOf("rules_cc"), listOf("extract_cpp_info"), false),
   Kotlin("//aspects:rules/kt/kt_info.bzl", listOf("io_bazel_rules_kotlin", "rules_kotlin"), listOf("extract_kotlin_info"), true),
   Rust("//aspects:rules/rust/rust_info.bzl", listOf("rules_rust"), listOf("extract_rust_crate_info"), false),
-  Android("//aspects:rules/android/android_info.bzl", listOf(), listOf("extract_android_sdk_info"), false),
+  Android("//aspects:rules/android/android_info.bzl", listOf(), listOf("extract_android_info"), false),
   Go("//aspects:rules/go/go_info.bzl", listOf("io_bazel_rules_go"), listOf("extract_go_info"), false);
 
   fun toLoadStatement(): String =

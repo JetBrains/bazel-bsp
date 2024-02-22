@@ -2,23 +2,17 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import com.google.common.hash.Hashing
 import com.google.devtools.build.lib.view.proto.Deps
-import java.net.URI
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.exists
-import kotlin.io.path.name
-import kotlin.io.path.notExists
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
@@ -31,6 +25,14 @@ import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
+import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.exists
+import kotlin.io.path.name
+import kotlin.io.path.notExists
 
 class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
@@ -48,7 +50,8 @@ class BazelProjectMapper(
     targets: Map<String, TargetInfo>,
     rootTargets: Set<String>,
     allTargetNames: List<String>,
-    workspaceContext: WorkspaceContext
+    workspaceContext: WorkspaceContext,
+    bazelInfo: BazelInfo
   ): Project {
     languagePluginsService.prepareSync(targets.values.asSequence())
     val dependencyTree = measure("Build dependency tree") {
@@ -69,15 +72,11 @@ class BazelProjectMapper(
     val scalaLibrariesMapper = measure("Create scala libraries") {
       calculateScalaLibrariesMapper(targetsToImport)
     }
-    val androidSdkLibrariesMapper = measure("Create Android SDK libraries") {
-      calculateAndroidSdkLibrariesMapper(targetsToImport)
-    }
     val librariesFromDeps = measure("Merge libraries from deps") {
       concatenateMaps(
         annotationProcessorLibraries,
         kotlinStdlibsMapper,
         scalaLibrariesMapper,
-        androidSdkLibrariesMapper,
       )
     }
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
@@ -106,7 +105,7 @@ class BazelProjectMapper(
       createRustExternalModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
     }
     val allModules = modulesFromBazel + rustExternalModules
-    return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets)
+    return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets, bazelInfo.release)
   }
 
   private fun <K, V> concatenateMaps(vararg maps: Map<K, List<V>>): Map<K, List<V>> =
@@ -196,32 +195,6 @@ class BazelProjectMapper(
       ?.compilerJars
       ?.toSet().orEmpty()
 
-  private fun calculateAndroidSdkLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
-    val projectLevelAndroidSdkLibraries = calculateProjectLevelAndroidSdkLibraries(targetsToImport) ?: return emptyMap()
-    val androidTargetsIds = targetsToImport.filter { it.hasAndroidSdkInfo() }.map { it.id }
-    return androidTargetsIds.associateWith { listOf(projectLevelAndroidSdkLibraries) }
-  }
-
-  private fun calculateProjectLevelAndroidSdkLibraries(targetsToImport: Sequence<TargetInfo>): Library? {
-    val androidSdkLibrariesJars = calculateProjectLevelAndroidSdkLibrariesJars(targetsToImport)
-
-    return if (androidSdkLibrariesJars.isNotEmpty()) {
-      Library(
-        label = "android_sdk_libraries",
-        outputs = androidSdkLibrariesJars,
-        sources = emptySet(),
-        dependencies = emptyList(),
-      )
-    } else null
-  }
-
-  private fun calculateProjectLevelAndroidSdkLibrariesJars(targetsToImport: Sequence<TargetInfo>): Set<URI> =
-    targetsToImport
-      .filter { it.hasAndroidSdkInfo() }
-      .map { it.androidSdkInfo.androidJar }
-      .map { bazelPathsResolver.resolve(it).toUri() }
-      .toSet()
-
   /**
    * In some cases, the jar dependencies of a target might be injected by bazel or rules and not are not
    * available via `deps` field of a target. For this reason, we read JavaOutputInfo's jdeps file and
@@ -307,7 +280,7 @@ class BazelProjectMapper(
 
   private fun targetSupportsJdeps(targetInfo: TargetInfo): Boolean {
     val languages = inferLanguages(targetInfo)
-    return setOf(Language.JAVA, Language.KOTLIN, Language.SCALA).containsAll(languages)
+    return setOf(Language.JAVA, Language.KOTLIN, Language.SCALA, Language.ANDROID).containsAll(languages)
   }
 
   private fun syntheticLabel(lib: String): String {
@@ -389,6 +362,8 @@ class BazelProjectMapper(
         "rust_test",
         "rust_doc",
         "rust_doc_test",
+        "android_library",
+        "android_binary",
       )
         )
 
@@ -422,7 +397,7 @@ class BazelProjectMapper(
     val directDependencies = resolveDirectDependencies(target) + extraLibraries.map { Label(it.label) }
     val languages = inferLanguages(target)
     val tags = targetKindResolver.resolveTags(target)
-    val baseDirectory = bazelPathsResolver.labelToDirectoryUri(label)
+    val baseDirectory = label.toDirectoryUri()
     val languagePlugin = languagePluginsService.getPlugin(languages)
     val sourceSet = resolveSourceSet(target, languagePlugin)
     val resources = resolveResources(target)
@@ -446,16 +421,25 @@ class BazelProjectMapper(
   }
 
   private fun resolveDirectDependencies(target: TargetInfo): List<Label> =
-    target.dependenciesList.map { Label(it.id) }
+    target.dependenciesList.map { Label(it.id) } + resolveAndroidDependencies(target)
 
-  private fun inferLanguages(target: TargetInfo): Set<Language> =
-    if (target.sourcesList.isEmpty()) {
-      Language.all().filter { isBinaryTargetOfLanguage(target.kind, it) }.toHashSet()
-    } else {
-      target.sourcesList.flatMap { source: FileLocation ->
-        Language.all().filter { isLanguageFile(source, it) }
-      }.toHashSet()
-    }
+  private fun resolveAndroidDependencies(target: TargetInfo): List<Label> {
+    if (!target.hasAndroidTargetInfo()) return emptyList()
+    val kotlinTargetId = target.androidTargetInfo.kotlinTargetId
+    if (kotlinTargetId.isEmpty()) return emptyList()
+    return listOf(Label(kotlinTargetId))
+  }
+
+  private fun inferLanguages(target: TargetInfo): Set<Language> {
+    val languagesForTarget = Language.all().filter { isBinaryTargetOfLanguage(target.kind, it) }.toHashSet()
+    val languagesForSources = target.sourcesList.flatMap { source: FileLocation ->
+      Language.all().filter { isLanguageFile(source, it) }
+    }.toHashSet()
+    val languagesForDependencies = target.dependenciesList.flatMap { dependency ->
+      Language.all().filter { isDependencyOfLanguage(dependency, it) }
+    }.toHashSet()
+    return languagesForTarget + languagesForSources + languagesForDependencies
+  }
 
   private fun isLanguageFile(file: FileLocation, language: Language): Boolean =
     language.extensions.any {
@@ -463,7 +447,16 @@ class BazelProjectMapper(
     }
 
   private fun isBinaryTargetOfLanguage(kind: String, language: Language): Boolean =
-    language.binary_targets.contains(kind)
+    language.binaryTargets.contains(kind)
+
+  private fun isDependencyOfLanguage(dependency: Dependency, language: Language): Boolean =
+    language.dependencyRegex?.matches(dependency.id) == true
+
+  private fun Label.toDirectoryUri(): URI {
+    val isWorkspace = bazelPathsResolver.isRelativeWorkspacePath(value)
+    val path = if (isWorkspace) bazelPathsResolver.extractRelativePath(value) else bazelPathsResolver.extractExternalPath(value)
+    return bazelPathsResolver.pathToDirectoryUri(path, isWorkspace)
+  }
 
   private fun resolveSourceSet(target: TargetInfo, languagePlugin: LanguagePlugin<*>): SourceSet {
     val sources = target.sourcesList.toSet()
@@ -483,7 +476,16 @@ class BazelProjectMapper(
   }
 
   private fun resolveResources(target: TargetInfo): Set<URI> =
-    bazelPathsResolver.resolveUris(target.resourcesList).toSet()
+    bazelPathsResolver.resolveUris(target.resourcesList).toSet() + resolveAndroidResources(target)
+
+  private fun resolveAndroidResources(target: TargetInfo): Set<URI> {
+    if (!target.hasAndroidTargetInfo()) return emptySet()
+    val androidTargetInfo = target.androidTargetInfo
+    if (!androidTargetInfo.hasManifest()) return emptySet()
+
+    return bazelPathsResolver
+      .resolveUris(listOf(target.androidTargetInfo.manifest) + target.androidTargetInfo.resourcesList).toSet()
+  }
 
   private fun buildReverseSourceMapping(modules: Sequence<Module>): Map<URI, Label> =
     modules.flatMap(::buildReverseSourceMappingForModule).toMap()

@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
+import org.jetbrains.bsp.bazel.workspacecontext.EnabledRulesSpec
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 import javax.xml.xpath.XPathConstants
@@ -13,17 +14,26 @@ interface BazelExternalRulesQuery {
   fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String>
 }
 
+class BazelEnabledRulesQueryImpl(
+        private val enabledRulesSpec: EnabledRulesSpec,
+) : BazelExternalRulesQuery {
+  override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =
+    enabledRulesSpec.values
+}
+
 class BazelExternalRulesQueryImpl(
   private val bazelRunner: BazelRunner,
-  private val isBzlModEnabled: Boolean
+  private val isBzlModEnabled: Boolean,
+  private val enabledRules: EnabledRulesSpec
 ) : BazelExternalRulesQuery {
-  override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> = when (isBzlModEnabled) {
-    true -> BazelBzlModExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker) +
-      BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
-
-    false -> BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
-  }
+    override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> = when {
+        enabledRules.isNotEmpty() -> BazelEnabledRulesQueryImpl(enabledRules).fetchExternalRuleNames(cancelChecker)
+        isBzlModEnabled -> BazelBzlModExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker) +
+                BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
+        else -> BazelWorkspaceExternalRulesQueryImpl(bazelRunner).fetchExternalRuleNames(cancelChecker)
+    }
 }
+
 
 class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelExternalRulesQuery {
   override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =

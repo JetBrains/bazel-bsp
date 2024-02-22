@@ -1,9 +1,10 @@
 package configurations.bazelBsp
 
-import configurations.BaseConfiguration
+import configurations.BaseBuildType
+import configurations.BazelBspVcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
 
-object UnitTests : BaseConfiguration.BaseBuildType(
+object UnitTests : BaseBuildType(
         name = "[unit tests] unit tests //...",
         setupSteps = true,
         steps = {
@@ -15,7 +16,7 @@ object UnitTests : BaseConfiguration.BaseBuildType(
                 param("toolPath", "/usr/local/bin")
             }
         },
-        vcsRoot = BaseConfiguration.BazelBspVcs,
+        vcsRoot = BazelBspVcs,
         requirements =  {
             contains("cloud.amazon.agent-name-prefix", "Linux-Medium")
         }

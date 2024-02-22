@@ -41,7 +41,7 @@ object BazelBspRemoteJdkTest : BazelBspTestBaseScenario() {
             listOf("application"),
             listOf("java"),
             emptyList(),
-            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = false }
+            BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
         exampleExampleBuildTarget.baseDirectory = "file://\$WORKSPACE/example/"

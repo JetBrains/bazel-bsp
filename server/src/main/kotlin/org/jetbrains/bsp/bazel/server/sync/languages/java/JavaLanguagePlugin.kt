@@ -7,7 +7,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
@@ -15,8 +15,8 @@ import java.net.URI
 import java.nio.file.Path
 
 class JavaLanguagePlugin(
-    private val bazelPathsResolver: BazelPathsResolver,
-    private val jdkResolver: JdkResolver,
+  private val bazelPathsResolver: BazelPathsResolver,
+  private val jdkResolver: JdkResolver,
 ) : LanguagePlugin<JavaModule>() {
     private var jdk: Jdk? = null
 
@@ -80,12 +80,11 @@ class JavaLanguagePlugin(
     }
 
     private fun javaVersionFromJavacOpts(javacOpts: List<String>): String? =
-        javacOpts.mapNotNull {
+        javacOpts.firstNotNullOfOrNull {
             val flagName = it.substringBefore(' ')
             val argument = it.substringAfter(' ')
             if (flagName == "-target" || flagName == "--target" || flagName == "--release") argument else null
-        }.firstOrNull()
-
+        }
 
     fun toJvmBuildTarget(javaModule: JavaModule): JvmBuildTarget {
         val jdk = javaModule.jdk

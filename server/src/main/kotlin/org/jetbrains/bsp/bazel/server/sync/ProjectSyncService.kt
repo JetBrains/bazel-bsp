@@ -87,7 +87,7 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
     inverseSourcesParams: InverseSourcesParams
   ): InverseSourcesResult {
     val project = projectProvider.get(cancelChecker)
-    return bspMapper.inverseSources(project, inverseSourcesParams)
+    return bspMapper.inverseSources(project, inverseSourcesParams, cancelChecker)
   }
 
   fun buildTargetDependencySources(

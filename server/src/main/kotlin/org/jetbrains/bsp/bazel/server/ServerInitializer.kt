@@ -59,8 +59,9 @@ object ServerInitializer {
                 createTraceWriterOrNull(traceFile, cliArgs.produceTraceLog)
             )
             val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), null)
-            bspServer.startServer(bspIntegrationData)
-            bspIntegrationData.launcher.startListening().get()
+            val launcher = bspServer.buildServer(bspIntegrationData)
+            val client = launcher.remoteProxy
+            launcher.startListening().get()
         } catch (e: Exception) {
             e.printStackTrace(System.err)
             hasErrors = true

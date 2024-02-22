@@ -15,15 +15,11 @@ import java.util.function.Function
 
 class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
     fun <T, R> handleRequest(
-        methodName: String, function: BiFunction<CancelChecker?, T, R>, arg: T,
+        methodName: String, function: BiFunction<CancelChecker, T, R>, arg: T,
     ): CompletableFuture<R> {
         LOGGER.info("{} call with param: {}", methodName, arg)
-        return serverIsRunning<R>(methodName)
-            ?: runAsync(
-                methodName,
-                Function { cancelChecker: CancelChecker? -> function.apply(cancelChecker, arg) })
+        return serverIsRunning(methodName) ?: runAsync(methodName) { function.apply(it, arg) }
     }
-
 
     fun <R> handleRequest(
         methodName: String, supplier: Function<CancelChecker, R>,
@@ -43,13 +39,13 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
     fun <R> handleRequest(
         methodName: String,
         supplier: Function<CancelChecker, R>,
-        precondition: Function<String?, CompletableFuture<R>?>,
+        precondition: Function<String, CompletableFuture<R>?>,
     ): CompletableFuture<R> {
         LOGGER.info("{} call", methodName)
         return precondition.apply(methodName) ?: runAsync(methodName, supplier)
     }
 
-    fun <T> serverIsRunning(methodName: String): CompletableFuture<T>? =
+    private fun <T> serverIsRunning(methodName: String): CompletableFuture<T>? =
         serverIsInitialized(methodName) ?: serverIsNotFinished(methodName)
 
     fun <T> serverIsInitialized(methodName: String): CompletableFuture<T>? =
@@ -95,12 +91,12 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
     }
 
     private fun <T> failure(methodName: String, error: ResponseError): CompletableFuture<T> {
-        LOGGER.error("{} call finishing with error: {}", methodName, error.message)
+        LOGGER.error("{} call finishing with error: {}", methodName, error)
         return CompletableFuture.failedFuture(ResponseErrorException(error))
     }
 
     private fun <T> failure(methodName: String, throwable: Throwable): CompletableFuture<T> {
-        LOGGER.error("{} call finishing with error: {}", methodName, throwable.message)
+        LOGGER.error("$methodName call finishing with error", throwable)
         if (throwable is ResponseErrorException) {
             return CompletableFuture.failedFuture(throwable)
         }

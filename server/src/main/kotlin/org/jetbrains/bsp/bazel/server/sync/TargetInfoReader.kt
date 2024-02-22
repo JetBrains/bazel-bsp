@@ -2,19 +2,10 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import com.google.protobuf.Message
 import com.google.protobuf.TextFormat
-import java.net.URI
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.attribute.FileTime
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.getLastModifiedTime
-import kotlin.io.path.name
-import kotlin.io.path.toPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidSdkInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.CppTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.GoTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JavaRuntimeInfo
@@ -26,6 +17,15 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaToolchainInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.attribute.FileTime
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.getLastModifiedTime
+import kotlin.io.path.name
 
 class TargetInfoReader {
 
@@ -36,7 +36,7 @@ class TargetInfoReader {
     private val cache: ConcurrentHashMap<URI, CachedTargetInfo> = ConcurrentHashMap()
 
 
-    fun readTargetMapFromAspectOutputs(files: Set<URI>): Map<String, TargetInfo> {
+    fun readTargetMapFromAspectOutputs(files: Set<Path>): Map<String, TargetInfo> {
         val builderMap = ConcurrentHashMap<String, TargetInfo.Builder>()
         runBlocking(Dispatchers.IO) {
             files.asFlow().collect { addExtensionInfo(it, builderMap) }
@@ -52,8 +52,7 @@ class TargetInfoReader {
             .mapValues { it.value.find(TargetInfo::hasJvmTargetInfo) ?: it.value.first() }
     }
 
-    private fun addExtensionInfo(uri: URI, builderMap: ConcurrentHashMap<String, TargetInfo.Builder>) {
-        val path = uri.toPath()
+    private fun addExtensionInfo(path: Path, builderMap: ConcurrentHashMap<String, TargetInfo.Builder>) {
         val cleanPathName = path.name.substringBefore(".bsp-info.textproto")
 
         val targetPathPrefix = "${path.parent}/${cleanPathName.substringBeforeLast('.')}"
@@ -61,70 +60,70 @@ class TargetInfoReader {
         val ruleName = cleanPathName.substringAfterLast('.')
 
         val builder = builderMap.getOrPut(targetPathPrefix) { TargetInfo.newBuilder() }
-        addExtensionInfoToTarget(ruleName, uri, builder)
+        addExtensionInfoToTarget(ruleName, path, builder)
     }
 
     private fun addExtensionInfoToTarget(
-        extensionName: String, uri: URI, targetInfoBuilder: TargetInfo.Builder
+        extensionName: String, path: Path, targetInfoBuilder: TargetInfo.Builder
     ): TargetInfo.Builder = when (extensionName) {
         "jvm_target_info" -> {
-            val builder = readFromFile(uri, JvmTargetInfo.newBuilder())
+            val builder = readFromFile(path, JvmTargetInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setJvmTargetInfo(info)
         }
 
         "scala_target_info" -> {
-            val builder = readFromFile(uri, ScalaTargetInfo.newBuilder())
+            val builder = readFromFile(path, ScalaTargetInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setScalaTargetInfo(info)
         }
 
         "scala_toolchain_info" -> {
-            val builder = readFromFile(uri, ScalaToolchainInfo.newBuilder())
+            val builder = readFromFile(path, ScalaToolchainInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setScalaToolchainInfo(info)
         }
 
         "kotlin_target_info" -> {
-            val builder = readFromFile(uri, KotlinTargetInfo.newBuilder())
+            val builder = readFromFile(path, KotlinTargetInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setKotlinTargetInfo(info)
         }
 
         "cpp_target_info" -> {
-            val builder = readFromFile(uri, CppTargetInfo.newBuilder())
+            val builder = readFromFile(path, CppTargetInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setCppTargetInfo(info)
         }
 
         "python_target_info" -> {
-            val builder = readFromFile(uri, PythonTargetInfo.newBuilder())
+            val builder = readFromFile(path, PythonTargetInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setPythonTargetInfo(info)
         }
 
         "java_runtime_info" -> {
-            val builder: JavaRuntimeInfo.Builder = readFromFile(uri, JavaRuntimeInfo.newBuilder())
+            val builder: JavaRuntimeInfo.Builder = readFromFile(path, JavaRuntimeInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setJavaRuntimeInfo(info)
         }
 
         "java_toolchain_info" -> {
-            val builder: JavaToolchainInfo.Builder = readFromFile(uri, JavaToolchainInfo.newBuilder())
+            val builder: JavaToolchainInfo.Builder = readFromFile(path, JavaToolchainInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setJavaToolchainInfo(info)
         }
 
         "rust_crate_info" -> {
-            val builder = readFromFile(uri, RustCrateInfo.newBuilder())
+            val builder = readFromFile(path, RustCrateInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setRustCrateInfo(info)
         }
 
-        "android_sdk_info" -> {
-            val builder = readFromFile(uri, AndroidSdkInfo.newBuilder())
+        "android_target_info" -> {
+            val builder = readFromFile(path, AndroidTargetInfo.newBuilder())
             val info = builder.build()
-            targetInfoBuilder.setAndroidSdkInfo(info)
+            targetInfoBuilder.setAndroidTargetInfo(info)
         }
 
         "go_target_info" -> {
@@ -134,7 +133,7 @@ class TargetInfoReader {
         }
 
         "general" -> {
-            val builder: TargetInfo.Builder = readFromFile(uri, TargetInfo.newBuilder())
+            val builder: TargetInfo.Builder = readFromFile(path, TargetInfo.newBuilder())
             val info = builder.buildPartial()
             targetInfoBuilder.mergeFrom(info)
         }
@@ -143,9 +142,9 @@ class TargetInfoReader {
     }
 
 
-    private fun <T : Message.Builder> readFromFile(uri: URI, builder: T): T {
+    private fun <T : Message.Builder> readFromFile(path: Path, builder: T): T {
         val parser = TextFormat.Parser.newBuilder().setAllowUnknownFields(true).build()
-        parser.merge(Files.newBufferedReader(Paths.get(uri), StandardCharsets.UTF_8), builder)
+        parser.merge(Files.newBufferedReader(path, StandardCharsets.UTF_8), builder)
         return builder
     }
 

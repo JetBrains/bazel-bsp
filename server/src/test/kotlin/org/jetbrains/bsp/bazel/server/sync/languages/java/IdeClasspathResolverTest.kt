@@ -4,7 +4,7 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

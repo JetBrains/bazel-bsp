@@ -7,6 +7,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinary
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import org.junit.jupiter.api.DisplayName
@@ -54,6 +55,7 @@ class WorkspaceContextConstructorTest {
                     bazelBinary = ProjectViewBazelBinarySection(Path("/path/to/bazel")),
                     buildManualTargets = ProjectViewBuildManualTargetsSection(false),
                     importDepth = ProjectViewImportDepthSection(3),
+                    enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala"))
                 ).build()
 
             // when
@@ -100,6 +102,9 @@ class WorkspaceContextConstructorTest {
 
             val expectedImportDepthSpec = ImportDepthSpec(3)
             workspaceContext.importDepth shouldBe expectedImportDepthSpec
+
+            val expectedEnabledRules = EnabledRulesSpec(listOf("rules_scala"))
+            workspaceContext.enabledRules shouldBe expectedEnabledRules
         }
     }
 }

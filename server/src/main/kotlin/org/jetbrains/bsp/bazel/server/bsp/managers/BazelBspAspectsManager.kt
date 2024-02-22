@@ -1,12 +1,11 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
-import org.apache.velocity.VelocityContext
-import org.apache.velocity.app.VelocityEngine
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.aspect
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.buildManualTests
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalGoogleLegacyApi
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.repositoryOverride
@@ -14,10 +13,7 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
-import java.io.StringWriter
 import java.nio.file.Paths
-import java.util.*
-import kotlin.io.path.writeText
 
 data class BazelBspAspectsManagerResult(val bepOutput: BepOutput, val isFailure: Boolean)
 
@@ -67,9 +63,19 @@ class BazelBspAspectsManager(
           keepGoing(),
           color(true),
           buildManualTests(),
-          curses(false)
+          curses(false),
+          experimentalGoogleLegacyApi(),
         ),
-        null
+        null,
+        // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
+        // (`Cargo.lock` file) based on dependencies specified in `manifest`
+        // (`Cargo.toml` file) and syncs `lockfile` (`Cargo.bazel.lock` file) with `cargo_lockfile`.
+        // Ensures that both Bazel and Cargo are using the same versions of dependencies.
+        // Mentioned `cargo_lockfile`, `lockfile` and `manifest` are defined in
+        // `crates_repository` from `rules_rust`,
+        // see: https://bazelbuild.github.io/rules_rust/crate_universe.html#crates_repository.
+        // In our server used only with `bazel build` command.
+        listOf(Pair("CARGO_BAZEL_REPIN", "1"))
       ).let {
         BazelBspAspectsManagerResult(it.bepOutput, it.processResult.isNotSuccess)
       }

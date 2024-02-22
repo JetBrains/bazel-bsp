@@ -1,13 +1,13 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.net.URI
 import kotlin.io.path.toPath
 
 class JdkResolver(
-    private val bazelPathsResolver: BazelPathsResolver,
-    private val jdkVersionResolver: JdkVersionResolver
+  private val bazelPathsResolver: BazelPathsResolver,
+  private val jdkVersionResolver: JdkVersionResolver
 ) {
 
   fun resolve(targets: Sequence<TargetInfo>): Jdk? {

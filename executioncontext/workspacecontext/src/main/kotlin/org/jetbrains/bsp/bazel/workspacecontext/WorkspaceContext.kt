@@ -63,6 +63,12 @@ data class WorkspaceContext(
      * Obtained from `ProjectView` simply by mapping `import_depth` section.
      */
     val importDepth: ImportDepthSpec,
+    /**
+     * Parameter determining which rules should be used by Bazel BSP, if empty Bazel is queried.
+     *
+     * Obtained from `ProjectView` simply by mapping `import_depth` section.
+     */
+    val enabledRules: EnabledRulesSpec,
 ) : ExecutionContext()
 
 class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstructor<WorkspaceContext> {
@@ -83,6 +89,7 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
             dotBazelBspDirPath = dotBazelBspDirPathSpecExtractor.fromProjectView(projectView),
             buildManualTargets = BuildManualTargetsSpecExtractor.fromProjectView(projectView),
             importDepth = ImportDepthSpecExtractor.fromProjectView(projectView),
+            enabledRules = EnabledRulesSpecExtractor.fromProjectView(projectView),
         )
     }
 }

@@ -45,7 +45,7 @@ object BazelBspLocalJdkTest : BazelBspTestBaseScenario() {
                 it.canCompile = true
                 it.canTest = false
                 it.canRun = true
-                it.canDebug = false
+                it.canDebug = true
             }
         )
         exampleExampleBuildTarget.displayName = "$targetPrefix//example:example"
