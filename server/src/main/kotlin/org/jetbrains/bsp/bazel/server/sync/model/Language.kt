@@ -21,7 +21,7 @@ enum class Language(
       hashSetOf(JAVA.id),
       // This should be removed once https://github.com/bazelbuild/rules_kotlin/issues/273 is fixed
       "@@rules_kotlin.*//third_party:android_sdk".toRegex(),
-    );
+    ),
     GO("go", hashSetOf(".go"));
 
     val allNames: Set<String> = dependentNames + id

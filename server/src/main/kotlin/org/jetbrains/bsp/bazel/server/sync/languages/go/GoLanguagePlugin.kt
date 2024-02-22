@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.go
 import ch.epfl.scala.bsp4j.BuildTarget
 import org.jetbrains.bsp.GoBuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.server.sync.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import java.net.URI
 import kotlin.io.path.toPath
