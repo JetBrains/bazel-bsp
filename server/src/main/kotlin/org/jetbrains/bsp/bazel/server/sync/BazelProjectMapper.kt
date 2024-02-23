@@ -300,6 +300,7 @@ class BazelProjectMapper(
         interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
       )
     }
+      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() }
   }
 
   private fun List<FileLocation>.resolveUris() =
@@ -332,7 +333,7 @@ class BazelProjectMapper(
   ): Sequence<TargetInfo> =
     tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
 
-    private fun selectTargetsToImport(
+  private fun selectTargetsToImport(
     workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
   ): Sequence<TargetInfo> = tree.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
