@@ -56,5 +56,5 @@ object BazelRootMessageParser : Parser {
   }
 
   private fun collectCompilerDiagnostics(output: Output) =
-      generateSequence { CompilerDiagnosticParser.tryParseOne(output) }.toList()
+      generateSequence { CompilerDiagnosticParser.tryParseOne(output) ?: Scala3CompilerDiagnosticParser.tryParseOne(output) }.toList()
 }

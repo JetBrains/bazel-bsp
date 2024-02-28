@@ -51,6 +51,7 @@ class DiagnosticsParser {
     private val Parsers = listOf(
         BazelRootMessageParser,
         CompilerDiagnosticParser,
+        Scala3CompilerDiagnosticParser,
         AllCatchParser
     )
     private val IgnoredLines = listOf(
