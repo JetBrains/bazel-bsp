@@ -68,7 +68,7 @@ class ProjectResolver(
     val rootTargets = buildAspectResult.bepOutput.rootTargets().let { formatTargetsIfNeeded(it) }
     val targets = measured(
       "Parsing aspect outputs"
-    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
+    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs).let { it.mapKeys { it.key.replace("@@", "@") } } }
     return measured(
       "Mapping to internal model"
     ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }
@@ -88,10 +88,7 @@ class ProjectResolver(
       // contrary to "//"-prefixed in older Bazel versions. Unfortunately this does not apply
       // to BEP data, probably due to a bug, so we need to add the "@" prefix here.
       in 0..5 -> targets.toList()
-      else ->
-        if (bazelInfo.isBzlModEnabled)
-          targets.map { "@@$it" }
-        else targets.map { "@$it" }
+      else -> targets.map { "@$it" }
     }.toList()
 
   companion object {

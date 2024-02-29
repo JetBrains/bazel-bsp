@@ -90,7 +90,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         Paths.get(bazelInfo.execRoot, path)
 
     fun isRelativeWorkspacePath(label: String): Boolean {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
         return label.startsWith(prefix)
     }
 
@@ -107,7 +107,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     }
 
     fun extractRelativePath(label: String): String {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
+        val prefix = bazelInfo.release.mainRepositoryReferencePrefix()
 
         require(isRelativeWorkspacePath(label)) { "$label didn't start with $prefix" }
         val labelWithoutPrefix = label.substring(prefix.length)

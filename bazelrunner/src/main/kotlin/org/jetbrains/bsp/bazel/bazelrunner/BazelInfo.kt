@@ -16,12 +16,10 @@ data class BazelRelease(
   val major: Int
 ) {
 
-  fun mainRepositoryReferencePrefix(isBzlModEnabled: Boolean) = when (major) {
+  fun mainRepositoryReferencePrefix() = when (major) {
     in 0..3 -> throw RuntimeException("Unsupported Bazel version, use Bazel 4 or newer")
     in 4..5 -> "//"
-    else ->
-      if (isBzlModEnabled) "@@//"
-      else "@//"
+    else -> "@//"
   }
 
   companion object {
