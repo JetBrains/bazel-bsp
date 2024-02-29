@@ -16,4 +16,7 @@ public interface BazelBuildServer {
 
   @JsonRequest("buildTarget/runWithDebug")
   public fun buildTargetRunWithDebug(params: RunWithDebugParams): CompletableFuture<RunResult>
+
+  @JsonRequest("buildTarget/mobileInstall")
+  public fun buildTargetMobileInstall(params: MobileInstallParams): CompletableFuture<MobileInstallResult>
 }

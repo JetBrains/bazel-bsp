@@ -28,6 +28,12 @@ object BazelFlag {
   @JvmStatic fun experimentalGoogleLegacyApi(): String =
       flag("experimental_google_legacy_api")
 
+  @JvmStatic fun device(device: String): String =
+    arg("device", device)
+
+  @JvmStatic fun start(startType: String): String =
+    arg("start", startType)
+
   private fun arg(name: String, value: String) =
       String.format("--%s=%s", name, value)
 

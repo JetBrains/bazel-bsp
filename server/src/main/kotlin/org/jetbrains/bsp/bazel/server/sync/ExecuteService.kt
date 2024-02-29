@@ -17,6 +17,9 @@ import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
+import org.jetbrains.bsp.MobileInstallParams
+import org.jetbrains.bsp.MobileInstallResult
+import org.jetbrains.bsp.MobileInstallStartType
 import org.jetbrains.bsp.RunWithDebugParams
 import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
@@ -130,6 +133,28 @@ class ExecuteService(
             return RunResult(result.statusCode)
         }
         return debugRunner.runWithDebug(cancelChecker, params, singleModule)
+    }
+
+    fun mobileInstall(cancelChecker: CancelChecker, params: MobileInstallParams): MobileInstallResult {
+        val targets = selectTargets(cancelChecker, listOf(params.target))
+        val bspId = targets.singleOrResponseError(params.target)
+
+        val startType = when (params.startType) {
+            MobileInstallStartType.NO -> "no"
+            MobileInstallStartType.COLD -> "cold"
+            MobileInstallStartType.WARM -> "warm"
+            MobileInstallStartType.DEBUG -> "debug"
+        }
+
+        val bazelProcessResult = bazelRunner.commandBuilder()
+            .mobileInstall()
+            .withArgument(BspMappings.toBspUri(bspId))
+            .withArgument(BazelFlag.device(params.targetDeviceSerialNumber))
+            .withArgument(BazelFlag.start(startType))
+            .withFlag(BazelFlag.color(true))
+            .executeBazelCommand(params.originId)
+            .waitAndGetResult(cancelChecker)
+        return MobileInstallResult(bazelProcessResult.statusCode, params.originId)
     }
 
     @Suppress("UNUSED_PARAMETER")  // params is used by BspRequestsRunner.handleRequest

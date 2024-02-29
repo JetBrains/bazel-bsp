@@ -54,6 +54,8 @@ import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.BazelBuildServer
+import org.jetbrains.bsp.MobileInstallParams
+import org.jetbrains.bsp.MobileInstallResult
 import org.jetbrains.bsp.RunWithDebugParams
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
@@ -212,6 +214,18 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
         )
       },
       params
+    )
+  }
+
+  override fun buildTargetMobileInstall(params: MobileInstallParams): CompletableFuture<MobileInstallResult> {
+    return runner.handleRequest(
+      "buildTargetMobileInstall",
+      { cancelChecker: CancelChecker, params: MobileInstallParams ->
+        executeService.mobileInstall(
+          cancelChecker, params,
+        )
+      },
+      params,
     )
   }
 

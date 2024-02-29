@@ -18,5 +18,6 @@ class BazelRunnerCommandBuilder internal constructor(private val bazelRunner: Ba
   fun cquery()  = BazelRunnerBuilder(bazelRunner, listOf("cquery"))
 
   fun build()  = BazelRunnerBuildBuilder(bazelRunner, listOf("build")).withUseBuildFlags()
+  fun mobileInstall() = BazelRunnerBuildBuilder(bazelRunner, listOf("mobile-install")).withUseBuildFlags()
   fun test()   = BazelRunnerBuildBuilder(bazelRunner, listOf("test")).withUseBuildFlags()
 }
