@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" parent-id="Bazel" uuid="" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>Bazel-BSP</name>
+  <parameters />
+  <project-extensions>
+    <extension id="PROJECT_EXT_1" type="versionedSettings">
+      <parameters>
+        <param name="buildSettings" value="ALWAYS_USE_CURRENT" />
+        <param name="credentialsStorageType" value="credentialsJSON" />
+        <param name="enabled" value="true" />
+        <param name="ignoreChangesInDependenciesAndVcsSettings" value="false" />
+        <param name="rootId" value="Bazel_BazelBsp_BazelBspTcConfig" />
+        <param name="showChanges" value="false" />
+      </parameters>
+    </extension>
+  </project-extensions>
+  <cleanup />
+  <buildTypesOrder order="Bazel_BazelBsp_FormatBuildifier,Bazel_BazelBsp_BuildBuildBazelBsp,Bazel_BazelBsp_UnitTestsUnitTests,Bazel_BazelBsp_E2eTestsE2eSampleRepoTestBazel640test,Bazel_BazelBsp_E2eTestsE2eSampleRepoTestBazel532test,Bazel_BazelBsp_E2eTestsE2eLocalJdkTestBazel640test,Bazel_BazelBsp_E2eTestsE2eLocalJdkTestBazel532test,Bazel_BazelBsp_E2eTestsE2eRemoteJdkTestBazel532test,Bazel_BazelBsp_BazelBspResults" />
+</project>
+
