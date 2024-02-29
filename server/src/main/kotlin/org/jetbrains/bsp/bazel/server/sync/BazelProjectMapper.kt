@@ -363,7 +363,7 @@ class BazelProjectMapper(
     }
 
   private fun isWorkspaceTarget(target: TargetInfo): Boolean =
-    target.id.startsWith(bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)) &&
+    bazelInfo.release.isRelativeWorkspacePath(target.id) &&
       (hasKnownSources(target) ||
         target.kind in setOf(
         "java_library",
@@ -518,8 +518,7 @@ class BazelProjectMapper(
     targetInfo.envInheritList.associateWith { System.getenv(it) }
 
   private fun removeDotBazelBspTarget(targets: List<String>): List<String> {
-    val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled) + ".bazelbsp"
-    return targets.filter { !it.startsWith(prefix) }
+    return targets.filter { bazelInfo.release.isRelativeWorkspacePath(it) && !bazelInfo.release.stripPrefix(it).startsWith(".bazelbsp") }
   }
 
   private fun createRustExternalModules(

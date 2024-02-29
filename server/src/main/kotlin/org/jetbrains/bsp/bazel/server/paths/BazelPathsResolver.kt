@@ -90,8 +90,7 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         Paths.get(bazelInfo.execRoot, path)
 
     fun isRelativeWorkspacePath(label: String): Boolean {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
-        return label.startsWith(prefix)
+        return bazelInfo.release.isRelativeWorkspacePath(label)
     }
 
     fun extractExternalPath(label: String): String {
@@ -107,10 +106,9 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
     }
 
     fun extractRelativePath(label: String): String {
-        val prefix = bazelInfo.release.mainRepositoryReferencePrefix(bazelInfo.isBzlModEnabled)
 
-        require(isRelativeWorkspacePath(label)) { "$label didn't start with $prefix" }
-        val labelWithoutPrefix = label.substring(prefix.length)
+        require(bazelInfo.release.isRelativeWorkspacePath(label)) { "$label didn't start with correct prefix" }
+        val labelWithoutPrefix = bazelInfo.release.stripPrefix(label)
         val parts = labelWithoutPrefix.split(":".toRegex()).toTypedArray()
         require(parts.size == 2) { "Label $label didn't contain exactly one ':'" }
         return parts[0]
