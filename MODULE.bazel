@@ -4,7 +4,7 @@ module(
 )
 
 bazel_dep(name = "bazel_skylib", version = "1.5.0")
-bazel_dep(name = "rules_kotlin", version = "1.9.0")
+bazel_dep(name = "rules_kotlin", version = "1.9.1")
 
 # Required until Bazel repo upstreams it's rules_jvm_external fix and there's a new release
 bazel_bep = use_extension("//:non_module_deps.bzl", "bazel_bep")
