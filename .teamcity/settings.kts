@@ -28,13 +28,12 @@ object BazelBsp : Project({
         }) {
             buildType(BuildTheProject)
             buildType(UnitTests)
-            buildType(SampleRepoBazel6E2ETest)
-            buildType(SampleRepoBazel5E2ETest)
-            buildType(BazelBspLocalBazel6JdkTest)
-            buildType(BazelBspLocalBazel5JdkTest)
-            buildType(BazelBspRemoteBazel6JdkTest)
-            buildType(BazelBspRemoteBazel5JdkTest)
+            buildType(SampleRepoBazelE2ETest)
+            buildType(BazelBspLocalBazelJdkTest)
+            buildType(BazelBspRemoteBazelJdkTest)
             buildType(ServerDownloadsBazeliskTest)
+            buildType(KotlinProjectTest)
+            buildType(RegularBenchmark)
         }
 
         buildType(BazelBspAggregator, options = {
@@ -62,13 +61,11 @@ object BazelBsp : Project({
         RelativeId("FormatBuildifier"),
         RelativeId("BuildBuildBazelBsp"),
         RelativeId("UnitTestsUnitTests"),
-        RelativeId("E2eTestsE2eSampleRepoTestBazel632test"),
-        RelativeId("E2eTestsE2eSampleRepoTestBazel532test"),
-        RelativeId("E2eTestsE2eLocalJdkTestBazel632test"),
-        RelativeId("E2eTestsE2eLocalJdkTestBazel532test"),
-        RelativeId("E2eTestsE2eRemoteJdkTestBazel632test"),
-        RelativeId("E2eTestsE2eRemoteJdkTestBazel532test"),
-        RelativeId("E2eTestsE2eServerDownloadsBazeliskTestBazel632test"),
+        RelativeId("E2eTestsE2eSampleRepoTest"),
+        RelativeId("E2eTestsE2eLocalJdkTest"),
+        RelativeId("E2eTestsE2eRemoteJdkTest"),
+        RelativeId("E2eTestsE2eServerDownloadsBazeliskTest"),
+        RelativeId("E2eTestsE2eKotlinProjectTest"),
         RelativeId("BazelBspResults")
     )
 })

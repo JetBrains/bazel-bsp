@@ -28,52 +28,33 @@ open class BazelBspE2ETestsBuildType(
     }
 )
 
-object SampleRepoBazel6E2ETest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:sample_repo_test_bazel_6_4_0",
+object SampleRepoBazelE2ETest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:sample_repo_test",
+)
+
+object BazelBspLocalBazelJdkTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:local_jdk_test",
+    steps = {
+        script {
+            this.name = "set JDK to 17"
+            scriptContent = """
+                #!/bin/bash
+                set -euxo pipefail
+
+                echo "##teamcity[setParameter name='env.JAVA_HOME' value='%env.JDK_17_0%']"
+            """.trimIndent()
+        }
+    },
+)
+
+object BazelBspRemoteBazelJdkTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:remote_jdk_test",
 )
 
 object ServerDownloadsBazeliskTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:server_downloads_bazelisk_test_bazel_6_4_0",
+    targets = "//e2e:server_downloads_bazelisk_test",
 )
 
-object SampleRepoBazel5E2ETest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:sample_repo_test_bazel_5_3_2",
-)
-
-object BazelBspLocalBazel6JdkTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:local_jdk_test_bazel_6_4_0",
-    steps = {
-        script {
-            this.name = "set JDK to 17"
-            scriptContent = """
-                #!/bin/bash
-                set -euxo pipefail
-
-                echo "##teamcity[setParameter name='env.JAVA_HOME' value='%env.JDK_17_0%']"
-            """.trimIndent()
-        }
-    },
-)
-
-object BazelBspLocalBazel5JdkTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:local_jdk_test_bazel_5_3_2",
-    steps = {
-        script {
-            this.name = "set JDK to 17"
-            scriptContent = """
-                #!/bin/bash
-                set -euxo pipefail
-
-                echo "##teamcity[setParameter name='env.JAVA_HOME' value='%env.JDK_17_0%']"
-            """.trimIndent()
-        }
-    },
-)
-
-object BazelBspRemoteBazel6JdkTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:remote_jdk_test_bazel_6_4_0",
-)
-
-object BazelBspRemoteBazel5JdkTest : BazelBspE2ETestsBuildType(
-    targets = "//e2e:remote_jdk_test_bazel_5_3_2",
+object KotlinProjectTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:kotlin_project_test",
 )
