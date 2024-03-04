@@ -103,6 +103,11 @@ message AndroidTargetInfo {
   string kotlin_target_id = 5;
 }
 
+message GoTargetInfo {
+  string importpath = 1;
+  FileLocation sdk_home_path = 2;
+}
+
 message TargetInfo {
   string id = 10;
   string kind = 20;
@@ -122,4 +127,5 @@ message TargetInfo {
   PythonTargetInfo python_target_info = 8000;
   RustCrateInfo rust_crate_info = 9000;
   AndroidTargetInfo android_target_info = 10000;
+  GoTargetInfo go_target_info = 11000;
 }
