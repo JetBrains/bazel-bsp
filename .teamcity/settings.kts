@@ -66,6 +66,7 @@ object BazelBsp : Project({
         RelativeId("E2eTestsE2eRemoteJdkTest"),
         RelativeId("E2eTestsE2eServerDownloadsBazeliskTest"),
         RelativeId("E2eTestsE2eKotlinProjectTest"),
+        RelativeId("Benchmark1001Targets"),
         RelativeId("BazelBspResults")
     )
 })

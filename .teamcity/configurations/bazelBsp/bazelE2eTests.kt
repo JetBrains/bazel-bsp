@@ -12,7 +12,7 @@ open class BazelBspE2ETestsBuildType(
     targets: String,
     steps: (BuildSteps.() -> Unit)? = null,
 ) : BaseBuildType(
-    name = "[e2e tests] $targets test",
+    name = "[e2e tests] $targets",
     vcsRoot = BazelBspVcs,
     setupSteps = true,
     artifactRules = "+:/home/teamcity/.cache/bazel/_bazel_teamcity/*/execroot/_main/bazel-out/k8-fastbuild/testlogs/e2e/** => testlogs.zip",
