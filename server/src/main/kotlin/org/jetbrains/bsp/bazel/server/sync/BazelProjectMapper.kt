@@ -289,12 +289,10 @@ class BazelProjectMapper(
   }
 
   private fun createLibraries(targets: Map<String, TargetInfo>): Map<String, Library> {
-    return targets.mapValues { entry ->
-      val targetId = entry.key
-      val targetInfo = entry.value
+    return targets.mapValues { (targetId, targetInfo) ->
       Library(
         label = targetId,
-        outputs = getTargetJarUris(targetInfo),
+        outputs = getTargetJarUris(targetInfo) + getAndroidAarUris(targetInfo),
         sources = getSourceJarUris(targetInfo),
         dependencies = targetInfo.dependenciesList.map { it.id },
         interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
@@ -310,6 +308,21 @@ class BazelProjectMapper(
     targetInfo.jvmTargetInfo.jarsList
       .flatMap { it.binaryJarsList }
       .resolveUris()
+
+  private fun getAndroidAarUris(targetInfo: TargetInfo): Set<URI> {
+    if (!targetInfo.hasAndroidAarImportInfo()) return emptySet()
+    val androidAarImportInfo = targetInfo.androidAarImportInfo
+
+    val result = mutableSetOf<URI>()
+    result += bazelPathsResolver.resolve(androidAarImportInfo.manifest).toUri()
+    if (androidAarImportInfo.hasResourceFolder()) {
+      result += bazelPathsResolver.resolve(androidAarImportInfo.resourceFolder).resolve("res").toUri()
+    }
+    if (androidAarImportInfo.hasRTxt()) {
+      result += bazelPathsResolver.resolve(targetInfo.androidAarImportInfo.rTxt).toUri()
+    }
+    return result
+  }
 
   private fun getSourceJarUris(targetInfo: TargetInfo) =
     targetInfo.jvmTargetInfo.jarsList

@@ -28,6 +28,9 @@ object BazelFlag {
   @JvmStatic fun experimentalGoogleLegacyApi(): String =
       flag("experimental_google_legacy_api")
 
+  @JvmStatic fun experimentalEnableAndroidMigrationApis(): String =
+    flag("experimental_enable_android_migration_apis")
+
   @JvmStatic fun device(device: String): String =
     arg("device", device)
 

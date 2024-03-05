@@ -55,3 +55,29 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
     )
 
     return create_proto(target, ctx, android_target_info_proto, "android_target_info"), None
+
+def extract_android_aar_import_info(target, ctx, dep_targets, **kwargs):
+    if ctx.rule.kind != "aar_import":
+        return None, None
+
+    if AndroidManifestInfo not in target:
+        return None, None
+    manifest = file_location(target[AndroidManifestInfo].manifest)
+
+    resource_folder = None
+    r_txt = None
+    if AndroidResourcesInfo in target:
+        direct_android_resources = target[AndroidResourcesInfo].direct_android_resources.to_list()
+        if direct_android_resources:
+            direct_android_resource = direct_android_resources[0]
+            resource_files = direct_android_resource.resources
+            if resource_files:
+                resource_folder = file_location(resource_files[0])
+            r_txt = file_location(direct_android_resource.r_txt)
+
+    android_aar_import_info_proto = create_struct(
+        manifest = manifest,
+        resource_folder = resource_folder,
+        r_txt = r_txt,
+    )
+    return create_proto(target, ctx, android_aar_import_info_proto, "android_aar_import_info"), None

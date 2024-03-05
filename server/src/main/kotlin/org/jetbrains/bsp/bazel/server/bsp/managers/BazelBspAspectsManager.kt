@@ -5,6 +5,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.aspect
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.buildManualTests
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalEnableAndroidMigrationApis
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalGoogleLegacyApi
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
@@ -65,6 +66,7 @@ class BazelBspAspectsManager(
           buildManualTests(),
           curses(false),
           experimentalGoogleLegacyApi(),
+          experimentalEnableAndroidMigrationApis(),
         ),
         null,
         // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
