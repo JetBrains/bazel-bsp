@@ -7,6 +7,11 @@ import ch.epfl.scala.bsp4j.CompileProvider
 import ch.epfl.scala.bsp4j.CppOptionsItem
 import ch.epfl.scala.bsp4j.CppOptionsParams
 import ch.epfl.scala.bsp4j.CppOptionsResult
+import ch.epfl.scala.bsp4j.DependencyModule
+import ch.epfl.scala.bsp4j.DependencyModuleDataKind
+import ch.epfl.scala.bsp4j.DependencyModulesItem
+import ch.epfl.scala.bsp4j.DependencyModulesParams
+import ch.epfl.scala.bsp4j.DependencyModulesResult
 import ch.epfl.scala.bsp4j.DependencySourcesItem
 import ch.epfl.scala.bsp4j.DependencySourcesParams
 import ch.epfl.scala.bsp4j.DependencySourcesResult
@@ -22,6 +27,8 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
+import ch.epfl.scala.bsp4j.MavenDependencyModule
+import ch.epfl.scala.bsp4j.MavenDependencyModuleArtifact
 import ch.epfl.scala.bsp4j.OutputPathItem
 import ch.epfl.scala.bsp4j.OutputPathItemKind
 import ch.epfl.scala.bsp4j.OutputPathsItem
@@ -71,6 +78,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
+import org.jetbrains.bsp.bazel.server.sync.model.Library
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
@@ -78,6 +86,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.LinkedList
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.relativeToOrNull
@@ -445,6 +454,62 @@ class BspProjectMapper(
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
         val items = modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
         return ScalaMainClassesResult(items)
+    }
+
+    private fun extractMavenDependencyInfo(lib: Library): MavenDependencyModule? {
+        val jars = lib.outputs.map { uri -> uri.toString() }.map {
+            MavenDependencyModuleArtifact(it)
+        }
+        val sourceJars = lib.sources.map { uri -> uri.toString() }.map {
+            val artifact = MavenDependencyModuleArtifact(it)
+            artifact.classifier = "sources"
+            artifact
+        }
+
+        // Matches the Maven group (organization), artifact, and version in the Bazel dependency
+        // string such as .../execroot/monorepo/bazel-out/k8-fastbuild/bin/external/maven/com/google/guava/guava/31.1-jre/processed_guava-31.1-jre.jar
+        val regexPattern = """.*/maven/(.+)/([^/]+)/([^/]+)/[^/]+.jar""".toRegex()
+        val dependencyPath = lib.outputs.first().toString()
+        // Find matches in the dependency path
+        val matchResult = regexPattern.find(dependencyPath)
+
+        // If a match is found, group values are extracted; otherwise, null is returned
+        return matchResult?.let {
+            val (organization, artifact, version) = it.destructured
+            MavenDependencyModule(organization.replace("/", "."), artifact, version, jars + sourceJars)
+        }
+    }
+
+   private fun allModuleDependencies(project: Project, module: Module): HashSet<Library> {
+        val toResolve = LinkedList<String>()
+        toResolve.addAll(module.directDependencies.map { it.value })
+        val accumulator = HashSet<Library>()
+        while (toResolve.isNotEmpty()){
+            val lib = project.libraries[toResolve.pop()]
+            if (lib != null && !accumulator.contains(lib)) {
+                accumulator.add(lib)
+                toResolve.addAll(lib.dependencies)
+            }
+        }
+        return accumulator
+    }
+
+    fun buildDependencyModules(project: Project, params: DependencyModulesParams): DependencyModulesResult {
+        val targetSet = params.targets.toSet()
+        val dependencyModulesItems = project.modules.filter { targetSet.contains(BuildTargetIdentifier(it.label.value)) }.map { module ->
+            val buildTargetId = BuildTargetIdentifier(module.label.value)
+            val moduleItems = allModuleDependencies(project, module).map { libraryDep ->
+                val mavenDependencyModule = if (libraryDep.outputs.isNotEmpty()) extractMavenDependencyInfo(libraryDep) else null
+                val dependencyModule = DependencyModule(libraryDep.label, mavenDependencyModule?.version ?: "")
+                if (mavenDependencyModule != null) {
+                    dependencyModule.data = mavenDependencyModule
+                    dependencyModule.dataKind = DependencyModuleDataKind.MAVEN
+                }
+                dependencyModule
+            }
+            DependencyModulesItem(buildTargetId, moduleItems)
+        }
+        return DependencyModulesResult(dependencyModulesItems)
     }
 
     fun rustWorkspace(
