@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "87829ecbff78110152fc769fe53e9e34e2d8bcbbd58e75ae3b9c14b6480d89b5",
+  "moduleFileHash": "d18fe938aaa407e4a295bd8d80e4887c95336dc402a97717cd2b815c57279a70",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -129,10 +129,10 @@
                   "io.grpc:grpc-protobuf:1.62.2",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
                   "org.junit.platform:junit-platform-console:1.10.2",
-                  "io.kotest:kotest-assertions-api-jvm:5.8.0",
-                  "io.kotest:kotest-assertions-core-jvm:5.8.0",
-                  "io.kotest:kotest-assertions-shared-jvm:5.8.0",
-                  "io.kotest:kotest-common-jvm:5.8.0"
+                  "io.kotest:kotest-assertions-api-jvm:5.8.1",
+                  "io.kotest:kotest-assertions-core-jvm:5.8.1",
+                  "io.kotest:kotest-assertions-shared-jvm:5.8.1",
+                  "io.kotest:kotest-common-jvm:5.8.1"
                 ],
                 "fail_if_repin_required": true,
                 "fetch_sources": true,
@@ -3358,7 +3358,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "07acb51c4ec8f6c748778b054b9f10ef12830fd370229a916844678caf9e1b62",
+          "@@//:maven_install.json": "88fce6c78b07655b63ea744b32f165b86b837321fed5d623f87a635f40d8309a",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3498,18 +3498,18 @@
               "downloaded_file_path": "com/google/api/gax-grpc/2.32.0/gax-grpc-2.32.0.jar"
             }
           },
-          "org_apache_logging_log4j_log4j_core_jar_sources_2_23_0": {
+          "org_apache_logging_log4j_log4j_core_jar_sources_2_23_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_core_jar_sources_2_23_0",
-              "sha256": "105b1682af81f678cfee6842e1776e925cc708e2dc0746366ef1fdb43438835d",
+              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_core_jar_sources_2_23_1",
+              "sha256": "3da91ab04815b5506efa7b7ec3bca6f8dacc398a8f25329ff8e8c734e98d1678",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0-sources.jar",
-                "https://maven.google.com/org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0-sources.jar",
-                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1-sources.jar",
+                "https://maven.google.com/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1-sources.jar",
+                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1-sources.jar"
               ],
-              "downloaded_file_path": "org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0-sources.jar"
+              "downloaded_file_path": "org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1-sources.jar"
             }
           },
           "io_grpc_grpc_api_1_56_1": {
@@ -3989,10 +3989,10 @@
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.62.2\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
                 "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.8.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.8.0\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.8.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.8.1\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M1\" }",
@@ -4366,6 +4366,20 @@
               "downloaded_file_path": "org/threeten/threetenbp/1.6.8/threetenbp-1.6.8.jar"
             }
           },
+          "org_apache_logging_log4j_log4j_api_jar_sources_2_23_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_api_jar_sources_2_23_1",
+              "sha256": "d5cf646b25ee4ee16b27aea90d919aa0b35846feae811abc8cb389331420a059",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1-sources.jar",
+                "https://maven.google.com/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1-sources.jar",
+                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1-sources.jar"
+              ],
+              "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1-sources.jar"
+            }
+          },
           "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_8_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4526,20 +4540,6 @@
                 "https://maven.google.com/com/google/api-client/google-api-client/2.2.0/google-api-client-2.2.0.jar"
               ],
               "downloaded_file_path": "com/google/api-client/google-api-client/2.2.0/google-api-client-2.2.0.jar"
-            }
-          },
-          "org_apache_logging_log4j_log4j_api_jar_sources_2_23_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_api_jar_sources_2_23_0",
-              "sha256": "c4aa950e16ed604707ec4c2680bd23a2f7cb38e182808e23237909cc08a4f6d8",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0-sources.jar",
-                "https://maven.google.com/org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0-sources.jar",
-                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0-sources.jar"
-              ],
-              "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0-sources.jar"
             }
           },
           "rules_jvm_external_deps": {
@@ -5204,18 +5204,18 @@
               "downloaded_file_path": "com/google/apis/google-api-services-storage/v1-rev20230617-2.0.0/google-api-services-storage-v1-rev20230617-2.0.0.jar"
             }
           },
-          "org_apache_logging_log4j_log4j_api_2_23_0": {
+          "org_apache_logging_log4j_log4j_api_2_23_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_api_2_23_0",
-              "sha256": "ff1a58a39df66d55534de744eb97225d4f7665482e73988a496681f5f2744938",
+              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_api_2_23_1",
+              "sha256": "92ec1fd36ab3bc09de6198d2d7c0914685c0f7127ea931acc32fd2ecdd82ea89",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0.jar",
-                "https://maven.google.com/org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0.jar",
-                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0.jar"
+                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar",
+                "https://maven.google.com/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar",
+                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar"
               ],
-              "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.23.0/log4j-api-2.23.0.jar"
+              "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar"
             }
           },
           "com_google_googlejavaformat_google_java_format_1_17_0": {
@@ -5655,20 +5655,6 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar"
             }
           },
-          "org_apache_logging_log4j_log4j_core_2_23_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_core_2_23_0",
-              "sha256": "0fef441ee938719f635db7ef21ad5b1ddf7d5bf8f5abf5eca8f29c3f432681db",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0.jar",
-                "https://maven.google.com/org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0.jar",
-                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0.jar"
-              ],
-              "downloaded_file_path": "org/apache/logging/log4j/log4j-core/2.23.0/log4j-core-2.23.0.jar"
-            }
-          },
           "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6073,6 +6059,20 @@
               "downloaded_file_path": "org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar"
             }
           },
+          "org_apache_logging_log4j_log4j_core_2_23_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_apache_logging_log4j_log4j_core_2_23_1",
+              "sha256": "7079368005fc34f56248f57f8a8a53361c3a53e9007d556dbc66fc669df081b5",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar",
+                "https://maven.google.com/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar",
+                "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar"
+              ],
+              "downloaded_file_path": "org/apache/logging/log4j/log4j-core/2.23.1/log4j-core-2.23.1.jar"
+            }
+          },
           "com_google_http_client_google_http_client_1_43_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6333,10 +6333,10 @@
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.62.2\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
                 "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.8.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.8.0\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.8.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.8.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.8.1\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M1\" }",
