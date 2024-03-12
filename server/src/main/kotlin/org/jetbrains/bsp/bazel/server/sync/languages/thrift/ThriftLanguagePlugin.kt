@@ -4,7 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import java.net.URI
 import java.nio.file.Path
@@ -14,9 +14,9 @@ class ThriftLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) :
 
     override fun dependencySources(
         targetInfo: BspTargetInfo.TargetInfo,
-        dependencyTree: DependencyTree
+        dependencyGraph: DependencyGraph
     ): Set<URI> {
-        val transitiveSourceDeps = dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+        val transitiveSourceDeps = dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
             .filter(::isThriftLibrary)
             .flatMap(BspTargetInfo.TargetInfo::getSourcesList)
             .map(bazelPathsResolver::resolveUri)

@@ -9,7 +9,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import java.net.URI
@@ -67,9 +67,9 @@ class PythonLanguagePlugin(
             emptyList(),
         )
 
-    override fun dependencySources(targetInfo: TargetInfo, dependencyTree: DependencyTree): Set<URI> =
+    override fun dependencySources(targetInfo: TargetInfo, dependencyGraph: DependencyGraph): Set<URI> =
         if (targetInfo.hasPythonTargetInfo())
-            dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+            dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getExternalSources)
                 .map(::calculateExternalSourcePath)
                 .toSet()

@@ -10,7 +10,7 @@ import ch.epfl.scala.bsp4j.ScalaTestClassesItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
@@ -47,9 +47,9 @@ class ScalaLanguagePlugin(
 
     override fun dependencySources(
         targetInfo: BspTargetInfo.TargetInfo,
-        dependencyTree: DependencyTree
+        dependencyGraph: DependencyGraph
     ): Set<URI> =
-        javaLanguagePlugin.dependencySources(targetInfo, dependencyTree)
+        javaLanguagePlugin.dependencySources(targetInfo, dependencyGraph)
 
     override fun applyModuleData(moduleData: ScalaModule, buildTarget: BuildTarget) {
         val scalaBuildTarget = with(moduleData.sdk) {

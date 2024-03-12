@@ -8,7 +8,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import java.net.URI
@@ -55,10 +55,10 @@ class JavaLanguagePlugin(
     private fun getJdk(): Jdk = jdk ?: throw RuntimeException("Failed to resolve JDK for project")
 
     override fun dependencySources(
-        targetInfo: TargetInfo, dependencyTree: DependencyTree
+        targetInfo: TargetInfo, dependencyGraph: DependencyGraph
     ): Set<URI> =
         targetInfo.getJvmTargetInfoOrNull()?.run {
-            dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+            dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getSourceJars)
                 .map(bazelPathsResolver::resolveUri)
                 .toSet()

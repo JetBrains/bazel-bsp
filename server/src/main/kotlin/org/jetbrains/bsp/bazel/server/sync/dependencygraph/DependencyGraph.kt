@@ -1,9 +1,9 @@
-package org.jetbrains.bsp.bazel.server.sync.dependencytree
+package org.jetbrains.bsp.bazel.server.sync.dependencygraph
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 
-class DependencyTree(
+class DependencyGraph(
         private val rootTargets: Set<String> = emptySet(),
         private val idToTargetInfo: Map<String, TargetInfo> = emptyMap(),
 ) {

@@ -13,7 +13,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
@@ -54,11 +54,11 @@ class BazelProjectMapper(
     bazelInfo: BazelInfo
   ): Project {
     languagePluginsService.prepareSync(targets.values.asSequence())
-    val dependencyTree = measure("Build dependency tree") {
-      DependencyTree(rootTargets, targets)
+    val dependencyGraph = measure("Build dependency tree") {
+      DependencyGraph(rootTargets, targets)
     }
     val targetsToImport = measure("Select targets") {
-      selectTargetsToImport(workspaceContext, rootTargets, dependencyTree)
+      selectTargetsToImport(workspaceContext, rootTargets, dependencyGraph)
     }
     val targetsAsLibraries = measure("Targets as libraries") {
       targets - targetsToImport.map { it.id }.toSet()
@@ -87,7 +87,7 @@ class BazelProjectMapper(
     }
     val workspaceRoot = bazelPathsResolver.workspaceRoot()
     val modulesFromBazel = measure("Create modules") {
-      createModules(targetsToImport, dependencyTree, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
+      createModules(targetsToImport, dependencyGraph, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
     }
     val sourceToTarget = measure("Build reverse sources") {
       buildReverseSourceMapping(modulesFromBazel)
@@ -99,10 +99,10 @@ class BazelProjectMapper(
       (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toList()).map { Label(it) }
     }
     val rustExternalTargetsToImport = measure("Select external Rust targets") {
-      selectRustExternalTargetsToImport(rootTargets, dependencyTree)
+      selectRustExternalTargetsToImport(rootTargets, dependencyGraph)
     }
     val rustExternalModules = measure("Create Rust external modules") {
-      createRustExternalModules(rustExternalTargetsToImport, dependencyTree, librariesFromDeps)
+      createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
     }
     val allModules = modulesFromBazel + rustExternalModules
     return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets, bazelInfo.release)
@@ -342,13 +342,13 @@ class BazelProjectMapper(
       .toSet()
 
   private fun selectRustExternalTargetsToImport(
-    rootTargets: Set<String>, tree: DependencyTree
+    rootTargets: Set<String>, graph: DependencyGraph
   ): Sequence<TargetInfo> =
-    tree.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
+    graph.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
 
   private fun selectTargetsToImport(
-    workspaceContext: WorkspaceContext, rootTargets: Set<String>, tree: DependencyTree
-  ): Sequence<TargetInfo> = tree.allTargetsAtDepth(
+    workspaceContext: WorkspaceContext, rootTargets: Set<String>, graph: DependencyGraph
+  ): Sequence<TargetInfo> = graph.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
   ).asSequence().filter(::isWorkspaceTarget)
 
@@ -385,14 +385,14 @@ class BazelProjectMapper(
 
   private fun createModules(
     targetsToImport: Sequence<TargetInfo>,
-    dependencyTree: DependencyTree,
+    dependencyGraph: DependencyGraph,
     generatedLibraries: Map<String, Collection<Library>>,
   ): Sequence<Module> = runBlocking {
     targetsToImport.asFlow()
       .map {
         createModule(
           it,
-          dependencyTree,
+          dependencyGraph,
           generatedLibraries[it.id].orEmpty())
       }
       .filterNot { it.tags.contains(Tag.NO_IDE) }
@@ -403,7 +403,7 @@ class BazelProjectMapper(
 
   private fun createModule(
     target: TargetInfo,
-    dependencyTree: DependencyTree,
+    dependencyGraph: DependencyGraph,
     extraLibraries: Collection<Library>,
   ): Module {
     val label = Label(target.id)
@@ -415,7 +415,7 @@ class BazelProjectMapper(
     val sourceSet = resolveSourceSet(target, languagePlugin)
     val resources = resolveResources(target)
     val languageData = languagePlugin.resolveModule(target)
-    val sourceDependencies = languagePlugin.dependencySources(target, dependencyTree)
+    val sourceDependencies = languagePlugin.dependencySources(target, dependencyGraph)
     val environment = environmentItem(target)
     return Module(
       label = label,
@@ -523,10 +523,10 @@ class BazelProjectMapper(
 
   private fun createRustExternalModules(
     targetsToImport: Sequence<TargetInfo>,
-    dependencyTree: DependencyTree,
+    dependencyGraph: DependencyGraph,
     generatedLibraries: Map<String, Collection<Library>>,
   ): Sequence<Module> {
-    val modules = createModules(targetsToImport, dependencyTree, generatedLibraries)
+    val modules = createModules(targetsToImport, dependencyGraph, generatedLibraries)
     return modules.onEach {
       if (it.languageData is RustModule) {
         it.languageData.isExternalModule = true
