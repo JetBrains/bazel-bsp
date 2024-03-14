@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "109f5e26c9646aceec80ede2d12f75541085d1ba618eeabbc700387d8314cad0",
+  "moduleFileHash": "4938ecac684f3f4711045f8061ab27a29d158ac74f6cdda2c992a65ec974ea75",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -122,6 +122,7 @@
                   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
+                  "org.slf4j:slf4j-nop:1.7.36",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.0",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.2",
                   "com.google.protobuf:protobuf-java:3.25.3",
@@ -1816,6 +1817,34 @@
         "recordedRepoMappingEntries": []
       }
     },
+    "@@bazel_tools//tools/android:android_extensions.bzl%remote_android_tools_extensions": {
+      "general": {
+        "bzlTransitiveDigest": "4x/FXzwoadac6uV9ItZ4eGOyCculGHHrKUhLFNWo3lA=",
+        "accumulatedFileDigests": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "android_tools": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "name": "bazel_tools~remote_android_tools_extensions~android_tools",
+              "sha256": "2b661a761a735b41c41b3a78089f4fc1982626c76ddb944604ae3ff8c545d3c2",
+              "url": "https://mirror.bazel.build/bazel_android_tools/android_tools_pkg-0.30.0.tar"
+            }
+          },
+          "android_gmaven_r8": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_jar",
+            "attributes": {
+              "name": "bazel_tools~remote_android_tools_extensions~android_gmaven_r8",
+              "sha256": "57a696749695a09381a87bc2f08c3a8ed06a717a5caa3ef878a3077e0d3af19d",
+              "url": "https://maven.google.com/com/android/tools/r8/8.1.56/r8-8.1.56.jar"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": []
+      }
+    },
     "@@bazel_tools//tools/cpp:cc_configure.bzl%cc_configure_extension": {
       "general": {
         "bzlTransitiveDigest": "mcsWHq3xORJexV5/4eCvNOLxFOQKV6eli3fkr+tEaqE=",
@@ -3358,7 +3387,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "b072cc8918b2fc27f6e18b9d6d5f8258679bb4243be2c176c4671a580ccb5048",
+          "@@//:maven_install.json": "9a0fdb06e034e2da052afbce1567d3d91702ff255da51eced14376fd4588e335",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3606,20 +3635,6 @@
               "downloaded_file_path": "io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1.jar"
             }
           },
-          "com_fasterxml_jackson_core_jackson_databind_jar_sources_2_16_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_databind_jar_sources_2_16_2",
-              "sha256": "d119210de6ed8ac9adc1747d5c2d785c802b848d87dd8b65da95f8495c573f46",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2-sources.jar",
-                "https://maven.google.com/com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2-sources.jar",
-                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2-sources.jar"
-              ],
-              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2-sources.jar"
-            }
-          },
           "ch_epfl_scala_bsp4j_jar_sources_2_2_0_M1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3796,20 +3811,6 @@
               "downloaded_file_path": "commons-cli/commons-cli/1.6.0/commons-cli-1.6.0.jar"
             }
           },
-          "com_fasterxml_jackson_core_jackson_annotations_2_16_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_annotations_2_16_2",
-              "sha256": "d1cdd269ebaa753d1842933194e17d61958f058952d63e03dbfb3d1d78a6926e",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2.jar",
-                "https://maven.google.com/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2.jar",
-                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2.jar"
-              ],
-              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2.jar"
-            }
-          },
           "io_kotest_kotest_common_jvm_jar_sources_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3982,6 +3983,7 @@
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
+                "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"1.7.36\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
@@ -4123,20 +4125,6 @@
               "downloaded_file_path": "com/google/protobuf/protobuf-java-util/3.23.2/protobuf-java-util-3.23.2.jar"
             }
           },
-          "net_bytebuddy_byte_buddy_1_12_7": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~net_bytebuddy_byte_buddy_1_12_7",
-              "sha256": "d2e46555699e70361b5471a7e142f9c67855bba6907a285177ebd8ad973775d8",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7.jar",
-                "https://maven.google.com/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7.jar",
-                "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7.jar"
-              ],
-              "downloaded_file_path": "net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7.jar"
-            }
-          },
           "org_ow2_asm_asm_9_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4260,6 +4248,20 @@
               "downloaded_file_path": "com/google/oauth-client/google-oauth-client/1.34.1/google-oauth-client-1.34.1.jar"
             }
           },
+          "com_fasterxml_jackson_core_jackson_databind_jar_sources_2_17_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_databind_jar_sources_2_17_0",
+              "sha256": "2abe3703841fc6de7545279030bdff45c90ea21a5ea3e2238caccb35244919b7",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0-sources.jar"
+            }
+          },
           "com_google_cloud_google_cloud_core_grpc_2_22_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4271,20 +4273,6 @@
                 "https://maven.google.com/com/google/cloud/google-cloud-core-grpc/2.22.0/google-cloud-core-grpc-2.22.0.jar"
               ],
               "downloaded_file_path": "com/google/cloud/google-cloud-core-grpc/2.22.0/google-cloud-core-grpc-2.22.0.jar"
-            }
-          },
-          "com_fasterxml_jackson_core_jackson_core_2_16_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_core_2_16_2",
-              "sha256": "4f43e2f1430b2d2413e8e5a3d79138e57e891d6a961b18c28ac90859639d8664",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2.jar",
-                "https://maven.google.com/com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2.jar",
-                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2.jar"
-              ],
-              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2.jar"
             }
           },
           "com_google_cloud_google_cloud_storage_2_26_1": {
@@ -4617,6 +4605,20 @@
                 "https://maven.google.com/com/google/http-client/google-http-client-appengine/1.43.3/google-http-client-appengine-1.43.3.jar"
               ],
               "downloaded_file_path": "com/google/http-client/google-http-client-appengine/1.43.3/google-http-client-appengine-1.43.3.jar"
+            }
+          },
+          "net_bytebuddy_byte_buddy_jar_sources_1_14_9": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~net_bytebuddy_byte_buddy_jar_sources_1_14_9",
+              "sha256": "4039b20d06895bf0449161dd5f1cbbc2e81004af196d5b42c5536b91db8e0315",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9-sources.jar",
+                "https://maven.google.com/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9-sources.jar",
+                "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9-sources.jar"
+              ],
+              "downloaded_file_path": "net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9-sources.jar"
             }
           },
           "io_grpc_grpc_auth_1_56_1": {
@@ -4971,20 +4973,6 @@
               "downloaded_file_path": "com/google/truth/truth/1.1.2/truth-1.1.2.jar"
             }
           },
-          "net_bytebuddy_byte_buddy_jar_sources_1_12_7": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~net_bytebuddy_byte_buddy_jar_sources_1_12_7",
-              "sha256": "94a6f5d7d8491ca7541f2da90bac4f084e04264112e936334493b2c2f094455d",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7-sources.jar",
-                "https://maven.google.com/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7-sources.jar",
-                "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7-sources.jar"
-              ],
-              "downloaded_file_path": "net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7-sources.jar"
-            }
-          },
           "org_slf4j_slf4j_api_jar_sources_1_7_30": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5109,20 +5097,6 @@
               "downloaded_file_path": "org/checkerframework/checker-qual/3.37.0/checker-qual-3.37.0-sources.jar"
             }
           },
-          "com_fasterxml_jackson_core_jackson_annotations_jar_sources_2_16_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_annotations_jar_sources_2_16_2",
-              "sha256": "51060e668fd0c7f6abcc75c70cc87d50006c6c541798f13e6105a34f485904e7",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2-sources.jar",
-                "https://maven.google.com/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2-sources.jar",
-                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2-sources.jar"
-              ],
-              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2-sources.jar"
-            }
-          },
           "io_grpc_grpc_xds_1_56_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5229,6 +5203,20 @@
                 "https://maven.google.com/com/google/googlejavaformat/google-java-format/1.17.0/google-java-format-1.17.0.jar"
               ],
               "downloaded_file_path": "com/google/googlejavaformat/google-java-format/1.17.0/google-java-format-1.17.0.jar"
+            }
+          },
+          "com_fasterxml_jackson_core_jackson_databind_2_17_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_databind_2_17_0",
+              "sha256": "d0ed5b54cb1b0bbb0828e24ce752a43a006dc188b34e3a4ae3238acc7b637418",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0.jar",
+                "https://maven.google.com/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0.jar"
             }
           },
           "com_google_guava_guava_jar_sources_32_1_3_android": {
@@ -5476,6 +5464,20 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar"
             }
           },
+          "com_fasterxml_jackson_core_jackson_annotations_jar_sources_2_17_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_annotations_jar_sources_2_17_0",
+              "sha256": "d758d47fa8b7d05006958191ca816ca3ea4795ee97b1adefa84f03b3dfd01d40",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0-sources.jar"
+            }
+          },
           "software_amazon_awssdk_json_utils_2_20_128": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5667,20 +5669,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar"
-            }
-          },
-          "com_fasterxml_jackson_core_jackson_databind_2_16_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_databind_2_16_2",
-              "sha256": "53b6025d98c357068296e4b134242443a248c2c582800879f1c4ea93b54bafa6",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2.jar",
-                "https://maven.google.com/com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2.jar",
-                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2.jar"
-              ],
-              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-databind/2.16.2/jackson-databind-2.16.2.jar"
             }
           },
           "io_netty_netty_transport_4_1_94_Final": {
@@ -5989,20 +5977,6 @@
                 "https://maven.google.com/com/google/api/grpc/grpc-google-cloud-storage-v2/2.26.1-alpha/grpc-google-cloud-storage-v2-2.26.1-alpha.jar"
               ],
               "downloaded_file_path": "com/google/api/grpc/grpc-google-cloud-storage-v2/2.26.1-alpha/grpc-google-cloud-storage-v2-2.26.1-alpha.jar"
-            }
-          },
-          "com_fasterxml_jackson_core_jackson_core_jar_sources_2_16_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_core_jar_sources_2_16_2",
-              "sha256": "7b4da571d0a44bd35bc1ec9c97410ce0548c31c9bc6acf69087e1470dae37b9c",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2-sources.jar",
-                "https://maven.google.com/com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2-sources.jar",
-                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2-sources.jar"
-              ],
-              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-core/2.16.2/jackson-core-2.16.2-sources.jar"
             }
           },
           "org_codehaus_plexus_plexus_utils_3_5_1": {
@@ -6326,6 +6300,7 @@
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
+                "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"1.7.36\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
@@ -6408,6 +6383,34 @@
                 "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar"
               ],
               "downloaded_file_path": "org/junit/platform/junit-platform-launcher/1.10.2/junit-platform-launcher-1.10.2.jar"
+            }
+          },
+          "com_fasterxml_jackson_core_jackson_core_2_17_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_core_2_17_0",
+              "sha256": "55be130f6a68038088a261856c4e383ce79957a0fc1a29ecb213a9efd6ef4389",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0.jar",
+                "https://maven.google.com/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0.jar"
+            }
+          },
+          "com_fasterxml_jackson_core_jackson_core_jar_sources_2_17_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_core_jar_sources_2_17_0",
+              "sha256": "97f4f4a85bf4da59174dde187130bddb927ac31320b385ed8ef1439c00df00f2",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0-sources.jar"
             }
           },
           "io_grpc_grpc_api_1_62_2": {
@@ -6630,6 +6633,20 @@
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22-sources.jar"
             }
           },
+          "net_bytebuddy_byte_buddy_1_14_9": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~net_bytebuddy_byte_buddy_1_14_9",
+              "sha256": "377352e253282bf86f731ac90ed88348e8f40a63ce033c00a85982de7e790e6f",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9.jar",
+                "https://maven.google.com/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9.jar",
+                "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9.jar"
+              ],
+              "downloaded_file_path": "net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9.jar"
+            }
+          },
           "org_eclipse_lsp4j_org_eclipse_lsp4j_generator_jar_sources_0_20_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6820,6 +6837,20 @@
                 "https://maven.google.com/io/netty/netty-transport-native-unix-common/4.1.94.Final/netty-transport-native-unix-common-4.1.94.Final.jar"
               ],
               "downloaded_file_path": "io/netty/netty-transport-native-unix-common/4.1.94.Final/netty-transport-native-unix-common-4.1.94.Final.jar"
+            }
+          },
+          "com_fasterxml_jackson_core_jackson_annotations_2_17_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_core_jackson_annotations_2_17_0",
+              "sha256": "8562569a001d46e84ea23802257e33c8f68b24eb47c1e0efd133a0372c512959",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0.jar",
+                "https://maven.google.com/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0.jar"
             }
           }
         },

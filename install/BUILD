@@ -17,5 +17,6 @@ kt_jvm_binary(
         "//commons",
         "//install:install-lib",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server",
+        "@maven//:org_slf4j_slf4j_nop",  # fixes BAZEL-806
     ],
 )
