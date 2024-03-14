@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "d18fe938aaa407e4a295bd8d80e4887c95336dc402a97717cd2b815c57279a70",
+  "moduleFileHash": "109f5e26c9646aceec80ede2d12f75541085d1ba618eeabbc700387d8314cad0",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -122,7 +122,7 @@
                   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
-                  "com.fasterxml.jackson.core:jackson-databind:2.16.2",
+                  "com.fasterxml.jackson.core:jackson-databind:2.17.0",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.2",
                   "com.google.protobuf:protobuf-java:3.25.3",
                   "io.grpc:grpc-stub:1.62.2",
@@ -3358,7 +3358,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "88fce6c78b07655b63ea744b32f165b86b837321fed5d623f87a635f40d8309a",
+          "@@//:maven_install.json": "b072cc8918b2fc27f6e18b9d6d5f8258679bb4243be2c176c4671a580ccb5048",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3404,18 +3404,18 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.0/kotlinx-coroutines-core-jvm-1.8.0.jar"
             }
           },
-          "io_kotest_kotest_assertions_api_jvm_jar_sources_5_8_0": {
+          "io_kotest_kotest_assertions_api_jvm_jar_sources_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_api_jvm_jar_sources_5_8_0",
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_api_jvm_jar_sources_5_8_1",
               "sha256": "5828eacafedf979de09382b9e42950cec4e932f7697b0972a089a2dd3ebb7bd7",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0-sources.jar",
-                "https://maven.google.com/io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0-sources.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1-sources.jar",
+                "https://maven.google.com/io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1-sources.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1-sources.jar"
               ],
-              "downloaded_file_path": "io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0-sources.jar"
+              "downloaded_file_path": "io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1-sources.jar"
             }
           },
           "software_amazon_awssdk_netty_nio_client_2_20_128": {
@@ -3552,18 +3552,18 @@
               "downloaded_file_path": "com/google/auto/value/auto-value-annotations/1.7.4/auto-value-annotations-1.7.4-sources.jar"
             }
           },
-          "io_kotest_kotest_common_jvm_5_8_0": {
+          "io_kotest_kotest_common_jvm_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_common_jvm_5_8_0",
-              "sha256": "f7e713bba225fba5879741665a3b6193fa528bc27be54752a7763808a4f29513",
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_common_jvm_5_8_1",
+              "sha256": "60bd9521ec83c6c4255dcc05aa09f55c12c0aa58f1e35bd914f7ce6d2dcd5070",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0.jar",
-                "https://maven.google.com/io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1.jar",
+                "https://maven.google.com/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1.jar"
               ],
-              "downloaded_file_path": "io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0.jar"
+              "downloaded_file_path": "io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1.jar"
             }
           },
           "org_apache_commons_commons_lang3_3_12_0": {
@@ -3592,18 +3592,18 @@
               "downloaded_file_path": "io/netty/netty-codec-http/4.1.94.Final/netty-codec-http-4.1.94.Final.jar"
             }
           },
-          "io_kotest_kotest_assertions_core_jvm_5_8_0": {
+          "io_kotest_kotest_assertions_core_jvm_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_core_jvm_5_8_0",
-              "sha256": "c2c94547fb1521a4820d0e2e17eaa4b903c368edea78fe2e1ffad143abacf61c",
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_core_jvm_5_8_1",
+              "sha256": "16886cdf66acfba6ff11d7033e7b2c9ff69358c083b40522b624f181ad63c2c5",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0.jar",
-                "https://maven.google.com/io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1.jar",
+                "https://maven.google.com/io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1.jar"
               ],
-              "downloaded_file_path": "io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0.jar"
+              "downloaded_file_path": "io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1.jar"
             }
           },
           "com_fasterxml_jackson_core_jackson_databind_jar_sources_2_16_2": {
@@ -3796,20 +3796,6 @@
               "downloaded_file_path": "commons-cli/commons-cli/1.6.0/commons-cli-1.6.0.jar"
             }
           },
-          "io_kotest_kotest_common_jvm_jar_sources_5_8_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_common_jvm_jar_sources_5_8_0",
-              "sha256": "4d94f39ec050c9ecf136406f67bb13ca128a2d32f734e64a371a13090fd896b9",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0-sources.jar",
-                "https://maven.google.com/io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0-sources.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0-sources.jar"
-              ],
-              "downloaded_file_path": "io/kotest/kotest-common-jvm/5.8.0/kotest-common-jvm-5.8.0-sources.jar"
-            }
-          },
           "com_fasterxml_jackson_core_jackson_annotations_2_16_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -3822,6 +3808,20 @@
                 "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2.jar"
               ],
               "downloaded_file_path": "com/fasterxml/jackson/core/jackson-annotations/2.16.2/jackson-annotations-2.16.2.jar"
+            }
+          },
+          "io_kotest_kotest_common_jvm_jar_sources_5_8_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_common_jvm_jar_sources_5_8_1",
+              "sha256": "f1e94997c8aa244b4e2752d62eec6a38042ef99d7479d9a51c199a5e5feff6ec",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1-sources.jar",
+                "https://maven.google.com/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1-sources.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1-sources.jar"
+              ],
+              "downloaded_file_path": "io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1-sources.jar"
             }
           },
           "software_amazon_awssdk_auth_2_20_128": {
@@ -3982,7 +3982,7 @@
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
-                "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.2\" }",
+                "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.62.2\" }",
@@ -4688,18 +4688,18 @@
               "downloaded_file_path": "org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar"
             }
           },
-          "io_kotest_kotest_assertions_shared_jvm_jar_sources_5_8_0": {
+          "io_kotest_kotest_assertions_shared_jvm_jar_sources_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_shared_jvm_jar_sources_5_8_0",
-              "sha256": "84f00308879d547364405279c90f817643c93b450bcace716e6f89c9df88eed2",
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_shared_jvm_jar_sources_5_8_1",
+              "sha256": "2d32c8692d63175838e48d0bf8db3f4a2a2f2c81bc4866d0ffcb21488b805323",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0-sources.jar",
-                "https://maven.google.com/io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0-sources.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1-sources.jar",
+                "https://maven.google.com/io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1-sources.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1-sources.jar"
               ],
-              "downloaded_file_path": "io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0-sources.jar"
+              "downloaded_file_path": "io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1-sources.jar"
             }
           },
           "org_jetbrains_kotlin_kotlin_stdlib_jdk7_1_8_20": {
@@ -5558,18 +5558,18 @@
               "downloaded_file_path": "io/grpc/grpc-protobuf/1.56.1/grpc-protobuf-1.56.1.jar"
             }
           },
-          "io_kotest_kotest_assertions_shared_jvm_5_8_0": {
+          "io_kotest_kotest_assertions_shared_jvm_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_shared_jvm_5_8_0",
-              "sha256": "f959ffd72d8a739c54f2e09017f8003d25f4468de853a52c20ffb2930d5354c1",
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_shared_jvm_5_8_1",
+              "sha256": "bc9660d9d8b70810fcd8a8c3dbaf3f15b3311def47fd3a5f0ae7b098fbd016b0",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0.jar",
-                "https://maven.google.com/io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1.jar",
+                "https://maven.google.com/io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1.jar"
               ],
-              "downloaded_file_path": "io/kotest/kotest-assertions-shared-jvm/5.8.0/kotest-assertions-shared-jvm-5.8.0.jar"
+              "downloaded_file_path": "io/kotest/kotest-assertions-shared-jvm/5.8.1/kotest-assertions-shared-jvm-5.8.1.jar"
             }
           },
           "com_google_truth_truth_jar_sources_1_1_2": {
@@ -6207,20 +6207,6 @@
               "downloaded_file_path": "org/conscrypt/conscrypt-openjdk-uber/2.5.2/conscrypt-openjdk-uber-2.5.2.jar"
             }
           },
-          "io_kotest_kotest_assertions_api_jvm_5_8_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_api_jvm_5_8_0",
-              "sha256": "24e5429f8de994056147f4e4198f03bc1b37303b2e4e2bad81a5c388f5fe8d21",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0.jar",
-                "https://maven.google.com/io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0.jar"
-              ],
-              "downloaded_file_path": "io/kotest/kotest-assertions-api-jvm/5.8.0/kotest-assertions-api-jvm-5.8.0.jar"
-            }
-          },
           "junit_junit_jar_sources_4_13_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6246,6 +6232,20 @@
                 "https://maven.google.com/com/google/protobuf/protobuf-java/3.23.2/protobuf-java-3.23.2.jar"
               ],
               "downloaded_file_path": "com/google/protobuf/protobuf-java/3.23.2/protobuf-java-3.23.2.jar"
+            }
+          },
+          "io_kotest_kotest_assertions_api_jvm_5_8_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_api_jvm_5_8_1",
+              "sha256": "24e5429f8de994056147f4e4198f03bc1b37303b2e4e2bad81a5c388f5fe8d21",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1.jar",
+                "https://maven.google.com/io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1.jar"
+              ],
+              "downloaded_file_path": "io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1.jar"
             }
           },
           "io_grpc_grpc_protobuf_lite_1_62_2": {
@@ -6326,7 +6326,7 @@
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
-                "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.16.2\" }",
+                "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.62.2\" }",
@@ -6519,18 +6519,18 @@
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar"
             }
           },
-          "io_kotest_kotest_assertions_core_jvm_jar_sources_5_8_0": {
+          "io_kotest_kotest_assertions_core_jvm_jar_sources_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_core_jvm_jar_sources_5_8_0",
-              "sha256": "8330b4f03d002d8b6d60c365e35efe60da87cb69989ace2c01d6e4336be4410a",
+              "name": "rules_jvm_external~override~maven~io_kotest_kotest_assertions_core_jvm_jar_sources_5_8_1",
+              "sha256": "ee00a0c0385dcc8d6fbc44b8b5e97b7e347fa457a25d2a0b07d3f370dee13078",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0-sources.jar",
-                "https://maven.google.com/io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0-sources.jar",
-                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1-sources.jar",
+                "https://maven.google.com/io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1-sources.jar",
+                "https://repo1.maven.org/maven2/io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1-sources.jar"
               ],
-              "downloaded_file_path": "io/kotest/kotest-assertions-core-jvm/5.8.0/kotest-assertions-core-jvm-5.8.0-sources.jar"
+              "downloaded_file_path": "io/kotest/kotest-assertions-core-jvm/5.8.1/kotest-assertions-core-jvm-5.8.1-sources.jar"
             }
           },
           "org_checkerframework_checker_qual_3_37_0": {
