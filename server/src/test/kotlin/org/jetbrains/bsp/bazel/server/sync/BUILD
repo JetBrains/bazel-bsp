@@ -18,3 +18,12 @@ kt_test(
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
     ],
 )
+
+kt_test(
+    name = "DependencyMapperTest",
+    size = "small",
+    src = "DependencyMapperTest.kt",
+    deps = [
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
+    ],
+)
