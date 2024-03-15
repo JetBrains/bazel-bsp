@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "e9dc22984b1c0cbd8eb959f2b24354dbafe197855162962c44fbb7922c89b83b",
+  "moduleFileHash": "10cfa07e5c9582a3b475bcfb17f0f558c5eff64d82449e910ebab9637bdeaf93",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -122,7 +122,7 @@
                   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
                   "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
-                  "org.slf4j:slf4j-nop:1.7.36",
+                  "org.slf4j:slf4j-nop:2.0.12",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.0",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.2",
                   "com.google.protobuf:protobuf-java:4.26.0",
@@ -3983,7 +3983,7 @@
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
-                "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"1.7.36\" }",
+                "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.12\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.26.0\" }",
@@ -6313,7 +6313,7 @@
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
-                "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"1.7.36\" }",
+                "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.12\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.26.0\" }",
