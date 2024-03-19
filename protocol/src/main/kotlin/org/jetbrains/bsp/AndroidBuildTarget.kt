@@ -18,4 +18,5 @@ public data class AndroidBuildTarget(
   val manifest: URI?,
   val resourceFolders: List<URI>,
   var jvmBuildTarget: JvmBuildTarget? = null,
+  var kotlinBuildTarget: KotlinBuildTarget? = null,
 )

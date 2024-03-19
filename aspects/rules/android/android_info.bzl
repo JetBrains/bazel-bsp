@@ -39,19 +39,11 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
                 # Add to set
                 resource_folders_set[resource_source_dir_location] = None
 
-    kotlin_target_id = None
-    if ctx.rule.kind == "android_library" and str(target.label).endswith("_base") and not ctx.rule.attr.srcs:
-        # This is a hack to detect the android_library target produced by kt_android_library.
-        # It creates an android_library target that ends with _base and a kt_jvm_library target that ends with _kt.
-        # Read more here: https://github.com/bazelbuild/rules_kotlin/blob/master/kotlin/internal/jvm/android.bzl
-        kotlin_target_id = str(target.label)[:-5] + "_kt"
-
     android_target_info_proto = create_struct(
         android_jar = android_jar,
         manifest = manifest,
         resources = resources,
         resource_folders = resource_folders_set.keys(),
-        kotlin_target_id = kotlin_target_id,
     )
 
     return create_proto(target, ctx, android_target_info_proto, "android_target_info"), None

@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -16,6 +15,7 @@ import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
@@ -38,6 +38,7 @@ class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
   private val bazelPathsResolver: BazelPathsResolver,
   private val targetKindResolver: TargetKindResolver,
+  private val kotlinAndroidModulesMerger: KotlinAndroidModulesMerger,
   private val bazelInfo: BazelInfo,
   private val bspClientLogger: BspClientLogger,
   private val metricsLogger: MetricsLogger?
@@ -89,14 +90,17 @@ class BazelProjectMapper(
     val modulesFromBazel = measure("Create modules") {
       createModules(targetsToImport, dependencyGraph, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
     }
+    val mergedModulesFromBazel = measure("Merge Kotlin Android modules") {
+      kotlinAndroidModulesMerger.mergeKotlinAndroidModules(modulesFromBazel)
+    }
     val sourceToTarget = measure("Build reverse sources") {
-      buildReverseSourceMapping(modulesFromBazel)
+      buildReverseSourceMapping(mergedModulesFromBazel)
     }
     val librariesToImport = measure("Merge all libraries") {
       librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
     }
     val invalidTargets = measure("Save invalid target labels") {
-      (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toList()).map { Label(it) }
+      (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toSet()).map { Label(it) }
     }
     val rustExternalTargetsToImport = measure("Select external Rust targets") {
       selectRustExternalTargetsToImport(rootTargets, dependencyGraph)
@@ -104,7 +108,7 @@ class BazelProjectMapper(
     val rustExternalModules = measure("Create Rust external modules") {
       createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
     }
-    val allModules = modulesFromBazel + rustExternalModules
+    val allModules = mergedModulesFromBazel + rustExternalModules
     return Project(workspaceRoot, allModules.toList(), sourceToTarget, librariesToImport, invalidTargets, bazelInfo.release)
   }
 
@@ -377,6 +381,7 @@ class BazelProjectMapper(
         "rust_doc_test",
         "android_library",
         "android_binary",
+        "android_local_test",
       )
         )
 
@@ -387,7 +392,7 @@ class BazelProjectMapper(
     targetsToImport: Sequence<TargetInfo>,
     dependencyGraph: DependencyGraph,
     generatedLibraries: Map<String, Collection<Library>>,
-  ): Sequence<Module> = runBlocking {
+  ): List<Module> = runBlocking {
     targetsToImport.asFlow()
       .map {
         createModule(
@@ -397,7 +402,6 @@ class BazelProjectMapper(
       }
       .filterNot { it.tags.contains(Tag.NO_IDE) }
       .toList()
-      .asSequence()
   }
 
 
@@ -434,24 +438,14 @@ class BazelProjectMapper(
   }
 
   private fun resolveDirectDependencies(target: TargetInfo): List<Label> =
-    target.dependenciesList.map { Label(it.id) } + resolveAndroidDependencies(target)
-
-  private fun resolveAndroidDependencies(target: TargetInfo): List<Label> {
-    if (!target.hasAndroidTargetInfo()) return emptyList()
-    val kotlinTargetId = target.androidTargetInfo.kotlinTargetId
-    if (kotlinTargetId.isEmpty()) return emptyList()
-    return listOf(Label(kotlinTargetId))
-  }
+    target.dependenciesList.map { Label(it.id) }
 
   private fun inferLanguages(target: TargetInfo): Set<Language> {
     val languagesForTarget = Language.all().filter { isBinaryTargetOfLanguage(target.kind, it) }.toHashSet()
     val languagesForSources = target.sourcesList.flatMap { source: FileLocation ->
       Language.all().filter { isLanguageFile(source, it) }
     }.toHashSet()
-    val languagesForDependencies = target.dependenciesList.flatMap { dependency ->
-      Language.all().filter { isDependencyOfLanguage(dependency, it) }
-    }.toHashSet()
-    return languagesForTarget + languagesForSources + languagesForDependencies
+    return languagesForTarget + languagesForSources
   }
 
   private fun isLanguageFile(file: FileLocation, language: Language): Boolean =
@@ -461,9 +455,6 @@ class BazelProjectMapper(
 
   private fun isBinaryTargetOfLanguage(kind: String, language: Language): Boolean =
     language.binaryTargets.contains(kind)
-
-  private fun isDependencyOfLanguage(dependency: Dependency, language: Language): Boolean =
-    language.dependencyRegex?.matches(dependency.id) == true
 
   private fun Label.toDirectoryUri(): URI {
     val isWorkspace = bazelPathsResolver.isRelativeWorkspacePath(value)
@@ -500,8 +491,8 @@ class BazelProjectMapper(
       .resolveUris(listOf(target.androidTargetInfo.manifest) + target.androidTargetInfo.resourcesList).toSet()
   }
 
-  private fun buildReverseSourceMapping(modules: Sequence<Module>): Map<URI, Label> =
-    modules.flatMap(::buildReverseSourceMappingForModule).toMap()
+  private fun buildReverseSourceMapping(modules: List<Module>): Map<URI, Label> =
+    modules.asSequence().flatMap(::buildReverseSourceMappingForModule).toMap()
 
   private fun buildReverseSourceMappingForModule(module: Module): List<Pair<URI, Label>> =
     with(module) {
@@ -527,7 +518,7 @@ class BazelProjectMapper(
     generatedLibraries: Map<String, Collection<Library>>,
   ): Sequence<Module> {
     val modules = createModules(targetsToImport, dependencyGraph, generatedLibraries)
-    return modules.onEach {
+    return modules.asSequence().onEach {
       if (it.languageData is RustModule) {
         it.languageData.isExternalModule = true
       }

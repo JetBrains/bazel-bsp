@@ -34,6 +34,7 @@ import org.jetbrains.bsp.bazel.server.sync.TargetInfoReader
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JdkResolver
@@ -155,10 +156,12 @@ class BazelBspServer(
     val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver, bazelInfo.release)
     val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
     val targetKindResolver = TargetKindResolver()
+    val kotlinAndroidModulesMerger = KotlinAndroidModulesMerger()
     val bazelProjectMapper = BazelProjectMapper(
       languagePluginsService,
       bazelPathsResolver,
       targetKindResolver,
+      kotlinAndroidModulesMerger,
       bazelInfo,
       bspClientLogger,
       metricsLogger

@@ -52,14 +52,14 @@ class AndroidLanguagePlugin(
       resources = resources,
       resourceFolders = resourceFolders,
       javaModule = javaLanguagePlugin.resolveModule(targetInfo),
+      kotlinModule = null,
     )
   }
 
   private fun getAndroidTargetType(targetInfo: BspTargetInfo.TargetInfo): AndroidTargetType = when (targetInfo.kind) {
     "android_binary" -> AndroidTargetType.APP
     "android_library" -> AndroidTargetType.LIBRARY
-    "android_test", "android_robolectric_test", "android_local_test", "android_instrumentation_test" ->
-      AndroidTargetType.TEST
+    "android_local_test", "android_instrumentation_test" -> AndroidTargetType.TEST
     else -> AndroidTargetType.LIBRARY
   }
 

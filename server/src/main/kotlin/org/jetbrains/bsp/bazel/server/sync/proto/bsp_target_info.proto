@@ -100,7 +100,6 @@ message AndroidTargetInfo {
   FileLocation manifest = 2;
   repeated FileLocation resources = 3;
   repeated FileLocation resource_folders = 4;
-  string kotlin_target_id = 5;
 }
 
 message AndroidAarImportInfo {
