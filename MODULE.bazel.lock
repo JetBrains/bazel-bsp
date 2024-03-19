@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "10cfa07e5c9582a3b475bcfb17f0f558c5eff64d82449e910ebab9637bdeaf93",
+  "moduleFileHash": "b30c638314eeb2f948d3e4658625ab3a72cec6cded976fc75c5025ff41c26f51",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -125,7 +125,7 @@
                   "org.slf4j:slf4j-nop:2.0.12",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.0",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.2",
-                  "com.google.protobuf:protobuf-java:4.26.0",
+                  "com.google.protobuf:protobuf-java:3.25.3",
                   "io.grpc:grpc-stub:1.62.2",
                   "io.grpc:grpc-protobuf:1.62.2",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
@@ -3387,7 +3387,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "53282dbcae4ade54d1fe8be6a2602cdfa36b7bb89ccdf2ec2692a7d8989347a3",
+          "@@//:maven_install.json": "1cbe4f07a5865038f8c352948b461bdf45f8a887db379fb80b479dee946111fb",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3593,6 +3593,20 @@
                 "https://repo1.maven.org/maven2/io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1.jar"
               ],
               "downloaded_file_path": "io/kotest/kotest-common-jvm/5.8.1/kotest-common-jvm-5.8.1.jar"
+            }
+          },
+          "org_slf4j_slf4j_api_jar_sources_2_0_12": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_api_jar_sources_2_0_12",
+              "sha256": "f05052e5924887edee5ba8228d210e763f85032e2b58245a37fa71e049950787",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12-sources.jar",
+                "https://maven.google.com/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12-sources.jar",
+                "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12-sources.jar"
+              ],
+              "downloaded_file_path": "org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12-sources.jar"
             }
           },
           "org_apache_commons_commons_lang3_3_12_0": {
@@ -3986,7 +4000,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.12\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.26.0\" }",
+                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.62.2\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.62.2\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
@@ -4464,6 +4478,20 @@
               "downloaded_file_path": "com/google/code/gson/gson/2.10.1/gson-2.10.1-sources.jar"
             }
           },
+          "org_slf4j_slf4j_nop_jar_sources_2_0_12": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_nop_jar_sources_2_0_12",
+              "sha256": "9421d6218a24fedfcd6735aa9cfab555aa752d5ff74b55152dc94daeba361924",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12-sources.jar",
+                "https://maven.google.com/org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12-sources.jar",
+                "https://repo1.maven.org/maven2/org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12-sources.jar"
+              ],
+              "downloaded_file_path": "org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12-sources.jar"
+            }
+          },
           "com_google_auto_value_auto_value_annotations_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4488,20 +4516,6 @@
                 "https://maven.google.com/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar"
               ],
               "downloaded_file_path": "javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar"
-            }
-          },
-          "org_slf4j_slf4j_nop_1_7_36": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_nop_1_7_36",
-              "sha256": "c214958b07816cb4412b30c7bdbd4308ffdc6ba2a83767b8f3a9229cbd9274d6",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36.jar",
-                "https://maven.google.com/org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36.jar",
-                "https://repo1.maven.org/maven2/org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36.jar"
-              ],
-              "downloaded_file_path": "org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36.jar"
             }
           },
           "com_google_http_client_google_http_client_apache_v2_1_43_3": {
@@ -4971,20 +4985,6 @@
                 "https://maven.google.com/com/google/auth/google-auth-library-oauth2-http/1.19.0/google-auth-library-oauth2-http-1.19.0.jar"
               ],
               "downloaded_file_path": "com/google/auth/google-auth-library-oauth2-http/1.19.0/google-auth-library-oauth2-http-1.19.0.jar"
-            }
-          },
-          "org_slf4j_slf4j_api_jar_sources_1_7_36": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_api_jar_sources_1_7_36",
-              "sha256": "15bc04357a3725b7a5153f132db71379f95e83b7b8590a86cc6d4ad77bfc150a",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36-sources.jar",
-                "https://maven.google.com/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36-sources.jar",
-                "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36-sources.jar"
-              ],
-              "downloaded_file_path": "org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36-sources.jar"
             }
           },
           "com_google_truth_truth_1_1_2": {
@@ -6221,20 +6221,6 @@
               "downloaded_file_path": "io/kotest/kotest-assertions-api-jvm/5.8.1/kotest-assertions-api-jvm-5.8.1.jar"
             }
           },
-          "org_slf4j_slf4j_api_1_7_36": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_api_1_7_36",
-              "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar",
-                "https://maven.google.com/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar",
-                "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar"
-              ],
-              "downloaded_file_path": "org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar"
-            }
-          },
           "io_grpc_grpc_protobuf_lite_1_62_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6316,7 +6302,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.12\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.0\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.16.2\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.26.0\" }",
+                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.62.2\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.62.2\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
@@ -6382,6 +6368,20 @@
                 "https://maven.google.com/software/amazon/awssdk/aws-query-protocol/2.20.128/aws-query-protocol-2.20.128.jar"
               ],
               "downloaded_file_path": "software/amazon/awssdk/aws-query-protocol/2.20.128/aws-query-protocol-2.20.128.jar"
+            }
+          },
+          "org_slf4j_slf4j_api_2_0_12": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_api_2_0_12",
+              "sha256": "a79502b8abdfbd722846a27691226a4088682d6d35654f9b80e2a9ccacf7ed47",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar",
+                "https://maven.google.com/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar",
+                "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar"
+              ],
+              "downloaded_file_path": "org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar"
             }
           },
           "org_junit_platform_junit_platform_launcher_1_10_2": {
@@ -6674,6 +6674,20 @@
               "downloaded_file_path": "org/eclipse/lsp4j/org.eclipse.lsp4j.generator/0.20.1/org.eclipse.lsp4j.generator-0.20.1-sources.jar"
             }
           },
+          "org_slf4j_slf4j_nop_2_0_12": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_nop_2_0_12",
+              "sha256": "828d622a52538efd2a460552d8cc345a7a19a9fd686390ced8040e30462897f2",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12.jar",
+                "https://maven.google.com/org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12.jar",
+                "https://repo1.maven.org/maven2/org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12.jar"
+              ],
+              "downloaded_file_path": "org/slf4j/slf4j-nop/2.0.12/slf4j-nop-2.0.12.jar"
+            }
+          },
           "com_google_guava_guava_testlib_jar_sources_31_1_jre": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6714,20 +6728,6 @@
                 "https://repo1.maven.org/maven2/org/mockito/mockito-core/4.3.1/mockito-core-4.3.1-sources.jar"
               ],
               "downloaded_file_path": "org/mockito/mockito-core/4.3.1/mockito-core-4.3.1-sources.jar"
-            }
-          },
-          "org_slf4j_slf4j_nop_jar_sources_1_7_36": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_slf4j_slf4j_nop_jar_sources_1_7_36",
-              "sha256": "b86491d9a8bbc35fe6a6ecf267fc5168399496f5aeffae608ed0ca99736838e9",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36-sources.jar",
-                "https://maven.google.com/org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36-sources.jar",
-                "https://repo1.maven.org/maven2/org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36-sources.jar"
-              ],
-              "downloaded_file_path": "org/slf4j/slf4j-nop/1.7.36/slf4j-nop-1.7.36-sources.jar"
             }
           },
           "com_google_android_annotations_4_1_1_4": {
