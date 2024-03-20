@@ -144,14 +144,19 @@ class TargetInfoReader {
 
     private fun <T : Message.Builder> readFromFile(path: Path, builder: T): T {
         val parser = TextFormat.Parser.newBuilder().setAllowUnknownFields(true).build()
-        parser.merge(Files.newBufferedReader(path, StandardCharsets.UTF_8), builder)
+
+        Files.newBufferedReader(path, StandardCharsets.UTF_8).use {
+            parser.merge(it, builder)
+        }
         return builder
     }
 
     private fun readTargetInfoFromFile(uri: URI): TargetInfo {
         val builder = TargetInfo.newBuilder()
         val parser = TextFormat.Parser.newBuilder().setAllowUnknownFields(true).build()
-        parser.merge(Files.newBufferedReader(Paths.get(uri), StandardCharsets.UTF_8), builder)
+        Files.newBufferedReader(Paths.get(uri), StandardCharsets.UTF_8).use {
+            parser.merge(it, builder)
+        }
         return builder.buildPartial()
     }
 
