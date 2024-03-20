@@ -75,6 +75,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.relativeToOrNull
 import kotlin.io.path.toPath
@@ -122,8 +123,9 @@ class BspProjectMapper(
             LibraryItem(
                 id = BuildTargetIdentifier(it.label),
                 dependencies = it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
-                jars = it.outputs.map { uri -> uri.toString() },
-                sourceJars = it.sources.map { uri -> uri.toString() },
+                ijars = it.interfaceJars.filter { o -> o.toPath().exists() }.map { o -> o.toString() },
+                jars = it.outputs.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
+                sourceJars = it.sources.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
             )
         }
         return WorkspaceLibrariesResult(libraries)
