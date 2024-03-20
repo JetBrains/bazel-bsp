@@ -146,10 +146,7 @@ class BspProjectMapper(
     private fun computeSymlinksToExclude(workspaceRoot: URI): List<Path> {
         val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
         val workspaceRootPath = workspaceRoot.toPath()
-        val sanitizedWorkspaceRootPath = workspaceRootPath
-            .name
-            .replace("[^A-Za-z0-9]".toRegex(), "-")
-        val workspaceSymlinkNames = setOf("bazel-$sanitizedWorkspaceRootPath")
+        val workspaceSymlinkNames = setOf("bazel-${workspaceRootPath.name}")
 
         return (stableSymlinkNames + workspaceSymlinkNames).map { workspaceRootPath.resolve(it) }
     }
