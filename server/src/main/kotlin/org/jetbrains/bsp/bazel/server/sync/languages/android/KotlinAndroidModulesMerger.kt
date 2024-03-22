@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.android
 
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinModule
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 
@@ -48,7 +49,10 @@ class KotlinAndroidModulesMerger {
     val kotlinLanguageData = kotlinModule.languageData
     if (kotlinLanguageData !is KotlinModule?) return null
     val androidLanguageData = androidModule.languageData as? AndroidModule ?: return null
-    val kotlinAndroidLanguageData = androidLanguageData.copy(kotlinModule = kotlinLanguageData)
+    val javaModule = androidLanguageData.javaModule?.run {
+      copy(binaryOutputs = binaryOutputs + kotlinModule.javaModule?.binaryOutputs.orEmpty())
+    }
+    val kotlinAndroidLanguageData = androidLanguageData.copy(kotlinModule = kotlinLanguageData, javaModule = javaModule)
 
     val kotlinModuleWithoutSdk = kotlinModule.directDependencies.asSequence()
       .filterNot { it.value.endsWith("//third_party:android_sdk") }

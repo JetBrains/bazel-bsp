@@ -54,6 +54,8 @@ import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.BazelBuildServer
+import org.jetbrains.bsp.JvmBinaryJarsParams
+import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.MobileInstallParams
 import org.jetbrains.bsp.MobileInstallResult
 import org.jetbrains.bsp.RunWithDebugParams
@@ -356,6 +358,16 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
     return runner.handleRequest(
       "jvmTestEnvironment", { cancelChecker: CancelChecker, params: JvmTestEnvironmentParams ->
         projectSyncService.jvmTestEnvironment(
+          cancelChecker, params
+        )
+      }, params
+    )
+  }
+
+  override fun buildTargetJvmBinaryJars(params: JvmBinaryJarsParams): CompletableFuture<JvmBinaryJarsResult> {
+    return runner.handleRequest(
+      "jvmBinaryJars", { cancelChecker: CancelChecker, params: JvmBinaryJarsParams ->
+        projectSyncService.jvmBinaryJars(
           cancelChecker, params
         )
       }, params

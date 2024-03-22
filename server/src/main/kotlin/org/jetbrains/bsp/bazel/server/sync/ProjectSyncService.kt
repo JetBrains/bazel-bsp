@@ -33,6 +33,8 @@ import ch.epfl.scala.bsp4j.SourcesParams
 import ch.epfl.scala.bsp4j.SourcesResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.JvmBinaryJarsParams
+import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
 import org.jetbrains.bsp.WorkspaceLibrariesResult
@@ -111,6 +113,11 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
   fun jvmTestEnvironment(cancelChecker: CancelChecker, params: JvmTestEnvironmentParams): JvmTestEnvironmentResult {
     val project = projectProvider.get(cancelChecker)
     return bspMapper.jvmTestEnvironment(project, params, cancelChecker)
+  }
+
+  fun jvmBinaryJars(cancelChecker: CancelChecker, params: JvmBinaryJarsParams): JvmBinaryJarsResult {
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.jvmBinaryJars(project, params)
   }
 
   fun buildTargetJavacOptions(cancelChecker: CancelChecker, params: JavacOptionsParams): JavacOptionsResult {

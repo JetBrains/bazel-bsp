@@ -32,11 +32,11 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
+import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsQuery.additionalAndroidBuildTargetsQuery
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import java.util.Optional
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
@@ -167,13 +167,19 @@ class ExecuteService(
     }
 
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
-        val targetsSpec = TargetsSpec(bspIds, emptyList())
+        val targets = bspIds + getAdditionalBuildTargets(cancelChecker, bspIds)
+        val targetsSpec = TargetsSpec(targets, emptyList())
         return compilationManager.buildTargetsWithBep(
                 cancelChecker,
             targetsSpec,
             originId
         ).processResult
     }
+
+    private fun getAdditionalBuildTargets(
+        cancelChecker: CancelChecker,
+        bspIds: List<BuildTargetIdentifier>,
+    ): List<BuildTargetIdentifier> = additionalAndroidBuildTargetsQuery(bspIds, bazelRunner, cancelChecker)
 
     private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> =
             selectModules(cancelChecker, targets).map { toBspId(it) }

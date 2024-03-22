@@ -19,4 +19,7 @@ public interface BazelBuildServer {
 
   @JsonRequest("buildTarget/mobileInstall")
   public fun buildTargetMobileInstall(params: MobileInstallParams): CompletableFuture<MobileInstallResult>
+
+  @JsonRequest("buildTarget/jvmBinaryJars")
+  public fun buildTargetJvmBinaryJars(params: JvmBinaryJarsParams): CompletableFuture<JvmBinaryJarsResult>
 }

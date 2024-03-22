@@ -417,7 +417,7 @@ class BazelProjectMapper(
     val baseDirectory = label.toDirectoryUri()
     val languagePlugin = languagePluginsService.getPlugin(languages)
     val sourceSet = resolveSourceSet(target, languagePlugin)
-    val resources = resolveResources(target)
+    val resources = resolveResources(target, languagePlugin)
     val languageData = languagePlugin.resolveModule(target)
     val sourceDependencies = languagePlugin.dependencySources(target, dependencyGraph)
     val environment = environmentItem(target)
@@ -479,17 +479,8 @@ class BazelProjectMapper(
     bspClientLogger.error(message)
   }
 
-  private fun resolveResources(target: TargetInfo): Set<URI> =
-    bazelPathsResolver.resolveUris(target.resourcesList).toSet() + resolveAndroidResources(target)
-
-  private fun resolveAndroidResources(target: TargetInfo): Set<URI> {
-    if (!target.hasAndroidTargetInfo()) return emptySet()
-    val androidTargetInfo = target.androidTargetInfo
-    if (!androidTargetInfo.hasManifest()) return emptySet()
-
-    return bazelPathsResolver
-      .resolveUris(listOf(target.androidTargetInfo.manifest) + target.androidTargetInfo.resourcesList).toSet()
-  }
+  private fun resolveResources(target: TargetInfo, languagePlugin: LanguagePlugin<*>): Set<URI> =
+    bazelPathsResolver.resolveUris(target.resourcesList).toSet() + languagePlugin.resolveAdditionalResources(target)
 
   private fun buildReverseSourceMapping(modules: List<Module>): Map<URI, Label> =
     modules.asSequence().flatMap(::buildReverseSourceMappingForModule).toMap()

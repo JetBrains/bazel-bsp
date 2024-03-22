@@ -18,10 +18,10 @@ class AndroidLanguagePlugin(
   override fun applyModuleData(moduleData: AndroidModule, buildTarget: BuildTarget) {
     val androidBuildTarget = with(moduleData) {
       AndroidBuildTarget(
-        androidJar = androidJar,
+        androidJar = androidJar.toString(),
         androidTargetType = androidTargetType,
-        manifest = manifest,
-        resourceFolders = resourceFolders,
+        manifest = manifest?.toString(),
+        resourceFolders = resourceFolders.map { it.toString() },
       )
     }
     moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
@@ -68,4 +68,14 @@ class AndroidLanguagePlugin(
 
   override fun calculateSourceRoot(source: Path): Path =
     javaLanguagePlugin.calculateSourceRoot(source)
+
+  override fun resolveAdditionalResources(targetInfo: BspTargetInfo.TargetInfo): Set<URI> {
+    if (!targetInfo.hasAndroidTargetInfo()) return emptySet()
+    val androidTargetInfo = targetInfo.androidTargetInfo
+    if (!androidTargetInfo.hasManifest()) return emptySet()
+
+    return bazelPathsResolver
+      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourcesList)
+      .toSet()
+  }
 }

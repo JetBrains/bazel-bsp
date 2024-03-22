@@ -14,7 +14,7 @@ data class JavaModule(
     val javacOpts: List<String>,
     val jvmOps: List<String>,
     val mainOutput: URI,
-    val allOutputs: List<URI>,
+    val binaryOutputs: List<URI>,
     val mainClass: String?,
     val args: List<String>,
 ) : LanguageData

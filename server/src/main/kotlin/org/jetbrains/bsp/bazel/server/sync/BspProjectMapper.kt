@@ -53,6 +53,9 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.BazelBuildServerCapabilities
 import org.jetbrains.bsp.DirectoryItem
+import org.jetbrains.bsp.JvmBinaryJarsItem
+import org.jetbrains.bsp.JvmBinaryJarsParams
+import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.LibraryItem
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
@@ -103,7 +106,8 @@ class BspProjectMapper(
             workspaceLibrariesProvider = true,
             workspaceDirectoriesProvider = true,
             workspaceInvalidTargetsProvider = true,
-            runWithDebugProvider = true
+            runWithDebugProvider = true,
+            jvmBinaryJarsProvider = true,
         )
         return InitializeBuildResult(
             Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities
@@ -323,6 +327,21 @@ class BspProjectMapper(
             val resolvedClasspath = resolveClasspath(cqueryResult)
             module?.let { extractJvmEnvironmentItem(module, resolvedClasspath) }
         }
+    }
+
+    fun jvmBinaryJars(project: Project, params: JvmBinaryJarsParams): JvmBinaryJarsResult {
+        fun toJvmBinaryJarsItem(module: Module): JvmBinaryJarsItem? =
+            module.javaModule?.let { javaModule ->
+                val jars = javaModule.binaryOutputs.map { it.toString() }
+                JvmBinaryJarsItem(BspMappings.toBspId(module), jars)
+            }
+
+        val jvmBinaryJarsItems = params.targets.mapNotNull { target ->
+            val label = Label(target.uri)
+            val module = project.findModule(label)
+            module?.let { toJvmBinaryJarsItem(it) }
+        }
+        return JvmBinaryJarsResult(jvmBinaryJarsItems)
     }
 
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams, cancelChecker: CancelChecker): JavacOptionsResult {
