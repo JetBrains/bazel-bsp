@@ -4,14 +4,11 @@ import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalEnableAndroidMigrationApis
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalGoogleLegacyApi
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
-import java.util.Optional
 
 class BazelBspCompilationManager(
     private val bazelRunner: BazelRunner,
@@ -23,13 +20,7 @@ class BazelBspCompilationManager(
     fun buildTargetsWithBep(
         cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String,
     ): BepBuildResult {
-        return buildTargetsWithBep(
-            cancelChecker, targetSpecs,
-            listOf(
-                experimentalGoogleLegacyApi(),
-                experimentalEnableAndroidMigrationApis()
-            ), originId, emptyList()
-        )
+        return buildTargetsWithBep(cancelChecker, targetSpecs, emptyList(), originId, emptyList())
     }
 
     fun buildTargetsWithBep(

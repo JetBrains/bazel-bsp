@@ -46,7 +46,7 @@ class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner)
           log.warn("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
           null
         } else result.stdout.readXML(log)?.calculateEligibleRules()
-      } ?: listOf()
+      }?.filter { "android" !in it } ?: listOf()
 
   private fun Document.calculateEligibleRules(): List<String> {
     val xPath = XPathFactory.newInstance().newXPath()
@@ -81,6 +81,7 @@ class BazelBzlModExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : 
     return jsonElement.extractValuesFromKey("key")
       .map { it.substringBefore('@') } // the element has the format <DEP_NAME>@<DEP_VERSION>
       .distinct()
+      .filter { "android" !in it }
   }
 
   companion object {
