@@ -9,13 +9,13 @@ class ProjectProvider(
     private var project: Project? = null
 
     @Synchronized
-    fun refreshAndGet(cancelChecker: CancelChecker): Project =
-        loadFromBazel(cancelChecker)
+    fun refreshAndGet(cancelChecker: CancelChecker, build: Boolean): Project =
+        loadFromBazel(cancelChecker, build = build)
 
     @Synchronized
-    fun get(cancelChecker: CancelChecker): Project = project ?: loadFromDisk() ?: loadFromBazel(cancelChecker)
+    fun get(cancelChecker: CancelChecker): Project = project ?: loadFromDisk() ?: loadFromBazel(cancelChecker, false)
 
-    private fun loadFromBazel(cancelChecker: CancelChecker) = projectResolver.resolve(cancelChecker).also {
+    private fun loadFromBazel(cancelChecker: CancelChecker, build: Boolean) = projectResolver.resolve(cancelChecker, build = build).also {
         project = it
         storeOnDisk()
         System.gc()

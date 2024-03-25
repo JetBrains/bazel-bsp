@@ -30,7 +30,7 @@ class ProjectResolver(
     return Measurements.measure(f, description, metricsLogger, bspLogger)
   }
 
-  fun resolve(cancelChecker: CancelChecker): Project {
+  fun resolve(cancelChecker: CancelChecker, build: Boolean): Project {
 
     val workspaceContext = measured(
       "Reading project view and creating workspace context",
@@ -55,7 +55,7 @@ class ProjectResolver(
 
     val buildAspectResult = measured(
       "Building project with aspect"
-    ) { buildProjectWithAspect(cancelChecker, workspaceContext) }
+    ) { buildProjectWithAspect(cancelChecker, workspaceContext, keepDefaultOutputGroups = build) }
     val aspectOutputs = measured(
         "Reading aspect output paths"
     ) { buildAspectResult.bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
@@ -75,13 +75,18 @@ class ProjectResolver(
     ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }
   }
 
-  private fun buildProjectWithAspect(cancelChecker: CancelChecker, workspaceContext: WorkspaceContext): BazelBspAspectsManagerResult =
-    bazelBspAspectsManager.fetchFilesFromOutputGroups(
+  private fun buildProjectWithAspect(cancelChecker: CancelChecker, workspaceContext: WorkspaceContext, keepDefaultOutputGroups: Boolean): BazelBspAspectsManagerResult {
+    val outputGroups =
+      listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP, RUST_ANALYZER_OUTPUT_GROUP)
+        .map { if (keepDefaultOutputGroups) "+$it" else it }
+
+    return bazelBspAspectsManager.fetchFilesFromOutputGroups(
       cancelChecker,
       workspaceContext.targets,
       ASPECT_NAME,
-      listOf(BSP_INFO_OUTPUT_GROUP, ARTIFACTS_OUTPUT_GROUP, RUST_ANALYZER_OUTPUT_GROUP)
+      outputGroups
     )
+  }
 
   private fun formatTargetsIfNeeded(targets: Collection<String>, targetsInfo: Map<String, BspTargetInfo.TargetInfo >): List<String> =
     when (bazelInfo.release.major) {

@@ -124,7 +124,17 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   override fun workspaceBuildTargets(): CompletableFuture<WorkspaceBuildTargetsResult> {
     return runner.handleRequest("workspaceBuildTargets") { cancelChecker: CancelChecker ->
       projectSyncService.workspaceBuildTargets(
-        cancelChecker
+        cancelChecker,
+        build = false
+      )
+    }
+  }
+
+  override fun workspaceBuildAndGetBuildTargets(): CompletableFuture<WorkspaceBuildTargetsResult> {
+    return runner.handleRequest("workspaceBuildAndGetBuildTargets") { cancelChecker: CancelChecker ->
+      projectSyncService.workspaceBuildTargets(
+        cancelChecker,
+        true
       )
     }
   }

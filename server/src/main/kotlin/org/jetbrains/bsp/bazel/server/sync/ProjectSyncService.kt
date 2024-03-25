@@ -54,8 +54,8 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
   // correctly, so I am not changing anything.
   fun workspaceReload(cancelChecker: CancelChecker): Any = Any()
 
-  fun workspaceBuildTargets(cancelChecker: CancelChecker): WorkspaceBuildTargetsResult {
-    val project = projectProvider.refreshAndGet(cancelChecker)
+  fun workspaceBuildTargets(cancelChecker: CancelChecker, build: Boolean): WorkspaceBuildTargetsResult {
+    val project = projectProvider.refreshAndGet(cancelChecker, build = build)
     return bspMapper.workspaceTargets(project)
   }
 
