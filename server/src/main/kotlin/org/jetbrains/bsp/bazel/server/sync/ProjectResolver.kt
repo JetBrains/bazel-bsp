@@ -12,6 +12,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQuery
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -84,7 +85,8 @@ class ProjectResolver(
       cancelChecker,
       workspaceContext.targets,
       ASPECT_NAME,
-      outputGroups
+      outputGroups,
+      workspaceContext.isAndroidEnabled,
     )
   }
 

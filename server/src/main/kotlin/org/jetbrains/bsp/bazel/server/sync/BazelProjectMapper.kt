@@ -91,7 +91,7 @@ class BazelProjectMapper(
       createModules(targetsToImport, dependencyGraph, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
     }
     val mergedModulesFromBazel = measure("Merge Kotlin Android modules") {
-      kotlinAndroidModulesMerger.mergeKotlinAndroidModules(modulesFromBazel)
+      kotlinAndroidModulesMerger.mergeKotlinAndroidModules(modulesFromBazel, workspaceContext)
     }
     val sourceToTarget = measure("Build reverse sources") {
       buildReverseSourceMapping(mergedModulesFromBazel)

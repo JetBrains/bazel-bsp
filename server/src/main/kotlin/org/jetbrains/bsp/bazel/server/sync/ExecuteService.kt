@@ -35,8 +35,10 @@ import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsQuery.additionalAndroidBuildTargetsQuery
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
@@ -169,17 +171,23 @@ class ExecuteService(
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targets = bspIds + getAdditionalBuildTargets(cancelChecker, bspIds)
         val targetsSpec = TargetsSpec(targets, emptyList())
+        val isAndroidEnabled = workspaceContextProvider.currentWorkspaceContext().isAndroidEnabled
         return compilationManager.buildTargetsWithBep(
-                cancelChecker,
-            targetsSpec,
-            originId
+            cancelChecker = cancelChecker,
+            targetSpecs = targetsSpec,
+            originId = originId,
+            isAndroidEnabled = isAndroidEnabled,
         ).processResult
     }
 
     private fun getAdditionalBuildTargets(
         cancelChecker: CancelChecker,
         bspIds: List<BuildTargetIdentifier>,
-    ): List<BuildTargetIdentifier> = additionalAndroidBuildTargetsQuery(bspIds, bazelRunner, cancelChecker)
+    ): List<BuildTargetIdentifier> {
+        val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
+
+        return if (workspaceContext.isAndroidEnabled) additionalAndroidBuildTargetsQuery(bspIds, bazelRunner, cancelChecker) else emptyList()
+    }
 
     private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> =
             selectModules(cancelChecker, targets).map { toBspId(it) }

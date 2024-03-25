@@ -21,14 +21,19 @@ class BazelBspCompilationManager(
     val workspaceRoot: Path,
 ) {
     fun buildTargetsWithBep(
-        cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String,
+        cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String, isAndroidEnabled: Boolean,
     ): BepBuildResult {
+        val androidFlags = listOf(
+            experimentalGoogleLegacyApi(),
+            experimentalEnableAndroidMigrationApis()
+        )
+        val flagsToUse = if (isAndroidEnabled) androidFlags else emptyList()
         return buildTargetsWithBep(
-            cancelChecker, targetSpecs,
-            listOf(
-                experimentalGoogleLegacyApi(),
-                experimentalEnableAndroidMigrationApis()
-            ), originId, emptyList()
+            cancelChecker = cancelChecker,
+            targetSpecs = targetSpecs,
+            extraFlags = flagsToUse,
+            originId = originId,
+            environment = emptyList(),
         )
     }
 

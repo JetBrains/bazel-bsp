@@ -93,3 +93,6 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
         )
     }
 }
+
+val WorkspaceContext.isAndroidEnabled: Boolean
+    get() = "rules_android" in enabledRules.values
