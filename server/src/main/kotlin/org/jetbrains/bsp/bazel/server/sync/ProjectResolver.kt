@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
@@ -9,6 +10,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManagerResult
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQuery
+import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
@@ -17,7 +19,6 @@ import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
   private val bazelBspAspectsManager: BazelBspAspectsManager,
-  private val bazelExternalRulesQuery: BazelExternalRulesQuery,
   private val bazelBspLanguageExtensionsGenerator: BazelBspLanguageExtensionsGenerator,
   private val bazelBspFallbackAspectsManager: BazelBspFallbackAspectsManager,
   private val workspaceContextProvider: WorkspaceContextProvider,
@@ -25,6 +26,7 @@ class ProjectResolver(
   private val bspLogger: BspClientLogger,
   private val targetInfoReader: TargetInfoReader,
   private val bazelInfo: BazelInfo,
+  private val bazelRunner: BazelRunner,
   private val metricsLogger: MetricsLogger?
 ) {
   private fun <T> measured(description: String, f: () -> T): T {
@@ -37,6 +39,9 @@ class ProjectResolver(
       "Reading project view and creating workspace context",
       workspaceContextProvider::currentWorkspaceContext
     )
+
+    val bazelExternalRulesQuery =
+      BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled, workspaceContext.enabledRules)
 
     val externalRuleNames = measured(
       "Discovering supported external rules"

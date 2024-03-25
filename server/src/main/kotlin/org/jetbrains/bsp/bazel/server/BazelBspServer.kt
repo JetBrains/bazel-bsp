@@ -150,9 +150,6 @@ class BazelBspServer(
       bazelBspCompilationManager = compilationManager,
       aspectsResolver = aspectsResolver
     )
-    val currentContext = workspaceContextProvider.currentWorkspaceContext()
-    val bazelExternalRulesQuery =
-      BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled, currentContext.enabledRules)
     val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver, bazelInfo.release)
     val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
     val targetKindResolver = TargetKindResolver()
@@ -170,7 +167,6 @@ class BazelBspServer(
 
     val projectResolver = ProjectResolver(
       bazelBspAspectsManager = bazelBspAspectsManager,
-      bazelExternalRulesQuery = bazelExternalRulesQuery,
       bazelBspLanguageExtensionsGenerator = bazelBspLanguageExtensionsGenerator,
       bazelBspFallbackAspectsManager = bazelBspFallbackAspectsManager,
       workspaceContextProvider = workspaceContextProvider,
@@ -178,6 +174,7 @@ class BazelBspServer(
       bspLogger = bspClientLogger,
       targetInfoReader = targetInfoReader,
       bazelInfo = bazelInfo,
+      bazelRunner = bazelRunner,
       metricsLogger = metricsLogger
     )
     val projectStorage = FileProjectStorage(bspInfo, bspClientLogger)
