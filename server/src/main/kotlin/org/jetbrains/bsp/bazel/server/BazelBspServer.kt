@@ -33,6 +33,7 @@ import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import org.jetbrains.bsp.bazel.server.sync.TargetInfoReader
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
@@ -87,6 +88,7 @@ class BazelBspServer(
     val serverLifetime = BazelBspServerLifetime(workspaceContextProvider)
     val bspRequestsRunner = BspRequestsRunner(serverLifetime)
     val projectSyncService = ProjectSyncService(bspProjectMapper, projectProvider)
+    val additionalBuildTargetsProvider = AdditionalAndroidBuildTargetsProvider(projectProvider)
     val executeService = ExecuteService(
       compilationManager = compilationManager,
       projectProvider = projectProvider,
@@ -95,6 +97,7 @@ class BazelBspServer(
       bspClientLogger = bspClientLogger,
       bspClientTestNotifier = bspClientTestNotifier,
       bazelPathsResolver = bazelPathsResolver,
+      additionalBuildTargetsProvider = additionalBuildTargetsProvider,
       hasAnyProblems = bspState,
     )
     return BazelServices(

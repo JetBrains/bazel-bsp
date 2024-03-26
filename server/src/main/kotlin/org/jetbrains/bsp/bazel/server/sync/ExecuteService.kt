@@ -32,10 +32,9 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
-import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsQuery.additionalAndroidBuildTargetsQuery
+import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
-import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
@@ -48,6 +47,7 @@ class ExecuteService(
     private val bspClientLogger: BspClientLogger,
     private val bspClientTestNotifier: BspClientTestNotifier,
     private val bazelPathsResolver: BazelPathsResolver,
+    private val additionalBuildTargetsProvider: AdditionalAndroidBuildTargetsProvider,
     private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>
 ) {
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
@@ -186,7 +186,11 @@ class ExecuteService(
     ): List<BuildTargetIdentifier> {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
 
-        return if (workspaceContext.isAndroidEnabled) additionalAndroidBuildTargetsQuery(bspIds, bazelRunner, cancelChecker) else emptyList()
+        return if (workspaceContext.isAndroidEnabled) {
+          additionalBuildTargetsProvider.getAdditionalBuildTargets(cancelChecker, bspIds)
+        } else {
+          emptyList()
+        }
     }
 
     private fun selectTargets(cancelChecker: CancelChecker, targets: List<BuildTargetIdentifier>): List<BuildTargetIdentifier> =
