@@ -538,7 +538,7 @@ class DiagnosticsServiceTest {
         diagnosticsBeforeError.shouldBeEmpty()
 
         // Extract the diagnostics from BEP, there's an error in `Test.scala` of "//path/to/package:test".
-        service.extractDiagnostics(output, "//path/to/package:test", null)
+        service.extractDiagnostics(output, "//path/to/package:test", null, false)
 
         // Assert that state is updated
         service.getBspState().keys.shouldHaveSize(1)
@@ -626,8 +626,8 @@ class DiagnosticsServiceTest {
             )
         )
 
-        service.extractDiagnostics(output1, "//path/to/package:test", null)
-        service.extractDiagnostics(output2, "//path/to/package2:test", null)
+        service.extractDiagnostics(output1, "//path/to/package:test", null, false)
+        service.extractDiagnostics(output2, "//path/to/package2:test", null, false)
 
         // Assert that state is updated
         service.getBspState().keys shouldContainExactlyInAnyOrder listOf(
@@ -675,6 +675,6 @@ class DiagnosticsServiceTest {
     }
 
     private fun extractDiagnostics(output: String, buildTarget: String): List<PublishDiagnosticsParams>? {
-        return DiagnosticsService(workspacePath, ConcurrentHashMap()).extractDiagnostics(output, buildTarget, null)
+        return DiagnosticsService(workspacePath, ConcurrentHashMap()).extractDiagnostics(output, buildTarget, null, false)
     }
 }
