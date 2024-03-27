@@ -15,3 +15,4 @@ startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
 build --noexperimental_check_output_files
 build --noexperimental_check_external_repository_files
 build --experimental_reuse_sandbox_directories
+build --java_language_version=17
