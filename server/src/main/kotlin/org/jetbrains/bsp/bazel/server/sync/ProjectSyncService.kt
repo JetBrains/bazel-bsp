@@ -167,8 +167,8 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
     cancelChecker: CancelChecker,
     params: DependencyModulesParams
   ): DependencyModulesResult {
-    // TODO https://youtrack.jetbrains.com/issue/BAZEL-616
-    return DependencyModulesResult(emptyList())
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.buildDependencyModules(project, params)
   }
 
   fun rustWorkspace(

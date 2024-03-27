@@ -7,6 +7,11 @@ import ch.epfl.scala.bsp4j.CompileProvider
 import ch.epfl.scala.bsp4j.CppOptionsItem
 import ch.epfl.scala.bsp4j.CppOptionsParams
 import ch.epfl.scala.bsp4j.CppOptionsResult
+import ch.epfl.scala.bsp4j.DependencyModule
+import ch.epfl.scala.bsp4j.DependencyModuleDataKind
+import ch.epfl.scala.bsp4j.DependencyModulesItem
+import ch.epfl.scala.bsp4j.DependencyModulesParams
+import ch.epfl.scala.bsp4j.DependencyModulesResult
 import ch.epfl.scala.bsp4j.DependencySourcesItem
 import ch.epfl.scala.bsp4j.DependencySourcesParams
 import ch.epfl.scala.bsp4j.DependencySourcesResult
@@ -458,6 +463,26 @@ class BspProjectMapper(
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
         val items = modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
         return ScalaMainClassesResult(items)
+    }
+
+    fun buildDependencyModules(project: Project, params: DependencyModulesParams): DependencyModulesResult {
+        val targetSet = params.targets.toSet()
+        val dependencyModulesItems = project.modules.filter { targetSet.contains(BuildTargetIdentifier(it.label.value)) }.map { module ->
+            val buildTargetId = BuildTargetIdentifier(module.label.value)
+            val moduleItems = DependencyMapper.allModuleDependencies(project, module).flatMap { libraryDep ->
+                if (libraryDep.outputs.isNotEmpty()) {
+                    val mavenDependencyModule = DependencyMapper.extractMavenDependencyInfo(libraryDep)
+                    val dependencyModule = DependencyModule(libraryDep.label, mavenDependencyModule?.version ?: "")
+                    if (mavenDependencyModule != null) {
+                        dependencyModule.data = mavenDependencyModule
+                        dependencyModule.dataKind = DependencyModuleDataKind.MAVEN
+                    }
+                    listOf(dependencyModule)
+                } else emptyList()
+            }
+            DependencyModulesItem(buildTargetId, moduleItems)
+        }
+        return DependencyModulesResult(dependencyModulesItems)
     }
 
     fun rustWorkspace(
