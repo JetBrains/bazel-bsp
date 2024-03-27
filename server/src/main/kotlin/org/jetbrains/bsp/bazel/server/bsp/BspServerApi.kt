@@ -23,6 +23,8 @@ import ch.epfl.scala.bsp4j.JavaBuildServer
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
 import ch.epfl.scala.bsp4j.JvmBuildServer
+import ch.epfl.scala.bsp4j.JvmCompileClasspathParams
+import ch.epfl.scala.bsp4j.JvmCompileClasspathResult
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
@@ -359,6 +361,17 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
         )
       },
       params
+    )
+  }
+
+  override fun buildTargetJvmCompileClasspath(params: JvmCompileClasspathParams): CompletableFuture<JvmCompileClasspathResult> {
+    return runner.handleRequest(
+       "jvmCompileClasspath",
+      { cancelChecker: CancelChecker, params: JvmCompileClasspathParams ->
+        projectSyncService.jvmCompileClasspath(
+          cancelChecker, params
+        )
+      }, params
     )
   }
 

@@ -16,6 +16,9 @@ import ch.epfl.scala.bsp4j.InverseSourcesResult
 import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
+import ch.epfl.scala.bsp4j.JvmCompileClasspathItem
+import ch.epfl.scala.bsp4j.JvmCompileClasspathParams
+import ch.epfl.scala.bsp4j.JvmCompileClasspathResult
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
 import ch.epfl.scala.bsp4j.JvmMainClass
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
@@ -108,6 +111,7 @@ class BspProjectMapper(
             workspaceInvalidTargetsProvider = true,
             runWithDebugProvider = true,
             jvmBinaryJarsProvider = true,
+            jvmCompileClasspathProvider = true,
         )
         return InitializeBuildResult(
             Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities
@@ -302,6 +306,15 @@ class BspProjectMapper(
         val targets = params.targets
         val result = getJvmEnvironmentItems(project, targets, cancelChecker)
         return JvmTestEnvironmentResult(result)
+    }
+
+    fun jvmCompileClasspath(
+            project: Project, params: JvmCompileClasspathParams, cancelChecker: CancelChecker
+    ): JvmCompileClasspathResult {
+        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
+            JvmCompileClasspathItem(BspMappings.toBspId(module), ideClasspath.map { it.toString() })
+        }
+        return JvmCompileClasspathResult(items)
     }
 
     private fun getJvmEnvironmentItems(
