@@ -8,6 +8,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTarge
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewExcludableListSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewIdeJavaHomeOverrideSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewListSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewSingletonSection
@@ -35,6 +36,8 @@ data class ProjectView(
     val importDepth: ProjectViewImportDepthSection?,
     /** manually enabled rules to override the automatic rules detection mechanism */
     val enabledRules: ProjectViewEnabledRulesSection?,
+    /** local java home path to override to use with IDE, e.g. IntelliJ IDEA */
+    val ideJavaHomeOverride: ProjectViewIdeJavaHomeOverrideSection?,
 ) {
 
     data class Builder(
@@ -47,6 +50,7 @@ data class ProjectView(
         private val deriveTargetsFromDirectories: ProjectViewDeriveTargetsFromDirectoriesSection? = null,
         private val importDepth: ProjectViewImportDepthSection? = null,
         private val enabledRules: ProjectViewEnabledRulesSection? = null,
+        private val ideJavaHomeOverride: ProjectViewIdeJavaHomeOverrideSection? = null,
     ) {
 
         fun build(): ProjectView {
@@ -64,6 +68,7 @@ data class ProjectView(
             val deriveTargetsFromDirectories = combineDeriveTargetFlagSection(importedProjectViews)
             val importDepth = combineImportDepthSection(importedProjectViews)
             val enabledRules = combineEnabledRulesSection(importedProjectViews)
+            val ideJavaHomeOverride = combineIdeJavaHomeOverrideSection(importedProjectViews)
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
@@ -73,7 +78,8 @@ data class ProjectView(
                         + " directories: {},"
                         + " deriveTargetsFlag: {}."
                         + " import depth: {},"
-                        + " enabled rules: {},",
+                        + " enabled rules: {},"
+                        + " ideJavaHomeOverride: {},",
                 targets,
                 bazelBinary,
                 buildFlags,
@@ -82,6 +88,7 @@ data class ProjectView(
                 deriveTargetsFromDirectories,
                 importDepth,
                 enabledRules,
+                ideJavaHomeOverride,
             )
             return ProjectView(
                 targets,
@@ -92,6 +99,7 @@ data class ProjectView(
                 deriveTargetsFromDirectories,
                 importDepth,
                 enabledRules,
+                ideJavaHomeOverride,
             )
         }
 
@@ -201,6 +209,9 @@ data class ProjectView(
             )
             return createInstanceOfListSectionOrNull(rules, ::ProjectViewEnabledRulesSection)
         }
+
+        private fun combineIdeJavaHomeOverrideSection(importedProjectViews: List<ProjectView>): ProjectViewIdeJavaHomeOverrideSection? =
+            ideJavaHomeOverride ?: getLastImportedSingletonValue(importedProjectViews, ProjectView::ideJavaHomeOverride)
 
         private fun <T : ProjectViewSingletonSection<*>> getLastImportedSingletonValue(
             importedProjectViews: List<ProjectView>, sectionGetter: (ProjectView) -> T?

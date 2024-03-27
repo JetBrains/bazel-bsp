@@ -116,7 +116,7 @@ class BazelBspServer(
 
   private fun createLanguagePluginsService(bazelPathsResolver: BazelPathsResolver): LanguagePluginsService {
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
-    val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver)
+    val javaLanguagePlugin = JavaLanguagePlugin(workspaceContextProvider, bazelPathsResolver, jdkResolver)
     val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
     val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)

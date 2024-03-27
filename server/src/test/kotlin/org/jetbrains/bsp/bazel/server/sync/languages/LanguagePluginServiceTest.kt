@@ -17,6 +17,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Language
+import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -31,9 +32,13 @@ import kotlin.io.path.createTempDirectory
 class LanguagePluginServiceTest {
 
   private lateinit var languagePluginsService: LanguagePluginsService
+  private lateinit var workspaceRoot: Path
+  private lateinit var projectViewFile: Path
 
   @BeforeEach
   fun beforeEach() {
+    workspaceRoot = createTempDirectory("workspaceRoot")
+    projectViewFile = workspaceRoot.resolve("projectview.bazelproject")
     val bazelInfo = BasicBazelInfo(
       execRoot = "",
       outputBase = Paths.get(""),
@@ -41,9 +46,10 @@ class LanguagePluginServiceTest {
       release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
       false
     )
+    val provider = DefaultWorkspaceContextProvider(Paths.get(""), projectViewFile)
     val bazelPathsResolver = BazelPathsResolver(bazelInfo)
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
-    val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver)
+    val javaLanguagePlugin = JavaLanguagePlugin(provider, bazelPathsResolver, jdkResolver)
     val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
     val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)

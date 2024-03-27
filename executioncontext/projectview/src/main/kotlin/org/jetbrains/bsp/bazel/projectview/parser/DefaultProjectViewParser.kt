@@ -3,12 +3,14 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewIdeJavaHomeOverrideSection
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelBinarySectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManualTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDeriveTargetsFromDirectoriesSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewDirectoriesSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewEnabledRulesSectionParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewIdeJavaHomeOverrideSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewImportDepthSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewTargetsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.splitter.ProjectViewRawSections
@@ -40,6 +42,7 @@ open class DefaultProjectViewParser : ProjectViewParser {
             deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSectionParser.parse(rawSections),
             importDepth = ProjectViewImportDepthSectionParser.parse(rawSections),
             enabledRules = ProjectViewEnabledRulesSectionParser.parse(rawSections),
+            ideJavaHomeOverride = ProjectViewIdeJavaHomeOverrideSectionParser.parse(rawSections),
         ).build()
     }
 

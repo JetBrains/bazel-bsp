@@ -27,6 +27,13 @@ data class ProjectViewBuildManualTargetsSection(override val value: Boolean) :
     }
 }
 
+data class ProjectViewIdeJavaHomeOverrideSection(override val value: Path) :
+    ProjectViewSingletonSection<Path>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "ide_java_home_override"
+    }
+}
+
 data class ProjectViewImportDepthSection(override val value: Int) :
     ProjectViewSingletonSection<Int>(SECTION_NAME) {
     companion object {

@@ -11,17 +11,20 @@ import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
 
 class JavaLanguagePlugin(
+  private val workspaceContextProvider: WorkspaceContextProvider,
   private val bazelPathsResolver: BazelPathsResolver,
   private val jdkResolver: JdkResolver,
 ) : LanguagePlugin<JavaModule>() {
     private var jdk: Jdk? = null
 
     override fun prepareSync(targets: Sequence<TargetInfo>) {
-        jdk = jdkResolver.resolve(targets)
+        val ideJavaHomeOverride = workspaceContextProvider.currentWorkspaceContext().ideJavaHomeOverrideSpec.value
+        jdk = ideJavaHomeOverride?.let { Jdk(version = "ideJavaHomeOverride", javaHome = it.toUri()) } ?: jdkResolver.resolve(targets)
     }
 
     override fun resolveModule(targetInfo: TargetInfo): JavaModule? =
