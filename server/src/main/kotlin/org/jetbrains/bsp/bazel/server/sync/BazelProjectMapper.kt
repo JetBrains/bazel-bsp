@@ -372,18 +372,21 @@ class BazelProjectMapper(
         target.kind in setOf(
         "java_library",
         "java_binary",
+        "java_test",
         "kt_jvm_library",
         "kt_jvm_binary",
+        "kt_jvm_test",
         "scala_library",
         "scala_binary",
+        "scala_test",
         "rust_test",
         "rust_doc",
         "rust_doc_test",
         "android_library",
         "android_binary",
         "android_local_test",
-      )
         )
+      )
 
   private fun isRustTarget(target: TargetInfo): Boolean =
     target.hasRustCrateInfo()
