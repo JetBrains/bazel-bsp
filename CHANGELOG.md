@@ -30,6 +30,8 @@
   | [6b45eb6](https://github.com/JetBrains/bazel-bsp/commit/6b45eb61fb90c143b845cae69e2f69c6c1b4460d)
 - Include libraries defined in `jdeps` files during sync.
   | [bb47e49](https://github.com/JetBrains/bazel-bsp/commit/bb47e493fc595ddf21438f454cee7a6cd756fc0b)
+- Add support for buildTarget/jvmCompileClasspath
+  | [f7f2662](https://github.com/JetBrains/bazel-bsp/commit/f7f26623ce3254b2f1ecda95329b665d05862109)
 
 ### Fixes 🛠️
 
