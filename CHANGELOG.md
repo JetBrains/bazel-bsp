@@ -47,6 +47,8 @@
   | [1c51f02](https://github.com/JetBrains/bazel-bsp/commit/1c51f02a4331c331a0d7d4cc412bfd1e36daf77e)
 - Server adds sources to generated libs.
   | [eaa5161](https://github.com/JetBrains/bazel-bsp/commit/eaa5161fe4193268c21c324f27786f5f17f79afd)
+- Support Scala 3 diagnostics.
+  | [744735f](https://github.com/JetBrains/bazel-bsp/commit/744735ff30c96f218414514e99019c8ffc700dfe)
 
 ## [3.0.0] - 09.08.2023
 

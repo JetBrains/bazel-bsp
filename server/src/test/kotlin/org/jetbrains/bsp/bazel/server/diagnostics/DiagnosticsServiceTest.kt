@@ -358,6 +358,106 @@ class DiagnosticsServiceTest {
         )
         diagnostics shouldContainExactlyInAnyOrder expected
     }
+    @Test
+    fun `parse scala 3 error`() {
+        // given
+        val output = """
+            |[31m[31m-- [E007] Type Mismatch Error: Hello.scala:19:20 -------------------------------[0m[0m
+            |[31m19 |[0m  [33mdef[0m [36mhello4[0m: [35mInt[0m = [31m"Hello"[0m
+            |[31m[31m   |[0m                    ^^^^^^^[0m
+            |[31m   |[0m                    Found:    ([32m"Hello"[0m : String)
+            |[31m   |[0m                    Required: Int
+            |[31m   |[0m
+            |[31m   |[0m longer explanation available when compiling with `-explain`
+            |2 errors found
+            |Build failed
+            |java.lang.RuntimeException: Build failed
+            |	at io.bazel.rulesscala.scalac.ScalacInvoker.invokeCompiler(ScalacInvoker3.java:43)
+            |	at io.bazel.rulesscala.scalac.ScalacWorker.compileScalaSources(ScalacWorker.java:253)
+            |	at io.bazel.rulesscala.scalac.ScalacWorker.work(ScalacWorker.java:69)
+            |	at io.bazel.rulesscala.worker.Worker.persistentWorkerMain(Worker.java:86)
+            |	at io.bazel.rulesscala.worker.Worker.workerMain(Worker.java:39)
+            |   at io.bazel.rulesscala.scalac.ScalacWorker.main(ScalacWorker.java:33)
+            """.trimMargin()
+
+        // when
+        val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
+
+        // then
+        val expected = listOf(
+            PublishDiagnosticsParams(
+                TextDocumentIdentifier("file:///user/workspace/Hello.scala"),
+                BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
+                ErrorDiagnostic(
+                    Position(19, 20),
+                    """|Type Mismatch Error
+                       |Found:    ("Hello" : String)
+                       |Required: Int
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                )
+            )
+        )
+        diagnostics shouldContainExactlyInAnyOrder expected
+    }
+
+    @Test
+    fun `parse scala 3 multiple errors`() {
+        // given
+        val output = """
+            |[31m[31m-- [E007] Type Mismatch Error: Hello.scala:18:20 -------------------------------[0m[0m
+            |[31m18 |[0m  [33mdef[0m [36mhello3[0m: [35mInt[0m = [31m"Hello"[0m
+            |[31m[31m   |[0m                    ^^^^^^^[0m
+            |[31m   |[0m                    Found:    ([32m"Hello"[0m : String)
+            |[31m   |[0m                    Required: Int
+            |[31m   |[0m
+            |[31m   |[0m longer explanation available when compiling with `-explain`
+            |[31m[31m-- [E007] Type Mismatch Error: Hello.scala:19:20 -------------------------------[0m[0m
+            |[31m19 |[0m  [33mdef[0m [36mhello4[0m: [35mInt[0m = [31m"Hello"[0m
+            |[31m[31m   |[0m                    ^^^^^^^[0m
+            |[31m   |[0m                    Found:    ([32m"Hello"[0m : String)
+            |[31m   |[0m                    Required: Int
+            |[31m   |[0m
+            |[31m   |[0m longer explanation available when compiling with `-explain`
+            |2 errors found
+            |Build failed
+            |java.lang.RuntimeException: Build failed
+            |	at io.bazel.rulesscala.scalac.ScalacInvoker.invokeCompiler(ScalacInvoker3.java:43)
+            |	at io.bazel.rulesscala.scalac.ScalacWorker.compileScalaSources(ScalacWorker.java:253)
+            |	at io.bazel.rulesscala.scalac.ScalacWorker.work(ScalacWorker.java:69)
+            |	at io.bazel.rulesscala.worker.Worker.persistentWorkerMain(Worker.java:86)
+            |	at io.bazel.rulesscala.worker.Worker.workerMain(Worker.java:39)
+            |at io.bazel.rulesscala.scalac.ScalacWorker.main(ScalacWorker.java:33)
+            """.trimMargin()
+
+        // when
+        val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
+
+        // then
+        val expected = listOf(
+            PublishDiagnosticsParams(
+                TextDocumentIdentifier("file:///user/workspace/Hello.scala"),
+                BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
+                ErrorDiagnostic(
+                    Position(18, 20),
+                    """|Type Mismatch Error
+                       |Found:    ("Hello" : String)
+                       |Required: Int
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                ),
+                ErrorDiagnostic(
+                    Position(19, 20),
+                    """|Type Mismatch Error
+                       |Found:    ("Hello" : String)
+                       |Required: Int
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                )
+            )
+        )
+        diagnostics shouldContainExactlyInAnyOrder expected
+    }
 
     @Test
     fun `parse scala warnings`() {
