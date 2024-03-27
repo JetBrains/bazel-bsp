@@ -27,8 +27,6 @@ import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
-import ch.epfl.scala.bsp4j.MavenDependencyModule
-import ch.epfl.scala.bsp4j.MavenDependencyModuleArtifact
 import ch.epfl.scala.bsp4j.OutputPathItem
 import ch.epfl.scala.bsp4j.OutputPathItemKind
 import ch.epfl.scala.bsp4j.OutputPathsItem
@@ -78,7 +76,6 @@ import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.model.Label
 import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Library
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
@@ -86,9 +83,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.LinkedList
 import kotlin.io.path.exists
-import java.util.*
 import kotlin.io.path.name
 import kotlin.io.path.relativeToOrNull
 import kotlin.io.path.toPath

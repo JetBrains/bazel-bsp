@@ -40,6 +40,28 @@ class DependencyMapperTest {
     }
 
     @Test
+    fun `should bazelmod translate dependency`() {
+        val jarUri = URI.create("$cacheLocation/bin/external/rules_jvm_external~~maven~name/v1/https/repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/1.1.1/header_auto-service-annotations-1.1.1.jar")
+        val jarSourcesUri = URI.create("$cacheLocation/bin/external/rules_jvm_external~~maven~name/v1/https/repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/1.1.1/header_auto-service-annotations-1.1.1-sources.jar")
+        val lib1 = Library(
+            "@@rules_jvm_external~override~maven~maven//:com_google_auto_service_auto_service_annotations",
+            setOf(jarUri),
+            setOf(jarSourcesUri),
+            emptyList()
+        )
+        val expectedMavenArtifact = MavenDependencyModuleArtifact(jarUri.toString())
+        val expectedMavenSourcesArtifact = MavenDependencyModuleArtifact(jarSourcesUri.toString())
+        expectedMavenSourcesArtifact.classifier = "sources"
+        val expectedDependency = MavenDependencyModule("com.google.auto.service", "auto-service-annotations", "1.1.1", listOf(
+            expectedMavenArtifact,
+            expectedMavenSourcesArtifact
+        ))
+        val dependency = DependencyMapper.extractMavenDependencyInfo(lib1)
+
+        dependency shouldBe expectedDependency
+    }
+
+    @Test
     fun `should not translate non maven dependency`() {
         val lib1 = Library(
             "@//projects/v1:scheduler",
