@@ -5,5 +5,5 @@ import java.net.URI
 
 data class GoModule (
   val sdkHomePath: URI?,
-  val importPath: String?,
+  val importPath: String,
 ): LanguageData

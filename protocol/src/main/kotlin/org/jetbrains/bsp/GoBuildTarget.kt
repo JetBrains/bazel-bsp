@@ -4,6 +4,5 @@ import java.net.URI
 
 data class GoBuildTarget(
   val sdkHomePath: URI?,
-  val importPath: String?,
+  val importPath: String,
 )
-
