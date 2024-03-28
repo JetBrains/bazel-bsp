@@ -11,7 +11,8 @@ import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
-import java.util.Optional
+
+// TODO: remove this file once we untangle the spaghetti and use the method from ExecuteService
 
 class BazelBspCompilationManager(
     private val bazelRunner: BazelRunner,
@@ -21,28 +22,11 @@ class BazelBspCompilationManager(
     val workspaceRoot: Path,
 ) {
     fun buildTargetsWithBep(
-        cancelChecker: CancelChecker, targetSpecs: TargetsSpec, originId: String, isAndroidEnabled: Boolean,
-    ): BepBuildResult {
-        val androidFlags = listOf(
-            experimentalGoogleLegacyApi(),
-            experimentalEnableAndroidMigrationApis()
-        )
-        val flagsToUse = if (isAndroidEnabled) androidFlags else emptyList()
-        return buildTargetsWithBep(
-            cancelChecker = cancelChecker,
-            targetSpecs = targetSpecs,
-            extraFlags = flagsToUse,
-            originId = originId,
-            environment = emptyList(),
-        )
-    }
-
-    fun buildTargetsWithBep(
         cancelChecker: CancelChecker,
         targetSpecs: TargetsSpec,
-        extraFlags: List<String>,
-        originId: String?,
-        environment: List<Pair<String, String>>
+        extraFlags: List<String> = emptyList(),
+        originId: String? = null,
+        environment: List<Pair<String, String>> = emptyList()
     ): BepBuildResult {
         val target = targetSpecs.values.firstOrNull()
         val diagnosticsService = DiagnosticsService(workspaceRoot, hasAnyProblems)

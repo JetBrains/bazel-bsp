@@ -68,13 +68,12 @@ class BazelRunner private constructor(
         logInvocation(processArgs, environment, originId)
         val processBuilder = ProcessBuilder(processArgs)
         processBuilder.environment() += environment
-        val outputLogger = bspClientLogger.takeIf { parseProcessOutput }
+        val outputLogger = bspClientLogger.takeIf { parseProcessOutput }?.copy(originId = originId)
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
         val process = processBuilder.start()
         return BazelProcess(
             process,
-            if (originId == null) outputLogger else outputLogger?.copy(originId = originId),
-            originId
+            outputLogger
         )
     }
 

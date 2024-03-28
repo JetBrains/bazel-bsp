@@ -8,7 +8,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime
 import org.jetbrains.bsp.bazel.server.bsp.BazelServices
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
@@ -59,7 +58,6 @@ class BazelBspServer(
 
   private fun bspServerData(
     bspClientLogger: BspClientLogger,
-    bspClientTestNotifier: BspClientTestNotifier,
     bazelRunner: BazelRunner,
     compilationManager: BazelBspCompilationManager,
     bazelInfo: BazelInfo,
@@ -95,7 +93,6 @@ class BazelBspServer(
       bazelRunner = bazelRunner,
       workspaceContextProvider = workspaceContextProvider,
       bspClientLogger = bspClientLogger,
-      bspClientTestNotifier = bspClientTestNotifier,
       bazelPathsResolver = bazelPathsResolver,
       additionalBuildTargetsProvider = additionalBuildTargetsProvider,
       hasAnyProblems = bspState,
@@ -193,10 +190,8 @@ class BazelBspServer(
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =
         BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState, client, workspaceRoot)
-      val bspClientTestNotifier = BspClientTestNotifier(client)
       bspServerData(
         bspClientLogger,
-        bspClientTestNotifier,
         bazelRunner,
         compilationManager,
         bazelInfo,
