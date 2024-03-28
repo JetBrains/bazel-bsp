@@ -1,5 +1,5 @@
 load("@//rules/bazel_integration_test:defs.bzl", "bazel_integration_test_all_versions", "bazel_integration_test_current_version")
-load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "integration_test_utils")
+load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "integration_test_utils", "bazel_integration_test")
 
 bazel_integration_test_all_versions(
     name = "sample_repo_test",
@@ -65,6 +65,14 @@ bazel_integration_test_all_versions(
     workspace_path = "test-resources/rust-project",
 )
 
+bazel_integration_test(
+    name = "android_project_test",
+    timeout = "eternal",
+    bazel_version = "7.1.1",
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspAndroidProjectTest",
+    workspace_path = "test-resources/android-project",
+)
+
 test_suite(
     name = "all_tests",
     tags = integration_test_utils.DEFAULT_INTEGRATION_TEST_TAGS,
@@ -75,6 +83,7 @@ test_suite(
         ":python_project_test",
         ":remote_jdk_test",
         ":rust_project_test",
+        ":android_project_test",
         ":sample_repo_test",
         ":server_downloads_bazelisk_test",
     ],
