@@ -1,11 +1,9 @@
 package org.jetbrains.bsp.bazel.server.diagnostics
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.Diagnostic
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
 import java.util.Collections
 
 /**
@@ -17,16 +15,20 @@ class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: Mutabl
 
     private val parser = DiagnosticsParser()
     private val mapper = DiagnosticBspMapper(workspaceRoot)
+    /* Warnings are reported before the target completed event, when everything is cleared. so we want to avoid removing them */
+    private val updatedInThisRun = mutableSetOf<PublishDiagnosticsParams>()
 
     fun getBspState() = Collections.unmodifiableMap(hasAnyProblems)
 
     fun extractDiagnostics(
         bazelOutput: String,
         targetLabel: String,
-        originId: String?
+        originId: String?,
+        diagnosticsFromProgress: Boolean
     ): List<PublishDiagnosticsParams> {
-        val parsedDiagnostics = parser.parse(bazelOutput, targetLabel)
+        val parsedDiagnostics = parser.parse(bazelOutput, targetLabel, diagnosticsFromProgress)
         val events = mapper.createDiagnostics(parsedDiagnostics, originId)
+        if (diagnosticsFromProgress) updatedInThisRun.addAll(events)
         updateProblemState(events)
         return events
     }
@@ -34,6 +36,10 @@ class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: Mutabl
     fun clearFormerDiagnostics(targetLabel: String): List<PublishDiagnosticsParams> {
 	    val docs = hasAnyProblems[targetLabel]
 	    hasAnyProblems.remove(targetLabel)
+        if (updatedInThisRun.isNotEmpty()) {
+            hasAnyProblems[targetLabel] = updatedInThisRun.map { it.textDocument }.toSet()
+            updatedInThisRun.clear()
+        }
 	    return docs
 	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), emptyList(), true)}
 	      .orEmpty()
