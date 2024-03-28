@@ -30,6 +30,8 @@
   | [6b45eb6](https://github.com/JetBrains/bazel-bsp/commit/6b45eb61fb90c143b845cae69e2f69c6c1b4460d)
 - Include libraries defined in `jdeps` files during sync.
   | [bb47e49](https://github.com/JetBrains/bazel-bsp/commit/bb47e493fc595ddf21438f454cee7a6cd756fc0b)
+- Add support for buildTarget/jvmCompileClasspath
+  | [f7f2662](https://github.com/JetBrains/bazel-bsp/commit/f7f26623ce3254b2f1ecda95329b665d05862109)
 
 ### Fixes 🛠️
 
@@ -47,6 +49,8 @@
   | [1c51f02](https://github.com/JetBrains/bazel-bsp/commit/1c51f02a4331c331a0d7d4cc412bfd1e36daf77e)
 - Server adds sources to generated libs.
   | [eaa5161](https://github.com/JetBrains/bazel-bsp/commit/eaa5161fe4193268c21c324f27786f5f17f79afd)
+- Support Scala 3 diagnostics.
+  | [744735f](https://github.com/JetBrains/bazel-bsp/commit/744735ff30c96f218414514e99019c8ffc700dfe)
 
 ## [3.0.0] - 09.08.2023
 

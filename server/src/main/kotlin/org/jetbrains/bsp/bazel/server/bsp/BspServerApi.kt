@@ -23,6 +23,8 @@ import ch.epfl.scala.bsp4j.JavaBuildServer
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
 import ch.epfl.scala.bsp4j.JvmBuildServer
+import ch.epfl.scala.bsp4j.JvmCompileClasspathParams
+import ch.epfl.scala.bsp4j.JvmCompileClasspathResult
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
@@ -54,6 +56,10 @@ import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.BazelBuildServer
+import org.jetbrains.bsp.JvmBinaryJarsParams
+import org.jetbrains.bsp.JvmBinaryJarsResult
+import org.jetbrains.bsp.MobileInstallParams
+import org.jetbrains.bsp.MobileInstallResult
 import org.jetbrains.bsp.RunWithDebugParams
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
@@ -120,7 +126,17 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   override fun workspaceBuildTargets(): CompletableFuture<WorkspaceBuildTargetsResult> {
     return runner.handleRequest("workspaceBuildTargets") { cancelChecker: CancelChecker ->
       projectSyncService.workspaceBuildTargets(
-        cancelChecker
+        cancelChecker,
+        build = false
+      )
+    }
+  }
+
+  override fun workspaceBuildAndGetBuildTargets(): CompletableFuture<WorkspaceBuildTargetsResult> {
+    return runner.handleRequest("workspaceBuildAndGetBuildTargets") { cancelChecker: CancelChecker ->
+      projectSyncService.workspaceBuildTargets(
+        cancelChecker,
+        true
       )
     }
   }
@@ -212,6 +228,18 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
         )
       },
       params
+    )
+  }
+
+  override fun buildTargetMobileInstall(params: MobileInstallParams): CompletableFuture<MobileInstallResult> {
+    return runner.handleRequest(
+      "buildTargetMobileInstall",
+      { cancelChecker: CancelChecker, params: MobileInstallParams ->
+        executeService.mobileInstall(
+          cancelChecker, params,
+        )
+      },
+      params,
     )
   }
 
@@ -336,12 +364,33 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
     )
   }
 
+  override fun buildTargetJvmCompileClasspath(params: JvmCompileClasspathParams): CompletableFuture<JvmCompileClasspathResult> {
+    return runner.handleRequest(
+       "jvmCompileClasspath",
+      { cancelChecker: CancelChecker, params: JvmCompileClasspathParams ->
+        projectSyncService.jvmCompileClasspath(
+          cancelChecker, params
+        )
+      }, params
+    )
+  }
+
   override fun buildTargetJvmTestEnvironment(
     params: JvmTestEnvironmentParams
   ): CompletableFuture<JvmTestEnvironmentResult> {
     return runner.handleRequest(
       "jvmTestEnvironment", { cancelChecker: CancelChecker, params: JvmTestEnvironmentParams ->
         projectSyncService.jvmTestEnvironment(
+          cancelChecker, params
+        )
+      }, params
+    )
+  }
+
+  override fun buildTargetJvmBinaryJars(params: JvmBinaryJarsParams): CompletableFuture<JvmBinaryJarsResult> {
+    return runner.handleRequest(
+      "jvmBinaryJars", { cancelChecker: CancelChecker, params: JvmBinaryJarsParams ->
+        projectSyncService.jvmBinaryJars(
           cancelChecker, params
         )
       }, params

@@ -5,6 +5,7 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.aspect
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.buildManualTests
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalEnableAndroidMigrationApis
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalGoogleLegacyApi
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
@@ -47,25 +48,26 @@ class BazelBspAspectsManager(
     targetSpecs: TargetsSpec,
     aspect: String,
     outputGroups: List<String>,
+    isAndroidEnabled: Boolean,
   ): BazelBspAspectsManagerResult {
+    if (targetSpecs.values.isEmpty()) return BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
+    val androidFlags = listOf(experimentalGoogleLegacyApi(), experimentalEnableAndroidMigrationApis())
+    val defaultFlags = listOf(
+      repositoryOverride(Constants.ASPECT_REPOSITORY, aspectsResolver.bazelBspRoot),
+      aspect(aspectsResolver.resolveLabel(aspect)),
+      outputGroups(outputGroups),
+      keepGoing(),
+      color(true),
+      buildManualTests(),
+      curses(false),
+    )
+    val flagsToUse = defaultFlags + if (isAndroidEnabled) androidFlags else emptyList()
 
-    return if (targetSpecs.values.isEmpty()) BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
-    else bazelBspCompilationManager
+    return bazelBspCompilationManager
       .buildTargetsWithBep(
         cancelChecker,
         targetSpecs,
-        listOf(
-          repositoryOverride(
-            Constants.ASPECT_REPOSITORY, aspectsResolver.bazelBspRoot
-          ),
-          aspect(aspectsResolver.resolveLabel(aspect)),
-          outputGroups(outputGroups),
-          keepGoing(),
-          color(true),
-          buildManualTests(),
-          curses(false),
-          experimentalGoogleLegacyApi(),
-        ),
+        flagsToUse,
         null,
         // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
         // (`Cargo.lock` file) based on dependencies specified in `manifest`

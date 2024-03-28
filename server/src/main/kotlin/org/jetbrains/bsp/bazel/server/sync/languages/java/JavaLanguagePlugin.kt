@@ -8,28 +8,29 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
 
 class JavaLanguagePlugin(
+  private val workspaceContextProvider: WorkspaceContextProvider,
   private val bazelPathsResolver: BazelPathsResolver,
   private val jdkResolver: JdkResolver,
 ) : LanguagePlugin<JavaModule>() {
     private var jdk: Jdk? = null
 
     override fun prepareSync(targets: Sequence<TargetInfo>) {
-        jdk = jdkResolver.resolve(targets)
+        val ideJavaHomeOverride = workspaceContextProvider.currentWorkspaceContext().ideJavaHomeOverrideSpec.value
+        jdk = ideJavaHomeOverride?.let { Jdk(version = "ideJavaHomeOverride", javaHome = it.toUri()) } ?: jdkResolver.resolve(targets)
     }
 
     override fun resolveModule(targetInfo: TargetInfo): JavaModule? =
         targetInfo.takeIf(TargetInfo::hasJvmTargetInfo)?.jvmTargetInfo?.run {
             val mainOutput = bazelPathsResolver.resolveUri(getJars(0).getBinaryJars(0))
-            val allOutputs = jarsList.flatMap {
-                it.interfaceJarsList + it.binaryJarsList
-            }.map(bazelPathsResolver::resolveUri)
+            val binaryOutputs = jarsList.flatMap { it.binaryJarsList }.map(bazelPathsResolver::resolveUri)
             val mainClass = getMainClass(this)
             val runtimeJdk = jdkResolver.resolveJdk(targetInfo)
 
@@ -39,7 +40,7 @@ class JavaLanguagePlugin(
                 javacOptsList,
                 jvmFlagsList,
                 mainOutput,
-                allOutputs,
+                binaryOutputs,
                 mainClass,
                 argsList,
             )
@@ -55,10 +56,10 @@ class JavaLanguagePlugin(
     private fun getJdk(): Jdk = jdk ?: throw RuntimeException("Failed to resolve JDK for project")
 
     override fun dependencySources(
-        targetInfo: TargetInfo, dependencyTree: DependencyTree
+        targetInfo: TargetInfo, dependencyGraph: DependencyGraph
     ): Set<URI> =
         targetInfo.getJvmTargetInfoOrNull()?.run {
-            dependencyTree.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+            dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
                 .flatMap(::getSourceJars)
                 .map(bazelPathsResolver::resolveUri)
                 .toSet()

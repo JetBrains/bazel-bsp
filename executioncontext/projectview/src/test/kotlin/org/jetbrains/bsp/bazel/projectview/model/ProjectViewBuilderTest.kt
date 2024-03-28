@@ -39,6 +39,7 @@ class ProjectViewBuilderTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -103,6 +104,7 @@ class ProjectViewBuilderTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -168,6 +170,7 @@ class ProjectViewBuilderTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -217,6 +220,7 @@ class ProjectViewBuilderTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(0),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -326,7 +330,8 @@ class ProjectViewBuilderTest {
                 ),
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(2),
-                enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala"))
+                enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala")),
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -496,6 +501,7 @@ class ProjectViewBuilderTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -668,6 +674,7 @@ class ProjectViewBuilderTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }

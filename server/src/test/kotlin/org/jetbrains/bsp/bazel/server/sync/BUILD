@@ -11,9 +11,9 @@ kt_test(
 )
 
 kt_test(
-    name = "JUnit5TestParserTest",
+    name = "DependencyMapperTest",
     size = "small",
-    src = "JUnit5TestParserTest.kt",
+    src = "DependencyMapperTest.kt",
     deps = [
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync",
     ],

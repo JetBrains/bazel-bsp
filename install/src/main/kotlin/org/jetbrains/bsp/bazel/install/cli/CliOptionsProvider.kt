@@ -230,17 +230,18 @@ class CliOptionsProvider(private val args: Array<String>) {
     private fun createProjectViewCliOptions(cmd: CommandLine): ProjectViewCliOptions? =
         if (isAnyGenerationFlagSet(cmd))
             ProjectViewCliOptions(
-                bazelBinary = bazelBinary(cmd),
-                targets = targets(cmd),
-                excludedTargets = excludedTargets(cmd),
-                buildFlags = buildFlags(cmd),
-                buildManualTargets = buildManualTargets(cmd),
-                directories = directories(cmd),
-                excludedDirectories = excludedDirectories(cmd),
-                deriveTargetsFromDirectories = deriveTargetsFlag(cmd),
-                importDepth = importDepth(cmd),
-                produceTraceLog = produceTraceLogFlag(cmd),
-                enabledRules = enabledRules(cmd)
+              bazelBinary = bazelBinary(cmd),
+              targets = targets(cmd),
+              excludedTargets = excludedTargets(cmd),
+              buildFlags = buildFlags(cmd),
+              buildManualTargets = buildManualTargets(cmd),
+              directories = directories(cmd),
+              excludedDirectories = excludedDirectories(cmd),
+              deriveTargetsFromDirectories = deriveTargetsFlag(cmd),
+              importDepth = importDepth(cmd),
+              produceTraceLog = produceTraceLogFlag(cmd),
+              enabledRules = enabledRules(cmd),
+              ideJavaHomeOverride = ideJavaHomeOverride(cmd),
             )
         else null
 
@@ -275,6 +276,8 @@ class CliOptionsProvider(private val args: Array<String>) {
 
     private fun enabledRules(cmd: CommandLine): List<String>? = cmd.getOptionValues(ENABLED_RULES_LONG_OPT)?.toList()
 
+    private fun ideJavaHomeOverride(cmd: CommandLine): Path? = getOptionValueAndMapToAbsolutePath(cmd, IDE_JAVA_HOME_OVERRIDE_LONG_OPT)
+
     private fun targets(cmd: CommandLine): List<String>? = cmd.getOptionValues(TARGETS_SHORT_OPT)?.toList()
 
     private fun excludedTargets(cmd: CommandLine): List<String>? = cmd.getOptionValues(EXCLUDED_TARGETS_LONG_OPT)?.toList()
@@ -307,6 +310,7 @@ class CliOptionsProvider(private val args: Array<String>) {
         private const val JAVA_PATH_SHORT_OPT = "j"
         private const val BUILD_MANUAL_TARGETS_OPT = "m"
         private const val ENABLED_RULES_LONG_OPT = "enabled-rules"
+        private const val IDE_JAVA_HOME_OVERRIDE_LONG_OPT = "ide-java-home-override"
         private const val DIRECTORIES_SHORT_OPT = "r"
         private const val EXCLUDED_DIRECTORIES_LONG_OPT = "excluded-directories"
         private const val DERIVE_TARGETS_FLAG_SHORT_OPT = "v"

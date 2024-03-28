@@ -8,7 +8,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime
 import org.jetbrains.bsp.bazel.server.bsp.BazelServices
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
@@ -33,7 +32,9 @@ import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import org.jetbrains.bsp.bazel.server.sync.TargetInfoReader
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.go.GoLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
@@ -58,7 +59,6 @@ class BazelBspServer(
 
   private fun bspServerData(
     bspClientLogger: BspClientLogger,
-    bspClientTestNotifier: BspClientTestNotifier,
     bazelRunner: BazelRunner,
     compilationManager: BazelBspCompilationManager,
     bazelInfo: BazelInfo,
@@ -87,14 +87,15 @@ class BazelBspServer(
     val serverLifetime = BazelBspServerLifetime(workspaceContextProvider)
     val bspRequestsRunner = BspRequestsRunner(serverLifetime)
     val projectSyncService = ProjectSyncService(bspProjectMapper, projectProvider)
+    val additionalBuildTargetsProvider = AdditionalAndroidBuildTargetsProvider(projectProvider)
     val executeService = ExecuteService(
       compilationManager = compilationManager,
       projectProvider = projectProvider,
       bazelRunner = bazelRunner,
       workspaceContextProvider = workspaceContextProvider,
       bspClientLogger = bspClientLogger,
-      bspClientTestNotifier = bspClientTestNotifier,
       bazelPathsResolver = bazelPathsResolver,
+      additionalBuildTargetsProvider = additionalBuildTargetsProvider,
       hasAnyProblems = bspState,
     )
     return BazelServices(
@@ -113,7 +114,7 @@ class BazelBspServer(
 
   private fun createLanguagePluginsService(bazelPathsResolver: BazelPathsResolver): LanguagePluginsService {
     val jdkResolver = JdkResolver(bazelPathsResolver, JdkVersionResolver())
-    val javaLanguagePlugin = JavaLanguagePlugin(bazelPathsResolver, jdkResolver)
+    val javaLanguagePlugin = JavaLanguagePlugin(workspaceContextProvider, bazelPathsResolver, jdkResolver)
     val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
     val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
@@ -152,16 +153,15 @@ class BazelBspServer(
       bazelBspCompilationManager = compilationManager,
       aspectsResolver = aspectsResolver
     )
-    val currentContext = workspaceContextProvider.currentWorkspaceContext()
-    val bazelExternalRulesQuery =
-      BazelExternalRulesQueryImpl(bazelRunner, bazelInfo.isBzlModEnabled, currentContext.enabledRules)
     val bazelBspLanguageExtensionsGenerator = BazelBspLanguageExtensionsGenerator(aspectsResolver, bazelInfo.release)
     val bazelBspFallbackAspectsManager = BazelBspFallbackAspectsManager(bazelRunner, workspaceContextProvider)
     val targetKindResolver = TargetKindResolver()
+    val kotlinAndroidModulesMerger = KotlinAndroidModulesMerger()
     val bazelProjectMapper = BazelProjectMapper(
       languagePluginsService,
       bazelPathsResolver,
       targetKindResolver,
+      kotlinAndroidModulesMerger,
       bazelInfo,
       bspClientLogger,
       metricsLogger
@@ -170,7 +170,6 @@ class BazelBspServer(
 
     val projectResolver = ProjectResolver(
       bazelBspAspectsManager = bazelBspAspectsManager,
-      bazelExternalRulesQuery = bazelExternalRulesQuery,
       bazelBspLanguageExtensionsGenerator = bazelBspLanguageExtensionsGenerator,
       bazelBspFallbackAspectsManager = bazelBspFallbackAspectsManager,
       workspaceContextProvider = workspaceContextProvider,
@@ -178,6 +177,7 @@ class BazelBspServer(
       bspLogger = bspClientLogger,
       targetInfoReader = targetInfoReader,
       bazelInfo = bazelInfo,
+      bazelRunner = bazelRunner,
       metricsLogger = metricsLogger
     )
     val projectStorage = FileProjectStorage(bspInfo, bspClientLogger)
@@ -193,10 +193,8 @@ class BazelBspServer(
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =
         BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState, client, workspaceRoot)
-      val bspClientTestNotifier = BspClientTestNotifier(client)
       bspServerData(
         bspClientLogger,
-        bspClientTestNotifier,
         bazelRunner,
         compilationManager,
         bazelInfo,

@@ -166,6 +166,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             projectView shouldBe expectedProjectView
@@ -210,6 +211,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -262,6 +264,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -312,6 +315,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(7),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -353,6 +357,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(8),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -410,6 +415,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(false),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -472,6 +478,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(1),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             projectView shouldBe expectedProjectView
         }
@@ -496,6 +503,7 @@ class DefaultProjectViewParserTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = ProjectViewEnabledRulesSection(listOf("io_bazel_rules_scala", "rules_jvm", "rules_java")),
+                ideJavaHomeOverride = null,
             )
 
             projectView shouldBe expectedProjectView

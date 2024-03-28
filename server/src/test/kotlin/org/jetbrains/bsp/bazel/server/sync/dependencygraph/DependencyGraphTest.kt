@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.sync.dependencytree
+package org.jetbrains.bsp.bazel.server.sync.dependencygraph
 
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
@@ -8,20 +8,20 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 // graphs generated using: https://arthursonzogni.com/Diagon/#GraphDAG
-class DependencyTreeTest {
+class DependencyGraphTest {
 
     @Nested
-    @DisplayName("DependencyTree.transitiveDependenciesWithoutRootTargets")
+    @DisplayName("DependencyGraph.transitiveDependenciesWithoutRootTargets")
     inner class TransitiveDependenciesTest {
 
         @Test
         fun `should return empty list for not existing target`() {
             // given
-            val dependencyTree = DependencyTree()
+            val dependencyGraph = DependencyGraph()
 
             // when
             val dependencies =
-                dependencyTree.transitiveDependenciesWithoutRootTargets("//does/not/exist")
+                dependencyGraph.transitiveDependenciesWithoutRootTargets("//does/not/exist")
 
             // then
             dependencies shouldBe emptySet()
@@ -29,7 +29,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return no dependencies for target without dependencies`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -47,10 +47,10 @@ class DependencyTreeTest {
             val b = targetInfo("//B")
             val idToTargetInfo = toIdToTargetInfoMap(a, b)
             val rootTargets = setOf("//A", "//B")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//B")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//B")
 
             // then
             dependencies shouldBe emptySet()
@@ -58,7 +58,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return only direct dependencies for target without transitive dependencies`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -79,10 +79,10 @@ class DependencyTreeTest {
             val d = targetInfo("//d", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d)
             val rootTargets = setOf("//A")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
 
             // then
             val expectedDependencies = setOf(b, c, d)
@@ -91,7 +91,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return direct and transitive dependencies for target with transitive dependencies`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -117,10 +117,48 @@ class DependencyTreeTest {
             val e = targetInfo("//e", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e)
             val rootTargets = setOf("//A")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
+
+            // then
+            val expectedDependencies = setOf(b, c, d, e)
+            dependencies shouldBe expectedDependencies
+        }
+
+        @Test
+        fun `should return direct and transitive dependencies for target with transitive dependencies but leaf is reused by targets`() {
+            // graph:
+            // '?' - queried target
+            // '+' - should be returned
+            // '-' - shouldn't be returned
+            // capital letter - root target
+            // ┌───────┐
+            // │   A   │
+            // │   ?   │
+            // └┬─────┬┘
+            // ┌▽───┐┌▽┐
+            // │ b  ││c│
+            // │ +  ││+│
+            // └┬──┬┘└┬┘
+            // ┌▽┐┌▽──▽┐
+            // │d││ e  │
+            // │+││ +  │
+            // └─┘└────┘
+
+            // given
+            val a = targetInfo("//A", listOf("//b", "//c"))
+            val b = targetInfo("//b", listOf("//d", "//e"))
+            val c = targetInfo("//c", listOf("//e"))
+            val d = targetInfo("//d", listOf())
+            val e = targetInfo("//e", listOf())
+            val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e)
+            val rootTargets = setOf("//A")
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
+
+            // when
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
 
             // then
             val expectedDependencies = setOf(b, c, d, e)
@@ -129,7 +167,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return direct and transitive dependencies for target with transitive dependencies including deep root target`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -161,10 +199,10 @@ class DependencyTreeTest {
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
             val rootTargets = setOf("//A", "//D")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
 
             // then
             val expectedDependencies = setOf(b, c, d, e, f, g)
@@ -173,7 +211,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return direct and transitive dependencies for target with transitive dependencies including deep root target and excluding direct root targets`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -218,10 +256,10 @@ class DependencyTreeTest {
             val l = targetInfo("//L", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g, h, i, j, k, l)
             val rootTargets = setOf("//A", "//B", "//F", "//L")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
 
             // then
             val expectedDependencies = setOf(c, f, g, h, i, j, k, l)
@@ -229,8 +267,8 @@ class DependencyTreeTest {
         }
 
         @Test
-        fun `should return direct and transitive dependencies for target with transitive dependencies including deep root target and excluding direct root targets which are not a root for the tree`() {
-            // tree:
+        fun `should return direct and transitive dependencies for target with transitive dependencies including deep root target and excluding direct root targets which are not a root for the graph`() {
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -273,10 +311,10 @@ class DependencyTreeTest {
             val l = targetInfo("//L", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g, h, i, j, k, l)
             val rootTargets = setOf("//A", "//B", "//F", "//L")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.transitiveDependenciesWithoutRootTargets("//F")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//F")
 
             // then
             val expectedDependencies = setOf(i, j, k, l)
@@ -285,11 +323,11 @@ class DependencyTreeTest {
     }
 
     @Nested
-    @DisplayName("DependencyTree.allTargetsAtDepth")
+    @DisplayName("DependencyGraph.allTargetsAtDepth")
     inner class DependenciesAtDepthTest {
         @Test
         fun `should return only root targets for importing depth 0`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -321,10 +359,10 @@ class DependencyTreeTest {
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
             val rootTargets = setOf("//A", "//D")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.allTargetsAtDepth(0, setOf("//A", "//D"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(0, setOf("//A", "//D"))
 
             // then
             val expectedDependencies = setOf(a, d)
@@ -333,7 +371,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return root targets and their direct dependencies for importing depth 1`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -365,10 +403,10 @@ class DependencyTreeTest {
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
             val rootTargets = setOf("//A", "//D")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.allTargetsAtDepth(1, setOf("//A", "//D"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(1, setOf("//A", "//D"))
 
             // then
             val expectedDependencies = setOf(a, b, c, d, f, g)
@@ -377,7 +415,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return two levels of dependencies for importing depth 2`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -409,10 +447,10 @@ class DependencyTreeTest {
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
             val rootTargets = setOf("//A", "//D")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.allTargetsAtDepth(2, setOf("//A"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(2, setOf("//A"))
 
             // then
             val expectedDependencies = setOf(a, b, c, d, e)
@@ -421,7 +459,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return 11 targets for importing depth 10`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -491,10 +529,10 @@ class DependencyTreeTest {
             val rootTargets = setOf("//A00")
             val idToTargetInfo =
                 toIdToTargetInfoMap(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.allTargetsAtDepth(10, setOf("//A00"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(10, setOf("//A00"))
 
             // then
             val expectedDependencies = setOf(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
@@ -503,7 +541,7 @@ class DependencyTreeTest {
 
         @Test
         fun `should return all targets for importing depth -1`() {
-            // tree:
+            // graph:
             // '?' - queried target
             // '+' - should be returned
             // '-' - shouldn't be returned
@@ -535,10 +573,10 @@ class DependencyTreeTest {
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
             val rootTargets = setOf("//A", "//D")
-            val dependencyTree = DependencyTree(rootTargets, idToTargetInfo)
+            val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyTree.allTargetsAtDepth(-1, setOf("//A"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(-1, setOf("//A"))
 
             // then
             val expectedDependencies = setOf(a, b, c, d, e, f, g)

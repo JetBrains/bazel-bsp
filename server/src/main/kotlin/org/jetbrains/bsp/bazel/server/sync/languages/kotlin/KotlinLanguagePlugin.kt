@@ -4,7 +4,7 @@ import ch.epfl.scala.bsp4j.BuildTarget
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import org.jetbrains.bsp.KotlinBuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.server.sync.dependencytree.DependencyTree
+import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.model.Label
@@ -46,8 +46,8 @@ class KotlinLanguagePlugin(
     )
   }
 
-  override fun dependencySources(targetInfo: BspTargetInfo.TargetInfo, dependencyTree: DependencyTree): Set<URI> =
-      javaLanguagePlugin.dependencySources(targetInfo, dependencyTree)
+  override fun dependencySources(targetInfo: BspTargetInfo.TargetInfo, dependencyGraph: DependencyGraph): Set<URI> =
+      javaLanguagePlugin.dependencySources(targetInfo, dependencyGraph)
 
   override fun calculateSourceRoot(source: Path): Path? =
       javaLanguagePlugin.calculateSourceRoot(source)

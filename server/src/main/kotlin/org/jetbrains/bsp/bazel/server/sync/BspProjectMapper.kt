@@ -7,6 +7,11 @@ import ch.epfl.scala.bsp4j.CompileProvider
 import ch.epfl.scala.bsp4j.CppOptionsItem
 import ch.epfl.scala.bsp4j.CppOptionsParams
 import ch.epfl.scala.bsp4j.CppOptionsResult
+import ch.epfl.scala.bsp4j.DependencyModule
+import ch.epfl.scala.bsp4j.DependencyModuleDataKind
+import ch.epfl.scala.bsp4j.DependencyModulesItem
+import ch.epfl.scala.bsp4j.DependencyModulesParams
+import ch.epfl.scala.bsp4j.DependencyModulesResult
 import ch.epfl.scala.bsp4j.DependencySourcesItem
 import ch.epfl.scala.bsp4j.DependencySourcesParams
 import ch.epfl.scala.bsp4j.DependencySourcesResult
@@ -16,6 +21,9 @@ import ch.epfl.scala.bsp4j.InverseSourcesResult
 import ch.epfl.scala.bsp4j.JavacOptionsItem
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
+import ch.epfl.scala.bsp4j.JvmCompileClasspathItem
+import ch.epfl.scala.bsp4j.JvmCompileClasspathParams
+import ch.epfl.scala.bsp4j.JvmCompileClasspathResult
 import ch.epfl.scala.bsp4j.JvmEnvironmentItem
 import ch.epfl.scala.bsp4j.JvmMainClass
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
@@ -53,6 +61,9 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.BazelBuildServerCapabilities
 import org.jetbrains.bsp.DirectoryItem
+import org.jetbrains.bsp.JvmBinaryJarsItem
+import org.jetbrains.bsp.JvmBinaryJarsParams
+import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.LibraryItem
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
@@ -75,6 +86,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.relativeToOrNull
 import kotlin.io.path.toPath
@@ -102,7 +114,9 @@ class BspProjectMapper(
             workspaceLibrariesProvider = true,
             workspaceDirectoriesProvider = true,
             workspaceInvalidTargetsProvider = true,
-            runWithDebugProvider = true
+            runWithDebugProvider = true,
+            jvmBinaryJarsProvider = true,
+            jvmCompileClasspathProvider = true,
         )
         return InitializeBuildResult(
             Constants.NAME, Constants.VERSION, Constants.BSP_VERSION, capabilities
@@ -122,8 +136,9 @@ class BspProjectMapper(
             LibraryItem(
                 id = BuildTargetIdentifier(it.label),
                 dependencies = it.dependencies.map { dep -> BuildTargetIdentifier(dep) },
-                jars = it.outputs.map { uri -> uri.toString() },
-                sourceJars = it.sources.map { uri -> uri.toString() },
+                ijars = it.interfaceJars.filter { o -> o.toPath().exists() }.map { o -> o.toString() },
+                jars = it.outputs.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
+                sourceJars = it.sources.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
             )
         }
         return WorkspaceLibrariesResult(libraries)
@@ -146,10 +161,7 @@ class BspProjectMapper(
     private fun computeSymlinksToExclude(workspaceRoot: URI): List<Path> {
         val stableSymlinkNames = setOf("bazel-out", "bazel-testlogs", "bazel-bin")
         val workspaceRootPath = workspaceRoot.toPath()
-        val sanitizedWorkspaceRootPath = workspaceRootPath
-            .name
-            .replace("[^A-Za-z0-9]".toRegex(), "-")
-        val workspaceSymlinkNames = setOf("bazel-$sanitizedWorkspaceRootPath")
+        val workspaceSymlinkNames = setOf("bazel-${workspaceRootPath.name}")
 
         return (stableSymlinkNames + workspaceSymlinkNames).map { workspaceRootPath.resolve(it) }
     }
@@ -301,6 +313,15 @@ class BspProjectMapper(
         return JvmTestEnvironmentResult(result)
     }
 
+    fun jvmCompileClasspath(
+            project: Project, params: JvmCompileClasspathParams, cancelChecker: CancelChecker
+    ): JvmCompileClasspathResult {
+        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
+            JvmCompileClasspathItem(BspMappings.toBspId(module), ideClasspath.map { it.toString() })
+        }
+        return JvmCompileClasspathResult(items)
+    }
+
     private fun getJvmEnvironmentItems(
             project: Project, targets: List<BuildTargetIdentifier>, cancelChecker: CancelChecker
     ): List<JvmEnvironmentItem> {
@@ -324,6 +345,21 @@ class BspProjectMapper(
             val resolvedClasspath = resolveClasspath(cqueryResult)
             module?.let { extractJvmEnvironmentItem(module, resolvedClasspath) }
         }
+    }
+
+    fun jvmBinaryJars(project: Project, params: JvmBinaryJarsParams): JvmBinaryJarsResult {
+        fun toJvmBinaryJarsItem(module: Module): JvmBinaryJarsItem? =
+            module.javaModule?.let { javaModule ->
+                val jars = javaModule.binaryOutputs.map { it.toString() }
+                JvmBinaryJarsItem(BspMappings.toBspId(module), jars)
+            }
+
+        val jvmBinaryJarsItems = params.targets.mapNotNull { target ->
+            val label = Label(target.uri)
+            val module = project.findModule(label)
+            module?.let { toJvmBinaryJarsItem(it) }
+        }
+        return JvmBinaryJarsResult(jvmBinaryJarsItems)
     }
 
     fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams, cancelChecker: CancelChecker): JavacOptionsResult {
@@ -427,6 +463,26 @@ class BspProjectMapper(
         val scalaLanguagePlugin = languagePluginsService.scalaLanguagePlugin
         val items = modules.mapNotNull(scalaLanguagePlugin::toScalaMainClassesItem)
         return ScalaMainClassesResult(items)
+    }
+
+    fun buildDependencyModules(project: Project, params: DependencyModulesParams): DependencyModulesResult {
+        val targetSet = params.targets.toSet()
+        val dependencyModulesItems = project.modules.filter { targetSet.contains(BuildTargetIdentifier(it.label.value)) }.map { module ->
+            val buildTargetId = BuildTargetIdentifier(module.label.value)
+            val moduleItems = DependencyMapper.allModuleDependencies(project, module).flatMap { libraryDep ->
+                if (libraryDep.outputs.isNotEmpty()) {
+                    val mavenDependencyModule = DependencyMapper.extractMavenDependencyInfo(libraryDep)
+                    val dependencyModule = DependencyModule(libraryDep.label, mavenDependencyModule?.version ?: "")
+                    if (mavenDependencyModule != null) {
+                        dependencyModule.data = mavenDependencyModule
+                        dependencyModule.dataKind = DependencyModuleDataKind.MAVEN
+                    }
+                    listOf(dependencyModule)
+                } else emptyList()
+            }
+            DependencyModulesItem(buildTargetId, moduleItems)
+        }
+        return DependencyModulesResult(dependencyModulesItems)
     }
 
     fun rustWorkspace(

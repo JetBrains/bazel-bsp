@@ -5,11 +5,14 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.CompileReport
 import ch.epfl.scala.bsp4j.CompileTask
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
+import ch.epfl.scala.bsp4j.StatusCode
 import ch.epfl.scala.bsp4j.TaskFinishDataKind
 import ch.epfl.scala.bsp4j.TaskFinishParams
 import ch.epfl.scala.bsp4j.TaskId
 import ch.epfl.scala.bsp4j.TaskStartDataKind
 import ch.epfl.scala.bsp4j.TaskStartParams
+import ch.epfl.scala.bsp4j.TestReport
+import ch.epfl.scala.bsp4j.TestStatus
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos
 import com.google.devtools.build.v1.BuildEvent
 import com.google.devtools.build.v1.PublishBuildEventGrpc
@@ -23,6 +26,7 @@ import org.apache.logging.log4j.Logger
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.io.IOException
@@ -82,6 +86,67 @@ class BepServer(
     fetchNamedSet(event)
     processCompletedEvent(event)
     processAbortedEvent(event)
+    processTestResult(event)
+    processTestSummary(event)
+  }
+
+  private fun processTestResult(event: BuildEventStreamProtos.BuildEvent) {
+    if (event.hasTestResult()) {
+      if (originId == null) {
+        return
+      }
+
+      val bspClientTestNotifier = BspClientTestNotifier(bspClient, originId)
+
+      val testResult = event.testResult
+
+      val parentId = TaskId(UUID.randomUUID().toString())
+      val childId = TaskId(UUID.randomUUID().toString())
+      childId.parents = listOf(parentId.id)
+
+      bspClientTestNotifier.beginTestTarget(target, parentId)
+
+      // TODO: this is the place where we could parse the test result and produce individual test events
+      // TODO: there's some other interesting data
+      //  If testing is requested, a TestResult event is sent for each test attempt,
+      //  shard, and run per test. This allows BEP consumers to identify precisely
+      //  which test actions failed their tests and identify the test outputs
+      //  (such as logs, test.xml files) for each test action.
+
+      val testStatus = when (testResult.status) {
+        BuildEventStreamProtos.TestStatus.NO_STATUS -> TestStatus.SKIPPED
+        BuildEventStreamProtos.TestStatus.PASSED -> TestStatus.PASSED
+        BuildEventStreamProtos.TestStatus.FLAKY -> TestStatus.FAILED
+        BuildEventStreamProtos.TestStatus.TIMEOUT -> TestStatus.FAILED
+        BuildEventStreamProtos.TestStatus.FAILED -> TestStatus.FAILED
+        BuildEventStreamProtos.TestStatus.INCOMPLETE -> TestStatus.SKIPPED
+        BuildEventStreamProtos.TestStatus.REMOTE_FAILURE -> TestStatus.IGNORED
+        BuildEventStreamProtos.TestStatus.FAILED_TO_BUILD -> TestStatus.CANCELLED
+        BuildEventStreamProtos.TestStatus.TOOL_HALTED_BEFORE_TESTING -> TestStatus.SKIPPED
+        else -> TestStatus.FAILED
+      }
+
+      bspClientTestNotifier.startTest("Test", childId)
+      bspClientTestNotifier.finishTest("Test", childId, testStatus, "Test finished")
+
+      val passed = if (testStatus == TestStatus.PASSED) 1 else 0
+      val failed = if (testStatus == TestStatus.FAILED) 1 else 0
+      val ignored = if (testStatus == TestStatus.IGNORED) 1 else 0
+      val cancelled = if (testStatus == TestStatus.CANCELLED) 1 else 0
+      val skipped = if (testStatus == TestStatus.SKIPPED) 1 else 0
+
+      val testReport = TestReport(
+        target, passed, failed, ignored, cancelled, skipped
+      )
+
+      bspClientTestNotifier.endTestTarget(testReport, parentId)
+    }
+  }
+
+  private fun processTestSummary(event: BuildEventStreamProtos.BuildEvent) {
+    if (event.hasTestSummary()) {
+      // TODO: this is probably only relevant in remote scenarios
+    }
   }
 
   private fun fetchNamedSet(event: BuildEventStreamProtos.BuildEvent) {

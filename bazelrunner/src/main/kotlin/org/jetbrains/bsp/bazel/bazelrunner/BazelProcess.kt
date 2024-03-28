@@ -13,13 +13,12 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 class BazelProcess internal constructor(
     private val process: Process,
     private val logger: BspClientLogger? = null,
-    private val originId: String? = null,
 ) {
 
     fun waitAndGetResult(cancelChecker: CancelChecker, ensureAllOutputRead: Boolean = false): BazelProcessResult {
         val stopwatch = Stopwatch.start()
         val outputProcessor: OutputProcessor =
-            if (logger!= null) {
+            if (logger != null) {
                 if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
                 else AsyncOutputProcessor(process, logger::message, LOGGER::info)
             } else {
@@ -34,8 +33,7 @@ class BazelProcess internal constructor(
     }
 
     private fun logCompletion(exitCode: Int, duration: Duration) {
-        logger?.copy(originId = originId)
-            ?.message("Command completed in %s (exit code %d)", Format.duration(duration), exitCode)
+        logger?.message("Command completed in %s (exit code %d)", Format.duration(duration), exitCode)
     }
 
     companion object {

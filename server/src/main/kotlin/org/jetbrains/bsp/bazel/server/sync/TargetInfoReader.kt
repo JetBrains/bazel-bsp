@@ -5,6 +5,7 @@ import com.google.protobuf.TextFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidAarImportInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.CppTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.GoTargetInfo
@@ -126,6 +127,12 @@ class TargetInfoReader {
             targetInfoBuilder.setAndroidTargetInfo(info)
         }
 
+        "android_aar_import_info" -> {
+            val builder = readFromFile(path, AndroidAarImportInfo.newBuilder())
+            val info = builder.build()
+            targetInfoBuilder.setAndroidAarImportInfo(info)
+        }
+
         "go_target_info" -> {
             val builder: GoTargetInfo.Builder = readFromFile(path, GoTargetInfo.newBuilder())
             val info = builder.build()
@@ -144,14 +151,19 @@ class TargetInfoReader {
 
     private fun <T : Message.Builder> readFromFile(path: Path, builder: T): T {
         val parser = TextFormat.Parser.newBuilder().setAllowUnknownFields(true).build()
-        parser.merge(Files.newBufferedReader(path, StandardCharsets.UTF_8), builder)
+
+        Files.newBufferedReader(path, StandardCharsets.UTF_8).use {
+            parser.merge(it, builder)
+        }
         return builder
     }
 
     private fun readTargetInfoFromFile(uri: URI): TargetInfo {
         val builder = TargetInfo.newBuilder()
         val parser = TextFormat.Parser.newBuilder().setAllowUnknownFields(true).build()
-        parser.merge(Files.newBufferedReader(Paths.get(uri), StandardCharsets.UTF_8), builder)
+        Files.newBufferedReader(Paths.get(uri), StandardCharsets.UTF_8).use {
+            parser.merge(it, builder)
+        }
         return builder.buildPartial()
     }
 

@@ -5,7 +5,6 @@ enum class Language(
     val extensions: Set<String>,
     val binaryTargets: Set<String> = hashSetOf(),
     dependentNames: Set<String> = hashSetOf(),
-    val dependencyRegex: Regex? = null,
 ) {
     SCALA("scala", hashSetOf(".scala")),
     JAVA("java", hashSetOf(".java"), binaryTargets = setOf("java_binary")),
@@ -17,10 +16,8 @@ enum class Language(
     ANDROID(
       "android",
       emptySet(),
-      setOf("android_binary", "android_library"),
+      setOf("android_binary", "android_library", "android_local_test"),
       hashSetOf(JAVA.id),
-      // This should be removed once https://github.com/bazelbuild/rules_kotlin/issues/273 is fixed
-      "@@rules_kotlin.*//third_party:android_sdk".toRegex(),
     ),
     GO("go", hashSetOf(".go"));
 

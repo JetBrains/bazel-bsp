@@ -17,10 +17,14 @@ def map_with_resolve_files(f, xs):
     return results, resolve_files
 
 def get_interface_jars(output):
-    if hasattr(output, "compile_jar") and output.compile_jar:
-        return [output.compile_jar]
-    elif hasattr(output, "ijar") and output.ijar:
+    if hasattr(output, "ijar") and output.ijar:
         return [output.ijar]
+    else:
+        return []
+
+def get_binary_jars(output):
+    if output.class_jar:
+        return [output.class_jar]
     else:
         return []
 
@@ -74,10 +78,10 @@ def get_generated_jars(provider):
     return [], []
 
 def to_jvm_outputs(output):
-    if output == None or output.class_jar == None:
+    if output == None:
         return None
 
-    binary_jars = [output.class_jar]
+    binary_jars = get_binary_jars(output)
     interface_jars = get_interface_jars(output)
     source_jars = get_source_jars(output)
     output = struct(

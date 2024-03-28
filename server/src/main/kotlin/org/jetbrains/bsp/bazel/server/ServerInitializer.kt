@@ -60,7 +60,6 @@ object ServerInitializer {
             )
             val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), null)
             val launcher = bspServer.buildServer(bspIntegrationData)
-            val client = launcher.remoteProxy
             launcher.startListening().get()
         } catch (e: Exception) {
             e.printStackTrace(System.err)

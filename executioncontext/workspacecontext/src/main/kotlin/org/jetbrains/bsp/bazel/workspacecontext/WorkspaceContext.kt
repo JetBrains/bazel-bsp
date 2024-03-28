@@ -66,9 +66,15 @@ data class WorkspaceContext(
     /**
      * Parameter determining which rules should be used by Bazel BSP, if empty Bazel is queried.
      *
-     * Obtained from `ProjectView` simply by mapping `import_depth` section.
+     * Obtained from `ProjectView` simply by mapping `enabled_rules` section.
      */
     val enabledRules: EnabledRulesSpec,
+    /**
+     * Parameter determining the java home path that should be used with the local IDE
+     *
+     * Obtained from `ProjectView` simply by mapping `ide_java_home_override` section.
+     */
+    val ideJavaHomeOverrideSpec: IdeJavaHomeOverrideSpec,
 ) : ExecutionContext()
 
 class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstructor<WorkspaceContext> {
@@ -86,10 +92,14 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
             directories = directoriesSpecExtractor.fromProjectView(projectView),
             buildFlags = BuildFlagsSpecExtractor.fromProjectView(projectView),
             bazelBinary = BazelBinarySpecExtractor.fromProjectView(projectView),
-            dotBazelBspDirPath = dotBazelBspDirPathSpecExtractor.fromProjectView(projectView),
             buildManualTargets = BuildManualTargetsSpecExtractor.fromProjectView(projectView),
+            dotBazelBspDirPath = dotBazelBspDirPathSpecExtractor.fromProjectView(projectView),
             importDepth = ImportDepthSpecExtractor.fromProjectView(projectView),
             enabledRules = EnabledRulesSpecExtractor.fromProjectView(projectView),
+            ideJavaHomeOverrideSpec = IdeJavaHomeOverrideSpecExtractor.fromProjectView(projectView),
         )
     }
 }
+
+val WorkspaceContext.isAndroidEnabled: Boolean
+    get() = "rules_android" in enabledRules.values

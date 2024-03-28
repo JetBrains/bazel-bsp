@@ -3,7 +3,6 @@ package org.jetbrains.bsp
 import ch.epfl.scala.bsp4j.JvmBuildTarget
 import com.google.gson.annotations.JsonAdapter
 import org.eclipse.lsp4j.jsonrpc.json.adapters.EnumTypeAdapter
-import java.net.URI
 
 @JsonAdapter(EnumTypeAdapter.Factory::class)
 public enum class AndroidTargetType(public val value: Int) {
@@ -13,9 +12,10 @@ public enum class AndroidTargetType(public val value: Int) {
 }
 
 public data class AndroidBuildTarget(
-  val androidJar: URI,
+  val androidJar: String,
   val androidTargetType: AndroidTargetType,
-  val manifest: URI?,
-  val resourceFolders: List<URI>,
+  val manifest: String?,
+  val resourceFolders: List<String>,
   var jvmBuildTarget: JvmBuildTarget? = null,
+  var kotlinBuildTarget: KotlinBuildTarget? = null,
 )

@@ -19,6 +19,7 @@ data class ProjectViewCliOptions internal constructor(
         val importDepth: Int?,
         val produceTraceLog: Boolean?,
         val enabledRules: List<String>?,
+        val ideJavaHomeOverride: Path?,
 )
 
 data class CliOptions internal constructor(

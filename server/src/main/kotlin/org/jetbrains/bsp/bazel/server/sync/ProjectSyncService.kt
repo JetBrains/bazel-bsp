@@ -11,6 +11,8 @@ import ch.epfl.scala.bsp4j.InverseSourcesParams
 import ch.epfl.scala.bsp4j.InverseSourcesResult
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
+import ch.epfl.scala.bsp4j.JvmCompileClasspathParams
+import ch.epfl.scala.bsp4j.JvmCompileClasspathResult
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentResult
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
@@ -33,6 +35,8 @@ import ch.epfl.scala.bsp4j.SourcesParams
 import ch.epfl.scala.bsp4j.SourcesResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.JvmBinaryJarsParams
+import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
 import org.jetbrains.bsp.WorkspaceLibrariesResult
@@ -52,8 +56,8 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
   // correctly, so I am not changing anything.
   fun workspaceReload(cancelChecker: CancelChecker): Any = Any()
 
-  fun workspaceBuildTargets(cancelChecker: CancelChecker): WorkspaceBuildTargetsResult {
-    val project = projectProvider.refreshAndGet(cancelChecker)
+  fun workspaceBuildTargets(cancelChecker: CancelChecker, build: Boolean): WorkspaceBuildTargetsResult {
+    val project = projectProvider.refreshAndGet(cancelChecker, build = build)
     return bspMapper.workspaceTargets(project)
   }
 
@@ -113,6 +117,16 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
     return bspMapper.jvmTestEnvironment(project, params, cancelChecker)
   }
 
+  fun jvmBinaryJars(cancelChecker: CancelChecker, params: JvmBinaryJarsParams): JvmBinaryJarsResult {
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.jvmBinaryJars(project, params)
+  }
+
+  fun jvmCompileClasspath(cancelChecker: CancelChecker, params: JvmCompileClasspathParams): JvmCompileClasspathResult {
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.jvmCompileClasspath(project, params, cancelChecker)
+  }
+
   fun buildTargetJavacOptions(cancelChecker: CancelChecker, params: JavacOptionsParams): JavacOptionsResult {
     val project = projectProvider.get(cancelChecker)
     return bspMapper.buildTargetJavacOptions(project, params, cancelChecker)
@@ -153,8 +167,8 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
     cancelChecker: CancelChecker,
     params: DependencyModulesParams
   ): DependencyModulesResult {
-    // TODO https://youtrack.jetbrains.com/issue/BAZEL-616
-    return DependencyModulesResult(emptyList())
+    val project = projectProvider.get(cancelChecker)
+    return bspMapper.buildDependencyModules(project, params)
   }
 
   fun rustWorkspace(

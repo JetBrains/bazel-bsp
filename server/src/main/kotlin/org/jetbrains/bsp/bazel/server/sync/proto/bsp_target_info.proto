@@ -100,7 +100,12 @@ message AndroidTargetInfo {
   FileLocation manifest = 2;
   repeated FileLocation resources = 3;
   repeated FileLocation resource_folders = 4;
-  string kotlin_target_id = 5;
+}
+
+message AndroidAarImportInfo {
+  FileLocation manifest = 1;
+  FileLocation resource_folder = 2;
+  FileLocation r_txt = 3;
 }
 
 message GoTargetInfo {
@@ -127,5 +132,6 @@ message TargetInfo {
   PythonTargetInfo python_target_info = 8000;
   RustCrateInfo rust_crate_info = 9000;
   AndroidTargetInfo android_target_info = 10000;
-  GoTargetInfo go_target_info = 11000;
+  AndroidAarImportInfo android_aar_import_info = 11000;
+  GoTargetInfo go_target_info = 12000;
 }

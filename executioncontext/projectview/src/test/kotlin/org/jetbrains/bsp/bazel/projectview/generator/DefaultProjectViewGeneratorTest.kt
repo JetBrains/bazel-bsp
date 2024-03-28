@@ -43,6 +43,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -74,6 +75,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -105,6 +107,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -136,7 +139,8 @@ class DefaultProjectViewGeneratorTest {
                 directories = null,
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
-                enabledRules = null
+                enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -176,6 +180,7 @@ class DefaultProjectViewGeneratorTest {
                     deriveTargetsFromDirectories = null,
                     importDepth = null,
                     enabledRules = null,
+                    ideJavaHomeOverride = null,
             )
 
             // when
@@ -207,6 +212,7 @@ class DefaultProjectViewGeneratorTest {
                     deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                     importDepth = null,
                     enabledRules = null,
+                    ideJavaHomeOverride = null,
             )
 
             // when
@@ -233,6 +239,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -259,6 +266,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -285,6 +293,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -335,6 +344,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -395,6 +405,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -491,6 +502,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -571,6 +583,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             // when
@@ -624,6 +637,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -642,6 +656,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
             parsedProjectView shouldBe expectedProjectView
         }
@@ -672,6 +687,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = null,
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -724,6 +740,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = ProjectViewDeriveTargetsFromDirectoriesSection(true),
                 importDepth = ProjectViewImportDepthSection(3),
                 enabledRules = null,
+                ideJavaHomeOverride = null,
             )
 
             val parser = DefaultProjectViewParser()
@@ -750,6 +767,7 @@ class DefaultProjectViewGeneratorTest {
                 deriveTargetsFromDirectories = null,
                 importDepth = null,
                 enabledRules = ProjectViewEnabledRulesSection(listOf("rules_scala", "rules_jvm")),
+                ideJavaHomeOverride = null,
             )
 
             // when

@@ -11,6 +11,7 @@ import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManual
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDirectoriesSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewEnabledRulesSection
+import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewIdeJavaHomeOverrideSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewImportDepthSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewTargetsSection
 import java.nio.file.Path
@@ -34,6 +35,7 @@ object ProjectViewCLiOptionsProvider {
             importDepth = toImportDepthSection(projectViewCliOptions),
             buildManualTargets = toBuildManualTargetsSection(projectViewCliOptions),
             enabledRules = toEnabledRulesSection(projectViewCliOptions),
+            ideJavaHomeOverride = toIdeJavaHomeOverrideSection(projectViewCliOptions),
         )
 
     private fun toBazelBinarySection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewBazelBinarySection? =
@@ -83,6 +85,9 @@ object ProjectViewCLiOptionsProvider {
 
     private fun toEnabledRulesSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewEnabledRulesSection? =
         projectViewCliOptions?.enabledRules?.let { ProjectViewEnabledRulesSection(it) }
+
+    private fun toIdeJavaHomeOverrideSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewIdeJavaHomeOverrideSection? =
+        projectViewCliOptions?.ideJavaHomeOverride?.let { ProjectViewIdeJavaHomeOverrideSection(it) }
 
     private fun toDeriveTargetFlagSection(projectViewCliOptions: ProjectViewCliOptions?): ProjectViewDeriveTargetsFromDirectoriesSection? =
         projectViewCliOptions?.deriveTargetsFromDirectories?.let(::ProjectViewDeriveTargetsFromDirectoriesSection)
