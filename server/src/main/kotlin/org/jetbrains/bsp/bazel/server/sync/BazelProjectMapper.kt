@@ -364,6 +364,8 @@ class BazelProjectMapper(
         "rust_doc_test",
         "android_library",
         "android_binary",
+        "go_library",
+        "go_binary",
       )
         )
 
