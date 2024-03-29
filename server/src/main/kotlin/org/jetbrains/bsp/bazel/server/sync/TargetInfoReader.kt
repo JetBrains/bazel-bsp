@@ -15,7 +15,6 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.KotlinTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaTargetInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaToolchainInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import java.net.URI
 import java.nio.charset.StandardCharsets
@@ -76,12 +75,6 @@ class TargetInfoReader {
             val builder = readFromFile(path, ScalaTargetInfo.newBuilder())
             val info = builder.build()
             targetInfoBuilder.setScalaTargetInfo(info)
-        }
-
-        "scala_toolchain_info" -> {
-            val builder = readFromFile(path, ScalaToolchainInfo.newBuilder())
-            val info = builder.build()
-            targetInfoBuilder.setScalaToolchainInfo(info)
         }
 
         "kotlin_target_info" -> {

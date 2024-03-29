@@ -4,16 +4,8 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.nio.file.Path
 import java.util.regex.Pattern
-import kotlin.math.min
 
 class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
-
-    fun resolve(targets: Sequence<BspTargetInfo.TargetInfo>): ScalaSdk? =
-        targets
-            .mapNotNull(::resolveSdk)
-            .distinct()
-            .sortedWith(SCALA_VERSION_COMPARATOR)
-            .lastOrNull()
 
     fun resolveSdk(targetInfo: BspTargetInfo.TargetInfo): ScalaSdk? {
         if (!targetInfo.hasScalaTargetInfo()) {
@@ -46,17 +38,6 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
         version.split("\\.".toRegex()).toTypedArray().take(2).joinToString(".")
 
     companion object {
-        private val SCALA_VERSION_COMPARATOR = Comparator { a: ScalaSdk, b: ScalaSdk ->
-            val aParts = a.version.split("\\.".toRegex()).toTypedArray()
-            val bParts = b.version.split("\\.".toRegex()).toTypedArray()
-            var i = 0
-            while (i < min(aParts.size, bParts.size)) {
-                val result = aParts[i].toInt().compareTo(bParts[i].toInt())
-                if (result != 0) return@Comparator result
-                i++
-            }
-            0
-        }
         private val VERSION_PATTERN =
             Pattern.compile("(?:processed_)?scala3?-(?:library|compiler|reflect)(?:_3)?-([.\\d]+)\\.jar")
     }

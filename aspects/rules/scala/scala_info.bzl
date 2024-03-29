@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "file_location", "is_external", "map", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "create_proto", "file_location", "map")
 
 def find_scalac_classpath(runfiles):
     result = []
@@ -11,24 +11,6 @@ def find_scalac_classpath(runfiles):
         elif file.extension == "jar" and ("scala3-library" in name or "scala3-reflect" in name or "scala-library" in name or "scala-reflect" in name):
             result.append(file)
     return result if found_scala_compiler_jar and len(result) >= 2 else []
-
-def extract_scala_toolchain_info(target, ctx, output_groups, **kwargs):
-    runfiles = target.default_runfiles.files.to_list()
-
-    classpath = find_scalac_classpath(runfiles)
-
-    if not classpath:
-        return None, None
-
-    resolve_files = classpath
-    compiler_classpath = map(file_location, classpath)
-
-    if (is_external(target)):
-        update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
-
-    scala_toolchain_info = struct(compiler_classpath = compiler_classpath)
-
-    return create_proto(target, ctx, scala_toolchain_info, "scala_toolchain_info"), None
 
 def extract_scala_info(target, ctx, output_groups, **kwargs):
     kind = ctx.rule.kind

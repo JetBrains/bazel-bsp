@@ -38,8 +38,6 @@ COMPILE_DEPS = [
 
 PRIVATE_COMPILE_DEPS = [
     "_java_toolchain",
-    "_scala_toolchain",
-    "_scalac",
     "_jvm",
     "runtime_jdk",
 ]
