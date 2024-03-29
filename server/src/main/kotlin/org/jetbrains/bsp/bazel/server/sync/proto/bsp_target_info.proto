@@ -49,6 +49,7 @@ message JavaRuntimeInfo {
 
 message ScalaTargetInfo {
   repeated string scalac_opts = 1;
+  repeated FileLocation compiler_classpath = 2;
 }
 
 message ScalaToolchainInfo {

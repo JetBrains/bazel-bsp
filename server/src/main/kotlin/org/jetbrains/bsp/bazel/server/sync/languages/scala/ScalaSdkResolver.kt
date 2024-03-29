@@ -15,13 +15,13 @@ class ScalaSdkResolver(private val bazelPathsResolver: BazelPathsResolver) {
             .sortedWith(SCALA_VERSION_COMPARATOR)
             .lastOrNull()
 
-    private fun resolveSdk(targetInfo: BspTargetInfo.TargetInfo): ScalaSdk? {
-        if (!targetInfo.hasScalaToolchainInfo()) {
+    fun resolveSdk(targetInfo: BspTargetInfo.TargetInfo): ScalaSdk? {
+        if (!targetInfo.hasScalaTargetInfo()) {
             return null
         }
-        val scalaToolchain = targetInfo.scalaToolchainInfo
+        val scalaTarget = targetInfo.scalaTargetInfo
         val compilerJars =
-            bazelPathsResolver.resolvePaths(scalaToolchain.compilerClasspathList).sorted()
+            bazelPathsResolver.resolvePaths(scalaTarget.compilerClasspathList).sorted()
         val maybeVersions = compilerJars.mapNotNull(::extractVersion)
         if (maybeVersions.none()) {
             return null

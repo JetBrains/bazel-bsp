@@ -42,6 +42,10 @@ def extract_scala_info(target, ctx, output_groups, **kwargs):
     # check of _scala_toolchain is necessary, because SCALA_TOOLCHAIN will always be present
     if hasattr(ctx.rule.attr, "_scala_toolchain"):
         common_scalac_opts = ctx.toolchains[SCALA_TOOLCHAIN].scalacopts
+        if hasattr(ctx.rule.attr, "_scalac"):
+            compiler_classpath = find_scalac_classpath(ctx.rule.attr._scalac.default_runfiles.files.to_list())
+            if compiler_classpath:
+                scala_info["compiler_classpath"] = map(file_location, compiler_classpath)
     else:
         common_scalac_opts = []
     scala_info["scalac_opts"] = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
