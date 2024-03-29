@@ -37,13 +37,13 @@ def extract_scala_info(target, ctx, output_groups, **kwargs):
 
     SCALA_TOOLCHAIN = "@io_bazel_rules_scala//scala:toolchain_type"
 
+    scala_info = {}
+
     # check of _scala_toolchain is necessary, because SCALA_TOOLCHAIN will always be present
     if hasattr(ctx.rule.attr, "_scala_toolchain"):
         common_scalac_opts = ctx.toolchains[SCALA_TOOLCHAIN].scalacopts
     else:
         common_scalac_opts = []
-    scalac_opts = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
+    scala_info["scalac_opts"] = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
 
-    scala_info = struct(scalac_opts = scalac_opts)
-
-    return create_proto(target, ctx, scala_info, "scala_target_info"), None
+    return create_proto(target, ctx, struct(**scala_info), "scala_target_info"), None
