@@ -13,7 +13,6 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -90,7 +89,6 @@ class ProjectResolver(
       targetSpecs = workspaceContext.targets,
       aspect = ASPECT_NAME,
       outputGroups = outputGroups,
-      isAndroidEnabled = workspaceContext.isAndroidEnabled,
       shouldBuildManualFlags = workspaceContext.shouldAddBuildAffectingFlags(keepDefaultOutputGroups)
     )
   }
