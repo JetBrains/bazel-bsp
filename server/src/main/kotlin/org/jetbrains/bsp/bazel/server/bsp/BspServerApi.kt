@@ -1,12 +1,10 @@
 package org.jetbrains.bsp.bazel.server.bsp
 
 import ch.epfl.scala.bsp4j.BuildClient
-import ch.epfl.scala.bsp4j.BuildServer
 import ch.epfl.scala.bsp4j.CleanCacheParams
 import ch.epfl.scala.bsp4j.CleanCacheResult
 import ch.epfl.scala.bsp4j.CompileParams
 import ch.epfl.scala.bsp4j.CompileResult
-import ch.epfl.scala.bsp4j.CppBuildServer
 import ch.epfl.scala.bsp4j.CppOptionsParams
 import ch.epfl.scala.bsp4j.CppOptionsResult
 import ch.epfl.scala.bsp4j.DebugSessionAddress
@@ -19,10 +17,8 @@ import ch.epfl.scala.bsp4j.InitializeBuildParams
 import ch.epfl.scala.bsp4j.InitializeBuildResult
 import ch.epfl.scala.bsp4j.InverseSourcesParams
 import ch.epfl.scala.bsp4j.InverseSourcesResult
-import ch.epfl.scala.bsp4j.JavaBuildServer
 import ch.epfl.scala.bsp4j.JavacOptionsParams
 import ch.epfl.scala.bsp4j.JavacOptionsResult
-import ch.epfl.scala.bsp4j.JvmBuildServer
 import ch.epfl.scala.bsp4j.JvmCompileClasspathParams
 import ch.epfl.scala.bsp4j.JvmCompileClasspathResult
 import ch.epfl.scala.bsp4j.JvmRunEnvironmentParams
@@ -31,7 +27,6 @@ import ch.epfl.scala.bsp4j.JvmTestEnvironmentParams
 import ch.epfl.scala.bsp4j.JvmTestEnvironmentResult
 import ch.epfl.scala.bsp4j.OutputPathsParams
 import ch.epfl.scala.bsp4j.OutputPathsResult
-import ch.epfl.scala.bsp4j.PythonBuildServer
 import ch.epfl.scala.bsp4j.PythonOptionsParams
 import ch.epfl.scala.bsp4j.PythonOptionsResult
 import ch.epfl.scala.bsp4j.ReadParams
@@ -39,10 +34,8 @@ import ch.epfl.scala.bsp4j.ResourcesParams
 import ch.epfl.scala.bsp4j.ResourcesResult
 import ch.epfl.scala.bsp4j.RunParams
 import ch.epfl.scala.bsp4j.RunResult
-import ch.epfl.scala.bsp4j.RustBuildServer
 import ch.epfl.scala.bsp4j.RustWorkspaceParams
 import ch.epfl.scala.bsp4j.RustWorkspaceResult
-import ch.epfl.scala.bsp4j.ScalaBuildServer
 import ch.epfl.scala.bsp4j.ScalaMainClassesParams
 import ch.epfl.scala.bsp4j.ScalaMainClassesResult
 import ch.epfl.scala.bsp4j.ScalaTestClassesParams
@@ -55,7 +48,7 @@ import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.BazelBuildServer
+import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.JvmBinaryJarsParams
 import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.MobileInstallParams
@@ -68,9 +61,7 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import java.util.concurrent.CompletableFuture
 
-class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServices) :
-  BuildServer, JvmBuildServer, ScalaBuildServer,
-  JavaBuildServer, CppBuildServer, BazelBuildServer, PythonBuildServer, RustBuildServer {
+class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServices) : JoinedBuildServer {
 
   private lateinit var serverLifetime: BazelBspServerLifetime
   private lateinit var runner: BspRequestsRunner
@@ -89,16 +80,15 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   override fun buildInitialize(
     initializeBuildParams: InitializeBuildParams
   ): CompletableFuture<InitializeBuildResult> {
-    return runner.handleRequest(
-      "buildInitialize", { cancelChecker: CancelChecker ->
-        projectSyncService.initialize(
-          cancelChecker
-        )
-      }, { methodName: String ->
-        runner.serverIsNotFinished(
-          methodName
-        )
-      })
+    return runner.handleRequest("buildInitialize", { cancelChecker: CancelChecker ->
+      projectSyncService.initialize(
+        cancelChecker
+      )
+    }, { methodName: String ->
+      runner.serverIsNotFinished(
+        methodName
+      )
+    })
   }
 
   override fun onBuildInitialized() {
@@ -106,17 +96,14 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   }
 
   override fun buildShutdown(): CompletableFuture<Any> {
-    return runner.handleRequest<Any>(
-      "buildShutdown",
-      {
-        serverLifetime.finish()
-        Any()
-      },
-      { methodName: String ->
-        runner.serverIsInitialized(
-          methodName
-        )
-      })
+    return runner.handleRequest<Any>("buildShutdown", {
+      serverLifetime.finish()
+      Any()
+    }, { methodName: String ->
+      runner.serverIsInitialized(
+        methodName
+      )
+    })
   }
 
   override fun onBuildExit() {
@@ -126,8 +113,7 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   override fun workspaceBuildTargets(): CompletableFuture<WorkspaceBuildTargetsResult> {
     return runner.handleRequest("workspaceBuildTargets") { cancelChecker: CancelChecker ->
       projectSyncService.workspaceBuildTargets(
-        cancelChecker,
-        build = false
+        cancelChecker, build = false
       )
     }
   }
@@ -135,8 +121,7 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   override fun workspaceBuildAndGetBuildTargets(): CompletableFuture<WorkspaceBuildTargetsResult> {
     return runner.handleRequest("workspaceBuildAndGetBuildTargets") { cancelChecker: CancelChecker ->
       projectSyncService.workspaceBuildTargets(
-        cancelChecker,
-        true
+        cancelChecker, true
       )
     }
   }
@@ -221,13 +206,11 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
 
   override fun buildTargetRunWithDebug(params: RunWithDebugParams): CompletableFuture<RunResult> {
     return runner.handleRequest(
-      "buildTargetRunWithDebug",
-      { cancelChecker: CancelChecker, params: RunWithDebugParams ->
+      "buildTargetRunWithDebug", { cancelChecker: CancelChecker, params: RunWithDebugParams ->
         executeService.runWithDebug(
           cancelChecker, params
         )
-      },
-      params
+      }, params
     )
   }
 
@@ -354,20 +337,17 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
     params: JvmRunEnvironmentParams
   ): CompletableFuture<JvmRunEnvironmentResult> {
     return runner.handleRequest(
-      "jvmRunEnvironment",
-      { cancelChecker: CancelChecker, params: JvmRunEnvironmentParams ->
+      "jvmRunEnvironment", { cancelChecker: CancelChecker, params: JvmRunEnvironmentParams ->
         projectSyncService.jvmRunEnvironment(
           cancelChecker, params
         )
-      },
-      params
+      }, params
     )
   }
 
   override fun buildTargetJvmCompileClasspath(params: JvmCompileClasspathParams): CompletableFuture<JvmCompileClasspathResult> {
     return runner.handleRequest(
-       "jvmCompileClasspath",
-      { cancelChecker: CancelChecker, params: JvmCompileClasspathParams ->
+      "jvmCompileClasspath", { cancelChecker: CancelChecker, params: JvmCompileClasspathParams ->
         projectSyncService.jvmCompileClasspath(
           cancelChecker, params
         )

@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "2c90c8fa7451044d5c18d3bfed79485dfe08fca997c2bc59c61ea6c6b1d55c3c",
+  "moduleFileHash": "ae47c070931a7207a06ac1f1d307c3d1e7f6c34d9b8a75a6341672fdece45e4f",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -699,7 +699,7 @@
           "usingModule": "bsp-testkit2@_",
           "location": {
             "file": "@@bsp-testkit2~override//:MODULE.bazel",
-            "line": 15,
+            "line": 8,
             "column": 22
           },
           "imports": {
@@ -713,11 +713,11 @@
                 "name": "maven",
                 "artifacts": [
                   "com.google.code.gson:gson:2.10.1",
-                  "com.google.guava:guava:31.0.1-jre",
-                  "ch.epfl.scala:bsp4j:2.2.0-M1",
-                  "org.junit.jupiter:junit-jupiter:5.10.1",
-                  "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3",
-                  "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
+                  "com.google.guava:guava:31.1-jre",
+                  "ch.epfl.scala:bsp4j:2.2.0-M2",
+                  "org.junit.jupiter:junit-jupiter:5.10.2",
+                  "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
+                  "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0"
                 ],
                 "fetch_sources": true,
                 "repositories": [
@@ -728,7 +728,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@bsp-testkit2~override//:MODULE.bazel",
-                "line": 16,
+                "line": 9,
                 "column": 14
               }
             }
@@ -3453,7 +3453,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "b351bdcba6cab08b89ba6f7b133640ecb5e30c42008775dea49daf44e27cd3ac",
+          "@@//:maven_install.json": "0a59c61eb962e1e4028348a876f1dc7f4f0dcd32dbfc489d820c87f106e2a482",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -4062,11 +4062,11 @@
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.8.1\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
-                "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
-                "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M1\" }",
-                "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.1\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.7.3\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
+                "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.1-jre\" }",
+                "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
+                "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"com.google.code.findbugs\", \"artifact\": \"jsr305\", \"version\": \"3.0.2\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.8.9\" }",
                 "{ \"group\": \"com.google.errorprone\", \"artifact\": \"error_prone_annotations\", \"version\": \"2.3.2\" }",
@@ -6406,11 +6406,11 @@
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.8.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.8.1\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
-                "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
-                "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M1\" }",
-                "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.1\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.7.3\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.7.3\" }",
+                "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.1-jre\" }",
+                "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
+                "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.0\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.0\" }",
                 "{ \"group\": \"com.google.code.findbugs\", \"artifact\": \"jsr305\", \"version\": \"3.0.2\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.8.9\" }",
                 "{ \"group\": \"com.google.errorprone\", \"artifact\": \"error_prone_annotations\", \"version\": \"2.3.2\" }",
