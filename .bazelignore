@@ -4,3 +4,6 @@ e2e/test-resources/local-jdk-project/bazel-local-jdk-project
 e2e/test-resources/python-project/bazel-python-project
 e2e/test-resources/cpp-project/bazel-cpp-project
 e2e/test-resources/rust-project/bazel-rust-project
+e2e/test-resources/rust-project/bazel-rust-project
+e2e/test-resources/android-project/bazel-android-project
+e2e/test-resources/android-kotlin-project/bazel-android-kotlin-project

@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "ae47c070931a7207a06ac1f1d307c3d1e7f6c34d9b8a75a6341672fdece45e4f",
+  "moduleFileHash": "6d546e66fd02ff9d65f8bb0ad947100068fee55fb6db82c1fd9375885f9bcf37",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -54,19 +54,21 @@
             "bazel_binaries": "bazel_binaries",
             "bazel_binaries_bazelisk": "bazel_binaries_bazelisk",
             "build_bazel_bazel_5_3_2": "build_bazel_bazel_5_3_2",
-            "build_bazel_bazel_6_4_0": "build_bazel_bazel_6_4_0"
+            "build_bazel_bazel_6_4_0": "build_bazel_bazel_6_4_0",
+            "build_bazel_bazel_7_1_1": "build_bazel_bazel_7_1_1"
           },
           "devImports": [
             "bazel_binaries",
             "bazel_binaries_bazelisk",
             "build_bazel_bazel_5_3_2",
-            "build_bazel_bazel_6_4_0"
+            "build_bazel_bazel_6_4_0",
+            "build_bazel_bazel_7_1_1"
           ],
           "tags": [
             {
               "tagName": "download",
               "attributeValues": {
-                "version": "6.4.0"
+                "version": "7.1.1"
               },
               "devDependency": true,
               "location": {
@@ -78,12 +80,24 @@
             {
               "tagName": "download",
               "attributeValues": {
-                "version": "5.3.2"
+                "version": "6.4.0"
               },
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
                 "line": 48,
+                "column": 24
+              }
+            },
+            {
+              "tagName": "download",
+              "attributeValues": {
+                "version": "5.3.2"
+              },
+              "devDependency": true,
+              "location": {
+                "file": "@@//:MODULE.bazel",
+                "line": 49,
                 "column": 24
               }
             }
@@ -97,7 +111,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 68,
+            "line": 70,
             "column": 22
           },
           "imports": {
@@ -145,7 +159,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 69,
+                "line": 71,
                 "column": 14
               }
             }
@@ -2512,6 +2526,15 @@
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
+          "build_bazel_bazel_7_1_1": {
+            "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
+            "ruleClassName": "bazel_binary",
+            "attributes": {
+              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~build_bazel_bazel_7_1_1",
+              "version": "7.1.1",
+              "bazelisk": "@bazel_binaries_bazelisk//:bazelisk"
+            }
+          },
           "build_bazel_bazel_6_4_0": {
             "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
             "ruleClassName": "bazel_binary",
@@ -2544,10 +2567,11 @@
             "attributes": {
               "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~bazel_binaries",
               "version_to_repo": {
+                "7.1.1": "build_bazel_bazel_7_1_1",
                 "6.4.0": "build_bazel_bazel_6_4_0",
                 "5.3.2": "build_bazel_bazel_5_3_2"
               },
-              "current_version": "6.4.0"
+              "current_version": "7.1.1"
             }
           }
         },
@@ -2555,13 +2579,25 @@
           "explicitRootModuleDirectDeps": [],
           "explicitRootModuleDirectDevDeps": [
             "bazel_binaries_bazelisk",
+            "build_bazel_bazel_7_1_1",
             "build_bazel_bazel_6_4_0",
             "build_bazel_bazel_5_3_2",
             "bazel_binaries"
           ],
           "useAllRepos": "NO"
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "rules_bazel_integration_test~0.23.0",
+            "bazel_skylib",
+            "bazel_skylib~1.5.0"
+          ],
+          [
+            "rules_bazel_integration_test~0.23.0",
+            "cgrindel_bazel_starlib",
+            "cgrindel_bazel_starlib~0.18.0"
+          ]
+        ]
       }
     },
     "@@rules_go~0.41.0//go:extensions.bzl%go_sdk": {
