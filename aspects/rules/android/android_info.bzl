@@ -15,9 +15,10 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         return None, None
 
     manifest = None
-    if AndroidIdeInfo in target:
-        android_ide_info = target[AndroidIdeInfo]
-        manifest = file_location(android_ide_info.manifest)
+    if hasattr(ctx.rule.attr, "manifest") and ctx.rule.attr.manifest:
+        manifest_files = ctx.rule.attr.manifest.files.to_list()
+        if manifest_files:
+            manifest = file_location(manifest_files[0])
 
     resources = []
     resource_folders_set = {}

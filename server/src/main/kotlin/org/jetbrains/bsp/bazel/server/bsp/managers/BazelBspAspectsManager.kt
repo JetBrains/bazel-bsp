@@ -5,8 +5,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.aspect
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.buildManualTests
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalEnableAndroidMigrationApis
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.experimentalGoogleLegacyApi
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.repositoryOverride
@@ -48,20 +46,20 @@ class BazelBspAspectsManager(
     targetSpecs: TargetsSpec,
     aspect: String,
     outputGroups: List<String>,
-    isAndroidEnabled: Boolean,
+    shouldBuildManualFlags: Boolean,
   ): BazelBspAspectsManagerResult {
     if (targetSpecs.values.isEmpty()) return BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
-    val androidFlags = listOf(experimentalGoogleLegacyApi(), experimentalEnableAndroidMigrationApis())
     val defaultFlags = listOf(
       repositoryOverride(Constants.ASPECT_REPOSITORY, aspectsResolver.bazelBspRoot),
       aspect(aspectsResolver.resolveLabel(aspect)),
       outputGroups(outputGroups),
       keepGoing(),
       color(true),
-      buildManualTests(),
       curses(false),
     )
-    val flagsToUse = defaultFlags + if (isAndroidEnabled) androidFlags else emptyList()
+    val buildManualTargetsFlags = if (shouldBuildManualFlags) listOf(buildManualTests()) else emptyList()
+
+    val flagsToUse = defaultFlags + buildManualTargetsFlags
 
     return bazelBspCompilationManager
       .buildTargetsWithBep(

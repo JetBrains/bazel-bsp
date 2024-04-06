@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.workspacecontext
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContext
 import org.jetbrains.bsp.bazel.executioncontext.api.ExecutionContextConstructor
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
@@ -103,3 +104,13 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
 
 val WorkspaceContext.isAndroidEnabled: Boolean
     get() = "rules_android" in enabledRules.values
+
+val WorkspaceContext.extraFlags: List<String>
+    get() = if (isAndroidEnabled) {
+        listOf(
+            BazelFlag.experimentalGoogleLegacyApi(),
+            BazelFlag.experimentalEnableAndroidMigrationApis(),
+        )
+    } else {
+        emptyList()
+    }

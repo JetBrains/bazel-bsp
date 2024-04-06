@@ -22,6 +22,8 @@ open class BazelBspE2ETestsBuildType(
             this.name = "test $targets"
             this.command = "test"
             this.targets = targets
+            // This fixes FileUtils.getCacheDirectory in integration tests
+            this.arguments = "--sandbox_writable_path=/home/teamcity/.cache"
             logging = BazelStep.Verbosity.Diagnostic
             param("toolPath", "/usr/local/bin")
         }
@@ -57,4 +59,12 @@ object ServerDownloadsBazeliskTest : BazelBspE2ETestsBuildType(
 
 object KotlinProjectTest : BazelBspE2ETestsBuildType(
     targets = "//e2e:kotlin_project_test",
+)
+
+object AndroidProjectTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:android_project_test",
+)
+
+object AndroidKotlinProjectTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:android_kotlin_project_test",
 )

@@ -9,12 +9,10 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManagerResult
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQuery
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.sync.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
-import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -87,11 +85,11 @@ class ProjectResolver(
         .map { if (keepDefaultOutputGroups) "+$it" else it }
 
     return bazelBspAspectsManager.fetchFilesFromOutputGroups(
-      cancelChecker,
-      workspaceContext.targets,
-      ASPECT_NAME,
-      outputGroups,
-      workspaceContext.isAndroidEnabled,
+      cancelChecker = cancelChecker,
+      targetSpecs = workspaceContext.targets,
+      aspect = ASPECT_NAME,
+      outputGroups = outputGroups,
+      shouldBuildManualFlags = workspaceContext.shouldAddBuildAffectingFlags(keepDefaultOutputGroups)
     )
   }
 
@@ -106,6 +104,9 @@ class ProjectResolver(
           else "@$it"
         }
     }.toList()
+
+  private fun WorkspaceContext.shouldAddBuildAffectingFlags(willBeBuilt: Boolean): Boolean =
+    this.buildManualTargets.value || !willBeBuilt
 
   companion object {
     private const val ASPECT_NAME = "bsp_target_info_aspect"
