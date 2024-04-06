@@ -8,7 +8,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime
 import org.jetbrains.bsp.bazel.server.bsp.BazelServices
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
@@ -19,7 +18,6 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
-import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
@@ -59,7 +57,6 @@ class BazelBspServer(
 
   private fun bspServerData(
     bspClientLogger: BspClientLogger,
-    bspClientTestNotifier: BspClientTestNotifier,
     bazelRunner: BazelRunner,
     compilationManager: BazelBspCompilationManager,
     bazelInfo: BazelInfo,
@@ -95,7 +92,6 @@ class BazelBspServer(
       bazelRunner = bazelRunner,
       workspaceContextProvider = workspaceContextProvider,
       bspClientLogger = bspClientLogger,
-      bspClientTestNotifier = bspClientTestNotifier,
       bazelPathsResolver = bazelPathsResolver,
       additionalBuildTargetsProvider = additionalBuildTargetsProvider,
       hasAnyProblems = bspState,
@@ -123,7 +119,7 @@ class BazelBspServer(
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
     val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
     val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
-    val androidLanguagePlugin = AndroidLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
+    val androidLanguagePlugin = AndroidLanguagePlugin(javaLanguagePlugin, kotlinLanguagePlugin, bazelPathsResolver)
 
     return LanguagePluginsService(
       scalaLanguagePlugin,
@@ -193,10 +189,8 @@ class BazelBspServer(
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =
         BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState, client, workspaceRoot)
-      val bspClientTestNotifier = BspClientTestNotifier(client)
       bspServerData(
         bspClientLogger,
-        bspClientTestNotifier,
         bazelRunner,
         compilationManager,
         bazelInfo,

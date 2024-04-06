@@ -8,10 +8,8 @@ import ch.epfl.scala.bsp4j.CompileResult
 import ch.epfl.scala.bsp4j.RunParams
 import ch.epfl.scala.bsp4j.RunResult
 import ch.epfl.scala.bsp4j.StatusCode
-import ch.epfl.scala.bsp4j.TaskId
 import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
-import ch.epfl.scala.bsp4j.TestStatus
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
@@ -25,7 +23,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.BazelProcessResult
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
@@ -45,7 +42,6 @@ class ExecuteService(
     private val bazelRunner: BazelRunner,
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientLogger: BspClientLogger,
-    private val bspClientTestNotifier: BspClientTestNotifier,
     private val bazelPathsResolver: BazelPathsResolver,
     private val additionalBuildTargetsProvider: AdditionalAndroidBuildTargetsProvider,
     private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>
@@ -54,11 +50,18 @@ class ExecuteService(
         bspClientLogger.copy(originId = originId).error(message)
     }
 
-    private fun <T> withBepServer(body : (BepReader) -> T): T {
+    private fun <T> withBepServer(originId: String?, target: BuildTargetIdentifier?, body : (BepReader) -> T): T {
         val diagnosticsService = DiagnosticsService(compilationManager.workspaceRoot, hasAnyProblems)
-        val server = BepServer(compilationManager.client,  diagnosticsService, null, null, bazelPathsResolver)
+        val server = BepServer(compilationManager.client,  diagnosticsService, originId, target, bazelPathsResolver)
         val bepReader = BepReader(server)
-        return body(bepReader)
+
+        try {
+            bepReader.start()
+            return body(bepReader)
+        } finally {
+            bepReader.finishBuild()
+            bepReader.await()
+        }
     }
 
     fun compile(cancelChecker: CancelChecker, params: CompileParams): CompileResult {
@@ -79,29 +82,18 @@ class ExecuteService(
             return TestResult(result.statusCode)
         }
         val targetsSpec = TargetsSpec(targets, emptyList())
-        val taskId = TaskId(params.originId)
-        val displayName = targets.joinToString(", ") { it.uri }
-        bspClientTestNotifier.startTest(
-            isSuite = false,
-            displayName = displayName,
-            taskId = taskId,
-        )
 
-        result = bazelRunner.commandBuilder().test()
-            .withTargets(targetsSpec)
-            .withArguments(params.arguments)
-            .withFlag(BazelFlag.testOutputAll())
-            .withFlag(BazelFlag.color(true))
-            .executeBazelCommand(params.originId)
-            .waitAndGetResult(cancelChecker, true)
+        // TODO: handle multiple targets
+        withBepServer(params.originId, params.targets.single()) { bepReader ->
+            result = bazelRunner.commandBuilder().test()
+                .withTargets(targetsSpec)
+                .withArguments(params.arguments)
+                .withFlag(BazelFlag.testOutputAll())
+                .withFlag(BazelFlag.color(true))
+                .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
+                .waitAndGetResult(cancelChecker, true)
+        }
 
-        bspClientTestNotifier.finishTest(
-            isSuite = false,
-            displayName = displayName,
-            taskId = taskId,
-            status = if (result.statusCode == StatusCode.OK) TestStatus.PASSED else TestStatus.FAILED,
-            message = null,
-        )
         return TestResult(result.statusCode).apply {
             originId = originId
             data = result
@@ -161,7 +153,7 @@ class ExecuteService(
 
     @Suppress("UNUSED_PARAMETER")  // params is used by BspRequestsRunner.handleRequest
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
-        withBepServer { bepReader ->
+        withBepServer(null, null) { bepReader ->
             bazelRunner.commandBuilder().clean()
                 .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath()).waitAndGetResult(cancelChecker)
         }
@@ -171,13 +163,16 @@ class ExecuteService(
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targets = bspIds + getAdditionalBuildTargets(cancelChecker, bspIds)
         val targetsSpec = TargetsSpec(targets, emptyList())
-        val isAndroidEnabled = workspaceContextProvider.currentWorkspaceContext().isAndroidEnabled
-        return compilationManager.buildTargetsWithBep(
-            cancelChecker = cancelChecker,
-            targetSpecs = targetsSpec,
-            originId = originId,
-            isAndroidEnabled = isAndroidEnabled,
-        ).processResult
+        // TODO: what if there's more than one target?
+        //  (it was like this in now-deleted BazelBspCompilationManager.buildTargetsWithBep)
+        return withBepServer(originId, bspIds.firstOrNull()) { bepReader ->
+            bazelRunner
+                .commandBuilder()
+                .build()
+                .withTargets(targetsSpec)
+                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
+                .waitAndGetResult(cancelChecker, true)
+        }
     }
 
     private fun getAdditionalBuildTargets(

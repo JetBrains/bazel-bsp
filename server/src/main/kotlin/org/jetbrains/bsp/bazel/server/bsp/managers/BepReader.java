@@ -24,7 +24,7 @@ public class BepReader {
     private final CompletableFuture<Boolean> bepReaderFinished;
 
     private final Logger logger = LogManager.getLogger(BepReader.class);
-    void start() {
+    public void start() {
         new Thread(() -> {
             try {
                 logger.info("Start listening to BEP events");
@@ -46,11 +46,11 @@ public class BepReader {
         }).start();
     }
 
-    void finishBuild() {
+    public void finishBuild() {
         bazelBuildFinished.complete(true);
     }
 
-    void await() throws ExecutionException, InterruptedException {
+    public void await() throws ExecutionException, InterruptedException {
         bepReaderFinished.get();
     }
 

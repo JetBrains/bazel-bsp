@@ -117,3 +117,33 @@ kt_jvm_binary(
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )
+
+kt_jvm_binary(
+    name = "BazelBspAndroidProjectTest",
+    srcs = ["BazelBspAndroidProjectTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspAndroidProjectTest",
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//e2e:__subpackages__"],
+    deps = [
+        "//commons",
+        "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/android",
+        "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
+        "//protocol",
+        "@maven//:ch_epfl_scala_bsp4j",
+    ],
+)
+
+kt_jvm_binary(
+    name = "BazelBspAndroidKotlinProjectTest",
+    srcs = ["BazelBspAndroidKotlinProjectTest.kt"],
+    main_class = "org.jetbrains.bsp.bazel.BazelBspAndroidKotlinProjectTest",
+    resources = ["//e2e/src/main/resources:bsp-e2e-resources"],
+    visibility = ["//e2e:__subpackages__"],
+    deps = [
+        "//commons",
+        "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/android",
+        "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
+        "//protocol",
+        "@maven//:ch_epfl_scala_bsp4j",
+    ],
+)

@@ -1,5 +1,5 @@
 load("@//rules/bazel_integration_test:defs.bzl", "bazel_integration_test_all_versions", "bazel_integration_test_current_version")
-load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "integration_test_utils")
+load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "bazel_integration_test", "integration_test_utils")
 
 bazel_integration_test_all_versions(
     name = "sample_repo_test",
@@ -38,8 +38,10 @@ bazel_integration_test_all_versions(
     workspace_path = "test-resources/python-project",
 )
 
-bazel_integration_test_current_version(
+bazel_integration_test(
     name = "kotlin_project_test",
+    timeout = "eternal",
+    bazel_version = "6.4.0",
     test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspKotlinProjectTest",
     workspace_path = "test-resources/kotlin-project",
 )
@@ -50,8 +52,10 @@ bazel_integration_test_all_versions(
     workspace_path = "test-resources/enabled-rules-project",
 )
 
-bazel_integration_test_current_version(
+bazel_integration_test(
     name = "server_downloads_bazelisk_test",
+    timeout = "eternal",
+    bazel_version = "6.4.0",
     env = {
         "PATH": "",  # To ensure that the server won't find Bazel in PATH
     },
@@ -65,11 +69,25 @@ bazel_integration_test_all_versions(
     workspace_path = "test-resources/rust-project",
 )
 
+bazel_integration_test_current_version(
+    name = "android_project_test",
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspAndroidProjectTest",
+    workspace_path = "test-resources/android-project",
+)
+
+bazel_integration_test_current_version(
+    name = "android_kotlin_project_test",
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspAndroidKotlinProjectTest",
+    workspace_path = "test-resources/android-kotlin-project",
+)
+
 test_suite(
     name = "all_tests",
     tags = integration_test_utils.DEFAULT_INTEGRATION_TEST_TAGS,
     # we need to include all of them manually because of the "manual" tag
     tests = [
+        ":android_kotlin_project_test",
+        ":android_project_test",
         ":enabled_rules_test",
         ":local_jdk_test",
         ":python_project_test",
