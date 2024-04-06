@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "4b7487749785fe502ec338b9994df57dab0667611bfd27f2445d383711fa9c77",
+  "moduleFileHash": "146cc37ec8514605963ea29442744d832566434a5bebc18d2f2d7666ed8bc151",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -128,7 +128,7 @@
                   "com.google.code.gson:gson:2.10.1",
                   "com.google.guava:guava:31.0.1-jre",
                   "ch.epfl.scala:bsp4j:2.2.0-M2",
-                  "commons-io:commons-io:jar:2.15.1",
+                  "commons-io:commons-io:jar:2.16.0",
                   "commons-cli:commons-cli:jar:1.6.0",
                   "org.apache.logging.log4j:log4j-api:2.23.1",
                   "org.apache.logging.log4j:log4j-core:2.23.1",
@@ -3489,7 +3489,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "0a59c61eb962e1e4028348a876f1dc7f4f0dcd32dbfc489d820c87f106e2a482",
+          "@@//:maven_install.json": "f979e1c75f581d0cef94f61f1c568c13e3442066fb988cf831f677921a225a5f",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3667,6 +3667,20 @@
                 "https://maven.google.com/org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar"
               ],
               "downloaded_file_path": "org/reactivestreams/reactive-streams/1.0.3/reactive-streams-1.0.3.jar"
+            }
+          },
+          "io_grpc_grpc_protobuf_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_1_63_0",
+              "sha256": "260e0abaf8ac72fc71deec9f88d2beeb163e6d19494bbabe45676a4b4ce87087",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0.jar",
+                "https://maven.google.com/io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0.jar"
             }
           },
           "com_google_auto_value_auto_value_annotations_jar_sources_1_7_4": {
@@ -4077,7 +4091,7 @@
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
-                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.15.1\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.6.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
@@ -4198,20 +4212,6 @@
                 "https://maven.google.com/com/google/api/gax-httpjson/2.32.0/gax-httpjson-2.32.0.jar"
               ],
               "downloaded_file_path": "com/google/api/gax-httpjson/2.32.0/gax-httpjson-2.32.0.jar"
-            }
-          },
-          "io_grpc_grpc_protobuf_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_1_62_2",
-              "sha256": "66a0b196318bdfd817d965d2d82b9c81dfced8eb08c0f7510fcb728d2994237a",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2.jar",
-                "https://maven.google.com/io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2.jar"
             }
           },
           "com_google_protobuf_protobuf_java_util_3_23_2": {
@@ -4441,6 +4441,20 @@
                 "https://maven.google.com/io/netty/netty-resolver/4.1.94.Final/netty-resolver-4.1.94.Final.jar"
               ],
               "downloaded_file_path": "io/netty/netty-resolver/4.1.94.Final/netty-resolver-4.1.94.Final.jar"
+            }
+          },
+          "io_grpc_grpc_api_jar_sources_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_api_jar_sources_1_63_0",
+              "sha256": "7ff367383a7e67241d72404f584a73d47d8f0a6b4c0bdf8aca4170f6475e58a3",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-api/1.63.0/grpc-api-1.63.0-sources.jar",
+                "https://maven.google.com/io/grpc/grpc-api/1.63.0/grpc-api-1.63.0-sources.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-api/1.63.0/grpc-api-1.63.0-sources.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-api/1.63.0/grpc-api-1.63.0-sources.jar"
             }
           },
           "org_threeten_threetenbp_1_6_8": {
@@ -4902,20 +4916,6 @@
               "downloaded_file_path": "org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar"
             }
           },
-          "io_grpc_grpc_api_jar_sources_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_api_jar_sources_1_62_2",
-              "sha256": "aa2974982805cc998f79e7c4d5d536744fd5520b56eb15b0179f9331c1edb3b7",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-api/1.62.2/grpc-api-1.62.2-sources.jar",
-                "https://maven.google.com/io/grpc/grpc-api/1.62.2/grpc-api-1.62.2-sources.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-api/1.62.2/grpc-api-1.62.2-sources.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-api/1.62.2/grpc-api-1.62.2-sources.jar"
-            }
-          },
           "org_hamcrest_hamcrest_core_1_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5034,6 +5034,20 @@
                 "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
               ],
               "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
+            }
+          },
+          "io_grpc_grpc_protobuf_jar_sources_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_jar_sources_1_63_0",
+              "sha256": "e44785571580c4bfc25582a739f66acacf4af030bb6d58d8459532d4570225a6",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0-sources.jar",
+                "https://maven.google.com/io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0-sources.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0-sources.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-protobuf/1.63.0/grpc-protobuf-1.63.0-sources.jar"
             }
           },
           "io_grpc_grpc_alts_1_56_1": {
@@ -5402,20 +5416,6 @@
               "downloaded_file_path": "io/grpc/grpc-context/1.56.1/grpc-context-1.56.1.jar"
             }
           },
-          "io_grpc_grpc_protobuf_jar_sources_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_jar_sources_1_62_2",
-              "sha256": "4020d5c7485d6dd261f07b3deeabfe1d06fcd13e8a20fc147683926a03c38ef1",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2-sources.jar",
-                "https://maven.google.com/io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2-sources.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2-sources.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-protobuf/1.62.2/grpc-protobuf-1.62.2-sources.jar"
-            }
-          },
           "org_objenesis_objenesis_3_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5649,20 +5649,6 @@
               "downloaded_file_path": "org/eclipse/xtend/org.eclipse.xtend.lib.macro/2.28.0/org.eclipse.xtend.lib.macro-2.28.0.jar"
             }
           },
-          "io_grpc_grpc_stub_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_stub_1_62_2",
-              "sha256": "fb4ca679a4214143406c65ac4167b2b5e2ee2cab1fc101566bb1c4695d105e36",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2.jar",
-                "https://maven.google.com/io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2.jar"
-            }
-          },
           "io_grpc_grpc_protobuf_1_56_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5757,6 +5743,20 @@
                 "https://maven.google.com/com/google/api/grpc/proto-google-common-protos/2.23.0/proto-google-common-protos-2.23.0.jar"
               ],
               "downloaded_file_path": "com/google/api/grpc/proto-google-common-protos/2.23.0/proto-google-common-protos-2.23.0.jar"
+            }
+          },
+          "io_grpc_grpc_protobuf_lite_jar_sources_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_lite_jar_sources_1_63_0",
+              "sha256": "0464b0b77b4360c0f9916477859abbbf22457a9d18c343743635e7247c2af684",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0-sources.jar",
+                "https://maven.google.com/io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0-sources.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0-sources.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0-sources.jar"
             }
           },
           "org_jetbrains_kotlinx_kotlinx_coroutines_core_1_8_0": {
@@ -5948,6 +5948,20 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar"
             }
           },
+          "io_grpc_grpc_protobuf_lite_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_lite_1_63_0",
+              "sha256": "5e7f36c03600c7cfa8e10d2d0321f0ba8c32d74cd044873f44b026704f355fb7",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0.jar",
+                "https://maven.google.com/io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-protobuf-lite/1.63.0/grpc-protobuf-lite-1.63.0.jar"
+            }
+          },
           "net_bytebuddy_byte_buddy_agent_1_12_7": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6095,6 +6109,48 @@
               "downloaded_file_path": "com/google/api/grpc/grpc-google-cloud-storage-v2/2.26.1-alpha/grpc-google-cloud-storage-v2-2.26.1-alpha.jar"
             }
           },
+          "io_grpc_grpc_stub_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_stub_1_63_0",
+              "sha256": "a92fc7c7f1ac9d580c5e3df5825b977c842f442874794663b78db22b27d649e0",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0.jar",
+                "https://maven.google.com/io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0.jar"
+            }
+          },
+          "io_grpc_grpc_stub_jar_sources_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_stub_jar_sources_1_63_0",
+              "sha256": "77cf1024d4612bf7ec085ff330456eb49cdbaa93e21559396f07b063ea289238",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0-sources.jar",
+                "https://maven.google.com/io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0-sources.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0-sources.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-stub/1.63.0/grpc-stub-1.63.0-sources.jar"
+            }
+          },
+          "io_grpc_grpc_api_1_63_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~io_grpc_grpc_api_1_63_0",
+              "sha256": "21d747911e1e5931004f1b058417f3c3f72f1fbf8aea16f5fc6af7a3f0caf35a",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/grpc/grpc-api/1.63.0/grpc-api-1.63.0.jar",
+                "https://maven.google.com/io/grpc/grpc-api/1.63.0/grpc-api-1.63.0.jar",
+                "https://repo1.maven.org/maven2/io/grpc/grpc-api/1.63.0/grpc-api-1.63.0.jar"
+              ],
+              "downloaded_file_path": "io/grpc/grpc-api/1.63.0/grpc-api-1.63.0.jar"
+            }
+          },
           "org_codehaus_plexus_plexus_utils_3_5_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6174,20 +6230,6 @@
                 "https://maven.google.com/com/google/http-client/google-http-client/1.43.3/google-http-client-1.43.3.jar"
               ],
               "downloaded_file_path": "com/google/http-client/google-http-client/1.43.3/google-http-client-1.43.3.jar"
-            }
-          },
-          "io_grpc_grpc_protobuf_lite_jar_sources_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_lite_jar_sources_1_62_2",
-              "sha256": "fd38569d1c610d12e0844873ea18542503334b5f4db8c2239b68553ccc58942b",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2-sources.jar",
-                "https://maven.google.com/io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2-sources.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2-sources.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2-sources.jar"
             }
           },
           "io_opencensus_opencensus_proto_0_2_0": {
@@ -6351,20 +6393,6 @@
               "downloaded_file_path": "org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar"
             }
           },
-          "io_grpc_grpc_protobuf_lite_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_protobuf_lite_1_62_2",
-              "sha256": "79997989a8c2b5bf4dd18182a2df2e2f668703d68ba7c317e7a07809d33f91f4",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2.jar",
-                "https://maven.google.com/io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-protobuf-lite/1.62.2/grpc-protobuf-lite-1.62.2.jar"
-            }
-          },
           "io_netty_netty_buffer_4_1_94_Final": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6421,7 +6449,7 @@
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
-                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.15.1\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.6.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
@@ -6540,20 +6568,6 @@
                 "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0-sources.jar"
               ],
               "downloaded_file_path": "com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0-sources.jar"
-            }
-          },
-          "io_grpc_grpc_api_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_api_1_62_2",
-              "sha256": "2e896944cf513e0e5cfd32bcd72c89601a27c6ca56916f84b20f3a13bacf1b1f",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-api/1.62.2/grpc-api-1.62.2.jar",
-                "https://maven.google.com/io/grpc/grpc-api/1.62.2/grpc-api-1.62.2.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-api/1.62.2/grpc-api-1.62.2.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-api/1.62.2/grpc-api-1.62.2.jar"
             }
           },
           "org_junit_platform_junit_platform_engine_1_10_2": {
@@ -6718,20 +6732,6 @@
                 "https://repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-kotlin/2.16.2/jackson-module-kotlin-2.16.2.jar"
               ],
               "downloaded_file_path": "com/fasterxml/jackson/module/jackson-module-kotlin/2.16.2/jackson-module-kotlin-2.16.2.jar"
-            }
-          },
-          "io_grpc_grpc_stub_jar_sources_1_62_2": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~io_grpc_grpc_stub_jar_sources_1_62_2",
-              "sha256": "da613a25d08f3915ab1d54634c6dc4ffa7441fea74d53fcd46e68afe53b1b29a",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2-sources.jar",
-                "https://maven.google.com/io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2-sources.jar",
-                "https://repo1.maven.org/maven2/io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2-sources.jar"
-              ],
-              "downloaded_file_path": "io/grpc/grpc-stub/1.62.2/grpc-stub-1.62.2-sources.jar"
             }
           },
           "org_jetbrains_kotlinx_kotlinx_coroutines_test_jar_sources_1_8_0": {
