@@ -40,11 +40,22 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
                 # Add to set
                 resource_folders_set[resource_source_dir_location] = None
 
+    aidl_binary_jar = None
+    aidl_source_jar = None
+    if AndroidIdeInfo in target:
+        android_ide_info = target[AndroidIdeInfo]
+        if android_ide_info.idl_class_jar:
+            aidl_binary_jar = file_location(android_ide_info.idl_class_jar)
+        if android_ide_info.idl_source_jar:
+            aidl_source_jar = file_location(android_ide_info.idl_source_jar)
+
     android_target_info_proto = create_struct(
         android_jar = android_jar,
         manifest = manifest,
         resources = resources,
         resource_folders = resource_folders_set.keys(),
+        aidl_binary_jar = aidl_binary_jar,
+        aidl_source_jar = aidl_source_jar,
     )
 
     return create_proto(target, ctx, android_target_info_proto, "android_target_info"), None

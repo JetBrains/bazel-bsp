@@ -73,11 +73,15 @@ class BazelProjectMapper(
     val scalaLibrariesMapper = measure("Create scala libraries") {
       calculateScalaLibrariesMapper(targetsToImport)
     }
+    val androidLibrariesMapper = measure("Create android libraries") {
+      calculateAndroidLibrariesMapper(targetsToImport)
+    }
     val librariesFromDeps = measure("Merge libraries from deps") {
       concatenateMaps(
         annotationProcessorLibraries,
         kotlinStdlibsMapper,
         scalaLibrariesMapper,
+        androidLibrariesMapper,
       )
     }
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
@@ -199,6 +203,38 @@ class BazelProjectMapper(
       ?.compilerJars
       ?.toSet().orEmpty()
 
+  private fun calculateAndroidLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> =
+    targetsToImport.mapNotNull { target ->
+        val aidlLibrary = createAidlLibrary(target) ?: return@mapNotNull null
+        target.id to listOf(aidlLibrary)
+      }.toMap()
+
+  private fun createAidlLibrary(target: TargetInfo): Library? {
+    if (!target.hasAndroidTargetInfo()) return null
+    val androidTargetInfo = target.androidTargetInfo
+    if (!androidTargetInfo.hasAidlBinaryJar()) return null
+
+    val libraryLabel = target.id + "_aidl"
+    if (target.sourcesList.isEmpty()) {
+      // Bazel doesn't create the AIDL jar if there's no sources, since it'd be the same as the output jar
+      return createLibrary(libraryLabel, target)
+    }
+
+    val outputs = listOf(target.androidTargetInfo.aidlBinaryJar).resolveUris()
+    val sources = if (target.androidTargetInfo.hasAidlSourceJar()) {
+      listOf(target.androidTargetInfo.aidlSourceJar).resolveUris()
+    } else {
+      emptySet()
+    }
+    return Library(
+      label = libraryLabel,
+      outputs = outputs,
+      sources = sources,
+      dependencies = emptyList(),
+      interfaceJars = emptySet(),
+    )
+  }
+
   /**
    * In some cases, the jar dependencies of a target might be injected by bazel or rules and not are not
    * available via `deps` field of a target. For this reason, we read JavaOutputInfo's jdeps file and
@@ -294,16 +330,19 @@ class BazelProjectMapper(
 
   private fun createLibraries(targets: Map<String, TargetInfo>): Map<String, Library> {
     return targets.mapValues { (targetId, targetInfo) ->
-      Library(
-        label = targetId,
-        outputs = getTargetJarUris(targetInfo) + getAndroidAarUris(targetInfo),
-        sources = getSourceJarUris(targetInfo),
-        dependencies = targetInfo.dependenciesList.map { it.id },
-        interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
-      )
+      createLibrary(targetId, targetInfo)
     }
       .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() }
   }
+
+  private fun createLibrary(label: String, targetInfo: TargetInfo): Library =
+    Library(
+      label = label,
+      outputs = getTargetJarUris(targetInfo) + getAndroidAarUris(targetInfo),
+      sources = getSourceJarUris(targetInfo),
+      dependencies = targetInfo.dependenciesList.map { it.id },
+      interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
+    )
 
   private fun List<FileLocation>.resolveUris() =
     map { bazelPathsResolver.resolve(it).toUri() }.toSet()

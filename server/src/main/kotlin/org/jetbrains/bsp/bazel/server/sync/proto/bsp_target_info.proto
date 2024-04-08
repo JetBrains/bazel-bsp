@@ -100,6 +100,8 @@ message AndroidTargetInfo {
   FileLocation manifest = 2;
   repeated FileLocation resources = 3;
   repeated FileLocation resource_folders = 4;
+  FileLocation aidl_binary_jar = 5;
+  FileLocation aidl_source_jar = 6;
 }
 
 message AndroidAarImportInfo {
