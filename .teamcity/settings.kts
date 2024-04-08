@@ -5,7 +5,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 
 
-version = "2023.11"
+version = "2024.03"
 
 project(BazelBsp)
 
@@ -32,6 +32,8 @@ object BazelBsp : Project({
             buildType(BazelBspLocalBazelJdkTest)
             buildType(BazelBspRemoteBazelJdkTest)
             buildType(ServerDownloadsBazeliskTest)
+            buildType(AndroidProjectTest)
+            buildType(AndroidKotlinProjectTest)
             buildType(KotlinProjectTest)
             buildType(RegularBenchmark)
         }
@@ -66,6 +68,8 @@ object BazelBsp : Project({
         RelativeId("E2eTestsE2eRemoteJdkTest"),
         RelativeId("E2eTestsE2eServerDownloadsBazeliskTest"),
         RelativeId("E2eTestsE2eKotlinProjectTest"),
+        RelativeId("E2eTestsE2eAndroidProjectTest"),
+        RelativeId("E2eTestsE2eAndroidKotlinProjectTest"),
         RelativeId("Benchmark1001Targets"),
         RelativeId("BazelBspResults")
     )
