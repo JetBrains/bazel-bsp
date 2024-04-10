@@ -59,6 +59,7 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     while (!isFinished) {
       isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
       if (cancelChecker.isCanceled) {
+        process.descendants().forEach { it.destroy() }
         process.destroy()
       }
     }
