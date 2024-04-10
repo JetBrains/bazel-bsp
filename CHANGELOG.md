@@ -3,13 +3,122 @@
 
 ## [Unreleased]
 
-### Features
+## [3.2.0] - 10.04.2024
+
+### Features 🎉
+
+- `workspace/directories` implementation
+  | [43abdfb](https://github.com/JetBrains/bazel-bsp/commit/43abdfbb2c31c386905a7539d04c051ae8d06100)
+- Experimental Bazel JVM target debugging through BSP.
+  | [94f2af7](https://github.com/JetBrains/bazel-bsp/commit/94f2af710dd9c5bc45aa0d577ee27a12e415cb5e)
+- Add `workspace/invalidTargets` endpoint.
+  | [14a117f](https://github.com/JetBrains/bazel-bsp/commit/14a117ff96311255bddbe931d7fbd5bfdb2ac484)
 - The server will now download bazelisk if Bazel is not found in the PATH.
+  | [89beaf7](https://github.com/JetBrains/bazel-bsp/commit/89beaf714d11420c05f5321d794af59691a407a6)
+- Support bzlmod in rules detection mechanism.
+  | [47cdfa8](https://github.com/JetBrains/bazel-bsp/commit/47cdfa8b472f1fb111c86965360ad990d6c4670f)
+- Support kotlin stdlibs in bzlmod project.
+  | [24aa30d](https://github.com/JetBrains/bazel-bsp/commit/24aa30d1f6377e5966eaf0243071dc314f3e69fc)
+- Experimental Rust support.
+  | [ec66172](https://github.com/JetBrains/bazel-bsp/commit/ec66172246bb921d60759158408dccee9f2a33da)
+- Provide the `android.jar` library for Android targets.
+  | [c4aaf5e](https://github.com/JetBrains/bazel-bsp/commit/c4aaf5eb45eb2e04e020a0309a108de50c5a7672)
+- Assign value of javac -target flag to `JvmBuildTarget`'s `javaVersion`.
+  | [9098181](https://github.com/JetBrains/bazel-bsp/commit/9098181b09ea3916d504389fa1081d45d8fc7f89)
+- `workspace/inverseSources` with now uses query.
+  | [26ef246](https://github.com/JetBrains/bazel-bsp/commit/26ef246d18acb1697e84a3ca1387ed0144b1717c)
+- Add an option to override detected rules.
+  | [8230406](https://github.com/JetBrains/bazel-bsp/commit/8230406bf4815b1ce74e329b8a2e301179648b23)
+- Server creates an empty project view file if it doesn't exist instead of failing.
+  | [660d9cd](https://github.com/JetBrains/bazel-bsp/commit/660d9cd7ad9d05db88065a71a2aae1c34288adbb)
+- Add Android resources to the project model.
+  | [33760f0](https://github.com/JetBrains/bazel-bsp/commit/33760f0cbb3b642ebb19d703bf5f9c6ff7648f7e)
+- Add manifest and resourceFolders to `AndroidBuildTarget`.
+  | [2989f70](https://github.com/JetBrains/bazel-bsp/commit/2989f7045ce53eff984bbd048f33d0457be634d9)
+- Filtering out libraries with no interface jars.
+  | [ec41697](https://github.com/JetBrains/bazel-bsp/commit/ec416974a9049133a4c754403f3e5f3210ae5751)
+- Add the `mobileInstall` request.
+  | [a4dc63c](https://github.com/JetBrains/bazel-bsp/commit/a4dc63c2410a10f51dfb6e25c6ed36126b74eb2b)
+- `aar_import` support.
+  | [3037649](https://github.com/JetBrains/bazel-bsp/commit/30376490f2cbbd51534b3458b987a1ad33f7bbbf)
+- `android_local_test` support.
+  | [ebb4676](https://github.com/JetBrains/bazel-bsp/commit/ebb46765f747adef5cb4aa9fcafe3180a1018b05)
+- Jetpack Compose preview support.
+  | [dc830f8](https://github.com/JetBrains/bazel-bsp/commit/dc830f86ba881c9fb0e832822b8be2c3d71cb3da)
+- Add "build and get build targets" BSP endpoint for build & resync action.
+  | [774e427](https://github.com/JetBrains/bazel-bsp/commit/774e4270c84eb1d97e8acd0105adc3ebb3968812)
+- Add support for `buildTarget/jvmCompileClasspath`.
+  | [cd00ed5](https://github.com/JetBrains/bazel-bsp/commit/cd00ed5f3993a17ead460cc13e160fa82800153d)
+- Add flag `ide_java_home_override` to project view to override the java home to work with local IDE. 
+  | [c0de197](https://github.com/JetBrains/bazel-bsp/commit/c0de197e60fd1bac748df85230c378252976982e)
+- Add `dependencyModules` request support.
+  | [e62f321](https://github.com/JetBrains/bazel-bsp/commit/e62f3215e3ccc4fc5a30e43a34cb50a54b270074)
+- Fix task workflow.
+  | [73008c5](https://github.com/JetBrains/bazel-bsp/commit/73008c5a49233c693d83be73a85f5e936e77713f)
+- AIDL import support.
+  | [7571695](https://github.com/JetBrains/bazel-bsp/commit/75716956a6daad80cd2530e1e6dd0f7dc978854f)
 
 ### Fixes 🛠️
 
+- Server logs non-existing files instead of failing.
+  | [54a1fecc](https://github.com/JetBrains/bazel-bsp/commit/54a1fecc62ce09dbd741ff17bb773e7f5148fccf)
+- Server collects more jars from `rules_kotlin`'s `KtJvmInfo` to handle the lack of generated jars.
+  | [e7faadc](https://github.com/JetBrains/bazel-bsp/commit/e7faadcdc25f2bb2355b609ea38cd42a674a2f25)
+- Server allows aspects to be injected normally when users enable bzlmod.
+  | [84c4f9a](https://github.com/JetBrains/bazel-bsp/commit/84c4f9a7f5f9c179bb4e61893fd960b04a7dec45)
 - Project cache correctly deserializes kotlin modules.
+  | [cd64dbb](https://github.com/JetBrains/bazel-bsp/commit/cd64dbb349c16c9cd09d97d09c313665dd4b4356)
+- Remove build_flags from non-build calls.
+  | [242995b](https://github.com/JetBrains/bazel-bsp/commit/242995b140f9827c91918f7ae79db04b052db187)
+- Add fallback for custom bazel version.
+  | [9ad762b](https://github.com/JetBrains/bazel-bsp/commit/9ad762bc31627f903a411770f9fde3354d05109b)
 - Python extension is always loaded and projects created using native python rules get their Python data collected.
+  | [74ba7c9](https://github.com/JetBrains/bazel-bsp/commit/74ba7c949a6988e93929d9713216cfb905de950b)
+- Resources should check type too.
+  | [02a9e01](https://github.com/JetBrains/bazel-bsp/commit/02a9e01c6296a8b84cf3f753f52df031517893e1)
+- Compute classpath lazily in `JvmEnvironment` requests.
+  | [f6823e7](https://github.com/JetBrains/bazel-bsp/commit/f6823e719d6e1daa0dea22f7a3c90dc6db9bf1cc)
+- Read classpath on demand in javacOptions and scalacOptions requests handlers.
+  | [a10ecb0](https://github.com/JetBrains/bazel-bsp/commit/a10ecb0674fc78815cceac05a7b6ca4623da3fd3)
+- Kotlin stdlibs now are obtained from toolchain instead of classpath.
+  | [e6ad2a0](https://github.com/JetBrains/bazel-bsp/commit/e6ad2a0f29386fa3c81450eb46c222c000eb2ea5)
+- Kotlin is set to have higher precedence than Java to always return Kotlin data object if exists.
+  | [9915acf](https://github.com/JetBrains/bazel-bsp/commit/9915acf14e6f19c605939518eefe0079a2ab940a)
+- Compiler errors should be parsed properly and handle bytestream provider uri.
+  | [80ec82c](https://github.com/JetBrains/bazel-bsp/commit/80ec82c989362382088a20ecb16c803133afef06)
+- File system in the installer is now closed after use.
+  | [2f86f1d](https://github.com/JetBrains/bazel-bsp/commit/2f86f1dfef01038b6ab2b175a3b86b1cca3fd4f9)
+- Server does not build the project on sync for newer Bazel versions.
+  | [6ec65a8](https://github.com/JetBrains/bazel-bsp/commit/6ec65a8a50b30ef418db4643b3894ad3e0422c22)
+- `CARGO_BAZEL_REPIN` flag is used only during sync.
+  | [cac0b01](https://github.com/JetBrains/bazel-bsp/commit/cac0b011b2a0243c5e8cd14e4d3768c206400820)
+- Fix issue if classpath query returns more results.
+  | [67692aa](https://github.com/JetBrains/bazel-bsp/commit/67692aa670b4f66353d1f0dd73e944fcbc2119e3)
+- Server handles properly remote artefacts after sync.
+  | [0cc0014](https://github.com/JetBrains/bazel-bsp/commit/0cc0014ec7a81cf48955b62b7c0030f2f28804c9)
+- `canDebug` flag is now set to true if target is runnable.
+  | [55e4faa](https://github.com/JetBrains/bazel-bsp/commit/55e4faaa6d2aebd1aa5f3e8059642f31dd5574f1)
+- Fix the `@@` prefix issue if `bazel.module` and `WORKSPACE` are used together.
+  | [86fd20b](https://github.com/JetBrains/bazel-bsp/commit/86fd20bc825d01ebc7035d17fd41e3960eb44167)
+- Avoid `SLF4J` "Failed to load class" warning.
+  | [a1ef51f](https://github.com/JetBrains/bazel-bsp/commit/a1ef51fd630800beccb6aae57bd9fd92c39042bb)
+- `bazel-<workspace-name>` symlink exclusion uses real name of the workspace instead of sanitized one.
+  | [b9598d9](https://github.com/JetBrains/bazel-bsp/commit/b9598d9f9c105560292d6075234acbded12eab24)
+- ijars are included in libraries.
+  | [c66358e](https://github.com/JetBrains/bazel-bsp/commit/c66358e0e847bfdd5c35c98adf7e2adb6460a84f)
+- The spurious "too many open files" issue has been fixed.
+  | [28797b6](https://github.com/JetBrains/bazel-bsp/commit/28797b6894440462b319537eff462a4e231b21e6)
+- android features are enabled only if `rules_android` are in `enabled_rules`.
+  | [33daf98](https://github.com/JetBrains/bazel-bsp/commit/33daf98247a0d84b94c06bfe7fa9695976755a41)
+- `enabled_rules` section is reread on each sync.
+  | [b1655d9](https://github.com/JetBrains/bazel-bsp/commit/b1655d9ec6015849263bd63310f979a06f81dd0c)
+- Test targets are always included in targets, not libraries.
+  | [b117aec](https://github.com/JetBrains/bazel-bsp/commit/b117aeccbd035cad7fb6052903e0661e255552c3)
+- Fix showing Scala 3 diagnostics.
+  | [3629a3f](https://github.com/JetBrains/bazel-bsp/commit/3629a3faa88d9a4d87df5fa917286b02805db558)
+- Use Android flags for run and test to avoid cache invalidation
+  | [ade3e68](https://github.com/JetBrains/bazel-bsp/commit/ade3e6825d1e7cae2fb78915d230965ba2e86154)
+
 
 ## [3.1.0] - 18.09.2023
 
@@ -476,7 +585,9 @@
 
 - Everything... 🎉
 
-[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/JetBrains/bazel-bsp/compare/3.2.0...HEAD
+
+[3.2.0]: https://github.com/JetBrains/bazel-bsp/compare/3.1.0...3.2.0
 
 [3.1.0]: https://github.com/JetBrains/bazel-bsp/compare/3.0.0...3.1.0
 
