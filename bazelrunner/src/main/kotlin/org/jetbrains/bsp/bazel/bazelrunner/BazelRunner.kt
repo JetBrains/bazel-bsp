@@ -1,10 +1,11 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
-import java.nio.file.Path
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import org.jetbrains.bsp.bazel.workspacecontext.extraFlags
+import java.nio.file.Path
 
 class BazelRunner private constructor(
     private val workspaceContextProvider: WorkspaceContextProvider,
@@ -87,5 +88,6 @@ class BazelRunner private constructor(
     }
 
     private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelBinary.value.toString()
-    private fun buildFlags(workspaceContext: WorkspaceContext): List<String> = workspaceContext.buildFlags.values
+    private fun buildFlags(workspaceContext: WorkspaceContext): List<String> =
+        workspaceContext.buildFlags.values + workspaceContext.extraFlags
 }

@@ -8,11 +8,13 @@ import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
 import java.net.URI
 import java.nio.file.Path
 
 class AndroidLanguagePlugin(
   private val javaLanguagePlugin: JavaLanguagePlugin,
+  private val kotlinLanguagePlugin: KotlinLanguagePlugin,
   private val bazelPathsResolver: BazelPathsResolver,
 ) : LanguagePlugin<AndroidModule>() {
   override fun applyModuleData(moduleData: AndroidModule, buildTarget: BuildTarget) {
@@ -26,6 +28,9 @@ class AndroidLanguagePlugin(
     }
     moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
       androidBuildTarget.jvmBuildTarget = it
+    }
+    moduleData.kotlinModule?.let { kotlinLanguagePlugin.toKotlinBuildTarget(it) }?.let {
+      androidBuildTarget.kotlinBuildTarget = it
     }
 
     buildTarget.dataKind = "android"
@@ -42,14 +47,12 @@ class AndroidLanguagePlugin(
     } else {
       null
     }
-    val resources = bazelPathsResolver.resolveUris(androidTargetInfo.resourcesList)
     val resourceFolders = bazelPathsResolver.resolveUris(androidTargetInfo.resourceFoldersList)
 
     return AndroidModule(
       androidJar = androidJar,
       androidTargetType = getAndroidTargetType(targetInfo),
       manifest = manifest,
-      resources = resources,
       resourceFolders = resourceFolders,
       javaModule = javaLanguagePlugin.resolveModule(targetInfo),
       kotlinModule = null,
@@ -75,7 +78,7 @@ class AndroidLanguagePlugin(
     if (!androidTargetInfo.hasManifest()) return emptySet()
 
     return bazelPathsResolver
-      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourcesList)
+      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourceFoldersList)
       .toSet()
   }
 }

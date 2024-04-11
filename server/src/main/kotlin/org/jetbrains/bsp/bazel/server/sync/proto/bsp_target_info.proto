@@ -98,8 +98,9 @@ message RustCrateInfo {
 message AndroidTargetInfo {
   FileLocation android_jar = 1;
   FileLocation manifest = 2;
-  repeated FileLocation resources = 3;
-  repeated FileLocation resource_folders = 4;
+  repeated FileLocation resource_folders = 3;
+  FileLocation aidl_binary_jar = 4;
+  FileLocation aidl_source_jar = 5;
 }
 
 message AndroidAarImportInfo {
@@ -119,6 +120,7 @@ message TargetInfo {
   repeated string tags = 30;
   repeated Dependency dependencies = 40;
   repeated FileLocation sources = 50;
+  repeated FileLocation generated_sources = 51;
   repeated FileLocation resources = 60;
   map <string, string> env = 70;
   repeated string env_inherit = 80;

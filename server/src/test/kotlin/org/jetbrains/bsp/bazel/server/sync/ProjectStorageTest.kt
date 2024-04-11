@@ -83,6 +83,7 @@ class ProjectStorageTest {
                     URI.create("file:///root/project"),
                     SourceSet(
                         hashSetOf(URI.create("file:///root/project/Lib.java")),
+                        emptySet(),
                         hashSetOf(URI.create("file:///root/project/"))
                     ),
                     emptySet(),

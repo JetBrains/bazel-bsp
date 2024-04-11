@@ -11,6 +11,7 @@ kt_jvm_library(
         "//executioncontext/api",
     ],
     deps = [
+        "//bazelrunner:params",
         "//executioncontext/api",
         "//executioncontext/projectview:generator",
         "//executioncontext/projectview:parser",

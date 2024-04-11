@@ -7,26 +7,26 @@ import org.jetbrains.bsp.bazel.install.Install
 import kotlin.time.Duration.Companion.minutes
 
 object ServerDownloadsBazeliskTest : BazelBspTestBaseScenario() {
-    @JvmStatic
-    fun main(args: Array<String>) = executeScenario()
+  private val mockTestClient = createTestkitClient()
 
-    override fun installServer() {
-        // DO NOT supply the -b flag to test whether bazelisk is downloaded
-        Install.main(
-            arrayOf(
-                "-d", workspaceDir,
-                "-t", "//...",
-                "--produce-trace-log"
-            )
-        )
-    }
+  @JvmStatic
+  fun main(args: Array<String>) = executeScenario()
 
-    override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(resolveProject())
+  override fun installServer() {
+    // DO NOT supply the -b flag to test whether bazelisk is downloaded
+    Install.main(
+      arrayOf(
+        "-d", workspaceDir, "-t", "//...", "--produce-trace-log"
+      )
+    )
+  }
 
-    override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult =
-        WorkspaceBuildTargetsResult(listOf())
+  override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(resolveProject())
 
-    private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
-        "resolve project"
-    ) { testClient.testResolveProject(2.minutes) }
+  override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult =
+    WorkspaceBuildTargetsResult(listOf())
+
+  private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
+    "resolve project"
+  ) { mockTestClient.testResolveProject(2.minutes) }
 }

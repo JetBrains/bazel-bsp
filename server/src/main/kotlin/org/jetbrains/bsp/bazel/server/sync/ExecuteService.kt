@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.CleanCacheParams
 import ch.epfl.scala.bsp4j.CleanCacheResult
@@ -29,7 +28,6 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.model.Module
@@ -165,13 +163,6 @@ class ExecuteService(
     private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
         val targets = bspIds + getAdditionalBuildTargets(cancelChecker, bspIds)
         val targetsSpec = TargetsSpec(targets, emptyList())
-        val isAndroidEnabled = workspaceContextProvider.currentWorkspaceContext().isAndroidEnabled
-
-        val androidFlags = listOf(
-            BazelFlag.experimentalGoogleLegacyApi(),
-            BazelFlag.experimentalEnableAndroidMigrationApis()
-        )
-        val flagsToUse = if (isAndroidEnabled) androidFlags else emptyList()
         // TODO: what if there's more than one target?
         //  (it was like this in now-deleted BazelBspCompilationManager.buildTargetsWithBep)
         return withBepServer(originId, bspIds.firstOrNull()) { bepReader ->
@@ -179,7 +170,6 @@ class ExecuteService(
                 .commandBuilder()
                 .build()
                 .withTargets(targetsSpec)
-                .withFlags(flagsToUse)
                 .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
                 .waitAndGetResult(cancelChecker, true)
         }

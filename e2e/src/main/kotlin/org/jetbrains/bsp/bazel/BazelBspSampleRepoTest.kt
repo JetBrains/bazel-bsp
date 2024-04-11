@@ -40,6 +40,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
+  private val testClient = createTestkitClient()
 
   // TODO: https://youtrack.jetbrains.com/issue/BAZEL-95
   @JvmStatic
@@ -1091,7 +1092,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("library"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     javaTargetsSubpackageSubpackage.displayName = "$targetPrefix//java_targets/subpackage:java_library"
     javaTargetsSubpackageSubpackage.baseDirectory = "file://\$WORKSPACE/java_targets/subpackage/"
@@ -1103,7 +1106,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("library"),
       listOf("java"),
       listOf(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     javaTargetsJavaLibrary.displayName = "$targetPrefix//java_targets:java_library"
     javaTargetsJavaLibrary.baseDirectory = "file://\$WORKSPACE/java_targets/"
@@ -1135,7 +1140,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     targetWithoutMainClassLibrary.displayName = "$targetPrefix//target_without_main_class:library"
     targetWithoutMainClassLibrary.baseDirectory = "file://\$WORKSPACE/target_without_main_class/"
@@ -1207,7 +1214,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("library"),
       emptyList(),
       listOf(BuildTargetIdentifier("$targetPrefix//java_targets/subpackage:java_library")),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     javaTargetsJavaLibraryExported.displayName = "$targetPrefix//java_targets:java_library_exported"
     javaTargetsJavaLibraryExported.baseDirectory = "file://\$WORKSPACE/java_targets/"
@@ -1221,7 +1230,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     manualTargetScalaLibrary.displayName = "$targetPrefix//manual_target:scala_library"
     manualTargetScalaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
@@ -1233,7 +1244,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("library"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     manualTargetJavaLibrary.displayName = "$targetPrefix//manual_target:java_library"
     manualTargetJavaLibrary.baseDirectory = "file://\$WORKSPACE/manual_target/"
@@ -1249,7 +1262,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     manualTargetScalaBinary.displayName = "$targetPrefix//manual_target:scala_binary"
     manualTargetScalaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
@@ -1261,7 +1276,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("application"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     manualTargetJavaBinary.displayName = "$targetPrefix//manual_target:java_binary"
     manualTargetJavaBinary.baseDirectory = "file://\$WORKSPACE/manual_target/"
@@ -1277,7 +1294,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
         BuildTargetIdentifier("scala-library-2.12.14.jar"),
         BuildTargetIdentifier("scala-reflect-2.12.14.jar"),
       ),
-      BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     manualTargetScalaTest.displayName = "$targetPrefix//manual_target:scala_test"
     manualTargetScalaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"
@@ -1289,7 +1308,9 @@ object BazelBspSampleRepoTest : BazelBspTestBaseScenario() {
       listOf("test"),
       listOf("java"),
       emptyList(),
-      BuildTargetCapabilities().also { it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false }
+      BuildTargetCapabilities().also {
+        it.canCompile = false; it.canTest = false; it.canRun = false; it.canDebug = false
+      }
     )
     manualTargetJavaTest.displayName = "$targetPrefix//manual_target:java_test"
     manualTargetJavaTest.baseDirectory = "file://\$WORKSPACE/manual_target/"

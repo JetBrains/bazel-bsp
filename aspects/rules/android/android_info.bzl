@@ -15,17 +15,16 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         return None, None
 
     manifest = None
-    if AndroidIdeInfo in target:
-        android_ide_info = target[AndroidIdeInfo]
-        manifest = file_location(android_ide_info.manifest)
+    if hasattr(ctx.rule.attr, "manifest") and ctx.rule.attr.manifest:
+        manifest_files = ctx.rule.attr.manifest.files.to_list()
+        if manifest_files:
+            manifest = file_location(manifest_files[0])
 
-    resources = []
     resource_folders_set = {}
     if hasattr(ctx.rule.attr, "resource_files"):
         for resource in ctx.rule.attr.resource_files:
             for resource_file in resource.files.to_list():
                 resource_file_location = file_location(resource_file)
-                resources.append(resource_file_location)
                 resource_source_dir_relative_path = android_common.resource_source_directory(resource_file)
                 if resource_source_dir_relative_path == None:
                     continue
@@ -39,11 +38,21 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
                 # Add to set
                 resource_folders_set[resource_source_dir_location] = None
 
+    aidl_binary_jar = None
+    aidl_source_jar = None
+    if AndroidIdeInfo in target:
+        android_ide_info = target[AndroidIdeInfo]
+        if android_ide_info.idl_class_jar:
+            aidl_binary_jar = file_location(android_ide_info.idl_class_jar)
+        if android_ide_info.idl_source_jar:
+            aidl_source_jar = file_location(android_ide_info.idl_source_jar)
+
     android_target_info_proto = create_struct(
         android_jar = android_jar,
         manifest = manifest,
-        resources = resources,
         resource_folders = resource_folders_set.keys(),
+        aidl_binary_jar = aidl_binary_jar,
+        aidl_source_jar = aidl_source_jar,
     )
 
     return create_proto(target, ctx, android_target_info_proto, "android_target_info"), None

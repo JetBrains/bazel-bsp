@@ -10,7 +10,6 @@ data class AndroidModule(
   val androidJar: URI,
   val androidTargetType: AndroidTargetType,
   val manifest: URI?,
-  val resources: List<URI>,
   val resourceFolders: List<URI>,
   val javaModule: JavaModule?,
   val kotlinModule: KotlinModule?,

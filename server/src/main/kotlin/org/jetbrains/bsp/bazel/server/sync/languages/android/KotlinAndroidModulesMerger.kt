@@ -53,26 +53,38 @@ class KotlinAndroidModulesMerger {
 
     val kotlinLanguageData = kotlinModule.languageData
     if (kotlinLanguageData !is KotlinModule?) return null
-    val androidLanguageData = androidModule.languageData as? AndroidModule ?: return null
+
+    // kt_android_local_test passes the resources and manifest to the parent module;
+    // kt_android_library passes them to the Android module.
+    val androidLanguageData = if (androidModule.resources.isNotEmpty()) {
+      androidModule.languageData as? AndroidModule
+    } else {
+      parentModule.languageData as? AndroidModule
+    } ?: return null
+
     val javaModule = androidLanguageData.javaModule?.run {
       copy(binaryOutputs = binaryOutputs + kotlinModule.javaModule?.binaryOutputs.orEmpty())
     }
     val kotlinAndroidLanguageData = androidLanguageData.copy(kotlinModule = kotlinLanguageData, javaModule = javaModule)
 
-    val kotlinModuleWithoutSdk = kotlinModule.directDependencies.asSequence()
-      .filterNot { it.value.endsWith("//third_party:android_sdk") }
-      .toSet()
-    val directDependencies = kotlinModuleWithoutSdk - androidModule.label + androidModule.directDependencies
+    val mergedDependencies =
+      kotlinModule.directDependencies.asSequence() + androidModule.directDependencies.asSequence()
+    val correctMergedDependencies = mergedDependencies
+      .filterNot { it == androidModule.label }
+      .filterNot { it == kotlinModule.label }
+      .filterNot { it.value.endsWith("//third_party:android_sdk") }  // This is added by Kotlin rules
+      .distinct()
+      .toList()
 
     val mergedModule = Module(
       label = parentModule.label,
       isSynthetic = false,
-      directDependencies = directDependencies.toList(),
+      directDependencies = correctMergedDependencies,
       languages = kotlinModule.languages + androidModule.languages,
       tags = parentModule.tags,
       baseDirectory = parentModule.baseDirectory,
       sourceSet = kotlinModule.sourceSet,
-      resources = androidModule.resources,
+      resources = androidModule.resources + parentModule.resources,
       outputs = kotlinModule.outputs + androidModule.outputs,
       sourceDependencies = kotlinModule.sourceDependencies + androidModule.sourceDependencies,
       languageData = kotlinAndroidLanguageData,

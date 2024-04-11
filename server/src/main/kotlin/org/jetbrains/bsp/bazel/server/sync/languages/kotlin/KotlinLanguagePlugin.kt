@@ -16,20 +16,24 @@ class KotlinLanguagePlugin(
 ) : LanguagePlugin<KotlinModule>() {
 
   override fun applyModuleData(moduleData: KotlinModule, buildTarget: BuildTarget) {
-    val kotlinBuildTarget = with(moduleData) {
-      KotlinBuildTarget(
-          languageVersion = languageVersion,
-          apiVersion = apiVersion,
-          associates = associates.map { BuildTargetIdentifier(it.value) },
-          kotlincOptions = kotlincOptions
-      )
-    }
-    moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
-      kotlinBuildTarget.jvmBuildTarget = it
-    }
-
+    val kotlinBuildTarget = toKotlinBuildTarget(moduleData)
     buildTarget.dataKind = "kotlin"
     buildTarget.data = kotlinBuildTarget
+  }
+
+  fun toKotlinBuildTarget(kotlinModule: KotlinModule): KotlinBuildTarget {
+    val kotlinBuildTarget = with(kotlinModule) {
+      KotlinBuildTarget(
+        languageVersion = languageVersion,
+        apiVersion = apiVersion,
+        associates = associates.map { BuildTargetIdentifier(it.value) },
+        kotlincOptions = kotlincOptions
+      )
+    }
+    kotlinModule.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
+      kotlinBuildTarget.jvmBuildTarget = it
+    }
+    return kotlinBuildTarget
   }
 
   override fun resolveModule(targetInfo: BspTargetInfo.TargetInfo): KotlinModule? {
