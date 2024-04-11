@@ -343,6 +343,7 @@ class BazelProjectMapper(
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
+      goImportPath = targetInfo.goTargetInfo?.importpath
     )
 
   private fun List<FileLocation>.resolveUris() =
