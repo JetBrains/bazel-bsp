@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "146cc37ec8514605963ea29442744d832566434a5bebc18d2f2d7666ed8bc151",
+  "moduleFileHash": "95ee595fb035e62e71e7648d7f42de2d476a454db4e525113592df88de31df96",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -128,7 +128,7 @@
                   "com.google.code.gson:gson:2.10.1",
                   "com.google.guava:guava:31.0.1-jre",
                   "ch.epfl.scala:bsp4j:2.2.0-M2",
-                  "commons-io:commons-io:jar:2.16.0",
+                  "commons-io:commons-io:jar:2.16.1",
                   "commons-cli:commons-cli:jar:1.6.0",
                   "org.apache.logging.log4j:log4j-api:2.23.1",
                   "org.apache.logging.log4j:log4j-core:2.23.1",
@@ -3506,7 +3506,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "0da6812a89e4776165121883568d4c8f3db446c07db6cd0e439b810be53bfb37",
+          "@@//:maven_install.json": "fc5d2f7bd12950e4aadf85e990196c01afa07a4cc41fe3431e9d35d8a7b37293",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -4094,7 +4094,7 @@
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
-                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.0\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.1\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.6.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
@@ -4284,6 +4284,20 @@
               "downloaded_file_path": "io/grpc/grpc-stub/1.56.1/grpc-stub-1.56.1.jar"
             }
           },
+          "com_google_protobuf_protobuf_java_jar_sources_3_25_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_jar_sources_3_25_3",
+              "sha256": "1bc9c4b7f5f5a89781ba06ca23ac651b979c3bfd93b2d60d8156ec2389017392",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar",
+                "https://maven.google.com/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar",
+                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar"
+              ],
+              "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3-sources.jar"
+            }
+          },
           "com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4419,20 +4433,6 @@
               "downloaded_file_path": "software/amazon/awssdk/utils/2.20.128/utils-2.20.128.jar"
             }
           },
-          "com_google_protobuf_protobuf_java_jar_sources_4_26_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_jar_sources_4_26_1",
-              "sha256": "a7af45fee27cce2996790a10186fd743ae0fd31b18eba9bcd00deecbf906e445",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1-sources.jar",
-                "https://maven.google.com/com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1-sources.jar",
-                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1-sources.jar"
-              ],
-              "downloaded_file_path": "com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1-sources.jar"
-            }
-          },
           "io_netty_netty_resolver_4_1_94_Final": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4487,20 +4487,6 @@
               "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1-sources.jar"
             }
           },
-          "commons_io_commons_io_jar_sources_2_16_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_io_commons_io_jar_sources_2_16_0",
-              "sha256": "4818538c79277de6fe813816d8380da45e9c0e8cf2e3d10b022a22bed580fde4",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-io/commons-io/2.16.0/commons-io-2.16.0-sources.jar",
-                "https://maven.google.com/commons-io/commons-io/2.16.0/commons-io-2.16.0-sources.jar",
-                "https://repo1.maven.org/maven2/commons-io/commons-io/2.16.0/commons-io-2.16.0-sources.jar"
-              ],
-              "downloaded_file_path": "commons-io/commons-io/2.16.0/commons-io-2.16.0-sources.jar"
-            }
-          },
           "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_8_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4513,6 +4499,20 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0.jar"
+            }
+          },
+          "commons_io_commons_io_jar_sources_2_16_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_io_commons_io_jar_sources_2_16_1",
+              "sha256": "fcfe84e39fb44e38a0ea0ab0815b53adea6fff89c7b72535bc42495f400cb9a1",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar",
+                "https://maven.google.com/commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar",
+                "https://repo1.maven.org/maven2/commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar"
+              ],
+              "downloaded_file_path": "commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar"
             }
           },
           "org_apache_commons_commons_lang3_3_11": {
@@ -5447,6 +5447,20 @@
               "downloaded_file_path": "org/objenesis/objenesis/3.2/objenesis-3.2.jar"
             }
           },
+          "com_google_protobuf_protobuf_java_3_25_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_3_25_3",
+              "sha256": "e90d8ddb963b20a972a6a59b5093ade2b07cbe546cab3279aaf4383260385f58",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar",
+                "https://maven.google.com/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar",
+                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar"
+              ],
+              "downloaded_file_path": "com/google/protobuf/protobuf-java/3.25.3/protobuf-java-3.25.3.jar"
+            }
+          },
           "org_junit_platform_junit_platform_reporting_1_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5748,20 +5762,6 @@
               "downloaded_file_path": "com/google/api/grpc/proto-google-common-protos/2.23.0/proto-google-common-protos-2.23.0.jar"
             }
           },
-          "commons_io_commons_io_2_16_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_io_commons_io_2_16_0",
-              "sha256": "d1e417901235fae3aa0cb9736baeaf5b74de7349817d1c72390d82e3d83d3a97",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-io/commons-io/2.16.0/commons-io-2.16.0.jar",
-                "https://maven.google.com/commons-io/commons-io/2.16.0/commons-io-2.16.0.jar",
-                "https://repo1.maven.org/maven2/commons-io/commons-io/2.16.0/commons-io-2.16.0.jar"
-              ],
-              "downloaded_file_path": "commons-io/commons-io/2.16.0/commons-io-2.16.0.jar"
-            }
-          },
           "io_grpc_grpc_protobuf_lite_jar_sources_1_63_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5788,6 +5788,20 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core/1.8.0/kotlinx-coroutines-core-1.8.0.jar"
+            }
+          },
+          "commons_io_commons_io_2_16_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_io_commons_io_2_16_1",
+              "sha256": "f41f7baacd716896447ace9758621f62c1c6b0a91d89acee488da26fc477c84f",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar",
+                "https://maven.google.com/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar",
+                "https://repo1.maven.org/maven2/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar"
+              ],
+              "downloaded_file_path": "commons-io/commons-io/2.16.1/commons-io-2.16.1.jar"
             }
           },
           "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3": {
@@ -6452,7 +6466,7 @@
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
-                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.0\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.1\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.6.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
@@ -6873,20 +6887,6 @@
                 "https://maven.google.com/commons-codec/commons-codec/1.15/commons-codec-1.15.jar"
               ],
               "downloaded_file_path": "commons-codec/commons-codec/1.15/commons-codec-1.15.jar"
-            }
-          },
-          "com_google_protobuf_protobuf_java_4_26_1": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~com_google_protobuf_protobuf_java_4_26_1",
-              "sha256": "091933e5870af810748326f7ace4a673aca721253177542842f044b546f14282",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1.jar",
-                "https://maven.google.com/com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1.jar",
-                "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1.jar"
-              ],
-              "downloaded_file_path": "com/google/protobuf/protobuf-java/4.26.1/protobuf-java-4.26.1.jar"
             }
           },
           "org_jetbrains_kotlin_kotlin_stdlib_jdk7_jar_sources_1_8_20": {
