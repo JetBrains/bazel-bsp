@@ -428,6 +428,7 @@ class BazelProjectMapper(
         "android_local_test",
         "go_library",
         "go_binary",
+        "go_test",
         )
       )
 
