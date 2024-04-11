@@ -20,13 +20,11 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         if manifest_files:
             manifest = file_location(manifest_files[0])
 
-    resources = []
     resource_folders_set = {}
     if hasattr(ctx.rule.attr, "resource_files"):
         for resource in ctx.rule.attr.resource_files:
             for resource_file in resource.files.to_list():
                 resource_file_location = file_location(resource_file)
-                resources.append(resource_file_location)
                 resource_source_dir_relative_path = android_common.resource_source_directory(resource_file)
                 if resource_source_dir_relative_path == None:
                     continue
@@ -52,7 +50,6 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
     android_target_info_proto = create_struct(
         android_jar = android_jar,
         manifest = manifest,
-        resources = resources,
         resource_folders = resource_folders_set.keys(),
         aidl_binary_jar = aidl_binary_jar,
         aidl_source_jar = aidl_source_jar,

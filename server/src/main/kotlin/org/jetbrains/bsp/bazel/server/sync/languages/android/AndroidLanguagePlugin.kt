@@ -47,14 +47,12 @@ class AndroidLanguagePlugin(
     } else {
       null
     }
-    val resources = bazelPathsResolver.resolveUris(androidTargetInfo.resourcesList)
     val resourceFolders = bazelPathsResolver.resolveUris(androidTargetInfo.resourceFoldersList)
 
     return AndroidModule(
       androidJar = androidJar,
       androidTargetType = getAndroidTargetType(targetInfo),
       manifest = manifest,
-      resources = resources,
       resourceFolders = resourceFolders,
       javaModule = javaLanguagePlugin.resolveModule(targetInfo),
       kotlinModule = null,
@@ -80,7 +78,7 @@ class AndroidLanguagePlugin(
     if (!androidTargetInfo.hasManifest()) return emptySet()
 
     return bazelPathsResolver
-      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourcesList)
+      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourceFoldersList)
       .toSet()
   }
 }

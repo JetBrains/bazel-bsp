@@ -53,8 +53,7 @@ abstract class BazelBspAndroidProjectTestBase : BazelBspTestBaseScenario() {
       BuildTargetIdentifier("@@//src/main/java/com/example/myapplication:lib"),
       listOf(
         "file://\$WORKSPACE/src/main/java/com/example/myapplication/AndroidManifest.xml",
-        "file://\$WORKSPACE/src/main/java/com/example/myapplication/res/layout/activity_main.xml",
-        "file://\$WORKSPACE/src/main/java/com/example/myapplication/res/values/strings.xml",
+        "file://\$WORKSPACE/src/main/java/com/example/myapplication/res/",
       ),
     )
 
