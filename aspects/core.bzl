@@ -123,13 +123,26 @@ def _bsp_target_info_aspect_impl(target, ctx):
 
     srcs_attr = getattr(ctx.rule.attr, "srcs", [])
     sources = []
+    generated_sources = []
 
     if type(srcs_attr) == "list":
-        sources = [
+        all_sources = [
             file_location(f)
             for t in srcs_attr
             for f in t.files.to_list()
-            if f.is_source
+            if not f.is_directory
+        ]
+
+        sources = [
+            s
+            for s in all_sources
+            if s.is_source
+        ]
+
+        generated_sources = [
+            s
+            for s in all_sources
+            if not s.is_source
         ]
 
     resources_attr = getattr(ctx.rule.attr, "resources", [])
@@ -150,6 +163,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
         tags = rule_attrs.tags,
         dependencies = list(all_deps),
         sources = sources,
+        generated_sources = generated_sources,
         resources = resources,
         env = getattr(rule_attrs, "env", {}),
         env_inherit = getattr(rule_attrs, "env_inherit", []),

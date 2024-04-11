@@ -223,8 +223,15 @@ class BspProjectMapper(
                     false
                 )
             }
+            val generatedSourceItems = sourceSet.generatedSources.map {
+                SourceItem(
+                    BspMappings.toBspUri(it),
+                    SourceItemKind.FILE,
+                    true
+                )
+            }
             val sourceRoots = sourceSet.sourceRoots.map(BspMappings::toBspUri)
-            val sourcesItem = SourcesItem(BspMappings.toBspId(module), sourceItems)
+            val sourcesItem = SourcesItem(BspMappings.toBspId(module), sourceItems + generatedSourceItems)
             sourcesItem.roots = sourceRoots
             return sourcesItem
         }

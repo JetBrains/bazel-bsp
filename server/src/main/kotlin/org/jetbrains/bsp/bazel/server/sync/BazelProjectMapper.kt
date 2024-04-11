@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -504,15 +505,22 @@ class BazelProjectMapper(
     return bazelPathsResolver.pathToDirectoryUri(path, isWorkspace)
   }
 
+
   private fun resolveSourceSet(target: TargetInfo, languagePlugin: LanguagePlugin<*>): SourceSet {
     val sources = target.sourcesList.toSet()
       .map(bazelPathsResolver::resolve)
       .onEach { if (it.notExists()) it.logNonExistingFile(target.id) }
       .filter { it.exists() }
-    val sourceRoots = sources.mapNotNull(languagePlugin::calculateSourceRoot)
+    val generatedSources = target.generatedSourcesList.toSet()
+      .map(bazelPathsResolver::resolve)
+      .onEach { if (it.notExists()) it.logNonExistingFile(target.id) }
+      .filter { it.exists() }
+
+    val sourceRoots = (sources + generatedSources).mapNotNull(languagePlugin::calculateSourceRoot)
     return SourceSet(
-      sources.map(bazelPathsResolver::resolveUri).toSet(),
-      sourceRoots.map(bazelPathsResolver::resolveUri).toSet()
+      sources = sources.map(bazelPathsResolver::resolveUri).toSet(),
+      generatedSources =  generatedSources.map(bazelPathsResolver::resolveUri).toSet(),
+      sourceRoots = sourceRoots.map(bazelPathsResolver::resolveUri).toSet()
     )
   }
 

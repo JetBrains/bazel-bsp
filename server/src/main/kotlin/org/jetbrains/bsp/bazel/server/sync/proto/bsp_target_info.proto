@@ -116,6 +116,7 @@ message TargetInfo {
   repeated string tags = 30;
   repeated Dependency dependencies = 40;
   repeated FileLocation sources = 50;
+  repeated FileLocation generated_sources = 51;
   repeated FileLocation resources = 60;
   map <string, string> env = 70;
   repeated string env_inherit = 80;

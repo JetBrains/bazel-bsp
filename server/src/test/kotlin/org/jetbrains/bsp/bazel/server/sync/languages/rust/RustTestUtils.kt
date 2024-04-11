@@ -19,6 +19,7 @@ fun createModule(
         baseDirectory = baseDirectory,
         sourceSet = SourceSet(
             sources = sources,
+            generatedSources = setOf<URI>(),
             sourceRoots = setOf<URI>()
         ),
         resources = setOf<URI>(),
