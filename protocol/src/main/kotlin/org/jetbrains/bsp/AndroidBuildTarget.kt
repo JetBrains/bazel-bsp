@@ -16,6 +16,7 @@ public data class AndroidBuildTarget(
   val androidTargetType: AndroidTargetType,
   val manifest: String?,
   val resourceFolders: List<String>,
+  val resourceJavaPackage: String?,
   var jvmBuildTarget: JvmBuildTarget? = null,
   var kotlinBuildTarget: KotlinBuildTarget? = null,
 )

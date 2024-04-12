@@ -38,6 +38,10 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
                 # Add to set
                 resource_folders_set[resource_source_dir_location] = None
 
+    resource_java_package = None
+    if hasattr(ctx.rule.attr, "custom_package"):
+        resource_java_package = ctx.rule.attr.custom_package
+
     aidl_binary_jar = None
     aidl_source_jar = None
     if AndroidIdeInfo in target:
@@ -51,6 +55,7 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         android_jar = android_jar,
         manifest = manifest,
         resource_folders = resource_folders_set.keys(),
+        resource_java_package = resource_java_package,
         aidl_binary_jar = aidl_binary_jar,
         aidl_source_jar = aidl_source_jar,
     )
