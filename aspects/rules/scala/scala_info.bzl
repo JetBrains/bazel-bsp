@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "file_location", "map")
+load("//aspects:utils/utils.bzl", "create_proto", "file_location", "is_external", "map", "update_sync_output_groups")
 
 def find_scalac_classpath(runfiles):
     result = []
@@ -25,9 +25,12 @@ def extract_scala_info(target, ctx, output_groups, **kwargs):
     if hasattr(ctx.rule.attr, "_scala_toolchain"):
         common_scalac_opts = ctx.toolchains[SCALA_TOOLCHAIN].scalacopts
         if hasattr(ctx.rule.attr, "_scalac"):
-            compiler_classpath = find_scalac_classpath(ctx.rule.attr._scalac.default_runfiles.files.to_list())
+            scalac = ctx.rule.attr._scalac
+            compiler_classpath = find_scalac_classpath(scalac.default_runfiles.files.to_list())
             if compiler_classpath:
                 scala_info["compiler_classpath"] = map(file_location, compiler_classpath)
+                if is_external(scalac):
+                    update_sync_output_groups(output_groups, "external-deps-resolve", depset(compiler_classpath))
     else:
         common_scalac_opts = []
     scala_info["scalac_opts"] = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
