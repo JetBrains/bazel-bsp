@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "95ee595fb035e62e71e7648d7f42de2d476a454db4e525113592df88de31df96",
+  "moduleFileHash": "596cdf550e4cb2ebb8fc2ae8b08127ce58f19f466e56470ae1a1d473022a188d",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -170,7 +170,7 @@
       ],
       "deps": {
         "bazel_skylib": "bazel_skylib@1.5.0",
-        "rules_kotlin": "rules_kotlin@1.9.1",
+        "rules_kotlin": "rules_kotlin@1.9.5",
         "rules_java": "rules_java@7.5.0",
         "rules_proto": "rules_proto@5.3.0-21.7",
         "rules_cc": "rules_cc@0.0.9",
@@ -214,10 +214,10 @@
         }
       }
     },
-    "rules_kotlin@1.9.1": {
+    "rules_kotlin@1.9.5": {
       "name": "rules_kotlin",
-      "version": "1.9.1",
-      "key": "rules_kotlin@1.9.1",
+      "version": "1.9.5",
+      "key": "rules_kotlin@1.9.5",
       "repoName": "rules_kotlin",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
@@ -227,14 +227,13 @@
         {
           "extensionBzlFile": "@rules_kotlin//src/main/starlark/core/repositories:bzlmod_setup.bzl",
           "extensionName": "rules_kotlin_extensions",
-          "usingModule": "rules_kotlin@1.9.1",
+          "usingModule": "rules_kotlin@1.9.5",
           "location": {
-            "file": "https://bcr.bazel.build/modules/rules_kotlin/1.9.1/MODULE.bazel",
+            "file": "https://bcr.bazel.build/modules/rules_kotlin/1.9.5/MODULE.bazel",
             "line": 14,
             "column": 40
           },
           "imports": {
-            "buildkite_config": "buildkite_config",
             "com_github_google_ksp": "com_github_google_ksp",
             "com_github_jetbrains_kotlin": "com_github_jetbrains_kotlin",
             "com_github_pinterest_ktlint": "com_github_pinterest_ktlint",
@@ -248,10 +247,10 @@
         {
           "extensionBzlFile": "@bazel_tools//tools/android:android_extensions.bzl",
           "extensionName": "remote_android_tools_extensions",
-          "usingModule": "rules_kotlin@1.9.1",
+          "usingModule": "rules_kotlin@1.9.5",
           "location": {
-            "file": "https://bcr.bazel.build/modules/rules_kotlin/1.9.1/MODULE.bazel",
-            "line": 27,
+            "file": "https://bcr.bazel.build/modules/rules_kotlin/1.9.5/MODULE.bazel",
+            "line": 29,
             "column": 42
           },
           "imports": {
@@ -262,67 +261,6 @@
           "tags": [],
           "hasDevUseExtension": false,
           "hasNonDevUseExtension": true
-        },
-        {
-          "extensionBzlFile": "@rules_jvm_external//:extensions.bzl",
-          "extensionName": "maven",
-          "usingModule": "rules_kotlin@1.9.1",
-          "location": {
-            "file": "https://bcr.bazel.build/modules/rules_kotlin/1.9.1/MODULE.bazel",
-            "line": 36,
-            "column": 22
-          },
-          "imports": {
-            "kotlin_rules_maven": "kotlin_rules_maven"
-          },
-          "devImports": [],
-          "tags": [
-            {
-              "tagName": "install",
-              "attributeValues": {
-                "name": "kotlin_rules_maven",
-                "artifacts": [
-                  "com.google.code.findbugs:jsr305:3.0.2",
-                  "junit:junit:4.13-beta-3",
-                  "com.google.protobuf:protobuf-java:3.6.0",
-                  "com.google.protobuf:protobuf-java-util:3.6.0",
-                  "com.google.guava:guava:27.1-jre",
-                  "com.google.truth:truth:0.45",
-                  "com.google.auto.service:auto-service:1.0.1",
-                  "com.google.auto.service:auto-service-annotations:1.0.1",
-                  "com.google.auto.value:auto-value:1.10.1",
-                  "com.google.auto.value:auto-value-annotations:1.10.1",
-                  "com.google.dagger:dagger:2.43.2",
-                  "com.google.dagger:dagger-compiler:2.43.2",
-                  "com.google.dagger:dagger-producers:2.43.2",
-                  "javax.annotation:javax.annotation-api:1.3.2",
-                  "javax.inject:javax.inject:1",
-                  "org.pantsbuild:jarjar:1.7.2",
-                  "org.jetbrains.kotlinx:atomicfu-js:0.15.2",
-                  "org.jetbrains.kotlinx:kotlinx-serialization-runtime:1.0-M1-1.4.0-rc",
-                  "dev.zacsweers.autoservice:auto-service-ksp:jar:1.1.0",
-                  "com.squareup.moshi:moshi:1.15.0",
-                  "com.squareup.moshi:moshi-kotlin:1.15.0",
-                  "com.squareup.moshi:moshi-kotlin-codegen:1.15.0",
-                  "com.google.auto.service:auto-service-annotations:jar:1.1.1"
-                ],
-                "fetch_sources": true,
-                "repositories": [
-                  "https://maven-central.storage.googleapis.com/repos/central/data/",
-                  "https://maven.google.com",
-                  "https://repo1.maven.org/maven2"
-                ]
-              },
-              "devDependency": false,
-              "location": {
-                "file": "https://bcr.bazel.build/modules/rules_kotlin/1.9.1/MODULE.bazel",
-                "line": 37,
-                "column": 14
-              }
-            }
-          ],
-          "hasDevUseExtension": false,
-          "hasNonDevUseExtension": true
         }
       ],
       "deps": {
@@ -331,9 +269,6 @@
         "rules_java": "rules_java@7.5.0",
         "rules_python": "rules_python@0.31.0",
         "rules_cc": "rules_cc@0.0.9",
-        "rules_jvm_external": "rules_jvm_external@_",
-        "rules_pkg": "rules_pkg@0.7.0",
-        "io_bazel_stardoc": "stardoc@0.5.6",
         "rules_proto": "rules_proto@5.3.0-21.7",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -342,14 +277,14 @@
         "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_kotlin~1.9.1",
+          "name": "rules_kotlin~1.9.5",
           "urls": [
-            "https://github.com/bazelbuild/rules_kotlin/releases/download/v1.9.1/rules_kotlin-v1.9.1.tar.gz"
+            "https://github.com/bazelbuild/rules_kotlin/releases/download/v1.9.5/rules_kotlin-v1.9.5.tar.gz"
           ],
-          "integrity": "sha256-2YmMMlDgRCQ27qveThlMMNbHakqX9RexjO/f1ONFclo=",
+          "integrity": "sha256-NOjANRdktx1492yHRumAY5ec4I3PGpFmbz87wpSaUz0=",
           "strip_prefix": "",
           "remote_patches": {
-            "https://bcr.bazel.build/modules/rules_kotlin/1.9.1/patches/module_dot_bazel_version.patch": "sha256-JNJ7cO0dqwPGSWBXTKQ93kwoF0xUXsTrIu9pronFqJI="
+            "https://bcr.bazel.build/modules/rules_kotlin/1.9.5/patches/module_dot_bazel_version.patch": "sha256-tOrLxnNleAaGaQRSX2G0aTQ0kjwAvUGRuhEGMiHFvEo="
           },
           "remote_patch_strip": 1
         }
@@ -754,7 +689,7 @@
       "deps": {
         "bazel_skylib": "bazel_skylib@1.5.0",
         "rules_java": "rules_java@7.5.0",
-        "rules_kotlin": "rules_kotlin@1.9.1",
+        "rules_kotlin": "rules_kotlin@1.9.5",
         "rules_jvm_external": "rules_jvm_external@_",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -1017,68 +952,6 @@
         "bazel_tools": "bazel_tools@_"
       }
     },
-    "rules_pkg@0.7.0": {
-      "name": "rules_pkg",
-      "version": "0.7.0",
-      "key": "rules_pkg@0.7.0",
-      "repoName": "rules_pkg",
-      "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
-      "extensionUsages": [],
-      "deps": {
-        "rules_python": "rules_python@0.31.0",
-        "bazel_skylib": "bazel_skylib@1.5.0",
-        "rules_license": "rules_license@0.0.7",
-        "bazel_tools": "bazel_tools@_",
-        "local_config_platform": "local_config_platform@_"
-      },
-      "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "ruleClassName": "http_archive",
-        "attributes": {
-          "name": "rules_pkg~0.7.0",
-          "urls": [
-            "https://github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz"
-          ],
-          "integrity": "sha256-iimOgydi7aGDBZfWT+fbWBeKqEzVkm121bdE1lWJQcI=",
-          "strip_prefix": "",
-          "remote_patches": {
-            "https://bcr.bazel.build/modules/rules_pkg/0.7.0/patches/module_dot_bazel.patch": "sha256-4OaEPZwYF6iC71ZTDg6MJ7LLqX7ZA0/kK4mT+4xKqiE="
-          },
-          "remote_patch_strip": 0
-        }
-      }
-    },
-    "stardoc@0.5.6": {
-      "name": "stardoc",
-      "version": "0.5.6",
-      "key": "stardoc@0.5.6",
-      "repoName": "stardoc",
-      "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
-      "extensionUsages": [],
-      "deps": {
-        "bazel_skylib": "bazel_skylib@1.5.0",
-        "rules_java": "rules_java@7.5.0",
-        "rules_license": "rules_license@0.0.7",
-        "bazel_tools": "bazel_tools@_",
-        "local_config_platform": "local_config_platform@_"
-      },
-      "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "ruleClassName": "http_archive",
-        "attributes": {
-          "name": "stardoc~0.5.6",
-          "urls": [
-            "https://github.com/bazelbuild/stardoc/releases/download/0.5.6/stardoc-0.5.6.tar.gz"
-          ],
-          "integrity": "sha256-37w2Sq7BQ99ebFL68fEWZ3WltECCQ/RF9EtmHP3DE08=",
-          "strip_prefix": "",
-          "remote_patches": {},
-          "remote_patch_strip": 0
-        }
-      }
-    },
     "rules_license@0.0.7": {
       "name": "rules_license",
       "version": "0.0.7",
@@ -1308,6 +1181,36 @@
         }
       }
     },
+    "stardoc@0.5.6": {
+      "name": "stardoc",
+      "version": "0.5.6",
+      "key": "stardoc@0.5.6",
+      "repoName": "stardoc",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
+        "bazel_skylib": "bazel_skylib@1.5.0",
+        "rules_java": "rules_java@7.5.0",
+        "rules_license": "rules_license@0.0.7",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "name": "stardoc~0.5.6",
+          "urls": [
+            "https://github.com/bazelbuild/stardoc/releases/download/0.5.6/stardoc-0.5.6.tar.gz"
+          ],
+          "integrity": "sha256-37w2Sq7BQ99ebFL68fEWZ3WltECCQ/RF9EtmHP3DE08=",
+          "strip_prefix": "",
+          "remote_patches": {},
+          "remote_patch_strip": 0
+        }
+      }
+    },
     "zlib@1.3": {
       "name": "zlib",
       "version": "1.3",
@@ -1386,6 +1289,38 @@
           "integrity": "sha256-miM41vja0yRPgj8txghKA+TQ+7J8qJLclw5okNW0gYQ=",
           "strip_prefix": "",
           "remote_patches": {},
+          "remote_patch_strip": 0
+        }
+      }
+    },
+    "rules_pkg@0.7.0": {
+      "name": "rules_pkg",
+      "version": "0.7.0",
+      "key": "rules_pkg@0.7.0",
+      "repoName": "rules_pkg",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
+        "rules_python": "rules_python@0.31.0",
+        "bazel_skylib": "bazel_skylib@1.5.0",
+        "rules_license": "rules_license@0.0.7",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "name": "rules_pkg~0.7.0",
+          "urls": [
+            "https://github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz"
+          ],
+          "integrity": "sha256-iimOgydi7aGDBZfWT+fbWBeKqEzVkm121bdE1lWJQcI=",
+          "strip_prefix": "",
+          "remote_patches": {
+            "https://bcr.bazel.build/modules/rules_pkg/0.7.0/patches/module_dot_bazel.patch": "sha256-4OaEPZwYF6iC71ZTDg6MJ7LLqX7ZA0/kK4mT+4xKqiE="
+          },
           "remote_patch_strip": 0
         }
       }
@@ -2490,7 +2425,13 @@
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO"
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "gazelle~0.32.0",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "@@gazelle~0.32.0//internal/bzlmod:non_module_deps.bzl%non_module_deps": {
@@ -2517,7 +2458,13 @@
             }
           }
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "gazelle~0.32.0",
+            "bazel_gazelle_go_repository_cache",
+            "gazelle~0.32.0~non_module_deps~bazel_gazelle_go_repository_cache"
+          ]
+        ]
       }
     },
     "@@platforms//host:extension.bzl%host_platform": {
@@ -2881,7 +2828,13 @@
             }
           }
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "rules_go~0.41.0",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "@@rules_java~7.5.0//java:extensions.bzl%toolchains": {
@@ -4024,59 +3977,6 @@
                 "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar"
               ],
               "downloaded_file_path": "org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar"
-            }
-          },
-          "kotlin_rules_maven": {
-            "bzlFile": "@@rules_jvm_external~override//:coursier.bzl",
-            "ruleClassName": "coursier_fetch",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~kotlin_rules_maven",
-              "user_provided_name": "kotlin_rules_maven",
-              "repositories": [
-                "{ \"repo_url\": \"https://maven-central.storage.googleapis.com/repos/central/data/\" }",
-                "{ \"repo_url\": \"https://maven.google.com\" }",
-                "{ \"repo_url\": \"https://repo1.maven.org/maven2\" }"
-              ],
-              "artifacts": [
-                "{ \"group\": \"com.google.code.findbugs\", \"artifact\": \"jsr305\", \"version\": \"3.0.2\" }",
-                "{ \"group\": \"junit\", \"artifact\": \"junit\", \"version\": \"4.13-beta-3\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.6.0\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java-util\", \"version\": \"3.6.0\" }",
-                "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"27.1-jre\" }",
-                "{ \"group\": \"com.google.truth\", \"artifact\": \"truth\", \"version\": \"0.45\" }",
-                "{ \"group\": \"com.google.auto.service\", \"artifact\": \"auto-service\", \"version\": \"1.0.1\" }",
-                "{ \"group\": \"com.google.auto.service\", \"artifact\": \"auto-service-annotations\", \"version\": \"1.0.1\" }",
-                "{ \"group\": \"com.google.auto.value\", \"artifact\": \"auto-value\", \"version\": \"1.10.1\" }",
-                "{ \"group\": \"com.google.auto.value\", \"artifact\": \"auto-value-annotations\", \"version\": \"1.10.1\" }",
-                "{ \"group\": \"com.google.dagger\", \"artifact\": \"dagger\", \"version\": \"2.43.2\" }",
-                "{ \"group\": \"com.google.dagger\", \"artifact\": \"dagger-compiler\", \"version\": \"2.43.2\" }",
-                "{ \"group\": \"com.google.dagger\", \"artifact\": \"dagger-producers\", \"version\": \"2.43.2\" }",
-                "{ \"group\": \"javax.annotation\", \"artifact\": \"javax.annotation-api\", \"version\": \"1.3.2\" }",
-                "{ \"group\": \"javax.inject\", \"artifact\": \"javax.inject\", \"version\": \"1\" }",
-                "{ \"group\": \"org.pantsbuild\", \"artifact\": \"jarjar\", \"version\": \"1.7.2\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"atomicfu-js\", \"version\": \"0.15.2\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-runtime\", \"version\": \"1.0-M1-1.4.0-rc\" }",
-                "{ \"group\": \"dev.zacsweers.autoservice\", \"artifact\": \"auto-service-ksp\", \"version\": \"1.1.0\", \"packaging\": \"jar\" }",
-                "{ \"group\": \"com.squareup.moshi\", \"artifact\": \"moshi\", \"version\": \"1.15.0\" }",
-                "{ \"group\": \"com.squareup.moshi\", \"artifact\": \"moshi-kotlin\", \"version\": \"1.15.0\" }",
-                "{ \"group\": \"com.squareup.moshi\", \"artifact\": \"moshi-kotlin-codegen\", \"version\": \"1.15.0\" }",
-                "{ \"group\": \"com.google.auto.service\", \"artifact\": \"auto-service-annotations\", \"version\": \"1.1.1\", \"packaging\": \"jar\" }"
-              ],
-              "fail_on_missing_checksum": true,
-              "fetch_sources": true,
-              "fetch_javadoc": false,
-              "excluded_artifacts": [],
-              "generate_compat_repositories": false,
-              "version_conflict_policy": "default",
-              "override_targets": {},
-              "strict_visibility": false,
-              "strict_visibility_value": [
-                "@@//visibility:private"
-              ],
-              "resolve_timeout": 600,
-              "use_starlark_android_rules": false,
-              "aar_import_bzl_label": "@build_bazel_rules_android//android:rules.bzl",
-              "duplicate_version_warning": "warn"
             }
           },
           "unpinned_maven": {
@@ -7044,9 +6944,9 @@
         "recordedRepoMappingEntries": []
       }
     },
-    "@@rules_kotlin~1.9.1//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
+    "@@rules_kotlin~1.9.5//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
       "general": {
-        "bzlTransitiveDigest": "LE+QUTVTwppoAoZuVHfoNmyjA8HGWJdHmYvHJwFswd0=",
+        "bzlTransitiveDigest": "ZIJvXHuEmZVzPuEoOBnuZfBDhARLL27d329xeBvhebY=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -7054,7 +6954,7 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_kotlin~1.9.1~rules_kotlin_extensions~rules_android",
+              "name": "rules_kotlin~1.9.5~rules_kotlin_extensions~rules_android",
               "sha256": "cd06d15dd8bb59926e4d65f9003bfc20f9da4b2519985c27e190cddc8b7a7806",
               "strip_prefix": "rules_android-0.1.1",
               "urls": [
@@ -7066,7 +6966,7 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_kotlin~1.9.1~rules_kotlin_extensions~com_github_pinterest_ktlint",
+              "name": "rules_kotlin~1.9.5~rules_kotlin_extensions~com_github_pinterest_ktlint",
               "sha256": "2b3f6f674a944d25bb8d283c3539947bbe86074793012909a55de4b771f74bcc",
               "urls": [
                 "https://github.com/pinterest/ktlint/releases/download/0.49.1/ktlint"
@@ -7074,21 +6974,11 @@
               "executable": true
             }
           },
-          "buildkite_config": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "name": "rules_kotlin~1.9.1~rules_kotlin_extensions~buildkite_config",
-              "urls": [
-                "https://storage.googleapis.com/rbe-toolchain/bazel-configs/rbe-ubuntu1604/latest/rbe_default.tar"
-              ]
-            }
-          },
           "com_github_jetbrains_kotlin": {
-            "bzlFile": "@@rules_kotlin~1.9.1//src/main/starlark/core/repositories:compiler.bzl",
+            "bzlFile": "@@rules_kotlin~1.9.5//src/main/starlark/core/repositories:compiler.bzl",
             "ruleClassName": "kotlin_compiler_repository",
             "attributes": {
-              "name": "rules_kotlin~1.9.1~rules_kotlin_extensions~com_github_jetbrains_kotlin",
+              "name": "rules_kotlin~1.9.5~rules_kotlin_extensions~com_github_jetbrains_kotlin",
               "urls": [
                 "https://github.com/JetBrains/kotlin/releases/download/v1.9.22/kotlin-compiler-1.9.22.zip"
               ],
@@ -7097,10 +6987,10 @@
             }
           },
           "com_github_google_ksp": {
-            "bzlFile": "@@rules_kotlin~1.9.1//src/main/starlark/core/repositories:ksp.bzl",
+            "bzlFile": "@@rules_kotlin~1.9.5//src/main/starlark/core/repositories:ksp.bzl",
             "ruleClassName": "ksp_compiler_plugin_repository",
             "attributes": {
-              "name": "rules_kotlin~1.9.1~rules_kotlin_extensions~com_github_google_ksp",
+              "name": "rules_kotlin~1.9.5~rules_kotlin_extensions~com_github_google_ksp",
               "urls": [
                 "https://github.com/google/ksp/releases/download/1.9.22-1.0.17/artifacts.zip"
               ],
@@ -7111,7 +7001,7 @@
         },
         "recordedRepoMappingEntries": [
           [
-            "rules_kotlin~1.9.1",
+            "rules_kotlin~1.9.5",
             "bazel_tools",
             "bazel_tools"
           ]

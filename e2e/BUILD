@@ -81,6 +81,12 @@ bazel_integration_test_current_version(
     workspace_path = "test-resources/android-kotlin-project",
 )
 
+bazel_integration_test_current_version(
+    name = "go_project_test",
+    test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspGoProjectTest",
+    workspace_path = "test-resources/go-project",
+)
+
 test_suite(
     name = "all_tests",
     tags = integration_test_utils.DEFAULT_INTEGRATION_TEST_TAGS,
@@ -95,5 +101,6 @@ test_suite(
         ":rust_project_test",
         ":sample_repo_test",
         ":server_downloads_bazelisk_test",
+        ":go_project_test",
     ],
 )
