@@ -100,6 +100,7 @@ message AndroidTargetInfo {
   FileLocation manifest = 200;
   repeated FileLocation resource_folders = 300;
   string resource_java_package = 400;
+  repeated FileLocation asset_folders = 450;
   FileLocation aidl_binary_jar = 500;
   FileLocation aidl_source_jar = 600;
 }

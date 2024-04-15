@@ -33,6 +33,7 @@ object BazelBspAndroidProjectTest : BazelBspAndroidProjectTestBase() {
       manifest = "file://\$WORKSPACE/src/main/AndroidManifest.xml",
       resourceFolders = emptyList(),
       resourceJavaPackage = null,
+      assetFolders = emptyList(),
       jvmBuildTarget = jvmBuildTargetData,
     )
 
@@ -42,6 +43,7 @@ object BazelBspAndroidProjectTest : BazelBspAndroidProjectTestBase() {
       manifest = "file://\$WORKSPACE/src/main/java/com/example/myapplication/AndroidManifest.xml",
       resourceFolders = listOf("file://\$WORKSPACE/src/main/java/com/example/myapplication/res/"),
       resourceJavaPackage = null,
+      assetFolders = emptyList(),
       jvmBuildTarget = jvmBuildTargetData,
     )
 
@@ -51,6 +53,7 @@ object BazelBspAndroidProjectTest : BazelBspAndroidProjectTestBase() {
       manifest = "file://\$WORKSPACE/src/test/java/com/example/myapplication/AndroidManifest.xml",
       resourceFolders = emptyList(),
       resourceJavaPackage = null,
+      assetFolders = emptyList(),
       jvmBuildTarget = jvmBuildTargetData,
     )
 

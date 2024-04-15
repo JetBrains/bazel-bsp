@@ -12,6 +12,7 @@ data class AndroidModule(
   val manifest: URI?,
   val resourceFolders: List<URI>,
   val resourceJavaPackage: String?,
+  val assetFolders: List<URI>,
   val javaModule: JavaModule?,
   val kotlinModule: KotlinModule?,
 ) : LanguageData

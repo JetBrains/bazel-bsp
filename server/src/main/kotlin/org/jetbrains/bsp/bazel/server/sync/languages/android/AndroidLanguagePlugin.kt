@@ -25,6 +25,7 @@ class AndroidLanguagePlugin(
         manifest = manifest?.toString(),
         resourceFolders = resourceFolders.map { it.toString() },
         resourceJavaPackage = resourceJavaPackage,
+        assetFolders = assetFolders.map { it.toString() },
       )
     }
     moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
@@ -50,6 +51,7 @@ class AndroidLanguagePlugin(
     }
     val resourceFolders = bazelPathsResolver.resolveUris(androidTargetInfo.resourceFoldersList)
     val resourceJavaPackage = androidTargetInfo.resourceJavaPackage.takeIf { it.isNotEmpty() }
+    val assetFolders = bazelPathsResolver.resolveUris(androidTargetInfo.assetFoldersList)
 
     return AndroidModule(
       androidJar = androidJar,
@@ -57,6 +59,7 @@ class AndroidLanguagePlugin(
       manifest = manifest,
       resourceFolders = resourceFolders,
       resourceJavaPackage = resourceJavaPackage,
+      assetFolders = assetFolders,
       javaModule = javaLanguagePlugin.resolveModule(targetInfo),
       kotlinModule = null,
     )
