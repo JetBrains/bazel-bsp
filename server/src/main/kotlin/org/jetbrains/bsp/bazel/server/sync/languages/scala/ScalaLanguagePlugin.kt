@@ -36,7 +36,7 @@ class ScalaLanguagePlugin(
     }
 
     private fun <K, V> Map<K, V?>.filterValuesNotNull(): Map<K, V> =
-        filterValues{ it != null }.mapValues { it.value!! }
+        filterValues { it != null }.mapValues { it.value!! }
 
     override fun resolveModule(targetInfo: BspTargetInfo.TargetInfo): ScalaModule? {
         if (!targetInfo.hasScalaTargetInfo()) {
