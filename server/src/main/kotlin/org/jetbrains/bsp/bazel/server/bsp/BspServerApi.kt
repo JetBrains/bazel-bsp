@@ -48,6 +48,8 @@ import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.AnalysisDebugParams
+import org.jetbrains.bsp.AnalysisDebugResult
 import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.JvmBinaryJarsParams
 import org.jetbrains.bsp.JvmBinaryJarsResult
@@ -187,6 +189,10 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
         cancelChecker, params
       )
     }, params)
+  }
+
+  override fun buildTargetAnalysisDebug(params: AnalysisDebugParams): CompletableFuture<AnalysisDebugResult> {
+    return runner.handleRequest("buildTargetAnalysisDebug", executeService::analysisDebug, params)
   }
 
   override fun buildTargetTest(params: TestParams): CompletableFuture<TestResult> {

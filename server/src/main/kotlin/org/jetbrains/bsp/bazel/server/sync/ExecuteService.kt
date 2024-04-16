@@ -15,6 +15,8 @@ import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
+import org.jetbrains.bsp.AnalysisDebugParams
+import org.jetbrains.bsp.AnalysisDebugResult
 import org.jetbrains.bsp.MobileInstallParams
 import org.jetbrains.bsp.MobileInstallResult
 import org.jetbrains.bsp.MobileInstallStartType
@@ -73,6 +75,19 @@ class ExecuteService(
         } else {
             CompileResult(StatusCode.ERROR).apply { originId = params.originId }
         }
+    }
+
+    fun analysisDebug(cancelChecker: CancelChecker, params: AnalysisDebugParams): AnalysisDebugResult {
+        val targets = selectTargets(cancelChecker, params.targets)
+        val statusCode = if (targets.isNotEmpty()) {
+            val debugFlags =
+                listOf(BazelFlag.noBuild(), BazelFlag.starlarkDebug(), BazelFlag.starlarkDebugPort(params.port))
+            val result = build(cancelChecker, targets, params.originId, debugFlags)
+            result.statusCode
+        } else {
+            StatusCode.ERROR
+        }
+        return AnalysisDebugResult(params.originId, statusCode)
     }
 
     fun test(cancelChecker: CancelChecker, params: TestParams): TestResult {
@@ -159,7 +174,12 @@ class ExecuteService(
         return CleanCacheResult(true)
     }
 
-    private fun build(cancelChecker: CancelChecker, bspIds: List<BuildTargetIdentifier>, originId: String): BazelProcessResult {
+    private fun build(
+        cancelChecker: CancelChecker,
+        bspIds: List<BuildTargetIdentifier>,
+        originId: String,
+        bazelFlags: List<String> = emptyList(),
+    ): BazelProcessResult {
         val targets = bspIds + getAdditionalBuildTargets(cancelChecker, bspIds)
         val targetsSpec = TargetsSpec(targets, emptyList())
         // TODO: what if there's more than one target?
@@ -169,6 +189,7 @@ class ExecuteService(
                 .commandBuilder()
                 .build()
                 .withTargets(targetsSpec)
+                .withFlags(bazelFlags)
                 .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
                 .waitAndGetResult(cancelChecker, true)
         }

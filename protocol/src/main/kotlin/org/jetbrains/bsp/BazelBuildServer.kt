@@ -15,6 +15,9 @@ public interface BazelBuildServer {
   @JsonRequest("workspace/invalidTargets")
   public fun workspaceInvalidTargets(): CompletableFuture<WorkspaceInvalidTargetsResult>
 
+  @JsonRequest("buildTarget/analysisDebug")
+  public fun buildTargetAnalysisDebug(params: AnalysisDebugParams): CompletableFuture<AnalysisDebugResult>
+
   @JsonRequest("buildTarget/runWithDebug")
   public fun buildTargetRunWithDebug(params: RunWithDebugParams): CompletableFuture<RunResult>
 
