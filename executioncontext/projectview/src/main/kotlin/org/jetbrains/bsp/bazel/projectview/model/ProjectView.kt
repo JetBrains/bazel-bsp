@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.projectview.model.sections.ExperimentalUseLibOverModSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
@@ -38,6 +39,8 @@ data class ProjectView(
     val enabledRules: ProjectViewEnabledRulesSection?,
     /** local java home path to override to use with IDE, e.g. IntelliJ IDEA */
     val ideJavaHomeOverride: ProjectViewIdeJavaHomeOverrideSection?,
+    /** use a new predicate that is more likely to interpret targets as libraries than as modules */
+    val useLibOverModSection: ExperimentalUseLibOverModSection?,
 ) {
 
     data class Builder(
@@ -51,6 +54,8 @@ data class ProjectView(
         private val importDepth: ProjectViewImportDepthSection? = null,
         private val enabledRules: ProjectViewEnabledRulesSection? = null,
         private val ideJavaHomeOverride: ProjectViewIdeJavaHomeOverrideSection? = null,
+        private val useLibOverModSection: ExperimentalUseLibOverModSection? = null,
+
     ) {
 
         fun build(): ProjectView {
@@ -69,6 +74,8 @@ data class ProjectView(
             val importDepth = combineImportDepthSection(importedProjectViews)
             val enabledRules = combineEnabledRulesSection(importedProjectViews)
             val ideJavaHomeOverride = combineIdeJavaHomeOverrideSection(importedProjectViews)
+            val useLibOverModSection = combineUseLibOverModSection(importedProjectViews)
+
             log.debug(
                 "Building project view with combined"
                         + " targets: {},"
@@ -79,7 +86,8 @@ data class ProjectView(
                         + " deriveTargetsFlag: {}."
                         + " import depth: {},"
                         + " enabled rules: {},"
-                        + " ideJavaHomeOverride: {},",
+                        + " ideJavaHomeOverride: {},"
+                        + " useLibOverModSection: {},",
                 targets,
                 bazelBinary,
                 buildFlags,
@@ -89,6 +97,7 @@ data class ProjectView(
                 importDepth,
                 enabledRules,
                 ideJavaHomeOverride,
+                useLibOverModSection
             )
             return ProjectView(
                 targets,
@@ -100,6 +109,14 @@ data class ProjectView(
                 importDepth,
                 enabledRules,
                 ideJavaHomeOverride,
+                useLibOverModSection,
+            )
+        }
+
+        private fun combineUseLibOverModSection(importedProjectViews: List<ProjectView>): ExperimentalUseLibOverModSection? {
+            return useLibOverModSection ?: getLastImportedSingletonValue(
+                importedProjectViews,
+                ProjectView::useLibOverModSection
             )
         }
 
