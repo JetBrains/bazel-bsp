@@ -40,3 +40,10 @@ data class ProjectViewImportDepthSection(override val value: Int) :
         const val SECTION_NAME = "import_depth"
     }
 }
+
+data class ExperimentalUseLibOverModSection(override val value: Boolean) :
+    ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "experimental_use_lib_over_mod"
+    }
+}
