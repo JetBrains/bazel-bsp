@@ -141,6 +141,7 @@ class BazelProjectMapper(
               .toSet(),
             dependencies = emptyList(),
             interfaceJars = emptySet(),
+            tags = targetKindResolver.resolveTags(targetInfo)
           )
       }
       .map { it.key to listOf(it.value) }
@@ -165,6 +166,7 @@ class BazelProjectMapper(
         outputs = kotlinStdlibsJars,
         sources = emptySet(),
         dependencies = emptyList(),
+        tags = emptySet()
       )
     } else null
   }
@@ -192,7 +194,8 @@ class BazelProjectMapper(
           label = Paths.get(it).name,
           outputs = setOf(it),
           sources = emptySet(),
-          dependencies = emptyList()
+          dependencies = emptyList(),
+          tags = emptySet()
         )
       }
     } else null
@@ -232,6 +235,7 @@ class BazelProjectMapper(
       sources = sources,
       dependencies = emptyList(),
       interfaceJars = emptySet(),
+      tags = targetKindResolver.resolveTags(target)
     )
   }
 
@@ -253,10 +257,12 @@ class BazelProjectMapper(
         libraryNameToLibraryValueMap.computeIfAbsent(label) { _ ->
           Library(
             label = label,
+            outputs = setOf(bazelPathsResolver.resolveUri(lib)),
+            sources = emptySet(),
             dependencies = emptyList(),
             interfaceJars = emptySet(),
-            outputs = setOf(bazelPathsResolver.resolveUri(lib)),
-            sources = emptySet())
+            tags = emptySet()
+          )
         }
       }
     }
@@ -342,6 +348,7 @@ class BazelProjectMapper(
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
+      tags = targetKindResolver.resolveTags(targetInfo)
     )
 
   private fun List<FileLocation>.resolveUris() =

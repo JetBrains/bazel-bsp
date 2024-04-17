@@ -139,6 +139,7 @@ class BspProjectMapper(
                 ijars = it.interfaceJars.filter { o -> o.toPath().exists() }.map { o -> o.toString() },
                 jars = it.outputs.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
                 sourceJars = it.sources.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
+                capabilities = inferCapabilities(it.tags)
             )
         }
         return WorkspaceLibrariesResult(libraries)
@@ -179,7 +180,7 @@ class BspProjectMapper(
         val dependencies =
             module.directDependencies.map(BspMappings::toBspId)
         val languages = module.languages.flatMap(Language::allNames).distinct()
-        val capabilities = inferCapabilities(module)
+        val capabilities = inferCapabilities(module.tags)
         val tags = module.tags.mapNotNull(BspMappings::toBspTag)
         val baseDirectory = BspMappings.toBspUri(module.baseDirectory)
         val buildTarget = BuildTarget(
@@ -195,16 +196,16 @@ class BspProjectMapper(
         return buildTarget
     }
 
-    private fun inferCapabilities(module: Module): BuildTargetCapabilities {
-        val canCompile = !module.tags.contains(Tag.NO_BUILD) && isBuildableIfManual(module)
-        val canTest = module.tags.contains(Tag.TEST) && !module.tags.contains(Tag.MANUAL)
-        val canRun = module.tags.contains(Tag.APPLICATION) && !module.tags.contains(Tag.MANUAL)
+    private fun inferCapabilities(tags: Collection<Tag>): BuildTargetCapabilities {
+        val canCompile = !tags.contains(Tag.NO_BUILD) && isBuildableIfManual(tags)
+        val canTest = tags.contains(Tag.TEST) && !tags.contains(Tag.MANUAL)
+        val canRun = tags.contains(Tag.APPLICATION) && !tags.contains(Tag.MANUAL)
         val canDebug = canRun || canTest // runnable and testable targets should be debuggable
         return BuildTargetCapabilities().also { it.canCompile = canCompile; it.canTest = canTest; it.canRun = canRun; it.canDebug = canDebug }
     }
 
-    private fun isBuildableIfManual(module: Module): Boolean =
-        (!module.tags.contains(Tag.MANUAL)
+    private fun isBuildableIfManual(tags: Collection<Tag>): Boolean =
+        (!tags.contains(Tag.MANUAL)
                 || workspaceContextProvider.currentWorkspaceContext().buildManualTargets.value)
 
 

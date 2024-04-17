@@ -25,7 +25,8 @@ class DependencyMapperTest {
             "@maven//:org_scala_lang_scala_library",
             setOf(jarUri),
             setOf(jarSourcesUri),
-            emptyList()
+            emptyList(),
+            tags = emptySet()
         )
         val expectedMavenArtifact = MavenDependencyModuleArtifact(jarUri.toString())
         val expectedMavenSourcesArtifact = MavenDependencyModuleArtifact(jarSourcesUri.toString())
@@ -47,7 +48,8 @@ class DependencyMapperTest {
             "@@rules_jvm_external~override~maven~maven//:com_google_auto_service_auto_service_annotations",
             setOf(jarUri),
             setOf(jarSourcesUri),
-            emptyList()
+            emptyList(),
+            tags = emptySet()
         )
         val expectedMavenArtifact = MavenDependencyModuleArtifact(jarUri.toString())
         val expectedMavenSourcesArtifact = MavenDependencyModuleArtifact(jarSourcesUri.toString())
@@ -67,7 +69,8 @@ class DependencyMapperTest {
             "@//projects/v1:scheduler",
             emptySet(),
             emptySet(),
-            emptyList()
+            emptyList(),
+            tags = emptySet()
         )
         val dependency = DependencyMapper.extractMavenDependencyInfo(lib1)
 
@@ -82,25 +85,29 @@ class DependencyMapperTest {
             "@maven//:org_scala_lang_scala_library",
             setOf(jarUri),
             setOf(jarSourcesUri),
-            emptyList()
+            emptyList(),
+            tags = emptySet()
         )
         val lib2 = Library(
             "@maven//:org_scala_lang_scala_library2",
             emptySet(),
             emptySet(),
-            listOf(lib1.label)
+            listOf(lib1.label),
+            tags = emptySet()
         )
         val lib3 = Library(
             "@maven//:org_scala_lang_scala_library3",
             emptySet(),
             emptySet(),
-            listOf(lib1.label, lib2.label)
+            listOf(lib1.label, lib2.label),
+            tags = emptySet()
         )
         val lib4 = Library(
             "@maven//:org_scala_lang_scala_library4",
             emptySet(),
             emptySet(),
-            listOf(lib3.label, lib2.label)
+            listOf(lib3.label, lib2.label),
+            tags = emptySet()
         )
         val libraries = mapOf(lib1.label to lib1, lib2.label to lib2, lib3.label to lib3, lib4.label to lib4)
         val currentUri = Paths.get(".").toUri()

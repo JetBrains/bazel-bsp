@@ -1,5 +1,6 @@
 package org.jetbrains.bsp
 
+import ch.epfl.scala.bsp4j.BuildTargetCapabilities
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 
 public data class LibraryItem(
@@ -8,6 +9,7 @@ public data class LibraryItem(
   val ijars: List<String>,
   val jars: List<String>,
   val sourceJars: List<String>,
+  val capabilities: BuildTargetCapabilities,
 )
 
 public data class WorkspaceLibrariesResult(
