@@ -331,9 +331,10 @@ class BazelProjectMapper(
 
   private fun createLibraries(targets: Map<String, TargetInfo>): Map<String, Library> {
     return targets.mapValues { (targetId, targetInfo) ->
+//      bspClientLogger.message(targetInfo.toString())
       createLibrary(targetId, targetInfo)
     }
-      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() }
+//      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() || it.goImportPath.toBoolean() } // TODO: fix
   }
 
   private fun createLibrary(label: String, targetInfo: TargetInfo): Library =
@@ -343,7 +344,8 @@ class BazelProjectMapper(
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
-      goImportPath = targetInfo.goTargetInfo?.importpath
+      goImportPath = targetInfo.goTargetInfo?.importpath,
+      goRoot = "external/org_golang_x_net/ipv4",
     )
 
   private fun List<FileLocation>.resolveUris() =
