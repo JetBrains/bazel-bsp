@@ -179,29 +179,27 @@ class BazelProjectMapper(
   private fun calculateScalaLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
     val projectLevelScalaSdkLibraries = calculateProjectLevelScalaLibraries()
     val scalaTargets = targetsToImport.filter { it.hasScalaTargetInfo() }.map { it.id }
-    return projectLevelScalaSdkLibraries
-      ?.let { libraries -> scalaTargets.associateWith { libraries } }
-      .orEmpty()
+    return scalaTargets.associateWith {
+      languagePluginsService.scalaLanguagePlugin.scalaSdks[it]?.compilerJars?.mapNotNull {
+        projectLevelScalaSdkLibraries[it]
+      }.orEmpty()
+    }
   }
 
-  private fun calculateProjectLevelScalaLibraries(): List<Library>? {
-    val scalaSdkLibrariesJars = getProjectLevelScalaSdkLibrariesJars()
-    return if (scalaSdkLibrariesJars.isNotEmpty()) {
-      scalaSdkLibrariesJars.map {
-        Library(
-          label = Paths.get(it).name,
-          outputs = setOf(it),
-          sources = emptySet(),
-          dependencies = emptyList()
-        )
-      }
-    } else null
-  }
+  private fun calculateProjectLevelScalaLibraries(): Map<URI, Library> =
+    getProjectLevelScalaSdkLibrariesJars().associateWith {
+      Library(
+        label = Paths.get(it).name,
+        outputs = setOf(it),
+        sources = emptySet(),
+        dependencies = emptyList()
+      )
+    }
 
   private fun getProjectLevelScalaSdkLibrariesJars(): Set<URI> =
-    languagePluginsService.scalaLanguagePlugin.scalaSdk
-      ?.compilerJars
-      ?.toSet().orEmpty()
+    languagePluginsService.scalaLanguagePlugin.scalaSdks.values.toSet().flatMap {
+      it.compilerJars
+    }.toSet()
 
   private fun calculateAndroidLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> =
     targetsToImport.mapNotNull { target ->

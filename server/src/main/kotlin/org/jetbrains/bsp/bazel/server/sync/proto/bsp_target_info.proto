@@ -49,10 +49,7 @@ message JavaRuntimeInfo {
 
 message ScalaTargetInfo {
   repeated string scalac_opts = 1;
-}
-
-message ScalaToolchainInfo {
-  repeated FileLocation compiler_classpath = 1;
+  repeated FileLocation compiler_classpath = 2;
 }
 
 message CppTargetInfo {
@@ -125,7 +122,6 @@ message TargetInfo {
   JavaToolchainInfo java_toolchain_info = 2000;
   JavaRuntimeInfo java_runtime_info = 3000;
   ScalaTargetInfo scala_target_info = 4000;
-  ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
   KotlinTargetInfo kotlin_target_info = 7000;
   PythonTargetInfo python_target_info = 8000;
