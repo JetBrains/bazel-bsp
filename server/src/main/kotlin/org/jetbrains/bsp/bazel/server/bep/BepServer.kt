@@ -165,6 +165,9 @@ class BepServer(
 
   private fun processProgressEvent(event: BuildEventStreamProtos.BuildEvent) {
     if (event.hasProgress()) {
+      if (target != null) {
+        processDiagnosticText(event.progress.stderr, target.uri, true)
+      }
       // TODO https://youtrack.jetbrains.com/issue/BAZEL-622
       // bepLogger.onProgress(event.getProgress());
     }
@@ -250,7 +253,7 @@ class BepServer(
         try {
           val path = Paths.get(URI.create(actionEvent.stderr.uri))
           val stdErrText = Files.readString(path)
-          processDiagnosticText(stdErrText, label)
+          processDiagnosticText(stdErrText, label, false)
         } catch (e: FileSystemNotFoundException) {
           LOGGER.warn(e)
         } catch (e: IOException) {
@@ -258,24 +261,26 @@ class BepServer(
         }
       }
       BuildEventStreamProtos.File.FileCase.CONTENTS -> {
-        processDiagnosticText(actionEvent.stderr.contents.toStringUtf8(), label)
+        processDiagnosticText(actionEvent.stderr.contents.toStringUtf8(), label, false)
       }
       else -> {
-        processDiagnosticText("", label)
+        processDiagnosticText("", label, false)
       }
     }
   }
 
-  private fun processDiagnosticText(stdErrText: String, targetLabel: String) {
-    val events =
-      diagnosticsService.extractDiagnostics(
-        stdErrText, targetLabel, startedEvents.first.value
-      )
-    events.forEach(Consumer { publishDiagnosticsParams: PublishDiagnosticsParams? ->
-      bspClient.onBuildPublishDiagnostics(
-        publishDiagnosticsParams
-      )
-    })
+  private fun processDiagnosticText(stdErrText: String, targetLabel: String, diagnosticsFromProgress: Boolean) {
+    if (startedEvents.isNotEmpty() && stdErrText.isNotEmpty()) {
+      val events =
+        diagnosticsService.extractDiagnostics(
+          stdErrText, targetLabel, startedEvents.first.value, diagnosticsFromProgress
+        )
+      events.forEach(Consumer { publishDiagnosticsParams: PublishDiagnosticsParams? ->
+        bspClient.onBuildPublishDiagnostics(
+            publishDiagnosticsParams
+        )
+      })
+    }
   }
 
   private fun consumeCompletedEvent(event: BuildEventStreamProtos.BuildEvent) {
