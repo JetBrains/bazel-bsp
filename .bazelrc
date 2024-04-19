@@ -1,3 +1,5 @@
+try-import .bazelrc.user
+
 build --java_language_version=11
 build --tool_java_language_version=11
 build --javacopt="-Xep:WildcardImport:ERROR"
@@ -15,3 +17,30 @@ startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
 build --noexperimental_check_output_files
 build --noexperimental_check_external_repository_files
 build --experimental_reuse_sandbox_directories
+
+# Setup EngFlow's Remote Execution
+build:engflow --define=EXECUTOR=remote
+build:engflow --disk_cache=
+build:engflow --experimental_inmemory_dotd_files
+build:engflow --experimental_inmemory_jdeps_files
+build:engflow --remote_timeout=600
+build:engflow --nolegacy_important_outputs
+build:engflow --grpc_keepalive_time=30s
+build:engflow --remote_cache_compression=true
+build:engflow --remote_download_minimal
+build:engflow --host_platform=//platforms/linux_x86/config:platform
+build:engflow --platforms=//platforms/linux_x86/config:platform
+build:engflow --extra_toolchains=//platforms/linux_x86/config:cc-toolchain
+build:engflow --extra_execution_platforms=//platforms/linux_x86/config:platform
+build:engflow --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+build:engflow --crosstool_top=//platforms/linux_x86/cc:toolchain
+build:engflow --host_crosstool_top=//platforms/linux_x86/cc:toolchain
+build:engflow --cpu=k8
+build:engflow --host_cpu=k8
+build:engflow --compiler=clang
+build:engflow --host_compiler=clang
+build:engflow --remote_cache=grpcs://regolith.cluster.engflow.com
+build:engflow --remote_executor=grpcs://regolith.cluster.engflow.com
+build:engflow --bes_backend=grpcs://regolith.cluster.engflow.com
+build:engflow --bes_results_url=https://regolith.cluster.engflow.com/invocation/
+build:engflow --config=engflow_auth

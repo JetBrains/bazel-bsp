@@ -8,3 +8,4 @@ projectview.bazelproject
 __pycache__
 
 .jps-compiled
+.bazelrc.user
