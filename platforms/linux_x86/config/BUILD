@@ -17,7 +17,6 @@
 
 package(default_visibility = ["//visibility:public"])
 
-
 toolchain(
     name = "cc-toolchain",
     exec_compatible_with = [
@@ -35,7 +34,6 @@ toolchain(
 
 platform(
     name = "platform",
-    parents = ["@local_config_platform//:host"],
     constraint_values = [
         "@platforms//os:linux",
         "@platforms//cpu:x86_64",
@@ -45,4 +43,5 @@ platform(
         "container-image": "docker://antonioengflow/bazel-bsp-rbe@sha256:9c8e458c436d59aab58ca86e220587498537f77ddcf20192aebcf4372f69bc2d",
         "OSFamily": "Linux",
     },
+    parents = ["@local_config_platform//:host"],
 )

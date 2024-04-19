@@ -82,5 +82,5 @@ kt_test(
     exec_properties = {
         # This specific test needs internet access, to reach out to github.com
         "dockerNetwork": "standard",
-    }
+    },
 )
