@@ -3,11 +3,11 @@ package configurations
 import jetbrains.buildServer.configs.kotlin.v10.toExtId
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureConditions
 import jetbrains.buildServer.configs.kotlin.v2019_2.Requirements
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 
 open class BaseBuildType(
@@ -16,12 +16,14 @@ open class BaseBuildType(
     steps: BuildSteps.() -> Unit,
     artifactRules: String = "",
     setupSteps: Boolean = false,
+    failureConditions: FailureConditions.() -> Unit = {},
     requirements: Requirements.() -> Unit = {}
 ) : BuildType({
     id(name.toExtId())
     this.name = name
     this.artifactRules = artifactRules
     this.requirements(requirements)
+    this.failureConditions(failureConditions)
 
     failureConditions {
         executionTimeoutMin = 60

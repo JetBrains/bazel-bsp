@@ -76,6 +76,8 @@ data class WorkspaceContext(
      * Obtained from `ProjectView` simply by mapping `ide_java_home_override` section.
      */
     val ideJavaHomeOverrideSpec: IdeJavaHomeOverrideSpec,
+
+    val experimentalUseLibOverModSection: ExperimentalUseLibOverModSpec
 ) : ExecutionContext()
 
 class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstructor<WorkspaceContext> {
@@ -98,6 +100,7 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
             importDepth = ImportDepthSpecExtractor.fromProjectView(projectView),
             enabledRules = EnabledRulesSpecExtractor.fromProjectView(projectView),
             ideJavaHomeOverrideSpec = IdeJavaHomeOverrideSpecExtractor.fromProjectView(projectView),
+            experimentalUseLibOverModSection = ExperimentalUseLibOverModSpecExtractor.fromProjectView(projectView),
         )
     }
 }

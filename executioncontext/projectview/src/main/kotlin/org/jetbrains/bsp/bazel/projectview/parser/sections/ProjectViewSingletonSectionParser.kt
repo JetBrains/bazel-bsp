@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.parser.sections
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.projectview.model.sections.ExperimentalUseLibOverModSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildManualTargetsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewDeriveTargetsFromDirectoriesSection
@@ -86,4 +87,13 @@ object ProjectViewIdeJavaHomeOverrideSectionParser :
     override fun mapRawValue(rawValue: String): Path = Path(rawValue)
 
     override fun createInstance(value: Path): ProjectViewIdeJavaHomeOverrideSection = ProjectViewIdeJavaHomeOverrideSection(value)
+}
+
+object ExperimentalUseLibOverModSectionParser :
+    ProjectViewSingletonSectionParser<Boolean, ExperimentalUseLibOverModSection>(ExperimentalUseLibOverModSection.SECTION_NAME) {
+
+    override fun mapRawValue(rawValue: String): Boolean = rawValue.toBoolean()
+
+    override fun createInstance(value: Boolean): ExperimentalUseLibOverModSection =
+        ExperimentalUseLibOverModSection(value)
 }
