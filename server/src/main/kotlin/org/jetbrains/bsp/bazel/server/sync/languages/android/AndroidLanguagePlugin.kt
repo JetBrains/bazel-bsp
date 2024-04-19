@@ -23,9 +23,9 @@ class AndroidLanguagePlugin(
         androidJar = androidJar.toString(),
         androidTargetType = androidTargetType,
         manifest = manifest?.toString(),
-        resourceFolders = resourceFolders.map { it.toString() },
+        resourceDirectories = resourceDirectories.map { it.toString() },
         resourceJavaPackage = resourceJavaPackage,
-        assetFolders = assetFolders.map { it.toString() },
+        assetsDirectories = assetsDirectories.map { it.toString() },
       )
     }
     moduleData.javaModule?.let { javaLanguagePlugin.toJvmBuildTarget(it) }?.let {
@@ -49,17 +49,17 @@ class AndroidLanguagePlugin(
     } else {
       null
     }
-    val resourceFolders = bazelPathsResolver.resolveUris(androidTargetInfo.resourceFoldersList)
+    val resourceDirectories = bazelPathsResolver.resolveUris(androidTargetInfo.resourceDirectoriesList)
     val resourceJavaPackage = androidTargetInfo.resourceJavaPackage.takeIf { it.isNotEmpty() }
-    val assetFolders = bazelPathsResolver.resolveUris(androidTargetInfo.assetFoldersList)
+    val assetsDirectories = bazelPathsResolver.resolveUris(androidTargetInfo.assetsDirectoriesList)
 
     return AndroidModule(
       androidJar = androidJar,
       androidTargetType = getAndroidTargetType(targetInfo),
       manifest = manifest,
-      resourceFolders = resourceFolders,
+      resourceDirectories = resourceDirectories,
       resourceJavaPackage = resourceJavaPackage,
-      assetFolders = assetFolders,
+      assetsDirectories = assetsDirectories,
       javaModule = javaLanguagePlugin.resolveModule(targetInfo),
       kotlinModule = null,
     )
@@ -84,7 +84,7 @@ class AndroidLanguagePlugin(
     if (!androidTargetInfo.hasManifest()) return emptySet()
 
     return bazelPathsResolver
-      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourceFoldersList)
+      .resolveUris(listOf(targetInfo.androidTargetInfo.manifest) + targetInfo.androidTargetInfo.resourceDirectoriesList)
       .toSet()
   }
 }

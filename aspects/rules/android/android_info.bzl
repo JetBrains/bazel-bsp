@@ -20,7 +20,7 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         if manifest_files:
             manifest = file_location(manifest_files[0])
 
-    resource_folders_set = {}
+    resource_directories_set = {}
     if hasattr(ctx.rule.attr, "resource_files"):
         for resource in ctx.rule.attr.resource_files:
             for resource_file in resource.files.to_list():
@@ -32,13 +32,13 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
                     set_relative_path(resource_file_location, resource_source_dir_relative_path)
 
                 # Add to set
-                resource_folders_set[resource_source_dir_location] = None
+                resource_directories_set[resource_source_dir_location] = None
 
     resource_java_package = None
     if hasattr(ctx.rule.attr, "custom_package"):
         resource_java_package = ctx.rule.attr.custom_package
 
-    asset_folders = []
+    assets_directories = []
     if hasattr(ctx.rule.attr, "assets") and ctx.rule.attr.assets and \
        hasattr(ctx.rule.attr, "assets_dir") and ctx.rule.attr.assets_dir:
         first_asset_files = ctx.rule.attr.assets[0].files.to_list()
@@ -47,7 +47,7 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
             first_asset_location = file_location(first_asset)
             asset_folder_relative_path = ctx.label.package + "/" + ctx.rule.attr.assets_dir
             asset_folder_location = set_relative_path(first_asset_location, asset_folder_relative_path)
-            asset_folders.append(asset_folder_location)
+            assets_directories.append(asset_folder_location)
 
     aidl_binary_jar = None
     aidl_source_jar = None
@@ -61,9 +61,9 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
     android_target_info_proto = create_struct(
         android_jar = android_jar,
         manifest = manifest,
-        resource_folders = resource_folders_set.keys(),
+        resource_directories = resource_directories_set.keys(),
         resource_java_package = resource_java_package,
-        asset_folders = asset_folders,
+        assets_directories = assets_directories,
         aidl_binary_jar = aidl_binary_jar,
         aidl_source_jar = aidl_source_jar,
     )
