@@ -49,10 +49,7 @@ message JavaRuntimeInfo {
 
 message ScalaTargetInfo {
   repeated string scalac_opts = 1;
-}
-
-message ScalaToolchainInfo {
-  repeated FileLocation compiler_classpath = 1;
+  repeated FileLocation compiler_classpath = 2;
 }
 
 message CppTargetInfo {
@@ -96,11 +93,13 @@ message RustCrateInfo {
 }
 
 message AndroidTargetInfo {
-  FileLocation android_jar = 1;
-  FileLocation manifest = 2;
-  repeated FileLocation resource_folders = 3;
-  FileLocation aidl_binary_jar = 4;
-  FileLocation aidl_source_jar = 5;
+  FileLocation android_jar = 100;
+  FileLocation manifest = 200;
+  repeated FileLocation resource_directories = 300;
+  string resource_java_package = 400;
+  repeated FileLocation assets_directories = 450;
+  FileLocation aidl_binary_jar = 500;
+  FileLocation aidl_source_jar = 600;
 }
 
 message AndroidAarImportInfo {
@@ -128,7 +127,6 @@ message TargetInfo {
   JavaToolchainInfo java_toolchain_info = 2000;
   JavaRuntimeInfo java_runtime_info = 3000;
   ScalaTargetInfo scala_target_info = 4000;
-  ScalaToolchainInfo scala_toolchain_info = 5000;
   CppTargetInfo cpp_target_info = 6000;
   KotlinTargetInfo kotlin_target_info = 7000;
   PythonTargetInfo python_target_info = 8000;

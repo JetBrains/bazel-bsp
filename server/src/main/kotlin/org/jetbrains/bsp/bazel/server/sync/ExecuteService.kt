@@ -88,7 +88,6 @@ class ExecuteService(
             result = bazelRunner.commandBuilder().test()
                 .withTargets(targetsSpec)
                 .withArguments(params.arguments)
-                .withFlag(BazelFlag.testOutputAll())
                 .withFlag(BazelFlag.color(true))
                 .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
                 .waitAndGetResult(cancelChecker, true)

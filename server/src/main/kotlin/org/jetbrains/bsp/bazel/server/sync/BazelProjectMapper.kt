@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -108,7 +107,7 @@ class BazelProjectMapper(
       (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toSet()).map { Label(it) }
     }
     val rustExternalTargetsToImport = measure("Select external Rust targets") {
-      selectRustExternalTargetsToImport(rootTargets, dependencyGraph)
+      selectRustExternalTargetsToImport(rootTargets, dependencyGraph, workspaceContext)
     }
     val rustExternalModules = measure("Create Rust external modules") {
       createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
@@ -180,29 +179,27 @@ class BazelProjectMapper(
   private fun calculateScalaLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
     val projectLevelScalaSdkLibraries = calculateProjectLevelScalaLibraries()
     val scalaTargets = targetsToImport.filter { it.hasScalaTargetInfo() }.map { it.id }
-    return projectLevelScalaSdkLibraries
-      ?.let { libraries -> scalaTargets.associateWith { libraries } }
-      .orEmpty()
+    return scalaTargets.associateWith {
+      languagePluginsService.scalaLanguagePlugin.scalaSdks[it]?.compilerJars?.mapNotNull {
+        projectLevelScalaSdkLibraries[it]
+      }.orEmpty()
+    }
   }
 
-  private fun calculateProjectLevelScalaLibraries(): List<Library>? {
-    val scalaSdkLibrariesJars = getProjectLevelScalaSdkLibrariesJars()
-    return if (scalaSdkLibrariesJars.isNotEmpty()) {
-      scalaSdkLibrariesJars.map {
-        Library(
-          label = Paths.get(it).name,
-          outputs = setOf(it),
-          sources = emptySet(),
-          dependencies = emptyList()
-        )
-      }
-    } else null
-  }
+  private fun calculateProjectLevelScalaLibraries(): Map<URI, Library> =
+    getProjectLevelScalaSdkLibrariesJars().associateWith {
+      Library(
+        label = Paths.get(it).name,
+        outputs = setOf(it),
+        sources = emptySet(),
+        dependencies = emptyList()
+      )
+    }
 
   private fun getProjectLevelScalaSdkLibrariesJars(): Set<URI> =
-    languagePluginsService.scalaLanguagePlugin.scalaSdk
-      ?.compilerJars
-      ?.toSet().orEmpty()
+    languagePluginsService.scalaLanguagePlugin.scalaSdks.values.toSet().flatMap {
+      it.compilerJars
+    }.toSet()
 
   private fun calculateAndroidLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> =
     targetsToImport.mapNotNull { target ->
@@ -386,15 +383,15 @@ class BazelProjectMapper(
       .toSet()
 
   private fun selectRustExternalTargetsToImport(
-    rootTargets: Set<String>, graph: DependencyGraph
+    rootTargets: Set<String>, graph: DependencyGraph, workspaceContext: WorkspaceContext
   ): Sequence<TargetInfo> =
-    graph.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
+    graph.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it, workspaceContext) && isRustTarget(it) }
 
   private fun selectTargetsToImport(
     workspaceContext: WorkspaceContext, rootTargets: Set<String>, graph: DependencyGraph
   ): Sequence<TargetInfo> = graph.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
-  ).asSequence().filter(::isWorkspaceTarget)
+  ).asSequence().filter { isWorkspaceTarget(it, workspaceContext) }
 
   private fun hasKnownSources(targetInfo: TargetInfo) =
     targetInfo.sourcesList.any {
@@ -407,9 +404,9 @@ class BazelProjectMapper(
         it.relativePath.endsWith(".go")
     }
 
-  private fun isWorkspaceTarget(target: TargetInfo): Boolean =
+  private fun isWorkspaceTarget(target: TargetInfo, workspaceContext: WorkspaceContext): Boolean =
     bazelInfo.release.isRelativeWorkspacePath(target.id) &&
-      (hasKnownSources(target) ||
+      (hasKnownSources(target) || !workspaceContext.experimentalUseLibOverModSection.value &&
         target.kind in setOf(
         "java_library",
         "java_binary",

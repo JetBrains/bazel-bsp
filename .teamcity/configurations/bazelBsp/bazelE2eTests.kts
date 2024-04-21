@@ -1,7 +1,6 @@
 package configurations.bazelBsp
 
-import configurations.BaseBuildType
-import configurations.BazelBspVcs
+import configurations.BaseConfiguration
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.BazelStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.bazel
@@ -11,9 +10,9 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 open class BazelBspE2ETestsBuildType(
     targets: String,
     steps: (BuildSteps.() -> Unit)? = null,
-) : BaseBuildType(
+) : BaseConfiguration.BaseBuildType(
     name = "[e2e tests] $targets",
-    vcsRoot = BazelBspVcs,
+    vcsRoot = BaseConfiguration.BazelBspVcs,
     setupSteps = true,
     artifactRules = "+:/home/teamcity/.cache/bazel/_bazel_teamcity/*/execroot/_main/bazel-out/k8-fastbuild/testlogs/e2e/** => testlogs.zip",
     steps = {

@@ -22,9 +22,6 @@ object BazelFlag {
   @JvmStatic fun repositoryOverride(repositoryName: String, path: String): String =
     arg("override_repository", "$repositoryName=$path")
 
-  @JvmStatic fun testOutputAll(): String =
-    arg("test_output", "all")
-
   @JvmStatic fun experimentalGoogleLegacyApi(): String =
       flag("experimental_google_legacy_api")
 

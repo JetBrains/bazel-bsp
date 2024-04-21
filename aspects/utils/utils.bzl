@@ -45,11 +45,14 @@ def to_file_location(exec_path, root_exec_path_fragment, is_source, is_external)
 
     root_exec_path_fragment = exec_path[:-(len("/" + relative_path))] if relative_path != "" else exec_path
 
+    return create_file_location(relative_path, is_source, is_external, root_exec_path_fragment)
+
+def create_file_location(relative_path, is_source, is_external, root_execution_path_fragment):
     return struct(
         relative_path = relative_path,
         is_source = is_source,
         is_external = is_external,
-        root_execution_path_fragment = root_exec_path_fragment,
+        root_execution_path_fragment = root_execution_path_fragment,
     )
 
 def create_struct(**kwargs):
