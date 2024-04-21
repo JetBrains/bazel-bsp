@@ -157,7 +157,7 @@ kt_jvm_binary(
     deps = [
         "//commons",
         "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel/base",
-        "@maven//:ch_epfl_scala_bsp4j",
         "//protocol",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

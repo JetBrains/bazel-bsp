@@ -95,12 +95,12 @@ test_suite(
         ":android_kotlin_project_test",
         ":android_project_test",
         ":enabled_rules_test",
+        ":go_project_test",
         ":local_jdk_test",
         ":python_project_test",
         ":remote_jdk_test",
         ":rust_project_test",
         ":sample_repo_test",
         ":server_downloads_bazelisk_test",
-        ":go_project_test",
     ],
 )
