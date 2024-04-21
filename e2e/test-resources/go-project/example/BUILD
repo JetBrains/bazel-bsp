@@ -4,6 +4,6 @@ go_binary(
     name = "hello",
     srcs = ["hello.go"],
     deps = [
-        "//lib:go_default_library"
+        "//lib:go_default_library",
     ],
 )
