@@ -144,6 +144,8 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
 
     return BazelBspTestScenarioStep("compile results") {
       testClient.testCompile(60.seconds, compileParams, expectedCompilerResult, listOf(expectedDiagnosticsParam))
+      // second compile should not lose the diagnostics
+      testClient.testCompile(60.seconds, compileParams, expectedCompilerResult, listOf(expectedDiagnosticsParam))
     }
   }
 }
