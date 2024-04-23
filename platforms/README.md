@@ -7,3 +7,7 @@ The platforms for RBE are generated via `rbe_configs_gen` in [bazel-toolchains](
 ```
 rbe_configs_gen --output_config_path platforms/linux_x86 --exec_os=linux --target_os=linux --output_src_root=$(pwd) --toolchain_container=docker.io/antonioengflow/bazel-bsp-rbe@sha256:9c8e458c436d59aab58ca86e220587498537f77ddcf20192aebcf4372f69bc2d
 ```
+
+After running this script make sure to delete `platforms/linux_x86/WORKSPACE` and `platforms/linux_x86/REPO.bazel` by running:
+
+```rm platforms/linux_x86/REPO.bazel platforms/linux_x86/WORKSPACE```
