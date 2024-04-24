@@ -7,23 +7,41 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.bazel.install.Install
-import org.jetbrains.bsp.testkit.client.BasicTestClient
 import org.jetbrains.bsp.testkit.client.MockClient
 import org.jetbrains.bsp.testkit.client.TestClient
 import org.jetbrains.bsp.testkit.client.bazel.BazelJsonTransformer
-import kotlin.io.path.Path
+import java.nio.file.Paths
 import kotlin.io.path.name
+import kotlin.io.path.exists
+import kotlin.io.path.readText
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 abstract class BazelBspTestBaseScenario {
 
   protected val bazelBinary = System.getenv("BIT_BAZEL_BINARY")
   protected val workspaceDir = System.getenv("BIT_WORKSPACE_DIR")
+  private val shouldTrace = System.getenv("PRINT_BSP_TRACE")?.toBooleanStrictOrNull() ?: false
 
   val targetPrefix = calculateTargetPrefix()
 
+  private fun printBazelbspTrace() {
+    val traceFile = Paths.get(workspaceDir, ".bazelbsp", "bazelbsp.trace.json")
+    if (traceFile.exists()) {
+      System.err.println(":::::::: bazelbsp.trace.json ::::::::\n\n")
+      System.err.println(traceFile.readText())
+      return
+    }
+    System.err.println("could not find trace file")
+  }
+
   init {
     installServer()
+    if (shouldTrace) {
+      Runtime.getRuntime().addShutdownHook(Thread {
+        printBazelbspTrace()
+      })
+    }
   }
 
   // check: https://github.com/bazelbuild/intellij/blob/adb358670a7fc6ad51808486dc03f4605f83dcd3/aspect/testing/tests/src/com/google/idea/blaze/aspect/integration/BazelInvokingIntegrationTestRunner.java#L132
@@ -38,12 +56,12 @@ abstract class BazelBspTestBaseScenario {
   }
 
   protected open fun installServer() {
+    val commonArgs = arrayOf(
+      "-d", workspaceDir,
+      "-b", bazelBinary,
+      "-t", "//...",)
     Install.main(
-      arrayOf(
-        "-d", workspaceDir,
-        "-b", bazelBinary,
-        "-t", "//...",
-      )
+      if (shouldTrace) arrayOf("-l") + commonArgs else commonArgs
     )
   }
 
