@@ -10,6 +10,12 @@ def map(f, xs):
 def filter(f, xs):
     return [x for x in xs if f(x)]
 
+def not_none(x):
+    return x != None
+
+def filter_not_none(xs):
+    return filter(not_none, xs)
+
 def flatten(xss):
     return [x for xs in xss for x in xs]
 
@@ -106,3 +112,9 @@ def convert_struct_to_dict(s):
         attrs.remove("to_proto")
 
     return {key: getattr(s, key) for key in attrs}
+
+def log(text, level):
+    print("[" + level + "] " + str(text))
+
+def log_warn(text):
+    log(text, "WARN")

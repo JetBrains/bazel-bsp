@@ -9,4 +9,4 @@ public data class KotlinBuildTarget(
   val kotlincOptions: List<String>,
   val associates: List<BuildTargetIdentifier>,
   var jvmBuildTarget: JvmBuildTarget? = null,
-)
+  )
