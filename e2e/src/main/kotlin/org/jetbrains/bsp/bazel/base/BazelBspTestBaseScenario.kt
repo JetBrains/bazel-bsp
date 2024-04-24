@@ -79,11 +79,15 @@ abstract class BazelBspTestBaseScenario {
     }
   }
 
-  protected fun createTestkitClient(): TestClient {
+  protected fun createTestkitClient(): TestClient =
+    createTestkitClient(false)
+
+  protected fun createTestkitClient(jvmClasspathReceiver: Boolean): TestClient {
     log.info("Testing repo workspace path: $workspaceDir")
     log.info("Creating TestClient...")
 
     val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
+    capabilities.jvmCompileClasspathReceiver = jvmClasspathReceiver
     val initializeBuildParams = InitializeBuildParams(
       "BspTestClient", "1.0.0", "2.0.0", workspaceDir, capabilities
     )

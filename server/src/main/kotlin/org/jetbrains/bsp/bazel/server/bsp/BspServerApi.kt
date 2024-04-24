@@ -82,7 +82,8 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
   ): CompletableFuture<InitializeBuildResult> {
     return runner.handleRequest("buildInitialize", { cancelChecker: CancelChecker ->
       projectSyncService.initialize(
-        cancelChecker
+        cancelChecker,
+        initializeBuildParams.capabilities,
       )
     }, { methodName: String ->
       runner.serverIsNotFinished(

@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import ch.epfl.scala.bsp4j.BuildClientCapabilities
 import ch.epfl.scala.bsp4j.CppOptionsParams
 import ch.epfl.scala.bsp4j.CppOptionsResult
 import ch.epfl.scala.bsp4j.DependencyModulesParams
@@ -41,12 +42,17 @@ import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
 import org.jetbrains.bsp.WorkspaceLibrariesResult
 import org.jetbrains.bsp.bazel.server.sync.model.Language
+import java.util.Optional
+import kotlin.jvm.optionals.getOrDefault
 
 /** A facade for all project sync related methods  */
 class ProjectSyncService(private val bspMapper: BspProjectMapper, private val projectProvider: ProjectProvider) {
 
-  fun initialize(cancelChecker: CancelChecker): InitializeBuildResult =
-    bspMapper.initializeServer(Language.all())
+  private var clientCapabilities = Optional.empty<BuildClientCapabilities>()
+  fun initialize(cancelChecker: CancelChecker, clientCapabilities: BuildClientCapabilities): InitializeBuildResult{
+    this.clientCapabilities = Optional.of(clientCapabilities)
+    return bspMapper.initializeServer(Language.all())
+  }
 
 
   // TODO https://youtrack.jetbrains.com/issue/BAZEL-639
@@ -129,7 +135,8 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun buildTargetJavacOptions(cancelChecker: CancelChecker, params: JavacOptionsParams): JavacOptionsResult {
     val project = projectProvider.get(cancelChecker)
-    return bspMapper.buildTargetJavacOptions(project, params, cancelChecker)
+    val includeClasspath = clientCapabilities.map { !it.jvmCompileClasspathReceiver }.getOrDefault(true)
+    return bspMapper.buildTargetJavacOptions(project, params, includeClasspath, cancelChecker)
   }
 
   fun buildTargetCppOptions(cancelChecker: CancelChecker, params: CppOptionsParams): CppOptionsResult {
@@ -144,7 +151,8 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun buildTargetScalacOptions(cancelChecker: CancelChecker, params: ScalacOptionsParams): ScalacOptionsResult {
     val project = projectProvider.get(cancelChecker)
-    return bspMapper.buildTargetScalacOptions(project, params, cancelChecker)
+    val includeClasspath = clientCapabilities.map { !it.jvmCompileClasspathReceiver }.getOrDefault(true)
+    return bspMapper.buildTargetScalacOptions(project, params, includeClasspath, cancelChecker)
   }
 
   fun buildTargetScalaTestClasses(
@@ -179,3 +187,4 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
     return bspMapper.rustWorkspace(project, params)
   }
 }
+
