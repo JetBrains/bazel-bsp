@@ -1,4 +1,4 @@
-try-import .bazelrc.user
+try-import %workspace%/.bazelrc.user
 
 build --java_language_version=11
 build --tool_java_language_version=11
@@ -39,7 +39,6 @@ build:engflow --host_platform=//platforms/linux_x86/config:platform
 build:engflow --platforms=//platforms/linux_x86/config:platform
 build:engflow --extra_toolchains=//platforms/linux_x86/config:cc-toolchain
 build:engflow --extra_execution_platforms=//platforms/linux_x86/config:platform
-build:engflow --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 build:engflow --crosstool_top=//platforms/linux_x86/cc:toolchain
 build:engflow --host_crosstool_top=//platforms/linux_x86/cc:toolchain
 build:engflow --cpu=k8
@@ -47,3 +46,5 @@ build:engflow --host_cpu=k8
 build:engflow --compiler=clang
 build:engflow --host_compiler=clang
 build:engflow --remote_executor=grpcs://regolith.cluster.engflow.com
+build:engflow --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+build:engflow --test_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=0
