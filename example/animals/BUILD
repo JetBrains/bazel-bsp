@@ -1,5 +1,3 @@
-load(":generator.bzl", "animals_library_source")
-
 java_library(
     name = "consumer",
     srcs = glob(["src/java/org/jetbrains/bsp/example/animals/consumer/LibraryConsumer.java"]),
@@ -10,9 +8,5 @@ java_library(
 # even if it is directly referred in projectview's targets section.
 java_library(
     name = "animals_lib",
-    srcs = [":animals"],
-)
-
-animals_library_source(
-    name = "animals",
+    srcs = ["//example/animals2:animals"],
 )
