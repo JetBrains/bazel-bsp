@@ -33,6 +33,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.notExists
+import kotlin.io.path.toPath
 
 class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
@@ -141,6 +142,8 @@ class BazelProjectMapper(
               .toSet(),
             dependencies = emptyList(),
             interfaceJars = emptySet(),
+            goImportPath = "",
+            goRoot = "",
           )
       }
       .map { it.key to listOf(it.value) }
@@ -165,6 +168,8 @@ class BazelProjectMapper(
         outputs = kotlinStdlibsJars,
         sources = emptySet(),
         dependencies = emptyList(),
+        goImportPath = "",
+        goRoot = "",
       )
     } else null
   }
@@ -192,7 +197,9 @@ class BazelProjectMapper(
         label = Paths.get(it).name,
         outputs = setOf(it),
         sources = emptySet(),
-        dependencies = emptyList()
+        dependencies = emptyList(),
+        goImportPath = "",
+        goRoot = "",
       )
     }
 
@@ -230,6 +237,8 @@ class BazelProjectMapper(
       sources = sources,
       dependencies = emptyList(),
       interfaceJars = emptySet(),
+      goImportPath = "",
+      goRoot = "",
     )
   }
 
@@ -254,7 +263,10 @@ class BazelProjectMapper(
             dependencies = emptyList(),
             interfaceJars = emptySet(),
             outputs = setOf(bazelPathsResolver.resolveUri(lib)),
-            sources = emptySet())
+            sources = emptySet(),
+            goImportPath = "",
+            goRoot = "",
+          )
         }
       }
     }
@@ -328,22 +340,25 @@ class BazelProjectMapper(
 
   private fun createLibraries(targets: Map<String, TargetInfo>): Map<String, Library> {
     return targets.mapValues { (targetId, targetInfo) ->
-//      bspClientLogger.message(targetInfo.toString())
       createLibrary(targetId, targetInfo)
     }
 //      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() || it.goImportPath.toBoolean() } // TODO: fix
   }
 
-  private fun createLibrary(label: String, targetInfo: TargetInfo): Library =
-    Library(
+  private fun createLibrary(label: String, targetInfo: TargetInfo): Library {
+    val goRoot = targetInfo.goTargetInfo.sourcesList.firstOrNull()?.let { bazelPathsResolver.resolveUri(it).toPath().parent }
+    bspClientLogger.message("Creating library for target $label")
+    bspClientLogger.message("No tak moze library root:  $goRoot")
+    return Library(
       label = label,
       outputs = getTargetJarUris(targetInfo) + getAndroidAarUris(targetInfo),
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
-      goImportPath = targetInfo.goTargetInfo?.importpath,
-      goRoot = "external/org_golang_x_net/ipv4",
+      goImportPath = targetInfo.goTargetInfo.importpath,
+      goRoot = goRoot.toString(),
     )
+  }
 
   private fun List<FileLocation>.resolveUris() =
     map { bazelPathsResolver.resolve(it).toUri() }.toSet()

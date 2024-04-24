@@ -140,6 +140,7 @@ class BspProjectMapper(
                 jars = it.outputs.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
                 sourceJars = it.sources.filter { o -> o.toPath().exists() }.map { uri -> uri.toString() },
                 goImportPath = it.goImportPath,
+                goRoot = it.goRoot
             )
         }
         return WorkspaceLibrariesResult(libraries)
