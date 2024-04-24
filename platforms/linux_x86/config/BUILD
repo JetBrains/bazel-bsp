@@ -42,6 +42,7 @@ platform(
     exec_properties = {
         "container-image": "docker://antonioengflow/bazel-bsp-rbe@sha256:9c8e458c436d59aab58ca86e220587498537f77ddcf20192aebcf4372f69bc2d",
         "OSFamily": "Linux",
+        "dockerNetwork": "standard",
     },
     parents = ["@local_config_platform//:host"],
 )

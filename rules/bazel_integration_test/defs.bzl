@@ -1,6 +1,8 @@
 load("@bazel_binaries//:defs.bzl", "bazel_binaries")
 load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "bazel_integration_test", "bazel_integration_tests", "integration_test_utils")
 
+IT_TESTS_TAGS = ["manual", "exclusive-if-local"]
+
 def bazel_integration_test_all_versions(name, test_runner, workspace_path, env = {}, additional_env_inherit = []):
     # test projects are too old for bazel 7
     # bazel_versions = bazel_binaries.versions.all
@@ -14,11 +16,12 @@ def bazel_integration_test_all_versions(name, test_runner, workspace_path, env =
         workspace_path = workspace_path,
         env = env,
         additional_env_inherit = additional_env_inherit,
+        tags = IT_TESTS_TAGS,
     )
 
     native.test_suite(
         name = name,
-        tags = integration_test_utils.DEFAULT_INTEGRATION_TEST_TAGS,
+        tags = IT_TESTS_TAGS,
         tests = integration_test_utils.bazel_integration_test_names(name, bazel_versions),
     )
 
@@ -27,7 +30,7 @@ def bazel_integration_test_all_versions(name, test_runner, workspace_path, env =
 
         native.test_suite(
             name = new_name,
-            tags = integration_test_utils.DEFAULT_INTEGRATION_TEST_TAGS,
+            tags = ["manual", "exclusive-if-local"],
             tests = [old_test_name],
         )
 

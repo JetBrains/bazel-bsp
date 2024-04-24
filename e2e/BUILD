@@ -1,4 +1,4 @@
-load("@//rules/bazel_integration_test:defs.bzl", "bazel_integration_test_all_versions", "bazel_integration_test_current_version")
+load("@//rules/bazel_integration_test:defs.bzl", "bazel_integration_test_all_versions", "bazel_integration_test_current_version", "IT_TESTS_TAGS")
 load("@rules_bazel_integration_test//bazel_integration_test:defs.bzl", "bazel_integration_test", "integration_test_utils")
 
 bazel_integration_test_all_versions(
@@ -83,7 +83,7 @@ bazel_integration_test_current_version(
 
 test_suite(
     name = "all_tests",
-    tags = integration_test_utils.DEFAULT_INTEGRATION_TEST_TAGS,
+    tags = IT_TESTS_TAGS,
     # we need to include all of them manually because of the "manual" tag
     tests = [
         ":android_kotlin_project_test",

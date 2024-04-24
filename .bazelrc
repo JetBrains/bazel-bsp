@@ -48,3 +48,4 @@ build:engflow --host_compiler=clang
 build:engflow --remote_executor=grpcs://regolith.cluster.engflow.com
 build:engflow --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 build:engflow --test_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=0
+build:engflow --test_env=CC=/usr/bin/cc
