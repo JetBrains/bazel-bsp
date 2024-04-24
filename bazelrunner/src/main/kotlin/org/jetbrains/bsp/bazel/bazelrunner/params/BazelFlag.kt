@@ -1,5 +1,8 @@
 package org.jetbrains.bsp.bazel.bazelrunner.params
 
+import org.jetbrains.bsp.bazel.commons.Constants.NAME
+import org.jetbrains.bsp.bazel.commons.Constants.VERSION
+
 object BazelFlag {
   @JvmStatic fun color(enabled: Boolean) =
       arg("color", if (enabled) "yes" else "no")
@@ -33,6 +36,9 @@ object BazelFlag {
 
   @JvmStatic fun start(startType: String): String =
     arg("start", startType)
+
+  @JvmStatic fun toolTag(): String =
+    arg("tool_tag", "$NAME:$VERSION")
 
   private fun arg(name: String, value: String) =
       String.format("--%s=%s", name, value)
