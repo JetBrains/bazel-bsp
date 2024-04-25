@@ -11,10 +11,12 @@ import ch.epfl.scala.bsp4j.StatusCode
 import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.google.gson.Gson
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
+import org.jetbrains.bsp.BazelTestParamsData
 import org.jetbrains.bsp.MobileInstallParams
 import org.jetbrains.bsp.MobileInstallResult
 import org.jetbrains.bsp.MobileInstallStartType
@@ -83,9 +85,24 @@ class ExecuteService(
         }
         val targetsSpec = TargetsSpec(targets, emptyList())
 
+        var bazelTestParamsData: BazelTestParamsData? = null
+        try {
+            if (params.dataKind == BazelTestParamsData.DATA_KIND) {
+                val rawParams = params.data.toString()
+                bazelTestParamsData = Gson().fromJson(rawParams, BazelTestParamsData::class.java)
+            }
+        } catch (e: Exception) {
+            bspClientLogger.warn("Failed to parse BazelTestParamsData: $e")
+        }
+
+        var baseCommand = when (bazelTestParamsData?.coverage) {
+            true -> bazelRunner.commandBuilder().coverage()
+            else -> bazelRunner.commandBuilder().test()
+        }
+
         // TODO: handle multiple targets
         withBepServer(params.originId, params.targets.single()) { bepReader ->
-            result = bazelRunner.commandBuilder().test()
+            result = baseCommand
                 .withTargets(targetsSpec)
                 .withArguments(params.arguments)
                 .withFlag(BazelFlag.color(true))
