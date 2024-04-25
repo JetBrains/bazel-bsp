@@ -9,6 +9,7 @@ kt_jvm_library(
     visibility = ["//logger:__subpackages__"],
     deps = [
         "//commons",
+        "//protocol",
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

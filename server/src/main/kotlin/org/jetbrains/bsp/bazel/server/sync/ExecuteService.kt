@@ -105,6 +105,7 @@ class ExecuteService(
             result = baseCommand
                 .withTargets(targetsSpec)
                 .withArguments(params.arguments)
+                .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
                 .withFlag(BazelFlag.color(true))
                 .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
                 .waitAndGetResult(cancelChecker, true)

@@ -126,6 +126,11 @@ class BepServer(
         else -> TestStatus.FAILED
       }
 
+      val coverageReportUri = testResult.testActionOutputList.find { it.name == "test.lcov" }?.uri
+      if (coverageReportUri != null) {
+        bspClientTestNotifier.sendCoverageReport(parentId, coverageReportUri)
+      }
+
       bspClientTestNotifier.startTest("Test", childId)
       bspClientTestNotifier.finishTest("Test", childId, testStatus, "Test finished")
 
