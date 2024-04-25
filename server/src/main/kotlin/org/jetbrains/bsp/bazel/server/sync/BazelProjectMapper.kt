@@ -423,7 +423,7 @@ class BazelProjectMapper(
   private fun isWorkspaceTarget(target: TargetInfo, workspaceContext: WorkspaceContext): Boolean =
     bazelInfo.release.isRelativeWorkspacePath(target.id) &&
       (hasKnownSources(target) || !workspaceContext.experimentalUseLibOverModSection.value &&
-              target.kind in setOf(
+        target.kind in setOf(
         "java_library",
         "java_binary",
         "java_test",
