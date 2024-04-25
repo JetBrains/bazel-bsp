@@ -11,5 +11,3 @@ data class Library(
         val goImportPath: String? = "",
         val goRoot: URI? = URI(""),
 )
-
-

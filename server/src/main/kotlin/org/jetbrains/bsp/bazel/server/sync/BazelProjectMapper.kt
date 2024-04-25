@@ -204,9 +204,9 @@ class BazelProjectMapper(
 
   private fun calculateAndroidLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> =
     targetsToImport.mapNotNull { target ->
-      val aidlLibrary = createAidlLibrary(target) ?: return@mapNotNull null
-      target.id to listOf(aidlLibrary)
-    }.toMap()
+        val aidlLibrary = createAidlLibrary(target) ?: return@mapNotNull null
+        target.id to listOf(aidlLibrary)
+      }.toMap()
 
   private fun createAidlLibrary(target: TargetInfo): Library? {
     if (!target.hasAndroidTargetInfo()) return null
@@ -243,7 +243,7 @@ class BazelProjectMapper(
    * https://github.com/bazelbuild/intellij/blob/b68ec8b33aa54ead6d84dd94daf4822089b3b013/java/src/com/google/idea/blaze/java/sync/importer/BlazeJavaWorkspaceImporter.java#L256
    */
   private fun jdepsLibraries(targetsToImport: Map<String, TargetInfo>, libraryDependencies: Map<String, List<Library>>, librariesToImport: Map<String, Library>):
-          Map<String, List<Library>> {
+    Map<String, List<Library>> {
     val targetsToJdepsJars = getAllJdepsDependencies(targetsToImport, libraryDependencies, librariesToImport)
     val libraryNameToLibraryValueMap = HashMap<String, Library>()
     return targetsToJdepsJars.mapValues {
@@ -255,8 +255,7 @@ class BazelProjectMapper(
             dependencies = emptyList(),
             interfaceJars = emptySet(),
             outputs = setOf(bazelPathsResolver.resolveUri(lib)),
-            sources = emptySet(),
-          )
+            sources = emptySet())
         }
       }
     }
@@ -423,28 +422,28 @@ class BazelProjectMapper(
 
   private fun isWorkspaceTarget(target: TargetInfo, workspaceContext: WorkspaceContext): Boolean =
     bazelInfo.release.isRelativeWorkspacePath(target.id) &&
-            (hasKnownSources(target) || !workspaceContext.experimentalUseLibOverModSection.value &&
-                    target.kind in setOf(
-              "java_library",
-              "java_binary",
-              "java_test",
-              "kt_jvm_library",
-              "kt_jvm_binary",
-              "kt_jvm_test",
-              "scala_library",
-              "scala_binary",
-              "scala_test",
-              "rust_test",
-              "rust_doc",
-              "rust_doc_test",
-              "android_library",
-              "android_binary",
-              "android_local_test",
-              "go_library",
-              "go_binary",
-              "go_test",
-            )
-                    )
+      (hasKnownSources(target) || !workspaceContext.experimentalUseLibOverModSection.value &&
+              target.kind in setOf(
+        "java_library",
+        "java_binary",
+        "java_test",
+        "kt_jvm_library",
+        "kt_jvm_binary",
+        "kt_jvm_test",
+        "scala_library",
+        "scala_binary",
+        "scala_test",
+        "rust_test",
+        "rust_doc",
+        "rust_doc_test",
+        "android_library",
+        "android_binary",
+        "android_local_test",
+        "go_library",
+        "go_binary",
+        "go_test",
+      )
+    )
 
   private fun isRustTarget(target: TargetInfo): Boolean =
     target.hasRustCrateInfo()

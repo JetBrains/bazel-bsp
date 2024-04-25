@@ -27,7 +27,6 @@ class GoLanguagePlugin(
     if (!targetInfo.hasGoTargetInfo()) return null
 
     val goTargetInfo = targetInfo.goTargetInfo
-
     return GoModule(
       sdkHomePath = calculateSdkURI(goTargetInfo.sdkHomePath),
       importPath = goTargetInfo.importpath,
