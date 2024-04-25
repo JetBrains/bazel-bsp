@@ -12,24 +12,6 @@ def find_scalac_classpath(runfiles):
             result.append(file)
     return result if found_scala_compiler_jar and len(result) >= 2 else []
 
-def extract_scala_toolchain_info(target, ctx, output_groups, **kwargs):
-    runfiles = target.default_runfiles.files.to_list()
-
-    classpath = find_scalac_classpath(runfiles)
-
-    if not classpath:
-        return None, None
-
-    resolve_files = classpath
-    compiler_classpath = map(file_location, classpath)
-
-    if (is_external(target)):
-        update_sync_output_groups(output_groups, "external-deps-resolve", depset(resolve_files))
-
-    scala_toolchain_info = struct(compiler_classpath = compiler_classpath)
-
-    return create_proto(target, ctx, scala_toolchain_info, "scala_toolchain_info"), None
-
 def extract_scala_info(target, ctx, output_groups, **kwargs):
     kind = ctx.rule.kind
     if not kind.startswith("scala_") and not kind.startswith("thrift_"):
@@ -37,13 +19,20 @@ def extract_scala_info(target, ctx, output_groups, **kwargs):
 
     SCALA_TOOLCHAIN = "@io_bazel_rules_scala//scala:toolchain_type"
 
+    scala_info = {}
+
     # check of _scala_toolchain is necessary, because SCALA_TOOLCHAIN will always be present
     if hasattr(ctx.rule.attr, "_scala_toolchain"):
         common_scalac_opts = ctx.toolchains[SCALA_TOOLCHAIN].scalacopts
+        if hasattr(ctx.rule.attr, "_scalac"):
+            scalac = ctx.rule.attr._scalac
+            compiler_classpath = find_scalac_classpath(scalac.default_runfiles.files.to_list())
+            if compiler_classpath:
+                scala_info["compiler_classpath"] = map(file_location, compiler_classpath)
+                if is_external(scalac):
+                    update_sync_output_groups(output_groups, "external-deps-resolve", depset(compiler_classpath))
     else:
         common_scalac_opts = []
-    scalac_opts = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
+    scala_info["scalac_opts"] = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
 
-    scala_info = struct(scalac_opts = scalac_opts)
-
-    return create_proto(target, ctx, scala_info, "scala_target_info"), None
+    return create_proto(target, ctx, struct(**scala_info), "scala_target_info"), None

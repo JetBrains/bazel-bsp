@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
-import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -331,10 +330,9 @@ class BazelProjectMapper(
 
   private fun createLibraries(targets: Map<String, TargetInfo>): Map<String, Library> {
     return targets.mapValues { (targetId, targetInfo) ->
-//      bspClientLogger.message(targetInfo.toString())
       createLibrary(targetId, targetInfo)
     }
-//      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() || it.goImportPath.toBoolean() } // TODO: fix
+      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() }
   }
 
   private fun createLibrary(label: String, targetInfo: TargetInfo): Library =
@@ -344,8 +342,6 @@ class BazelProjectMapper(
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
-      goImportPath = targetInfo.goTargetInfo?.importpath,
-      goRoot = "external/org_golang_x_net/ipv4",
     )
 
   private fun List<FileLocation>.resolveUris() =

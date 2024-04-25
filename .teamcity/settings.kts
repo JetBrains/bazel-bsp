@@ -1,5 +1,5 @@
-import configurations.bazelBsp.*
 import configurations.*
+import configurations.bazelBsp.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -11,12 +11,12 @@ project(BazelBsp)
 
 object BazelBsp : Project({
 
-    vcsRoot(BazelBspVcs)
+    vcsRoot(BaseConfiguration.BazelBspVcs)
 
     // setup pipeline chain for bazel-bsp
     val allSteps = sequential {
 
-        buildType(BuildifierFormat, options = {
+        buildType(BazelFormat.BuildifierFormat, options = {
             onDependencyFailure = FailureAction.CANCEL
             onDependencyCancel = FailureAction.CANCEL
         })
@@ -26,19 +26,20 @@ object BazelBsp : Project({
             onDependencyCancel = FailureAction.CANCEL
 
         }) {
-            buildType(BuildTheProject)
-            buildType(UnitTests)
-            buildType(SampleRepoBazelE2ETest)
-            buildType(BazelBspLocalBazelJdkTest)
-            buildType(BazelBspRemoteBazelJdkTest)
-            buildType(ServerDownloadsBazeliskTest)
-            buildType(AndroidProjectTest)
-            buildType(AndroidKotlinProjectTest)
-            buildType(KotlinProjectTest)
-            buildType(RegularBenchmark)
+            buildType(BazelBuild.BuildTheProject)
+            buildType(BazelUnitTests.UnitTests)
+            buildType(BazelE2eTests.SampleRepoBazelE2ETest)
+            buildType(BazelE2eTests.BazelBspLocalBazelJdkTest)
+            buildType(BazelE2eTests.BazelBspRemoteBazelJdkTest)
+            buildType(BazelE2eTests.ServerDownloadsBazeliskTest)
+            buildType(BazelE2eTests.AndroidProjectTest)
+            buildType(BazelE2eTests.AndroidKotlinProjectTest)
+            buildType(BazelE2eTests.KotlinProjectTest)
+            buildType(BazelE2ePluginTests.LocalProbeTests)
+            buildType(BazelBenchmark.RegularBenchmark)
         }
 
-        buildType(BazelBspAggregator, options = {
+        buildType(ResultsAggregator.BazelBspAggregator, options = {
             onDependencyFailure = FailureAction.ADD_PROBLEM
             onDependencyCancel = FailureAction.ADD_PROBLEM
         })
@@ -70,6 +71,7 @@ object BazelBsp : Project({
         RelativeId("E2eTestsE2eKotlinProjectTest"),
         RelativeId("E2eTestsE2eAndroidProjectTest"),
         RelativeId("E2eTestsE2eAndroidKotlinProjectTest"),
+        RelativeId("E2eTestsPluginRun"),
         RelativeId("Benchmark1001Targets"),
         RelativeId("BazelBspResults")
     )

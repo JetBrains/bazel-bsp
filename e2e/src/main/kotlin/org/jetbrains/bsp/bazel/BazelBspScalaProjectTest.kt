@@ -1,14 +1,9 @@
 package org.jetbrains.bsp.bazel
 
-import ch.epfl.scala.bsp4j.BuildTarget
-import ch.epfl.scala.bsp4j.BuildTargetCapabilities
-import ch.epfl.scala.bsp4j.BuildTargetIdentifier
-import ch.epfl.scala.bsp4j.ScalacOptionsItem
-import ch.epfl.scala.bsp4j.ScalacOptionsParams
-import ch.epfl.scala.bsp4j.ScalacOptionsResult
-import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
+import ch.epfl.scala.bsp4j.*
 import org.jetbrains.bsp.bazel.base.BazelBspTestBaseScenario
 import org.jetbrains.bsp.bazel.base.BazelBspTestScenarioStep
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
 object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
@@ -19,6 +14,7 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
 
   override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
     scalaOptionsResults(),
+    compileWithWarnings(),
   )
 
   override fun expectedWorkspaceBuildTargetsResult(): WorkspaceBuildTargetsResult {
@@ -51,11 +47,33 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
     }
     val expectedScalaOptionsResult = ScalacOptionsResult(expectedScalaOptionsItems)
     val scalaOptionsParams = ScalacOptionsParams(expectedTargetIdentifiers)
-
-    return BazelBspTestScenarioStep(
-      "scalaOptions results"
-    ) {
+    return BazelBspTestScenarioStep("scalaOptions results") {
       testClient.testScalacOptions(60.seconds, scalaOptionsParams, expectedScalaOptionsResult)
+    }
+  }
+
+  private fun compileWithWarnings(): BazelBspTestScenarioStep {
+    val expectedTargetIdentifiers = expectedTargetIdentifiers().filter { it.uri != "bsp-workspace-root" }
+    val compileParams = CompileParams(expectedTargetIdentifiers);
+    compileParams.originId = UUID.randomUUID().toString()
+
+    val expectedCompilerResult = CompileResult(StatusCode.OK)
+    val expectedDiagnostic = Diagnostic(
+      Range(Position(2, 4), Position(2, 4)),
+      "\"match may not be exhaustive.\\nIt would fail on the following input: C(_)\\n  aa match {\\n  ^\""
+    )
+    expectedDiagnostic.severity = DiagnosticSeverity.WARNING
+    val expectedDocumentId = TextDocumentIdentifier("file://\$WORKSPACE/scala_targets/Example.scala")
+    val expectedDiagnosticsParam = PublishDiagnosticsParams(
+      expectedDocumentId,
+      expectedTargetIdentifiers[0],
+      listOf(expectedDiagnostic),
+      true,
+    )
+    expectedDiagnosticsParam.originId = compileParams.originId
+
+    return BazelBspTestScenarioStep("compile results") {
+      testClient.testCompile(60.seconds, compileParams, expectedCompilerResult, listOf(expectedDiagnosticsParam))
     }
   }
 

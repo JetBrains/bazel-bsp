@@ -1,11 +1,10 @@
 package configurations.bazelBsp
 
-import configurations.BaseBuildType
-import configurations.BazelBspVcs
+import configurations.BaseConfiguration
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
-object BuildifierFormat : BaseBuildType(
+object BuildifierFormat : BaseConfiguration.BaseBuildType(
         name = "[format] buildifier",
         steps = {
             script {
@@ -20,5 +19,5 @@ object BuildifierFormat : BaseBuildType(
                 dockerImage = "andrefmrocha/buildifier"
             }
         },
-        vcsRoot = BazelBspVcs,
+        vcsRoot = BaseConfiguration.BazelBspVcs,
 )

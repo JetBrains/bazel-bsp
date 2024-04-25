@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "file_location")
+load("//aspects:utils/utils.bzl", "create_file_location", "create_proto", "create_struct", "file_location")
 
 ANDROID_SDK_TOOLCHAIN_TYPE = "@bazel_tools//tools/android:sdk_toolchain_type"
 
@@ -20,7 +20,7 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
         if manifest_files:
             manifest = file_location(manifest_files[0])
 
-    resource_folders_set = {}
+    resource_directories_set = {}
     if hasattr(ctx.rule.attr, "resource_files"):
         for resource in ctx.rule.attr.resource_files:
             for resource_file in resource.files.to_list():
@@ -28,15 +28,26 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
                 resource_source_dir_relative_path = android_common.resource_source_directory(resource_file)
                 if resource_source_dir_relative_path == None:
                     continue
-                resource_source_dir_location = struct(
-                    relative_path = resource_source_dir_relative_path,
-                    is_source = resource_file_location.is_source,
-                    is_external = resource_file_location.is_external,
-                    root_execution_path_fragment = resource_file_location.root_execution_path_fragment,
-                )
+                resource_source_dir_location = \
+                    set_relative_path(resource_file_location, resource_source_dir_relative_path)
 
                 # Add to set
-                resource_folders_set[resource_source_dir_location] = None
+                resource_directories_set[resource_source_dir_location] = None
+
+    resource_java_package = None
+    if hasattr(ctx.rule.attr, "custom_package"):
+        resource_java_package = ctx.rule.attr.custom_package
+
+    assets_directories = []
+    if hasattr(ctx.rule.attr, "assets") and ctx.rule.attr.assets and \
+       hasattr(ctx.rule.attr, "assets_dir") and ctx.rule.attr.assets_dir:
+        first_asset_files = ctx.rule.attr.assets[0].files.to_list()
+        if first_asset_files:
+            first_asset = first_asset_files[0]
+            first_asset_location = file_location(first_asset)
+            asset_folder_relative_path = ctx.label.package + "/" + ctx.rule.attr.assets_dir
+            asset_folder_location = set_relative_path(first_asset_location, asset_folder_relative_path)
+            assets_directories.append(asset_folder_location)
 
     aidl_binary_jar = None
     aidl_source_jar = None
@@ -50,12 +61,22 @@ def extract_android_info(target, ctx, dep_targets, **kwargs):
     android_target_info_proto = create_struct(
         android_jar = android_jar,
         manifest = manifest,
-        resource_folders = resource_folders_set.keys(),
+        resource_directories = resource_directories_set.keys(),
+        resource_java_package = resource_java_package,
+        assets_directories = assets_directories,
         aidl_binary_jar = aidl_binary_jar,
         aidl_source_jar = aidl_source_jar,
     )
 
     return create_proto(target, ctx, android_target_info_proto, "android_target_info"), None
+
+def set_relative_path(location, new_relative_path):
+    return create_file_location(
+        relative_path = new_relative_path,
+        is_source = location.is_source,
+        is_external = location.is_external,
+        root_execution_path_fragment = location.root_execution_path_fragment,
+    )
 
 def extract_android_aar_import_info(target, ctx, dep_targets, **kwargs):
     if ctx.rule.kind != "aar_import":
