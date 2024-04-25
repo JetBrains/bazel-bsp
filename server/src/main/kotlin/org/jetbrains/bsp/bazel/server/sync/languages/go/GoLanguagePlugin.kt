@@ -27,15 +27,10 @@ class GoLanguagePlugin(
     if (!targetInfo.hasGoTargetInfo()) return null
 
     val goTargetInfo = targetInfo.goTargetInfo
-//    TODO: tu mozna dodac cos w stylu znajdywanie najdluzszego wspolnego prefiksu
-//    val sources = goTargetInfo.sourcesList.map {
-//        bazelPathsResolver.resolveUri(it).toPath().parent
-//    }
 
     return GoModule(
       sdkHomePath = calculateSdkURI(goTargetInfo.sdkHomePath),
       importPath = goTargetInfo.importpath,
-      targetRoot = goTargetInfo.sourcesList.firstOrNull()?.let { bazelPathsResolver.resolveUri(it).toPath().parent },
     )
   }
 

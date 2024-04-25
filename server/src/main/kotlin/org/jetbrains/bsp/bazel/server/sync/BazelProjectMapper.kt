@@ -33,6 +33,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.notExists
+import kotlin.io.path.toPath
 
 class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
@@ -107,7 +108,7 @@ class BazelProjectMapper(
       (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toSet()).map { Label(it) }
     }
     val rustExternalTargetsToImport = measure("Select external Rust targets") {
-      selectRustExternalTargetsToImport(rootTargets, dependencyGraph)
+      selectRustExternalTargetsToImport(rootTargets, dependencyGraph, workspaceContext)
     }
     val rustExternalModules = measure("Create Rust external modules") {
       createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
@@ -129,19 +130,19 @@ class BazelProjectMapper(
       .filter { it.jvmTargetInfo.generatedJarsList.isNotEmpty() }
       .associate { targetInfo ->
         targetInfo.id to
-          Library(
-            label = targetInfo.id + "_generated",
-            outputs = targetInfo.jvmTargetInfo.generatedJarsList
-              .flatMap { it.binaryJarsList }
-              .map { bazelPathsResolver.resolveUri(it) }
-              .toSet(),
-            sources = targetInfo.jvmTargetInfo.generatedJarsList
-              .flatMap { it.sourceJarsList }
-              .map { bazelPathsResolver.resolveUri(it) }
-              .toSet(),
-            dependencies = emptyList(),
-            interfaceJars = emptySet(),
-          )
+                Library(
+                  label = targetInfo.id + "_generated",
+                  outputs = targetInfo.jvmTargetInfo.generatedJarsList
+                    .flatMap { it.binaryJarsList }
+                    .map { bazelPathsResolver.resolveUri(it) }
+                    .toSet(),
+                  sources = targetInfo.jvmTargetInfo.generatedJarsList
+                    .flatMap { it.sourceJarsList }
+                    .map { bazelPathsResolver.resolveUri(it) }
+                    .toSet(),
+                  dependencies = emptyList(),
+                  interfaceJars = emptySet(),
+                )
       }
       .map { it.key to listOf(it.value) }
       .toMap()
@@ -179,35 +180,33 @@ class BazelProjectMapper(
   private fun calculateScalaLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
     val projectLevelScalaSdkLibraries = calculateProjectLevelScalaLibraries()
     val scalaTargets = targetsToImport.filter { it.hasScalaTargetInfo() }.map { it.id }
-    return projectLevelScalaSdkLibraries
-      ?.let { libraries -> scalaTargets.associateWith { libraries } }
-      .orEmpty()
+    return scalaTargets.associateWith {
+      languagePluginsService.scalaLanguagePlugin.scalaSdks[it]?.compilerJars?.mapNotNull {
+        projectLevelScalaSdkLibraries[it]
+      }.orEmpty()
+    }
   }
 
-  private fun calculateProjectLevelScalaLibraries(): List<Library>? {
-    val scalaSdkLibrariesJars = getProjectLevelScalaSdkLibrariesJars()
-    return if (scalaSdkLibrariesJars.isNotEmpty()) {
-      scalaSdkLibrariesJars.map {
-        Library(
-          label = Paths.get(it).name,
-          outputs = setOf(it),
-          sources = emptySet(),
-          dependencies = emptyList()
-        )
-      }
-    } else null
-  }
+  private fun calculateProjectLevelScalaLibraries(): Map<URI, Library> =
+    getProjectLevelScalaSdkLibrariesJars().associateWith {
+      Library(
+        label = Paths.get(it).name,
+        outputs = setOf(it),
+        sources = emptySet(),
+        dependencies = emptyList(),
+      )
+    }
 
   private fun getProjectLevelScalaSdkLibrariesJars(): Set<URI> =
-    languagePluginsService.scalaLanguagePlugin.scalaSdk
-      ?.compilerJars
-      ?.toSet().orEmpty()
+    languagePluginsService.scalaLanguagePlugin.scalaSdks.values.toSet().flatMap {
+      it.compilerJars
+    }.toSet()
 
   private fun calculateAndroidLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> =
     targetsToImport.mapNotNull { target ->
-        val aidlLibrary = createAidlLibrary(target) ?: return@mapNotNull null
-        target.id to listOf(aidlLibrary)
-      }.toMap()
+      val aidlLibrary = createAidlLibrary(target) ?: return@mapNotNull null
+      target.id to listOf(aidlLibrary)
+    }.toMap()
 
   private fun createAidlLibrary(target: TargetInfo): Library? {
     if (!target.hasAndroidTargetInfo()) return null
@@ -244,7 +243,7 @@ class BazelProjectMapper(
    * https://github.com/bazelbuild/intellij/blob/b68ec8b33aa54ead6d84dd94daf4822089b3b013/java/src/com/google/idea/blaze/java/sync/importer/BlazeJavaWorkspaceImporter.java#L256
    */
   private fun jdepsLibraries(targetsToImport: Map<String, TargetInfo>, libraryDependencies: Map<String, List<Library>>, librariesToImport: Map<String, Library>):
-    Map<String, List<Library>> {
+          Map<String, List<Library>> {
     val targetsToJdepsJars = getAllJdepsDependencies(targetsToImport, libraryDependencies, librariesToImport)
     val libraryNameToLibraryValueMap = HashMap<String, Library>()
     return targetsToJdepsJars.mapValues {
@@ -256,7 +255,8 @@ class BazelProjectMapper(
             dependencies = emptyList(),
             interfaceJars = emptySet(),
             outputs = setOf(bazelPathsResolver.resolveUri(lib)),
-            sources = emptySet())
+            sources = emptySet(),
+          )
         }
       }
     }
@@ -332,8 +332,16 @@ class BazelProjectMapper(
     return targets.mapValues { (targetId, targetInfo) ->
       createLibrary(targetId, targetInfo)
     }
-      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() }
+      .filterValues {
+        it.interfaceJars.isNotEmpty()
+                || it.sources.isNotEmpty()
+                || it.outputs.isNotEmpty()
+                || it.isGoLibrary()
+      }
   }
+
+  private fun Library.isGoLibrary(): Boolean =
+    !goImportPath.isNullOrEmpty() && goRoot.toString().isNotEmpty()
 
   private fun createLibrary(label: String, targetInfo: TargetInfo): Library =
     Library(
@@ -342,6 +350,8 @@ class BazelProjectMapper(
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
+      goImportPath = targetInfo.goTargetInfo?.importpath,
+      goRoot = getGoRootUri(targetInfo),
     )
 
   private fun List<FileLocation>.resolveUris() =
@@ -384,16 +394,21 @@ class BazelProjectMapper(
       .map { bazelPathsResolver.resolve(it) }
       .toSet()
 
+  private fun getGoRootUri(targetInfo: TargetInfo): URI =
+    Label(
+      if (targetInfo.id.take(2) == "@@") targetInfo.id.drop(1) else targetInfo.id
+    ).toDirectoryUri()
+
   private fun selectRustExternalTargetsToImport(
-    rootTargets: Set<String>, graph: DependencyGraph
+    rootTargets: Set<String>, graph: DependencyGraph, workspaceContext: WorkspaceContext
   ): Sequence<TargetInfo> =
-    graph.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it) && isRustTarget(it) }
+    graph.allTargetsAtDepth(-1, rootTargets).asSequence().filter { !isWorkspaceTarget(it, workspaceContext) && isRustTarget(it) }
 
   private fun selectTargetsToImport(
     workspaceContext: WorkspaceContext, rootTargets: Set<String>, graph: DependencyGraph
   ): Sequence<TargetInfo> = graph.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
-  ).asSequence().filter(::isWorkspaceTarget)
+  ).asSequence().filter { isWorkspaceTarget(it, workspaceContext) }
 
   private fun hasKnownSources(targetInfo: TargetInfo) =
     targetInfo.sourcesList.any {
@@ -406,30 +421,30 @@ class BazelProjectMapper(
         it.relativePath.endsWith(".go")
     }
 
-  private fun isWorkspaceTarget(target: TargetInfo): Boolean =
+  private fun isWorkspaceTarget(target: TargetInfo, workspaceContext: WorkspaceContext): Boolean =
     bazelInfo.release.isRelativeWorkspacePath(target.id) &&
-      (hasKnownSources(target) ||
-        target.kind in setOf(
-        "java_library",
-        "java_binary",
-        "java_test",
-        "kt_jvm_library",
-        "kt_jvm_binary",
-        "kt_jvm_test",
-        "scala_library",
-        "scala_binary",
-        "scala_test",
-        "rust_test",
-        "rust_doc",
-        "rust_doc_test",
-        "android_library",
-        "android_binary",
-        "android_local_test",
-        "go_library",
-        "go_binary",
-        "go_test",
-        )
-      )
+            (hasKnownSources(target) || !workspaceContext.experimentalUseLibOverModSection.value &&
+                    target.kind in setOf(
+              "java_library",
+              "java_binary",
+              "java_test",
+              "kt_jvm_library",
+              "kt_jvm_binary",
+              "kt_jvm_test",
+              "scala_library",
+              "scala_binary",
+              "scala_test",
+              "rust_test",
+              "rust_doc",
+              "rust_doc_test",
+              "android_library",
+              "android_binary",
+              "android_local_test",
+              "go_library",
+              "go_binary",
+              "go_test",
+            )
+                    )
 
   private fun isRustTarget(target: TargetInfo): Boolean =
     target.hasRustCrateInfo()
