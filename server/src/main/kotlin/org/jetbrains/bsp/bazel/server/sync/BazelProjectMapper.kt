@@ -130,19 +130,19 @@ class BazelProjectMapper(
       .filter { it.jvmTargetInfo.generatedJarsList.isNotEmpty() }
       .associate { targetInfo ->
         targetInfo.id to
-                Library(
-                  label = targetInfo.id + "_generated",
-                  outputs = targetInfo.jvmTargetInfo.generatedJarsList
-                    .flatMap { it.binaryJarsList }
-                    .map { bazelPathsResolver.resolveUri(it) }
-                    .toSet(),
-                  sources = targetInfo.jvmTargetInfo.generatedJarsList
-                    .flatMap { it.sourceJarsList }
-                    .map { bazelPathsResolver.resolveUri(it) }
-                    .toSet(),
-                  dependencies = emptyList(),
-                  interfaceJars = emptySet(),
-                )
+          Library(
+            label = targetInfo.id + "_generated",
+            outputs = targetInfo.jvmTargetInfo.generatedJarsList
+              .flatMap { it.binaryJarsList }
+              .map { bazelPathsResolver.resolveUri(it) }
+              .toSet(),
+            sources = targetInfo.jvmTargetInfo.generatedJarsList
+              .flatMap { it.sourceJarsList }
+              .map { bazelPathsResolver.resolveUri(it) }
+              .toSet(),
+            dependencies = emptyList(),
+            interfaceJars = emptySet(),
+          )
       }
       .map { it.key to listOf(it.value) }
       .toMap()
