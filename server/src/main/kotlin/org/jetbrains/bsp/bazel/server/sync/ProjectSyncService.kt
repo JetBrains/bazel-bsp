@@ -42,15 +42,14 @@ import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
 import org.jetbrains.bsp.WorkspaceLibrariesResult
 import org.jetbrains.bsp.bazel.server.sync.model.Language
-import java.util.Optional
-import kotlin.jvm.optionals.getOrDefault
 
 /** A facade for all project sync related methods  */
 class ProjectSyncService(private val bspMapper: BspProjectMapper, private val projectProvider: ProjectProvider) {
 
-  private var clientCapabilities = Optional.empty<BuildClientCapabilities>()
-  fun initialize(cancelChecker: CancelChecker, clientCapabilities: BuildClientCapabilities): InitializeBuildResult{
-    this.clientCapabilities = Optional.of(clientCapabilities)
+  private lateinit var clientCapabilities: BuildClientCapabilities
+
+  fun initialize(cancelChecker: CancelChecker, clientCapabilities: BuildClientCapabilities): InitializeBuildResult {
+    this.clientCapabilities = clientCapabilities
     return bspMapper.initializeServer(Language.all())
   }
 
@@ -135,7 +134,7 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun buildTargetJavacOptions(cancelChecker: CancelChecker, params: JavacOptionsParams): JavacOptionsResult {
     val project = projectProvider.get(cancelChecker)
-    val includeClasspath = clientCapabilities.map { !it.jvmCompileClasspathReceiver }.getOrDefault(true)
+    val includeClasspath = !clientCapabilities.jvmCompileClasspathReceiver
     return bspMapper.buildTargetJavacOptions(project, params, includeClasspath, cancelChecker)
   }
 
@@ -151,7 +150,7 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun buildTargetScalacOptions(cancelChecker: CancelChecker, params: ScalacOptionsParams): ScalacOptionsResult {
     val project = projectProvider.get(cancelChecker)
-    val includeClasspath = clientCapabilities.map { !it.jvmCompileClasspathReceiver }.getOrDefault(true)
+    val includeClasspath = !clientCapabilities.jvmCompileClasspathReceiver
     return bspMapper.buildTargetScalacOptions(project, params, includeClasspath, cancelChecker)
   }
 

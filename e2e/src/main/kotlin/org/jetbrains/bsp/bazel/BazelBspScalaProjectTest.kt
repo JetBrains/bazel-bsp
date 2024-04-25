@@ -27,9 +27,9 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
-  private val testClient = createTestkitClient()
-  private val testClientClasspathReceiver = createTestkitClient(true)
   private val log = LogManager.getLogger(BazelBspScalaProjectTest::class.java)
+  private val testClient = createTestkitClient()
+  private val testClientClasspathReceiver = createTestkitClient(jvmClasspathReceiver = true)
 
   @JvmStatic
   fun main(args: Array<String>) = try{
