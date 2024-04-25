@@ -26,7 +26,6 @@ import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
 import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.net.URI
-import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
@@ -65,6 +64,9 @@ class BazelProjectMapper(
     val targetsAsLibraries = measure("Targets as libraries") {
       targets - targetsToImport.map { it.id }.toSet()
     }
+    val noSourceLibraries = measure("Create no source libraries") {
+      calculateNoSourceLibraries(targetsToImport, workspaceContext)
+    }
     val annotationProcessorLibraries = measure("Create AP libraries") {
       annotationProcessorLibraries(targetsToImport)
     }
@@ -78,10 +80,11 @@ class BazelProjectMapper(
       calculateScalaLibrariesMapper(targetsToImport)
     }
     val androidLibrariesMapper = measure("Create android libraries") {
-      calculateAndroidLibrariesMapper(targetsToImport)
+      calculateAndroidLibrariesMapper(targetsToImport, workspaceContext)
     }
     val librariesFromDeps = measure("Merge libraries from deps") {
       concatenateMaps(
+        noSourceLibraries,
         annotationProcessorLibraries,
         kotlinStdlibsMapper,
         kotlincPluginLibrariesMapper,
@@ -112,7 +115,7 @@ class BazelProjectMapper(
       (removeDotBazelBspTarget(allTargetNames) - targetsToImport.map(TargetInfo::getId).toSet()).map { Label(it) }
     }
     val rustExternalTargetsToImport = measure("Select external Rust targets") {
-      selectRustExternalTargetsToImport(rootTargets, dependencyGraph, workspaceContext)
+      selectRustExternalTargetsToImport(rootTargets, dependencyGraph)
     }
     val rustExternalModules = measure("Create Rust external modules") {
       createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
@@ -135,6 +138,16 @@ class BazelProjectMapper(
       .associateWith { key ->
         maps.flatMap { it[key].orEmpty() }
       }
+
+  private fun calculateNoSourceLibraries(
+    targetsToImport: Sequence<TargetInfo>,
+    workspaceContext: WorkspaceContext,
+  ): Map<String, List<Library>> {
+    if (!workspaceContext.experimentalUseLibOverModSection.value) return emptyMap()
+    return targetsToImport.filterNot { hasKnownSources(it) }.map { target ->
+      target.id to listOf(createLibrary(target.id + "_output_jars", target))
+    }.toMap()
+  }
 
   private fun annotationProcessorLibraries(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> {
     return targetsToImport
@@ -232,13 +245,16 @@ class BazelProjectMapper(
       it.compilerJars
     }.toSet()
 
-  private fun calculateAndroidLibrariesMapper(targetsToImport: Sequence<TargetInfo>): Map<String, List<Library>> =
+  private fun calculateAndroidLibrariesMapper(
+    targetsToImport: Sequence<TargetInfo>,
+    workspaceContext: WorkspaceContext,
+  ): Map<String, List<Library>> =
     targetsToImport.mapNotNull { target ->
-      val aidlLibrary = createAidlLibrary(target) ?: return@mapNotNull null
+      val aidlLibrary = createAidlLibrary(target, workspaceContext) ?: return@mapNotNull null
       target.id to listOf(aidlLibrary)
     }.toMap()
 
-  private fun createAidlLibrary(target: TargetInfo): Library? {
+  private fun createAidlLibrary(target: TargetInfo, workspaceContext: WorkspaceContext): Library? {
     if (!target.hasAndroidTargetInfo()) return null
     val androidTargetInfo = target.androidTargetInfo
     if (!androidTargetInfo.hasAidlBinaryJar()) return null
@@ -246,6 +262,7 @@ class BazelProjectMapper(
     val libraryLabel = target.id + "_aidl"
     if (target.sourcesList.isEmpty()) {
       // Bazel doesn't create the AIDL jar if there's no sources, since it'd be the same as the output jar
+      if (workspaceContext.experimentalUseLibOverModSection.value) return null
       return createLibrary(libraryLabel, target)
     }
 
@@ -429,16 +446,16 @@ class BazelProjectMapper(
       .toSet()
 
   private fun selectRustExternalTargetsToImport(
-    rootTargets: Set<String>, graph: DependencyGraph, workspaceContext: WorkspaceContext
+    rootTargets: Set<String>, graph: DependencyGraph,
   ): Sequence<TargetInfo> =
     graph.allTargetsAtDepth(-1, rootTargets).asSequence()
-      .filter { !isWorkspaceTarget(it, workspaceContext) && isRustTarget(it) }
+      .filter { !isWorkspaceTarget(it) && isRustTarget(it) }
 
   private fun selectTargetsToImport(
     workspaceContext: WorkspaceContext, rootTargets: Set<String>, graph: DependencyGraph
   ): Sequence<TargetInfo> = graph.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
-  ).asSequence().filter { isWorkspaceTarget(it, workspaceContext) }
+  ).asSequence().filter { isWorkspaceTarget(it) }
 
   private fun hasKnownSources(targetInfo: TargetInfo) =
     targetInfo.sourcesList.any {
@@ -450,9 +467,9 @@ class BazelProjectMapper(
         it.relativePath.endsWith(".rs")
     }
 
-  private fun isWorkspaceTarget(target: TargetInfo, workspaceContext: WorkspaceContext): Boolean =
+  private fun isWorkspaceTarget(target: TargetInfo): Boolean =
     bazelInfo.release.isRelativeWorkspacePath(target.id) &&
-      (hasKnownSources(target) || !workspaceContext.experimentalUseLibOverModSection.value &&
+      (hasKnownSources(target) ||
         target.kind in setOf(
         "java_library",
         "java_binary",
