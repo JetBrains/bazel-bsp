@@ -24,6 +24,8 @@ create(DslContext.projectId, BuildType({
 
     vcs {
         root(RelativeId("BazelBspVcs"))
+
+        branchFilter = "+:pull/566"
     }
 
     steps {
