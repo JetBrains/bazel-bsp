@@ -79,10 +79,6 @@ class ExecuteService(
 
     fun test(cancelChecker: CancelChecker, params: TestParams): TestResult {
         val targets = selectTargets(cancelChecker, params.targets)
-        var result = build(cancelChecker, targets, params.originId)
-        if (result.isNotSuccess) {
-            return TestResult(result.statusCode)
-        }
         val targetsSpec = TargetsSpec(targets, emptyList())
 
         var bazelTestParamsData: BazelTestParamsData? = null
@@ -101,14 +97,16 @@ class ExecuteService(
         }
 
         // TODO: handle multiple targets
-        withBepServer(params.originId, params.targets.single()) { bepReader ->
-            result = baseCommand
-                .withTargets(targetsSpec)
-                .withArguments(params.arguments)
-                .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
-                .withFlag(BazelFlag.color(true))
-                .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
-                .waitAndGetResult(cancelChecker, true)
+        val result = withBepServer(params.originId, params.targets.single()) { bepReader ->
+            run {
+                baseCommand
+                    .withTargets(targetsSpec)
+                    .withArguments(params.arguments)
+                    .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
+                    .withFlag(BazelFlag.color(true))
+                    .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
+                    .waitAndGetResult(cancelChecker, true)
+            }
         }
 
         return TestResult(result.statusCode).apply {

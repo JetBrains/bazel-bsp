@@ -55,7 +55,7 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
   }
 
   /**
-   * Notifies the client of of an available coverage report file.
+   * Notifies the client of an available coverage report file.
    *
    * @param taskId         TaskId of the task that produced the coverage report
    * @param lcovReportPath full path path to the coverage report file
