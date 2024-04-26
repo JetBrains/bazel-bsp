@@ -3,7 +3,7 @@ module(
     version = "",
 )
 
-bazel_dep(name = "bazel_skylib", version = "1.6.0")
+bazel_dep(name = "bazel_skylib", version = "1.6.1")
 bazel_dep(name = "rules_kotlin", version = "1.9.5")
 
 # Required until Bazel repo upstreams it's rules_jvm_external fix and there's a new release
