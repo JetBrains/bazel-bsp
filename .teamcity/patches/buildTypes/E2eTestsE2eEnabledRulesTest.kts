@@ -41,9 +41,9 @@ create(DslContext.projectId, BuildType({
             """.trimIndent()
         }
         bazel {
-            name = "test //e2e:sample_repo_test"
+            name = "test //e2e:enabled_rules_test"
             command = "test"
-            targets = "//e2e:sample_repo_test"
+            targets = "//e2e:enabled_rules_test"
             arguments = "--sandbox_writable_path=/home/teamcity/.cache"
             logging = BazelStep.Verbosity.Diagnostic
             param("toolPath", "/usr/local/bin")
