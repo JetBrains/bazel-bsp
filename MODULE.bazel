@@ -27,7 +27,7 @@ bazel_dep(
 
 git_override(
     module_name = "bsp-testkit2",
-    commit = "3462993c11559f36ab937286f035277692dd8cf4",
+    commit = "a5cf4603d01b0835acf28fabee201ffb22f28b2a",
     remote = "https://github.com/build-server-protocol/bsp-testkit2.git",
 )
 
