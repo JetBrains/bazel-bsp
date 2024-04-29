@@ -4,4 +4,7 @@ kt_jvm_library(
     name = "params",
     srcs = glob(["*.kt"]),
     visibility = ["//bazelrunner:__subpackages__"],
+    deps = [
+        "//commons",
+    ],
 )
