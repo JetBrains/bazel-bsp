@@ -17,7 +17,7 @@ object BazelFlag {
           flag("build_manual_tests")
 
   @JvmStatic fun buildEventBinaryPathConversion(enabled: Boolean): String =
-    arg("build_event_binary_file_path_conversion", if (enabled) "true" else "false")
+    arg("build_event_binary_file_path_conversion", enabled.toString())
 
   @JvmStatic fun curses(enabled: Boolean): String =
           arg("curses", if (enabled) "yes" else "no")
