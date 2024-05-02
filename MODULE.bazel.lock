@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "9923cdfe46ec4ca81943db0d970b4551a152575adde3fedee298399e6bf2269e",
+  "moduleFileHash": "6530468aaf46008b43ddeb32fb99bd35f04c645cc9f3ccd0ab778c92960ae52d",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -47,7 +47,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 40,
+            "line": 39,
             "column": 31
           },
           "imports": {
@@ -73,7 +73,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 48,
+                "line": 47,
                 "column": 24
               }
             },
@@ -85,7 +85,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 49,
+                "line": 48,
                 "column": 24
               }
             },
@@ -97,7 +97,7 @@
               "devDependency": true,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 50,
+                "line": 49,
                 "column": 24
               }
             }
@@ -111,7 +111,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 71,
+            "line": 70,
             "column": 22
           },
           "imports": {
@@ -139,6 +139,7 @@
                   "org.slf4j:slf4j-nop:2.0.13",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1",
+                  "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.4",
                   "com.google.protobuf:protobuf-java:3.25.3",
                   "io.grpc:grpc-stub:1.63.0",
                   "io.grpc:grpc-protobuf:1.63.0",
@@ -159,7 +160,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 72,
+                "line": 71,
                 "column": 14
               }
             }
@@ -3441,7 +3442,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "0efdcdbcd976e7b716dd8751dedd29a5d6eeac82e5a22ecafe2bd190265c737b",
+          "@@//:maven_install.json": "d0abdddeefbc6684ff12b3ee3c336f46b559e3dae2caeeff9e9c09251ed8e136",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3893,6 +3894,20 @@
               "downloaded_file_path": "com/google/api/grpc/gapic-google-cloud-storage-v2/2.26.1-alpha/gapic-google-cloud-storage-v2-2.26.1-alpha.jar"
             }
           },
+          "com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_9_4",
+              "sha256": "0be378558c5323a867e360dd89bc50360c69f1b56663a4096d3690041af120b4",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar",
+                "https://maven.google.com/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar"
+            }
+          },
           "io_kotest_kotest_common_jvm_jar_sources_5_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4001,6 +4016,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.13\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
+                "{ \"group\": \"com.fasterxml.jackson.dataformat\", \"artifact\": \"jackson-dataformat-xml\", \"version\": \"2.9.4\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.63.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.63.0\" }",
@@ -4343,6 +4359,20 @@
               "downloaded_file_path": "software/amazon/awssdk/utils/2.20.128/utils-2.20.128.jar"
             }
           },
+          "com_fasterxml_jackson_dataformat_jackson_dataformat_xml_jar_sources_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_dataformat_jackson_dataformat_xml_jar_sources_2_9_4",
+              "sha256": "bb6c046143b982b1fa54cf35faf30af953e86e2b52f84c1542b593316429bd04",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar"
+            }
+          },
           "commons_cli_commons_cli_1_7_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4574,6 +4604,20 @@
               "downloaded_file_path": "com/google/http-client/google-http-client-apache-v2/1.43.3/google-http-client-apache-v2-1.43.3.jar"
             }
           },
+          "com_fasterxml_woodstox_woodstox_core_5_0_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_woodstox_woodstox_core_5_0_3",
+              "sha256": "a1c04b64fbfe20ae9f2c60a3bf1633fed6688ae31935b6bd4a457a1bbb2e82d4",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar",
+                "https://maven.google.com/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar"
+            }
+          },
           "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4775,6 +4819,20 @@
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.20/kotlin-stdlib-jdk7-1.8.20.jar"
             }
           },
+          "com_fasterxml_jackson_dataformat_jackson_dataformat_xml_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_dataformat_jackson_dataformat_xml_2_9_4",
+              "sha256": "512a96d82a2030a3fffc8e867c66e5f336f1944f5e0f257f221c60e6ff2afeca",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar",
+                "https://maven.google.com/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar"
+            }
+          },
           "com_google_api_grpc_proto_google_cloud_storage_v2_2_26_1_alpha": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4935,6 +4993,20 @@
               "downloaded_file_path": "io/netty/netty-transport-classes-epoll/4.1.94.Final/netty-transport-classes-epoll-4.1.94.Final.jar"
             }
           },
+          "org_codehaus_woodstox_stax2_api_jar_sources_3_1_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_codehaus_woodstox_stax2_api_jar_sources_3_1_4",
+              "sha256": "2c36141117b83f63b5dded35f490c7b501a472fe60c60ecf02ed9e9954ef28b9",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar",
+                "https://maven.google.com/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar",
+                "https://repo1.maven.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar"
+              ],
+              "downloaded_file_path": "org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar"
+            }
+          },
           "org_junit_jupiter_junit_jupiter_params_5_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4961,6 +5033,20 @@
                 "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
               ],
               "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
+            }
+          },
+          "com_fasterxml_woodstox_woodstox_core_jar_sources_5_0_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_woodstox_woodstox_core_jar_sources_5_0_3",
+              "sha256": "d515c11b586b29da98c6359bbf0fd0eedfe5251b70626b28ca3f553e1c9061d9",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar",
+                "https://maven.google.com/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar"
             }
           },
           "io_grpc_grpc_protobuf_jar_sources_1_63_0": {
@@ -5042,6 +5128,20 @@
                 "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7-sources.jar"
               ],
               "downloaded_file_path": "net/bytebuddy/byte-buddy/1.12.7/byte-buddy-1.12.7-sources.jar"
+            }
+          },
+          "org_codehaus_woodstox_stax2_api_3_1_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_codehaus_woodstox_stax2_api_3_1_4",
+              "sha256": "86d7c0b775a7c9b454cc6ba61d40a8eb3b99cc129f832eb9b977a3755b4b338e",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar",
+                "https://maven.google.com/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar",
+                "https://repo1.maven.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar"
+              ],
+              "downloaded_file_path": "org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar"
             }
           },
           "com_google_cloud_google_cloud_core_http_2_22_0": {
@@ -6387,6 +6487,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.13\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
+                "{ \"group\": \"com.fasterxml.jackson.dataformat\", \"artifact\": \"jackson-dataformat-xml\", \"version\": \"2.9.4\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.63.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.63.0\" }",
@@ -6645,6 +6746,20 @@
                 "https://maven.google.com/io/grpc/grpc-grpclb/1.56.1/grpc-grpclb-1.56.1.jar"
               ],
               "downloaded_file_path": "io/grpc/grpc-grpclb/1.56.1/grpc-grpclb-1.56.1.jar"
+            }
+          },
+          "com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar_sources_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar_sources_2_9_4",
+              "sha256": "d2c69eeca8c450be8370150fd3c77f99e8f54f32888ae34c1bc32e47aa07828f",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar"
             }
           },
           "com_google_api_grpc_proto_google_common_protos_jar_sources_2_29_0": {

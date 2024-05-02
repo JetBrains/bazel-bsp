@@ -88,6 +88,10 @@ class ExecuteService(
             result = bazelRunner.commandBuilder().test()
                 .withTargets(targetsSpec)
                 .withArguments(params.arguments)
+                // Ensure that all tests, including those that pass, are included in results.
+                .withFlag(BazelFlag.testOutputAll())
+                // Use file:// uri scheme for output paths in the build events.
+                .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
                 .withFlag(BazelFlag.color(true))
                 .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
                 .waitAndGetResult(cancelChecker, true)
