@@ -354,14 +354,16 @@ class BazelProjectMapper(
     libraryDependencies: Map<String, List<Library>>,
     allLibraries: Map<String, Library>
   ): HashSet<String> {
-    var toVisit = target.dependenciesList.map { it.id } + libraryDependencies[target.id].orEmpty().map { it.label }
+    val toVisit = ArrayDeque(
+      target.dependenciesList.map { it.id } + libraryDependencies[target.id].orEmpty().map { it.label }
+    )
     val visited = HashSet<String>()
     while (toVisit.isNotEmpty()) {
-      val current = toVisit.first()
+      val current = toVisit.removeFirst()
       val dependencyLabels = targetsToImport[current]?.dependenciesList.orEmpty()
         .map { it.id } + allLibraries[current]?.dependencies.orEmpty()
       visited += current
-      toVisit = toVisit + dependencyLabels - current - visited
+      toVisit += dependencyLabels.filterNot { it in visited }
     }
     return visited
   }
