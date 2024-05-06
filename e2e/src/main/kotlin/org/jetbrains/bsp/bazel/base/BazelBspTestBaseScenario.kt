@@ -21,6 +21,8 @@ abstract class BazelBspTestBaseScenario {
 
   val targetPrefix = calculateTargetPrefix()
 
+  open fun additionalServerInstallArguments(): Array<String> = emptyArray()
+
   init {
     installServer()
   }
@@ -42,6 +44,7 @@ abstract class BazelBspTestBaseScenario {
         "-d", workspaceDir,
         "-b", bazelBinary,
         "-t", "//...",
+        *additionalServerInstallArguments()
       )
     )
   }
