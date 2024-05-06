@@ -40,7 +40,7 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
     throw t
   }
 
-  override fun additionalOptions() = arrayOf("-enabled-rules", "io_bazel_rules_scala", "rules_java", "rules_jvm")
+  override fun additionalServerInstallArguments() = arrayOf("-enabled-rules", "io_bazel_rules_scala", "rules_java", "rules_jvm")
 
   override fun scenarioSteps(): List<BazelBspTestScenarioStep> = listOf(
       resolveProject(),
@@ -114,10 +114,9 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
     }
     val expectedScalaOptionsResult = ScalacOptionsResult(expectedScalaOptionsItems)
     val scalaOptionsParams = ScalacOptionsParams(expectedTargetIdentifiers)
-    val step = BazelBspTestScenarioStep("scalaOptions results") {
+    return BazelBspTestScenarioStep("scalaOptions results") {
       testClient.testScalacOptions(120.seconds, scalaOptionsParams, expectedScalaOptionsResult)
     }
-    return step
   }
 
   private fun compileWithWarnings(): BazelBspTestScenarioStep {
