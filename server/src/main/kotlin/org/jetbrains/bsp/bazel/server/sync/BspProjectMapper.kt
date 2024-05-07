@@ -323,7 +323,7 @@ class BspProjectMapper(
     fun jvmCompileClasspath(
             project: Project, params: JvmCompileClasspathParams, cancelChecker: CancelChecker
     ): JvmCompileClasspathResult {
-        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
+        val items = params.targets.collectClasspathForTargetsAndApply(project, true, cancelChecker) { module, ideClasspath ->
             JvmCompileClasspathItem(BspMappings.toBspId(module), ideClasspath.map { it.toString() })
         }
         return JvmCompileClasspathResult(items)
@@ -369,8 +369,8 @@ class BspProjectMapper(
         return JvmBinaryJarsResult(jvmBinaryJarsItems)
     }
 
-    fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams, cancelChecker: CancelChecker): JavacOptionsResult {
-        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
+    fun buildTargetJavacOptions(project: Project, params: JavacOptionsParams, includeClasspath: Boolean, cancelChecker: CancelChecker): JavacOptionsResult {
+        val items = params.targets.collectClasspathForTargetsAndApply(project, includeClasspath, cancelChecker) { module, ideClasspath ->
             module.javaModule?.let { toJavacOptionsItem(module, it, ideClasspath) }
         }
         return JavacOptionsResult(items)
@@ -401,9 +401,10 @@ class BspProjectMapper(
     fun buildTargetScalacOptions(
             project: Project,
             params: ScalacOptionsParams,
+            includeClasspath: Boolean,
             cancelChecker: CancelChecker
     ): ScalacOptionsResult {
-        val items = params.targets.collectClasspathForTargetsAndApply(project, cancelChecker) { module, ideClasspath ->
+        val items = params.targets.collectClasspathForTargetsAndApply(project, includeClasspath, cancelChecker) { module, ideClasspath ->
             toScalacOptionsItem(module, ideClasspath)
         }
         return ScalacOptionsResult(items)
@@ -411,11 +412,15 @@ class BspProjectMapper(
 
     private fun <T> List<BuildTargetIdentifier>.collectClasspathForTargetsAndApply(
         project: Project,
+        includeClasspath: Boolean,
         cancelChecker: CancelChecker,
         mapper: (Module, List<URI>) -> T?
     ): List<T> =
         this.mapNotNull { project.findModule(Label(it.uri)) }
-            .mapNotNull { mapper(it, readIdeClasspath(it.label, cancelChecker)) }
+            .mapNotNull {
+                val classpath = if (includeClasspath) readIdeClasspath(it.label, cancelChecker) else emptyList()
+                mapper(it, classpath)
+            }
 
     private fun readIdeClasspath(targetLabel: Label, cancelChecker: CancelChecker): List<URI> {
         val targetIdentifier = BspMappings.toBspId(targetLabel)

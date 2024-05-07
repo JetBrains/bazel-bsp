@@ -34,6 +34,7 @@ object BazelBsp : Project({
             buildType(BazelE2eTests.ServerDownloadsBazeliskTest)
             buildType(BazelE2eTests.AndroidProjectTest)
             buildType(BazelE2eTests.AndroidKotlinProjectTest)
+            buildType(BazelE2eTests.ScalaProjectTest)
             buildType(BazelE2eTests.KotlinProjectTest)
             buildType(BazelE2ePluginTests.LocalProbeTests)
             buildType(BazelBenchmark.RegularBenchmark)
@@ -71,6 +72,7 @@ object BazelBsp : Project({
         RelativeId("E2eTestsE2eKotlinProjectTest"),
         RelativeId("E2eTestsE2eAndroidProjectTest"),
         RelativeId("E2eTestsE2eAndroidKotlinProjectTest"),
+        RelativeId("E2eTestsE2eEnabledRulesTest"),
         RelativeId("E2eTestsPluginRun"),
         RelativeId("Benchmark1001Targets"),
         RelativeId("BazelBspResults")

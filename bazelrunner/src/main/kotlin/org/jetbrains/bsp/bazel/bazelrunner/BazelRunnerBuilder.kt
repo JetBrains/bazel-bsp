@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.bazelrunner
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import com.google.common.collect.ImmutableList
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
@@ -11,8 +12,8 @@ open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
     private val bazelCommand: List<String>,
 ) {
-
-    private val flags = mutableListOf<String>()
+    private val globalFlags = listOf<String>(BazelFlag.toolTag())
+    private val flags = globalFlags.toMutableList()
     private val arguments = mutableListOf<String>()
     private val environmentVariables = mutableMapOf<String, String>()
     private var useBuildFlags = false
