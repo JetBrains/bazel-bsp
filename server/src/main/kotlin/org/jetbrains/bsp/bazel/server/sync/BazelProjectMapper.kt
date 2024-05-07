@@ -33,6 +33,7 @@ import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.notExists
+import kotlin.io.path.toPath
 
 class BazelProjectMapper(
   private val languagePluginsService: LanguagePluginsService,
@@ -192,7 +193,7 @@ class BazelProjectMapper(
         label = Paths.get(it).name,
         outputs = setOf(it),
         sources = emptySet(),
-        dependencies = emptyList()
+        dependencies = emptyList(),
       )
     }
 
@@ -330,8 +331,16 @@ class BazelProjectMapper(
     return targets.mapValues { (targetId, targetInfo) ->
       createLibrary(targetId, targetInfo)
     }
-      .filterValues { it.interfaceJars.isNotEmpty() || it.sources.isNotEmpty() || it.outputs.isNotEmpty() }
+      .filterValues {
+        it.interfaceJars.isNotEmpty()
+                || it.sources.isNotEmpty()
+                || it.outputs.isNotEmpty()
+                || it.isGoLibrary()
+      }
   }
+
+  private fun Library.isGoLibrary(): Boolean =
+    !goImportPath.isNullOrEmpty() && goRoot.toString().isNotEmpty()
 
   private fun createLibrary(label: String, targetInfo: TargetInfo): Library =
     Library(
@@ -340,6 +349,8 @@ class BazelProjectMapper(
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { it.id },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
+      goImportPath = targetInfo.goTargetInfo?.importpath,
+      goRoot = getGoRootUri(targetInfo),
     )
 
   private fun List<FileLocation>.resolveUris() =
@@ -381,6 +392,11 @@ class BazelProjectMapper(
       .flatMap { it.interfaceJarsList }
       .map { bazelPathsResolver.resolve(it) }
       .toSet()
+
+  private fun getGoRootUri(targetInfo: TargetInfo): URI =
+    Label(
+      if (targetInfo.id.take(2) == "@@") targetInfo.id.drop(1) else targetInfo.id
+    ).toDirectoryUri()
 
   private fun selectRustExternalTargetsToImport(
     rootTargets: Set<String>, graph: DependencyGraph, workspaceContext: WorkspaceContext
@@ -426,8 +442,8 @@ class BazelProjectMapper(
         "go_library",
         "go_binary",
         "go_test",
-        )
       )
+    )
 
   private fun isRustTarget(target: TargetInfo): Boolean =
     target.hasRustCrateInfo()

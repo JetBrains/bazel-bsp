@@ -1,8 +1,11 @@
 load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "file_location")
-load("@io_bazel_rules_go//go:def.bzl", "go_context")
+load("@io_bazel_rules_go//go:def.bzl", "go_context", "GoArchive")
 
 def extract_go_info(target, ctx, **kwargs):
-    importpath = getattr(ctx.rule.attr, "importpath", "")
+    if GoArchive not in target:
+        return None, None
+    go_archive = target[GoArchive]
+    importpath = go_archive.data.importpath
     sdk_home_path = _extract_sdk(ctx)
 
     go_target_info = create_struct(
