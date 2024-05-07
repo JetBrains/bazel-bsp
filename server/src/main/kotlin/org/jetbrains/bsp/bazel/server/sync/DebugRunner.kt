@@ -61,10 +61,10 @@ class DebugRunner(
      * If `debugArguments` is empty, run task will be executed normally without any debugging options
      */
     private fun runBazel(
-            cancelChecker: CancelChecker,
-            params: RunWithDebugParams,
-            bspUri: String,
-            debugArguments: List<String>,
+      cancelChecker: CancelChecker,
+      params: RunWithDebugParams,
+      bspUri: String,
+      debugArguments: List<String>,
     ): RunResult {
         val bazelProcessResult =
                 bazelRunner.commandBuilder()

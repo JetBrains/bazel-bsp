@@ -64,6 +64,9 @@ object AndroidProjectTest : BazelBspE2ETestsBuildType(
     targets = "//e2e:android_project_test",
 )
 
+object ScalaProjectTest : BazelBspE2ETestsBuildType(
+    targets = "//e2e:enabled_rules_test",
+)
 object AndroidKotlinProjectTest : BazelBspE2ETestsBuildType(
     targets = "//e2e:android_kotlin_project_test",
 )

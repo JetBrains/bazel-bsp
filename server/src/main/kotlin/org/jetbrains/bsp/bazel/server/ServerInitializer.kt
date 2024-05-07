@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server
 
+import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
@@ -18,9 +19,13 @@ data class CliArgs(
     val produceTraceLog: Boolean,
 )
 
+private val log = LogManager.getLogger(ServerInitializer::class.java)
+
 object ServerInitializer {
     @JvmStatic
     fun main(args: Array<String>) {
+        log.info("Starting server with args: ${args.toList()}")
+
         Runtime.getRuntime().addShutdownHook(
                 Thread {
                     ProcessHandle.allProcesses()
@@ -30,6 +35,7 @@ object ServerInitializer {
         )
 
         val cliArgs = if (args.size != 3) {
+            log.error("Wrong number of args, exiting with exit code 1")
             System.err.println("Usage: <bazel workspace root> <project view path> <produce trace log flag>")
             exitProcess(1)
         } else {
@@ -44,6 +50,7 @@ object ServerInitializer {
         val stdin = System.`in`
         val executor = Executors.newCachedThreadPool()
         try {
+            log.info("Initializing server")
             val bspInfo = BspInfo()
             val rootDir = bspInfo.bazelBspDir()
             Files.createDirectories(rootDir)
@@ -61,7 +68,9 @@ object ServerInitializer {
             val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), null)
             val launcher = bspServer.buildServer(bspIntegrationData)
             launcher.startListening().get()
+            log.info("Server has been initialized")
         } catch (e: Exception) {
+            log.error("Server initialization failed", e)
             e.printStackTrace(System.err)
             hasErrors = true
         } finally {

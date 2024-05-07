@@ -2,7 +2,6 @@ package org.jetbrains.bsp.bazel.base
 
 import ch.epfl.scala.bsp4j.SourcesParams
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.test.runTest
 import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.testkit.client.BasicTestClient
 import org.jetbrains.bsp.testkit.client.MockClient

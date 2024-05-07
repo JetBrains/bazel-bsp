@@ -7,7 +7,6 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.bazel.install.Install
-import org.jetbrains.bsp.testkit.client.BasicTestClient
 import org.jetbrains.bsp.testkit.client.MockClient
 import org.jetbrains.bsp.testkit.client.TestClient
 import org.jetbrains.bsp.testkit.client.bazel.BazelJsonTransformer
@@ -21,6 +20,8 @@ abstract class BazelBspTestBaseScenario {
   protected val workspaceDir = System.getenv("BIT_WORKSPACE_DIR")
 
   val targetPrefix = calculateTargetPrefix()
+
+  open fun additionalServerInstallArguments(): Array<String> = emptyArray()
 
   init {
     installServer()
@@ -43,6 +44,7 @@ abstract class BazelBspTestBaseScenario {
         "-d", workspaceDir,
         "-b", bazelBinary,
         "-t", "//...",
+        *additionalServerInstallArguments()
       )
     )
   }
@@ -77,11 +79,15 @@ abstract class BazelBspTestBaseScenario {
     }
   }
 
-  protected fun createTestkitClient(): TestClient {
+  protected fun createTestkitClient(): TestClient =
+    createTestkitClient(false)
+
+  protected fun createTestkitClient(jvmClasspathReceiver: Boolean): TestClient {
     log.info("Testing repo workspace path: $workspaceDir")
     log.info("Creating TestClient...")
 
     val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
+    capabilities.jvmCompileClasspathReceiver = jvmClasspathReceiver
     val initializeBuildParams = InitializeBuildParams(
       "BspTestClient", "1.0.0", "2.0.0", workspaceDir, capabilities
     )
