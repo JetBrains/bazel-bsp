@@ -17,7 +17,7 @@ enum class Language(private val fileName: String, val ruleNames: List<String>, v
   Kotlin("//aspects:rules/kt/kt_info.bzl", listOf("io_bazel_rules_kotlin", "rules_kotlin"), listOf("extract_kotlin_info"), true),
   Rust("//aspects:rules/rust/rust_info.bzl", listOf("rules_rust"), listOf("extract_rust_crate_info"), false),
   Android("//aspects:rules/android/android_info.bzl", listOf("rules_android"), listOf("extract_android_info", "extract_android_aar_import_info"), false),
-  Go("//aspects:rules/go/go_info.bzl", listOf("io_bazel_rules_go"), listOf("extract_go_info"), false);
+  Go("//aspects:rules/go/go_info.bzl", listOf("rules_go", "io_bazel_rules_go"), listOf("extract_go_info"), true);
 
   fun toLoadStatement(): String =
     this.functions.joinToString(
@@ -84,7 +84,7 @@ class BazelBspLanguageExtensionsGenerator(internalAspectsResolver: InternalAspec
         Language.Kotlin -> """"@${it.ruleName}//kotlin/internal:kt_toolchain_type""""
         Language.Rust -> """"@${it.ruleName}//rust:toolchain_type""""
         Language.Android -> getAndroidToolchain()
-        Language.Go -> """"@io_bazel_rules_go//go:toolchain""""
+        Language.Go -> """"@${it.ruleName}//go:toolchain""""
         else -> null
       }
     }
