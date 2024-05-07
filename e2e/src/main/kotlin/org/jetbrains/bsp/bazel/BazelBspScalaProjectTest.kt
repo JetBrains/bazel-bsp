@@ -27,8 +27,9 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
-  private val testClient = createTestkitClient()
   private val log = LogManager.getLogger(BazelBspScalaProjectTest::class.java)
+  private val testClient = createTestkitClient()
+  private val testClientClasspathReceiver = createTestkitClient(jvmClasspathReceiver = true)
 
   @JvmStatic
   fun main(args: Array<String>) = try{
@@ -47,6 +48,7 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
       compareWorkspaceTargetsResults(),
       compileWithWarnings(),
       scalaOptionsResults(),
+      scalaOptionsResultsClasspathReceiver(),
   )
 
   private fun resolveProject(): BazelBspTestScenarioStep = BazelBspTestScenarioStep(
@@ -116,6 +118,22 @@ object BazelBspScalaProjectTest : BazelBspTestBaseScenario() {
     val scalaOptionsParams = ScalacOptionsParams(expectedTargetIdentifiers)
     return BazelBspTestScenarioStep("scalaOptions results") {
       testClient.testScalacOptions(120.seconds, scalaOptionsParams, expectedScalaOptionsResult)
+    }
+  }
+  private fun scalaOptionsResultsClasspathReceiver(): BazelBspTestScenarioStep {
+    val expectedTargetIdentifiers = expectedTargetIdentifiers().filter { it.uri != "bsp-workspace-root" }
+    val expectedScalaOptionsItems = expectedTargetIdentifiers.map {
+      ScalacOptionsItem(
+        it,
+        emptyList(),
+        emptyList(),
+        "file://\$BAZEL_OUTPUT_BASE_PATH/execroot/__main__/bazel-out/k8-fastbuild/bin/scala_targets/library.jar"
+      )
+    }
+    val expectedScalaOptionsResult = ScalacOptionsResult(expectedScalaOptionsItems)
+    val scalaOptionsParams = ScalacOptionsParams(expectedTargetIdentifiers)
+    return BazelBspTestScenarioStep("scalaOptions results") {
+      testClientClasspathReceiver.testScalacOptions(60.seconds, scalaOptionsParams, expectedScalaOptionsResult)
     }
   }
 
