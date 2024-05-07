@@ -12,6 +12,7 @@ import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
@@ -51,6 +52,7 @@ class ExecuteService(
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
         bspClientLogger.copy(originId = originId).error(message)
     }
+    private val gson = Gson()
 
     private fun <T> withBepServer(originId: String?, target: BuildTargetIdentifier?, body : (BepReader) -> T): T {
         val diagnosticsService = DiagnosticsService(compilationManager.workspaceRoot, hasAnyProblems)
@@ -84,8 +86,7 @@ class ExecuteService(
         var bazelTestParamsData: BazelTestParamsData? = null
         try {
             if (params.dataKind == BazelTestParamsData.DATA_KIND) {
-                val rawParams = params.data.toString()
-                bazelTestParamsData = Gson().fromJson(rawParams, BazelTestParamsData::class.java)
+                bazelTestParamsData = gson.fromJson(params.data as JsonObject, BazelTestParamsData::class.java)
             }
         } catch (e: Exception) {
             bspClientLogger.warn("Failed to parse BazelTestParamsData: $e")
@@ -102,6 +103,7 @@ class ExecuteService(
                 baseCommand
                     .withTargets(targetsSpec)
                     .withArguments(params.arguments)
+                    // Use file:// uri scheme for output paths in the build events.
                     .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
                     .withFlag(BazelFlag.color(true))
                     .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
