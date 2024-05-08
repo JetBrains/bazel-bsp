@@ -321,6 +321,11 @@ class BazelProjectMapper(
     val outputJarsFromTransitiveDepsCache = ConcurrentHashMap<String, Set<Path>>()
     targetsToImport.values.filter { targetSupportsJdeps(it) }.map { target ->
         async {
+          val jarsFromJdeps = dependencyJarsFromJdepsFiles(target)
+          if (jarsFromJdeps.isEmpty()) {
+            return@async target.id to emptySet()
+          }
+
           val jarsFromDirectDependencies = getAllOutputJarsFromTransitiveDeps(
             target.id,
             targetsToImport,
@@ -328,8 +333,7 @@ class BazelProjectMapper(
             librariesToImport,
             outputJarsFromTransitiveDepsCache,
           )
-          val jarsFromJdeps = dependencyJarsFromJdepsFiles(target) - jarsFromDirectDependencies
-          target.id to jarsFromJdeps
+          target.id to jarsFromJdeps - jarsFromDirectDependencies
         }
       }.awaitAll().toMap().filterValues { it.isNotEmpty() }
   }
