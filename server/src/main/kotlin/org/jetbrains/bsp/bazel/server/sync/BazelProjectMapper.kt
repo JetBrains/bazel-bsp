@@ -95,9 +95,10 @@ class BazelProjectMapper(
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
       createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().distinct().associateBy { it.label }
     }
-    val extraLibrariesFromJdeps = measure("Libraries from jdeps") {
-      jdepsLibraries(targetsToImport.associateBy { it.id }, librariesFromDeps, librariesFromDepsAndTargets)
-    }
+    val extraLibrariesFromJdeps =
+      if (System.getProperty("get.libraries.from.jdeps", "true").toBoolean()) measure("Libraries from jdeps") {
+        jdepsLibraries(targetsToImport.associateBy { it.id }, librariesFromDeps, librariesFromDepsAndTargets)
+      } else emptyMap()
     val workspaceRoot = bazelPathsResolver.workspaceRoot()
     val modulesFromBazel = measure("Create modules") {
       createModules(targetsToImport, dependencyGraph, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
