@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync
 import com.google.protobuf.Message
 import com.google.protobuf.TextFormat
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidAarImportInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.AndroidTargetInfo
@@ -38,7 +38,7 @@ class TargetInfoReader {
     fun readTargetMapFromAspectOutputs(files: Set<Path>): Map<String, TargetInfo> {
         val builderMap = ConcurrentHashMap<String, TargetInfo.Builder>()
         runBlocking(Dispatchers.IO) {
-            files.asFlow().collect { addExtensionInfo(it, builderMap) }
+            files.map { launch { addExtensionInfo(it, builderMap) } }
         }
         return builderMap.mapValues { (_, builder) -> builder.buildPartial() }.values.groupBy(TargetInfo::getId)
             // If any aspect has already been run on the build graph, it created shadow graph

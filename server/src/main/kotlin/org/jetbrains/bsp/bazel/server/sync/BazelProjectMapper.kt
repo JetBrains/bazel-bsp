@@ -2,10 +2,9 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import com.google.common.hash.Hashing
 import com.google.devtools.build.lib.view.proto.Deps
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
@@ -30,6 +29,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.notExists
@@ -316,56 +316,51 @@ class BazelProjectMapper(
   private fun getAllJdepsDependencies(
     targetsToImport: Map<String, TargetInfo>,
     libraryDependencies: Map<String, List<Library>>,
-    librariesToImport: Map<String, Library>
-  ): Map<String, Set<Path>> =
-    targetsToImport
-      .filter { targetSupportsJdeps(it.value) }
-      .mapValues { targetInfo ->
-        val jarsFromDirectDependencies = getAllOutputJarsFromTransitiveDeps(
-          targetInfo,
-          targetsToImport,
-          libraryDependencies,
-          librariesToImport
-        )
-        val jarsFromJdeps = dependencyJarsFromJdepsFiles(targetInfo.value)
-        jarsFromJdeps - jarsFromDirectDependencies
-      }
-      .filterValues { it.isNotEmpty() }
-
-  private fun getAllOutputJarsFromTransitiveDeps(
-    targetInfo: Map.Entry<String, TargetInfo>,
-    targetsToImport: Map<String, TargetInfo>,
-    libraryDependencies: Map<String, List<Library>>,
-    librariesToImport: Map<String, Library>
-  ): Set<Path> {
-    return getAllTransitiveDependencies(targetInfo.value, targetsToImport, libraryDependencies, librariesToImport)
-      .flatMap { dep ->
-        val jarsFromTargets =
-          targetsToImport[dep]?.let { getTargetOutputJars(it) + getTargetInterfaceJars(it) }.orEmpty()
-        val jarsFromLibraries =
-          librariesToImport[dep]?.let { it.outputs + it.interfaceJars }.orEmpty().map { Paths.get(it.path) }
-        jarsFromTargets + jarsFromLibraries
-      }.toSet()
+    librariesToImport: Map<String, Library>,
+  ): Map<String, Set<Path>> = runBlocking(Dispatchers.Default) {
+    val outputJarsFromTransitiveDepsCache = ConcurrentHashMap<String, Set<Path>>()
+    targetsToImport.values.filter { targetSupportsJdeps(it) }.map { target ->
+        async {
+          val jarsFromDirectDependencies = getAllOutputJarsFromTransitiveDeps(
+            target.id,
+            targetsToImport,
+            libraryDependencies,
+            librariesToImport,
+            outputJarsFromTransitiveDepsCache,
+          )
+          val jarsFromJdeps = dependencyJarsFromJdepsFiles(target) - jarsFromDirectDependencies
+          target.id to jarsFromJdeps
+        }
+      }.awaitAll().toMap().filterValues { it.isNotEmpty() }
   }
 
-  private fun getAllTransitiveDependencies(
-    target: TargetInfo,
+  private fun getAllOutputJarsFromTransitiveDeps(
+    targetOrLibrary: String,
     targetsToImport: Map<String, TargetInfo>,
     libraryDependencies: Map<String, List<Library>>,
-    allLibraries: Map<String, Library>
-  ): HashSet<String> {
-    val toVisit = ArrayDeque(
-      target.dependenciesList.map { it.id } + libraryDependencies[target.id].orEmpty().map { it.label }
-    )
-    val visited = HashSet<String>()
-    while (toVisit.isNotEmpty()) {
-      val current = toVisit.removeFirst()
-      val dependencyLabels = targetsToImport[current]?.dependenciesList.orEmpty()
-        .map { it.id } + allLibraries[current]?.dependencies.orEmpty()
-      visited += current
-      toVisit += dependencyLabels.filterNot { it in visited }
+    librariesToImport: Map<String, Library>,
+    outputJarsFromTransitiveDepsCache: ConcurrentHashMap<String, Set<Path>>,
+  ): Set<Path> = outputJarsFromTransitiveDepsCache.getOrPut(targetOrLibrary) {
+    val jarsFromTargets =
+      targetsToImport[targetOrLibrary]?.let { getTargetOutputJars(it) + getTargetInterfaceJars(it) }.orEmpty()
+    val jarsFromLibraries =
+      librariesToImport[targetOrLibrary]?.let { it.outputs + it.interfaceJars }.orEmpty().map { Paths.get(it.path) }
+    val outputJars = (jarsFromTargets + jarsFromLibraries).toMutableSet()
+
+    val dependencies = targetsToImport[targetOrLibrary]?.dependenciesList.orEmpty().map { it.id } +
+      libraryDependencies[targetOrLibrary].orEmpty().map { it.label } +
+      librariesToImport[targetOrLibrary]?.dependencies.orEmpty()
+
+    dependencies.flatMapTo(outputJars) { dependency ->
+      getAllOutputJarsFromTransitiveDeps(
+        dependency,
+        targetsToImport,
+        libraryDependencies,
+        librariesToImport,
+        outputJarsFromTransitiveDepsCache,
+      )
     }
-    return visited
+    outputJars
   }
 
   private fun dependencyJarsFromJdepsFiles(targetInfo: TargetInfo): Set<Path> =
@@ -498,17 +493,20 @@ class BazelProjectMapper(
     targetsToImport: Sequence<TargetInfo>,
     dependencyGraph: DependencyGraph,
     generatedLibraries: Map<String, Collection<Library>>,
-  ): List<Module> = runBlocking {
-    targetsToImport.asFlow()
-      .map {
-        createModule(
-          it,
-          dependencyGraph,
-          generatedLibraries[it.id].orEmpty()
-        )
-      }
-      .filterNot { it.tags.contains(Tag.NO_IDE) }
+  ): List<Module> = runBlocking(Dispatchers.Default) {
+    targetsToImport
       .toList()
+      .map {
+        async {
+          createModule(
+            it,
+            dependencyGraph,
+            generatedLibraries[it.id].orEmpty()
+          )
+        }
+      }
+      .awaitAll()
+      .filterNot { it.tags.contains(Tag.NO_IDE) }
   }
 
 
