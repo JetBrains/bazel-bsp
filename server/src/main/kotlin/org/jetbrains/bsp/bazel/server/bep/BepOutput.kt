@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bep
 
 import com.google.common.collect.Queues
 import java.nio.file.Path
+import java.util.LinkedList
 
 class BepOutput(
     private val outputGroups: Map<String, Set<String>> = emptyMap(),
@@ -17,7 +18,7 @@ class BepOutput(
         if (rootIds.isEmpty()) {
             return emptySet()
         }
-        val result = HashSet<Path>(rootIds.size)
+        val result = LinkedList<Path>()
         val toVisit = Queues.newArrayDeque(rootIds)
         val visited = HashSet<String>(rootIds.size)
         while (!toVisit.isEmpty()) {
@@ -29,6 +30,6 @@ class BepOutput(
             children.filter { child: String -> !visited.contains(child) }
                 .forEach { e: String -> toVisit.add(e) }
         }
-        return result
+        return result.toSet()
     }
 }
