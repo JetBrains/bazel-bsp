@@ -1,7 +1,6 @@
-package org.jetbrains.bsp.bazel.server.sync.model
+package org.jetbrains.bsp.bazel.server.model
 
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
-import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import java.net.URI
 
 /** Project is the internal model of the project. Bazel/Aspect Model -> Project -> BSP Model  */
@@ -18,14 +17,11 @@ data class Project(
     fun findModule(label: Label): Module? =
         moduleMap[label]
 
-    fun findModulesByLanguage(language: Language): List<Module> =
-        modules.filter { language in it.languages }
-
-    fun findNonExternalModules(): List<Module> {
-        val rustExternalModules = modules.filter {
-            it.languageData is RustModule &&
-            it.languageData.isExternalModule
-        }
-        return modules - rustExternalModules.toSet()
-    }
+//    fun findNonExternalModules(): List<Module> {
+//        val rustExternalModules = modules.filter {
+//            it.languageData is RustModule &&
+//            it.languageData.isExternalModule
+//        }
+//        return modules - rustExternalModules.toSet()
+//    }
 }

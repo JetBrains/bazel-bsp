@@ -8,5 +8,6 @@ kt_jvm_library(
         "//bazelrunner",
         "//commons",
         "@maven//:ch_epfl_scala_bsp4j",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/model",
     ],
 )

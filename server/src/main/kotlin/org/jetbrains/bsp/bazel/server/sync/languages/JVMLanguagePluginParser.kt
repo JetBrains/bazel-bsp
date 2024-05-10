@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages
 
-import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.SourceRootGuesser
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths

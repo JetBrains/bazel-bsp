@@ -1,12 +1,8 @@
-package org.jetbrains.bsp.bazel.server.sync
+package org.jetbrains.bsp.bazel.server.model
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.BuildTargetTag
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
-import org.jetbrains.bsp.bazel.server.model.Label
-import org.jetbrains.bsp.bazel.server.model.Module
-import org.jetbrains.bsp.bazel.server.model.Project
-import org.jetbrains.bsp.bazel.server.model.Tag
 import java.net.URI
 
 object BspMappings {

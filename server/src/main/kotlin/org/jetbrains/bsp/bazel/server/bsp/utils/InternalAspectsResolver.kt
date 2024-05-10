@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils
 
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 

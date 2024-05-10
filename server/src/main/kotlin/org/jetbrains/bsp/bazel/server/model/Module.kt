@@ -1,6 +1,5 @@
-package org.jetbrains.bsp.bazel.server.sync.model
+package org.jetbrains.bsp.bazel.server.model
 
-import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
 import java.net.URI
 
 data class Module(

@@ -3,7 +3,7 @@ package org.jetbrains.bsp.bazel.server
 import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import org.eclipse.lsp4j.jsonrpc.Launcher
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
@@ -19,6 +19,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper
@@ -31,7 +32,7 @@ import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import org.jetbrains.bsp.bazel.server.sync.TargetInfoReader
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
-import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
+import org.jetbrains.bsp.bazel.server.sync.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
@@ -53,7 +54,7 @@ class BazelBspServer(
   private val workspaceRoot: Path,
   private val metricsLogger: MetricsLogger?
 ) {
-  private val bspState: MutableMap<String, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
+  private val bspState: MutableMap<Label, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
 
   private fun bspServerData(
     bspClientLogger: BspClientLogger,

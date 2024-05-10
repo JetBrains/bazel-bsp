@@ -16,6 +16,7 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.ScalaTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import org.jetbrains.bsp.bazel.server.model.Label
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -35,12 +36,12 @@ class TargetInfoReader {
     private val cache: ConcurrentHashMap<URI, CachedTargetInfo> = ConcurrentHashMap()
 
 
-    fun readTargetMapFromAspectOutputs(files: Set<Path>): Map<String, TargetInfo> {
+    fun readTargetMapFromAspectOutputs(files: Set<Path>): Map<Label, TargetInfo> {
         val builderMap = ConcurrentHashMap<String, TargetInfo.Builder>()
         runBlocking(Dispatchers.IO) {
             files.map { launch { addExtensionInfo(it, builderMap) } }
         }
-        return builderMap.mapValues { (_, builder) -> builder.buildPartial() }.values.groupBy(TargetInfo::getId)
+        return builderMap.mapValues { (_, builder) -> builder.buildPartial() }.values.groupBy { Label.parse(it.id) }
             // If any aspect has already been run on the build graph, it created shadow graph
             // containing new nodes of the same labels as the original ones. In particular,
             // this happens for all protobuf targets, for which a built-in aspect "bazel_java_proto_aspect"

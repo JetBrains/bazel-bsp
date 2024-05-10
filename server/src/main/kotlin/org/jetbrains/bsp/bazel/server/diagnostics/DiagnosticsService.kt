@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.diagnostics
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import org.jetbrains.bsp.bazel.server.model.Label
 import java.nio.file.Path
 import java.util.Collections
 
@@ -11,14 +12,15 @@ import java.util.Collections
  * can publish diagnostics with an empty array, to clear up former diagnostics.
  * see: https://youtrack.jetbrains.com/issue/BAZEL-376
  */
-class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>) {
+class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>) {
 
     private val parser = DiagnosticsParser()
     private val mapper = DiagnosticBspMapper(workspaceRoot)
     /* Warnings are reported before the target completed event, when everything is cleared. so we want to avoid removing them */
     private val updatedInThisRun = mutableSetOf<PublishDiagnosticsParams>()
 
-    fun getBspState() = Collections.unmodifiableMap(hasAnyProblems)
+    val bspState: Map<Label, Set<TextDocumentIdentifier>>
+        get() = Collections.unmodifiableMap(hasAnyProblems)
 
     fun extractDiagnostics(
         bazelOutput: String,
@@ -33,7 +35,7 @@ class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: Mutabl
         return events
     }
 
-    fun clearFormerDiagnostics(targetLabel: String): List<PublishDiagnosticsParams> {
+    fun clearFormerDiagnostics(targetLabel: Label): List<PublishDiagnosticsParams> {
         val docs = hasAnyProblems[targetLabel]
 	    hasAnyProblems.remove(targetLabel)
         val toClear = if (updatedInThisRun.isNotEmpty()) {
@@ -45,17 +47,17 @@ class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: Mutabl
             docs
         }
 	    return toClear
-	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), emptyList(), true)}
+	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel.value), emptyList(), true)}
 	      .orEmpty()
 	}
 
     private fun updateProblemState(events: List<PublishDiagnosticsParams>) {
         events
-            .groupBy { it.getBuildTarget().getUri() }
-            .forEach {
-                val buildTarget = it.key
-                val paramss = it.value
-                val docs = paramss.map { it.getTextDocument() }.toSet()
+            .groupBy { it.buildTarget.uri }
+            .forEach { group ->
+                val buildTarget = Label.parse(group.key)
+                val params = group.value
+                val docs = params.map { it.textDocument }.toSet()
                 hasAnyProblems[buildTarget] = docs
             }
     }

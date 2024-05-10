@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages
 import ch.epfl.scala.bsp4j.BuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.LanguageData
 import java.net.URI
 import java.nio.file.Path
 

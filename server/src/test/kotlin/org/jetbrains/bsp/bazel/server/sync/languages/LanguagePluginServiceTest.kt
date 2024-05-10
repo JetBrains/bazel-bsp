@@ -2,9 +2,9 @@ package org.jetbrains.bsp.bazel.server.sync.languages
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
-import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BasicBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.orLatestSupported
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
@@ -16,7 +16,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.model.Language
+import org.jetbrains.bsp.bazel.server.model.Language
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

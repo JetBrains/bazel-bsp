@@ -9,8 +9,8 @@ import ch.epfl.scala.bsp4j.ScalaPlatform
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
 import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin

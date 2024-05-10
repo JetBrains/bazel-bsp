@@ -8,11 +8,11 @@ import org.jetbrains.bsp.bazel.server.model.Module
 
 val Module.javaModule: JavaModule?
     get() {
-        return when (languageData) {
-            is JavaModule -> languageData
-            is ScalaModule -> languageData.javaModule
-            is KotlinModule -> languageData.javaModule
-            is AndroidModule -> languageData.javaModule
+        return when (val data = languageData) {
+            is JavaModule -> data
+            is ScalaModule -> data.javaModule
+            is KotlinModule -> data.javaModule
+            is AndroidModule -> data.javaModule
             else -> null
         }
     }

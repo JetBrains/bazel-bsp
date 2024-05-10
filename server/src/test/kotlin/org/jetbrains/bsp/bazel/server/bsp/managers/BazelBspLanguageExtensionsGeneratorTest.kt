@@ -4,7 +4,7 @@ import io.kotest.matchers.equals.shouldBeEqual
 import java.nio.file.Path
 import kotlin.io.path.createTempDirectory
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import org.jetbrains.bsp.bazel.install.EnvironmentCreator
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver

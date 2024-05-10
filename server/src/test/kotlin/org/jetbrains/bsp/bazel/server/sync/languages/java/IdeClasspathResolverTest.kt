@@ -1,11 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
-import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BasicBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.orLatestSupported
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.model.Label
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.URI
@@ -48,7 +48,7 @@ class IdeClasspathResolverTest {
     )
 
     val resolver = IdeClasspathResolver(
-      label = Label("@//path/to/target:targetName"),
+      label = Label.parse("@//path/to/target:targetName"),
       bazelPathsResolver = bazelPathsResolver,
       compileClasspath = compileClasspath.asSequence(),
       runtimeClasspath = runtimeClasspath.asSequence(),

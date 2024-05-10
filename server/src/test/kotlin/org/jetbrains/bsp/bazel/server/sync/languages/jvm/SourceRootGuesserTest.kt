@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp.utils
+package org.jetbrains.bsp.bazel.server.sync.languages.jvm
 
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.SourceRootGuesser.getSourcesRoot

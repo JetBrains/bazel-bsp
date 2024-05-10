@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.server.sync.model.Project
+import org.jetbrains.bsp.bazel.server.model.Project
 
 class ProjectProvider(
     private val projectResolver: ProjectResolver, private val projectStorage: ProjectStorage

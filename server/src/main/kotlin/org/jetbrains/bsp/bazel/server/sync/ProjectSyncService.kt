@@ -41,7 +41,7 @@ import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.WorkspaceDirectoriesResult
 import org.jetbrains.bsp.WorkspaceInvalidTargetsResult
 import org.jetbrains.bsp.WorkspaceLibrariesResult
-import org.jetbrains.bsp.bazel.server.sync.model.Language
+import org.jetbrains.bsp.bazel.server.model.Language
 
 /** A facade for all project sync related methods  */
 class ProjectSyncService(private val bspMapper: BspProjectMapper, private val projectProvider: ProjectProvider) {

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.sync.model
+package org.jetbrains.bsp.bazel.server.model
 
 import java.net.URI
 

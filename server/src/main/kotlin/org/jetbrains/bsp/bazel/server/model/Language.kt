@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.sync.model
+package org.jetbrains.bsp.bazel.server.model
 
 enum class Language(
     val id: String,
