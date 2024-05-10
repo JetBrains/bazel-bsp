@@ -9,7 +9,7 @@ data class Project(
     val workspaceRoot: URI,
     val modules: List<Module>,
     val sourceToTarget: Map<URI, Label>,
-    val libraries: Map<String, Library>,
+    val libraries: Map<Label, Library>,
     val invalidTargets: List<Label>,
     val bazelRelease: BazelRelease
 ) {
@@ -26,6 +26,6 @@ data class Project(
             it.languageData is RustModule &&
             it.languageData.isExternalModule
         }
-        return modules - rustExternalModules
+        return modules - rustExternalModules.toSet()
     }
 }

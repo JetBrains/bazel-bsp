@@ -4,7 +4,7 @@ import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Module
 
 val Module.javaModule: JavaModule?
     get() {

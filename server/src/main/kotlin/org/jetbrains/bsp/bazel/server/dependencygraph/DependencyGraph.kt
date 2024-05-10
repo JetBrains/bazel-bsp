@@ -4,8 +4,8 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 
 class DependencyGraph(
-        private val rootTargets: Set<String> = emptySet(),
-        private val idToTargetInfo: Map<String, TargetInfo> = emptyMap(),
+        private val rootTargets: Set<Label> = emptySet(),
+        private val idToTargetInfo: Map<Label, TargetInfo> = emptyMap(),
 ) {
     private val idToDirectDependenciesIds: Map<String, Set<String>>
     private val idToLazyTransitiveDependencies: Map<String, Lazy<Set<TargetInfo>>>

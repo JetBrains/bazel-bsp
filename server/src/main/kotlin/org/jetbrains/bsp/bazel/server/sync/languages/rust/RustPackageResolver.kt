@@ -5,8 +5,8 @@ import ch.epfl.scala.bsp4j.RustCrateType
 import ch.epfl.scala.bsp4j.RustPackage
 import ch.epfl.scala.bsp4j.RustTargetKind
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Module
 
 data class BazelPackageTargetInfo(
     val packageName: String,
