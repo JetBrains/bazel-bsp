@@ -1,5 +1,5 @@
 load("@rules_rust//rust:rust_common.bzl", "BuildInfo", "CrateInfo")
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "filter", "flatmap")
+load("//aspects:utils/utils.bzl", "create_struct", "filter", "flatmap")
 
 # This is supposed to be enum, but Starlark does not support enums.
 # See bsp_target_info.proto:RustCrateLocation.
@@ -77,4 +77,4 @@ def extract_rust_crate_info(target, ctx, **kwargs):
         proc_macro_artifacts = proc_macro_artifacts_paths,
     )
 
-    return create_proto(target, ctx, rust_crate_struct, "rust_crate_info"), None
+    return dict(rust_crate_info = rust_crate_struct), None

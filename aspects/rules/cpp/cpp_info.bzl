@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct")
+load("//aspects:utils/utils.bzl", "create_struct")
 
 def extract_cpp_info(target, ctx, **kwargs):
     if CcInfo not in target:
@@ -11,4 +11,4 @@ def extract_cpp_info(target, ctx, **kwargs):
         link_shared = getattr(ctx.rule.attr, "linkshared", False),
     )
 
-    return create_proto(target, ctx, result, "cpp_target_info"), None
+    return dict(cpp_target_info = result), None

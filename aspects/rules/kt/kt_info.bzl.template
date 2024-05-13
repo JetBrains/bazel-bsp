@@ -1,6 +1,6 @@
 load("@${ruleName}//kotlin/internal:defs.bzl", "KtJvmInfo", "KtCompilerPluginInfo")
 load("@${ruleName}//kotlin/internal:opts.bzl", "KotlincOptions", "kotlinc_options_to_flags")
-load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_proto", "create_struct", "map", "file_location", "filter_not_none", "log_warn")
+load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_struct", "map", "file_location", "filter_not_none", "log_warn")
 
 KOTLIN_TOOLCHAIN_TYPE = "@${ruleName}//kotlin/internal:kt_toolchain_type"
 
@@ -44,7 +44,7 @@ def extract_kotlin_info(target, ctx, **kwargs):
         kotlinc_plugin_infos = kt_compiler_plugin_infos,
     )
 
-    info_file = create_proto(target, ctx, kotlin_target_info, "kotlin_target_info")
+    info_file = dict(kotlin_target_info = kotlin_target_info)
 
     return info_file, None
 

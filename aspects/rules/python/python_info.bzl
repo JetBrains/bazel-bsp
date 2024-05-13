@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "file_location", "to_file_location")
+load("//aspects:utils/utils.bzl", "create_struct", "file_location", "to_file_location")
 
 def interpreter_from_absolute_path(path):
     if path == None:
@@ -31,4 +31,4 @@ def extract_python_info(target, ctx, **kwargs):
         version = getattr(provider, "python_version", None),
     )
 
-    return create_proto(target, ctx, python_target_info, "python_target_info"), None
+    return dict(python_target_info = python_target_info), None
