@@ -3441,7 +3441,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "9f4cb7ec2cc5e77c0fac263de3284419c483d85417fb2f20364134e2f5b299db",
+          "@@//:maven_install.json": "717527e6d1110182cf422edfeb08ac7a410b3656e005da0b4a94751e4259fa8a",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3717,18 +3717,18 @@
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.8.1/kotlinx-coroutines-core-jvm-1.8.1-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_jar_sources_1_8_0": {
+          "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_jar_sources_1_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_jar_sources_1_8_0",
-              "sha256": "c7203e2fa344570810d403dc7a88d1a240f76b1f17df5f4d9e90f8d48faf5bd1",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_jar_sources_1_8_1",
+              "sha256": "bea89f1396fcb311f672d6f82ea6504c5bf60b426d97611473ad04ffaf4253ba",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1-sources.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0-sources.jar"
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1-sources.jar"
             }
           },
           "com_fasterxml_jackson_core_jackson_core_2_15_2": {
@@ -4222,18 +4222,18 @@
               "downloaded_file_path": "com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_test_1_8_0": {
+          "org_jetbrains_kotlinx_kotlinx_coroutines_test_1_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_1_8_0",
-              "sha256": "337f24af1c61fc47d278a9be26fd1754b9933b0681f185eb9be0aa9e09067219",
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_1_8_1",
+              "sha256": "d5a9b8769a2167eb9dc911d1b2c54fe8270387b8160533d8ae8bda942e2998b1",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1.jar"
               ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0.jar"
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1.jar"
             }
           },
           "org_junit_jupiter_junit_jupiter_5_10_2": {
@@ -4411,20 +4411,6 @@
               "downloaded_file_path": "org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_8_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_8_0",
-              "sha256": "1535cc1f43235d8566f8d5bc6d1c11f0704117e4e563f2ece7e6aa3e68695f20",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.0/kotlinx-coroutines-test-jvm-1.8.0.jar"
-            }
-          },
           "commons_io_commons_io_jar_sources_2_16_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4437,6 +4423,20 @@
                 "https://repo1.maven.org/maven2/commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar"
               ],
               "downloaded_file_path": "commons-io/commons-io/2.16.1/commons-io-2.16.1-sources.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_8_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_jvm_1_8_1",
+              "sha256": "c4ef1deb31be3f81ed82ecf237220cc95886868a7ec527a418599dfff159dedb",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test-jvm/1.8.1/kotlinx-coroutines-test-jvm-1.8.1.jar"
             }
           },
           "org_apache_commons_commons_lang3_3_11": {
@@ -6605,6 +6605,20 @@
               "downloaded_file_path": "io/grpc/grpc-grpclb/1.56.1/grpc-grpclb-1.56.1.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_coroutines_test_jar_sources_1_8_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_jar_sources_1_8_1",
+              "sha256": "3bc8bfc47decf228385ce5ba8ddc30d1b85fc6d1a14d085192ce70c4d9029892",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1-sources.jar",
+                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1-sources.jar",
+                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1-sources.jar"
+              ],
+              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1-sources.jar"
+            }
+          },
           "com_google_api_grpc_proto_google_common_protos_jar_sources_2_29_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6617,20 +6631,6 @@
                 "https://repo1.maven.org/maven2/com/google/api/grpc/proto-google-common-protos/2.29.0/proto-google-common-protos-2.29.0-sources.jar"
               ],
               "downloaded_file_path": "com/google/api/grpc/proto-google-common-protos/2.29.0/proto-google-common-protos-2.29.0-sources.jar"
-            }
-          },
-          "org_jetbrains_kotlinx_kotlinx_coroutines_test_jar_sources_1_8_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~org_jetbrains_kotlinx_kotlinx_coroutines_test_jar_sources_1_8_0",
-              "sha256": "c0a496fc17c99a9c9fb4f88b149330e083e975707d7c13b48ce7159acaf9154b",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0-sources.jar",
-                "https://maven.google.com/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0-sources.jar",
-                "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0-sources.jar"
-              ],
-              "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.0/kotlinx-coroutines-test-1.8.0-sources.jar"
             }
           },
           "org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_23": {
