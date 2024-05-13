@@ -1,34 +1,26 @@
 package org.jetbrains.bsp.bazel.server.bep
 
-import com.google.common.collect.Queues
 import java.nio.file.Path
 
 class BepOutput(
     private val outputGroups: Map<String, Set<String>> = emptyMap(),
     private val textProtoFileSets: Map<String, TextProtoDepSet> = emptyMap(),
-    private val rootTargets: Set<String> = emptySet()
+    val rootTargets: Set<String> = emptySet()
 ) {
-    fun rootTargets(): Set<String> {
-        return rootTargets
-    }
-
+    // TODO could be a lazy stream/flow?
     fun filesByOutputGroupNameTransitive(outputGroup: String): Set<Path> {
         val rootIds = outputGroups.getOrDefault(outputGroup, emptySet())
-        if (rootIds.isEmpty()) {
-            return emptySet()
+        return filesRec(rootIds, HashSet(), emptyList()).toSet()
+    }
+
+    private tailrec fun filesRec(toVisit: Collection<String>, visited: Set<String>, acc: Collection<Path>): Collection<Path> {
+        if (toVisit.isEmpty()) {
+            return acc
+        } else {
+            val filesets = toVisit.map { textProtoFileSets[it] }
+            val visitNext = filesets.flatMap { it?.children.orEmpty() }.filterNot { visited.contains(it) }
+            val result = acc.plus(filesets.flatMap { it?.files.orEmpty() })
+            return filesRec(visitNext, visited.plus(toVisit), result)
         }
-        val result = HashSet<Path>(rootIds.size)
-        val toVisit = Queues.newArrayDeque(rootIds)
-        val visited = HashSet<String>(rootIds)
-        while (!toVisit.isEmpty()) {
-            val fileSetId = toVisit.remove()
-            val fileSet = textProtoFileSets[fileSetId]
-            result.addAll(fileSet!!.files)
-            val children = fileSet.children
-            children.asSequence()
-                .filter { child: String -> !visited.contains(child) }
-                .forEach { e: String -> visited.add(e); toVisit.add(e) }
-        }
-        return result
     }
 }

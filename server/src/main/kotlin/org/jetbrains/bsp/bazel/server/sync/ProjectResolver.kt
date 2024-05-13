@@ -65,7 +65,7 @@ class ProjectResolver(
     ) { buildAspectResult.bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
     val targets = measured(
         "Parsing aspect outputs"
-    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs).let { it } }
+    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
     val allTargetNames =
       if (buildAspectResult.isFailure)
         measured(
@@ -73,7 +73,7 @@ class ProjectResolver(
         ) { formatTargetsIfNeeded(bazelBspFallbackAspectsManager.getAllPossibleTargets(cancelChecker), targets) }
       else
         emptyList()
-    val rootTargets = buildAspectResult.bepOutput.rootTargets().let { formatTargetsIfNeeded(it, targets) }
+    val rootTargets = buildAspectResult.bepOutput.rootTargets.let { formatTargetsIfNeeded(it, targets) }
     return measured(
       "Mapping to internal model"
     ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }
