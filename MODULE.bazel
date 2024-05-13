@@ -79,7 +79,7 @@ maven.install(
         "org.apache.logging.log4j:log4j-api:2.23.1",
         "org.apache.logging.log4j:log4j-core:2.23.1",
         "org.apache.velocity:velocity-engine-core:2.3",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1",
         "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
         "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
         "org.slf4j:slf4j-nop:2.0.13",  # cannot be 2.0.0+ unless slf4j-api dependency in velocity-engine-core is 2.0.0+
