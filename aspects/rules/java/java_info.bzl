@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "to_file_location")
+load("//aspects:utils/utils.bzl", "create_struct", "to_file_location")
 
 def extract_java_toolchain(target, ctx, dep_targets, **kwargs):
     toolchain = None
@@ -24,8 +24,8 @@ def extract_java_toolchain(target, ctx, dep_targets, **kwargs):
                 break
 
     if toolchain_info != None:
-        info_file = create_proto(target, ctx, toolchain_info, "java_toolchain_info")
-        return info_file, dict(java_toolchain_info = toolchain_info)
+        result = dict(java_toolchain_info = toolchain_info)
+        return result, result
     else:
         return None, None
 
@@ -54,7 +54,7 @@ def extract_java_runtime(target, ctx, dep_targets, **kwargs):
                 break
 
     if runtime_info != None:
-        info_file = create_proto(target, ctx, runtime_info, "java_runtime_info")
-        return info_file, dict(java_runtime_info = runtime_info)
+        result = dict(java_runtime_info = runtime_info)
+        return result, result
     else:
         return None, None

@@ -17,7 +17,7 @@ bazel_dep(name = "rules_java", version = "7.5.0")
 bazel_dep(name = "rules_proto", version = "5.3.0-21.7")
 bazel_dep(name = "rules_cc", version = "0.0.9")
 bazel_dep(name = "platforms", version = "0.0.10")
-bazel_dep(name = "rules_python", version = "0.31.0")
+bazel_dep(name = "rules_python", version = "0.32.1")
 
 bazel_dep(
     name = "bsp-testkit2",
@@ -79,8 +79,8 @@ maven.install(
         "org.apache.logging.log4j:log4j-api:2.23.1",
         "org.apache.logging.log4j:log4j-core:2.23.1",
         "org.apache.velocity:velocity-engine-core:2.3",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1",
         "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
         "org.slf4j:slf4j-nop:2.0.13",  # cannot be 2.0.0+ unless slf4j-api dependency in velocity-engine-core is 2.0.0+
         "com.fasterxml.jackson.core:jackson-databind:2.17.1",
@@ -92,10 +92,10 @@ maven.install(
         # tests
         "org.junit.jupiter:junit-jupiter:5.10.2",
         "org.junit.platform:junit-platform-console:1.10.2",
-        "io.kotest:kotest-assertions-api-jvm:5.8.1",
-        "io.kotest:kotest-assertions-core-jvm:5.8.1",
-        "io.kotest:kotest-assertions-shared-jvm:5.8.1",
-        "io.kotest:kotest-common-jvm:5.8.1",
+        "io.kotest:kotest-assertions-api-jvm:5.9.0",
+        "io.kotest:kotest-assertions-core-jvm:5.9.0",
+        "io.kotest:kotest-assertions-shared-jvm:5.9.0",
+        "io.kotest:kotest-common-jvm:5.9.0",
     ],
     fail_if_repin_required = True,
     fetch_sources = True,
