@@ -63,8 +63,24 @@ abstract class BazelBspTestBaseScenario {
 
   fun executeScenario() {
     log.info("Running scenario...")
-    val scenarioStepsExecutionResult = executeScenarioSteps()
+    log.info("dupa")
+    var scenarioStepsExecutionResult: Boolean? = null
+    try {
+      scenarioStepsExecutionResult= executeScenarioSteps()
     log.info("Running scenario done.")
+
+
+
+    } catch (e: Exception) {
+      log.error("Failed to read log file", e)
+    } finally {
+      // Print the log contents in $workspaceDir/.bazelbsp/bazelbsp.log
+      val logFile = Path(workspaceDir).resolve(".bazelbsp").resolve("bazelbsp.log").toFile()
+      // Print all files in that directory
+      Path(workspaceDir).resolve(".bazelbsp").toFile().listFiles()?.forEach { log.info(it.name) }
+      log.info("Log file: ${logFile.absolutePath}")
+      logFile.readLines().forEach { log.info(it) }
+    }
 
     when (scenarioStepsExecutionResult) {
       true -> {
@@ -72,7 +88,7 @@ abstract class BazelBspTestBaseScenario {
         exitProcess(SUCCESS_EXIT_CODE)
       }
 
-      false -> {
+      false, null -> {
         log.fatal("Test failed")
         exitProcess(FAIL_EXIT_CODE)
       }

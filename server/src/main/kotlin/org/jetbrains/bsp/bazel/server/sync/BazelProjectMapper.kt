@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -121,6 +122,12 @@ class BazelProjectMapper(
       createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
     }
     val allModules = mergedModulesFromBazel + rustExternalModules
+
+    // DUPA
+    val log = LogManager.getLogger(BazelProjectMapper::class.java)
+    log.info("All modules: $allModules")
+    log.info("All libraries: $librariesToImport")
+    log.info("All invalid targets: $invalidTargets")
     return Project(
       workspaceRoot,
       allModules.toList(),
@@ -131,15 +138,13 @@ class BazelProjectMapper(
     )
   }
 
-  private fun <K, V> concatenateMaps(vararg maps: Map<K, List<V>>): Map<K, List<V>> {
-    val result = mutableMapOf<K, MutableList<V>>()
-    for (map in maps) {
-      for ((key, value) in map) {
-        result.getOrPut(key) { mutableListOf() }.addAll(value)
+  private fun <K, V> concatenateMaps(vararg maps: Map<K, List<V>>): Map<K, List<V>> =
+    maps
+      .flatMap { it.keys }
+      .distinct()
+      .associateWith { key ->
+        maps.flatMap { it[key].orEmpty() }
       }
-    }
-    return result
-  }
 
   private fun calculateNoSourceLibraries(
     targetsToImport: Sequence<TargetInfo>,

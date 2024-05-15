@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
@@ -12,6 +13,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGen
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.model.Project
+import org.jetbrains.bsp.bazel.workspacecontext.BazelBinarySpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 
@@ -75,6 +77,11 @@ class ProjectResolver(
       else
         emptyList()
     val rootTargets = buildAspectResult.bepOutput.rootTargets().let { formatTargetsIfNeeded(it, targets) }
+
+    // DUPA
+    val log = LogManager.getLogger(ProjectResolver::class.java)
+    log.info("Root targets: $rootTargets")
+    log.info("Targets: $targets")
     return measured(
       "Mapping to internal model"
     ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }
