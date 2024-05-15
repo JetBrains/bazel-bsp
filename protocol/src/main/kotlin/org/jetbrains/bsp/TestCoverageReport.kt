@@ -4,6 +4,6 @@ public data class TestCoverageReport (
         val lcovReportUri: String
 ) {
     companion object {
-        const val TaskProgressDataKind = "coverage-report"
+        const val DATA_KIND = "coverage-report"
     }
 }

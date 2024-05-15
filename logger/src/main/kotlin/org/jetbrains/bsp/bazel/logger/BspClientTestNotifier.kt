@@ -55,20 +55,6 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
   }
 
   /**
-   * Notifies the client of an available coverage report file.
-   *
-   * @param taskId         TaskId of the task that produced the coverage report
-   * @param lcovReportPath full path path to the coverage report file
-   */
-  fun sendCoverageReport(taskId: TaskId, lcovReportPath: String) {
-    val taskProgressParams = TaskProgressParams(taskId)
-    taskProgressParams.originId = originId
-    taskProgressParams.dataKind = TestCoverageReport.TaskProgressDataKind
-    taskProgressParams.data = TestCoverageReport(lcovReportPath)
-    bspClient.onBuildTaskProgress(taskProgressParams)
-  }
-
-  /**
    * Notifies the client about beginning the testing procedure
    *
    * @param targetIdentifier identifier of the testing target being executed

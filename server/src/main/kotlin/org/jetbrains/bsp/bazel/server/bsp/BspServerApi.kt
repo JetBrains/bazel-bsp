@@ -49,6 +49,7 @@ import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.JoinedBuildServer
+import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.JvmBinaryJarsParams
 import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.MobileInstallParams
@@ -61,14 +62,14 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import java.util.concurrent.CompletableFuture
 
-class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServices) : JoinedBuildServer {
+class BspServerApi(private val bazelServicesBuilder: (JoinedBuildClient) -> BazelServices) : JoinedBuildServer {
 
   private lateinit var serverLifetime: BazelBspServerLifetime
   private lateinit var runner: BspRequestsRunner
   private lateinit var projectSyncService: ProjectSyncService
   private lateinit var executeService: ExecuteService
 
-  fun init(client: BuildClient) {
+  fun init(client: JoinedBuildClient) {
     val serverContainer = bazelServicesBuilder(client)
 
     this.serverLifetime = serverContainer.serverLifetime
