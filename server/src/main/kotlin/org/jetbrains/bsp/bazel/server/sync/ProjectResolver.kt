@@ -78,10 +78,6 @@ class ProjectResolver(
         emptyList()
     val rootTargets = buildAspectResult.bepOutput.rootTargets().let { formatTargetsIfNeeded(it, targets) }
 
-    // DUPA
-    val log = LogManager.getLogger(ProjectResolver::class.java)
-    log.info("Root targets: $rootTargets")
-    log.info("Targets: $targets")
     return measured(
       "Mapping to internal model"
     ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }

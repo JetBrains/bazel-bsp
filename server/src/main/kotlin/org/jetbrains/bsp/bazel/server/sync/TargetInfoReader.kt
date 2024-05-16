@@ -14,7 +14,7 @@ class TargetInfoReader {
     fun readTargetMapFromAspectOutputs(files: Set<Path>): Map<Label, TargetInfo> {
         return runBlocking(Dispatchers.Default) {
             files.map { file -> async { readFromFile(file) } }.awaitAll()
-        }.groupBy { Label.parse(it.id) }
+        }.groupBy { it.id }
             // If any aspect has already been run on the build graph, it created shadow graph
             // containing new nodes of the same labels as the original ones. In particular,
             // this happens for all protobuf targets, for which a built-in aspect "bazel_java_proto_aspect"
@@ -23,6 +23,7 @@ class TargetInfoReader {
             // entity-per-label. As long as we don't have it, in case of a conflict we just take the entity
             // that contains JvmTargetInfo as currently it's the most important one for us.
             .mapValues { it.value.find(TargetInfo::hasJvmTargetInfo) ?: it.value.first() }
+            .mapKeys { Label.parse(it.key) }
     }
 
     private fun readFromFile(file: Path): TargetInfo {

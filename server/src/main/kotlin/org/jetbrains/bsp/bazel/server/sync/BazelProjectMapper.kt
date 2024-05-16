@@ -123,11 +123,6 @@ class BazelProjectMapper(
     }
     val allModules = mergedModulesFromBazel + rustExternalModules
 
-    // DUPA
-    val log = LogManager.getLogger(BazelProjectMapper::class.java)
-    log.info("All modules: $allModules")
-    log.info("All libraries: $librariesToImport")
-    log.info("All invalid targets: $invalidTargets")
     return Project(
       workspaceRoot,
       allModules.toList(),
@@ -393,9 +388,11 @@ class BazelProjectMapper(
     return setOf(Language.JAVA, Language.KOTLIN, Language.SCALA, Language.ANDROID).containsAll(languages)
   }
 
+  private val replacementRegex = "[^0-9a-zA-Z]".toRegex()
+
   private fun syntheticLabel(lib: String): Label {
     val shaOfPath = Hashing.sha256().hashString(lib, StandardCharsets.UTF_8) // just in case of a conflict in filename
-    return Label.parse(Paths.get(lib).fileName.toString().replace("[^0-9a-zA-Z]".toRegex(), "-") + "-" + shaOfPath)
+    return Label.parse(Paths.get(lib).fileName.toString().replace(replacementRegex, "-") + "-" + shaOfPath)
   }
 
   private fun createLibraries(targets: Map<Label, TargetInfo>): Map<Label, Library> {

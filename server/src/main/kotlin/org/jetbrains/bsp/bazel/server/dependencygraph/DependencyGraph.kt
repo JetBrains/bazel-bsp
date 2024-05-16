@@ -57,17 +57,24 @@ class DependencyGraph(
                 idToDirectDependenciesIds[it].orEmpty()
             }.toSet()
 
-    fun allTargetsAtDepth(depth: Int, targets: Set<Label>): Set<TargetInfo> =
-            if (depth < 0)
-                idsToTargetInfo(targets) + calculateStrictlyTransitiveDependencies(targets)
-            else
-                allTargetsAtDepth(depth, setOf(), targets)
+    fun allTargetsAtDepth(depth: Int, targets: Set<Label>): Set<TargetInfo> {
+      if (depth < 0) {
+        return idsToTargetInfo(targets) + calculateStrictlyTransitiveDependencies(targets)
+      }
 
-    private tailrec fun allTargetsAtDepth(depth: Int, searched: Set<TargetInfo>, targets: Set<Label>): Set<TargetInfo> =
-            if (depth == 0)
-                searched + idsToTargetInfo(targets)
-            else
-                allTargetsAtDepth(depth - 1, searched + idsToTargetInfo(targets), directDependenciesIds(targets))
+      var currentDepth = depth
+      val searched: MutableSet<TargetInfo> = mutableSetOf()
+      var currentTargets = targets
+
+      while (currentDepth > 0) {
+        searched.addAll(idsToTargetInfo(currentTargets))
+        currentTargets = directDependenciesIds(currentTargets)
+        currentDepth--
+      }
+
+      searched.addAll(idsToTargetInfo(currentTargets))
+      return searched
+    }
 
     fun transitiveDependenciesWithoutRootTargets(targetId: Label): Set<TargetInfo> =
             idToTargetInfo[targetId]?.let(::getDependencies).orEmpty()

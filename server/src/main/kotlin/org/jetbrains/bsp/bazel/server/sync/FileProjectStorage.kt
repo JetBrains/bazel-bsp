@@ -15,11 +15,10 @@ import java.nio.file.Path
 
 class FileProjectStorage(private val path: Path, private val logger: BspClientLogger) :
     ProjectStorage {
-
     private val mapper = jacksonMapperBuilder().addModules(
         SimpleModule().apply {
-            addKeySerializer(Label::class.java, LabelSerializer())
-            addKeyDeserializer(Label::class.java, LabelKeyDeserializer())
+//            addKeySerializer(Label::class.java, LabelSerializer())
+//            addKeyDeserializer(Label::class.java, LabelKeyDeserializer())
         }
     ).build()
 
@@ -27,7 +26,7 @@ class FileProjectStorage(private val path: Path, private val logger: BspClientLo
         bspInfo.bazelBspDir().resolve("project-cache.json"), logger
     )
 
-    override fun load(): Project? = path.takeIf(Files::exists)?.let { read() }
+    override fun load(): Project? = null
 
     private fun read(): Project = logger.timed<Project>(
         "Loading project from local cache"
@@ -44,11 +43,5 @@ class FileProjectStorage(private val path: Path, private val logger: BspClientLo
     override fun store(project: Project) = logger.timed(
         "Saving project to local cache"
     ) {
-        try {
-            mapper.writeValue(path.toFile(), project)
-        } catch (e: IOException) {
-            logger.error(e.toString())
-            throw RuntimeException(e)
-        }
     }
 }
