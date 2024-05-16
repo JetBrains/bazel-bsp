@@ -184,7 +184,7 @@ class BazelBspServer(
   fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<BuildClient> {
     val bspServerApi = BspServerApi { client: BuildClient ->
       val bspClientLogger = BspClientLogger(client)
-      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot)
+      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot, bspInfo.bazelBspDir().toString())
       val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =
