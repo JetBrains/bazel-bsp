@@ -386,7 +386,7 @@ class BazelProjectMapper(
   }
 
   private fun syntheticLabel(lib: String): String {
-    val shaOfPath = Hashing.sha256().hashString(lib, StandardCharsets.UTF_8) // just in case of a conflict in filename
+    val shaOfPath = Hashing.sha256().hashString(lib, StandardCharsets.UTF_8).toString().take(7) // just in case of a conflict in filename
     return Paths.get(lib).fileName.toString().replace("[^0-9a-zA-Z]".toRegex(), "-") + "-" + shaOfPath
   }
 
@@ -520,7 +520,8 @@ class BazelProjectMapper(
     extraLibraries: Collection<Library>,
   ): Module {
     val label = Label(target.id)
-    val directDependencies = resolveDirectDependencies(target) + extraLibraries.map { Label(it.label) }
+    // extra libraries can override some library versions, so they should be put before
+    val directDependencies = extraLibraries.map { Label(it.label) } + resolveDirectDependencies(target)
     val languages = inferLanguages(target)
     val tags = targetKindResolver.resolveTags(target)
     val baseDirectory = label.toDirectoryUri()
