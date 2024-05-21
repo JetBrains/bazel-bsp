@@ -44,7 +44,7 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
    */
   fun finishTest(displayName: String?, taskId: TaskId, status: TestStatus?, message: String?, dataKind: String? = null, data: Any? = null) {
     val testFinish = TestFinish(displayName, status)
-    if (testFinish.message != null) {
+    if (message != null) {
       testFinish.message = message
     }
 
