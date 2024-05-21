@@ -22,14 +22,14 @@ kt_jvm_library(
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/paths",
         "@bazel_bep//jar",
         "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_xml",
+        "@maven//:com_fasterxml_jackson_module_jackson_module_kotlin",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:io_grpc_grpc_stub",
         "@maven//:org_apache_logging_log4j_log4j_api",
         "@maven//:org_apache_logging_log4j_log4j_core",
-        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
-        "@maven//:com_fasterxml_jackson_core_jackson_databind",
-        "@maven//:com_fasterxml_jackson_module_jackson_module_kotlin",
-        "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_xml"
     ],
 )
