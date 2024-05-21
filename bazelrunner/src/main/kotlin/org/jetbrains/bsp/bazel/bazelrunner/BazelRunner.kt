@@ -1,16 +1,20 @@
 package org.jetbrains.bsp.bazel.bazelrunner
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.repositoryOverride
+import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.extraFlags
+import java.lang.ProcessBuilder.Redirect
 import java.nio.file.Path
 
 class BazelRunner private constructor(
     private val workspaceContextProvider: WorkspaceContextProvider,
     private val bspClientLogger: BspClientLogger,
     val workspaceRoot: Path?,
+    val bazelBspRoot: String
 ) {
 
     companion object {
@@ -21,8 +25,9 @@ class BazelRunner private constructor(
             workspaceContextProvider: WorkspaceContextProvider,
             bspClientLogger: BspClientLogger,
             workspaceRoot: Path?,
+            bazelBspRoot: String
         ): BazelRunner {
-            return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot)
+            return BazelRunner(workspaceContextProvider, bspClientLogger, workspaceRoot, bazelBspRoot)
         }
     }
 
@@ -64,8 +69,9 @@ class BazelRunner private constructor(
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
         val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
+        val defaultFlags = listOf(repositoryOverride(Constants.ASPECT_REPOSITORY, bazelBspRoot))
         val processArgs =
-            listOf(bazel(workspaceContext)) + command + usedBuildFlags + flags + arguments
+            listOf(bazel(workspaceContext)) + command + usedBuildFlags + defaultFlags + flags + arguments
         logInvocation(processArgs, environment, originId)
         val processBuilder = ProcessBuilder(processArgs)
         processBuilder.environment() += environment

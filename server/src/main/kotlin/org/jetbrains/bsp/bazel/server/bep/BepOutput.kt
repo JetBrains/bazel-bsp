@@ -19,15 +19,15 @@ class BepOutput(
         }
         val result = HashSet<Path>(rootIds.size)
         val toVisit = Queues.newArrayDeque(rootIds)
-        val visited = HashSet<String>(rootIds.size)
+        val visited = HashSet<String>(rootIds)
         while (!toVisit.isEmpty()) {
             val fileSetId = toVisit.remove()
             val fileSet = textProtoFileSets[fileSetId]
             result.addAll(fileSet!!.files)
-            visited.add(fileSetId)
             val children = fileSet.children
-            children.filter { child: String -> !visited.contains(child) }
-                .forEach { e: String -> toVisit.add(e) }
+            children.asSequence()
+                .filter { child: String -> !visited.contains(child) }
+                .forEach { e: String -> visited.add(e); toVisit.add(e) }
         }
         return result
     }

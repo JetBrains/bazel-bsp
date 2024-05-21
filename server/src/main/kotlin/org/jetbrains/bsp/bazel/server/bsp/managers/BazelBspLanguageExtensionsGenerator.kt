@@ -3,9 +3,13 @@ package org.jetbrains.bsp.bazel.server.bsp.managers
 import org.apache.velocity.app.VelocityEngine
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
 import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.server.bsp.utils.FileUtils.writeIfDifferent
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Properties
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 enum class Language(private val fileName: String, val ruleNames: List<String>, val functions: List<String>, val isTemplate: Boolean) {
@@ -95,6 +99,6 @@ class BazelBspLanguageExtensionsGenerator(internalAspectsResolver: InternalAspec
 
   private fun createNewExtensionsFile(fileContent: String) {
     val file = aspectsPath.resolve("extensions.bzl")
-    file.writeText(fileContent)
+    file.writeIfDifferent(fileContent)
   }
 }

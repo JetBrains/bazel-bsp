@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server.bsp.managers
 
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
+import org.jetbrains.bsp.bazel.server.bsp.utils.FileUtils.writeIfDifferent
 import java.io.StringWriter
 import java.nio.file.Path
 import java.util.*
@@ -28,6 +29,6 @@ class TemplateWriter(private val resourcePath: Path) {
     variableMap.entries.forEach { context.put(it.key, it.value) }
     val writer = StringWriter()
     template.merge(context, writer)
-    outputFile.writeText(writer.toString())
+    outputFile.writeIfDifferent(writer.toString())
   }
 }
