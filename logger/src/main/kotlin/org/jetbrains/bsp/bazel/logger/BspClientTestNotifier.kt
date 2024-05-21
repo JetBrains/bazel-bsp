@@ -31,6 +31,7 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
     bspClient.onBuildTaskStart(taskStartParams)
   }
 
+
   /**
    * Notifies the client about finishing a single test or a test suite
    *
@@ -43,7 +44,10 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
    */
   fun finishTest(displayName: String?, taskId: TaskId, status: TestStatus?, message: String?, dataKind: String? = null, data: Any? = null) {
     val testFinish = TestFinish(displayName, status)
-    testFinish.message = message
+    if (testFinish.message != null) {
+      testFinish.message = message
+    }
+
     if (dataKind != null && data != null) {
       testFinish.dataKind = dataKind
       testFinish.data = data

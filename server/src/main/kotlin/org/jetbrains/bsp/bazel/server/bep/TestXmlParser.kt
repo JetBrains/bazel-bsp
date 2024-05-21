@@ -1,7 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bep
 
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
-import org.jetbrains.bsp.TestSuiteTestFinishData
 import org.jetbrains.bsp.TestCaseTestFinishData
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -24,6 +23,7 @@ data class TestSuites(
 )
 
 data class TestSuite(
+    // Individual test cases are grouped within a suite.
     @JacksonXmlProperty(isAttribute = true)
     val name: String,
     @JacksonXmlProperty(isAttribute = true)
@@ -53,15 +53,19 @@ data class TestSuite(
 )
 
 data class TestCase(
+    // Name of the test case, typically method name.
     @JacksonXmlProperty(isAttribute = true)
     val name: String,
 
+    // Class name corresponding to the test case.
     @JacksonXmlProperty(isAttribute = true)
     val classname: String,
 
+    // Time value included with the test case.
     @JacksonXmlProperty(isAttribute = true)
     val time: Double,
 
+    // One of the following will be included if test did not pass.
     @JacksonXmlProperty(localName = "error")
     val error: TestResultDetail? = null,
 
@@ -75,15 +79,19 @@ data class TestCase(
 // This is a regular class due to limitations deserializing plain xml tag contents.
 // https://github.com/FasterXML/jackson-dataformat-xml/issues/615
 class TestResultDetail() {
+    // Shortened error message, as provided by the test framework.
     @JacksonXmlProperty(isAttribute = true)
     var message: String? = null
 
+    // Error type information.
+    // This typically gives the class name of the error, but may be absent or used for a similar alternative value.
     @JacksonXmlProperty(isAttribute = true)
-    var type: String?  = null
+    var type: String? = null
 
+    // Content between the tags, which typically includes the full error stack trace.
     @JacksonXmlText(value = true)
     @JacksonXmlProperty(localName = "")
-    var content: String?  = null
+    var content: String? = null
 }
 
 class TestXmlParser(private var parentId: TaskId, private var bspClientTestNotifier: BspClientTestNotifier) {
@@ -99,22 +107,32 @@ class TestXmlParser(private var parentId: TaskId, private var bspClientTestNotif
         }
     }
 
+    /**
+     * Deserialize the given test report into the TestSuites type as defined above.
+     */
     private fun parseTestXml(uri: String): TestSuites {
         val xmlMapper = XmlMapper().apply {
             registerKotlinModule()
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
 
-        val fileUri = URI.create(uri)
-        val testSuites: TestSuites = xmlMapper.readValue(File(fileUri), TestSuites::class.java)
+        var rawContent = File(URI.create(uri)).readText()
+        // Single empty tag does not deserialize properly, replace with empty pair.
+        rawContent = rawContent.replace("<skipped />", "<skipped></skipped>")
+        val testSuites: TestSuites = xmlMapper.readValue(rawContent, TestSuites::class.java)
         return testSuites
     }
 
+    /**
+     * Convert each TestSuite into a series of taskStart and taskFinish notification to the client.
+     * The parents field in each notification's TaskId will be used to indicate the parent-child relationship.
+     * @param suite TestSuite to be processed.
+     */
     private fun processSuite(suite: TestSuite) {
         val suiteTaskId = TaskId(UUID.randomUUID().toString())
         suiteTaskId.parents = listOf(parentId.id)
 
-        val suiteData = TestSuiteTestFinishData(suite.name, suite.pkg, null, null)
+        val suiteData = TestCaseTestFinishData(suite.time, null, suite.pkg, suite.systemErr.toString(), null)
         val suiteStatus = when {
             suite.failures > 0 -> TestStatus.FAILED
             suite.errors > 0 -> TestStatus.FAILED
@@ -123,44 +141,54 @@ class TestXmlParser(private var parentId: TaskId, private var bspClientTestNotif
 
         bspClientTestNotifier.startTest(suite.name, suiteTaskId)
         suite.testcase.forEach { case ->
-            processTestCase(suiteTaskId.id, case)
+            processTestCase(suite, suiteTaskId.id, case)
         }
-        bspClientTestNotifier.finishTest(suite.name, suiteTaskId, suiteStatus, suite.systemOut.toString(), TestSuiteTestFinishData.DATA_KIND, suiteData)
+        bspClientTestNotifier.finishTest(suite.name, suiteTaskId, suiteStatus, suite.systemOut.toString(), TestCaseTestFinishData.DATA_KIND, suiteData)
     }
 
-    private fun processTestCase(parentId: String, case: TestCase) {
+    /**
+     * Convert a TestCase into a taskStart and taskFinish notification to the client.
+     * The test case will be associated with its parent suite.
+     * @param parentSuite TestSuite to which this test case belongs.
+     * @param parentId String identifying the parent's TaskId. Used to indicate the proper tree structure.
+     * @param testCase TestCase to be processed and sent to the client.
+     */
+    private fun processTestCase(parentSuite: TestSuite, parentId: String, testCase: TestCase) {
         val testCaseTaskId = TaskId(UUID.randomUUID().toString())
         testCaseTaskId.parents = listOf(parentId)
 
+        // Extract the error summary message.
         val outcomeMessage = when {
-            case.error != null -> case.error.message
-            case.failure != null -> case.failure.message
-            case.skipped != null -> case.skipped.message
+            testCase.error != null -> testCase.error.message
+            testCase.failure != null -> testCase.failure.message
+            testCase.skipped != null -> testCase.skipped.message
             else -> null
         }
 
+        // Extract the full error message content.
         val fullOutput = when {
-            case.error != null -> case.error.content
-            case.failure != null -> case.failure.content
-            case.skipped != null -> case.skipped.content
+            testCase.error != null -> testCase.error.content
+            testCase.failure != null -> testCase.failure.content
+            testCase.skipped != null -> testCase.skipped.content
             else -> ""
         }
 
+        // Map the outcome into a TestStatus value.
         val testStatusOutcome = when {
-            case.error != null -> TestStatus.FAILED
-            case.failure != null -> TestStatus.FAILED
-            case.skipped != null -> TestStatus.SKIPPED
+            testCase.error != null -> TestStatus.FAILED
+            testCase.failure != null -> TestStatus.FAILED
+            testCase.skipped != null -> TestStatus.SKIPPED
             else -> TestStatus.PASSED
         }
 
+        // Extract error type information if provided.
         val errorType = when {
-            case.error != null -> case.error.type
-            case.failure != null -> case.failure.type
+            testCase.error != null -> testCase.error.type
+            testCase.failure != null -> testCase.failure.type
             else -> null
         }
-
-        val testCaseData = TestCaseTestFinishData(case.name, case.classname, case.time, fullOutput, errorType)
-        bspClientTestNotifier.startTest(case.name, testCaseTaskId)
-        bspClientTestNotifier.finishTest(case.name, testCaseTaskId, testStatusOutcome, outcomeMessage, TestCaseTestFinishData.DATA_KIND, testCaseData)
+        val testCaseData = TestCaseTestFinishData(testCase.time, testCase.classname, parentSuite.pkg, fullOutput, errorType)
+        bspClientTestNotifier.startTest(testCase.name, testCaseTaskId)
+        bspClientTestNotifier.finishTest(testCase.name, testCaseTaskId, testStatusOutcome, outcomeMessage, TestCaseTestFinishData.DATA_KIND, testCaseData)
     }
 }
