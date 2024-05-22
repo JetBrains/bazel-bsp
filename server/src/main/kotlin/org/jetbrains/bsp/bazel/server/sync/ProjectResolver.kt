@@ -77,7 +77,6 @@ class ProjectResolver(
       else
         emptyList()
     val rootTargets = buildAspectResult.bepOutput.rootTargets().let { formatTargetsIfNeeded(it, targets) }
-
     return measured(
       "Mapping to internal model"
     ) { bazelProjectMapper.createProject(targets, rootTargets.toSet(), allTargetNames, workspaceContext, bazelInfo) }

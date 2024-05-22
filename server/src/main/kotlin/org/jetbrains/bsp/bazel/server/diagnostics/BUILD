@@ -7,7 +7,7 @@ kt_jvm_library(
     deps = [
         "//bazelrunner",
         "//commons",
-        "@maven//:ch_epfl_scala_bsp4j",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/model",
+        "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

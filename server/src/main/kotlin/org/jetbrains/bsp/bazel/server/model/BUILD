@@ -5,9 +5,9 @@ kt_jvm_library(
     srcs = glob(["*.kt"]),
     visibility = ["//visibility:public"],
     deps = [
-            "//bazelrunner/src/main/kotlin/org/jetbrains/bsp/bazel/bazelrunner/utils",
-            "@maven//:ch_epfl_scala_bsp4j",
-                    "@maven//:com_fasterxml_jackson_core_jackson_annotations",
-                    "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "//bazelrunner/src/main/kotlin/org/jetbrains/bsp/bazel/bazelrunner/utils",
+        "@maven//:ch_epfl_scala_bsp4j",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
     ],
 )
