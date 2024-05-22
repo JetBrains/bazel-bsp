@@ -7,7 +7,6 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.model.LabelKeyDeserializer
-import org.jetbrains.bsp.bazel.server.model.LabelSerializer
 import org.jetbrains.bsp.bazel.server.model.Project
 import java.io.IOException
 import java.nio.file.Files
@@ -17,7 +16,6 @@ class FileProjectStorage(private val path: Path, private val logger: BspClientLo
     ProjectStorage {
     private val mapper = jacksonMapperBuilder().addModules(
         SimpleModule().apply {
-            addKeySerializer(Label::class.java, LabelSerializer())
             addKeyDeserializer(Label::class.java, LabelKeyDeserializer())
         }
     ).build()

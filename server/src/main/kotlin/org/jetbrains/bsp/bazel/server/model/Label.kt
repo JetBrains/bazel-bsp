@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.KeyDeserializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 
 @JvmInline
@@ -20,13 +21,6 @@ value class Label private constructor(@JsonValue val value: String) {
   companion object {
     fun parse(value: String): Label =
       Label(value.intern())
-  }
-}
-
-
-class LabelSerializer : StdSerializer<Label>(Label::class.java) {
-  override fun serialize(value: Label, gen: JsonGenerator, provider: SerializerProvider) {
-    gen.writeString(value.value)
   }
 }
 
