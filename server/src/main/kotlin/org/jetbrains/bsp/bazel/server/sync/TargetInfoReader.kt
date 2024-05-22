@@ -20,8 +20,11 @@ class TargetInfoReader {
             // is run. In order to correctly address this issue, we would have to provide separate
             // entities (TargetInfos) for each target and each ruleset (or language) instead of just
             // entity-per-label. As long as we don't have it, in case of a conflict we just take the entity
-            // that contains JvmTargetInfo as currently it's the most important one for us.
-            .mapValues { it.value.find(TargetInfo::hasJvmTargetInfo) ?: it.value.first() }
+            // that contains JvmTargetInfo as currently it's the most important one for us. Later, we sort by
+            // shortest size to get a stable result, which should be the default config.
+            .mapValues {
+                it.value.filter(TargetInfo::hasJvmTargetInfo).minByOrNull { targetInfo -> targetInfo.serializedSize } ?: it.value.first()
+            }
     }
 
     private fun readFromFile(file: Path): TargetInfo {
