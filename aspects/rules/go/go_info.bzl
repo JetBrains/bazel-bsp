@@ -13,7 +13,7 @@ def extract_go_info(target, ctx, **kwargs):
         sdk_home_path = sdk_home_path,
     )
 
-    return create_proto(target, ctx, go_target_info, "go_target_info"), None
+    return dict(go_target_info = go_target_info), None
 
 def _extract_sdk(ctx):
     go = go_context(ctx)
