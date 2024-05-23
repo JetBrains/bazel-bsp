@@ -19,17 +19,14 @@ object JVMLanguagePluginParser {
         else Paths.get("/").resolve(source.subpath(0, sourceRootEndIndex))
     }
 
-    private fun findPackage(source: Path, multipleLines: Boolean): String? {
-        val packages = File(source.toUri())
-            .useLines(block = ::findPackages)
-        return when {
-            packages.isEmpty() -> null
-            multipleLines -> packages.joinToString(".")
-            else -> packages.first()
+    private fun findPackage(source: Path, multipleLines: Boolean): String? = File(source.toUri()).useLines { lines ->
+        val packages = lines.mapNotNull {
+            PACKAGE_PATTERN.find(it)?.groups?.get(1)?.value
+        }
+        return if (multipleLines) {
+            packages.joinToString(".").takeIf { it.isNotEmpty() }
+        } else {
+            packages.firstOrNull()
         }
     }
-
-    private fun findPackages(lines: Sequence<String>): List<String> = lines.mapNotNull {
-        PACKAGE_PATTERN.find(it)?.groups?.get(1)?.value
-    }.toList()
 }

@@ -116,7 +116,7 @@ class BazelBspServer(
     val javaLanguagePlugin = JavaLanguagePlugin(workspaceContextProvider, bazelPathsResolver, jdkResolver)
     val scalaLanguagePlugin = ScalaLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val cppLanguagePlugin = CppLanguagePlugin(bazelPathsResolver)
-    val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin)
+    val kotlinLanguagePlugin = KotlinLanguagePlugin(javaLanguagePlugin, bazelPathsResolver)
     val thriftLanguagePlugin = ThriftLanguagePlugin(bazelPathsResolver)
     val pythonLanguagePlugin = PythonLanguagePlugin(bazelPathsResolver)
     val rustLanguagePlugin = RustLanguagePlugin(bazelPathsResolver)
@@ -187,7 +187,7 @@ class BazelBspServer(
   fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<BuildClient> {
     val bspServerApi = BspServerApi { client: BuildClient ->
       val bspClientLogger = BspClientLogger(client)
-      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot)
+      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot, bspInfo.bazelBspDir().toString())
       val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =

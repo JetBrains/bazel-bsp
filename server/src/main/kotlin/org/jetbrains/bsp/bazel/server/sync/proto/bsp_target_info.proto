@@ -59,12 +59,23 @@ message CppTargetInfo {
   bool link_shared = 4;
 }
 
+message KotlincPluginOption {
+  string plugin_id = 100;
+  string option_value = 200;
+}
+
+message KotlincPluginInfo {
+  repeated FileLocation plugin_jars = 100;
+  repeated KotlincPluginOption kotlinc_plugin_options = 200;
+}
+
 message KotlinTargetInfo {
-  string language_version = 1;
-  string api_version = 2;
-  repeated string associates = 3;
-  repeated string kotlinc_opts = 4;
-  repeated FileLocation stdlibs = 5;
+  string language_version = 100;
+  string api_version = 200;
+  repeated string associates = 300;
+  repeated string kotlinc_opts = 400;
+  repeated FileLocation stdlibs = 500;
+  repeated KotlincPluginInfo kotlinc_plugin_infos = 600;
 }
 
 message PythonTargetInfo {

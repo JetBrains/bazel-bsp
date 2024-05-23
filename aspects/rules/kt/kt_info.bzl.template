@@ -1,6 +1,6 @@
-load("@${ruleName}//kotlin/internal:defs.bzl", "KtJvmInfo")
+load("@${ruleName}//kotlin/internal:defs.bzl", "KtJvmInfo", "KtCompilerPluginInfo")
 load("@${ruleName}//kotlin/internal:opts.bzl", "KotlincOptions", "kotlinc_options_to_flags")
-load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_proto", "create_struct", "map", "file_location")
+load("//aspects:utils/utils.bzl", "convert_struct_to_dict", "create_struct", "map", "file_location", "filter_not_none", "log_warn")
 
 KOTLIN_TOOLCHAIN_TYPE = "@${ruleName}//kotlin/internal:kt_toolchain_type"
 
@@ -31,15 +31,54 @@ def extract_kotlin_info(target, ctx, **kwargs):
     stdlibs_files = kotlin_toolchain.jvm_stdlibs.compile_jars.to_list()
     stdlibs = map(file_location, stdlibs_files)
 
-    kotlin_info = dict(
+    # accumulate Kotlin compiler plugin info
+    plugins = getattr(ctx.rule.attr, "plugins", [])
+    kt_compiler_plugin_infos = filter_not_none([extract_kt_compiler_plugin_info(plugin) for plugin in plugins])
+
+    kotlin_target_info = create_struct(
         language_version = language_version,
         api_version = api_version,
         associates = associates_labels,
+        kotlinc_opts = kotlinc_options_to_flags(create_struct(**kotlinc_opts_dict)),
         stdlibs = stdlibs,
-        kotlinc_opts = kotlinc_options_to_flags(create_struct(**kotlinc_opts_dict))
+        kotlinc_plugin_infos = kt_compiler_plugin_infos,
     )
 
-    kotlin_target_info = create_struct(**kotlin_info)
-    info_file = create_proto(target, ctx, kotlin_target_info, "kotlin_target_info")
+    info_file = dict(kotlin_target_info = kotlin_target_info)
 
     return info_file, None
+
+def extract_kt_compiler_plugin_info(plugin):
+    if KtCompilerPluginInfo not in plugin:
+        return None
+
+    compiler_plugin_info = plugin[KtCompilerPluginInfo]
+
+    plugin_jars = filter_not_none([file_location(it) for it in compiler_plugin_info.classpath.to_list()])
+
+    raw_options = compiler_plugin_info.options
+    kt_compiler_plugin_options = filter_not_none([extract_kt_compiler_plugin_option(raw_option) for raw_option in raw_options])
+
+    return create_struct(
+        plugin_jars = plugin_jars,
+        kotlinc_plugin_options = kt_compiler_plugin_options,
+    )
+
+def extract_kt_compiler_plugin_option(option):
+    if type(option) != "struct":
+        log_warn("Kotlinc plugin option should be a struct")
+        log_warn(option)
+        return None
+
+    plugin_id = getattr(option, "id", "")
+    option_value = getattr(option, "value", "")
+
+    if not plugin_id or not option_value:
+        log_warn("Kotlinc plugin option should have plugin_id and option_value")
+        log_warn(option)
+        return None
+
+    return create_struct(
+        plugin_id = plugin_id,
+        option_value = option_value,
+    )

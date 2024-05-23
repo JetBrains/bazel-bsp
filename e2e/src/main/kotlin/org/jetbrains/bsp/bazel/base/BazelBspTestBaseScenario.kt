@@ -7,10 +7,10 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.bazel.install.Install
-import org.jetbrains.bsp.testkit.client.BasicTestClient
 import org.jetbrains.bsp.testkit.client.MockClient
 import org.jetbrains.bsp.testkit.client.TestClient
 import org.jetbrains.bsp.testkit.client.bazel.BazelJsonTransformer
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.name
 import kotlin.system.exitProcess
@@ -21,6 +21,8 @@ abstract class BazelBspTestBaseScenario {
   protected val workspaceDir = System.getenv("BIT_WORKSPACE_DIR")
 
   val targetPrefix = calculateTargetPrefix()
+
+  open fun additionalServerInstallArguments(): Array<String> = emptyArray()
 
   init {
     installServer()
@@ -43,11 +45,12 @@ abstract class BazelBspTestBaseScenario {
         "-d", workspaceDir,
         "-b", bazelBinary,
         "-t", "//...",
+        *additionalServerInstallArguments()
       )
     )
   }
 
-  protected fun processBazelOutput(vararg args: String): String {
+  private fun processBazelOutput(vararg args: String): String {
     val command = arrayOf<String>(bazelBinary, *args)
     val process = ProcessBuilder(*command).directory(Path(workspaceDir).toFile()).start()
     val output = process.inputStream.bufferedReader().readText().trim()
@@ -57,6 +60,27 @@ abstract class BazelBspTestBaseScenario {
       throw RuntimeException("Command '${command.joinToString(" ")}' failed with exit code $exitCode.\n$error")
     }
     return output
+  }
+
+  /**
+   * Bazelisk often fails to download Bazel on TeamCity because of network issues. Retry to reduce test flakiness.
+   */
+  private fun processBazelOutputWithDownloadRetry(vararg args: String): String {
+    var delayMs = 1000L
+    repeat(3) {
+      try {
+        return processBazelOutput(*args)
+      } catch (e: RuntimeException) {
+        val message = e.message
+        if (message == null || "could not download" !in message) {
+          throw e
+        }
+        log.warn("Failed to download Bazel. Retrying in $delayMs ms.")
+        Thread.sleep(delayMs)
+        delayMs *= 2
+      }
+    }
+    return processBazelOutput(*args)
   }
 
   fun executeScenario() {
@@ -77,52 +101,50 @@ abstract class BazelBspTestBaseScenario {
     }
   }
 
-  protected fun createTestkitClient(): TestClient {
-    log.info("Testing repo workspace path: $workspaceDir")
-    log.info("Creating TestClient...")
-
-    val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
-    val initializeBuildParams = InitializeBuildParams(
-      "BspTestClient", "1.0.0", "2.0.0", workspaceDir, capabilities
-    )
-
-    val bazelCache = Path(processBazelOutput("info", "execution_root"))
-    val bazelOutputBase = Path(processBazelOutput("info", "output_base"))
-
-    val bazelJsonTransformer = BazelJsonTransformer(
-      java.nio.file.Path.of(workspaceDir), bazelCache, bazelOutputBase
-    )
+  protected fun createTestkitClient(jvmClasspathReceiver: Boolean = false): TestClient {
+    val (initializeBuildParams, bazelJsonTransformer) = createTestClientParams(jvmClasspathReceiver)
 
     return TestClient(
-      java.nio.file.Path.of(workspaceDir),
+      Path.of(workspaceDir),
       initializeBuildParams,
       { s: String -> bazelJsonTransformer.transformJson(s) }
     ).also { log.info("Created TestClient done.") }
   }
 
   protected fun createBazelClient(): BazelTestClient {
-    log.info("Testing repo workspace path: $workspaceDir")
-    log.info("Creating TestClient...")
-
-    val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
-    val initializeBuildParams = InitializeBuildParams(
-      "BspTestClient", "1.0.0", "2.0.0", workspaceDir, capabilities
-    )
-
-    val bazelCache = Path(processBazelOutput("info", "execution_root"))
-    val bazelOutputBase = Path(processBazelOutput("info", "output_base"))
-
-    val bazelJsonTransformer = BazelJsonTransformer(
-      java.nio.file.Path.of(workspaceDir), bazelCache, bazelOutputBase
-    )
+    val (initializeBuildParams, bazelJsonTransformer) = createTestClientParams()
 
     return BazelTestClient(
-      java.nio.file.Path.of(workspaceDir),
+      Path.of(workspaceDir),
       initializeBuildParams,
       { s: String -> bazelJsonTransformer.transformJson(s) },
       MockClient(),
       JoinedBuildServer::class.java
     ).also { log.info("Created TestClient done.") }
+  }
+
+  private data class BazelTestClientParams(
+    val initializeBuildParams: InitializeBuildParams,
+    val bazelJsonTransformer: BazelJsonTransformer,
+  )
+
+  private fun createTestClientParams(jvmClasspathReceiver: Boolean = false): BazelTestClientParams {
+    log.info("Testing repo workspace path: $workspaceDir")
+    log.info("Creating TestClient...")
+
+    val capabilities = BuildClientCapabilities(listOf("java", "scala", "kotlin", "cpp"))
+    capabilities.jvmCompileClasspathReceiver = jvmClasspathReceiver
+    val initializeBuildParams = InitializeBuildParams(
+      "BspTestClient", "1.0.0", "2.0.0", workspaceDir, capabilities
+    )
+
+    val bazelCache = Path(processBazelOutputWithDownloadRetry("info", "execution_root"))
+    val bazelOutputBase = Path(processBazelOutput("info", "output_base"))
+
+    val bazelJsonTransformer = BazelJsonTransformer(
+      Path.of(workspaceDir), bazelCache, bazelOutputBase
+    )
+    return BazelTestClientParams(initializeBuildParams, bazelJsonTransformer)
   }
 
   private fun executeScenarioSteps(): Boolean = scenarioSteps().map { it.executeAndReturnResult() }.all { it }

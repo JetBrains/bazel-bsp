@@ -2,8 +2,8 @@ load("//aspects:utils/utils.bzl", "abs", "create_struct", "file_location", "get_
 load("//aspects:extensions.bzl", "EXTENSIONS", "TOOLCHAINS")
 
 def create_all_extension_info(target, ctx, output_groups, dep_targets):
-    info = [create_extension_info(target = target, ctx = ctx, output_groups = output_groups, dep_targets = dep_targets) for create_extension_info in EXTENSIONS]
-    return [(file, data) for file, data in info if file != None]
+    all_info = [create_extension_info(target = target, ctx = ctx, output_groups = output_groups, dep_targets = dep_targets) for create_extension_info in EXTENSIONS]
+    return [(info, exported_properties) for info, exported_properties in all_info if info != None]
 
 def _collect_target_from_attr(rule_attrs, attr_name, result):
     """Collects the targets from the given attr into the result."""
@@ -155,7 +155,7 @@ def _bsp_target_info_aspect_impl(target, ctx):
 
     aspect_ids = get_aspect_ids(ctx, target)
 
-    result = dict(
+    info = dict(
         id = str(target.label),
         kind = ctx.rule.kind,
         tags = rule_attrs.tags,
@@ -167,32 +167,27 @@ def _bsp_target_info_aspect_impl(target, ctx):
         env_inherit = getattr(rule_attrs, "env_inherit", []),
     )
 
-    extension_info = create_all_extension_info(target, ctx, output_groups, dep_targets)
-    extension_exported_properties = dict()
-    for (_, data) in extension_info:
-        if data != None:
-            extension_exported_properties.update(data)
-
-    info_files = [file for (file, _) in extension_info]
-    update_sync_output_groups(output_groups, "bsp-target-info", depset(info_files))
-
-    file_name = target.label.name
-    file_name = file_name + "-" + str(abs(hash(file_name)))
-    if aspect_ids:
-        file_name = file_name + "-" + str(abs(hash(".".join(aspect_ids))))
-    file_name = "%s.general" % file_name
-    file_name = "%s.bsp-info.textproto" % file_name
-    info_file = ctx.actions.declare_file(file_name)
-    ctx.actions.write(info_file, create_struct(**result).to_proto())
-    update_sync_output_groups(output_groups, "bsp-target-info", depset([info_file]))
-
     exported_properties = dict(
         id = target.label,
         kind = ctx.rule.kind,
         export_deps = export_deps,
         output_groups = output_groups,
-        **extension_exported_properties
     )
+
+    all_extension_info = create_all_extension_info(target, ctx, output_groups, dep_targets)
+    for (extension_info, extension_exported_properties) in all_extension_info:
+        info.update(extension_info)
+        if extension_exported_properties != None:
+            exported_properties.update(extension_exported_properties)
+
+    file_name = target.label.name
+    file_name = file_name + "-" + str(abs(hash(file_name)))
+    if aspect_ids:
+        file_name = file_name + "-" + str(abs(hash(".".join(aspect_ids))))
+    file_name = "%s.bsp-info.textproto" % file_name
+    info_file = ctx.actions.declare_file(file_name)
+    ctx.actions.write(info_file, create_struct(**info).to_proto())
+    update_sync_output_groups(output_groups, "bsp-target-info", depset([info_file]))
 
     return struct(
         bsp_info = struct(**exported_properties),
