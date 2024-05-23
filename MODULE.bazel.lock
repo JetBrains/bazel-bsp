@@ -2492,7 +2492,13 @@
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO"
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "gazelle~0.32.0",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "@@gazelle~0.32.0//internal/bzlmod:non_module_deps.bzl%non_module_deps": {
@@ -2519,7 +2525,13 @@
             }
           }
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "gazelle~0.32.0",
+            "bazel_gazelle_go_repository_cache",
+            "gazelle~0.32.0~non_module_deps~bazel_gazelle_go_repository_cache"
+          ]
+        ]
       }
     },
     "@@platforms//host:extension.bzl%host_platform": {
@@ -2883,7 +2895,13 @@
             }
           }
         },
-        "recordedRepoMappingEntries": []
+        "recordedRepoMappingEntries": [
+          [
+            "rules_go~0.41.0",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "@@rules_java~7.6.1//java:extensions.bzl%toolchains": {
