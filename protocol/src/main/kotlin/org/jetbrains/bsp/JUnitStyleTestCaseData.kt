@@ -1,6 +1,6 @@
 package org.jetbrains.bsp
 
-public data class TestCaseTestFinishData (
+public data class JUnitStyleTestCaseData (
         val time: Double,
         val className: String?,
         val pkg: String?,
@@ -8,6 +8,6 @@ public data class TestCaseTestFinishData (
         val errorType: String?,
 ) {
     companion object {
-        const val DATA_KIND = "test-finish-detail"
+        const val DATA_KIND = "junit-style-test-case-data"
     }
 }

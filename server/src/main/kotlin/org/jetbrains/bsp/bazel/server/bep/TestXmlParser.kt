@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bep
 
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
-import org.jetbrains.bsp.TestCaseTestFinishData
+import org.jetbrains.bsp.JUnitStyleTestCaseData
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
@@ -132,7 +132,7 @@ class TestXmlParser(private var parentId: TaskId, private var bspClientTestNotif
         val suiteTaskId = TaskId(UUID.randomUUID().toString())
         suiteTaskId.parents = listOf(parentId.id)
 
-        val suiteData = TestCaseTestFinishData(suite.time, null, suite.pkg, suite.systemErr.toString(), null)
+        val suiteData = JUnitStyleTestCaseData(suite.time, null, suite.pkg, suite.systemErr.toString(), null)
         val suiteStatus = when {
             suite.failures > 0 -> TestStatus.FAILED
             suite.errors > 0 -> TestStatus.FAILED
@@ -143,7 +143,7 @@ class TestXmlParser(private var parentId: TaskId, private var bspClientTestNotif
         suite.testcase.forEach { case ->
             processTestCase(suite, suiteTaskId.id, case)
         }
-        bspClientTestNotifier.finishTest(suite.name, suiteTaskId, suiteStatus, suite.systemOut.toString(), TestCaseTestFinishData.DATA_KIND, suiteData)
+        bspClientTestNotifier.finishTest(suite.name, suiteTaskId, suiteStatus, suite.systemOut.toString(), JUnitStyleTestCaseData.DATA_KIND, suiteData)
     }
 
     /**
@@ -187,8 +187,8 @@ class TestXmlParser(private var parentId: TaskId, private var bspClientTestNotif
             testCase.failure != null -> testCase.failure.type
             else -> null
         }
-        val testCaseData = TestCaseTestFinishData(testCase.time, testCase.classname, parentSuite.pkg, fullOutput, errorType)
+        val testCaseData = JUnitStyleTestCaseData(testCase.time, testCase.classname, parentSuite.pkg, fullOutput, errorType)
         bspClientTestNotifier.startTest(testCase.name, testCaseTaskId)
-        bspClientTestNotifier.finishTest(testCase.name, testCaseTaskId, testStatusOutcome, outcomeMessage, TestCaseTestFinishData.DATA_KIND, testCaseData)
+        bspClientTestNotifier.finishTest(testCase.name, testCaseTaskId, testStatusOutcome, outcomeMessage, JUnitStyleTestCaseData.DATA_KIND, testCaseData)
     }
 }
