@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "205562b1760581efdbeb57e92256a21f96be938e59a3b9ef3ac40bcbc8c5a0ff",
+  "moduleFileHash": "d185119026d126671b97795712522207deb54e7cb7302717ef725a4c920d06fb",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -129,7 +129,7 @@
                   "com.google.guava:guava:31.0.1-jre",
                   "ch.epfl.scala:bsp4j:2.2.0-M2",
                   "commons-io:commons-io:jar:2.16.1",
-                  "commons-cli:commons-cli:jar:1.7.0",
+                  "commons-cli:commons-cli:jar:1.8.0",
                   "org.apache.logging.log4j:log4j-api:2.23.1",
                   "org.apache.logging.log4j:log4j-core:2.23.1",
                   "org.apache.velocity:velocity-engine-core:2.3",
@@ -4190,7 +4190,7 @@
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
                 "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.1\", \"packaging\": \"jar\" }",
-                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.7.0\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.8.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
@@ -6548,7 +6548,7 @@
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
                 "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.1\", \"packaging\": \"jar\" }",
-                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.7.0\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.8.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
