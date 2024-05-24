@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "d185119026d126671b97795712522207deb54e7cb7302717ef725a4c920d06fb",
+  "moduleFileHash": "3d4bcca49f0075a17cc1db4745f357c247104770776722257dffb1ab3e5666ea",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -139,7 +139,7 @@
                   "org.slf4j:slf4j-nop:2.0.13",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1",
-                  "com.google.protobuf:protobuf-java:3.25.3",
+                  "com.google.protobuf:protobuf-java:4.27.0",
                   "io.grpc:grpc-stub:1.64.0",
                   "io.grpc:grpc-protobuf:1.64.0",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
@@ -3654,7 +3654,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "52c8b2f61a0880434fe0f92029f16ece986b09bc074fe17c77323c98f2a370c7",
+          "@@//:maven_install.json": "babe7b54ebbd386076731779640d69d409b74cc4420d17058046f70cf47748f5",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3886,20 +3886,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-reflect/1.9.23/kotlin-reflect-1.9.23.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-reflect/1.9.23/kotlin-reflect-1.9.23.jar"
-            }
-          },
-          "commons_cli_commons_cli_jar_sources_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_jar_sources_1_7_0",
-              "sha256": "7fc8f05ffe69cc18704e2eda2a9e3395f5e0ceeb64cbafbe2b13bb8587d9f120",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar",
-                "https://maven.google.com/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar",
-                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar"
-              ],
-              "downloaded_file_path": "commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar"
             }
           },
           "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_8_1": {
@@ -4200,7 +4186,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.13\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
+                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.27.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
@@ -4503,6 +4489,20 @@
               "downloaded_file_path": "com/google/cloud/google-cloud-core-grpc/2.22.0/google-cloud-core-grpc-2.22.0.jar"
             }
           },
+          "commons_cli_commons_cli_jar_sources_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_jar_sources_1_8_0",
+              "sha256": "84fc230333501d68996283f8de192558ae1a06c0e745c8c188360608be8c746a",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar",
+                "https://maven.google.com/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar",
+                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
+              ],
+              "downloaded_file_path": "commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
+            }
+          },
           "com_google_cloud_google_cloud_storage_2_26_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4554,20 +4554,6 @@
                 "https://maven.google.com/software/amazon/awssdk/utils/2.20.128/utils-2.20.128.jar"
               ],
               "downloaded_file_path": "software/amazon/awssdk/utils/2.20.128/utils-2.20.128.jar"
-            }
-          },
-          "commons_cli_commons_cli_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_1_7_0",
-              "sha256": "ef990c7522ed6caa06265e24317f29ce839f7702938e1aebe8187a0bac19c0d7",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar",
-                "https://maven.google.com/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar",
-                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar"
-              ],
-              "downloaded_file_path": "commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar"
             }
           },
           "io_netty_netty_resolver_4_1_94_Final": {
@@ -6558,7 +6544,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.13\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
+                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.27.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
@@ -6761,6 +6747,20 @@
                 "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
               ],
               "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
+            }
+          },
+          "commons_cli_commons_cli_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_1_8_0",
+              "sha256": "f94c98bbcfa1c1dac6956d6c3f494ec40265c67bf54ddefc95df4ffdd73ae6d5",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar",
+                "https://maven.google.com/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar",
+                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar"
+              ],
+              "downloaded_file_path": "commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar"
             }
           },
           "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22": {
