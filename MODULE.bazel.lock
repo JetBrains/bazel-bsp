@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "104e00df7b032086067fa40f3e4fec3b4cd32fa394d75938224c194cc583c4df",
+  "moduleFileHash": "ba716abb6d58863204670b73b7d44ef3d7f54a857c2fc8697ad504d433eced6c",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -129,7 +129,7 @@
                   "com.google.guava:guava:31.0.1-jre",
                   "ch.epfl.scala:bsp4j:2.2.0-M2",
                   "commons-io:commons-io:jar:2.16.1",
-                  "commons-cli:commons-cli:jar:1.7.0",
+                  "commons-cli:commons-cli:jar:1.8.0",
                   "org.apache.logging.log4j:log4j-api:2.23.1",
                   "org.apache.logging.log4j:log4j-core:2.23.1",
                   "org.apache.velocity:velocity-engine-core:2.3",
@@ -3655,7 +3655,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "beead8b4633a92e5dd9cf7637afdd8c351aef4b537b7a5e301117bbd873a5eb0",
+          "@@//:maven_install.json": "5ce354f01065c0052e7bf8868c1c0dd9cedba5bd46087b9b19acb342cc57cf74",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3887,20 +3887,6 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-reflect/1.9.23/kotlin-reflect-1.9.23.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-reflect/1.9.23/kotlin-reflect-1.9.23.jar"
-            }
-          },
-          "commons_cli_commons_cli_jar_sources_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_jar_sources_1_7_0",
-              "sha256": "7fc8f05ffe69cc18704e2eda2a9e3395f5e0ceeb64cbafbe2b13bb8587d9f120",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar",
-                "https://maven.google.com/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar",
-                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar"
-              ],
-              "downloaded_file_path": "commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar"
             }
           },
           "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_8_1": {
@@ -4205,7 +4191,7 @@
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
                 "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.1\", \"packaging\": \"jar\" }",
-                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.7.0\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.8.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
@@ -4519,6 +4505,20 @@
               "downloaded_file_path": "com/google/cloud/google-cloud-core-grpc/2.22.0/google-cloud-core-grpc-2.22.0.jar"
             }
           },
+          "commons_cli_commons_cli_jar_sources_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_jar_sources_1_8_0",
+              "sha256": "84fc230333501d68996283f8de192558ae1a06c0e745c8c188360608be8c746a",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar",
+                "https://maven.google.com/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar",
+                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
+              ],
+              "downloaded_file_path": "commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
+            }
+          },
           "com_google_cloud_google_cloud_storage_2_26_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4584,20 +4584,6 @@
                 "https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar"
               ],
               "downloaded_file_path": "com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar"
-            }
-          },
-          "commons_cli_commons_cli_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_1_7_0",
-              "sha256": "ef990c7522ed6caa06265e24317f29ce839f7702938e1aebe8187a0bac19c0d7",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar",
-                "https://maven.google.com/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar",
-                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar"
-              ],
-              "downloaded_file_path": "commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar"
             }
           },
           "io_netty_netty_resolver_4_1_94_Final": {
@@ -6648,7 +6634,7 @@
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.0.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
                 "{ \"group\": \"commons-io\", \"artifact\": \"commons-io\", \"version\": \"2.16.1\", \"packaging\": \"jar\" }",
-                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.7.0\", \"packaging\": \"jar\" }",
+                "{ \"group\": \"commons-cli\", \"artifact\": \"commons-cli\", \"version\": \"1.8.0\", \"packaging\": \"jar\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-api\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.logging.log4j\", \"artifact\": \"log4j-core\", \"version\": \"2.23.1\" }",
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
@@ -6862,6 +6848,20 @@
                 "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
               ],
               "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
+            }
+          },
+          "commons_cli_commons_cli_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_1_8_0",
+              "sha256": "f94c98bbcfa1c1dac6956d6c3f494ec40265c67bf54ddefc95df4ffdd73ae6d5",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar",
+                "https://maven.google.com/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar",
+                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar"
+              ],
+              "downloaded_file_path": "commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar"
             }
           },
           "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22": {
