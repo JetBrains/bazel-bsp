@@ -34,13 +34,17 @@ class DiagnosticsService(workspaceRoot: Path, private val hasAnyProblems: Mutabl
     }
 
     fun clearFormerDiagnostics(targetLabel: String): List<PublishDiagnosticsParams> {
-	    val docs = hasAnyProblems[targetLabel]
+        val docs = hasAnyProblems[targetLabel]
 	    hasAnyProblems.remove(targetLabel)
-        if (updatedInThisRun.isNotEmpty()) {
-            hasAnyProblems[targetLabel] = updatedInThisRun.map { it.textDocument }.toSet()
+        val toClear = if (updatedInThisRun.isNotEmpty()) {
+            val updatedDocs = updatedInThisRun.map { it.textDocument }.toSet()
+            hasAnyProblems[targetLabel] = updatedDocs
             updatedInThisRun.clear()
+            docs?.subtract(updatedDocs)
+        } else {
+            docs
         }
-	    return docs
+	    return toClear
 	      ?.map { PublishDiagnosticsParams(it, BuildTargetIdentifier(targetLabel), emptyList(), true)}
 	      .orEmpty()
 	}

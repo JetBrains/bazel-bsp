@@ -2,9 +2,10 @@ package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 
 class JdkVersionResolver {
-  private val versions = mutableMapOf<Path, Int?>()
+  private val versions = ConcurrentHashMap<Path, Int?>()
 
   fun resolve(path: Path): Int? =
       versions.computeIfAbsent(path.toRealPath()) { resolveJavaVersion(it) }

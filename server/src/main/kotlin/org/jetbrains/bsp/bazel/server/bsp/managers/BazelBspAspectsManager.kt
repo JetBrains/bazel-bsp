@@ -7,7 +7,6 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.repositoryOverride
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
@@ -50,7 +49,6 @@ class BazelBspAspectsManager(
   ): BazelBspAspectsManagerResult {
     if (targetSpecs.values.isEmpty()) return BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
     val defaultFlags = listOf(
-      repositoryOverride(Constants.ASPECT_REPOSITORY, aspectsResolver.bazelBspRoot),
       aspect(aspectsResolver.resolveLabel(aspect)),
       outputGroups(outputGroups),
       keepGoing(),

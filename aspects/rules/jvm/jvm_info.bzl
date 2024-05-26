@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "create_struct", "file_location", "is_external", "map", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "create_struct", "file_location", "is_external", "map", "update_sync_output_groups")
 
 def map_with_resolve_files(f, xs):
     results = []
@@ -162,7 +162,7 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
         jdeps = [file_location(j) for j in jdeps],
     )
 
-    return create_proto(target, ctx, info, "jvm_target_info"), None
+    return dict(jvm_target_info = info), None
 
 def get_jdeps(target):
     if JavaInfo in target:
