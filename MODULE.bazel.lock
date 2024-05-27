@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "d185119026d126671b97795712522207deb54e7cb7302717ef725a4c920d06fb",
+  "moduleFileHash": "ba716abb6d58863204670b73b7d44ef3d7f54a857c2fc8697ad504d433eced6c",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -139,6 +139,7 @@
                   "org.slf4j:slf4j-nop:2.0.13",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1",
+                  "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.4",
                   "com.google.protobuf:protobuf-java:3.25.3",
                   "io.grpc:grpc-stub:1.64.0",
                   "io.grpc:grpc-protobuf:1.64.0",
@@ -3654,7 +3655,7 @@
       "general": {
         "bzlTransitiveDigest": "s2W5ZcoLzoufYyLA8qfOeY8rbHOnaUuzhfEOfZpvZ1Q=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "52c8b2f61a0880434fe0f92029f16ece986b09bc074fe17c77323c98f2a370c7",
+          "@@//:maven_install.json": "5ce354f01065c0052e7bf8868c1c0dd9cedba5bd46087b9b19acb342cc57cf74",
           "@@rules_jvm_external~override//:rules_jvm_external_deps_install.json": "f7b381f38c8e0e8529fe2aac36898ccc9b2a7f38aa0fecf911924163437f1752"
         },
         "envVariables": {},
@@ -3888,20 +3889,6 @@
               "downloaded_file_path": "org/jetbrains/kotlin/kotlin-reflect/1.9.23/kotlin-reflect-1.9.23.jar"
             }
           },
-          "commons_cli_commons_cli_jar_sources_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_jar_sources_1_7_0",
-              "sha256": "7fc8f05ffe69cc18704e2eda2a9e3395f5e0ceeb64cbafbe2b13bb8587d9f120",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar",
-                "https://maven.google.com/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar",
-                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar"
-              ],
-              "downloaded_file_path": "commons-cli/commons-cli/1.7.0/commons-cli-1.7.0-sources.jar"
-            }
-          },
           "org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_jar_sources_1_8_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4064,6 +4051,20 @@
               "downloaded_file_path": "com/google/api/grpc/gapic-google-cloud-storage-v2/2.26.1-alpha/gapic-google-cloud-storage-v2-2.26.1-alpha.jar"
             }
           },
+          "com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_9_4",
+              "sha256": "0be378558c5323a867e360dd89bc50360c69f1b56663a4096d3690041af120b4",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar",
+                "https://maven.google.com/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4.jar"
+            }
+          },
           "io_grpc_grpc_api_jar_sources_1_64_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4200,6 +4201,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.13\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
+                "{ \"group\": \"com.fasterxml.jackson.dataformat\", \"artifact\": \"jackson-dataformat-xml\", \"version\": \"2.9.4\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
@@ -4503,6 +4505,20 @@
               "downloaded_file_path": "com/google/cloud/google-cloud-core-grpc/2.22.0/google-cloud-core-grpc-2.22.0.jar"
             }
           },
+          "commons_cli_commons_cli_jar_sources_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_jar_sources_1_8_0",
+              "sha256": "84fc230333501d68996283f8de192558ae1a06c0e745c8c188360608be8c746a",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar",
+                "https://maven.google.com/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar",
+                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
+              ],
+              "downloaded_file_path": "commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
+            }
+          },
           "com_google_cloud_google_cloud_storage_2_26_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4556,18 +4572,18 @@
               "downloaded_file_path": "software/amazon/awssdk/utils/2.20.128/utils-2.20.128.jar"
             }
           },
-          "commons_cli_commons_cli_1_7_0": {
+          "com_fasterxml_jackson_dataformat_jackson_dataformat_xml_jar_sources_2_9_4": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_1_7_0",
-              "sha256": "ef990c7522ed6caa06265e24317f29ce839f7702938e1aebe8187a0bac19c0d7",
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_dataformat_jackson_dataformat_xml_jar_sources_2_9_4",
+              "sha256": "bb6c046143b982b1fa54cf35faf30af953e86e2b52f84c1542b593316429bd04",
               "urls": [
-                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar",
-                "https://maven.google.com/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar",
-                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar"
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar"
               ],
-              "downloaded_file_path": "commons-cli/commons-cli/1.7.0/commons-cli-1.7.0.jar"
+              "downloaded_file_path": "com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4-sources.jar"
             }
           },
           "io_netty_netty_resolver_4_1_94_Final": {
@@ -4787,6 +4803,20 @@
               "downloaded_file_path": "com/google/http-client/google-http-client-apache-v2/1.43.3/google-http-client-apache-v2-1.43.3.jar"
             }
           },
+          "com_fasterxml_woodstox_woodstox_core_5_0_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_woodstox_woodstox_core_5_0_3",
+              "sha256": "a1c04b64fbfe20ae9f2c60a3bf1633fed6688ae31935b6bd4a457a1bbb2e82d4",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar",
+                "https://maven.google.com/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar"
+            }
+          },
           "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_3": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4946,6 +4976,20 @@
               "downloaded_file_path": "io/grpc/grpc-stub/1.64.0/grpc-stub-1.64.0.jar"
             }
           },
+          "com_fasterxml_jackson_dataformat_jackson_dataformat_xml_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_dataformat_jackson_dataformat_xml_2_9_4",
+              "sha256": "512a96d82a2030a3fffc8e867c66e5f336f1944f5e0f257f221c60e6ff2afeca",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar",
+                "https://maven.google.com/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.9.4/jackson-dataformat-xml-2.9.4.jar"
+            }
+          },
           "com_google_api_grpc_proto_google_cloud_storage_v2_2_26_1_alpha": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5092,6 +5136,20 @@
               "downloaded_file_path": "io/netty/netty-transport-classes-epoll/4.1.94.Final/netty-transport-classes-epoll-4.1.94.Final.jar"
             }
           },
+          "org_codehaus_woodstox_stax2_api_jar_sources_3_1_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_codehaus_woodstox_stax2_api_jar_sources_3_1_4",
+              "sha256": "2c36141117b83f63b5dded35f490c7b501a472fe60c60ecf02ed9e9954ef28b9",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar",
+                "https://maven.google.com/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar",
+                "https://repo1.maven.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar"
+              ],
+              "downloaded_file_path": "org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4-sources.jar"
+            }
+          },
           "org_junit_jupiter_junit_jupiter_params_5_10_2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5118,6 +5176,20 @@
                 "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
               ],
               "downloaded_file_path": "org/junit/platform/junit-platform-reporting/1.10.2/junit-platform-reporting-1.10.2-sources.jar"
+            }
+          },
+          "com_fasterxml_woodstox_woodstox_core_jar_sources_5_0_3": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_woodstox_woodstox_core_jar_sources_5_0_3",
+              "sha256": "d515c11b586b29da98c6359bbf0fd0eedfe5251b70626b28ca3f553e1c9061d9",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar",
+                "https://maven.google.com/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3-sources.jar"
             }
           },
           "io_grpc_grpc_alts_1_56_1": {
@@ -5199,6 +5271,20 @@
                 "https://repo1.maven.org/maven2/io/kotest/kotest-common-jvm/5.9.0/kotest-common-jvm-5.9.0.jar"
               ],
               "downloaded_file_path": "io/kotest/kotest-common-jvm/5.9.0/kotest-common-jvm-5.9.0.jar"
+            }
+          },
+          "org_codehaus_woodstox_stax2_api_3_1_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~org_codehaus_woodstox_stax2_api_3_1_4",
+              "sha256": "86d7c0b775a7c9b454cc6ba61d40a8eb3b99cc129f832eb9b977a3755b4b338e",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar",
+                "https://maven.google.com/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar",
+                "https://repo1.maven.org/maven2/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar"
+              ],
+              "downloaded_file_path": "org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar"
             }
           },
           "com_google_cloud_google_cloud_core_http_2_22_0": {
@@ -6558,6 +6644,7 @@
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"2.0.13\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
+                "{ \"group\": \"com.fasterxml.jackson.dataformat\", \"artifact\": \"jackson-dataformat-xml\", \"version\": \"2.9.4\" }",
                 "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
@@ -6763,6 +6850,20 @@
               "downloaded_file_path": "org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
             }
           },
+          "commons_cli_commons_cli_1_8_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~commons_cli_commons_cli_1_8_0",
+              "sha256": "f94c98bbcfa1c1dac6956d6c3f494ec40265c67bf54ddefc95df4ffdd73ae6d5",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar",
+                "https://maven.google.com/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar",
+                "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar"
+              ],
+              "downloaded_file_path": "commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar"
+            }
+          },
           "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6816,6 +6917,20 @@
                 "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1-sources.jar"
               ],
               "downloaded_file_path": "org/jetbrains/kotlinx/kotlinx-coroutines-test/1.8.1/kotlinx-coroutines-test-1.8.1-sources.jar"
+            }
+          },
+          "com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar_sources_2_9_4": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~override~maven~com_fasterxml_jackson_module_jackson_module_jaxb_annotations_jar_sources_2_9_4",
+              "sha256": "d2c69eeca8c450be8370150fd3c77f99e8f54f32888ae34c1bc32e47aa07828f",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar",
+                "https://maven.google.com/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar",
+                "https://repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar"
+              ],
+              "downloaded_file_path": "com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.9.4/jackson-module-jaxb-annotations-2.9.4-sources.jar"
             }
           },
           "com_google_api_grpc_proto_google_common_protos_jar_sources_2_29_0": {
@@ -7143,6 +7258,706 @@
             "rules_kotlin~1.9.5",
             "bazel_tools",
             "bazel_tools"
+          ]
+        ]
+      }
+    },
+    "@@rules_python~0.32.2//python/extensions:pip.bzl%pip": {
+      "os:linux,arch:amd64": {
+        "bzlTransitiveDigest": "hCBgmIuwtHbxPEudbdhcptPCcGxNzGWNWx03hUMBH54=",
+        "accumulatedFileDigests": {
+          "@@rules_python~0.32.2//tools/publish:requirements.txt": "8ced1e640eab3ee44298590e5ad88cd612f5bf96245af1981709f7a8884a982b"
+        },
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "rules_python_publish_deps_311_keyring": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_keyring",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "keyring-23.13.1-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "keyring==23.13.1",
+              "sha256": "771ed2a91909389ed6148631de678f82ddc73737d85a927f382a8a1b157898cd",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/62/db/0e9a09b2b95986dcd73ac78be6ed2bd73ebe8bac65cba7add5b83eb9d899/keyring-23.13.1-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_more_itertools": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_more_itertools",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "more_itertools-9.0.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "more-itertools==9.0.0",
+              "sha256": "250e83d7e81d0c87ca6bd942e6aeab8cc9daa6096d12c5308f3f92fa5e5c1f41",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/5d/87/1ec3fcc09d2c04b977eabf8a1083222f82eaa2f46d5a4f85f403bf8e7b30/more_itertools-9.0.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_rich": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_rich",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "rich-13.2.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "rich==13.2.0",
+              "sha256": "7c963f0d03819221e9ac561e1bc866e3f95a02248c1234daa48954e6d381c003",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/0e/cf/a6369a2aee266c2d7604230f083d4bd14b8f69bc69eb25b3da63b9f2f853/rich-13.2.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_importlib_metadata": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_importlib_metadata",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "importlib_metadata-6.0.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "importlib-metadata==6.0.0",
+              "sha256": "7efb448ec9a5e313a57655d35aa54cd3e01b7e1fbcf72dce1bf06119420f5bad",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/26/a7/9da7d5b23fc98ab3d424ac2c65613d63c1f401efb84ad50f2fa27b2caab4/importlib_metadata-6.0.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_secretstorage": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_secretstorage",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "SecretStorage-3.3.3-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "secretstorage==3.3.3",
+              "sha256": "f356e6628222568e3af06f2eba8df495efa13b3b63081dafd4f7d9a7b7bc9f99",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/54/24/b4293291fa1dd830f353d2cb163295742fa87f179fcc8a20a306a81978b7/SecretStorage-3.3.3-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_urllib3": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_urllib3",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "urllib3-1.26.14-py2.py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "urllib3==1.26.14",
+              "sha256": "75edcdc2f7d85b137124a6c3c9fc3933cdeaa12ecb9a6a959f22797a0feca7e1",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/fe/ca/466766e20b767ddb9b951202542310cba37ea5f2d792dae7589f1741af58/urllib3-1.26.14-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_mdurl": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_mdurl",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "mdurl-0.1.2-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "mdurl==0.1.2",
+              "sha256": "84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_readme_renderer": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_readme_renderer",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "readme_renderer-37.3-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "readme-renderer==37.3",
+              "sha256": "f67a16caedfa71eef48a31b39708637a6f4664c4394801a7b0d6432d13907343",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/97/52/fd8a77d6f0a9ddeb26ed8fb334e01ac546106bf0c5b8e40dc826c5bd160f/readme_renderer-37.3-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_markdown_it_py": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_markdown_it_py",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "markdown_it_py-2.1.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "markdown-it-py==2.1.0",
+              "sha256": "93de681e5c021a432c63147656fe21790bc01231e0cd2da73626f1aa3ac0fe27",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/f9/3f/ecd1b708973b9a3e4574b43cffc1ce8eb98696da34f1a1c44a68c3c0d737/markdown_it_py-2.1.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_zipp": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_zipp",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "zipp-3.11.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "zipp==3.11.0",
+              "sha256": "83a28fcb75844b5c0cdaf5aa4003c2d728c77e05f5aeabe8e95e56727005fbaa",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/d8/20/256eb3f3f437c575fb1a2efdce5e801a5ce3162ea8117da96c43e6ee97d8/zipp-3.11.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_certifi": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_certifi",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "certifi-2022.12.7-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "certifi==2022.12.7",
+              "sha256": "4ad3232f5e926d6718ec31cfc1fcadfde020920e278684144551c91769c7bc18",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/71/4c/3db2b8021bd6f2f0ceb0e088d6b2d49147671f25832fb17970e9b583d742/certifi-2022.12.7-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_bleach": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_bleach",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "bleach-6.0.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "bleach==6.0.0",
+              "sha256": "33c16e3353dbd13028ab4799a0f89a83f113405c766e9c122df8a06f5b85b3f4",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/ac/e2/dfcab68c9b2e7800c8f06b85c76e5f978d05b195a958daa9b1dda54a1db6/bleach-6.0.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_pycparser": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_pycparser",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "pycparser-2.21-py2.py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "pycparser==2.21",
+              "sha256": "8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/62/d5/5f610ebe421e85889f2e55e33b7f9a6795bd982198517d912eb1c76e1a53/pycparser-2.21-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_requests": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_requests",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "requests-2.28.2-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "requests==2.28.2",
+              "sha256": "64299f4909223da747622c030b781c0d7811e359c37124b4bd368fb8c6518baa",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/d2/f4/274d1dbe96b41cf4e0efb70cbced278ffd61b5c7bb70338b62af94ccb25b/requests-2.28.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_idna": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_idna",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "idna-3.4-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "idna==3.4",
+              "sha256": "90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/fc/34/3030de6f1370931b9dbb4dad48f6ab1015ab1d32447850b9fc94e60097be/idna-3.4-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_jeepney": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_jeepney",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "jeepney-0.8.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "jeepney==0.8.0",
+              "sha256": "c0a454ad016ca575060802ee4d590dd912e35c122fa04e70306de3d076cce755",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/ae/72/2a1e2290f1ab1e06f71f3d0f1646c9e4634e70e1d37491535e19266e8dc9/jeepney-0.8.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_docutils": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_docutils",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "docutils-0.19-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "docutils==0.19",
+              "sha256": "5e1de4d849fee02c63b040a4a3fd567f4ab104defd8a5511fbbc24a8a017efbc",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/93/69/e391bd51bc08ed9141ecd899a0ddb61ab6465309f1eb470905c0c8868081/docutils-0.19-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_webencodings": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_webencodings",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "webencodings-0.5.1-py2.py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "webencodings==0.5.1",
+              "sha256": "a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/f4/24/2a3e3df732393fed8b3ebf2ec078f05546de641fe1b667ee316ec1dcf3b7/webencodings-0.5.1-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_rfc3986": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_rfc3986",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "rfc3986-2.0.0-py2.py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "rfc3986==2.0.0",
+              "sha256": "50b1502b60e289cb37883f3dfd34532b8873c7de9f49bb546641ce9cbd256ebd",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/ff/9a/9afaade874b2fa6c752c36f1548f718b5b83af81ed9b76628329dab81c1b/rfc3986-2.0.0-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_cryptography": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_cryptography",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "cryptography-41.0.6-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "cryptography==41.0.6",
+              "sha256": "da46e2b5df770070412c46f87bac0849b8d685c5f2679771de277a422c7d0b86",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/ce/4e/54960380dda23ceb2027500e568aeafd6f06ce031847d7f2d3157f2bd12b/cryptography-41.0.6-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_requests_toolbelt": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_requests_toolbelt",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "requests_toolbelt-0.10.1-py2.py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "requests-toolbelt==0.10.1",
+              "sha256": "18565aa58116d9951ac39baa288d3adb5b3ff975c4f25eee78555d89e8f247f7",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/05/d3/bf87a36bff1cb88fd30a509fd366c70ec30676517ee791b2f77e0e29817a/requests_toolbelt-0.10.1-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_pygments": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_pygments",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "Pygments-2.14.0-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "pygments==2.14.0",
+              "sha256": "fa7bd7bd2771287c0de303af8bfdfc731f51bd2c6a47ab69d117138893b82717",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/0b/42/d9d95cc461f098f204cd20c85642ae40fbff81f74c300341b8d0e0df14e0/Pygments-2.14.0-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_jaraco_classes": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_jaraco_classes",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "jaraco.classes-3.2.3-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "jaraco-classes==3.2.3",
+              "sha256": "2353de3288bc6b82120752201c6b1c1a14b058267fa424ed5ce5984e3b922158",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/60/28/220d3ae0829171c11e50dded4355d17824d60895285631d7eb9dee0ab5e5/jaraco.classes-3.2.3-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_twine": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_twine",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "twine-4.0.2-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "twine==4.0.2",
+              "sha256": "929bc3c280033347a00f847236564d1c52a3e61b1ac2516c97c48f3ceab756d8",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/3a/38/a3f27a9e8ce45523d7d1e28c09e9085b61a98dab15d35ec086f36a44b37c/twine-4.0.2-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_six": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_six",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "six-1.16.0-py2.py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "six==1.16.0",
+              "sha256": "8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/d9/5a/e7c31adbe875f2abbb91bd84cf2dc52d792b5a01506781dbcf25c91daf11/six-1.16.0-py2.py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_pkginfo": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_pkginfo",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "pkginfo-1.9.6-py3-none-any.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "pkginfo==1.9.6",
+              "sha256": "4b7a555a6d5a22169fcc9cf7bfd78d296b0361adad412a346c1226849af5e546",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/b3/f2/6e95c86a23a30fa205ea6303a524b20cbae27fbee69216377e3d95266406/pkginfo-1.9.6-py3-none-any.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_charset_normalizer": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_charset_normalizer",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "charset_normalizer-3.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "charset-normalizer==3.0.1",
+              "sha256": "79909e27e8e4fcc9db4addea88aa63f6423ebb171db091fb4373e3312cb6d603",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/d9/7a/60d45c9453212b30eebbf8b5cddbdef330eebddfcf335bce7920c43fb72e/charset_normalizer-3.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps_311_cffi": {
+            "bzlFile": "@@rules_python~0.32.2//python/pip_install:pip_repository.bzl",
+            "ruleClassName": "whl_library",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps_311_cffi",
+              "dep_template": "@rules_python_publish_deps//{name}:{target}",
+              "filename": "cffi-1.15.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+              "isolated": true,
+              "python_interpreter_target": "@@rules_python~0.32.2~python~python_3_11_host//:python",
+              "quiet": true,
+              "repo": "rules_python_publish_deps_311",
+              "requirement": "cffi==1.15.1",
+              "sha256": "94411f22c3985acaec6f83c6df553f2dbe17b698cc7f8ae751ff2237d96b9e3c",
+              "timeout": 600,
+              "urls": [
+                "https://files.pythonhosted.org/packages/37/5a/c37631a86be838bdd84cc0259130942bf7e6e32f70f4cab95f479847fb91/cffi-1.15.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+              ]
+            }
+          },
+          "rules_python_publish_deps": {
+            "bzlFile": "@@rules_python~0.32.2//python/private/bzlmod:pip_repository.bzl",
+            "ruleClassName": "pip_repository",
+            "attributes": {
+              "name": "rules_python~0.32.2~pip~rules_python_publish_deps",
+              "repo_name": "rules_python_publish_deps",
+              "whl_map": {
+                "bleach": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_bleach\",\"version\":\"3.11\"}]",
+                "certifi": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_certifi\",\"version\":\"3.11\"}]",
+                "cffi": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_cffi\",\"version\":\"3.11\"}]",
+                "charset_normalizer": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_charset_normalizer\",\"version\":\"3.11\"}]",
+                "cryptography": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_cryptography\",\"version\":\"3.11\"}]",
+                "docutils": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_docutils\",\"version\":\"3.11\"}]",
+                "idna": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_idna\",\"version\":\"3.11\"}]",
+                "importlib_metadata": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_importlib_metadata\",\"version\":\"3.11\"}]",
+                "jaraco_classes": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_jaraco_classes\",\"version\":\"3.11\"}]",
+                "jeepney": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_jeepney\",\"version\":\"3.11\"}]",
+                "keyring": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_keyring\",\"version\":\"3.11\"}]",
+                "markdown_it_py": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_markdown_it_py\",\"version\":\"3.11\"}]",
+                "mdurl": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_mdurl\",\"version\":\"3.11\"}]",
+                "more_itertools": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_more_itertools\",\"version\":\"3.11\"}]",
+                "pkginfo": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_pkginfo\",\"version\":\"3.11\"}]",
+                "pycparser": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_pycparser\",\"version\":\"3.11\"}]",
+                "pygments": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_pygments\",\"version\":\"3.11\"}]",
+                "readme_renderer": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_readme_renderer\",\"version\":\"3.11\"}]",
+                "requests": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_requests\",\"version\":\"3.11\"}]",
+                "requests_toolbelt": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_requests_toolbelt\",\"version\":\"3.11\"}]",
+                "rfc3986": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_rfc3986\",\"version\":\"3.11\"}]",
+                "rich": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_rich\",\"version\":\"3.11\"}]",
+                "secretstorage": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_secretstorage\",\"version\":\"3.11\"}]",
+                "six": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_six\",\"version\":\"3.11\"}]",
+                "twine": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_twine\",\"version\":\"3.11\"}]",
+                "urllib3": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_urllib3\",\"version\":\"3.11\"}]",
+                "webencodings": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_webencodings\",\"version\":\"3.11\"}]",
+                "zipp": "[{\"config_setting\":\"@@rules_python~0.32.2//python/config_settings:is_python_3.11\",\"extra_targets\":[],\"repo\":\"rules_python_publish_deps_311_zipp\",\"version\":\"3.11\"}]"
+              },
+              "default_version": "3.11",
+              "groups": {}
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "bazel_features~1.11.0",
+            "bazel_features_globals",
+            "bazel_features~1.11.0~version_extension~bazel_features_globals"
+          ],
+          [
+            "bazel_features~1.11.0",
+            "bazel_features_version",
+            "bazel_features~1.11.0~version_extension~bazel_features_version"
+          ],
+          [
+            "rules_python~0.32.2",
+            "bazel_features",
+            "bazel_features~1.11.0"
+          ],
+          [
+            "rules_python~0.32.2",
+            "bazel_skylib",
+            "bazel_skylib~1.6.1"
+          ],
+          [
+            "rules_python~0.32.2",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__build",
+            "rules_python~0.32.2~internal_deps~pypi__build"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__click",
+            "rules_python~0.32.2~internal_deps~pypi__click"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__colorama",
+            "rules_python~0.32.2~internal_deps~pypi__colorama"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__importlib_metadata",
+            "rules_python~0.32.2~internal_deps~pypi__importlib_metadata"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__installer",
+            "rules_python~0.32.2~internal_deps~pypi__installer"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__more_itertools",
+            "rules_python~0.32.2~internal_deps~pypi__more_itertools"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__packaging",
+            "rules_python~0.32.2~internal_deps~pypi__packaging"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__pep517",
+            "rules_python~0.32.2~internal_deps~pypi__pep517"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__pip",
+            "rules_python~0.32.2~internal_deps~pypi__pip"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__pip_tools",
+            "rules_python~0.32.2~internal_deps~pypi__pip_tools"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__pyproject_hooks",
+            "rules_python~0.32.2~internal_deps~pypi__pyproject_hooks"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__setuptools",
+            "rules_python~0.32.2~internal_deps~pypi__setuptools"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__tomli",
+            "rules_python~0.32.2~internal_deps~pypi__tomli"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__wheel",
+            "rules_python~0.32.2~internal_deps~pypi__wheel"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pypi__zipp",
+            "rules_python~0.32.2~internal_deps~pypi__zipp"
+          ],
+          [
+            "rules_python~0.32.2",
+            "pythons_hub",
+            "rules_python~0.32.2~python~pythons_hub"
+          ],
+          [
+            "rules_python~0.32.2~python~pythons_hub",
+            "python_3_11_host",
+            "rules_python~0.32.2~python~python_3_11_host"
+          ],
+          [
+            "rules_python~0.32.2~python~pythons_hub",
+            "python_3_11_x86_64-unknown-linux-gnu",
+            "rules_python~0.32.2~python~python_3_11_x86_64-unknown-linux-gnu"
           ]
         ]
       }
