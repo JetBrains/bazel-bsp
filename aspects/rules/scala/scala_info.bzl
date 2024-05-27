@@ -1,4 +1,4 @@
-load("//aspects:utils/utils.bzl", "create_proto", "file_location", "is_external", "map", "update_sync_output_groups")
+load("//aspects:utils/utils.bzl", "file_location", "is_external", "map", "update_sync_output_groups")
 
 def find_scalac_classpath(runfiles):
     result = []
@@ -35,4 +35,4 @@ def extract_scala_info(target, ctx, output_groups, **kwargs):
         common_scalac_opts = []
     scala_info["scalac_opts"] = common_scalac_opts + getattr(ctx.rule.attr, "scalacopts", [])
 
-    return create_proto(target, ctx, struct(**scala_info), "scala_target_info"), None
+    return dict(scala_target_info = struct(**scala_info)), None
