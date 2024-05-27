@@ -27,6 +27,7 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
+import org.jetbrains.bsp.bazel.server.bep.TestXmlParser
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.io.IOException
@@ -37,6 +38,7 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.AbstractMap.SimpleEntry
 import java.util.function.Consumer
+
 
 class BepServer(
   private val bspClient: BuildClient,
@@ -97,12 +99,9 @@ class BepServer(
       }
 
       val bspClientTestNotifier = BspClientTestNotifier(bspClient, originId)
-
       val testResult = event.testResult
 
       val parentId = TaskId(UUID.randomUUID().toString())
-      val childId = TaskId(UUID.randomUUID().toString())
-      childId.parents = listOf(parentId.id)
 
       bspClientTestNotifier.beginTestTarget(target, parentId)
 
@@ -126,8 +125,17 @@ class BepServer(
         else -> TestStatus.FAILED
       }
 
-      bspClientTestNotifier.startTest("Test", childId)
-      bspClientTestNotifier.finishTest("Test", childId, testStatus, "Test finished")
+      val testXmlUri = testResult.testActionOutputList.find { it.name == "test.xml" }?.uri
+      if (testXmlUri != null) {
+        // Test cases identified and sent to the client by TestXmlParser.
+        TestXmlParser(parentId, bspClientTestNotifier).parseAndReport(testXmlUri)
+      } else {
+        // Send a generic notification if individual tests cannot be processed.
+        val childId = TaskId(UUID.randomUUID().toString())
+        childId.parents = listOf(parentId.id)
+        bspClientTestNotifier.startTest("Test", childId)
+        bspClientTestNotifier.finishTest("Test", childId, testStatus, "Test finished")
+      }
 
       val passed = if (testStatus == TestStatus.PASSED) 1 else 0
       val failed = if (testStatus == TestStatus.FAILED) 1 else 0

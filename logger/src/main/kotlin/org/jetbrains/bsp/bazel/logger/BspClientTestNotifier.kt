@@ -42,9 +42,17 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
    * @param status      status of the performed test (does not matter for test suites)
    * @param message     additional message concerning the test execution
    */
-  fun finishTest(displayName: String?, taskId: TaskId, status: TestStatus?, message: String?) {
+  fun finishTest(displayName: String?, taskId: TaskId, status: TestStatus?, message: String?, dataKind: String? = null, data: Any? = null) {
     val testFinish = TestFinish(displayName, status)
-    testFinish.message = message
+    if (message != null) {
+      testFinish.message = message
+    }
+
+    if (dataKind != null && data != null) {
+      testFinish.dataKind = dataKind
+      testFinish.data = data
+    }
+
     val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
     taskFinishParams.originId = originId
     taskFinishParams.dataKind = TaskFinishDataKind.TEST_FINISH
