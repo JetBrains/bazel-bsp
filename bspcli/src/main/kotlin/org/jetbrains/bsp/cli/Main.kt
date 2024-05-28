@@ -19,6 +19,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.eclipse.lsp4j.jsonrpc.Launcher.Builder
 import org.jetbrains.bsp.BazelBuildServer
+import org.jetbrains.bsp.JoinedBuildClient
+import org.jetbrains.bsp.PublishOutputParams
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.bazel.server.BazelBspServer
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
@@ -178,7 +180,7 @@ private fun startServer(serverIn: OutputStream,
                         serverExecutor: ExecutorService,
                         workspace: Path,
                         directory: Path,
-                        metricsLogger: MetricsLogger): Launcher<ch.epfl.scala.bsp4j.BuildClient> {
+                        metricsLogger: MetricsLogger): Launcher<JoinedBuildClient> {
     val bspInfo = BspInfo(directory)
     val bspIntegrationData = BspIntegrationData(serverIn, clientOut, serverExecutor, null)
     val workspaceContextProvider = DefaultWorkspaceContextProvider(
@@ -191,7 +193,7 @@ private fun startServer(serverIn: OutputStream,
 }
 
 
-class BuildClient : ch.epfl.scala.bsp4j.BuildClient {
+class BuildClient : JoinedBuildClient {
     override fun onBuildShowMessage(params: ShowMessageParams?) {}
 
     override fun onBuildLogMessage(params: LogMessageParams?) {}
@@ -209,4 +211,6 @@ class BuildClient : ch.epfl.scala.bsp4j.BuildClient {
     override fun onBuildPublishDiagnostics(params: PublishDiagnosticsParams?) {}
 
     override fun onBuildTargetDidChange(params: DidChangeBuildTarget?) {}
+
+    override fun onBuildPublishOutput(params: PublishOutputParams) {}
 }

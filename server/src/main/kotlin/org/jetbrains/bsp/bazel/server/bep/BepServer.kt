@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bep
 
-import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.CompileReport
 import ch.epfl.scala.bsp4j.CompileTask
@@ -23,6 +22,9 @@ import com.google.protobuf.Empty
 import io.grpc.stub.StreamObserver
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.jetbrains.bsp.JoinedBuildClient
+import org.jetbrains.bsp.PublishOutputParams
+import org.jetbrains.bsp.TestCoverageReport
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -41,7 +43,7 @@ import java.util.function.Consumer
 
 
 class BepServer(
-  private val bspClient: BuildClient,
+  private val bspClient: JoinedBuildClient,
   private val diagnosticsService: DiagnosticsService,
   private val originId: String?,
   private val target: BuildTargetIdentifier?,
@@ -123,6 +125,11 @@ class BepServer(
         BuildEventStreamProtos.TestStatus.FAILED_TO_BUILD -> TestStatus.CANCELLED
         BuildEventStreamProtos.TestStatus.TOOL_HALTED_BEFORE_TESTING -> TestStatus.SKIPPED
         else -> TestStatus.FAILED
+      }
+
+      val coverageReportUri = testResult.testActionOutputList.find { it.name == "test.lcov" }?.uri
+      if (coverageReportUri != null) {
+        bspClient.onBuildPublishOutput(PublishOutputParams(originId, parentId, target, TestCoverageReport.DATA_KIND, TestCoverageReport(coverageReportUri)))
       }
 
       val testXmlUri = testResult.testActionOutputList.find { it.name == "test.xml" }?.uri

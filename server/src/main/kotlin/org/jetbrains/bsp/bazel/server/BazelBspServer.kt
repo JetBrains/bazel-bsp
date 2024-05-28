@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server
 import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import org.eclipse.lsp4j.jsonrpc.Launcher
+import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
@@ -181,8 +182,8 @@ class BazelBspServer(
     return ProjectProvider(projectResolver, projectStorage)
   }
 
-  fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<BuildClient> {
-    val bspServerApi = BspServerApi { client: BuildClient ->
+  fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<JoinedBuildClient> {
+    val bspServerApi = BspServerApi { client: JoinedBuildClient ->
       val bspClientLogger = BspClientLogger(client)
       val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot, bspInfo.bazelBspDir().toString())
       val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
@@ -199,9 +200,9 @@ class BazelBspServer(
       )
     }
 
-    val builder = Launcher.Builder<BuildClient>()
+    val builder = Launcher.Builder<JoinedBuildClient>()
       .setOutput(bspIntegrationData.stdout).setInput(bspIntegrationData.stdin)
-      .setLocalService(bspServerApi).setRemoteInterface(BuildClient::class.java)
+      .setLocalService(bspServerApi).setRemoteInterface(JoinedBuildClient::class.java)
       .setExecutorService(bspIntegrationData.executor)
       .let { builder ->
         if (bspIntegrationData.traceWriter != null) {
