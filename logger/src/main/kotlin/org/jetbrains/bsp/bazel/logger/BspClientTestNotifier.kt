@@ -69,6 +69,7 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
   fun beginTestTarget(targetIdentifier: BuildTargetIdentifier?, taskId: TaskId) {
     val testingBegin = TestTask(targetIdentifier)
     val taskStartParams = TaskStartParams(taskId)
+    taskStartParams.originId = originId
     taskStartParams.dataKind = TaskStartDataKind.TEST_TASK
     taskStartParams.data = testingBegin
     bspClient.onBuildTaskStart(taskStartParams)
@@ -82,6 +83,7 @@ class BspClientTestNotifier(private val bspClient: BuildClient, private val orig
    */
   fun endTestTarget(testReport: TestReport, taskId: TaskId) {
     val taskFinishParams = TaskFinishParams(taskId, StatusCode.OK)
+    taskFinishParams.originId = originId
     taskFinishParams.dataKind = TaskFinishDataKind.TEST_REPORT
     taskFinishParams.data = testReport
     bspClient.onBuildTaskFinish(taskFinishParams)
