@@ -58,14 +58,7 @@ use_repo(
     "build_bazel_bazel_7_1_1",
 )
 
-bazel_dep(name = "rules_jvm_external", version = "5.3")
-
-# Required until there's a new release
-git_override(
-    module_name = "rules_jvm_external",
-    commit = "679348a8da17a9f3954fb2cab10a95d5a5848c85",
-    remote = "https://github.com/bazelbuild/rules_jvm_external.git",
-)
+bazel_dep(name = "rules_jvm_external", version = "6.1")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
