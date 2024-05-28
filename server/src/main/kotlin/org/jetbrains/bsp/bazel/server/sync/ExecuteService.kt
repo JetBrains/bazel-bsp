@@ -97,6 +97,10 @@ class ExecuteService(
             else -> bazelRunner.commandBuilder().test()
         }
 
+        bazelTestParamsData?.testFilter?.let { testFilter ->
+            baseCommand = baseCommand.withFlag(BazelFlag.testFilter(testFilter))
+        }
+
         // TODO: handle multiple targets
         val result = withBepServer(params.originId, params.targets.single()) { bepReader ->
             run {
