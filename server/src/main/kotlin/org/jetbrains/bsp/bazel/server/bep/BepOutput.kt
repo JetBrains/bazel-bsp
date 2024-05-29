@@ -1,14 +1,15 @@
 package org.jetbrains.bsp.bazel.server.bep
 
+import org.jetbrains.bsp.bazel.server.model.Label
 import com.google.common.collect.Queues
 import java.nio.file.Path
 
 class BepOutput(
     private val outputGroups: Map<String, Set<String>> = emptyMap(),
     private val textProtoFileSets: Map<String, TextProtoDepSet> = emptyMap(),
-    private val rootTargets: Set<String> = emptySet()
+    private val rootTargets: Set<Label> = emptySet()
 ) {
-    fun rootTargets(): Set<String> {
+    fun rootTargets(): Set<Label> {
         return rootTargets
     }
 

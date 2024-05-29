@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
-import org.jetbrains.bsp.bazel.server.sync.languages.LanguageData
+import org.jetbrains.bsp.bazel.server.model.LanguageData
 
 enum class RustCrateLocation {
     WORKSPACE_DIR, EXEC_ROOT

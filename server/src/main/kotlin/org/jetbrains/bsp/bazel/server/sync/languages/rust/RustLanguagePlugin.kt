@@ -8,9 +8,9 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.RustCrateInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Language
+import org.jetbrains.bsp.bazel.server.model.Module
 
 class RustLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<RustModule>() {
 

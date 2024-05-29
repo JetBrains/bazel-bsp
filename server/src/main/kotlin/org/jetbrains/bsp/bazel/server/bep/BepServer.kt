@@ -31,6 +31,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
 import org.jetbrains.bsp.bazel.server.bep.TestXmlParser
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.io.IOException
 import java.net.URI
@@ -304,7 +305,8 @@ class BepServer(
     * but since we also set up the BEP server to gather info about build targets within certain path (//... etc.), we can't
     * just use target.uri. So this only fixes the diagnostics without breaking the query for targets.
     * */
-    val label = if (target != null && ("@$eventLabel" == target.uri || "@@$eventLabel" == target.uri) ) target.uri else eventLabel
+    val labelText = if (target != null && ("@$eventLabel" == target.uri || "@@$eventLabel" == target.uri) ) target.uri else eventLabel
+    val label = Label.parse(labelText)
     val targetComplete = event.completed
     val outputGroups = targetComplete.outputGroupList
     LOGGER.trace("Consuming target completed event {}", targetComplete)

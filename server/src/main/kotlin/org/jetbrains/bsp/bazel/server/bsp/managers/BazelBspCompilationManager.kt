@@ -7,6 +7,7 @@ import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
@@ -16,7 +17,7 @@ import java.nio.file.Path
 class BazelBspCompilationManager(
     private val bazelRunner: BazelRunner,
     private val bazelPathsResolver: BazelPathsResolver,
-    private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>,
+    private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>,
     val client: JoinedBuildClient,
     val workspaceRoot: Path,
 ) {

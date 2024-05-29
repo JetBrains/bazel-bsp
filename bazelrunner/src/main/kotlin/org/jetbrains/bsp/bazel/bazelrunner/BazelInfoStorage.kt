@@ -2,6 +2,8 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BasicBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import java.io.IOException
 import java.nio.file.Path

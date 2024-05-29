@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bsp.utils
 
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths

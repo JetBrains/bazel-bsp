@@ -3,12 +3,12 @@ package org.jetbrains.bsp.bazel.server.sync
 import ch.epfl.scala.bsp4j.MavenDependencyModule
 import ch.epfl.scala.bsp4j.MavenDependencyModuleArtifact
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Library
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Project
-import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Library
+import org.jetbrains.bsp.bazel.server.model.Module
+import org.jetbrains.bsp.bazel.server.model.Project
+import org.jetbrains.bsp.bazel.server.model.SourceSet
 import org.junit.jupiter.api.Test
 import java.net.URI
 import java.nio.file.Paths
@@ -22,7 +22,7 @@ class DependencyMapperTest {
         val jarUri = URI.create("$cacheLocation/bin/external/maven/org/scala-lang/scala-library/2.13.11/processed_scala-library-2.13.11.jar")
         val jarSourcesUri = URI.create("$cacheLocation/bin/external/maven/org/scala-lang/scala-library/2.13.11/scala-library-2.13.11-sources.jar")
         val lib1 = Library(
-            "@maven//:org_scala_lang_scala_library",
+            Label.parse("@maven//:org_scala_lang_scala_library"),
             setOf(jarUri),
             setOf(jarSourcesUri),
             emptyList()
@@ -44,7 +44,7 @@ class DependencyMapperTest {
         val jarUri = URI.create("$cacheLocation/bin/external/rules_jvm_external~~maven~name/v1/https/repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/1.1.1/header_auto-service-annotations-1.1.1.jar")
         val jarSourcesUri = URI.create("$cacheLocation/bin/external/rules_jvm_external~~maven~name/v1/https/repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/1.1.1/header_auto-service-annotations-1.1.1-sources.jar")
         val lib1 = Library(
-            "@@rules_jvm_external~override~maven~maven//:com_google_auto_service_auto_service_annotations",
+            Label.parse("@@rules_jvm_external~override~maven~maven//:com_google_auto_service_auto_service_annotations"),
             setOf(jarUri),
             setOf(jarSourcesUri),
             emptyList()
@@ -64,7 +64,7 @@ class DependencyMapperTest {
     @Test
     fun `should not translate non maven dependency`() {
         val lib1 = Library(
-            "@//projects/v1:scheduler",
+            Label.parse("@//projects/v1:scheduler"),
             emptySet(),
             emptySet(),
             emptyList()
@@ -79,25 +79,25 @@ class DependencyMapperTest {
         val jarUri = URI.create("$cacheLocation/bin/external/maven/org/scala-lang/scala-library/2.13.11/processed_scala-library-2.13.11.jar")
         val jarSourcesUri = URI.create("$cacheLocation/bin/external/maven/org/scala-lang/scala-library/2.13.11/scala-library-2.13.11-sources.jar")
         val lib1 = Library(
-            "@maven//:org_scala_lang_scala_library",
+            Label.parse("@maven//:org_scala_lang_scala_library"),
             setOf(jarUri),
             setOf(jarSourcesUri),
             emptyList()
         )
         val lib2 = Library(
-            "@maven//:org_scala_lang_scala_library2",
+            Label.parse("@maven//:org_scala_lang_scala_library2"),
             emptySet(),
             emptySet(),
             listOf(lib1.label)
         )
         val lib3 = Library(
-            "@maven//:org_scala_lang_scala_library3",
+            Label.parse("@maven//:org_scala_lang_scala_library3"),
             emptySet(),
             emptySet(),
             listOf(lib1.label, lib2.label)
         )
         val lib4 = Library(
-            "@maven//:org_scala_lang_scala_library4",
+            Label.parse("@maven//:org_scala_lang_scala_library4"),
             emptySet(),
             emptySet(),
             listOf(lib3.label, lib2.label)
@@ -106,9 +106,9 @@ class DependencyMapperTest {
         val currentUri = Paths.get(".").toUri()
         val project = Project(currentUri, emptyList(), emptyMap(), libraries, emptyList(), BazelRelease(6))
         val module = Module(
-            Label(""),
+            Label.parse(""),
             true,
-            listOf(Label(lib4.label)),
+            listOf(lib4.label),
             emptySet(),
             emptySet(),
             currentUri,

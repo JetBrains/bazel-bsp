@@ -1,7 +1,8 @@
 package org.jetbrains.bsp.bazel.server.sync
 
+import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
@@ -10,7 +11,9 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManagerResult
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
-import org.jetbrains.bsp.bazel.server.sync.model.Project
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Project
+import org.jetbrains.bsp.bazel.workspacecontext.BazelBinarySpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 
@@ -65,7 +68,7 @@ class ProjectResolver(
     ) { buildAspectResult.bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
     val targets = measured(
         "Parsing aspect outputs"
-    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs).let { it } }
+    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
     val allTargetNames =
       if (buildAspectResult.isFailure)
         measured(
@@ -93,16 +96,18 @@ class ProjectResolver(
     )
   }
 
-  private fun formatTargetsIfNeeded(targets: Collection<String>, targetsInfo: Map<String, BspTargetInfo.TargetInfo >): List<String> =
+  private fun formatTargetsIfNeeded(targets: Collection<Label>, targetsInfo: Map<Label, BspTargetInfo.TargetInfo >): List<Label> =
     when (bazelInfo.release.major) {
       // Since bazel 6, the main repository targets are stringified to "@//"-prefixed labels,
       // contrary to "//"-prefixed in older Bazel versions. Unfortunately this does not apply
       // to BEP data, probably due to a bug, so we need to add the "@" or "@@" prefix here.
       in 0..5 -> targets.toList()
       else -> targets.map {
-          if (targetsInfo.contains("@@$it")) "@@$it"
+          if (targetsInfo.contains(Label.parse("@@${it.value}"))) "@@$it"
           else "@$it"
-        }
+        }.map {
+          Label.parse(it)
+      }
     }.toList()
 
   private fun WorkspaceContext.shouldAddBuildAffectingFlags(willBeBuilt: Boolean): Boolean =

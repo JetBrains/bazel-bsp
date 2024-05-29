@@ -8,6 +8,8 @@ kt_jvm_library(
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",
     ],
     deps = [
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/info",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/model",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/sync/proto:bsp_target_info_java_proto",
     ],
 )

@@ -1,11 +1,11 @@
-package org.jetbrains.bsp.bazel.server.sync.model
+package org.jetbrains.bsp.bazel.server.model
 
 import java.net.URI
 
 data class Library(
-        val label: String,
+        val label: Label,
         val outputs: Set<URI>,
         val sources: Set<URI>,
-        val dependencies: List<String>,
+        val dependencies: List<Label>,
         val interfaceJars: Set<URI> = emptySet(),
 )

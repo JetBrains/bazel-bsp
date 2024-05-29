@@ -1,12 +1,8 @@
-package org.jetbrains.bsp.bazel.server.sync
+package org.jetbrains.bsp.bazel.server.model
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.BuildTargetTag
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Project
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
 import java.net.URI
 
 object BspMappings {
@@ -36,5 +32,5 @@ object BspMappings {
     fun toUri(textDocument: TextDocumentIdentifier): URI = URI.create(textDocument.uri)
 
     fun toLabels(targets: List<BuildTargetIdentifier>): Set<Label> =
-        targets.map(BuildTargetIdentifier::getUri).map(::Label).toSet()
+        targets.map(BuildTargetIdentifier::getUri).map { Label.parse(it) }.toSet()
 }

@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.server.bsp.utils
+package org.jetbrains.bsp.bazel.server.sync.languages.jvm
 
 import java.net.URI
 import java.nio.file.FileSystems

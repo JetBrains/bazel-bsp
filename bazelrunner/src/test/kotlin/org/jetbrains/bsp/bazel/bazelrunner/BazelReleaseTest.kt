@@ -2,6 +2,8 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import com.google.common.base.Charsets
 import io.kotest.matchers.shouldBe
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.orLatestSupported
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.io.path.createDirectories

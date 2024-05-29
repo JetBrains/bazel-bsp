@@ -1,6 +1,10 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.rust
 
-import org.jetbrains.bsp.bazel.server.sync.model.*
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Language
+import org.jetbrains.bsp.bazel.server.model.Module
+import org.jetbrains.bsp.bazel.server.model.SourceSet
+import org.jetbrains.bsp.bazel.server.model.Tag
 import java.net.URI
 
 fun createModule(
@@ -11,7 +15,7 @@ fun createModule(
     rustModule: RustModule
 ): Module =
     Module(
-        label = Label(label),
+        label = Label.parse(label),
         isSynthetic = false,
         directDependencies = directDependencies,
         languages = setOf(Language.RUST),
@@ -60,7 +64,7 @@ fun createTarget(
 
     return createModule(
         label = "@//pkg$moduleName:$moduleName",
-        directDependencies = directDependencies.map { Label(it) },
+        directDependencies = directDependencies.map { Label.parse(it) },
         rustModule = createRustModule(
             crateId = moduleName,
             crateRoot = crateRoot,

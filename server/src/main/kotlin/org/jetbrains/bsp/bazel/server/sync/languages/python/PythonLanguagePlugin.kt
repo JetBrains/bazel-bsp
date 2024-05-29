@@ -8,10 +8,11 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.PythonTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
-import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.BspMappings
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Module
 import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.toPath
@@ -69,7 +70,7 @@ class PythonLanguagePlugin(
 
     override fun dependencySources(targetInfo: TargetInfo, dependencyGraph: DependencyGraph): Set<URI> =
         if (targetInfo.hasPythonTargetInfo())
-            dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+            dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse(targetInfo.id))
                 .flatMap(::getExternalSources)
                 .map(::calculateExternalSourcePath)
                 .toSet()

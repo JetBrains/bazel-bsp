@@ -4,7 +4,6 @@ kt_jvm_library(
     name = "utils",
     srcs = [
         "InternalAspectsResolver.kt",
-        "SourceRootGuesser.kt",
     ],
     visibility = ["//server:__subpackages__"],
     deps = [

@@ -85,8 +85,16 @@ abstract class BazelBspTestBaseScenario {
 
   fun executeScenario() {
     log.info("Running scenario...")
-    val scenarioStepsExecutionResult = executeScenarioSteps()
+    var scenarioStepsExecutionResult: Boolean? = null
+    try {
+      scenarioStepsExecutionResult = executeScenarioSteps()
     log.info("Running scenario done.")
+    } finally {
+      val logFile = Path(workspaceDir).resolve("all.log").toFile()
+      // Print all files in that directory
+      log.info("Log file: ${logFile.absolutePath}")
+      logFile.readLines().forEach { log.info(it) }
+    }
 
     when (scenarioStepsExecutionResult) {
       true -> {
@@ -94,7 +102,7 @@ abstract class BazelBspTestBaseScenario {
         exitProcess(SUCCESS_EXIT_CODE)
       }
 
-      false -> {
+      false, null -> {
         log.fatal("Test failed")
         exitProcess(FAIL_EXIT_CODE)
       }

@@ -1,14 +1,15 @@
-package org.jetbrains.bsp.bazel.server.sync.dependencygraph
+package org.jetbrains.bsp.bazel.server.dependencygraph
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import org.jetbrains.bsp.bazel.server.model.Label
 
 class DependencyGraph(
-        private val rootTargets: Set<String> = emptySet(),
-        private val idToTargetInfo: Map<String, TargetInfo> = emptyMap(),
+  private val rootTargets: Set<Label> = emptySet(),
+  private val idToTargetInfo: Map<Label, TargetInfo> = emptyMap(),
 ) {
-    private val idToDirectDependenciesIds: Map<String, Set<String>>
-    private val idToLazyTransitiveDependencies: Map<String, Lazy<Set<TargetInfo>>>
+    private val idToDirectDependenciesIds: Map<Label, Set<Label>>
+    private val idToLazyTransitiveDependencies: Map<Label, Lazy<Set<TargetInfo>>>
 
     init {
         idToDirectDependenciesIds = idToTargetInfo.entries.associate { (id, target) ->
@@ -21,8 +22,8 @@ class DependencyGraph(
     }
 
     private fun createIdToLazyTransitiveDependenciesMap(
-            idToTargetInfo: Map<String, TargetInfo>
-    ): Map<String, Lazy<Set<TargetInfo>>> =
+            idToTargetInfo: Map<Label, TargetInfo>
+    ): Map<Label, Lazy<Set<TargetInfo>>> =
             idToTargetInfo.mapValues { (_, targetInfo) ->
                 calculateLazyTransitiveDependenciesForTarget(targetInfo)
             }
@@ -42,44 +43,51 @@ class DependencyGraph(
     }
 
     private fun calculateStrictlyTransitiveDependencies(
-            dependencies: Set<String>
+            dependencies: Set<Label>
     ): Set<TargetInfo> =
             dependencies.flatMap {
                 idToLazyTransitiveDependencies[it]?.value.orEmpty()
             }.toSet()
 
-    private fun idsToTargetInfo(dependencies: Set<String>): Set<TargetInfo> =
+    private fun idsToTargetInfo(dependencies: Set<Label>): Set<TargetInfo> =
             dependencies.mapNotNull(idToTargetInfo::get).toSet()
 
-    private fun directDependenciesIds(targetIds: Set<String>) =
+    private fun directDependenciesIds(targetIds: Set<Label>) =
             targetIds.flatMap {
                 idToDirectDependenciesIds[it].orEmpty()
             }.toSet()
 
-    fun allTargetsAtDepth(depth: Int, targets: Set<String>): Set<TargetInfo> =
-            if (depth < 0)
-                idsToTargetInfo(targets) + calculateStrictlyTransitiveDependencies(targets)
-            else
-                allTargetsAtDepth(depth, setOf(), targets)
+    fun allTargetsAtDepth(depth: Int, targets: Set<Label>): Set<TargetInfo> {
+      if (depth < 0) {
+        return idsToTargetInfo(targets) + calculateStrictlyTransitiveDependencies(targets)
+      }
 
-    private tailrec fun allTargetsAtDepth(depth: Int, searched: Set<TargetInfo>, targets: Set<String>): Set<TargetInfo> =
-            if (depth == 0)
-                searched + idsToTargetInfo(targets)
-            else
-                allTargetsAtDepth(depth - 1, searched + idsToTargetInfo(targets), directDependenciesIds(targets))
+      var currentDepth = depth
+      val searched: MutableSet<TargetInfo> = mutableSetOf()
+      var currentTargets = targets
 
-    fun transitiveDependenciesWithoutRootTargets(targetId: String): Set<TargetInfo> =
+      while (currentDepth > 0) {
+        searched.addAll(idsToTargetInfo(currentTargets))
+        currentTargets = directDependenciesIds(currentTargets)
+        currentDepth--
+      }
+
+      searched.addAll(idsToTargetInfo(currentTargets))
+      return searched
+    }
+
+    fun transitiveDependenciesWithoutRootTargets(targetId: Label): Set<TargetInfo> =
             idToTargetInfo[targetId]?.let(::getDependencies).orEmpty()
                     .filter(::isNotARootTarget)
                     .flatMap(::collectTransitiveDependenciesAndAddTarget).toSet()
 
-    private fun getDependencies(target: TargetInfo): Set<String> =
-            target.dependenciesList.map(Dependency::getId).toSet()
+    private fun getDependencies(target: TargetInfo): Set<Label> =
+            target.dependenciesList.map(Dependency::getId).map(Label::parse).toSet()
 
-    private fun isNotARootTarget(targetId: String): Boolean =
+    private fun isNotARootTarget(targetId: Label): Boolean =
             !rootTargets.contains(targetId)
 
-    private fun collectTransitiveDependenciesAndAddTarget(targetId: String): Set<TargetInfo> {
+    private fun collectTransitiveDependenciesAndAddTarget(targetId: Label): Set<TargetInfo> {
         val target = idToTargetInfo[targetId]?.let(::setOf).orEmpty()
         val dependencies = idToLazyTransitiveDependencies[targetId]?.let(::setOf).orEmpty()
                 .map(Lazy<Set<TargetInfo>>::value).flatten().toSet()

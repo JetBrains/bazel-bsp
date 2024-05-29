@@ -1,17 +1,24 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.LabelKeyDeserializer
+import org.jetbrains.bsp.bazel.server.model.Project
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
-import org.jetbrains.bsp.bazel.server.sync.model.Project
 
 class FileProjectStorage(private val path: Path, private val logger: BspClientLogger) :
     ProjectStorage {
-
-    private val mapper = jacksonObjectMapper()
+    private val mapper = jacksonMapperBuilder().addModules(
+        SimpleModule().apply {
+            addKeyDeserializer(Label::class.java, LabelKeyDeserializer())
+        }
+    ).build()
 
     constructor(bspInfo: BspInfo, logger: BspClientLogger) : this(
         bspInfo.bazelBspDir().resolve("project-cache.json"), logger

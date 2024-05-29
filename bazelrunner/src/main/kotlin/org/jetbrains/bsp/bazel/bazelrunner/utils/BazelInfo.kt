@@ -1,4 +1,4 @@
-package org.jetbrains.bsp.bazel.bazelrunner
+package org.jetbrains.bsp.bazel.bazelrunner.utils
 
 import java.nio.file.Path
 import kotlin.io.path.isReadable

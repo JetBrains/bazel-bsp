@@ -2,7 +2,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages.android
 
 import org.jetbrains.bsp.bazel.server.sync.languages.jvm.javaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinModule
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Module
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
 

@@ -15,6 +15,7 @@ kt_jvm_library(
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/utils",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/utils:fileutils",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/diagnostics",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/model",
         "@maven//:com_google_code_gson_gson",
         "@maven//:com_google_guava_guava",
         "@maven//:io_grpc_grpc_protobuf",

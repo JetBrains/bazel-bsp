@@ -30,11 +30,12 @@ import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
+import org.jetbrains.bsp.bazel.server.model.BspMappings
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
-import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.server.model.BspMappings.toBspId
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Module
+import org.jetbrains.bsp.bazel.server.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
@@ -47,7 +48,7 @@ class ExecuteService(
     private val bspClientLogger: BspClientLogger,
     private val bazelPathsResolver: BazelPathsResolver,
     private val additionalBuildTargetsProvider: AdditionalAndroidBuildTargetsProvider,
-    private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>
+    private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>
 ) {
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
         bspClientLogger.copy(originId = originId).error(message)

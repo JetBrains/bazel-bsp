@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.bep
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.NamedSetOfFiles
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos.OutputGroup
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import java.io.File
 import java.nio.file.Path
@@ -13,7 +14,7 @@ data class TextProtoDepSet(val files: Collection<Path>, val children: Collection
 class BepOutputBuilder(private val bazelPathsResolver: BazelPathsResolver) {
   private val outputGroups: MutableMap<String, MutableSet<String>> = HashMap()
   private val textProtoFileSets: MutableMap<String, TextProtoDepSet> = HashMap()
-  private val rootTargets: MutableSet<String> = HashSet()
+  private val rootTargets: MutableSet<Label> = HashSet()
 
   fun storeNamedSet(id: String, namedSetOfFiles: NamedSetOfFiles) {
     val textProtoDepSet = TextProtoDepSet(
@@ -34,7 +35,7 @@ class BepOutputBuilder(private val bazelPathsResolver: BazelPathsResolver) {
     return bazelPathsResolver.resolveOutput(bazelOutputRelativePath)
   }
 
-  fun storeTargetOutputGroups(target: String, outputGroups: List<OutputGroup>) {
+  fun storeTargetOutputGroups(target: Label, outputGroups: List<OutputGroup>) {
     rootTargets.add(target)
 
     for (group in outputGroups) {

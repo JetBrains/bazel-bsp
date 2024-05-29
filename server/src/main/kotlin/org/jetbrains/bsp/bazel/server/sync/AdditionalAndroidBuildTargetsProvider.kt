@@ -1,10 +1,9 @@
-package org.jetbrains.bsp.bazel.server.sync.languages.android
+package org.jetbrains.bsp.bazel.server.sync
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
-import org.jetbrains.bsp.bazel.server.sync.ProjectProvider
-import org.jetbrains.bsp.bazel.server.sync.model.Language
+import org.jetbrains.bsp.bazel.server.model.BspMappings
+import org.jetbrains.bsp.bazel.server.model.Language
 
 /**
  * Every Kotlin Android target actually produces three targets, which we merge inside [KotlinAndroidModulesMerger].

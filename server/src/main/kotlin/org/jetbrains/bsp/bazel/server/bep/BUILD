@@ -19,6 +19,7 @@ kt_jvm_library(
         "//logger",
         "//protocol",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/diagnostics",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/model",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/paths",
         "@bazel_bep//jar",
         "@maven//:ch_epfl_scala_bsp4j",

@@ -2,18 +2,18 @@ package org.jetbrains.bsp.bazel.server.sync
 
 import ch.epfl.scala.bsp4j.*
 import io.kotest.matchers.shouldBe
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.java.Jdk
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaModule
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaSdk
-import org.jetbrains.bsp.bazel.server.sync.model.Label
-import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Project
-import org.jetbrains.bsp.bazel.server.sync.model.SourceSet
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Language
+import org.jetbrains.bsp.bazel.server.model.Module
+import org.jetbrains.bsp.bazel.server.model.Project
+import org.jetbrains.bsp.bazel.server.model.SourceSet
+import org.jetbrains.bsp.bazel.server.model.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
@@ -75,9 +75,9 @@ class ProjectStorageTest {
             URI.create("file:///root"),
             listOf(
                 Module(
-                    Label("//project:project"),
+                    Label.parse("//project:project"),
                     false,
-                    listOf(Label("//project:dep")),
+                    listOf(Label.parse("//project:dep")),
                     hashSetOf(Language.JAVA),
                     hashSetOf(Tag.LIBRARY),
                     URI.create("file:///root/project"),
@@ -93,7 +93,7 @@ class ProjectStorageTest {
                     hashMapOf()
                 )
             ),
-            mapOf(URI.create("file:///root/project/Lib.java") to Label("file:///root")),
+            mapOf(URI.create("file:///root/project/Lib.java") to Label.parse("file:///root")),
             emptyMap(),
             emptyList(),
             BazelRelease(7),

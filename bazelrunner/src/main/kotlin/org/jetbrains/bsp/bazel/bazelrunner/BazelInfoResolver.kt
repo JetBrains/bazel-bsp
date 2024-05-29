@@ -2,6 +2,11 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import ch.epfl.scala.bsp4j.StatusCode
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BasicBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.LazyBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.orLatestSupported
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import java.nio.file.Paths
 

@@ -3,6 +3,8 @@ package org.jetbrains.bsp.bazel.server.sync.dependencygraph
 import io.kotest.matchers.shouldBe
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.Dependency
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
+import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -21,7 +23,7 @@ class DependencyGraphTest {
 
             // when
             val dependencies =
-                dependencyGraph.transitiveDependenciesWithoutRootTargets("//does/not/exist")
+                dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//does/not/exist"))
 
             // then
             dependencies shouldBe emptySet()
@@ -46,11 +48,11 @@ class DependencyGraphTest {
             val a = targetInfo("//A", listOf("//B"))
             val b = targetInfo("//B")
             val idToTargetInfo = toIdToTargetInfoMap(a, b)
-            val rootTargets = setOf("//A", "//B")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//B"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//B")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//B"))
 
             // then
             dependencies shouldBe emptySet()
@@ -78,11 +80,11 @@ class DependencyGraphTest {
             val c = targetInfo("//c", listOf())
             val d = targetInfo("//d", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d)
-            val rootTargets = setOf("//A")
+            val rootTargets = setOf(Label.parse("/"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//A"))
 
             // then
             val expectedDependencies = setOf(b, c, d)
@@ -116,11 +118,11 @@ class DependencyGraphTest {
             val d = targetInfo("//d", listOf())
             val e = targetInfo("//e", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e)
-            val rootTargets = setOf("//A")
+            val rootTargets = setOf(Label.parse("//A"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//A"))
 
             // then
             val expectedDependencies = setOf(b, c, d, e)
@@ -154,11 +156,11 @@ class DependencyGraphTest {
             val d = targetInfo("//d", listOf())
             val e = targetInfo("//e", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e)
-            val rootTargets = setOf("//A")
+            val rootTargets = setOf(Label.parse("//A"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//A"))
 
             // then
             val expectedDependencies = setOf(b, c, d, e)
@@ -198,11 +200,11 @@ class DependencyGraphTest {
             val f = targetInfo("//f", listOf())
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
-            val rootTargets = setOf("//A", "//D")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//D"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//A"))
 
             // then
             val expectedDependencies = setOf(b, c, d, e, f, g)
@@ -255,11 +257,11 @@ class DependencyGraphTest {
             val k = targetInfo("//k", listOf("//L"))
             val l = targetInfo("//L", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g, h, i, j, k, l)
-            val rootTargets = setOf("//A", "//B", "//F", "//L")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//B"), Label.parse("//F"), Label.parse("//L"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//A")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//A"))
 
             // then
             val expectedDependencies = setOf(c, f, g, h, i, j, k, l)
@@ -310,11 +312,11 @@ class DependencyGraphTest {
             val k = targetInfo("//k", listOf("//L"))
             val l = targetInfo("//L", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g, h, i, j, k, l)
-            val rootTargets = setOf("//A", "//B", "//F", "//L")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//B"), Label.parse("//F"), Label.parse("//L"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets("//F")
+            val dependencies = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse("//F"))
 
             // then
             val expectedDependencies = setOf(i, j, k, l)
@@ -358,11 +360,11 @@ class DependencyGraphTest {
             val f = targetInfo("//f", listOf())
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
-            val rootTargets = setOf("//A", "//D")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//D"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.allTargetsAtDepth(0, setOf("//A", "//D"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(0, setOf(Label.parse("//A"), Label.parse("//D")))
 
             // then
             val expectedDependencies = setOf(a, d)
@@ -402,11 +404,11 @@ class DependencyGraphTest {
             val f = targetInfo("//f", listOf())
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
-            val rootTargets = setOf("//A", "//D")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//D"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.allTargetsAtDepth(1, setOf("//A", "//D"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(1, setOf(Label.parse("//A"), Label.parse("//D")))
 
             // then
             val expectedDependencies = setOf(a, b, c, d, f, g)
@@ -446,11 +448,11 @@ class DependencyGraphTest {
             val f = targetInfo("//f", listOf())
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
-            val rootTargets = setOf("//A", "//D")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//D"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.allTargetsAtDepth(2, setOf("//A"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(2, setOf(Label.parse("//A")))
 
             // then
             val expectedDependencies = setOf(a, b, c, d, e)
@@ -526,13 +528,13 @@ class DependencyGraphTest {
             val a9 = targetInfo("//a09", listOf("//a10"))
             val a10 = targetInfo("//a10", listOf("//a11"))
             val a11 = targetInfo("//a11")
-            val rootTargets = setOf("//A00")
+            val rootTargets = setOf(Label.parse("//A00"))
             val idToTargetInfo =
                 toIdToTargetInfoMap(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.allTargetsAtDepth(10, setOf("//A00"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(10, setOf(Label.parse("//A00")))
 
             // then
             val expectedDependencies = setOf(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
@@ -572,11 +574,11 @@ class DependencyGraphTest {
             val f = targetInfo("//f", listOf())
             val g = targetInfo("//g", listOf())
             val idToTargetInfo = toIdToTargetInfoMap(a, b, c, d, e, f, g)
-            val rootTargets = setOf("//A", "//D")
+            val rootTargets = setOf(Label.parse("//A"), Label.parse("//D"))
             val dependencyGraph = DependencyGraph(rootTargets, idToTargetInfo)
 
             // when
-            val dependencies = dependencyGraph.allTargetsAtDepth(-1, setOf("//A"))
+            val dependencies = dependencyGraph.allTargetsAtDepth(-1, setOf(Label.parse("//A")))
 
             // then
             val expectedDependencies = setOf(a, b, c, d, e, f, g)
@@ -593,6 +595,6 @@ class DependencyGraphTest {
     private fun dependency(id: String): Dependency =
         Dependency.newBuilder().setId(id).build()
 
-    private fun toIdToTargetInfoMap(vararg targetIds: TargetInfo) =
-        targetIds.associateBy { targetId -> targetId.id }
+    private fun toIdToTargetInfoMap(vararg targetIds: TargetInfo): Map<Label, TargetInfo> =
+        targetIds.associateBy { targetId -> Label.parse(targetId.id) }
 }
