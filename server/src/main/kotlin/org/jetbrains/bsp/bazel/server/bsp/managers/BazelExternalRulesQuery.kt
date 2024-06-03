@@ -1,5 +1,7 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
@@ -70,8 +72,10 @@ class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner)
 }
 
 class BazelBzlModExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelExternalRulesQuery {
+  private val gson = Gson()
+
   override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> {
-    val jsonElement = bazelRunner.commandBuilder().graph()
+    val bzlmodGraphJson = bazelRunner.commandBuilder().graph()
       .withFlag("--output=json")
       .executeBazelCommand(parseProcessOutput = false)
       .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
@@ -79,14 +83,32 @@ class BazelBzlModExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : 
           log.warn("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
           null
         } else result.stdout.toJson(log)
+      } as? JsonObject
+      return try {
+        gson.fromJson(bzlmodGraphJson, BzlmodGraph::class.java).getAllDirectRuleDependencies()
+      } catch (e: Throwable) {
+        log.warn("The returned bzlmod json is not parsable:\n$bzlmodGraphJson", e)
+        emptyList()
       }
-    return jsonElement.extractValuesFromKey("key")
-      .map { it.substringBefore('@') } // the element has the format <DEP_NAME>@<DEP_VERSION>
-      .distinct()
-      .filterNot { "android" in it }
   }
 
   companion object {
     private val log = LogManager.getLogger(BazelBzlModExternalRulesQueryImpl::class.java)
   }
+}
+
+data class BzlmodDependency(val key: String) {
+  /**
+   * Extract dependency name from bzlmod dependency, where the raw format is `<DEP_NAME>@<DEP_VERSION>`.
+   *
+   * There were some issues with (empty) bzlmod projects and android, so the automatic mechanism ignores it.
+   * Use `enabled_rules` to enable `rules_android` instead.
+   */
+  fun toDependencyName(): String? =
+    key.substringBefore('@')
+      .takeIf { "android" !in it }
+}
+
+data class BzlmodGraph(val dependencies: List<BzlmodDependency>) {
+  fun getAllDirectRuleDependencies() = dependencies.mapNotNull { it.toDependencyName() }
 }
