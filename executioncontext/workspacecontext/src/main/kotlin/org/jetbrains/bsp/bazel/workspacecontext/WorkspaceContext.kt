@@ -108,6 +108,9 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
 val WorkspaceContext.isAndroidEnabled: Boolean
     get() = "rules_android" in enabledRules.values
 
+val WorkspaceContext.isRustEnabled: Boolean
+    get() = "rules_rust" in enabledRules.values
+
 val WorkspaceContext.extraFlags: List<String>
     get() = if (isAndroidEnabled) {
         listOf(

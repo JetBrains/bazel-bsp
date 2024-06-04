@@ -23,6 +23,8 @@ class BazelEnabledRulesQueryImpl(
     enabledRulesSpec.values
 }
 
+private val rulesDisabledFromAutoDetection = listOf("rules_android", "rules_rust")
+
 class BazelExternalRulesQueryImpl(
   private val bazelRunner: BazelRunner,
   private val isBzlModEnabled: Boolean,
@@ -36,20 +38,20 @@ class BazelExternalRulesQueryImpl(
     }
 }
 
-
 class BazelWorkspaceExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : BazelExternalRulesQuery {
   override fun fetchExternalRuleNames(cancelChecker: CancelChecker): List<String> =
     bazelRunner.commandBuilder().query()
       .withArgument("//external:*")
       .withFlags(listOf("--output=xml", "--order_output=no"))
       .executeBazelCommand(parseProcessOutput = false)
-      .waitAndGetResult(cancelChecker, ensureAllOutputRead = true).let { result ->
+      .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
+      .let { result ->
         if (result.isNotSuccess) {
           log.warn("Bazel query failed with output: '${result.stderr.escapeNewLines()}'")
           null
         } else result.stdout.readXML(log)?.calculateEligibleRules()
       }
-      ?.filterNot { "android" in it }
+      ?.removeRulesDisabledFromAutoDetection()
       .orEmpty()
 
   private fun Document.calculateEligibleRules(): List<String> {
@@ -85,7 +87,9 @@ class BazelBzlModExternalRulesQueryImpl(private val bazelRunner: BazelRunner) : 
         } else result.stdout.toJson(log)
       } as? JsonObject
       return try {
-        gson.fromJson(bzlmodGraphJson, BzlmodGraph::class.java).getAllDirectRuleDependencies()
+        gson.fromJson(bzlmodGraphJson, BzlmodGraph::class.java)
+          .getAllDirectRuleDependencies()
+          .removeRulesDisabledFromAutoDetection()
       } catch (e: Throwable) {
         log.warn("The returned bzlmod json is not parsable:\n$bzlmodGraphJson", e)
         emptyList()
@@ -104,11 +108,13 @@ data class BzlmodDependency(val key: String) {
    * There were some issues with (empty) bzlmod projects and android, so the automatic mechanism ignores it.
    * Use `enabled_rules` to enable `rules_android` instead.
    */
-  fun toDependencyName(): String? =
+  fun toDependencyName(): String =
     key.substringBefore('@')
-      .takeIf { "android" !in it }
 }
 
 data class BzlmodGraph(val dependencies: List<BzlmodDependency>) {
-  fun getAllDirectRuleDependencies() = dependencies.mapNotNull { it.toDependencyName() }
+  fun getAllDirectRuleDependencies() = dependencies.map { it.toDependencyName() }
 }
+
+private fun List<String>.removeRulesDisabledFromAutoDetection(): List<String> =
+  this.filterNot { rule -> rulesDisabledFromAutoDetection.any { it in rule } }

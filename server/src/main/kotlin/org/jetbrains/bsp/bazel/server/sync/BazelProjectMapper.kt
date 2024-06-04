@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
@@ -25,6 +24,7 @@ import org.jetbrains.bsp.bazel.server.model.Project
 import org.jetbrains.bsp.bazel.server.model.SourceSet
 import org.jetbrains.bsp.bazel.server.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
+import org.jetbrains.bsp.bazel.workspacecontext.isRustEnabled
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -47,6 +47,13 @@ class BazelProjectMapper(
 
   private fun <T> measure(description: String, body: () -> T): T =
     Measurements.measure(body, description, metricsLogger, bspClientLogger)
+
+  private fun <T> measureIf(description: String, predicate: () -> Boolean, ifFalse: T, body: () -> T): T =
+    if (predicate()) {
+      Measurements.measure(body, description, metricsLogger, bspClientLogger)
+    } else {
+      ifFalse
+    }
 
   fun createProject(
     targets: Map<Label, TargetInfo>,
@@ -115,10 +122,18 @@ class BazelProjectMapper(
     val invalidTargets = measure("Save invalid target labels") {
       removeDotBazelBspTarget(allTargetNames) - targetsToImport.map { Label.parse(it.id) }.toSet()
     }
-    val rustExternalTargetsToImport = measure("Select external Rust targets") {
+    val rustExternalTargetsToImport = measureIf(
+      description = "Select external Rust targets",
+      predicate = { workspaceContext.isRustEnabled },
+      ifFalse = emptySequence()
+    ) {
       selectRustExternalTargetsToImport(rootTargets, dependencyGraph)
     }
-    val rustExternalModules = measure("Create Rust external modules") {
+    val rustExternalModules = measureIf(
+      description = "Create Rust external modules",
+      predicate = { workspaceContext.isRustEnabled },
+      ifFalse = emptySequence(),
+    ) {
       createRustExternalModules(rustExternalTargetsToImport, dependencyGraph, librariesFromDeps)
     }
     val allModules = mergedModulesFromBazel + rustExternalModules

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.sync
 
-import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
@@ -13,9 +12,9 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGen
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.model.Project
-import org.jetbrains.bsp.bazel.workspacecontext.BazelBinarySpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import org.jetbrains.bsp.bazel.workspacecontext.isRustEnabled
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -92,7 +91,8 @@ class ProjectResolver(
       targetSpecs = workspaceContext.targets,
       aspect = ASPECT_NAME,
       outputGroups = outputGroups,
-      shouldBuildManualFlags = workspaceContext.shouldAddBuildAffectingFlags(keepDefaultOutputGroups)
+      shouldBuildManualFlags = workspaceContext.shouldAddBuildAffectingFlags(keepDefaultOutputGroups),
+      isRustEnabled = workspaceContext.isRustEnabled,
     )
   }
 

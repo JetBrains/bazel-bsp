@@ -46,6 +46,7 @@ class BazelBspAspectsManager(
     aspect: String,
     outputGroups: List<String>,
     shouldBuildManualFlags: Boolean,
+    isRustEnabled: Boolean,
   ): BazelBspAspectsManagerResult {
     if (targetSpecs.values.isEmpty()) return BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
     val defaultFlags = listOf(
@@ -61,10 +62,10 @@ class BazelBspAspectsManager(
 
     return bazelBspCompilationManager
       .buildTargetsWithBep(
-        cancelChecker,
-        targetSpecs,
-        flagsToUse,
-        null,
+        cancelChecker = cancelChecker,
+        targetSpecs = targetSpecs,
+        extraFlags = flagsToUse,
+        originId = null,
         // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
         // (`Cargo.lock` file) based on dependencies specified in `manifest`
         // (`Cargo.toml` file) and syncs `lockfile` (`Cargo.bazel.lock` file) with `cargo_lockfile`.
@@ -73,7 +74,7 @@ class BazelBspAspectsManager(
         // `crates_repository` from `rules_rust`,
         // see: https://bazelbuild.github.io/rules_rust/crate_universe.html#crates_repository.
         // In our server used only with `bazel build` command.
-        listOf(Pair("CARGO_BAZEL_REPIN", "1"))
+        environment = if (isRustEnabled) listOf(Pair("CARGO_BAZEL_REPIN", "1")) else emptyList(),
       ).let {
         BazelBspAspectsManagerResult(it.bepOutput, it.processResult.isNotSuccess)
       }
