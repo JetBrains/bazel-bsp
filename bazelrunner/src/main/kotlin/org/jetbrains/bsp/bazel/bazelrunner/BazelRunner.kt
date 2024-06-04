@@ -40,6 +40,7 @@ class BazelRunner private constructor(
         environment: Map<String, String>,
         originId: String?,
         eventTextFile: Path,
+        serverPid: Long?,
     ): BazelProcess {
         fun besFlags() = listOf(
             "--build_event_binary_file=${eventTextFile.toAbsolutePath()}",
@@ -54,7 +55,8 @@ class BazelRunner private constructor(
             arguments,
             environment,
             originId,
-            true
+            true,
+            serverPid = serverPid,
         )
     }
 
@@ -66,6 +68,7 @@ class BazelRunner private constructor(
         originId: String?,
         parseProcessOutput: Boolean,
         useBuildFlags: Boolean = true,
+        serverPid: Long?,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
         val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
@@ -80,7 +83,8 @@ class BazelRunner private constructor(
         val process = processBuilder.start()
         return BazelProcess(
             process,
-            outputLogger
+            outputLogger,
+            serverPid,
         )
     }
 

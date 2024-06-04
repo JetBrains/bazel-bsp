@@ -13,6 +13,7 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 class BazelProcess internal constructor(
     private val process: Process,
     private val logger: BspClientLogger? = null,
+    private val serverPid: Long?,
 ) {
 
     fun waitAndGetResult(cancelChecker: CancelChecker, ensureAllOutputRead: Boolean = false): BazelProcessResult {
@@ -26,7 +27,7 @@ class BazelProcess internal constructor(
                 else AsyncOutputProcessor(process, LOGGER::info)
             }
 
-        val exitCode = outputProcessor.waitForExit(cancelChecker)
+        val exitCode = outputProcessor.waitForExit(cancelChecker, logger, serverPid)
         val duration = stopwatch.stop()
         logCompletion(exitCode, duration)
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)

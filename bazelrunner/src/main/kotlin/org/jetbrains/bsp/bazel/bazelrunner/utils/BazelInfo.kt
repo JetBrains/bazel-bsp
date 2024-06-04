@@ -10,6 +10,7 @@ interface BazelInfo {
   val workspaceRoot: Path
   val release: BazelRelease
   val isBzlModEnabled: Boolean
+  val serverPid: Long
 }
 
 data class BazelRelease(
@@ -60,6 +61,7 @@ data class BasicBazelInfo(
   override val workspaceRoot: Path,
   override val release: BazelRelease,
   override val isBzlModEnabled: Boolean,
+  override val serverPid: Long,
 ) : BazelInfo
 
 class LazyBazelInfo(bazelInfoSupplier: () -> BazelInfo) : BazelInfo {
@@ -79,4 +81,7 @@ class LazyBazelInfo(bazelInfoSupplier: () -> BazelInfo) : BazelInfo {
 
   override val isBzlModEnabled: Boolean
     get() = bazelInfo.isBzlModEnabled
+
+  override val serverPid: Long
+    get() = bazelInfo.serverPid
 }
