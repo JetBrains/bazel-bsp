@@ -86,6 +86,7 @@ internal object BazelBinarySpecExtractor : ExecutionContextEntityExtractor<Bazel
     }
     if (suffix == null) {
       log.error("Could not calculate bazelisk download link (your OS should be one of: windows-amd64, linux-amd64, linux-arm64, darwin)")
+      return null
     }
     return base + suffix
   }
