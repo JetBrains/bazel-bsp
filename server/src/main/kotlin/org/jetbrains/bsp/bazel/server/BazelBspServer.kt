@@ -6,7 +6,6 @@ import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime
@@ -25,7 +24,6 @@ import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService
-import org.jetbrains.bsp.bazel.server.sync.FileProjectStorage
 import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.sync.ProjectProvider
 import org.jetbrains.bsp.bazel.server.sync.ProjectResolver
@@ -106,9 +104,8 @@ class BazelBspServer(
     )
   }
 
-  private fun createBazelInfo(bspInfo: BspInfo, bazelRunner: BazelRunner): BazelInfo {
-    val bazelInfoStorage = BazelInfoStorage(bspInfo)
-    val bazelDataResolver = BazelInfoResolver(bazelRunner, bazelInfoStorage)
+  private fun createBazelInfo(bazelRunner: BazelRunner): BazelInfo {
+    val bazelDataResolver = BazelInfoResolver(bazelRunner)
     return bazelDataResolver.resolveBazelInfo { }
   }
 
@@ -178,16 +175,14 @@ class BazelBspServer(
       bazelRunner = bazelRunner,
       metricsLogger = metricsLogger
     )
-    val projectStorage = FileProjectStorage(bspInfo, bspClientLogger)
-
-    return ProjectProvider(projectResolver, projectStorage)
+    return ProjectProvider(projectResolver)
   }
 
   fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<JoinedBuildClient> {
     val bspServerApi = BspServerApi { client: JoinedBuildClient ->
       val bspClientLogger = BspClientLogger(client)
       val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot, bspInfo.bazelBspDir().toString())
-      val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
+      val bazelInfo = createBazelInfo(bazelRunner)
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =
         BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState, client, workspaceRoot)

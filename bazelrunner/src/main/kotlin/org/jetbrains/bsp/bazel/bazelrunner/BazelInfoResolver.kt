@@ -10,13 +10,9 @@ import org.jetbrains.bsp.bazel.bazelrunner.utils.orLatestSupported
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import java.nio.file.Paths
 
-class BazelInfoResolver(
-  private val bazelRunner: BazelRunner,
-  private val storage: BazelInfoStorage
-) {
-
+class BazelInfoResolver(private val bazelRunner: BazelRunner) {
   fun resolveBazelInfo(cancelChecker: CancelChecker): BazelInfo {
-    return LazyBazelInfo { storage.load() ?: bazelInfoFromBazel(cancelChecker) }
+    return LazyBazelInfo { bazelInfoFromBazel(cancelChecker) }
   }
 
   private fun bazelInfoFromBazel(cancelChecker: CancelChecker): BazelInfo {
@@ -24,7 +20,7 @@ class BazelInfoResolver(
     val processResult = bazelRunner.commandBuilder()
         .info().executeBazelCommand()
         .waitAndGetResult(cancelChecker,true)
-    return parseBazelInfo(processResult, isBzlModEnabled).also { storage.store(it) }
+    return parseBazelInfo(processResult, isBzlModEnabled)
   }
 
   private fun parseBazelInfo(bazelProcessResult: BazelProcessResult, isBzlModEnabled: Boolean): BasicBazelInfo {
