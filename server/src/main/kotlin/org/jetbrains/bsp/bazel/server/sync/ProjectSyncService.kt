@@ -134,7 +134,7 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun buildTargetJavacOptions(cancelChecker: CancelChecker, params: JavacOptionsParams): JavacOptionsResult {
     val project = projectProvider.get(cancelChecker)
-    val includeClasspath = !clientCapabilities.jvmCompileClasspathReceiver
+    val includeClasspath = clientCapabilities.jvmCompileClasspathReceiver == false
     return bspMapper.buildTargetJavacOptions(project, params, includeClasspath, cancelChecker)
   }
 
@@ -150,7 +150,7 @@ class ProjectSyncService(private val bspMapper: BspProjectMapper, private val pr
 
   fun buildTargetScalacOptions(cancelChecker: CancelChecker, params: ScalacOptionsParams): ScalacOptionsResult {
     val project = projectProvider.get(cancelChecker)
-    val includeClasspath = !clientCapabilities.jvmCompileClasspathReceiver
+    val includeClasspath = clientCapabilities.jvmCompileClasspathReceiver == false
     return bspMapper.buildTargetScalacOptions(project, params, includeClasspath, cancelChecker)
   }
 
