@@ -27,7 +27,7 @@ class BazelProcess internal constructor(
                 else AsyncOutputProcessor(process, LOGGER::info)
             }
 
-        val exitCode = outputProcessor.waitForExit(cancelChecker, logger, serverPid)
+        val exitCode = outputProcessor.waitForExit(cancelChecker, serverPid)
         val duration = stopwatch.stop()
         logCompletion(exitCode, duration)
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)

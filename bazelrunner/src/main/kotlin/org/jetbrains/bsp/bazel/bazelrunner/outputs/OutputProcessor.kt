@@ -56,13 +56,15 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     executorService.submit(runnable).also { runningProcessors.add(it) }
   }
 
-  fun waitForExit(cancelChecker: CancelChecker, logger: BspClientLogger?, serverPid: Long?): Int {
+  fun waitForExit(cancelChecker: CancelChecker, serverPid: Long?): Int {
     var isFinished = false;
     val serverHandle = serverPid?.let(ProcessHandle::of)?.getOrNull()
     while (!isFinished) {
       isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
       if (cancelChecker.isCanceled) {
+        // We probably don't want to kill them all
         serverHandle?.children()?.forEach { it.destroy() }
+        // Interrupts the server and detaches its children
         serverHandle?.destroy()
         process.destroy()
       }

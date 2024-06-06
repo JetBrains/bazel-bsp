@@ -20,7 +20,7 @@ class BazelBspCompilationManager(
     private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>,
     val client: JoinedBuildClient,
     val workspaceRoot: Path,
-    val serverPid: Long,
+    private val serverPid: Long,
 ) {
     fun buildTargetsWithBep(
         cancelChecker: CancelChecker,
