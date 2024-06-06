@@ -6,7 +6,7 @@ bazel_dep(name = "rules_kotlin", version = "1.9.1")
 
 bazel_dep(name = "rules_android", version = "0.2.0")
 
-RULES_ANDROID_COMMIT = "d3c0757dde5698c8e559804f8204448186ba0f50"
+RULES_ANDROID_COMMIT = "f6c3cb4edd98b3fe56a37fbbd2ede3d5c67b4edb"
 
 git_override(
     module_name = "rules_android",
