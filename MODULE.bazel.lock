@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "593d769851a9839d603d14d5eb606fda48fe378e3d2f075167dae375ab63fb3f",
+  "moduleFileHash": "5a5d64fe04094cd4ececca5abb73889f818c6971097c18d58ece971ba92b0b01",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -135,7 +135,7 @@
                   "org.apache.velocity:velocity-engine-core:2.3",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1",
                   "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1",
-                  "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3",
+                  "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0",
                   "org.slf4j:slf4j-nop:1.7.36",
                   "com.fasterxml.jackson.core:jackson-databind:2.17.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1",
@@ -170,7 +170,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_kotlin": "rules_kotlin@1.9.5",
         "rules_java": "rules_java@7.6.1",
         "rules_proto": "rules_proto@6.0.0-rc1",
@@ -184,10 +184,10 @@
         "local_config_platform": "local_config_platform@_"
       }
     },
-    "bazel_skylib@1.6.1": {
+    "bazel_skylib@1.7.1": {
       "name": "bazel_skylib",
-      "version": "1.6.1",
-      "key": "bazel_skylib@1.6.1",
+      "version": "1.7.1",
+      "key": "bazel_skylib@1.7.1",
       "repoName": "bazel_skylib",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
@@ -197,6 +197,7 @@
       "extensionUsages": [],
       "deps": {
         "platforms": "platforms@0.0.10",
+        "rules_license": "rules_license@0.0.7",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -204,11 +205,11 @@
         "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "bazel_skylib~1.6.1",
+          "name": "bazel_skylib~1.7.1",
           "urls": [
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.6.1/bazel-skylib-1.6.1.tar.gz"
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz"
           ],
-          "integrity": "sha256-nziIakBUjG6WwQa3UvJCEw7hGqoGila6flb0UR8z5PI=",
+          "integrity": "sha256-vCg8381SalLDIBJ5zaS8KYZS76iYsQtNsIN9xRZSdW8=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -266,7 +267,7 @@
       ],
       "deps": {
         "platforms": "platforms@0.0.10",
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_java": "rules_java@7.6.1",
         "rules_python": "rules_python@0.32.2",
         "rules_cc": "rules_cc@0.0.9",
@@ -390,7 +391,7 @@
         "platforms": "platforms@0.0.10",
         "rules_cc": "rules_cc@0.0.9",
         "bazel_features": "bazel_features@1.11.0",
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_proto": "rules_proto@6.0.0-rc1",
         "rules_license": "rules_license@0.0.7",
         "bazel_tools": "bazel_tools@_",
@@ -421,7 +422,7 @@
       "extensionUsages": [],
       "deps": {
         "rules_license": "rules_license@0.0.7",
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -662,7 +663,7 @@
       ],
       "deps": {
         "bazel_features": "bazel_features@1.11.0",
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_cc": "rules_cc@0.0.9",
         "platforms": "platforms@0.0.10",
         "rules_proto": "rules_proto@6.0.0-rc1",
@@ -740,7 +741,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_java": "rules_java@7.6.1",
         "rules_kotlin": "rules_kotlin@1.9.5",
         "rules_jvm_external": "rules_jvm_external@6.1",
@@ -759,7 +760,7 @@
       ],
       "extensionUsages": [],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_python": "rules_python@0.32.2",
         "platforms": "platforms@0.0.10",
         "cgrindel_bazel_starlib": "cgrindel_bazel_starlib@0.18.0",
@@ -1103,7 +1104,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "platforms": "platforms@0.0.10",
         "rules_java": "rules_java@7.6.1",
         "rules_kotlin": "rules_kotlin@1.9.5",
@@ -1276,6 +1277,33 @@
         "bazel_tools": "bazel_tools@_"
       }
     },
+    "rules_license@0.0.7": {
+      "name": "rules_license",
+      "version": "0.0.7",
+      "key": "rules_license@0.0.7",
+      "repoName": "rules_license",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "name": "rules_license~0.0.7",
+          "urls": [
+            "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz"
+          ],
+          "integrity": "sha256-RTHezLkTY5ww5cdRKgVNXYdWmNrrddjPkPKEN1/nw2A=",
+          "strip_prefix": "",
+          "remote_patches": {},
+          "remote_patch_strip": 0
+        }
+      }
+    },
     "bazel_features@1.11.0": {
       "name": "bazel_features",
       "version": "1.11.0",
@@ -1304,7 +1332,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -1322,33 +1350,6 @@
             "https://bcr.bazel.build/modules/bazel_features/1.11.0/patches/module_dot_bazel_version.patch": "sha256-SmJxgdBt6h3FejXQprwnDFpgAouqa1nThB8hStRLI7o="
           },
           "remote_patch_strip": 1
-        }
-      }
-    },
-    "rules_license@0.0.7": {
-      "name": "rules_license",
-      "version": "0.0.7",
-      "key": "rules_license@0.0.7",
-      "repoName": "rules_license",
-      "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
-      "extensionUsages": [],
-      "deps": {
-        "bazel_tools": "bazel_tools@_",
-        "local_config_platform": "local_config_platform@_"
-      },
-      "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "ruleClassName": "http_archive",
-        "attributes": {
-          "name": "rules_license~0.0.7",
-          "urls": [
-            "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz"
-          ],
-          "integrity": "sha256-RTHezLkTY5ww5cdRKgVNXYdWmNrrddjPkPKEN1/nw2A=",
-          "strip_prefix": "",
-          "remote_patches": {},
-          "remote_patch_strip": 0
         }
       }
     },
@@ -1403,7 +1404,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_python": "rules_python@0.32.2",
         "rules_cc": "rules_cc@0.0.9",
         "rules_proto": "rules_proto@6.0.0-rc1",
@@ -1482,7 +1483,7 @@
       "deps": {
         "io_bazel_rules_go": "rules_go@0.41.0",
         "bazel_gazelle": "gazelle@0.32.0",
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "io_bazel_stardoc": "stardoc@0.5.6",
         "buildifier_prebuilt": "buildifier_prebuilt@6.0.0.1",
         "platforms": "platforms@0.0.10",
@@ -1544,7 +1545,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_java": "rules_java@7.6.1",
         "rules_license": "rules_license@0.0.7",
         "bazel_tools": "bazel_tools@_",
@@ -1627,7 +1628,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "platforms": "platforms@0.0.10",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -1657,7 +1658,7 @@
       "extensionUsages": [],
       "deps": {
         "rules_python": "rules_python@0.32.2",
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_license": "rules_license@0.0.7",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -1719,7 +1720,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "rules_proto": "rules_proto@6.0.0-rc1",
         "com_google_protobuf": "protobuf@21.7",
         "com_google_absl": "abseil-cpp@20211102.0",
@@ -1886,7 +1887,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "platforms": "platforms@0.0.10",
         "rules_proto": "rules_proto@6.0.0-rc1",
         "com_google_protobuf": "protobuf@21.7",
@@ -1994,7 +1995,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "com_google_protobuf": "protobuf@21.7",
         "io_bazel_rules_go": "rules_go@0.41.0",
         "rules_proto": "rules_proto@6.0.0-rc1",
@@ -2045,7 +2046,7 @@
         }
       ],
       "deps": {
-        "bazel_skylib": "bazel_skylib@1.6.1",
+        "bazel_skylib": "bazel_skylib@1.7.1",
         "platforms": "platforms@0.0.10",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -2142,7 +2143,7 @@
           [
             "bazel_features~1.11.0",
             "bazel_skylib",
-            "bazel_skylib~1.6.1"
+            "bazel_skylib~1.7.1"
           ],
           [
             "bazel_features~1.11.0",
@@ -2390,7 +2391,7 @@
           [
             "buildifier_prebuilt~6.0.0.1",
             "bazel_skylib",
-            "bazel_skylib~1.6.1"
+            "bazel_skylib~1.7.1"
           ],
           [
             "buildifier_prebuilt~6.0.0.1",
@@ -4024,7 +4025,7 @@
       "general": {
         "bzlTransitiveDigest": "KKW33qxEheJxTHImb+0RRJzAx0lvrMXI0dlYVxV+o8k=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "6f8bd660a799529818e7fb3a5cfc74d2b4036e81cbfcac3a2f030cddd5c31be0",
+          "@@//:maven_install.json": "16beb9f406369a010ca7d362f63319f14a610dbc7d2a153c636dfdfecbc7c2bd",
           "@@rules_jvm_external~6.1//:rules_jvm_external_deps_install.json": "0bfbc915d9155df44d7a3b216e8f3c1fbcd110e358dd07637dc393583a5227e8"
         },
         "envVariables": {},
@@ -4051,6 +4052,30 @@
                 "https://repo1.maven.org/maven2/io/opentelemetry/opentelemetry-context/1.36.0/opentelemetry-context-1.36.0.jar"
               ],
               "downloaded_file_path": "v1/io/opentelemetry/opentelemetry-context/1.36.0/opentelemetry-context-1.36.0.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_7_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_7_0",
+              "sha256": "b1b8f8be450f16faa5d37d4f4b6dedf4d685136a4c6f1dec3aede92eafbbbded",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0-sources.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0-sources.jar"
+            }
+          },
+          "org_jetbrains_kotlin_kotlin_stdlib_2_0_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_2_0_0",
+              "sha256": "240938c4aab8e73e888703e3e7d3f87383ffe5bd536d6d5e3c100d4cd0379fcf",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.0.0/kotlin-stdlib-2.0.0.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib/2.0.0/kotlin-stdlib-2.0.0.jar"
             }
           },
           "io_grpc_grpc_core_1_62_2": {
@@ -4341,18 +4366,6 @@
               "downloaded_file_path": "v1/io/opencensus/opencensus-proto/0.2.0/opencensus-proto-0.2.0-sources.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_1_9_22": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_1_9_22",
-              "sha256": "e62b0391ff772e5126a80921fcd2c867347592a8014d23a162b9051f15786263",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22-sources.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22-sources.jar"
-            }
-          },
           "ch_epfl_scala_bsp4j_jar_sources_2_2_0_M2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4425,16 +4438,16 @@
               "downloaded_file_path": "v1/org/apache/maven/resolver/maven-resolver-api/1.9.18/maven-resolver-api-1.9.18.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_6_3": {
+          "io_kotest_kotest_assertions_api_jvm_jar_sources_5_9_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_6_3",
-              "sha256": "018093c488ab4a2c2db876b44e27b8c296c294f8222c480a422187976aa89d5b",
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_api_jvm_jar_sources_5_9_1",
+              "sha256": "5828eacafedf979de09382b9e42950cec4e932f7697b0972a089a2dd3ebb7bd7",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3-sources.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.9.1/kotest-assertions-api-jvm-5.9.1-sources.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3-sources.jar"
+              "downloaded_file_path": "v1/io/kotest/kotest-assertions-api-jvm/5.9.1/kotest-assertions-api-jvm-5.9.1-sources.jar"
             }
           },
           "org_junit_jupiter_junit_jupiter_api_5_10_2": {
@@ -4447,18 +4460,6 @@
                 "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar"
               ],
               "downloaded_file_path": "v1/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar"
-            }
-          },
-          "io_kotest_kotest_assertions_api_jvm_jar_sources_5_9_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_api_jvm_jar_sources_5_9_0",
-              "sha256": "5828eacafedf979de09382b9e42950cec4e932f7697b0972a089a2dd3ebb7bd7",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.9.0/kotest-assertions-api-jvm-5.9.0-sources.jar"
-              ],
-              "downloaded_file_path": "v1/io/kotest/kotest-assertions-api-jvm/5.9.0/kotest-assertions-api-jvm-5.9.0-sources.jar"
             }
           },
           "org_eclipse_xtext_org_eclipse_xtext_xbase_lib_jar_sources_2_28_0": {
@@ -4569,18 +4570,6 @@
               "downloaded_file_path": "v1/org/apache/maven/resolver/maven-resolver-impl/1.9.18/maven-resolver-impl-1.9.18.jar"
             }
           },
-          "io_kotest_kotest_assertions_core_jvm_5_9_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_core_jvm_5_9_0",
-              "sha256": "4c89e09a6b38268112fde26a0b52ef54bb17843b41bfd215f79f2cf4cdd0278c",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.9.0/kotest-assertions-core-jvm-5.9.0.jar"
-              ],
-              "downloaded_file_path": "v1/io/kotest/kotest-assertions-core-jvm/5.9.0/kotest-assertions-core-jvm-5.9.0.jar"
-            }
-          },
           "io_netty_netty_handler_jar_sources_4_1_108_Final": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -4651,6 +4640,30 @@
                 "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.17.1/jackson-databind-2.17.1-sources.jar"
               ],
               "downloaded_file_path": "v1/com/fasterxml/jackson/core/jackson-databind/2.17.1/jackson-databind-2.17.1-sources.jar"
+            }
+          },
+          "io_kotest_kotest_assertions_core_jvm_5_9_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_core_jvm_5_9_1",
+              "sha256": "849060962848ab7da9c58f9bcacc770f2d7f1599d13d329b2586c2b0e0bd9a96",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.9.1/kotest-assertions-core-jvm-5.9.1.jar"
+              ],
+              "downloaded_file_path": "v1/io/kotest/kotest-assertions-core-jvm/5.9.1/kotest-assertions-core-jvm-5.9.1.jar"
+            }
+          },
+          "org_jetbrains_kotlin_kotlin_stdlib_jar_sources_2_0_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_jar_sources_2_0_0",
+              "sha256": "256f2c1caf3df558d6c41b79fb83add98edcc08436b821a80b5f17d806c664a1",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.0.0/kotlin-stdlib-2.0.0-sources.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib/2.0.0/kotlin-stdlib-2.0.0-sources.jar"
             }
           },
           "software_amazon_awssdk_json_utils_jar_sources_2_25_23": {
@@ -4807,18 +4820,6 @@
                 "https://repo1.maven.org/maven2/com/google/inject/guice/5.1.0/guice-5.1.0-sources.jar"
               ],
               "downloaded_file_path": "v1/com/google/inject/guice/5.1.0/guice-5.1.0-sources.jar"
-            }
-          },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_6_3",
-              "sha256": "fb3096feff8e11b85d7ab179b5fcd47be628fe9193472005b67638638201cf85",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3-sources.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3-sources.jar"
             }
           },
           "com_google_api_gax_jar_sources_2_46_1": {
@@ -5361,18 +5362,6 @@
               "downloaded_file_path": "v1/org/apache/maven/maven-settings/3.9.6/maven-settings-3.9.6-sources.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_1_9_23": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_1_9_23",
-              "sha256": "8910cc238807d86ef550cb1f0b10dd5ed40b35a4ec1a52525f760aede84ead37",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.23/kotlin-stdlib-1.9.23.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib/1.9.23/kotlin-stdlib-1.9.23.jar"
-            }
-          },
           "com_google_http_client_google_http_client_jackson2_jar_sources_1_44_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5421,16 +5410,16 @@
               "downloaded_file_path": "v1/com/google/re2j/re2j/1.7/re2j-1.7-sources.jar"
             }
           },
-          "io_kotest_kotest_common_jvm_jar_sources_5_9_0": {
+          "io_kotest_kotest_common_jvm_jar_sources_5_9_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_common_jvm_jar_sources_5_9_0",
-              "sha256": "798fb91e8dcf345ddd619f07fccf25bc517116817001c3f211594b1ca8bd6799",
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_common_jvm_jar_sources_5_9_1",
+              "sha256": "ec32fccb4f41ab7ae592bb677d4f7b3c7e6ac3766457cc1e32c75d313880a7ca",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.9.0/kotest-common-jvm-5.9.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.9.1/kotest-common-jvm-5.9.1-sources.jar"
               ],
-              "downloaded_file_path": "v1/io/kotest/kotest-common-jvm/5.9.0/kotest-common-jvm-5.9.0-sources.jar"
+              "downloaded_file_path": "v1/io/kotest/kotest-common-jvm/5.9.1/kotest-common-jvm-5.9.1-sources.jar"
             }
           },
           "com_google_guava_guava_33_1_0_jre": {
@@ -5443,6 +5432,18 @@
                 "https://repo1.maven.org/maven2/com/google/guava/guava/33.1.0-jre/guava-33.1.0-jre.jar"
               ],
               "downloaded_file_path": "v1/com/google/guava/guava/33.1.0-jre/guava-33.1.0-jre.jar"
+            }
+          },
+          "org_jetbrains_kotlin_kotlin_stdlib_common_2_0_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_common_2_0_0",
+              "sha256": "8248a6d31891cb93e78cc401f64a3aefb3a32d0d33c1b9e7fbd026dc2422938a",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.0/kotlin-stdlib-common-2.0.0.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.0/kotlin-stdlib-common-2.0.0.jar"
             }
           },
           "io_opencensus_opencensus_api_0_31_1": {
@@ -5541,18 +5542,6 @@
               "downloaded_file_path": "v1/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_1_6_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_1_6_3",
-              "sha256": "8c0016890a79ab5980dd520a5ab1a6738023c29aa3b6437c482e0e5fdc06dab1",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.6.3/kotlinx-serialization-json-1.6.3.jar"
-            }
-          },
           "software_amazon_awssdk_profiles_2_25_23": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5563,6 +5552,18 @@
                 "https://repo1.maven.org/maven2/software/amazon/awssdk/profiles/2.25.23/profiles-2.25.23.jar"
               ],
               "downloaded_file_path": "v1/software/amazon/awssdk/profiles/2.25.23/profiles-2.25.23.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_7_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_7_0",
+              "sha256": "bc5fb7ba6985a62c4cc2d95940a751d87597f12428fe37feea4bdc6ce996d67c",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0.jar"
             }
           },
           "org_apache_maven_maven_artifact_3_9_6": {
@@ -5913,16 +5914,16 @@
               "downloaded_file_path": "v1/com/google/auth/google-auth-library-credentials/1.23.0/google-auth-library-credentials-1.23.0-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_6_3": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_7_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_6_3",
-              "sha256": "d3234179bcff1886d53d67c11eca47f7f3cf7b63c349d16965f6db51b7f3dd9a",
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_7_0",
+              "sha256": "0281a19e4256420833158bbb0e2a71fb62253c504633882e3f09fd178873b08f",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0-sources.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar"
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0-sources.jar"
             }
           },
           "io_grpc_grpc_core_jar_sources_1_62_2": {
@@ -6297,18 +6298,6 @@
               "downloaded_file_path": "v1/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_common_1_9_22",
-              "sha256": "60b53a3fc0ed19ff5568ad54372f102f51109b7480417e93c8f3418ae4f73188",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.22/kotlin-stdlib-common-1.9.22.jar"
-            }
-          },
           "io_netty_netty_buffer_4_1_108_Final": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6417,16 +6406,16 @@
               "downloaded_file_path": "v1/com/google/api/gax-httpjson/2.46.1/gax-httpjson-2.46.1.jar"
             }
           },
-          "org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_23": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_1_7_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_jar_sources_1_9_23",
-              "sha256": "6c636f62ce4c32d9e24ba3ce474a05ac7e9e3a9c6b4db25e8b3637e620f7b73d",
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_1_7_0",
+              "sha256": "35bf3b860574b0be7c0ce975e946f6d0e7da4ea5e8f8f13b71192e82f187051d",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.23/kotlin-stdlib-1.9.23-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib/1.9.23/kotlin-stdlib-1.9.23-sources.jar"
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0.jar"
             }
           },
           "io_grpc_grpc_protobuf_1_64_0": {
@@ -6453,6 +6442,18 @@
               "downloaded_file_path": "v1/org/eclipse/lsp4j/org.eclipse.lsp4j.generator/0.20.1/org.eclipse.lsp4j.generator-0.20.1-sources.jar"
             }
           },
+          "io_kotest_kotest_assertions_api_jvm_5_9_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_api_jvm_5_9_1",
+              "sha256": "4aff4ca83e9206cb2388325df872976f519e925a069494abec292ec3114c0d09",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.9.1/kotest-assertions-api-jvm-5.9.1.jar"
+              ],
+              "downloaded_file_path": "v1/io/kotest/kotest-assertions-api-jvm/5.9.1/kotest-assertions-api-jvm-5.9.1.jar"
+            }
+          },
           "com_google_apis_google_api_services_storage_v1_rev20240311_2_0_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -6463,18 +6464,6 @@
                 "https://repo1.maven.org/maven2/com/google/apis/google-api-services-storage/v1-rev20240311-2.0.0/google-api-services-storage-v1-rev20240311-2.0.0.jar"
               ],
               "downloaded_file_path": "v1/com/google/apis/google-api-services-storage/v1-rev20240311-2.0.0/google-api-services-storage-v1-rev20240311-2.0.0.jar"
-            }
-          },
-          "io_kotest_kotest_assertions_api_jvm_5_9_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_api_jvm_5_9_0",
-              "sha256": "4aff4ca83e9206cb2388325df872976f519e925a069494abec292ec3114c0d09",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-api-jvm/5.9.0/kotest-assertions-api-jvm-5.9.0.jar"
-              ],
-              "downloaded_file_path": "v1/io/kotest/kotest-assertions-api-jvm/5.9.0/kotest-assertions-api-jvm-5.9.0.jar"
             }
           },
           "javax_inject_javax_inject_1": {
@@ -6989,7 +6978,7 @@
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.1\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.1\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.7.0\" }",
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"1.7.36\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
@@ -7207,18 +7196,6 @@
               "downloaded_file_path": "v1/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0-sources.jar"
             }
           },
-          "io_kotest_kotest_assertions_shared_jvm_jar_sources_5_9_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_shared_jvm_jar_sources_5_9_0",
-              "sha256": "7b1193340e931f7ff0625ffd49ab7cf7dae4662d70c366c1bfb8453661af049d",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.9.0/kotest-assertions-shared-jvm-5.9.0-sources.jar"
-              ],
-              "downloaded_file_path": "v1/io/kotest/kotest-assertions-shared-jvm/5.9.0/kotest-assertions-shared-jvm-5.9.0-sources.jar"
-            }
-          },
           "com_google_http_client_google_http_client_gson_1_44_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -7229,6 +7206,18 @@
                 "https://repo1.maven.org/maven2/com/google/http-client/google-http-client-gson/1.44.1/google-http-client-gson-1.44.1.jar"
               ],
               "downloaded_file_path": "v1/com/google/http-client/google-http-client-gson/1.44.1/google-http-client-gson-1.44.1.jar"
+            }
+          },
+          "io_kotest_kotest_assertions_shared_jvm_jar_sources_5_9_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_shared_jvm_jar_sources_5_9_1",
+              "sha256": "14b0c73c06a18f80c7d624d700e30e858a990de5e9e31d6a699ce158dc36d15b",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.9.1/kotest-assertions-shared-jvm-5.9.1-sources.jar"
+              ],
+              "downloaded_file_path": "v1/io/kotest/kotest-assertions-shared-jvm/5.9.1/kotest-assertions-shared-jvm-5.9.1-sources.jar"
             }
           },
           "org_apache_maven_resolver_maven_resolver_transport_http_1_9_18": {
@@ -7555,6 +7544,18 @@
               "downloaded_file_path": "v1/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar"
             }
           },
+          "org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_2_0_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlin_kotlin_stdlib_common_jar_sources_2_0_0",
+              "sha256": "a550094167980dc49cbb6b196fb574a727160170812d4d78e3bdbbf490cb3823",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.0/kotlin-stdlib-common-2.0.0-sources.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlin/kotlin-stdlib-common/2.0.0/kotlin-stdlib-common-2.0.0-sources.jar"
+            }
+          },
           "io_grpc_grpc_stub_1_64_0": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -7830,6 +7831,18 @@
               "downloaded_file_path": "v1/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0-sources.jar"
             }
           },
+          "io_kotest_kotest_common_jvm_5_9_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_common_jvm_5_9_1",
+              "sha256": "4d3b0fd0cded7b7db4f76de3455d9ac94d0034009a31d7835f4d411de13396ee",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.9.1/kotest-common-jvm-5.9.1.jar"
+              ],
+              "downloaded_file_path": "v1/io/kotest/kotest-common-jvm/5.9.1/kotest-common-jvm-5.9.1.jar"
+            }
+          },
           "com_google_api_gax_2_46_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -7864,18 +7877,6 @@
                 "https://repo1.maven.org/maven2/com/google/api/api-common/2.29.1/api-common-2.29.1-sources.jar"
               ],
               "downloaded_file_path": "v1/com/google/api/api-common/2.29.1/api-common-2.29.1-sources.jar"
-            }
-          },
-          "io_kotest_kotest_common_jvm_5_9_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_common_jvm_5_9_0",
-              "sha256": "c8b01f239ff7926c55ff6a03611a97a5649d592e9ad06aa104f33d449476b888",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-common-jvm/5.9.0/kotest-common-jvm-5.9.0.jar"
-              ],
-              "downloaded_file_path": "v1/io/kotest/kotest-common-jvm/5.9.0/kotest-common-jvm-5.9.0.jar"
             }
           },
           "org_codehaus_woodstox_stax2_api_3_1_4": {
@@ -8370,18 +8371,6 @@
               "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-coroutines-jdk8/1.8.0/kotlinx-coroutines-jdk8-1.8.0-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_6_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_6_3",
-              "sha256": "5d873e2532ed1bb413a7698ddce0b85bc82a4018ad2b8a327fadf51c704cee8e",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3-sources.jar"
-            }
-          },
           "com_fasterxml_jackson_core_jackson_annotations_jar_sources_2_17_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -8454,6 +8443,18 @@
               "downloaded_file_path": "v1/io/opentelemetry/opentelemetry-context/1.36.0/opentelemetry-context-1.36.0-sources.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_7_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_7_0",
+              "sha256": "1903a21a3fdc9c610eb54cf93aed81b142a687709d3b3b35ad54f962ea93c578",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0.jar"
+            }
+          },
           "org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc_0_20_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -8512,18 +8513,6 @@
                 "https://repo1.maven.org/maven2/com/google/api/grpc/gapic-google-cloud-storage-v2/2.36.1-alpha/gapic-google-cloud-storage-v2-2.36.1-alpha.jar"
               ],
               "downloaded_file_path": "v1/com/google/api/grpc/gapic-google-cloud-storage-v2/2.36.1-alpha/gapic-google-cloud-storage-v2-2.36.1-alpha.jar"
-            }
-          },
-          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_6_3",
-              "sha256": "29c821a8d4e25cbfe4f2ce96cdd4526f61f8f4e69a135f9612a34a81d93b65f1",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar"
             }
           },
           "software_amazon_awssdk_checksums_spi_2_25_23": {
@@ -8634,6 +8623,18 @@
               "downloaded_file_path": "v1/org/apache/httpcomponents/httpclient/4.5.14/httpclient-4.5.14.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_7_0": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_7_0",
+              "sha256": "3927232856f43e17984159c0313f3d041f689d14bc4e2d4813fb8b7322f288b2",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0-sources.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0-sources.jar"
+            }
+          },
           "software_amazon_awssdk_arns_2_25_23": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -8682,28 +8683,16 @@
               "downloaded_file_path": "v1/org/apache/maven/maven-model-builder/3.9.6/maven-model-builder-3.9.6-sources.jar"
             }
           },
-          "io_kotest_kotest_assertions_shared_jvm_5_9_0": {
+          "io_kotest_kotest_assertions_shared_jvm_5_9_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_shared_jvm_5_9_0",
-              "sha256": "6fdc2d7ccafc37573fae167f84e31d8ad37fd831c0ad77253f30dbbb279d2656",
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_shared_jvm_5_9_1",
+              "sha256": "c7da7ed66e25b59406349facd4bb43537ca48589a74aa3d883eb412c9caac60a",
               "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.9.0/kotest-assertions-shared-jvm-5.9.0.jar"
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-shared-jvm/5.9.1/kotest-assertions-shared-jvm-5.9.1.jar"
               ],
-              "downloaded_file_path": "v1/io/kotest/kotest-assertions-shared-jvm/5.9.0/kotest-assertions-shared-jvm-5.9.0.jar"
-            }
-          },
-          "io_kotest_kotest_assertions_core_jvm_jar_sources_5_9_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_core_jvm_jar_sources_5_9_0",
-              "sha256": "4c19e7d72716371088b035ac15e10ea249f0f7cfab2c37e50c8ff7cbf64b558d",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.9.0/kotest-assertions-core-jvm-5.9.0-sources.jar"
-              ],
-              "downloaded_file_path": "v1/io/kotest/kotest-assertions-core-jvm/5.9.0/kotest-assertions-core-jvm-5.9.0-sources.jar"
+              "downloaded_file_path": "v1/io/kotest/kotest-assertions-shared-jvm/5.9.1/kotest-assertions-shared-jvm-5.9.1.jar"
             }
           },
           "org_apache_logging_log4j_log4j_core_2_23_1": {
@@ -8728,6 +8717,18 @@
                 "https://repo1.maven.org/maven2/com/google/apis/google-api-services-storage/v1-rev20240311-2.0.0/google-api-services-storage-v1-rev20240311-2.0.0-sources.jar"
               ],
               "downloaded_file_path": "v1/com/google/apis/google-api-services-storage/v1-rev20240311-2.0.0/google-api-services-storage-v1-rev20240311-2.0.0-sources.jar"
+            }
+          },
+          "io_kotest_kotest_assertions_core_jvm_jar_sources_5_9_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~io_kotest_kotest_assertions_core_jvm_jar_sources_5_9_1",
+              "sha256": "538737c8092aa24e4bde43896a684abd6a4e481f945088160bce807a06017664",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/io/kotest/kotest-assertions-core-jvm/5.9.1/kotest-assertions-core-jvm-5.9.1-sources.jar"
+              ],
+              "downloaded_file_path": "v1/io/kotest/kotest-assertions-core-jvm/5.9.1/kotest-assertions-core-jvm-5.9.1-sources.jar"
             }
           },
           "io_grpc_grpc_protobuf_lite_jar_sources_1_62_2": {
@@ -8919,7 +8920,7 @@
                 "{ \"group\": \"org.apache.velocity\", \"artifact\": \"velocity-engine-core\", \"version\": \"2.3\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-core\", \"version\": \"1.8.1\" }",
                 "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-coroutines-test\", \"version\": \"1.8.1\" }",
-                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.6.3\" }",
+                "{ \"group\": \"org.jetbrains.kotlinx\", \"artifact\": \"kotlinx-serialization-json\", \"version\": \"1.7.0\" }",
                 "{ \"group\": \"org.slf4j\", \"artifact\": \"slf4j-nop\", \"version\": \"1.7.36\" }",
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
@@ -10302,7 +10303,7 @@
           [
             "rules_python~0.32.2",
             "bazel_skylib",
-            "bazel_skylib~1.6.1"
+            "bazel_skylib~1.7.1"
           ],
           [
             "rules_python~0.32.2",
