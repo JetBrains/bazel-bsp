@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "ec0069b2680f1adb71da8f80555ac7a1e3514843a5000e59c348805351fe885c",
+  "moduleFileHash": "8ca4cd41f259b125ce9c25f593b3a198f8c6221076c76205ce86df3b1bdfb87c",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -55,20 +55,20 @@
             "bazel_binaries_bazelisk": "bazel_binaries_bazelisk",
             "build_bazel_bazel_5_3_2": "build_bazel_bazel_5_3_2",
             "build_bazel_bazel_6_4_0": "build_bazel_bazel_6_4_0",
-            "build_bazel_bazel_7_1_1": "build_bazel_bazel_7_1_1"
+            "build_bazel_bazel_7_1_2": "build_bazel_bazel_7_1_2"
           },
           "devImports": [
             "bazel_binaries",
             "bazel_binaries_bazelisk",
             "build_bazel_bazel_5_3_2",
             "build_bazel_bazel_6_4_0",
-            "build_bazel_bazel_7_1_1"
+            "build_bazel_bazel_7_1_2"
           ],
           "tags": [
             {
               "tagName": "download",
               "attributeValues": {
-                "version": "7.1.1"
+                "version": "7.1.2"
               },
               "devDependency": true,
               "location": {
@@ -140,7 +140,7 @@
                   "com.fasterxml.jackson.core:jackson-databind:2.17.1",
                   "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1",
                   "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.4",
-                  "com.google.protobuf:protobuf-java:3.25.3",
+                  "com.google.protobuf:protobuf-java:4.27.1",
                   "io.grpc:grpc-stub:1.64.0",
                   "io.grpc:grpc-protobuf:1.64.0",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
@@ -2846,12 +2846,12 @@
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
-          "build_bazel_bazel_7_1_1": {
+          "build_bazel_bazel_7_1_2": {
             "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
             "ruleClassName": "bazel_binary",
             "attributes": {
-              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~build_bazel_bazel_7_1_1",
-              "version": "7.1.1",
+              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~build_bazel_bazel_7_1_2",
+              "version": "7.1.2",
               "bazelisk": "@bazel_binaries_bazelisk//:bazelisk"
             }
           },
@@ -2887,11 +2887,11 @@
             "attributes": {
               "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~bazel_binaries",
               "version_to_repo": {
-                "7.1.1": "build_bazel_bazel_7_1_1",
+                "7.1.2": "build_bazel_bazel_7_1_2",
                 "6.4.0": "build_bazel_bazel_6_4_0",
                 "5.3.2": "build_bazel_bazel_5_3_2"
               },
-              "current_version": "7.1.1"
+              "current_version": "7.1.2"
             }
           }
         },
@@ -2899,7 +2899,7 @@
           "explicitRootModuleDirectDeps": [],
           "explicitRootModuleDirectDevDeps": [
             "bazel_binaries_bazelisk",
-            "build_bazel_bazel_7_1_1",
+            "build_bazel_bazel_7_1_2",
             "build_bazel_bazel_6_4_0",
             "build_bazel_bazel_5_3_2",
             "bazel_binaries"
@@ -7074,7 +7074,7 @@
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.dataformat\", \"artifact\": \"jackson-dataformat-xml\", \"version\": \"2.9.4\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
+                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.27.1\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
@@ -9004,7 +9004,7 @@
                 "{ \"group\": \"com.fasterxml.jackson.core\", \"artifact\": \"jackson-databind\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.module\", \"artifact\": \"jackson-module-kotlin\", \"version\": \"2.17.1\" }",
                 "{ \"group\": \"com.fasterxml.jackson.dataformat\", \"artifact\": \"jackson-dataformat-xml\", \"version\": \"2.9.4\" }",
-                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"3.25.3\" }",
+                "{ \"group\": \"com.google.protobuf\", \"artifact\": \"protobuf-java\", \"version\": \"4.27.1\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-stub\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
