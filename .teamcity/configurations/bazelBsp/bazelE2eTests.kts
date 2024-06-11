@@ -26,6 +26,10 @@ open class BazelBspE2ETestsBuildType(
             logging = BazelStep.Verbosity.Diagnostic
             param("toolPath", "/usr/local/bin")
         }
+    },
+    requirements =  {
+        endsWith("cloud.amazon.agent-name-prefix", "-Large")
+        equals("container.engine.osType", "linux")
     }
 )
 
