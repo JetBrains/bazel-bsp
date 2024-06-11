@@ -7,7 +7,6 @@ import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.extraFlags
-import java.lang.ProcessBuilder.Redirect
 import java.nio.file.Path
 
 class BazelRunner private constructor(
