@@ -3,7 +3,7 @@ module(
     version = "",
 )
 
-bazel_dep(name = "bazel_skylib", version = "1.6.1")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
 bazel_dep(name = "rules_kotlin", version = "1.9.5")
 
 # Required until Bazel repo upstreams it's rules_jvm_external fix and there's a new release
@@ -86,10 +86,10 @@ maven.install(
         # tests
         "org.junit.jupiter:junit-jupiter:5.10.2",
         "org.junit.platform:junit-platform-console:1.10.2",
-        "io.kotest:kotest-assertions-api-jvm:5.9.0",
-        "io.kotest:kotest-assertions-core-jvm:5.9.0",
-        "io.kotest:kotest-assertions-shared-jvm:5.9.0",
-        "io.kotest:kotest-common-jvm:5.9.0",
+        "io.kotest:kotest-assertions-api-jvm:5.9.1",
+        "io.kotest:kotest-assertions-core-jvm:5.9.1",
+        "io.kotest:kotest-assertions-shared-jvm:5.9.1",
+        "io.kotest:kotest-common-jvm:5.9.1",
     ],
     fail_if_repin_required = True,
     fetch_sources = True,

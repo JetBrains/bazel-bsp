@@ -17,6 +17,7 @@ object UnitTests : BaseConfiguration.BaseBuildType(
         },
         vcsRoot = BaseConfiguration.BazelBspVcs,
         requirements =  {
-            contains("cloud.amazon.agent-name-prefix", "Linux-Medium")
+            endsWith("cloud.amazon.agent-name-prefix", "Medium")
+            equals("container.engine.osType", "linux")
         }
 )
