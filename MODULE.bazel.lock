@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "ec0069b2680f1adb71da8f80555ac7a1e3514843a5000e59c348805351fe885c",
+  "moduleFileHash": "593d769851a9839d603d14d5eb606fda48fe378e3d2f075167dae375ab63fb3f",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -55,20 +55,20 @@
             "bazel_binaries_bazelisk": "bazel_binaries_bazelisk",
             "build_bazel_bazel_5_3_2": "build_bazel_bazel_5_3_2",
             "build_bazel_bazel_6_4_0": "build_bazel_bazel_6_4_0",
-            "build_bazel_bazel_7_1_1": "build_bazel_bazel_7_1_1"
+            "build_bazel_bazel_7_1_2": "build_bazel_bazel_7_1_2"
           },
           "devImports": [
             "bazel_binaries",
             "bazel_binaries_bazelisk",
             "build_bazel_bazel_5_3_2",
             "build_bazel_bazel_6_4_0",
-            "build_bazel_bazel_7_1_1"
+            "build_bazel_bazel_7_1_2"
           ],
           "tags": [
             {
               "tagName": "download",
               "attributeValues": {
-                "version": "7.1.1"
+                "version": "7.1.2"
               },
               "devDependency": true,
               "location": {
@@ -145,10 +145,10 @@
                   "io.grpc:grpc-protobuf:1.64.0",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
                   "org.junit.platform:junit-platform-console:1.10.2",
-                  "io.kotest:kotest-assertions-api-jvm:5.9.0",
-                  "io.kotest:kotest-assertions-core-jvm:5.9.0",
-                  "io.kotest:kotest-assertions-shared-jvm:5.9.0",
-                  "io.kotest:kotest-common-jvm:5.9.0"
+                  "io.kotest:kotest-assertions-api-jvm:5.9.1",
+                  "io.kotest:kotest-assertions-core-jvm:5.9.1",
+                  "io.kotest:kotest-assertions-shared-jvm:5.9.1",
+                  "io.kotest:kotest-common-jvm:5.9.1"
                 ],
                 "fail_if_repin_required": true,
                 "fetch_sources": true,
@@ -2838,86 +2838,6 @@
           }
         },
         "recordedRepoMappingEntries": []
-      }
-    },
-    "@@rules_bazel_integration_test~0.23.0//:extensions.bzl%bazel_binaries": {
-      "general": {
-        "bzlTransitiveDigest": "2YpQtmxm7IW8Ldz4jpGThmEDybtrPhL/NCQeG1JSpPI=",
-        "accumulatedFileDigests": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "build_bazel_bazel_7_1_1": {
-            "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
-            "ruleClassName": "bazel_binary",
-            "attributes": {
-              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~build_bazel_bazel_7_1_1",
-              "version": "7.1.1",
-              "bazelisk": "@bazel_binaries_bazelisk//:bazelisk"
-            }
-          },
-          "build_bazel_bazel_6_4_0": {
-            "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
-            "ruleClassName": "bazel_binary",
-            "attributes": {
-              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~build_bazel_bazel_6_4_0",
-              "version": "6.4.0",
-              "bazelisk": "@bazel_binaries_bazelisk//:bazelisk"
-            }
-          },
-          "build_bazel_bazel_5_3_2": {
-            "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
-            "ruleClassName": "bazel_binary",
-            "attributes": {
-              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~build_bazel_bazel_5_3_2",
-              "version": "5.3.2",
-              "bazelisk": "@bazel_binaries_bazelisk//:bazelisk"
-            }
-          },
-          "bazel_binaries_bazelisk": {
-            "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/private:bazel_binaries.bzl",
-            "ruleClassName": "bazelisk_binary",
-            "attributes": {
-              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~bazel_binaries_bazelisk",
-              "version": "1.18.0"
-            }
-          },
-          "bazel_binaries": {
-            "bzlFile": "@@rules_bazel_integration_test~0.23.0//bazel_integration_test/bzlmod:bazel_binaries.bzl",
-            "ruleClassName": "_bazel_binaries_helper",
-            "attributes": {
-              "name": "rules_bazel_integration_test~0.23.0~bazel_binaries~bazel_binaries",
-              "version_to_repo": {
-                "7.1.1": "build_bazel_bazel_7_1_1",
-                "6.4.0": "build_bazel_bazel_6_4_0",
-                "5.3.2": "build_bazel_bazel_5_3_2"
-              },
-              "current_version": "7.1.1"
-            }
-          }
-        },
-        "moduleExtensionMetadata": {
-          "explicitRootModuleDirectDeps": [],
-          "explicitRootModuleDirectDevDeps": [
-            "bazel_binaries_bazelisk",
-            "build_bazel_bazel_7_1_1",
-            "build_bazel_bazel_6_4_0",
-            "build_bazel_bazel_5_3_2",
-            "bazel_binaries"
-          ],
-          "useAllRepos": "NO"
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_bazel_integration_test~0.23.0",
-            "bazel_skylib",
-            "bazel_skylib~1.6.1"
-          ],
-          [
-            "rules_bazel_integration_test~0.23.0",
-            "cgrindel_bazel_starlib",
-            "cgrindel_bazel_starlib~0.18.0"
-          ]
-        ]
       }
     },
     "@@rules_go~0.41.0//go:extensions.bzl%go_sdk": {
@@ -7079,10 +6999,10 @@
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
                 "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.9.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.9.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.9.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.9.0\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.9.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.9.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.9.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.9.1\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
@@ -9009,10 +8929,10 @@
                 "{ \"group\": \"io.grpc\", \"artifact\": \"grpc-protobuf\", \"version\": \"1.64.0\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
                 "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.9.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.9.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.9.0\" }",
-                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.9.0\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.9.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.9.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.9.1\" }",
+                "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-common-jvm\", \"version\": \"5.9.1\" }",
                 "{ \"group\": \"com.google.code.gson\", \"artifact\": \"gson\", \"version\": \"2.10.1\" }",
                 "{ \"group\": \"com.google.guava\", \"artifact\": \"guava\", \"version\": \"31.1-jre\" }",
                 "{ \"group\": \"ch.epfl.scala\", \"artifact\": \"bsp4j\", \"version\": \"2.2.0-M2\" }",
