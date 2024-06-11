@@ -34,7 +34,8 @@ open class BazelBspBenchmarkBuildType(
             }
         },
         requirements =  {
-            contains("cloud.amazon.agent-name-prefix", "Linux-Large")
+            endsWith("cloud.amazon.agent-name-prefix", "-Large")
+            equals("container.engine.osType", "linux")
         }
     )
 

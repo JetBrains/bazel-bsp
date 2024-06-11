@@ -21,7 +21,8 @@ open class BazelBspE2EPluginTestsBuildType(
     artifactRules = artifactRules,
     setupSteps = setupSteps,
     requirements =  {
-        contains("cloud.amazon.agent-name-prefix", "Linux-XLarge")
+        endsWith("cloud.amazon.agent-name-prefix", "XLarge")
+        equals("container.engine.osType", "linux")
     },
     steps = {
         script {

@@ -16,6 +16,7 @@ object BuildTheProject : BaseConfiguration.BaseBuildType(
             }
         },
     requirements =  {
-        contains("cloud.amazon.agent-name-prefix", "Linux-Medium")
+        endsWith("cloud.amazon.agent-name-prefix", "Medium")
+        equals("container.engine.osType", "linux")
     }
 )
