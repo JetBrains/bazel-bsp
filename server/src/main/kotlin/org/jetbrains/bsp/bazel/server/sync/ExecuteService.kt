@@ -112,7 +112,7 @@ class ExecuteService(
                     // Use file:// uri scheme for output paths in the build events.
                     .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
                     .withFlag(BazelFlag.color(true))
-                    .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath(), serverPid)
+                    .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
                     .waitAndGetResult(cancelChecker, true)
             }
         }
@@ -136,7 +136,7 @@ class ExecuteService(
                 .withArgument(BspMappings.toBspUri(bspId))
                 .withArguments(params.arguments)
                 .withFlag(BazelFlag.color(true))
-                .executeBazelCommand(params.originId, serverPid = serverPid)
+                .executeBazelCommand(params.originId)
                 .waitAndGetResult(cancelChecker)
         return RunResult(bazelProcessResult.statusCode).apply { originId = originId }
     }
@@ -169,7 +169,7 @@ class ExecuteService(
             .withArgument(BazelFlag.device(params.targetDeviceSerialNumber))
             .withArgument(BazelFlag.start(startType))
             .withFlag(BazelFlag.color(true))
-            .executeBazelCommand(params.originId, serverPid = null)
+            .executeBazelCommand(params.originId)
             .waitAndGetResult(cancelChecker)
         return MobileInstallResult(bazelProcessResult.statusCode, params.originId)
     }
@@ -178,7 +178,7 @@ class ExecuteService(
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
         withBepServer(null, null) { bepReader ->
             bazelRunner.commandBuilder().clean()
-                .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath(), serverPid = serverPid).waitAndGetResult(cancelChecker)
+                .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath()).waitAndGetResult(cancelChecker)
         }
         return CleanCacheResult(true)
     }
@@ -193,7 +193,7 @@ class ExecuteService(
                 .commandBuilder()
                 .build()
                 .withTargets(targetsSpec)
-                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath(), serverPid)
+                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
                 .waitAndGetResult(cancelChecker, true)
         }
     }

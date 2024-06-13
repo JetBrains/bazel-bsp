@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.bazelrunner.outputs
 
 import com.google.common.base.Charsets
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -54,16 +55,24 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     executorService.submit(runnable).also { runningProcessors.add(it) }
   }
 
-  fun waitForExit(cancelChecker: CancelChecker, serverPid: Long?): Int {
+  fun waitForExit(cancelChecker: CancelChecker, serverPid: Long?, logger: BspClientLogger?): Int {
     var isFinished = false;
     while (!isFinished) {
       isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
       if (cancelChecker.isCanceled) {
-        serverPid?.let { Runtime.getRuntime().exec("kill -SIGINT $it").waitFor() }
+        serverPid?.let { Runtime.getRuntime().exec("kill -SIGINT $it").waitFor().takeIf { e -> e == 0 } }
+          ?: logger?.error("Could not cancel the task. Bazel server needs to be interrupted manually.")
       }
     }
     // Return values of waitFor() and waitFor(long, TimeUnit) differ
     // so we can't just return value from waitFor(long, TimeUnit) here
+    val exitCode = process.waitFor()
+    shutdown()
+    return exitCode
+  }
+
+  fun waitWithTimeout(timeoutMillis: Long): Int {
+    process.waitFor(timeoutMillis, TimeUnit.MILLISECONDS)
     val exitCode = process.waitFor()
     shutdown()
     return exitCode

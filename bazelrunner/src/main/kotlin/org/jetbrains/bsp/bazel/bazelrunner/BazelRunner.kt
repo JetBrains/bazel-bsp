@@ -55,7 +55,6 @@ class BazelRunner private constructor(
             environment,
             originId,
             true,
-            serverPid = serverPid,
         )
     }
 
@@ -67,7 +66,7 @@ class BazelRunner private constructor(
         originId: String?,
         parseProcessOutput: Boolean,
         useBuildFlags: Boolean = true,
-        serverPid: Long?,
+        needsServerPid: Boolean = true,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
         val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
@@ -79,6 +78,7 @@ class BazelRunner private constructor(
         processBuilder.environment() += environment
         val outputLogger = bspClientLogger.takeIf { parseProcessOutput }?.copy(originId = originId)
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
+        val serverPid = if (needsServerPid) resolveBazelServerPid() else null
         val process = processBuilder.start()
         return BazelProcess(
             process,
@@ -99,4 +99,13 @@ class BazelRunner private constructor(
     private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelBinary.value.toString()
     private fun buildFlags(workspaceContext: WorkspaceContext): List<String> =
         workspaceContext.buildFlags.values + workspaceContext.extraFlags
+
+    private fun resolveBazelServerPid(): Long? {
+        val processResult = commandBuilder()
+            .info()
+            .withArgument("server_pid")
+            .executeBazelCommand(needsServerPid = false)
+            .waitAndGetResultTimeout()
+        return processResult.stdoutLines.firstOrNull()?.toLong()
+    }
 }

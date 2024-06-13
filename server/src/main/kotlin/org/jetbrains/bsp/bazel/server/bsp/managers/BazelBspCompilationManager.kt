@@ -20,7 +20,6 @@ class BazelBspCompilationManager(
     private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>,
     val client: JoinedBuildClient,
     val workspaceRoot: Path,
-    private val serverPid: Long,
 ) {
     fun buildTargetsWithBep(
         cancelChecker: CancelChecker,
@@ -41,7 +40,7 @@ class BazelBspCompilationManager(
                 .withFlags(extraFlags)
                 .withTargets(targetSpecs)
                 .withEnvironment(environment)
-                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath(), serverPid)
+                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
                 .waitAndGetResult(cancelChecker, true)
             bepReader.finishBuild()
             bepReader.await()

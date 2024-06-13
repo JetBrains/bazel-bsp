@@ -44,8 +44,7 @@ class LanguagePluginServiceTest {
       outputBase = Paths.get(""),
       workspaceRoot = Paths.get(""),
       release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
-      false,
-      8888,
+      false
     )
     val provider = DefaultWorkspaceContextProvider(Paths.get(""), projectViewFile)
     val bazelPathsResolver = BazelPathsResolver(bazelInfo)

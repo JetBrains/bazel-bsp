@@ -27,9 +27,15 @@ class BazelProcess internal constructor(
                 else AsyncOutputProcessor(process, LOGGER::info)
             }
 
-        val exitCode = outputProcessor.waitForExit(cancelChecker, serverPid)
+        val exitCode = outputProcessor.waitForExit(cancelChecker, serverPid, logger)
         val duration = stopwatch.stop()
         logCompletion(exitCode, duration)
+        return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
+    }
+
+    fun waitAndGetResultTimeout(): BazelProcessResult {
+        val outputProcessor = SyncOutputProcessor(process, LOGGER::info)
+        val exitCode = outputProcessor.waitWithTimeout(50)
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
     }
 

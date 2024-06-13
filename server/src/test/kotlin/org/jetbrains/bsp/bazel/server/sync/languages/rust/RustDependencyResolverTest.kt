@@ -28,8 +28,7 @@ class RustDependencyResolverTest {
             outputBase = Paths.get(outputBase),
             workspaceRoot = Paths.get("/Users/user/workspace/bazel-bsp"),
             release = BazelRelease.fromReleaseString("release 6.0.0").orLatestSupported(),
-            false,
-            8888,
+            false
         )
 
         rustPackageResolver = RustPackageResolver(BazelPathsResolver(bazelInfo))
