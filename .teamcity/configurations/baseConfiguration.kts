@@ -121,7 +121,7 @@ object GitHubVcs : GitVcsRoot({
 
 object SpaceVcs : GitVcsRoot({
     name = "bazel-bsp-space"
-    url = "https://git.jetbrains.team/bazel/intellij-bsp.git"
+    url = "https://git.jetbrains.team/bazel/bazel-bsp.git"
     branch = "master"
     branchSpec = "+:refs/heads/*"
     authMethod = token {
