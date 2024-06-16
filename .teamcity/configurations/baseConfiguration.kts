@@ -17,12 +17,11 @@ open class BaseBuildType(
     artifactRules: String = "",
     setupSteps: Boolean = false,
     failureConditions: FailureConditions.() -> Unit = {},
-    requirements: Requirements.() -> Unit = {}
+    requirements: (Requirements.() -> Unit)? = null
 ) : BuildType({
-    id(name.toExtId())
+
     this.name = name
     this.artifactRules = artifactRules
-    this.requirements(requirements)
     this.failureConditions(failureConditions)
 
     failureConditions {
@@ -33,27 +32,55 @@ open class BaseBuildType(
         root(vcsRoot)
     }
 
+    if (vcsRoot.name == "bazel-bsp-github" ) {
+        id("GitHub$name".toExtId())
+        if (requirements == null) {
+            requirements {
+                endsWith("cloud.amazon.agent-name-prefix", "Medium")
+                equals("container.engine.osType", "linux")
+            }
+        } else {
+            this.requirements(requirements)
+        }
+    } else {
+        id("Space$name".toExtId())
+        requirements {
+            endsWith("cloud.amazon.agent-name-prefix", "-XLarge")
+            equals("container.engine.osType", "linux")
+        }
+    }
+
     features {
         perfmon {
         }
-
-        commitStatusPublisher {
-            publisher = github {
-                githubUrl = "https://api.github.com"
-                authType = personalToken {
-                    token = "credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6"
+        if (vcsRoot.name == "bazel-bsp-github") {
+            commitStatusPublisher {
+                publisher = github {
+                    githubUrl = "https://api.github.com"
+                    authType = personalToken {
+                        token = "credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6"
+                    }
+                }
+                param("github_oauth_user", "hb-man")
+            }
+            pullRequests {
+                vcsRootExtId = "${vcsRoot.id}"
+                provider = github {
+                    authType = token {
+                        token = "credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6"
+                    }
+                    filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
                 }
             }
-            param("github_oauth_user", "hb-man")
-        }
-
-        pullRequests {
-            vcsRootExtId = "${BazelBspVcs.id}"
-            provider = github {
-                authType = token {
-                    token = "credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6"
+        } else {
+            commitStatusPublisher {
+                vcsRootExtId = "${vcsRoot.id}"
+                publisher = space {
+                    authType = connection {
+                        connectionId = "PROJECT_EXT_12"
+                    }
+                    displayName = "BazelTeamCityCloud"
                 }
-                filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
             }
         }
     }
@@ -73,33 +100,32 @@ open class BaseBuildType(
                     
                     sudo chmod +x "/usr/bin/cs"
             """.trimIndent()
-
-//                dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-//                dockerPull = true
-//                dockerImage = "ubuntu:focal"
-//                dockerRunParameters = """
-//                    -v /usr/:/usr/
-//                    -v /etc/:/etc/
-//                    -v /var/:/var/
-//                    -v /tmp/:/tmp/
-//                """.trimIndent()
             }
         }
     }
     this.steps(steps)
 })
 
-object BazelBspVcs : GitVcsRoot({
-    name = "bazel-bsp-github-repo"
+object GitHubVcs : GitVcsRoot({
+    name = "bazel-bsp-github"
     url = "https://github.com/JetBrains/bazel-bsp.git"
     branch = "master"
-    branchSpec = """
-        +:refs/heads/*
-    """.trimIndent()
+    branchSpec = "+:refs/heads/*"
     authMethod = password {
         userName = "hb-man"
         password = "credentialsJSON:5bc345d4-e38f-4428-95e1-b6e4121aadf6"
     }
     param("oauthProviderId", "tc-cloud-github-connection")
     param("tokenType", "permanent")
+})
+
+object SpaceVcs : GitVcsRoot({
+    name = "bazel-bsp-space"
+    url = "https://git.jetbrains.team/bazel/intellij-bsp.git"
+    branch = "master"
+    branchSpec = "+:refs/heads/*"
+    authMethod = token {
+        userName = "x-oauth-basic"
+        tokenId = "tc_token_id:CID_ee3bac3e4aa54bdf48fee3b7b53cbc31:-1:8560ad34-1d4a-46f4-b15c-f3e2e7f3b874"
+    }
 })
