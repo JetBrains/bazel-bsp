@@ -20,7 +20,7 @@ open class Aggregator (
     }
 
     if (vcsRoot.name == "bazel-bsp-github") {
-        id("Github$name".toExtId())
+        id("GitHub$name".toExtId())
         features {
             pullRequests {
                 vcsRootExtId = "${vcsRoot.id}"

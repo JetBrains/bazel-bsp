@@ -81,7 +81,7 @@ object BazelBspGitHub : Project({
         RelativeId("GitHubE2eTestsE2eAndroidKotlinProjectTest"),
         RelativeId("GitHubE2eTestsE2eEnabledRulesTest"),
         RelativeId("GitHubE2eTestsPluginRun"),
-        RelativeId("GitHubBenchmark1001Targets"),
+        RelativeId("GitHubBenchmark10Targets"),
         RelativeId("GitHubResults")
     )
 })
@@ -154,7 +154,7 @@ object BazelBspSpace : Project({
         RelativeId("SpaceE2eTestsE2eAndroidKotlinProjectTest"),
         RelativeId("SpaceE2eTestsE2eEnabledRulesTest"),
         RelativeId("SpaceE2eTestsPluginRun"),
-        RelativeId("SpaceBenchmark1001Targets"),
+        RelativeId("SpaceBenchmark10Targets"),
         RelativeId("SpaceResults")
     )
 })
