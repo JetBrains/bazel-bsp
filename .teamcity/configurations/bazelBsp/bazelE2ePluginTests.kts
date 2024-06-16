@@ -1,6 +1,7 @@
 package configurations.bazelBsp
 
 import configurations.BaseConfiguration
+import jetbrains.buildServer.configs.kotlin.v2019_2.Requirements
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
@@ -8,6 +9,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
 open class PluginRun(
     vcsRoot: GitVcsRoot,
+    requirements: (Requirements.() -> Unit)? = null
 ) : BaseConfiguration.BaseBuildType(
     name = "[e2e tests] plugin run",
     vcsRoot = vcsRoot,
@@ -21,10 +23,7 @@ open class PluginRun(
         +:/mnt/agent/temp/buildTmp/ide-probe/screenshots => screenshots.zip
     """.trimIndent(),
     setupSteps = true,
-    requirements =  {
-        endsWith("cloud.amazon.agent-name-prefix", "-Large")
-        equals("container.engine.osType", "linux")
-    },
+    requirements =  requirements,
     steps = {
         script {
             this.name = "clone bazel-bsp and intellij-bazel to tmp"
@@ -123,7 +122,11 @@ open class PluginRun(
 )
 
 object GitHub : PluginRun(
-    vcsRoot = BaseConfiguration.GitHubVcs
+    vcsRoot = BaseConfiguration.GitHubVcs,
+    requirements =  {
+        endsWith("cloud.amazon.agent-name-prefix", "-Large")
+        equals("container.engine.osType", "linux")
+    },
 )
 
 object Space : PluginRun(

@@ -117,11 +117,7 @@ object AndroidProjectGitHub : E2ETest(
 
 object AndroidProjectSpace : E2ETest(
     vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:android_project_test",
-    requirements = {
-        endsWith("cloud.amazon.agent-name-prefix", "-Large")
-        equals("container.engine.osType", "linux")
-    }
+    targets = "//e2e:android_project_test"
 )
 
 object AndroidKotlinProjectGitHub : E2ETest(
@@ -135,11 +131,7 @@ object AndroidKotlinProjectGitHub : E2ETest(
 
 object AndroidKotlinProjectSpace : E2ETest(
     vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:android_kotlin_project_test",
-    requirements = {
-        endsWith("cloud.amazon.agent-name-prefix", "-Large")
-        equals("container.engine.osType", "linux")
-    }
+    targets = "//e2e:android_kotlin_project_test"
 )
 
 object ScalaProjectGitHub : E2ETest(
