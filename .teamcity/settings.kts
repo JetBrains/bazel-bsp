@@ -60,10 +60,7 @@ object BazelBspGitHub : Project({
     // setup trigger for bazel-bsp pipeline
     allSteps.last().triggers {
         vcs {
-            branchFilter = """
-                +:<default>
-                +:pull/*
-            """.trimIndent()
+            branchFilter = "+:pull/*"
         }
     }
 
@@ -135,7 +132,7 @@ object BazelBspSpace : Project({
         vcs {
             branchFilter = """
                 +:<default>
-                +:pull/*
+                +:*
             """.trimIndent()
         }
     }
