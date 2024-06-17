@@ -386,17 +386,24 @@ class BazelProjectMapper(
   }
 
   private fun dependencyJarsFromJdepsFiles(targetInfo: TargetInfo): Set<Path> =
-    targetInfo.jvmTargetInfo.jdepsList.flatMap {
-      val path = bazelPathsResolver.resolve(it)
+    targetInfo.jvmTargetInfo.jdepsList.flatMap { jdeps ->
+      val path = bazelPathsResolver.resolve(jdeps)
       if (path.toFile().exists()) {
         val bytes = Files.readAllBytes(path)
-        Deps.Dependencies.parseFrom(bytes).dependencyList.map { dependency ->
-          bazelPathsResolver.resolveOutput(Paths.get(dependency.path))
-        }
+        Deps.Dependencies.parseFrom(bytes).dependencyList
+          .filter { it.isRelevant() }
+          .map { bazelPathsResolver.resolveOutput(Paths.get(it.path)) }
       } else {
         emptySet()
       }
     }.toSet()
+
+  /**
+   * Similar to what was done in the Google's Bazel plugin in JdepsFileReader#relevantDep,
+   * we should only include deps that are actually used by the compiler
+   */
+  private fun Deps.Dependency.isRelevant() =
+    kind in sequenceOf(Deps.Dependency.Kind.EXPLICIT, Deps.Dependency.Kind.IMPLICIT)
 
   private fun targetSupportsJdeps(targetInfo: TargetInfo): Boolean {
     val languages = inferLanguages(targetInfo)
