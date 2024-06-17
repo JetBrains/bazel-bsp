@@ -126,6 +126,6 @@ object SpaceVcs : GitVcsRoot({
     branchSpec = "+:refs/heads/*"
     authMethod = token {
         userName = "x-oauth-basic"
-        tokenId = "tc_token_id:CID_ee3bac3e4aa54bdf48fee3b7b53cbc31:-1:a33c5da5-4562-48ee-b741-892de333fbe9"
+        tokenId = "tc_token_id:CID_ee3bac3e4aa54bdf48fee3b7b53cbc31:-1:6580b62b-2caf-4708-b2a0-ecec221cc755"
     }
 })
