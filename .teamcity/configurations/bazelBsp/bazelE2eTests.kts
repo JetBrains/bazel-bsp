@@ -34,18 +34,25 @@ open class E2ETest(
     requirements = requirements
 )
 
-object SampleRepoGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
-    targets = "//e2e:sample_repo_test",
+open class SampleRepo(
+    vcsRoot: GitVcsRoot,
+) : E2ETest(
+    vcsRoot = vcsRoot,
+    targets = "//e2e:sample_repo_test"
 )
 
-object SampleRepoSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:sample_repo_test",
+object SampleRepoGitHub : SampleRepo(
+    vcsRoot = BaseConfiguration.GitHubVcs
 )
 
-object LocalJdkTestGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
+object SampleRepoSpace : SampleRepo(
+    vcsRoot = BaseConfiguration.SpaceVcs
+)
+
+open class LocalJdk(
+    vcsRoot: GitVcsRoot,
+) : E2ETest(
+    vcsRoot = vcsRoot,
     targets = "//e2e:local_jdk_test",
     steps = {
         script {
@@ -60,86 +67,112 @@ object LocalJdkTestGitHub : E2ETest(
     },
 )
 
-object LocalJdkTestSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:local_jdk_test",
-    steps = {
-        script {
-            this.name = "set JDK to 17"
-            scriptContent = """
-                #!/bin/bash
-                set -euxo pipefail
-
-                echo "##teamcity[setParameter name='env.JAVA_HOME' value='%env.JDK_17_0%']"
-            """.trimIndent()
-        }
-    },
+object LocalJdkGitHub : LocalJdk(
+    vcsRoot = BaseConfiguration.GitHubVcs
 )
 
-object RemoteJdkTestGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
-    targets = "//e2e:remote_jdk_test",
+object LocalJdkSpace : LocalJdk(
+    vcsRoot = BaseConfiguration.SpaceVcs
 )
 
-object RemoteJdkTestSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:remote_jdk_test",
+open class RemoteJdk(
+    vcsRoot: GitVcsRoot
+): E2ETest(
+    vcsRoot = vcsRoot,
+    targets = "//e2e:remote_jdk_test"
 )
 
-object ServerDownloadsBazeliskGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
+object RemoteJdkGitHub : RemoteJdk(
+    vcsRoot = BaseConfiguration.GitHubVcs
+)
+
+object RemoteJdkSpace : RemoteJdk(
+    vcsRoot = BaseConfiguration.SpaceVcs
+)
+
+open class ServerDownloadsBazelisk(
+    vcsRoot: GitVcsRoot
+) : E2ETest(
+    vcsRoot = vcsRoot,
     targets = "//e2e:server_downloads_bazelisk_test",
 )
 
-object ServerDownloadsBazeliskSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:server_downloads_bazelisk_test",
+object ServerDownloadsBazeliskGitHub : ServerDownloadsBazelisk(
+    vcsRoot = BaseConfiguration.GitHubVcs
 )
 
-object KotlinProjectGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
+object ServerDownloadsBazeliskSpace : ServerDownloadsBazelisk(
+    vcsRoot = BaseConfiguration.SpaceVcs
+)
+
+open class KotlinProject(
+    vcsRoot: GitVcsRoot
+) : E2ETest(
+    vcsRoot = vcsRoot,
     targets = "//e2e:kotlin_project_test",
 )
 
-object KotlinProjectSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:kotlin_project_test",
+object KotlinProjectGitHub : KotlinProject(
+    vcsRoot = BaseConfiguration.GitHubVcs
 )
 
-object AndroidProjectGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
+object KotlinProjectSpace : KotlinProject(
+    vcsRoot = BaseConfiguration.SpaceVcs
+)
+
+open class AndroidProject(
+    vcsRoot: GitVcsRoot,
+    requirements: (Requirements.() -> Unit)? = null
+) : E2ETest(
+    vcsRoot = vcsRoot,
     targets = "//e2e:android_project_test",
+    requirements = requirements
+)
+
+object AndroidProjectGitHub : AndroidProject(
+    vcsRoot = BaseConfiguration.GitHubVcs,
     requirements = {
         endsWith("cloud.amazon.agent-name-prefix", "-Large")
         equals("container.engine.osType", "linux")
     }
 )
 
-object AndroidProjectSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:android_project_test"
+object AndroidProjectSpace : AndroidProject(
+    vcsRoot = BaseConfiguration.SpaceVcs
 )
 
-object AndroidKotlinProjectGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
+open class AndroidKotlinProject(
+    vcsRoot: GitVcsRoot,
+    requirements: (Requirements.() -> Unit)? = null
+) : E2ETest(
+    vcsRoot = vcsRoot,
     targets = "//e2e:android_kotlin_project_test",
+    requirements = requirements
+)
+
+object AndroidKotlinProjectGitHub : AndroidKotlinProject(
+    vcsRoot = BaseConfiguration.GitHubVcs,
     requirements = {
         endsWith("cloud.amazon.agent-name-prefix", "-Large")
         equals("container.engine.osType", "linux")
     }
 )
 
-object AndroidKotlinProjectSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:android_kotlin_project_test"
+object AndroidKotlinProjectSpace : AndroidKotlinProject(
+    vcsRoot = BaseConfiguration.SpaceVcs
 )
 
-object ScalaProjectGitHub : E2ETest(
-    vcsRoot = BaseConfiguration.GitHubVcs,
+open class ScalaProject(
+    vcsRoot: GitVcsRoot
+) : E2ETest(
+    vcsRoot = vcsRoot,
     targets = "//e2e:enabled_rules_test",
 )
 
-object ScalaProjectSpace : E2ETest(
-    vcsRoot = BaseConfiguration.SpaceVcs,
-    targets = "//e2e:enabled_rules_test",
+object ScalaProjectGitHub : ScalaProject(
+    vcsRoot = BaseConfiguration.GitHubVcs
+)
+
+object ScalaProjectSpace : ScalaProject(
+    vcsRoot = BaseConfiguration.SpaceVcs
 )
