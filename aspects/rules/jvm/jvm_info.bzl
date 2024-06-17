@@ -102,9 +102,12 @@ def extract_runtime_jars(target, provider):
 
 def extract_compile_jars(provider):
     compilation_info = getattr(provider, "compilation_info", None)
-    transitive_compile_time_jars = getattr(provider, "transitive_compile_time_jars", depset())
+    transitive_compile_time_jars = extract_transitive_compile_time_jars(provider)
 
     return compilation_info.compilation_classpath if compilation_info else transitive_compile_time_jars
+
+def extract_transitive_compile_time_jars(provider):
+    return getattr(provider, "transitive_compile_time_jars", depset())
 
 def get_jvm_provider(target):
     if hasattr(target, "scala"):
@@ -142,6 +145,7 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     jvm_flags = getattr(ctx.rule.attr, "jvm_flags", [])
     args = getattr(ctx.rule.attr, "args", [])
     main_class = getattr(ctx.rule.attr, "main_class", None)
+    transitive_compile_time_jars = extract_transitive_compile_time_jars(provider).to_list()
 
     if (is_external(target)):
         runtime_jars = extract_runtime_jars(target, provider).to_list()
@@ -160,6 +164,7 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
         main_class = main_class,
         args = args,
         jdeps = [file_location(j) for j in jdeps],
+        transitive_compile_time_jars = [file_location(j) for j in transitive_compile_time_jars],
     )
 
     return dict(jvm_target_info = info), None

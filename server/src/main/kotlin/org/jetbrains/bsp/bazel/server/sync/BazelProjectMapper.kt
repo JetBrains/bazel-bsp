@@ -90,6 +90,9 @@ class BazelProjectMapper(
     val androidLibrariesMapper = measure("Create android libraries") {
       calculateAndroidLibrariesMapper(targetsToImport, workspaceContext)
     }
+    val librariesFromTransitiveCompileTimeJars = measure("Libraries from transitive compile-time jars") {
+      createLibrariesFromTransitiveCompileTimeJars(targetsToImport, workspaceContext)
+    }
     val librariesFromDeps = measure("Merge libraries from deps") {
       concatenateMaps(
         noSourceLibraries,
@@ -98,6 +101,7 @@ class BazelProjectMapper(
         kotlincPluginLibrariesMapper,
         scalaLibrariesMapper,
         androidLibrariesMapper,
+        librariesFromTransitiveCompileTimeJars,
       )
     }
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
@@ -316,7 +320,8 @@ class BazelProjectMapper(
     val libraryNameToLibraryValueMap = HashMap<Label, Library>()
     return targetsToJdepsJars.mapValues {
       it.value.map { lib ->
-        val label = syntheticLabel(lib.toString())
+        val uri = bazelPathsResolver.resolveUri(lib)
+        val label = syntheticLabel(uri.toString())
         libraryNameToLibraryValueMap.computeIfAbsent(label) { _ ->
           Library(
             label = label,
@@ -432,6 +437,27 @@ class BazelProjectMapper(
       dependencies = targetInfo.dependenciesList.map { Label.parse(it.id) },
       interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
     )
+
+  private fun createLibrariesFromTransitiveCompileTimeJars(
+    targetsToImport: Sequence<TargetInfo>,
+    workspaceContext: WorkspaceContext,
+    ): Map<Label, List<Library>> =
+    if (workspaceContext.experimentalAddTransitiveCompileTimeJars.value)
+      targetsToImport.associate { targetInfo ->
+        Label.parse(targetInfo.id) to
+          targetInfo.jvmTargetInfo.transitiveCompileTimeJarsList
+            .map {
+              val uri = bazelPathsResolver.resolve(it).toUri()
+              val label = syntheticLabel(uri.toString())
+              Library(
+                label = label,
+                outputs = setOf(uri),
+                sources = setOf(),
+                dependencies = listOf()
+              )
+            }
+      }
+    else emptyMap()
 
   private fun List<FileLocation>.resolveUris() =
     map { bazelPathsResolver.resolve(it).toUri() }.toSet()

@@ -47,3 +47,10 @@ data class ExperimentalUseLibOverModSection(override val value: Boolean) :
         const val SECTION_NAME = "experimental_use_lib_over_mod"
     }
 }
+
+data class ExperimentalAddTransitiveCompileTimeJarsSection(override val value: Boolean) :
+    ProjectViewSingletonSection<Boolean>(SECTION_NAME) {
+    companion object {
+        const val SECTION_NAME = "experimental_add_transitive_compile_time_jars"
+    }
+}
