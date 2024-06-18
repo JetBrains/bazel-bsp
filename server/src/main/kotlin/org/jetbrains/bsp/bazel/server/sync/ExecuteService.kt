@@ -112,7 +112,7 @@ class ExecuteService(
                     // Use file:// uri scheme for output paths in the build events.
                     .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
                     .withFlag(BazelFlag.color(true))
-                    .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
+                    .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath(), bepReader.serverPid)
                     .waitAndGetResult(cancelChecker, true)
             }
         }
@@ -178,7 +178,8 @@ class ExecuteService(
     fun clean(cancelChecker: CancelChecker, params: CleanCacheParams?): CleanCacheResult {
         withBepServer(null, null) { bepReader ->
             bazelRunner.commandBuilder().clean()
-                .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath()).waitAndGetResult(cancelChecker)
+                .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath(), serverPidFuture = bepReader.serverPid)
+                .waitAndGetResult(cancelChecker)
         }
         return CleanCacheResult(true)
     }
@@ -193,7 +194,7 @@ class ExecuteService(
                 .commandBuilder()
                 .build()
                 .withTargets(targetsSpec)
-                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
+                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath(), bepReader.serverPid)
                 .waitAndGetResult(cancelChecker, true)
         }
     }

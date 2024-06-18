@@ -40,7 +40,7 @@ class BazelBspCompilationManager(
                 .withFlags(extraFlags)
                 .withTargets(targetSpecs)
                 .withEnvironment(environment)
-                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath())
+                .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath(), bepReader.serverPid)
                 .waitAndGetResult(cancelChecker, true)
             bepReader.finishBuild()
             bepReader.await()

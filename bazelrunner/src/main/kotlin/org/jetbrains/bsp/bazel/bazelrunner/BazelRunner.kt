@@ -8,6 +8,7 @@ import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.extraFlags
 import java.nio.file.Path
+import java.util.concurrent.CompletableFuture
 
 class BazelRunner private constructor(
     private val workspaceContextProvider: WorkspaceContextProvider,
@@ -39,7 +40,7 @@ class BazelRunner private constructor(
         environment: Map<String, String>,
         originId: String?,
         eventTextFile: Path,
-        serverPid: Long?,
+        serverPidFuture: CompletableFuture<Long>,
     ): BazelProcess {
         fun besFlags() = listOf(
             "--build_event_binary_file=${eventTextFile.toAbsolutePath()}",
@@ -55,6 +56,7 @@ class BazelRunner private constructor(
             environment,
             originId,
             true,
+            serverPidFuture = serverPidFuture,
         )
     }
 
@@ -66,7 +68,7 @@ class BazelRunner private constructor(
         originId: String?,
         parseProcessOutput: Boolean,
         useBuildFlags: Boolean = true,
-        needsServerPid: Boolean = true,
+        serverPidFuture: CompletableFuture<Long>?,
     ): BazelProcess {
         val workspaceContext = workspaceContextProvider.currentWorkspaceContext()
         val usedBuildFlags = if (useBuildFlags) buildFlags(workspaceContext) else emptyList()
@@ -78,12 +80,11 @@ class BazelRunner private constructor(
         processBuilder.environment() += environment
         val outputLogger = bspClientLogger.takeIf { parseProcessOutput }?.copy(originId = originId)
         workspaceRoot?.let { processBuilder.directory(it.toFile()) }
-        val serverPid = if (needsServerPid) resolveBazelServerPid() else null
         val process = processBuilder.start()
         return BazelProcess(
             process,
             outputLogger,
-            serverPid,
+            serverPidFuture,
         )
     }
 
@@ -97,15 +98,7 @@ class BazelRunner private constructor(
     }
 
     private fun bazel(workspaceContext: WorkspaceContext): String = workspaceContext.bazelBinary.value.toString()
+
     private fun buildFlags(workspaceContext: WorkspaceContext): List<String> =
         workspaceContext.buildFlags.values + workspaceContext.extraFlags
-
-    private fun resolveBazelServerPid(): Long? {
-        val processResult = commandBuilder()
-            .info()
-            .withArgument("server_pid")
-            .executeBazelCommand(needsServerPid = false)
-            .waitAndGetResultTimeout()
-        return processResult.stdoutLines.firstOrNull()?.toLong()
-    }
 }

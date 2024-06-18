@@ -9,14 +9,18 @@ import org.jetbrains.bsp.bazel.bazelrunner.outputs.SyncOutputProcessor
 import org.jetbrains.bsp.bazel.commons.Format
 import org.jetbrains.bsp.bazel.commons.Stopwatch
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import java.util.concurrent.CompletableFuture
 
 class BazelProcess internal constructor(
     private val process: Process,
     private val logger: BspClientLogger? = null,
-    private val serverPid: Long?,
+    private val serverPidFuture: CompletableFuture<Long>?
 ) {
 
-    fun waitAndGetResult(cancelChecker: CancelChecker, ensureAllOutputRead: Boolean = false): BazelProcessResult {
+    fun waitAndGetResult(
+      cancelChecker: CancelChecker,
+      ensureAllOutputRead: Boolean = false,
+    ): BazelProcessResult {
         val stopwatch = Stopwatch.start()
         val outputProcessor: OutputProcessor =
             if (logger != null) {
@@ -27,15 +31,9 @@ class BazelProcess internal constructor(
                 else AsyncOutputProcessor(process, LOGGER::info)
             }
 
-        val exitCode = outputProcessor.waitForExit(cancelChecker, serverPid, logger)
+        val exitCode = outputProcessor.waitForExit(cancelChecker, serverPidFuture, logger)
         val duration = stopwatch.stop()
         logCompletion(exitCode, duration)
-        return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
-    }
-
-    fun waitAndGetResultTimeout(): BazelProcessResult {
-        val outputProcessor = SyncOutputProcessor(process, LOGGER::info)
-        val exitCode = outputProcessor.waitWithTimeout(50)
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
     }
 

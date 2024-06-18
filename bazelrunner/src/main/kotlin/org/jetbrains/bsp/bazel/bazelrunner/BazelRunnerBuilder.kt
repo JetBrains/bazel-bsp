@@ -2,11 +2,12 @@ package org.jetbrains.bsp.bazel.bazelrunner
 
 import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import com.google.common.collect.ImmutableList
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
+import org.jetbrains.bsp.bazel.bazelrunner.params.BazelQueryKindParameters
 import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelArgumentsUtils
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
+import java.util.concurrent.CompletableFuture
 
 open class BazelRunnerBuilder internal constructor(
     private val bazelRunner: BazelRunner,
@@ -96,7 +97,7 @@ open class BazelRunnerBuilder internal constructor(
         return this
     }
 
-    fun executeBazelCommand(originId: String? = null, parseProcessOutput: Boolean = true, needsServerPid: Boolean = true): BazelProcess {
+    fun executeBazelCommand(originId: String? = null, parseProcessOutput: Boolean = true): BazelProcess {
         return bazelRunner.runBazelCommand(
             bazelCommand,
             flags,
@@ -105,11 +106,11 @@ open class BazelRunnerBuilder internal constructor(
             originId,
             parseProcessOutput,
             useBuildFlags,
-            needsServerPid
+            null,
         )
     }
 
-    fun executeBazelBesCommand(originId: String? = null, buildEventFile: Path, serverPid: Long? = null): BazelProcess {
+    fun executeBazelBesCommand(originId: String? = null, buildEventFile: Path, serverPidFuture: CompletableFuture<Long>): BazelProcess {
         return bazelRunner.runBazelCommandBes(
             bazelCommand,
             flags,
@@ -117,7 +118,7 @@ open class BazelRunnerBuilder internal constructor(
             environmentVariables,
             originId,
             buildEventFile.toAbsolutePath(),
-            serverPid,
+            serverPidFuture,
         )
     }
 }

@@ -1,12 +1,12 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers;
 
 import com.google.devtools.build.lib.buildeventstream.BuildEventStreamProtos;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.bsp.bazel.server.bep.BepServer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
@@ -22,6 +22,7 @@ public class BepReader {
 
     private final CompletableFuture<Boolean> bazelBuildFinished;
     private final CompletableFuture<Boolean> bepReaderFinished;
+    private final CompletableFuture<Long> serverPid;
 
     private final Logger logger = LogManager.getLogger(BepReader.class);
     public void start() {
@@ -33,6 +34,7 @@ public class BepReader {
                 while (!bazelBuildFinished.isDone() || (event = BuildEventStreamProtos.BuildEvent.parseDelimitedFrom(stream)) != null) {
                     if (event != null) {
                         bepServer.handleBuildEventStreamProtosEvent(event);
+                        setServerPid(event);
                     } else {
                         Thread.sleep(50);
                     }
@@ -44,6 +46,16 @@ public class BepReader {
                 bepReaderFinished.complete(true);
             }
         }).start();
+    }
+
+    private void setServerPid(BuildEventStreamProtos.BuildEvent event) {
+        if (event.hasStarted()) {
+            serverPid.complete(event.getStarted().getServerPid());
+        }
+    }
+
+    public CompletableFuture<Long> getServerPid() {
+        return serverPid;
     }
 
     public void finishBuild() {
@@ -58,6 +70,7 @@ public class BepReader {
         this.bepServer = bepServer;
         this.bazelBuildFinished = new CompletableFuture<>();
         this.bepReaderFinished = new CompletableFuture<>();
+        this.serverPid = new CompletableFuture<>();
         var attrs = PosixFilePermissions.asFileAttribute(
                 Stream.of(PosixFilePermission.OWNER_WRITE,
                         PosixFilePermission.OWNER_READ).collect(Collectors.toSet()));
