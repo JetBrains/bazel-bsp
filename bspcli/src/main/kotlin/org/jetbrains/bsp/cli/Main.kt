@@ -23,9 +23,10 @@ import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.PublishOutputParams
 import org.jetbrains.bsp.bazel.install.Install
 import org.jetbrains.bsp.bazel.server.BazelBspServer
+import org.jetbrains.bsp.bazel.server.benchmark.TelemetryConfig
+import org.jetbrains.bsp.bazel.server.benchmark.shutdownTelemetry
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
-import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
 import java.io.OutputStream
 import java.io.PipedInputStream
@@ -42,8 +43,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.io.path.absolute
-import kotlin.io.path.writeText
 import kotlin.system.exitProcess
 
 interface Api: BuildServer, JvmBuildServer, ScalaBuildServer, JavaBuildServer, CppBuildServer, BazelBuildServer
@@ -88,10 +87,9 @@ fun main(args0: Array<String>) {
 
     val serverOut = FixedThreadPipedOutputStream()
     val clientOut = FixedThreadPipedOutputStream()
-
-    val metricsLogger = MetricsLogger(true)
     val serverExecutor = Executors.newFixedThreadPool(4, threadFactory("cli-server-pool-%d"))
-    val serverLauncher = startServer(serverOut, clientOut.inputStream, serverExecutor, args.workspace, installationDirectory, metricsLogger)
+    val telemetryConfig = TelemetryConfig(metricsFile = args.metricsFile)
+    val serverLauncher = startServer(serverOut, clientOut.inputStream, serverExecutor, args.workspace, installationDirectory, telemetryConfig)
     val serverAlveFuture = serverLauncher.startListening()
 
     val clientExecutor = Executors.newFixedThreadPool(4, threadFactory("cli-client-pool-%d"))
@@ -117,11 +115,7 @@ fun main(args0: Array<String>) {
 
     clientAliveFuture.get()
     serverAlveFuture.get()
-
-    args.metricsFile?.let {
-        it.writeText(metricsLogger.dump())
-        println("Metrics dumped to '${it.absolute()}'")
-    }
+    shutdownTelemetry()
 }
 
 /**
@@ -180,14 +174,14 @@ private fun startServer(serverIn: OutputStream,
                         serverExecutor: ExecutorService,
                         workspace: Path,
                         directory: Path,
-                        metricsLogger: MetricsLogger): Launcher<JoinedBuildClient> {
+                        telemetryConfig: TelemetryConfig): Launcher<JoinedBuildClient> {
     val bspInfo = BspInfo(directory)
     val bspIntegrationData = BspIntegrationData(serverIn, clientOut, serverExecutor, null)
     val workspaceContextProvider = DefaultWorkspaceContextProvider(
       workspaceRoot = workspace,
       projectViewPath = directory.resolve("projectview.bazelproject")
     )
-    val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspace, metricsLogger)
+    val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, workspace, telemetryConfig)
 
     return bspServer.buildServer(bspIntegrationData)
 }

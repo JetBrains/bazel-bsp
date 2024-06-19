@@ -14,6 +14,7 @@ kt_jvm_library(
         "//executioncontext/workspacecontext",
         "//logger",
         "//protocol",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/benchmark",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bep",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/info",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/managers",

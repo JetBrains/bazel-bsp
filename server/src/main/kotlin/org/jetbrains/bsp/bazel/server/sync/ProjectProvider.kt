@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.bazel.server.benchmark.openTelemetry
 import org.jetbrains.bsp.bazel.server.model.Project
 
 class ProjectProvider(private val projectResolver: ProjectResolver) {
@@ -15,6 +16,7 @@ class ProjectProvider(private val projectResolver: ProjectResolver) {
 
     private fun loadFromBazel(cancelChecker: CancelChecker, build: Boolean) = projectResolver.resolve(cancelChecker, build = build).also {
         project = it
+        openTelemetry.sdkTracerProvider.forceFlush()
         System.gc()
     }
 }

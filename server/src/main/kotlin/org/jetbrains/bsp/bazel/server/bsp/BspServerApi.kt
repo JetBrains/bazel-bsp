@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bsp
 
-import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.CleanCacheParams
 import ch.epfl.scala.bsp4j.CleanCacheResult
 import ch.epfl.scala.bsp4j.CompileParams
@@ -48,8 +47,8 @@ import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.JoinedBuildClient
+import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.JvmBinaryJarsParams
 import org.jetbrains.bsp.JvmBinaryJarsResult
 import org.jetbrains.bsp.MobileInstallParams
@@ -84,7 +83,7 @@ class BspServerApi(private val bazelServicesBuilder: (JoinedBuildClient) -> Baze
     return runner.handleRequest("buildInitialize", { cancelChecker: CancelChecker ->
       projectSyncService.initialize(
         cancelChecker,
-        initializeBuildParams.capabilities,
+        initializeBuildParams,
       )
     }, { methodName: String ->
       runner.serverIsNotFinished(

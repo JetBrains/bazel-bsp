@@ -4,9 +4,7 @@ import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.LogMessageParams
 import ch.epfl.scala.bsp4j.MessageType
 import org.jetbrains.bsp.bazel.commons.Format
-import org.jetbrains.bsp.bazel.commons.Stopwatch
 import java.time.Duration
-import java.util.function.Supplier
 
 private val LOG_OPERATION_THRESHOLD: Duration = Duration.ofMillis(100)
 
@@ -40,26 +38,9 @@ data class BspClientLogger(private val bspClient: BuildClient, private val origi
     }
   }
 
-  fun <T> timed(description: String?, supplier: Supplier<T>): T {
-    val sw = Stopwatch.start()
-    val result = supplier.get()
-    val duration = sw.stop()
-    logDuration(description, duration)
-    return result
-  }
-
-  fun logDuration(description: String?, duration: Duration) {
+  fun logDuration(description: String, duration: Duration) {
     if (duration >= LOG_OPERATION_THRESHOLD) {
       message("Task '%s' completed in %s", description, Format.duration(duration))
-    }
-  }
-
-  fun timed(description: String?, runnable: Runnable) {
-    timed<Any?>(
-      description
-    ) {
-      runnable.run()
-      null
     }
   }
 }

@@ -24,6 +24,7 @@ kt_jvm_binary(
         "//install/src/main/kotlin/org/jetbrains/bsp/bazel/install",
         "//protocol",
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server",
+        "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/benchmark",
         "@maven//:ch_epfl_scala_bsp4j",
     ],
 )

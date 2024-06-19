@@ -4,7 +4,6 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.CompileReport
 import ch.epfl.scala.bsp4j.CompileTask
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
-import ch.epfl.scala.bsp4j.StatusCode
 import ch.epfl.scala.bsp4j.TaskFinishDataKind
 import ch.epfl.scala.bsp4j.TaskFinishParams
 import ch.epfl.scala.bsp4j.TaskId
@@ -29,7 +28,6 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.commons.ExitCodeMapper
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
 import org.jetbrains.bsp.bazel.logger.BspClientTestNotifier
-import org.jetbrains.bsp.bazel.server.bep.TestXmlParser
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
 import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
@@ -38,8 +36,10 @@ import java.net.URI
 import java.nio.file.FileSystemNotFoundException
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
 import java.util.AbstractMap.SimpleEntry
+import java.util.ArrayDeque
+import java.util.Deque
+import java.util.UUID
 import java.util.function.Consumer
 
 

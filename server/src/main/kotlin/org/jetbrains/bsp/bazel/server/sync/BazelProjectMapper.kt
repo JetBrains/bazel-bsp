@@ -10,12 +10,9 @@ import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
-import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.benchmark.tracer
+import org.jetbrains.bsp.bazel.server.benchmark.use
 import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
-import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
-import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
-import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.model.Language
 import org.jetbrains.bsp.bazel.server.model.Library
@@ -23,6 +20,11 @@ import org.jetbrains.bsp.bazel.server.model.Module
 import org.jetbrains.bsp.bazel.server.model.Project
 import org.jetbrains.bsp.bazel.server.model.SourceSet
 import org.jetbrains.bsp.bazel.server.model.Tag
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
+import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
+import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustModule
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.isRustEnabled
 import java.net.URI
@@ -42,15 +44,14 @@ class BazelProjectMapper(
   private val kotlinAndroidModulesMerger: KotlinAndroidModulesMerger,
   private val bazelInfo: BazelInfo,
   private val bspClientLogger: BspClientLogger,
-  private val metricsLogger: MetricsLogger?
 ) {
 
   private fun <T> measure(description: String, body: () -> T): T =
-    Measurements.measure(body, description, metricsLogger, bspClientLogger)
+    tracer.spanBuilder(description).use { body() }
 
   private fun <T> measureIf(description: String, predicate: () -> Boolean, ifFalse: T, body: () -> T): T =
     if (predicate()) {
-      Measurements.measure(body, description, metricsLogger, bspClientLogger)
+      measure(description, body)
     } else {
       ifFalse
     }

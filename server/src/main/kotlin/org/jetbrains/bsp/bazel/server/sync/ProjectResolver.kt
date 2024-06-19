@@ -1,10 +1,11 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.benchmark.tracer
+import org.jetbrains.bsp.bazel.server.benchmark.use
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManagerResult
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
@@ -23,18 +24,15 @@ class ProjectResolver(
   private val bazelBspFallbackAspectsManager: BazelBspFallbackAspectsManager,
   private val workspaceContextProvider: WorkspaceContextProvider,
   private val bazelProjectMapper: BazelProjectMapper,
-  private val bspLogger: BspClientLogger,
   private val targetInfoReader: TargetInfoReader,
   private val bazelInfo: BazelInfo,
   private val bazelRunner: BazelRunner,
-  private val metricsLogger: MetricsLogger?
 ) {
   private fun <T> measured(description: String, f: () -> T): T {
-    return Measurements.measure(f, description, metricsLogger, bspLogger)
+    return tracer.spanBuilder(description).use { f() }
   }
 
-  fun resolve(cancelChecker: CancelChecker, build: Boolean): Project {
-
+  fun resolve(cancelChecker: CancelChecker, build: Boolean): Project = tracer.spanBuilder("Resolve project").use {
     val workspaceContext = measured(
       "Reading project view and creating workspace context",
       workspaceContextProvider::currentWorkspaceContext
