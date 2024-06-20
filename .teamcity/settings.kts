@@ -61,7 +61,14 @@ object BazelBspGitHub : Project({
     allSteps.last().triggers {
         vcs {
             branchFilter = "+:pull/*"
+            triggerRules = """
+                -:**.md
+                -:/MODULE.bazel.lock
+                -:**.yaml
+                -:/.teamcity/**
+            """.trimIndent()
         }
+
     }
 
     // setup display order for bazel-bsp pipeline
@@ -133,6 +140,12 @@ object BazelBspSpace : Project({
             branchFilter = """
                 +:<default>
                 +:*
+            """.trimIndent()
+            triggerRules = """
+                -:**.md
+                -:/MODULE.bazel.lock
+                -:**.yaml
+                -:/.teamcity/**
             """.trimIndent()
         }
     }
