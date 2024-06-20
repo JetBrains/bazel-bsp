@@ -84,6 +84,7 @@ import org.jetbrains.bsp.bazel.server.model.Module
 import org.jetbrains.bsp.bazel.server.model.Project
 import org.jetbrains.bsp.bazel.server.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import java.io.IOException
 import java.net.URI
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -164,7 +165,15 @@ class BspProjectMapper(
         val workspaceRootPath = workspaceRoot.toPath()
         val workspaceSymlinkNames = setOf("bazel-${workspaceRootPath.name}")
 
-        return (stableSymlinkNames + workspaceSymlinkNames).map { workspaceRootPath.resolve(it) }
+        val symlinks = (stableSymlinkNames + workspaceSymlinkNames).map { workspaceRootPath.resolve(it) }
+        val realPaths = symlinks.mapNotNull {
+            try {
+                it.toRealPath()
+            } catch (e: IOException) {
+                null
+            }
+        }
+        return symlinks + realPaths
     }
 
     private fun computeAdditionalDirectoriesToExclude(): List<Path> =
