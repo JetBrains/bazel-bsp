@@ -11,6 +11,7 @@ import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.nio.file.Paths
 
 data class BazelBspAspectsManagerResult(val bepOutput: BepOutput, val isFailure: Boolean)
@@ -32,11 +33,15 @@ class BazelBspAspectsManager(
       ruleName?.let { RuleLanguage(it, language) }
     }
 
-  fun generateAspectsFromTemplates(ruleLanguages: List<RuleLanguage>) {
-    ruleLanguages.filter { it.ruleName != null && it.language.isTemplate }.forEach {
+  fun generateAspectsFromTemplates(ruleLanguages: List<RuleLanguage>, workspaceContext: WorkspaceContext) {
+    ruleLanguages.filter { it.language.isTemplate }.forEach {
       val outputFile = aspectsPath.resolve(it.language.toAspectRelativePath())
       val templateFilePath = it.language.toAspectTemplateRelativePath()
-      templateWriter.writeToFile(templateFilePath, outputFile, mapOf("ruleName" to it.ruleName))
+      val variableMap = mapOf(
+        "ruleName" to it.ruleName,
+        "addTransitiveCompileTimeJars" to if (workspaceContext.experimentalAddTransitiveCompileTimeJars.value) "True" else "False",
+      )
+      templateWriter.writeToFile(templateFilePath, outputFile, variableMap)
     }
   }
 

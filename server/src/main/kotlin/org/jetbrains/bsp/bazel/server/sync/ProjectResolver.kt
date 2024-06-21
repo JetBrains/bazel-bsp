@@ -50,7 +50,7 @@ class ProjectResolver(
     ) { bazelBspAspectsManager.calculateRuleLanguages(externalRuleNames) }
 
     measured("Realizing language aspect files from templates") {
-      bazelBspAspectsManager.generateAspectsFromTemplates(ruleLanguages)
+      bazelBspAspectsManager.generateAspectsFromTemplates(ruleLanguages, workspaceContext)
     }
 
     measured("Generating language extensions file") {

@@ -145,7 +145,10 @@ def extract_jvm_info(target, ctx, output_groups, **kwargs):
     jvm_flags = getattr(ctx.rule.attr, "jvm_flags", [])
     args = getattr(ctx.rule.attr, "args", [])
     main_class = getattr(ctx.rule.attr, "main_class", None)
-    transitive_compile_time_jars = extract_transitive_compile_time_jars(provider).to_list()
+    if ${addTransitiveCompileTimeJars}:
+        transitive_compile_time_jars = extract_transitive_compile_time_jars(provider).to_list()
+    else:
+        transitive_compile_time_jars = []
 
     if (is_external(target)):
         runtime_jars = extract_runtime_jars(target, provider).to_list()
