@@ -72,11 +72,4 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     shutdown()
     return exitCode
   }
-
-  fun waitWithTimeout(timeoutMillis: Long): Int {
-    process.waitFor(timeoutMillis, TimeUnit.MILLISECONDS)
-    val exitCode = process.waitFor()
-    shutdown()
-    return exitCode
-  }
 }
