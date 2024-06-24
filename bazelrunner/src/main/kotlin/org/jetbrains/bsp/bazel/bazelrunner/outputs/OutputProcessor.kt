@@ -61,7 +61,7 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     while (!isFinished) {
       isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
       if (cancelChecker.isCanceled) {
-        val serverPid = serverPidFuture?.get()
+        val serverPid = if (serverPidFuture?.isDone == true) serverPidFuture.get() else null
         serverPid?.let { Runtime.getRuntime().exec("kill -SIGINT $it").waitFor().takeIf { e -> e == 0 } }
           ?: logger?.error("Could not cancel the task. Bazel server needs to be interrupted manually.")
       }

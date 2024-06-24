@@ -49,7 +49,7 @@ public class BepReader {
     }
 
     private void setServerPid(BuildEventStreamProtos.BuildEvent event) {
-        if (event.hasStarted()) {
+        if (event.hasStarted()  && !serverPid.isDone()) {
             serverPid.complete(event.getStarted().getServerPid());
         }
     }
