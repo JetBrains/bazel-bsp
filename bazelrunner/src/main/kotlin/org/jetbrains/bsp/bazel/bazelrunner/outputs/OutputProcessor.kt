@@ -56,14 +56,16 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     executorService.submit(runnable).also { runningProcessors.add(it) }
   }
 
-  fun waitForExit(cancelChecker: CancelChecker, serverPidFuture: CompletableFuture<Long>?, logger: BspClientLogger?): Int {
+  fun waitForExit(
+    cancelChecker: CancelChecker,
+    logger: BspClientLogger?
+  ): Int {
     var isFinished = false;
     while (!isFinished) {
       isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
       if (cancelChecker.isCanceled) {
-        val serverPid = if (serverPidFuture?.isDone == true) serverPidFuture.get() else null
-        serverPid?.let { Runtime.getRuntime().exec("kill -SIGINT $it").waitFor().takeIf { e -> e == 0 } }
-          ?: logger?.error("Could not cancel the task. Bazel server needs to be interrupted manually.")
+        process.destroy()
+        logger?.error("Could not cancel the task. Bazel server needs to be interrupted manually.")
       }
     }
     // Return values of waitFor() and waitFor(long, TimeUnit) differ
@@ -72,4 +74,33 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     shutdown()
     return exitCode
   }
+
+  fun waitForExitAsync(
+    cancelChecker: CancelChecker,
+    serverPidFuture: CompletableFuture<Long>?,
+    logger: BspClientLogger?
+  ): CompletableFuture<Int> {
+    var isFinished = false;
+    var resultFuture: CompletableFuture<Int>? = null
+    while (!isFinished) {
+      isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
+      if (cancelChecker.isCanceled) {
+        process.destroy()
+        if (serverPidFuture != null) {
+          resultFuture = serverPidFuture.thenApply {
+            Runtime.getRuntime().exec("kill -SIGINT $it").waitFor()
+          }
+        } else {
+          logger?.error("Could not cancel the task. Bazel server needs to be interrupted manually.")
+        }
+      }
+    }
+    // Return values of waitFor() and waitFor(long, TimeUnit) differ
+    // so we can't just return value from waitFor(long, TimeUnit) here
+    val exitCode = process.waitFor()
+    shutdown();
+    return resultFuture?.thenApply { exitCode } ?: CompletableFuture.completedFuture(exitCode)
+  }
 }
+
+

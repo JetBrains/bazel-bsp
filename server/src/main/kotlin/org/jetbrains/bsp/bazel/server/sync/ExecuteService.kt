@@ -39,6 +39,7 @@ import org.jetbrains.bsp.bazel.server.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
+import java.util.concurrent.CompletableFuture
 
 class ExecuteService(
     private val compilationManager: BazelBspCompilationManager,
@@ -60,7 +61,6 @@ class ExecuteService(
         val diagnosticsService = DiagnosticsService(compilationManager.workspaceRoot, hasAnyProblems)
         val server = BepServer(compilationManager.client,  diagnosticsService, originId, target, bazelPathsResolver)
         val bepReader = BepReader(server)
-
         try {
             bepReader.start()
             return body(bepReader)
@@ -179,7 +179,8 @@ class ExecuteService(
         withBepServer(null, null) { bepReader ->
             bazelRunner.commandBuilder().clean()
                 .executeBazelBesCommand(buildEventFile = bepReader.eventFile.toPath(), serverPidFuture = bepReader.serverPid)
-                .waitAndGetResult(cancelChecker)
+                .waitAndGetResultAsync(cancelChecker)
+                .get()
         }
         return CleanCacheResult(true)
     }
@@ -195,7 +196,8 @@ class ExecuteService(
                 .build()
                 .withTargets(targetsSpec)
                 .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath(), bepReader.serverPid)
-                .waitAndGetResult(cancelChecker, true)
+                .waitAndGetResultAsync(cancelChecker, true)
+                .get()
         }
     }
 

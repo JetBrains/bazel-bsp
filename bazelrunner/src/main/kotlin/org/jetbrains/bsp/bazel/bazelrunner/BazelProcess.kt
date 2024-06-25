@@ -22,19 +22,37 @@ class BazelProcess internal constructor(
       ensureAllOutputRead: Boolean = false,
     ): BazelProcessResult {
         val stopwatch = Stopwatch.start()
-        val outputProcessor: OutputProcessor =
-            if (logger != null) {
-                if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
-                else AsyncOutputProcessor(process, logger::message, LOGGER::info)
-            } else {
-                if (ensureAllOutputRead) SyncOutputProcessor(process, LOGGER::info)
-                else AsyncOutputProcessor(process, LOGGER::info)
-            }
+        val outputProcessor: OutputProcessor = getOutputProcessor(ensureAllOutputRead)
 
-        val exitCode = outputProcessor.waitForExit(cancelChecker, serverPidFuture, logger)
+        val exitCode = outputProcessor.waitForExit(cancelChecker, logger)
         val duration = stopwatch.stop()
         logCompletion(exitCode, duration)
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
+    }
+
+    fun waitAndGetResultAsync(
+        cancelChecker: CancelChecker,
+        ensureAllOutputRead: Boolean = false,
+    ): CompletableFuture<BazelProcessResult> {
+        val stopwatch = Stopwatch.start()
+        val outputProcessor: OutputProcessor = getOutputProcessor(ensureAllOutputRead)
+
+        val exitCode = outputProcessor.waitForExitAsync(cancelChecker, serverPidFuture, logger)
+        return exitCode.thenApply {
+            val duration = stopwatch.stop()
+            logCompletion(it, duration)
+            BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, it)
+        }
+    }
+
+    private fun getOutputProcessor(ensureAllOutputRead: Boolean): OutputProcessor {
+        return if (logger != null) {
+            if (ensureAllOutputRead) SyncOutputProcessor(process, logger::message, LOGGER::info)
+            else AsyncOutputProcessor(process, logger::message, LOGGER::info)
+        } else {
+            if (ensureAllOutputRead) SyncOutputProcessor(process, LOGGER::info)
+            else AsyncOutputProcessor(process, LOGGER::info)
+        }
     }
 
     private fun logCompletion(exitCode: Int, duration: Duration) {
