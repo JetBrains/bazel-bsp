@@ -34,6 +34,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.io.path.notExists
 
@@ -395,10 +396,14 @@ class BazelProjectMapper(
     targetInfo.jvmTargetInfo.jdepsList.flatMap { jdeps ->
       val path = bazelPathsResolver.resolve(jdeps)
       if (path.toFile().exists()) {
-        val bytes = Files.readAllBytes(path)
-        Deps.Dependencies.parseFrom(bytes).dependencyList
+        val dependencyList = path.inputStream().use {
+          Deps.Dependencies.parseFrom(it).dependencyList
+        }
+        dependencyList
+          .asSequence()
           .filter { it.isRelevant() }
           .map { bazelPathsResolver.resolveOutput(Paths.get(it.path)) }
+          .toList()
       } else {
         emptySet()
       }
