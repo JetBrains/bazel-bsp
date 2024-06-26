@@ -74,7 +74,7 @@ maven.install(
         "org.apache.velocity:velocity-engine-core:2.3",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1",
         "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1",
-        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0",
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1",
         "org.slf4j:slf4j-nop:1.7.36",  # cannot be 2.0.0+ unless slf4j-api dependency in velocity-engine-core is 2.0.0+
         "com.fasterxml.jackson.core:jackson-databind:2.17.1",
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1",

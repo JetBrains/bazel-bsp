@@ -63,7 +63,6 @@ object BazelBspGitHub : Project({
             branchFilter = "+:pull/*"
             triggerRules = """
                 -:**.md
-                -:/MODULE.bazel.lock
                 -:**.yaml
                 -:/.teamcity/**
             """.trimIndent()
@@ -140,10 +139,10 @@ object BazelBspSpace : Project({
             branchFilter = """
                 +:<default>
                 +:*
+                -:bazel-steward*
             """.trimIndent()
             triggerRules = """
                 -:**.md
-                -:/MODULE.bazel.lock
                 -:**.yaml
                 -:/.teamcity/**
             """.trimIndent()
