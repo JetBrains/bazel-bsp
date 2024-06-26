@@ -124,7 +124,7 @@ open class PluginRun(
 object GitHub : PluginRun(
     vcsRoot = BaseConfiguration.GitHubVcs,
     requirements =  {
-        endsWith("cloud.amazon.agent-name-prefix", "-Large")
+        endsWith("cloud.amazon.agent-name-prefix", "XLarge")
         equals("container.engine.osType", "linux")
     },
 )
