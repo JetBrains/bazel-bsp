@@ -358,6 +358,7 @@ class DiagnosticsServiceTest {
         )
         diagnostics shouldContainExactlyInAnyOrder expected
     }
+
     @Test
     fun `parse scala 3 error`() {
         // given
@@ -451,6 +452,52 @@ class DiagnosticsServiceTest {
                     """|Type Mismatch Error
                        |Found:    ("Hello" : String)
                        |Required: Int
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                )
+            )
+        )
+        diagnostics shouldContainExactlyInAnyOrder expected
+    }
+
+    @Test
+    fun `parse another scala 3 multiple errors`() {
+        // given
+        val output = """|-- [E006] Not Found Error: drd/messaging/src/main/scala/bots/Bot.scala:143:26 
+                        |143 |        val messageJson = makeMessage(sendPkt.data)
+                        ||                         ^^^^^^^^^^^
+                        ||                          Not found: makeMessage
+                        ||
+                        || longer explanation available when compiling with `-explain`
+                        |-- [E006] Not Found Error: drd/messaging/src/main/scala/bots/Bot.scala:153:22 
+                        |153 |        client.expect[Message](request)
+                        ||                      ^^^^^^^
+                        ||                      Not found: type Message
+                        ||
+                        || longer explanation available when compiling with `-explain`
+                        |2 errors found
+                        |Build failed
+                        |""".trimMargin()
+
+        // when
+        val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
+
+        // then
+        val expected = listOf(
+            PublishDiagnosticsParams(
+                TextDocumentIdentifier("file:///user/workspace/drd/messaging/src/main/scala/bots/Bot.scala"),
+                BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
+                ErrorDiagnostic(
+                    Position(143, 26),
+                    """|Not Found Error
+                       |Not found: makeMessage
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                ),
+                ErrorDiagnostic(
+                    Position(153, 22),
+                    """|Not Found Error
+                       |Not found: type Message
                        |
                        |longer explanation available when compiling with `-explain`""".trimMargin()
                 )
