@@ -70,6 +70,9 @@ class BazelProjectMapper(
     val targetsToImport = measure("Select targets") {
       selectTargetsToImport(workspaceContext, rootTargets, dependencyGraph)
     }
+    val interfacesAndBinariesFromTargetsToImport = measure("Collect interfaces and classes from targets to import") {
+      collectInterfacesAndClasses(targetsToImport)
+    }
     val targetsAsLibraries = measure("Targets as libraries") {
       targets - targetsToImport.map { Label.parse(it.id) }.toSet()
     }
@@ -92,7 +95,12 @@ class BazelProjectMapper(
       calculateAndroidLibrariesMapper(targetsToImport, workspaceContext)
     }
     val librariesFromTransitiveCompileTimeJars = measure("Libraries from transitive compile-time jars") {
-      createLibrariesFromTransitiveCompileTimeJars(targetsToImport, workspaceContext)
+      createLibrariesFromTransitiveCompileTimeJars(
+        targetsToImport,
+        workspaceContext,
+        interfacesAndBinariesFromTargetsToImport,
+        targets,
+      )
     }
     val librariesFromDeps = measure("Merge libraries from deps") {
       concatenateMaps(
@@ -102,18 +110,30 @@ class BazelProjectMapper(
         kotlincPluginLibrariesMapper,
         scalaLibrariesMapper,
         androidLibrariesMapper,
-        librariesFromTransitiveCompileTimeJars,
       )
     }
     val librariesFromDepsAndTargets = measure("Libraries from targets and deps") {
       createLibraries(targetsAsLibraries) + librariesFromDeps.values.flatten().distinct().associateBy { it.label }
     }
     val extraLibrariesFromJdeps = measure("Libraries from jdeps") {
-      jdepsLibraries(targetsToImport.associateBy { Label.parse(it.id) }, librariesFromDeps, librariesFromDepsAndTargets)
+      jdepsLibraries(
+        targetsToImport.associateBy { Label.parse(it.id) },
+        librariesFromDeps,
+        librariesFromDepsAndTargets,
+        interfacesAndBinariesFromTargetsToImport
+      )
     }
     val workspaceRoot = bazelPathsResolver.workspaceRoot()
     val modulesFromBazel = measure("Create modules") {
-      createModules(targetsToImport, dependencyGraph, concatenateMaps(librariesFromDeps, extraLibrariesFromJdeps))
+      createModules(
+        targetsToImport,
+        dependencyGraph,
+        concatenateMaps(
+          librariesFromDeps,
+          extraLibrariesFromJdeps,
+          librariesFromTransitiveCompileTimeJars
+        )
+      )
     }
     val mergedModulesFromBazel = measure("Merge Kotlin Android modules") {
       kotlinAndroidModulesMerger.mergeKotlinAndroidModules(modulesFromBazel, workspaceContext)
@@ -122,7 +142,9 @@ class BazelProjectMapper(
       buildReverseSourceMapping(mergedModulesFromBazel)
     }
     val librariesToImport = measure("Merge all libraries") {
-      librariesFromDepsAndTargets + extraLibrariesFromJdeps.values.flatten().associateBy { it.label }
+      librariesFromDepsAndTargets +
+        extraLibrariesFromJdeps.values.flatten().associateBy { it.label } +
+        librariesFromTransitiveCompileTimeJars.values.flatten().associateBy { it.label }
     }
     val invalidTargets = measure("Save invalid target labels") {
       removeDotBazelBspTarget(allTargetNames) - targetsToImport.map { Label.parse(it.id) }.toSet()
@@ -314,21 +336,26 @@ class BazelProjectMapper(
   private fun jdepsLibraries(
     targetsToImport: Map<Label, TargetInfo>,
     libraryDependencies: Map<Label, List<Library>>,
-    librariesToImport: Map<Label, Library>
+    librariesToImport: Map<Label, Library>,
+    interfacesAndBinariesFromTargetsToImport: Map<Label, Set<URI>>,
   ):
     Map<Label, List<Library>> {
     val targetsToJdepsJars = getAllJdepsDependencies(targetsToImport, libraryDependencies, librariesToImport)
     val libraryNameToLibraryValueMap = HashMap<Label, Library>()
-    return targetsToJdepsJars.mapValues {
-      it.value.map { lib ->
-        val uri = bazelPathsResolver.resolveUri(lib)
+    return targetsToJdepsJars.mapValues { target ->
+      val interfacesAndBinariesFromTarget =
+        interfacesAndBinariesFromTargetsToImport.getOrDefault(target.key, emptySet())
+      target.value
+        .map { path -> bazelPathsResolver.resolveUri(path) }
+        .filter { uri -> uri !in interfacesAndBinariesFromTarget }
+        .map { uri ->
         val label = syntheticLabel(uri.toString())
         libraryNameToLibraryValueMap.computeIfAbsent(label) { _ ->
           Library(
             label = label,
             dependencies = emptyList(),
             interfaceJars = emptySet(),
-            outputs = setOf(bazelPathsResolver.resolveUri(lib)),
+            outputs = setOf(uri),
             sources = emptySet()
           )
         }
@@ -370,7 +397,7 @@ class BazelProjectMapper(
     outputJarsFromTransitiveDepsCache: ConcurrentHashMap<Label, Set<Path>>,
   ): Set<Path> = outputJarsFromTransitiveDepsCache.getOrPut(targetOrLibrary) {
     val jarsFromTargets =
-      targetsToImport[targetOrLibrary]?.let { getTargetOutputJars(it) + getTargetInterfaceJars(it) }.orEmpty()
+      targetsToImport[targetOrLibrary]?.let { getTargetOutputJarsSet(it) + getTargetInterfaceJarsSet(it) }.orEmpty()
     val jarsFromLibraries =
       librariesToImport[targetOrLibrary]?.let { it.outputs + it.interfaceJars }.orEmpty().map { Paths.get(it.path) }
     val outputJars = (jarsFromTargets + jarsFromLibraries).toMutableSet()
@@ -433,40 +460,68 @@ class BazelProjectMapper(
   private fun createLibrary(label: Label, targetInfo: TargetInfo): Library =
     Library(
       label = label,
-      outputs = getTargetJarUris(targetInfo) + getAndroidAarUris(targetInfo),
+      outputs = getTargetOutputJarUris(targetInfo) + getAndroidAarUris(targetInfo),
       sources = getSourceJarUris(targetInfo),
       dependencies = targetInfo.dependenciesList.map { Label.parse(it.id) },
-      interfaceJars = getTargetInterfaceJars(targetInfo).map { it.toUri() }.toSet(),
+      interfaceJars = getTargetInterfaceJarsSet(targetInfo).map { it.toUri() }.toSet(),
     )
 
   private fun createLibrariesFromTransitiveCompileTimeJars(
     targetsToImport: Sequence<TargetInfo>,
     workspaceContext: WorkspaceContext,
+    interfacesAndClassesFromTargetsToImport: Map<Label, Set<URI>>,
+    targetsMap: Map<Label, TargetInfo>,
     ): Map<Label, List<Library>> =
-    if (workspaceContext.experimentalAddTransitiveCompileTimeJars.value)
+    if (workspaceContext.experimentalAddTransitiveCompileTimeJars.value) {
+      val explicitCompileTimeInterfaces = calculateExplicitCompileTimeInterfaces(targetsToImport, targetsMap)
+      val res = HashMap<Label, Library>()
       targetsToImport.associate { targetInfo ->
+        val interfacesAndBinariesFromTarget =
+          interfacesAndClassesFromTargetsToImport.getOrDefault(Label.parse(targetInfo.id), emptySet())
+        val explicitCompileTimeInterfacesFromTarget =
+          explicitCompileTimeInterfaces.getOrDefault(Label.parse(targetInfo.id), emptySet())
         Label.parse(targetInfo.id) to
           targetInfo.jvmTargetInfo.transitiveCompileTimeJarsList
-            .map {
-              val uri = bazelPathsResolver.resolve(it).toUri()
+            .map { bazelPathsResolver.resolve(it).toUri() }
+            .filter {
+              it !in interfacesAndBinariesFromTarget &&
+                it in explicitCompileTimeInterfacesFromTarget
+            }
+            .map { uri ->
               val label = syntheticLabel(uri.toString())
-              Library(
-                label = label,
-                outputs = setOf(uri),
-                sources = setOf(),
-                dependencies = listOf()
-              )
+              res.computeIfAbsent(label) {
+                Library(
+                  label = label,
+                  outputs = setOf(uri),
+                  sources = setOf(),
+                  dependencies = listOf()
+                )
+              }
             }
       }
+    }
     else emptyMap()
+
+  private fun calculateExplicitCompileTimeInterfaces(
+    targets: Sequence<TargetInfo>,
+    targetsMap: Map<Label, TargetInfo>) =
+    targets.associate { target ->
+      Label.parse(target.id) to
+        target.dependenciesList
+          .asSequence()
+          .mapNotNull { targetsMap[Label.parse(it.id)] }
+          .flatMap { getTargetInterfaceJarsList(it) }
+          .map { it.toUri() }
+          .toSet()
+    }
 
   private fun List<FileLocation>.resolveUris() =
     map { bazelPathsResolver.resolve(it).toUri() }.toSet()
 
-  private fun getTargetJarUris(targetInfo: TargetInfo) =
-    targetInfo.jvmTargetInfo.jarsList
-      .flatMap { it.binaryJarsList }
-      .resolveUris()
+  private fun getTargetOutputJarUris(targetInfo: TargetInfo) =
+    getTargetOutputJarsList(targetInfo)
+      .map { it.toUri() }
+      .toSet()
 
   private fun getAndroidAarUris(targetInfo: TargetInfo): Set<URI> {
     if (!targetInfo.hasAndroidAarImportInfo()) return emptySet()
@@ -488,17 +543,21 @@ class BazelProjectMapper(
       .flatMap { it.sourceJarsList }
       .resolveUris()
 
-  private fun getTargetOutputJars(targetInfo: TargetInfo) =
+  private fun getTargetOutputJarsSet(targetInfo: TargetInfo) =
+    getTargetOutputJarsList(targetInfo).toSet()
+
+  private fun getTargetOutputJarsList(targetInfo: TargetInfo) =
     targetInfo.jvmTargetInfo.jarsList
       .flatMap { it.binaryJarsList }
       .map { bazelPathsResolver.resolve(it) }
-      .toSet()
 
-  private fun getTargetInterfaceJars(targetInfo: TargetInfo) =
+  private fun getTargetInterfaceJarsSet(targetInfo: TargetInfo) =
+    getTargetInterfaceJarsList(targetInfo).toSet()
+
+  private fun getTargetInterfaceJarsList(targetInfo: TargetInfo) =
     targetInfo.jvmTargetInfo.jarsList
       .flatMap { it.interfaceJarsList }
       .map { bazelPathsResolver.resolve(it) }
-      .toSet()
 
   private fun selectRustExternalTargetsToImport(
     rootTargets: Set<Label>, graph: DependencyGraph,
@@ -511,6 +570,15 @@ class BazelProjectMapper(
   ): Sequence<TargetInfo> = graph.allTargetsAtDepth(
     workspaceContext.importDepth.value, rootTargets
   ).asSequence().filter { isWorkspaceTarget(it) }
+
+  private fun collectInterfacesAndClasses(targets: Sequence<TargetInfo>) =
+    targets
+      .associate { target ->
+        Label.parse(target.id) to
+          (getTargetInterfaceJarsList(target) + getTargetOutputJarsList(target))
+            .map { it.toUri() }
+            .toSet()
+      }
 
   private fun hasKnownSources(targetInfo: TargetInfo) =
     targetInfo.sourcesList.any {
