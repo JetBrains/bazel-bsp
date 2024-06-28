@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "4cda081cfff05770dca272c62c007ff1660308f271ed62887e07f08b45423b05",
+  "moduleFileHash": "073c79f19af4354251e7d3a02afac34d7648ffffb9ac2cd60fdb55848357668d",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -150,7 +150,7 @@
                   "io.opentelemetry:opentelemetry-sdk-trace:1.39.0",
                   "io.opentelemetry.semconv:opentelemetry-semconv:1.25.0-alpha",
                   "org.junit.jupiter:junit-jupiter:5.10.2",
-                  "org.junit.platform:junit-platform-console:1.10.2",
+                  "org.junit.platform:junit-platform-console:1.10.3",
                   "io.kotest:kotest-assertions-api-jvm:5.9.1",
                   "io.kotest:kotest-assertions-core-jvm:5.9.1",
                   "io.kotest:kotest-assertions-shared-jvm:5.9.1",
@@ -4103,7 +4103,7 @@
       "general": {
         "bzlTransitiveDigest": "KKW33qxEheJxTHImb+0RRJzAx0lvrMXI0dlYVxV+o8k=",
         "accumulatedFileDigests": {
-          "@@//:maven_install.json": "51b3fac7efec568b207457bec49b9e2fe3d5a6028a961ce0de4185bea05a2b45",
+          "@@//:maven_install.json": "2b7eb6f8a71da84f3d23cf1f7642413935b93183642c14bf742bc11745719aed",
           "@@rules_jvm_external~6.1//:rules_jvm_external_deps_install.json": "0bfbc915d9155df44d7a3b216e8f3c1fbcd110e358dd07637dc393583a5227e8"
         },
         "envVariables": {},
@@ -4132,16 +4132,16 @@
               "downloaded_file_path": "v1/io/opentelemetry/opentelemetry-context/1.36.0/opentelemetry-context-1.36.0.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_7_0": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_7_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_7_0",
-              "sha256": "b1b8f8be450f16faa5d37d4f4b6dedf4d685136a4c6f1dec3aede92eafbbbded",
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_jar_sources_1_7_1",
+              "sha256": "fd7a94b2156def38a904f35a8bd1084fc8dcd856bc28073d7602eb0f715783f5",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.1/kotlinx-serialization-json-jvm-1.7.1-sources.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0-sources.jar"
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.1/kotlinx-serialization-json-jvm-1.7.1-sources.jar"
             }
           },
           "org_jetbrains_kotlin_kotlin_stdlib_2_0_0": {
@@ -5776,18 +5776,6 @@
               "downloaded_file_path": "v1/software/amazon/awssdk/profiles/2.25.23/profiles-2.25.23.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_7_0",
-              "sha256": "bc5fb7ba6985a62c4cc2d95940a751d87597f12428fe37feea4bdc6ce996d67c",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.0/kotlinx-serialization-json-jvm-1.7.0.jar"
-            }
-          },
           "org_apache_maven_maven_artifact_3_9_6": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -5798,6 +5786,18 @@
                 "https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/3.9.6/maven-artifact-3.9.6.jar"
               ],
               "downloaded_file_path": "v1/org/apache/maven/maven-artifact/3.9.6/maven-artifact-3.9.6.jar"
+            }
+          },
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_7_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jvm_1_7_1",
+              "sha256": "ab6f1b6e8c70899d8c41f2be5c391d357840f1429b151f4dfb07271029083316",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.1/kotlinx-serialization-json-jvm-1.7.1.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.7.1/kotlinx-serialization-json-jvm-1.7.1.jar"
             }
           },
           "software_amazon_eventstream_eventstream_1_0_1": {
@@ -6148,16 +6148,16 @@
               "downloaded_file_path": "v1/com/google/auth/google-auth-library-credentials/1.23.0/google-auth-library-credentials-1.23.0-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_7_0": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_7_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_7_0",
-              "sha256": "0281a19e4256420833158bbb0e2a71fb62253c504633882e3f09fd178873b08f",
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_jar_sources_1_7_1",
+              "sha256": "210c139ddd7939359c524b343d8c3027150b770f3bab3a487d6a4400ce2e7959",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.1/kotlinx-serialization-json-1.7.1-sources.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0-sources.jar"
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.1/kotlinx-serialization-json-1.7.1-sources.jar"
             }
           },
           "io_grpc_grpc_core_jar_sources_1_62_2": {
@@ -6712,16 +6712,16 @@
               "downloaded_file_path": "v1/io/opentelemetry/opentelemetry-sdk-metrics/1.39.0/opentelemetry-sdk-metrics-1.39.0.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_json_1_7_0": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_json_1_7_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_1_7_0",
-              "sha256": "35bf3b860574b0be7c0ce975e946f6d0e7da4ea5e8f8f13b71192e82f187051d",
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_json_1_7_1",
+              "sha256": "8a5dacc3db31d698079e3d5a3a80c6533a7d906c2fa768e709ab5943200f5572",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.1/kotlinx-serialization-json-1.7.1.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.0/kotlinx-serialization-json-1.7.0.jar"
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-json/1.7.1/kotlinx-serialization-json-1.7.1.jar"
             }
           },
           "io_grpc_grpc_protobuf_1_64_0": {
@@ -7347,7 +7347,7 @@
                 "{ \"group\": \"io.opentelemetry\", \"artifact\": \"opentelemetry-sdk-trace\", \"version\": \"1.39.0\" }",
                 "{ \"group\": \"io.opentelemetry.semconv\", \"artifact\": \"opentelemetry-semconv\", \"version\": \"1.25.0-alpha\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
-                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
+                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.3\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.9.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.9.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.9.1\" }",
@@ -8647,6 +8647,18 @@
               "downloaded_file_path": "v1/org/apache/maven/maven-model/3.9.6/maven-model-3.9.6-sources.jar"
             }
           },
+          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_7_1": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_file",
+            "attributes": {
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_7_1",
+              "sha256": "73ddb8dc2c3033f1ebccfe56377ca1321b78afd2c1c65bfbf62195f1c7a09345",
+              "urls": [
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.1/kotlinx-serialization-core-jvm-1.7.1.jar"
+              ],
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.1/kotlinx-serialization-core-jvm-1.7.1.jar"
+            }
+          },
           "org_eclipse_sisu_org_eclipse_sisu_inject_0_9_0_M2": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -8947,18 +8959,6 @@
               "downloaded_file_path": "v1/io/opentelemetry/opentelemetry-context/1.36.0/opentelemetry-context-1.36.0-sources.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_7_0": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_file",
-            "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_1_7_0",
-              "sha256": "1903a21a3fdc9c610eb54cf93aed81b142a687709d3b3b35ad54f962ea93c578",
-              "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0.jar"
-              ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0.jar"
-            }
-          },
           "org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc_0_20_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
@@ -9139,16 +9139,16 @@
               "downloaded_file_path": "v1/org/apache/httpcomponents/httpclient/4.5.14/httpclient-4.5.14.jar"
             }
           },
-          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_7_0": {
+          "org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_7_1": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_file",
             "attributes": {
-              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_7_0",
+              "name": "rules_jvm_external~6.1~maven~org_jetbrains_kotlinx_kotlinx_serialization_core_jvm_jar_sources_1_7_1",
               "sha256": "3927232856f43e17984159c0313f3d041f689d14bc4e2d4813fb8b7322f288b2",
               "urls": [
-                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0-sources.jar"
+                "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.1/kotlinx-serialization-core-jvm-1.7.1-sources.jar"
               ],
-              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.0/kotlinx-serialization-core-jvm-1.7.0-sources.jar"
+              "downloaded_file_path": "v1/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.1/kotlinx-serialization-core-jvm-1.7.1-sources.jar"
             }
           },
           "software_amazon_awssdk_arns_2_25_23": {
@@ -9463,7 +9463,7 @@
                 "{ \"group\": \"io.opentelemetry\", \"artifact\": \"opentelemetry-sdk-trace\", \"version\": \"1.39.0\" }",
                 "{ \"group\": \"io.opentelemetry.semconv\", \"artifact\": \"opentelemetry-semconv\", \"version\": \"1.25.0-alpha\" }",
                 "{ \"group\": \"org.junit.jupiter\", \"artifact\": \"junit-jupiter\", \"version\": \"5.10.2\" }",
-                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.2\" }",
+                "{ \"group\": \"org.junit.platform\", \"artifact\": \"junit-platform-console\", \"version\": \"1.10.3\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-api-jvm\", \"version\": \"5.9.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-core-jvm\", \"version\": \"5.9.1\" }",
                 "{ \"group\": \"io.kotest\", \"artifact\": \"kotest-assertions-shared-jvm\", \"version\": \"5.9.1\" }",
