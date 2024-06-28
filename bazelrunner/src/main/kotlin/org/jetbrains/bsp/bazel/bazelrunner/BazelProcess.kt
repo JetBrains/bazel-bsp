@@ -30,6 +30,10 @@ class BazelProcess internal constructor(
         return BazelProcessResult(outputProcessor.stdoutCollector, outputProcessor.stderrCollector, exitCode)
     }
 
+
+    // Returns a Future that completes with a result of the process.
+    // When the execution is cancelled, the returned Future also interrupts the task on the Bazel server. In that case
+    // the Future completes after BepReader's `serverPidFuture`.
     fun waitAndGetResultAsync(
         cancelChecker: CancelChecker,
         ensureAllOutputRead: Boolean = false,
