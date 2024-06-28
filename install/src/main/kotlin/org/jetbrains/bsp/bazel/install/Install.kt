@@ -25,7 +25,7 @@ object Install {
         try {
             runInstallOrThrow(cliOptions, cliOptions.projectViewCliOptions?.produceTraceLog ?: false)
         } catch (e: Exception) {
-            System.err.print("Bazel BSP server installation failed! Reason: ${e.stackTrace}")
+            System.err.print("Bazel BSP server installation failed! Reason: ${e.stackTrace.joinToString("\n")}")
             exitProcess(1)
         }
     }
