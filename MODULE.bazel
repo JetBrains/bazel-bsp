@@ -91,7 +91,7 @@ maven.install(
 
         # tests
         "org.junit.jupiter:junit-jupiter:5.10.2",
-        "org.junit.platform:junit-platform-console:1.10.2",
+        "org.junit.platform:junit-platform-console:1.10.3",
         "io.kotest:kotest-assertions-api-jvm:5.9.1",
         "io.kotest:kotest-assertions-core-jvm:5.9.1",
         "io.kotest:kotest-assertions-shared-jvm:5.9.1",
