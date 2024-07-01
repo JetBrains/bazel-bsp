@@ -8,7 +8,8 @@ import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmOutputsOrBuilder
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.JvmTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
@@ -59,7 +60,7 @@ class JavaLanguagePlugin(
         targetInfo: TargetInfo, dependencyGraph: DependencyGraph
     ): Set<URI> =
         targetInfo.getJvmTargetInfoOrNull()?.run {
-            dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+            dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse(targetInfo.id))
                 .flatMap(::getSourceJars)
                 .map(bazelPathsResolver::resolveUri)
                 .toSet()

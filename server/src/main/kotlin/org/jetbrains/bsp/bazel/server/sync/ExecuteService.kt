@@ -11,12 +11,15 @@ import ch.epfl.scala.bsp4j.StatusCode
 import ch.epfl.scala.bsp4j.TestParams
 import ch.epfl.scala.bsp4j.TestResult
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.ResponseErrorException
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseError
 import org.eclipse.lsp4j.jsonrpc.messages.ResponseErrorCode
 import org.jetbrains.bsp.AnalysisDebugParams
 import org.jetbrains.bsp.AnalysisDebugResult
+import org.jetbrains.bsp.BazelTestParamsData
 import org.jetbrains.bsp.MobileInstallParams
 import org.jetbrains.bsp.MobileInstallResult
 import org.jetbrains.bsp.MobileInstallStartType
@@ -29,11 +32,12 @@ import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BepReader
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
+import org.jetbrains.bsp.bazel.server.model.BspMappings
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings.toBspId
-import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.server.model.BspMappings.toBspId
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Module
+import org.jetbrains.bsp.bazel.server.model.Tag
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.isAndroidEnabled
@@ -46,11 +50,12 @@ class ExecuteService(
     private val bspClientLogger: BspClientLogger,
     private val bazelPathsResolver: BazelPathsResolver,
     private val additionalBuildTargetsProvider: AdditionalAndroidBuildTargetsProvider,
-    private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>
+    private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>
 ) {
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
         bspClientLogger.copy(originId = originId).error(message)
     }
+    private val gson = Gson()
 
     private fun <T> withBepServer(originId: String?, target: BuildTargetIdentifier?, body : (BepReader) -> T): T {
         val diagnosticsService = DiagnosticsService(compilationManager.workspaceRoot, hasAnyProblems)
@@ -92,20 +97,38 @@ class ExecuteService(
 
     fun test(cancelChecker: CancelChecker, params: TestParams): TestResult {
         val targets = selectTargets(cancelChecker, params.targets)
-        var result = build(cancelChecker, targets, params.originId)
-        if (result.isNotSuccess) {
-            return TestResult(result.statusCode)
-        }
         val targetsSpec = TargetsSpec(targets, emptyList())
 
+        var bazelTestParamsData: BazelTestParamsData? = null
+        try {
+            if (params.dataKind == BazelTestParamsData.DATA_KIND) {
+                bazelTestParamsData = gson.fromJson(params.data as JsonObject, BazelTestParamsData::class.java)
+            }
+        } catch (e: Exception) {
+            bspClientLogger.warn("Failed to parse BazelTestParamsData: $e")
+        }
+
+        var baseCommand = when (bazelTestParamsData?.coverage) {
+            true -> bazelRunner.commandBuilder().coverage()
+            else -> bazelRunner.commandBuilder().test()
+        }
+
+        bazelTestParamsData?.testFilter?.let { testFilter ->
+            baseCommand = baseCommand.withFlag(BazelFlag.testFilter(testFilter))
+        }
+
         // TODO: handle multiple targets
-        withBepServer(params.originId, params.targets.single()) { bepReader ->
-            result = bazelRunner.commandBuilder().test()
-                .withTargets(targetsSpec)
-                .withArguments(params.arguments)
-                .withFlag(BazelFlag.color(true))
-                .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
-                .waitAndGetResult(cancelChecker, true)
+        val result = withBepServer(params.originId, params.targets.single()) { bepReader ->
+            run {
+                baseCommand
+                    .withTargets(targetsSpec)
+                    .withArguments(params.arguments)
+                    // Use file:// uri scheme for output paths in the build events.
+                    .withFlag(BazelFlag.buildEventBinaryPathConversion(false))
+                    .withFlag(BazelFlag.color(true))
+                    .executeBazelBesCommand(params.originId, bepReader.eventFile.toPath())
+                    .waitAndGetResult(cancelChecker, true)
+            }
         }
 
         return TestResult(result.statusCode).apply {

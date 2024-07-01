@@ -1,37 +1,37 @@
 package org.jetbrains.bsp.bazel.server
 
-import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import org.eclipse.lsp4j.jsonrpc.Launcher
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoResolver
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfoStorage
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.benchmark.TelemetryConfig
 import org.jetbrains.bsp.bazel.server.bsp.BazelBspServerLifetime
 import org.jetbrains.bsp.bazel.server.bsp.BazelServices
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.BspRequestsRunner
 import org.jetbrains.bsp.bazel.server.bsp.BspServerApi
+import org.jetbrains.bsp.bazel.server.bsp.TelemetryContextPropagatingLauncherBuilder
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspCompilationManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
+import org.jetbrains.bsp.bazel.server.sync.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.BazelProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.BspProjectMapper
 import org.jetbrains.bsp.bazel.server.sync.ExecuteService
-import org.jetbrains.bsp.bazel.server.sync.FileProjectStorage
-import org.jetbrains.bsp.bazel.server.sync.MetricsLogger
 import org.jetbrains.bsp.bazel.server.sync.ProjectProvider
 import org.jetbrains.bsp.bazel.server.sync.ProjectResolver
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import org.jetbrains.bsp.bazel.server.sync.TargetInfoReader
 import org.jetbrains.bsp.bazel.server.sync.TargetKindResolver
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePluginsService
-import org.jetbrains.bsp.bazel.server.sync.languages.android.AdditionalAndroidBuildTargetsProvider
 import org.jetbrains.bsp.bazel.server.sync.languages.android.AndroidLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.android.KotlinAndroidModulesMerger
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
@@ -51,9 +51,9 @@ class BazelBspServer(
   private val bspInfo: BspInfo,
   private val workspaceContextProvider: WorkspaceContextProvider,
   private val workspaceRoot: Path,
-  private val metricsLogger: MetricsLogger?
+  private val telemetryConfig: TelemetryConfig,
 ) {
-  private val bspState: MutableMap<String, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
+  private val bspState: MutableMap<Label, Set<TextDocumentIdentifier>> = ConcurrentHashMap()
 
   private fun bspServerData(
     bspClientLogger: BspClientLogger,
@@ -84,7 +84,8 @@ class BazelBspServer(
 
     val serverLifetime = BazelBspServerLifetime(workspaceContextProvider)
     val bspRequestsRunner = BspRequestsRunner(serverLifetime)
-    val projectSyncService = ProjectSyncService(bspProjectMapper, projectProvider)
+    val telemetryConfigWithLogger = telemetryConfig.copy(bspClientLogger = bspClientLogger)
+    val projectSyncService = ProjectSyncService(bspProjectMapper, projectProvider, telemetryConfigWithLogger)
     val additionalBuildTargetsProvider = AdditionalAndroidBuildTargetsProvider(projectProvider)
     val executeService = ExecuteService(
       compilationManager = compilationManager,
@@ -104,9 +105,8 @@ class BazelBspServer(
     )
   }
 
-  private fun createBazelInfo(bspInfo: BspInfo, bazelRunner: BazelRunner): BazelInfo {
-    val bazelInfoStorage = BazelInfoStorage(bspInfo)
-    val bazelDataResolver = BazelInfoResolver(bazelRunner, bazelInfoStorage)
+  private fun createBazelInfo(bazelRunner: BazelRunner): BazelInfo {
+    val bazelDataResolver = BazelInfoResolver(bazelRunner)
     return bazelDataResolver.resolveBazelInfo { }
   }
 
@@ -160,7 +160,6 @@ class BazelBspServer(
       kotlinAndroidModulesMerger,
       bazelInfo,
       bspClientLogger,
-      metricsLogger
     )
     val targetInfoReader = TargetInfoReader()
 
@@ -170,22 +169,18 @@ class BazelBspServer(
       bazelBspFallbackAspectsManager = bazelBspFallbackAspectsManager,
       workspaceContextProvider = workspaceContextProvider,
       bazelProjectMapper = bazelProjectMapper,
-      bspLogger = bspClientLogger,
       targetInfoReader = targetInfoReader,
       bazelInfo = bazelInfo,
       bazelRunner = bazelRunner,
-      metricsLogger = metricsLogger
     )
-    val projectStorage = FileProjectStorage(bspInfo, bspClientLogger)
-
-    return ProjectProvider(projectResolver, projectStorage)
+    return ProjectProvider(projectResolver)
   }
 
-  fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<BuildClient> {
-    val bspServerApi = BspServerApi { client: BuildClient ->
+  fun buildServer(bspIntegrationData: BspIntegrationData): Launcher<JoinedBuildClient> {
+    val bspServerApi = BspServerApi { client: JoinedBuildClient ->
       val bspClientLogger = BspClientLogger(client)
-      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot)
-      val bazelInfo = createBazelInfo(bspInfo, bazelRunner)
+      val bazelRunner = BazelRunner.of(workspaceContextProvider, bspClientLogger, workspaceRoot, bspInfo.bazelBspDir().toString())
+      val bazelInfo = createBazelInfo(bazelRunner)
       val bazelPathsResolver = BazelPathsResolver(bazelInfo)
       val compilationManager =
         BazelBspCompilationManager(bazelRunner, bazelPathsResolver, bspState, client, workspaceRoot)
@@ -199,9 +194,9 @@ class BazelBspServer(
       )
     }
 
-    val builder = Launcher.Builder<BuildClient>()
+    val builder = TelemetryContextPropagatingLauncherBuilder<JoinedBuildClient>()
       .setOutput(bspIntegrationData.stdout).setInput(bspIntegrationData.stdin)
-      .setLocalService(bspServerApi).setRemoteInterface(BuildClient::class.java)
+      .setLocalService(bspServerApi).setRemoteInterface(JoinedBuildClient::class.java)
       .setExecutorService(bspIntegrationData.executor)
       .let { builder ->
         if (bspIntegrationData.traceWriter != null) {

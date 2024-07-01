@@ -3,11 +3,11 @@ package org.jetbrains.bsp.bazel.server.sync.languages.rust
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
-import org.jetbrains.bsp.bazel.bazelrunner.orLatestSupported
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BasicBazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.orLatestSupported
+import org.jetbrains.bsp.bazel.server.model.Module
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.model.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths

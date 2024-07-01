@@ -4,16 +4,16 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.InverseSourcesResult
 import ch.epfl.scala.bsp4j.StatusCode
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import java.nio.file.Path
 
 object InverseSourcesQuery {
     fun inverseSourcesQuery(
-        documentRelativePath: Path,
-        bazelRunner: BazelRunner,
-        bazelInfo: BazelRelease,
-        cancelChecker: CancelChecker
+      documentRelativePath: Path,
+      bazelRunner: BazelRunner,
+      bazelInfo: BazelRelease,
+      cancelChecker: CancelChecker
     ): InverseSourcesResult {
         val fileLabel = fileLabel(documentRelativePath, bazelRunner, cancelChecker)
             ?: return InverseSourcesResult(
@@ -27,10 +27,10 @@ object InverseSourcesQuery {
      * @return list of targets that contain `fileLabel` in their `srcs` attribute
      */
     private fun targetLabels(
-        fileLabel: String,
-        bazelRunner: BazelRunner,
-        bazelRelease: BazelRelease,
-        cancelChecker: CancelChecker
+      fileLabel: String,
+      bazelRunner: BazelRunner,
+      bazelRelease: BazelRelease,
+      cancelChecker: CancelChecker
     ): List<String> {
         val packageLabel = fileLabel.replace(":.*".toRegex(), ":*")
         val consistentLabelsArg = listOfNotNull(if (bazelRelease.major >= 6) "--consistent_labels" else null) // #bazel5

@@ -1,6 +1,5 @@
 package org.jetbrains.bsp.bazel.server.bsp
 
-import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.CleanCacheParams
 import ch.epfl.scala.bsp4j.CleanCacheResult
 import ch.epfl.scala.bsp4j.CompileParams
@@ -50,6 +49,7 @@ import ch.epfl.scala.bsp4j.WorkspaceBuildTargetsResult
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.jetbrains.bsp.AnalysisDebugParams
 import org.jetbrains.bsp.AnalysisDebugResult
+import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.JoinedBuildServer
 import org.jetbrains.bsp.JvmBinaryJarsParams
 import org.jetbrains.bsp.JvmBinaryJarsResult
@@ -63,14 +63,14 @@ import org.jetbrains.bsp.bazel.server.sync.ExecuteService
 import org.jetbrains.bsp.bazel.server.sync.ProjectSyncService
 import java.util.concurrent.CompletableFuture
 
-class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServices) : JoinedBuildServer {
+class BspServerApi(private val bazelServicesBuilder: (JoinedBuildClient) -> BazelServices) : JoinedBuildServer {
 
   private lateinit var serverLifetime: BazelBspServerLifetime
   private lateinit var runner: BspRequestsRunner
   private lateinit var projectSyncService: ProjectSyncService
   private lateinit var executeService: ExecuteService
 
-  fun init(client: BuildClient) {
+  fun init(client: JoinedBuildClient) {
     val serverContainer = bazelServicesBuilder(client)
 
     this.serverLifetime = serverContainer.serverLifetime
@@ -85,7 +85,7 @@ class BspServerApi(private val bazelServicesBuilder: (BuildClient) -> BazelServi
     return runner.handleRequest("buildInitialize", { cancelChecker: CancelChecker ->
       projectSyncService.initialize(
         cancelChecker,
-        initializeBuildParams.capabilities,
+        initializeBuildParams,
       )
     }, { methodName: String ->
       runner.serverIsNotFinished(

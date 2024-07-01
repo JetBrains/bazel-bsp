@@ -1,11 +1,10 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.server.sync.model.Project
+import org.jetbrains.bsp.bazel.server.benchmark.openTelemetry
+import org.jetbrains.bsp.bazel.server.model.Project
 
-class ProjectProvider(
-    private val projectResolver: ProjectResolver, private val projectStorage: ProjectStorage
-) {
+class ProjectProvider(private val projectResolver: ProjectResolver) {
     private var project: Project? = null
 
     @Synchronized
@@ -13,17 +12,11 @@ class ProjectProvider(
         loadFromBazel(cancelChecker, build = build)
 
     @Synchronized
-    fun get(cancelChecker: CancelChecker): Project = project ?: loadFromDisk() ?: loadFromBazel(cancelChecker, false)
+    fun get(cancelChecker: CancelChecker): Project = project ?: loadFromBazel(cancelChecker, false)
 
     private fun loadFromBazel(cancelChecker: CancelChecker, build: Boolean) = projectResolver.resolve(cancelChecker, build = build).also {
         project = it
-        storeOnDisk()
+        openTelemetry.sdkTracerProvider.forceFlush()
         System.gc()
     }
-
-    private fun loadFromDisk() = projectStorage.load()?.also {
-        project = it
-    }
-
-    private fun storeOnDisk() = projectStorage.store(project)
 }

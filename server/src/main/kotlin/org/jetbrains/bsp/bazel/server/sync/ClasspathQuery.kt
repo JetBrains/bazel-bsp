@@ -11,10 +11,11 @@ object ClasspathQuery {
     fun classPathQuery(target: BuildTargetIdentifier, cancelChecker: CancelChecker, bspInfo: BspInfo, bazelRunner: BazelRunner): JvmClasspath {
         val queryFile = bspInfo.bazelBspDir().resolve("aspects/runtime_classpath_query.bzl")
         val cqueryResult = bazelRunner.commandBuilder().cquery()
-                .withTargets(listOf(target.uri))
-                .withFlags(listOf("--starlark:file=$queryFile", "--output=starlark"))
-                .executeBazelCommand(parseProcessOutput = false)
-                .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
+          .withUseBuildFlags()
+          .withTargets(listOf(target.uri))
+          .withFlags(listOf("--starlark:file=$queryFile", "--output=starlark"))
+          .executeBazelCommand(parseProcessOutput = false)
+          .waitAndGetResult(cancelChecker, ensureAllOutputRead = true)
         if (cqueryResult.isNotSuccess) throw RuntimeException("Could not query target '${target.uri}' for runtime classpath")
         try {
             val classpaths = Gson().fromJson(cqueryResult.stdout, JvmClasspath::class.java)
@@ -33,5 +34,4 @@ object ClasspathQuery {
             val runtime_classpath: List<String>,
             val compile_classpath: List<String>
     )
-
 }

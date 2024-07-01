@@ -1,16 +1,16 @@
 package org.jetbrains.bsp.bazel.server.bsp.managers
 
 import org.apache.velocity.app.VelocityEngine
-import org.jetbrains.bsp.bazel.bazelrunner.BazelRelease
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelRelease
 import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.server.bsp.utils.FileUtils.writeIfDifferent
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import java.nio.file.Paths
 import java.util.Properties
-import kotlin.io.path.writeText
 
 enum class Language(private val fileName: String, val ruleNames: List<String>, val functions: List<String>, val isTemplate: Boolean) {
   Java("//aspects:rules/java/java_info.bzl", listOf(), listOf("extract_java_toolchain", "extract_java_runtime"), false),
-  Jvm("//aspects:rules/jvm/jvm_info.bzl", listOf(), listOf("extract_jvm_info"), false),
+  Jvm("//aspects:rules/jvm/jvm_info.bzl", listOf(), listOf("extract_jvm_info"), true),
   Python("//aspects:rules/python/python_info.bzl", listOf(), listOf("extract_python_info"), false),
   Scala("//aspects:rules/scala/scala_info.bzl", listOf("io_bazel_rules_scala"), listOf("extract_scala_info"), false),
   Cpp("//aspects:rules/cpp/cpp_info.bzl", listOf("rules_cc"), listOf("extract_cpp_info"), false),
@@ -95,6 +95,6 @@ class BazelBspLanguageExtensionsGenerator(internalAspectsResolver: InternalAspec
 
   private fun createNewExtensionsFile(fileContent: String) {
     val file = aspectsPath.resolve("extensions.bzl")
-    file.writeText(fileContent)
+    file.writeIfDifferent(fileContent)
   }
 }

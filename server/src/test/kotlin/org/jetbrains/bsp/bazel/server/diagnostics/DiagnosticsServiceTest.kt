@@ -10,8 +10,8 @@ import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import org.jetbrains.bsp.bazel.server.model.Label
 import java.nio.file.Paths
-import org.jetbrains.bsp.bazel.bazelrunner.BasicBazelInfo
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ConcurrentHashMap
 
@@ -358,6 +358,7 @@ class DiagnosticsServiceTest {
         )
         diagnostics shouldContainExactlyInAnyOrder expected
     }
+
     @Test
     fun `parse scala 3 error`() {
         // given
@@ -451,6 +452,52 @@ class DiagnosticsServiceTest {
                     """|Type Mismatch Error
                        |Found:    ("Hello" : String)
                        |Required: Int
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                )
+            )
+        )
+        diagnostics shouldContainExactlyInAnyOrder expected
+    }
+
+    @Test
+    fun `parse another scala 3 multiple errors`() {
+        // given
+        val output = """|-- [E006] Not Found Error: drd/messaging/src/main/scala/bots/Bot.scala:143:26 
+                        |143 |        val messageJson = makeMessage(sendPkt.data)
+                        ||                         ^^^^^^^^^^^
+                        ||                          Not found: makeMessage
+                        ||
+                        || longer explanation available when compiling with `-explain`
+                        |-- [E006] Not Found Error: drd/messaging/src/main/scala/bots/Bot.scala:153:22 
+                        |153 |        client.expect[Message](request)
+                        ||                      ^^^^^^^
+                        ||                      Not found: type Message
+                        ||
+                        || longer explanation available when compiling with `-explain`
+                        |2 errors found
+                        |Build failed
+                        |""".trimMargin()
+
+        // when
+        val diagnostics = extractDiagnostics(output, "//project/src/main/scala/com/example/project:project")
+
+        // then
+        val expected = listOf(
+            PublishDiagnosticsParams(
+                TextDocumentIdentifier("file:///user/workspace/drd/messaging/src/main/scala/bots/Bot.scala"),
+                BuildTargetIdentifier("//project/src/main/scala/com/example/project:project"),
+                ErrorDiagnostic(
+                    Position(143, 26),
+                    """|Not Found Error
+                       |Not found: makeMessage
+                       |
+                       |longer explanation available when compiling with `-explain`""".trimMargin()
+                ),
+                ErrorDiagnostic(
+                    Position(153, 22),
+                    """|Not Found Error
+                       |Not found: type Message
                        |
                        |longer explanation available when compiling with `-explain`""".trimMargin()
                 )
@@ -633,22 +680,22 @@ class DiagnosticsServiceTest {
             |INFO: 2 processes: 2 internal.
             |FAILED: Build did NOT complete successfully""".trimMargin()
 
-        service.getBspState().keys.shouldBeEmpty()
-        val diagnosticsBeforeError = service.clearFormerDiagnostics("//path/to/package:test")
+        service.bspState.keys.shouldBeEmpty()
+        val diagnosticsBeforeError = service.clearFormerDiagnostics(Label.parse("//path/to/package:test"))
         diagnosticsBeforeError.shouldBeEmpty()
 
         // Extract the diagnostics from BEP, there's an error in `Test.scala` of "//path/to/package:test".
         service.extractDiagnostics(output, "//path/to/package:test", null, false)
 
         // Assert that state is updated
-        service.getBspState().keys.shouldHaveSize(1)
-        service.getBspState()["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
+        service.bspState.keys.shouldHaveSize(1)
+        service.bspState[Label.parse("//path/to/package:test")] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
         )
 
         // Verify we can get `PublishDiagnosticsParams` to clear up previously published diagnostics,
         // and the state (getBspState()) has updated to have no problems.
-        val diagnosticsAfterError = service.clearFormerDiagnostics("//path/to/package:test")
+        val diagnosticsAfterError = service.clearFormerDiagnostics(Label.parse("//path/to/package:test"))
         val expected = listOf(
             PublishDiagnosticsParams(
                 TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
@@ -656,7 +703,7 @@ class DiagnosticsServiceTest {
             )
         )
         diagnosticsAfterError shouldContainExactlyInAnyOrder expected
-        service.getBspState().keys.shouldBeEmpty()
+        service.bspState.keys.shouldBeEmpty()
     }
 
     @Test
@@ -716,8 +763,8 @@ class DiagnosticsServiceTest {
             |INFO: 2 processes: 2 internal.
             |FAILED: Build did NOT complete successfully""".trimMargin()
 
-        service.clearFormerDiagnostics("//path/to/package:test").shouldBeEmpty()
-        service.clearFormerDiagnostics("//path/to/package2:test").shouldBeEmpty()
+        service.clearFormerDiagnostics(Label.parse("//path/to/package:test")).shouldBeEmpty()
+        service.clearFormerDiagnostics(Label.parse("//path/to/package2:test")).shouldBeEmpty()
 
         val expected = listOf(
             PublishDiagnosticsParams(
@@ -730,23 +777,23 @@ class DiagnosticsServiceTest {
         service.extractDiagnostics(output2, "//path/to/package2:test", null, false)
 
         // Assert that state is updated
-        service.getBspState().keys shouldContainExactlyInAnyOrder listOf(
-          "//path/to/package:test",
-          "//path/to/package2:test",
+        service.bspState.keys shouldContainExactlyInAnyOrder listOf(
+          Label.parse("//path/to/package:test"),
+          Label.parse("//path/to/package2:test"),
         )
-        service.getBspState()["//path/to/package:test"] shouldContainExactlyInAnyOrder setOf(
+        service.bspState[Label.parse("//path/to/package:test")] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package/Test.scala"),
         )
-        service.getBspState()["//path/to/package2:test"] shouldContainExactlyInAnyOrder setOf(
+        service.bspState[Label.parse("//path/to/package2:test")] shouldContainExactlyInAnyOrder setOf(
             TextDocumentIdentifier("file:///user/workspace/path/to/package2/Test.scala"),
         )
 
         // Get PublishDiagnosticsParam with empty diagnositcs for "//path/to/package:test"
-        val empty = service.clearFormerDiagnostics("//path/to/package:test")
+        val empty = service.clearFormerDiagnostics(Label.parse("//path/to/package:test"))
         empty shouldContainExactlyInAnyOrder expected
         // clearFormerDiagnostics shouldn't clear up for "//path/to/package2:test"
-        service.getBspState().keys shouldContainExactlyInAnyOrder listOf(
-          "//path/to/package2:test",
+        service.bspState.keys shouldContainExactlyInAnyOrder listOf(
+          Label.parse("//path/to/package2:test"),
         )
     }
 

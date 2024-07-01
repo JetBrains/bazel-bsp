@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.model
 
 import io.kotest.matchers.shouldBe
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.junit.jupiter.api.Test
 
 class LabelTest {
@@ -8,7 +9,7 @@ class LabelTest {
   @Test
   fun `should return target name for label with bazel 6 target`() {
     // given
-    val label = Label("@//path/to/target:targetName")
+    val label = Label.parse("@//path/to/target:targetName")
 
     // when
     val targetName = label.targetName()
@@ -20,7 +21,7 @@ class LabelTest {
   @Test
   fun `should return target name for label with bazel 5 target`() {
     // given
-    val label = Label("//path/to/target:targetName")
+    val label = Label.parse("//path/to/target:targetName")
 
     // when
     val targetName = label.targetName()
@@ -32,7 +33,7 @@ class LabelTest {
   @Test
   fun `should return empty string for label with target without target name`() {
     // given
-    val label = Label("//path/to/target")
+    val label = Label.parse("//path/to/target")
 
     // when
     val targetName = label.targetName()

@@ -1,6 +1,6 @@
 package org.jetbrains.bsp.bazel.server.paths
 
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.FileLocation
 import java.net.URI
 import java.nio.file.Files

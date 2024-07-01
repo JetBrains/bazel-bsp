@@ -9,15 +9,15 @@ import ch.epfl.scala.bsp4j.ScalaPlatform
 import ch.epfl.scala.bsp4j.ScalaTestClassesItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
-import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.BspMappings
 import org.jetbrains.bsp.bazel.server.sync.languages.JVMLanguagePluginParser
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaModule
-import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Module
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.server.model.Language
+import org.jetbrains.bsp.bazel.server.model.Module
+import org.jetbrains.bsp.bazel.server.model.Tag
 import java.net.URI
 import java.nio.file.Path
 

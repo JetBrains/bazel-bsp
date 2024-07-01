@@ -7,10 +7,11 @@ import ch.epfl.scala.bsp4j.CppOptionsItem
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo.TargetInfo
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.BspMappings
-import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.BspMappings
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Module
 import java.net.URI
 
 class CppLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : LanguagePlugin<CppModule>() {
@@ -40,7 +41,7 @@ class CppLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) : La
         targetInfo: TargetInfo, dependencyGraph: DependencyGraph
     ): Set<URI> =
         targetInfo.getCppTargetInfoOrNull()?.run {
-            dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+            dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse(targetInfo.id))
                 .flatMap(TargetInfo::getSourcesList)
                 .map(bazelPathsResolver::resolveUri)
                 .toSet()

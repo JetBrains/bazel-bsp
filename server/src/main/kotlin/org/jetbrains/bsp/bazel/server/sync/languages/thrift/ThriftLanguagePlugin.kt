@@ -2,10 +2,11 @@ package org.jetbrains.bsp.bazel.server.sync.languages.thrift
 
 import ch.epfl.scala.bsp4j.BuildTarget
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.server.bsp.utils.SourceRootGuesser
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.dependencygraph.DependencyGraph
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.sync.languages.LanguagePlugin
+import org.jetbrains.bsp.bazel.server.sync.languages.jvm.SourceRootGuesser
 import java.net.URI
 import java.nio.file.Path
 
@@ -16,7 +17,7 @@ class ThriftLanguagePlugin(private val bazelPathsResolver: BazelPathsResolver) :
         targetInfo: BspTargetInfo.TargetInfo,
         dependencyGraph: DependencyGraph
     ): Set<URI> {
-        val transitiveSourceDeps = dependencyGraph.transitiveDependenciesWithoutRootTargets(targetInfo.id)
+        val transitiveSourceDeps = dependencyGraph.transitiveDependenciesWithoutRootTargets(Label.parse(targetInfo.id))
             .filter(::isThriftLibrary)
             .flatMap(BspTargetInfo.TargetInfo::getSourcesList)
             .map(bazelPathsResolver::resolveUri)

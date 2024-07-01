@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync.languages.java
 
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
-import org.jetbrains.bsp.bazel.server.sync.model.Label
+import org.jetbrains.bsp.bazel.server.model.Label
 import java.net.URI
 
 class IdeClasspathResolver(

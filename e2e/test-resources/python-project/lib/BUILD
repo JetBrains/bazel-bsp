@@ -1,5 +1,5 @@
-load("@rules_python//python:defs.bzl", "py_library")
 load("@pip_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_library")
 
 py_library(
     name = "example_library",

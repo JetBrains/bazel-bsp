@@ -7,11 +7,11 @@ import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.color
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.curses
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.keepGoing
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.outputGroups
-import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag.repositoryOverride
 import org.jetbrains.bsp.bazel.commons.Constants
 import org.jetbrains.bsp.bazel.server.bep.BepOutput
 import org.jetbrains.bsp.bazel.server.bsp.utils.InternalAspectsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
+import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import java.nio.file.Paths
 
 data class BazelBspAspectsManagerResult(val bepOutput: BepOutput, val isFailure: Boolean)
@@ -33,11 +33,15 @@ class BazelBspAspectsManager(
       ruleName?.let { RuleLanguage(it, language) }
     }
 
-  fun generateAspectsFromTemplates(ruleLanguages: List<RuleLanguage>) {
-    ruleLanguages.filter { it.ruleName != null && it.language.isTemplate }.forEach {
+  fun generateAspectsFromTemplates(ruleLanguages: List<RuleLanguage>, workspaceContext: WorkspaceContext) {
+    ruleLanguages.filter { it.language.isTemplate }.forEach {
       val outputFile = aspectsPath.resolve(it.language.toAspectRelativePath())
       val templateFilePath = it.language.toAspectTemplateRelativePath()
-      templateWriter.writeToFile(templateFilePath, outputFile, mapOf("ruleName" to it.ruleName))
+      val variableMap = mapOf(
+        "ruleName" to it.ruleName,
+        "addTransitiveCompileTimeJars" to if (workspaceContext.experimentalAddTransitiveCompileTimeJars.value) "True" else "False",
+      )
+      templateWriter.writeToFile(templateFilePath, outputFile, variableMap)
     }
   }
 
@@ -47,10 +51,10 @@ class BazelBspAspectsManager(
     aspect: String,
     outputGroups: List<String>,
     shouldBuildManualFlags: Boolean,
+    isRustEnabled: Boolean,
   ): BazelBspAspectsManagerResult {
     if (targetSpecs.values.isEmpty()) return BazelBspAspectsManagerResult(BepOutput(), isFailure = false)
     val defaultFlags = listOf(
-      repositoryOverride(Constants.ASPECT_REPOSITORY, aspectsResolver.bazelBspRoot),
       aspect(aspectsResolver.resolveLabel(aspect)),
       outputGroups(outputGroups),
       keepGoing(),
@@ -63,10 +67,10 @@ class BazelBspAspectsManager(
 
     return bazelBspCompilationManager
       .buildTargetsWithBep(
-        cancelChecker,
-        targetSpecs,
-        flagsToUse,
-        null,
+        cancelChecker = cancelChecker,
+        targetSpecs = targetSpecs,
+        extraFlags = flagsToUse,
+        originId = null,
         // Setting `CARGO_BAZEL_REPIN=1` updates `cargo_lockfile`
         // (`Cargo.lock` file) based on dependencies specified in `manifest`
         // (`Cargo.toml` file) and syncs `lockfile` (`Cargo.bazel.lock` file) with `cargo_lockfile`.
@@ -75,7 +79,7 @@ class BazelBspAspectsManager(
         // `crates_repository` from `rules_rust`,
         // see: https://bazelbuild.github.io/rules_rust/crate_universe.html#crates_repository.
         // In our server used only with `bazel build` command.
-        listOf(Pair("CARGO_BAZEL_REPIN", "1"))
+        environment = if (isRustEnabled) listOf(Pair("CARGO_BAZEL_REPIN", "1")) else emptyList(),
       ).let {
         BazelBspAspectsManagerResult(it.bepOutput, it.processResult.isNotSuccess)
       }

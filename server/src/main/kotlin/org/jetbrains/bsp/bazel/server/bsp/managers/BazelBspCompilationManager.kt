@@ -3,9 +3,11 @@ package org.jetbrains.bsp.bazel.server.bsp.managers
 import ch.epfl.scala.bsp4j.BuildClient
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
+import org.jetbrains.bsp.JoinedBuildClient
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.server.bep.BepServer
 import org.jetbrains.bsp.bazel.server.diagnostics.DiagnosticsService
+import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
@@ -15,8 +17,8 @@ import java.nio.file.Path
 class BazelBspCompilationManager(
     private val bazelRunner: BazelRunner,
     private val bazelPathsResolver: BazelPathsResolver,
-    private val hasAnyProblems: MutableMap<String, Set<TextDocumentIdentifier>>,
-    val client: BuildClient,
+    private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>,
+    val client: JoinedBuildClient,
     val workspaceRoot: Path,
 ) {
     fun buildTargetsWithBep(

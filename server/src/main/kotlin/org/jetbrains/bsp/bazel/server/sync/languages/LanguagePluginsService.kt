@@ -11,8 +11,8 @@ import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonModule
 import org.jetbrains.bsp.bazel.server.sync.languages.rust.RustLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.scala.ScalaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.thrift.ThriftLanguagePlugin
-import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.Language
+import org.jetbrains.bsp.bazel.server.model.Module
 
 class LanguagePluginsService(
     val scalaLanguagePlugin: ScalaLanguagePlugin,

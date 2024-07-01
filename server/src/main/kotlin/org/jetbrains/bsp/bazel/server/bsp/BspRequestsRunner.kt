@@ -1,5 +1,6 @@
 package org.jetbrains.bsp.bazel.server.bsp
 
+import io.opentelemetry.context.Context
 import org.apache.logging.log4j.LogManager
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures
@@ -74,8 +75,12 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
             null
         }
 
-    private fun <T> runAsync(methodName: String, request: Function<CancelChecker, T>): CompletableFuture<T> =
-        CancellableFuture.from(CompletableFutures.computeAsync(request))
+    private fun <T> runAsync(methodName: String, request: Function<CancelChecker, T>): CompletableFuture<T> {
+        val telemetryContext = Context.current()
+        val requestWrapped = Function<CancelChecker, T> { cancelChecker ->
+            telemetryContext.makeCurrent().use { request.apply(cancelChecker) }
+        }
+        return CancellableFuture.from(CompletableFutures.computeAsync(requestWrapped))
             .thenApply<Either<Throwable, T>> { right: T -> Either.forRight(right) }
             .exceptionally { left: Throwable? -> Either.forLeft(left) }
             .thenCompose { either: Either<Throwable, T> ->
@@ -84,6 +89,7 @@ class BspRequestsRunner(private val serverLifetime: BazelBspServerLifetime) {
                     either.left
                 ) else success<T>(methodName, either.right)
             }
+    }
 
     private fun <T> success(methodName: String, response: T): CompletableFuture<T> {
         LOGGER.info("{} call finishing successfully", methodName)

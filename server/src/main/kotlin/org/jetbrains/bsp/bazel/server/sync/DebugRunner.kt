@@ -7,8 +7,9 @@ import org.jetbrains.bsp.RemoteDebugData
 import org.jetbrains.bsp.RunWithDebugParams
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
 import org.jetbrains.bsp.bazel.bazelrunner.params.BazelFlag
-import org.jetbrains.bsp.bazel.server.sync.model.Language
-import org.jetbrains.bsp.bazel.server.sync.model.Module
+import org.jetbrains.bsp.bazel.server.model.BspMappings
+import org.jetbrains.bsp.bazel.server.model.Language
+import org.jetbrains.bsp.bazel.server.model.Module
 
 class DebugRunner(
     private val bazelRunner: BazelRunner,
@@ -36,9 +37,9 @@ class DebugRunner(
      * @return `true` if the run request is a valid debug request, or is not a debug request at all
      */
     private fun verifyDebugRequest (
-            debugType: DebugType?,
-            moduleToRun: Module,
-            originId: String,
+      debugType: DebugType?,
+      moduleToRun: Module,
+      originId: String,
     ): Boolean =
             when (debugType) {
                 null -> true  // not a debug request, nothing to check

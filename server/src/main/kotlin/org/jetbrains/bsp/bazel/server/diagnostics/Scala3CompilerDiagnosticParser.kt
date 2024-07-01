@@ -10,7 +10,7 @@ object Scala3CompilerDiagnosticParser : Parser {
       \[E\d+\]   # "[E008]" code 
       ([^:]+): # (1) type of diagnostic
       ([^:]+):(\d+):(\d+) # (2) path, (3) line, (4) column
-      \ \-+$ # " -----------------" ending 
+      [\s-]*$ # " -----------------" ending 
       """.toRegex(RegexOption.COMMENTS)
 
     // Scala 3 diagnostics have additional color printed, since Bazel uses renderedMessage field

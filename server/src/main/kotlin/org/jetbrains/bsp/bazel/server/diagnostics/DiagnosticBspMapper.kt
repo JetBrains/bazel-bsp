@@ -8,7 +8,6 @@ import ch.epfl.scala.bsp4j.BuildTargetIdentifier
 import ch.epfl.scala.bsp4j.PublishDiagnosticsParams
 import ch.epfl.scala.bsp4j.TextDocumentIdentifier
 import java.nio.file.Paths
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import java.nio.file.Path
 
 class DiagnosticBspMapper(private val workspaceRoot: Path) {

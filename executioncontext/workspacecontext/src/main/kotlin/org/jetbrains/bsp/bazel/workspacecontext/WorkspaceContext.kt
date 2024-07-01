@@ -77,7 +77,8 @@ data class WorkspaceContext(
      */
     val ideJavaHomeOverrideSpec: IdeJavaHomeOverrideSpec,
 
-    val experimentalUseLibOverModSection: ExperimentalUseLibOverModSpec
+    val experimentalUseLibOverModSection: ExperimentalUseLibOverModSpec,
+    val experimentalAddTransitiveCompileTimeJars: ExperimentalAddTransitiveCompileTimeJars,
 ) : ExecutionContext()
 
 class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstructor<WorkspaceContext> {
@@ -101,12 +102,16 @@ class WorkspaceContextConstructor(workspaceRoot: Path) : ExecutionContextConstru
             enabledRules = EnabledRulesSpecExtractor.fromProjectView(projectView),
             ideJavaHomeOverrideSpec = IdeJavaHomeOverrideSpecExtractor.fromProjectView(projectView),
             experimentalUseLibOverModSection = ExperimentalUseLibOverModSpecExtractor.fromProjectView(projectView),
+            experimentalAddTransitiveCompileTimeJars = ExperimentalAddTransitiveCompileTimeJarsExtractor.fromProjectView(projectView),
         )
     }
 }
 
 val WorkspaceContext.isAndroidEnabled: Boolean
     get() = "rules_android" in enabledRules.values
+
+val WorkspaceContext.isRustEnabled: Boolean
+    get() = "rules_rust" in enabledRules.values
 
 val WorkspaceContext.extraFlags: List<String>
     get() = if (isAndroidEnabled) {

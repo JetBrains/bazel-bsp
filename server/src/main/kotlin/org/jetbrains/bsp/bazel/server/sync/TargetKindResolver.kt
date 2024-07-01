@@ -1,7 +1,7 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.server.sync.model.Tag
+import org.jetbrains.bsp.bazel.server.model.Tag
 
 class TargetKindResolver {
     fun resolveTags(targetInfo: BspTargetInfo.TargetInfo): Set<Tag> {

@@ -2,6 +2,7 @@ package org.jetbrains.bsp.bazel.server
 
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.commons.Constants
+import org.jetbrains.bsp.bazel.server.benchmark.TelemetryConfig
 import org.jetbrains.bsp.bazel.server.bsp.BspIntegrationData
 import org.jetbrains.bsp.bazel.server.bsp.info.BspInfo
 import org.jetbrains.bsp.bazel.workspacecontext.DefaultWorkspaceContextProvider
@@ -65,7 +66,7 @@ object ServerInitializer {
                 executor,
                 createTraceWriterOrNull(traceFile, cliArgs.produceTraceLog)
             )
-            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), null)
+            val bspServer = BazelBspServer(bspInfo, workspaceContextProvider, Path(cliArgs.bazelWorkspaceRoot), TelemetryConfig())
             val launcher = bspServer.buildServer(bspIntegrationData)
             launcher.startListening().get()
             log.info("Server has been initialized")

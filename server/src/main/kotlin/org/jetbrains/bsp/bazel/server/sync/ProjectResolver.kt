@@ -1,18 +1,21 @@
 package org.jetbrains.bsp.bazel.server.sync
 
 import org.eclipse.lsp4j.jsonrpc.CancelChecker
-import org.jetbrains.bsp.bazel.bazelrunner.BazelInfo
 import org.jetbrains.bsp.bazel.bazelrunner.BazelRunner
+import org.jetbrains.bsp.bazel.bazelrunner.utils.BazelInfo
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
-import org.jetbrains.bsp.bazel.logger.BspClientLogger
+import org.jetbrains.bsp.bazel.server.benchmark.tracer
+import org.jetbrains.bsp.bazel.server.benchmark.use
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspAspectsManagerResult
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspFallbackAspectsManager
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGenerator
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
-import org.jetbrains.bsp.bazel.server.sync.model.Project
+import org.jetbrains.bsp.bazel.server.model.Label
+import org.jetbrains.bsp.bazel.server.model.Project
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
+import org.jetbrains.bsp.bazel.workspacecontext.isRustEnabled
 
 /** Responsible for querying bazel and constructing Project instance  */
 class ProjectResolver(
@@ -21,18 +24,15 @@ class ProjectResolver(
   private val bazelBspFallbackAspectsManager: BazelBspFallbackAspectsManager,
   private val workspaceContextProvider: WorkspaceContextProvider,
   private val bazelProjectMapper: BazelProjectMapper,
-  private val bspLogger: BspClientLogger,
   private val targetInfoReader: TargetInfoReader,
   private val bazelInfo: BazelInfo,
   private val bazelRunner: BazelRunner,
-  private val metricsLogger: MetricsLogger?
 ) {
   private fun <T> measured(description: String, f: () -> T): T {
-    return Measurements.measure(f, description, metricsLogger, bspLogger)
+    return tracer.spanBuilder(description).use { f() }
   }
 
-  fun resolve(cancelChecker: CancelChecker, build: Boolean): Project {
-
+  fun resolve(cancelChecker: CancelChecker, build: Boolean): Project = tracer.spanBuilder("Resolve project").use {
     val workspaceContext = measured(
       "Reading project view and creating workspace context",
       workspaceContextProvider::currentWorkspaceContext
@@ -50,7 +50,7 @@ class ProjectResolver(
     ) { bazelBspAspectsManager.calculateRuleLanguages(externalRuleNames) }
 
     measured("Realizing language aspect files from templates") {
-      bazelBspAspectsManager.generateAspectsFromTemplates(ruleLanguages)
+      bazelBspAspectsManager.generateAspectsFromTemplates(ruleLanguages, workspaceContext)
     }
 
     measured("Generating language extensions file") {
@@ -65,7 +65,7 @@ class ProjectResolver(
     ) { buildAspectResult.bepOutput.filesByOutputGroupNameTransitive(BSP_INFO_OUTPUT_GROUP) }
     val targets = measured(
         "Parsing aspect outputs"
-    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs).let { it } }
+    ) { targetInfoReader.readTargetMapFromAspectOutputs(aspectOutputs) }
     val allTargetNames =
       if (buildAspectResult.isFailure)
         measured(
@@ -89,20 +89,23 @@ class ProjectResolver(
       targetSpecs = workspaceContext.targets,
       aspect = ASPECT_NAME,
       outputGroups = outputGroups,
-      shouldBuildManualFlags = workspaceContext.shouldAddBuildAffectingFlags(keepDefaultOutputGroups)
+      shouldBuildManualFlags = workspaceContext.shouldAddBuildAffectingFlags(keepDefaultOutputGroups),
+      isRustEnabled = workspaceContext.isRustEnabled,
     )
   }
 
-  private fun formatTargetsIfNeeded(targets: Collection<String>, targetsInfo: Map<String, BspTargetInfo.TargetInfo >): List<String> =
+  private fun formatTargetsIfNeeded(targets: Collection<Label>, targetsInfo: Map<Label, BspTargetInfo.TargetInfo >): List<Label> =
     when (bazelInfo.release.major) {
       // Since bazel 6, the main repository targets are stringified to "@//"-prefixed labels,
       // contrary to "//"-prefixed in older Bazel versions. Unfortunately this does not apply
       // to BEP data, probably due to a bug, so we need to add the "@" or "@@" prefix here.
       in 0..5 -> targets.toList()
       else -> targets.map {
-          if (targetsInfo.contains("@@$it")) "@@$it"
+          if (targetsInfo.contains(Label.parse("@@${it.value}"))) "@@$it"
           else "@$it"
-        }
+        }.map {
+          Label.parse(it)
+      }
     }.toList()
 
   private fun WorkspaceContext.shouldAddBuildAffectingFlags(willBeBuilt: Boolean): Boolean =

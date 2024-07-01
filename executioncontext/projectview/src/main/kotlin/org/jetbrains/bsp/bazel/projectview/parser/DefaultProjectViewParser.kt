@@ -3,7 +3,8 @@ package org.jetbrains.bsp.bazel.projectview.parser
 import org.apache.logging.log4j.LogManager
 import org.jetbrains.bsp.bazel.commons.escapeNewLines
 import org.jetbrains.bsp.bazel.projectview.model.ProjectView
-import org.jetbrains.bsp.bazel.projectview.parser.sections.ExperimentalUseLibOverModSectionParser;
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ExperimentalAddTransitiveCompileTimeJarsParser
+import org.jetbrains.bsp.bazel.projectview.parser.sections.ExperimentalUseLibOverModSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBazelBinarySectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildFlagsSectionParser
 import org.jetbrains.bsp.bazel.projectview.parser.sections.ProjectViewBuildManualTargetsSectionParser
@@ -43,7 +44,8 @@ open class DefaultProjectViewParser : ProjectViewParser {
             importDepth = ProjectViewImportDepthSectionParser.parse(rawSections),
             enabledRules = ProjectViewEnabledRulesSectionParser.parse(rawSections),
             ideJavaHomeOverride = ProjectViewIdeJavaHomeOverrideSectionParser.parse(rawSections),
-            useLibOverModSection = ExperimentalUseLibOverModSectionParser.parse(rawSections)
+            useLibOverModSection = ExperimentalUseLibOverModSectionParser.parse(rawSections),
+            addTransitiveCompileTimeJars = ExperimentalAddTransitiveCompileTimeJarsParser.parse(rawSections)
         ).build()
     }
 

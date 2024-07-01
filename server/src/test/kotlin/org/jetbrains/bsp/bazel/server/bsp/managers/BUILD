@@ -13,9 +13,9 @@ kt_test(
 )
 
 kt_test(
-    name = "StructuredFilesUtilsTests",
+    name = "BzlModGraphTest",
     size = "small",
-    src = "StructuredFilesUtilsTests.kt",
+    src = "BzlModGraphTest.kt",
     deps = [
         "//server/src/main/kotlin/org/jetbrains/bsp/bazel/server/bsp/managers",
     ],

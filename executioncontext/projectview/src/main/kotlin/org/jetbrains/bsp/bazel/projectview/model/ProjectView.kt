@@ -1,6 +1,7 @@
 package org.jetbrains.bsp.bazel.projectview.model
 
 import org.apache.logging.log4j.LogManager
+import org.jetbrains.bsp.bazel.projectview.model.sections.ExperimentalAddTransitiveCompileTimeJarsSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ExperimentalUseLibOverModSection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBazelBinarySection
 import org.jetbrains.bsp.bazel.projectview.model.sections.ProjectViewBuildFlagsSection
@@ -41,6 +42,8 @@ data class ProjectView(
     val ideJavaHomeOverride: ProjectViewIdeJavaHomeOverrideSection?,
     /** use a new predicate that is more likely to interpret targets as libraries than as modules */
     val useLibOverModSection: ExperimentalUseLibOverModSection? = null,
+    /** add transitive compile time jars to compensate for possible missing classpaths */
+    val addTransitiveCompileTimeJars: ExperimentalAddTransitiveCompileTimeJarsSection? = null,
 ) {
 
     data class Builder(
@@ -55,7 +58,7 @@ data class ProjectView(
         private val enabledRules: ProjectViewEnabledRulesSection? = null,
         private val ideJavaHomeOverride: ProjectViewIdeJavaHomeOverrideSection? = null,
         private val useLibOverModSection: ExperimentalUseLibOverModSection? = null,
-
+        private val addTransitiveCompileTimeJars: ExperimentalAddTransitiveCompileTimeJarsSection? = null,
     ) {
 
         fun build(): ProjectView {
@@ -75,6 +78,7 @@ data class ProjectView(
             val enabledRules = combineEnabledRulesSection(importedProjectViews)
             val ideJavaHomeOverride = combineIdeJavaHomeOverrideSection(importedProjectViews)
             val useLibOverModSection = combineUseLibOverModSection(importedProjectViews)
+            val addTransitiveCompileTimeJars = combineAddTransitiveCompileTimeJarsSection(importedProjectViews)
 
             log.debug(
                 "Building project view with combined"
@@ -87,7 +91,8 @@ data class ProjectView(
                         + " import depth: {},"
                         + " enabled rules: {},"
                         + " ideJavaHomeOverride: {},"
-                        + " useLibOverModSection: {},",
+                        + " useLibOverModSection: {},"
+                        + " addTransitiveCompileTimeJars: {},",
                 targets,
                 bazelBinary,
                 buildFlags,
@@ -97,7 +102,8 @@ data class ProjectView(
                 importDepth,
                 enabledRules,
                 ideJavaHomeOverride,
-                useLibOverModSection
+                useLibOverModSection,
+                addTransitiveCompileTimeJars,
             )
             return ProjectView(
                 targets,
@@ -110,6 +116,7 @@ data class ProjectView(
                 enabledRules,
                 ideJavaHomeOverride,
                 useLibOverModSection,
+                addTransitiveCompileTimeJars,
             )
         }
 
@@ -117,6 +124,13 @@ data class ProjectView(
             return useLibOverModSection ?: getLastImportedSingletonValue(
                 importedProjectViews,
                 ProjectView::useLibOverModSection
+            )
+        }
+
+        private fun combineAddTransitiveCompileTimeJarsSection(importedProjectViews: List<ProjectView>): ExperimentalAddTransitiveCompileTimeJarsSection? {
+            return addTransitiveCompileTimeJars ?: getLastImportedSingletonValue(
+                importedProjectViews,
+                ProjectView::addTransitiveCompileTimeJars
             )
         }
 
