@@ -56,13 +56,19 @@ abstract class OutputProcessor(private val process: Process, vararg loggers: Out
     executorService.submit(runnable).also { runningProcessors.add(it) }
   }
 
-  fun waitForExit(cancelChecker: CancelChecker, serverPidFuture: CompletableFuture<Long>?, logger: BspClientLogger?): Int {
+  fun waitForExit(
+    cancelChecker: CancelChecker,
+    serverPidFuture: CompletableFuture<Long>?,
+    logger: BspClientLogger?
+  ): Int {
     var isFinished = false;
     while (!isFinished) {
       isFinished = process.waitFor(500, TimeUnit.MILLISECONDS)
       if (cancelChecker.isCanceled) {
-        val serverPid = if (serverPidFuture?.isDone == true) serverPidFuture.get() else null
-        serverPid?.let { Runtime.getRuntime().exec("kill -SIGINT $it").waitFor().takeIf { e -> e == 0 } }
+        process.destroy()
+        serverPidFuture?.get()
+          ?.let { Runtime.getRuntime().exec("kill -SIGINT $it").waitFor() }
+          ?.takeIf { e -> e == 0 }
           ?: logger?.error("Could not cancel the task. Bazel server needs to be interrupted manually.")
       }
     }
