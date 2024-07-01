@@ -11,7 +11,6 @@ import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.TargetsSpec
 import java.nio.file.Path
-import java.util.concurrent.CompletableFuture
 
 // TODO: remove this file once we untangle the spaghetti and use the method from ExecuteService
 
@@ -35,17 +34,16 @@ class BazelBspCompilationManager(
         val bepReader = BepReader(bepServer)
         return try {
             bepReader.start()
-            val resultFuture = bazelRunner
+            val result = bazelRunner
                 .commandBuilder()
                 .build()
                 .withFlags(extraFlags)
                 .withTargets(targetSpecs)
                 .withEnvironment(environment)
                 .executeBazelBesCommand(originId, bepReader.eventFile.toPath().toAbsolutePath(), bepReader.serverPid)
-                .waitAndGetResultAsync(cancelChecker, true)
+                .waitAndGetResult(cancelChecker, true)
             bepReader.finishBuild()
             bepReader.await()
-            val result = resultFuture.get()
             BepBuildResult(result, bepServer.bepOutput)
         } finally {
             bepReader.finishBuild()
