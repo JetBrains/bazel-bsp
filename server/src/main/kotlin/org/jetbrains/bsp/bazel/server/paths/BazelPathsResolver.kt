@@ -113,4 +113,9 @@ class BazelPathsResolver(private val bazelInfo: BazelInfo) {
         require(parts.size == 2) { "Label $label didn't contain exactly one ':'" }
         return parts[0]
     }
+
+    fun clear() {
+        uris.clear()
+        paths.clear()
+    }
 }

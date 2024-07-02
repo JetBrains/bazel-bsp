@@ -13,6 +13,7 @@ import org.jetbrains.bsp.bazel.server.bsp.managers.BazelBspLanguageExtensionsGen
 import org.jetbrains.bsp.bazel.server.bsp.managers.BazelExternalRulesQueryImpl
 import org.jetbrains.bsp.bazel.server.model.Label
 import org.jetbrains.bsp.bazel.server.model.Project
+import org.jetbrains.bsp.bazel.server.paths.BazelPathsResolver
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContext
 import org.jetbrains.bsp.bazel.workspacecontext.WorkspaceContextProvider
 import org.jetbrains.bsp.bazel.workspacecontext.isRustEnabled
@@ -27,6 +28,7 @@ class ProjectResolver(
   private val targetInfoReader: TargetInfoReader,
   private val bazelInfo: BazelInfo,
   private val bazelRunner: BazelRunner,
+  private val bazelPathsResolver: BazelPathsResolver,
 ) {
   private fun <T> measured(description: String, f: () -> T): T {
     return tracer.spanBuilder(description).use { f() }
@@ -110,6 +112,11 @@ class ProjectResolver(
 
   private fun WorkspaceContext.shouldAddBuildAffectingFlags(willBeBuilt: Boolean): Boolean =
     this.buildManualTargets.value || !willBeBuilt
+
+  fun releaseMemory() {
+    bazelPathsResolver.clear()
+    System.gc()
+  }
 
   companion object {
     private const val ASPECT_NAME = "bsp_target_info_aspect"

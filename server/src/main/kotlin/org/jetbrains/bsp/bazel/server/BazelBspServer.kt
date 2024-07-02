@@ -172,6 +172,7 @@ class BazelBspServer(
       targetInfoReader = targetInfoReader,
       bazelInfo = bazelInfo,
       bazelRunner = bazelRunner,
+      bazelPathsResolver = bazelPathsResolver,
     )
     return ProjectProvider(projectResolver)
   }
