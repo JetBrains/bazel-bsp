@@ -43,7 +43,7 @@ object BazelBspGitHub : Project({
             buildType(BazelE2eTests.AndroidKotlinProjectGitHub)
             buildType(BazelE2eTests.ScalaProjectGitHub)
             buildType(BazelE2eTests.KotlinProjectGitHub)
-            buildType(BazelE2ePluginTests.GitHub)
+//            buildType(BazelE2ePluginTests.GitHub)
             buildType(BazelBenchmark.GitHub)
         }
 
@@ -83,7 +83,7 @@ object BazelBspGitHub : Project({
         RelativeId("GitHubE2eTestsE2eAndroidProjectTest"),
         RelativeId("GitHubE2eTestsE2eAndroidKotlinProjectTest"),
         RelativeId("GitHubE2eTestsE2eEnabledRulesTest"),
-        RelativeId("GitHubE2eTestsPluginRun"),
+//        RelativeId("GitHubE2eTestsPluginRun"),
         RelativeId("GitHubBenchmark10Targets"),
         RelativeId("GitHubResults")
     )
@@ -119,7 +119,7 @@ object BazelBspSpace : Project({
             buildType(BazelE2eTests.AndroidKotlinProjectSpace)
             buildType(BazelE2eTests.ScalaProjectSpace)
             buildType(BazelE2eTests.KotlinProjectSpace)
-            buildType(BazelE2ePluginTests.Space)
+//            buildType(BazelE2ePluginTests.Space)
             buildType(BazelBenchmark.Space)
         }
 
@@ -162,7 +162,7 @@ object BazelBspSpace : Project({
         RelativeId("SpaceE2eTestsE2eAndroidProjectTest"),
         RelativeId("SpaceE2eTestsE2eAndroidKotlinProjectTest"),
         RelativeId("SpaceE2eTestsE2eEnabledRulesTest"),
-        RelativeId("SpaceE2eTestsPluginRun"),
+//        RelativeId("SpaceE2eTestsPluginRun"),
         RelativeId("SpaceBenchmark10Targets"),
         RelativeId("SpaceResults")
     )

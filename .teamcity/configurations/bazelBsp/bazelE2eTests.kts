@@ -18,7 +18,7 @@ open class E2ETest(
     name = "[e2e tests] $targets",
     vcsRoot = vcsRoot,
     setupSteps = true,
-    artifactRules = "+:/home/teamcity/.cache/bazel/_bazel_teamcity/*/execroot/_main/bazel-out/k8-fastbuild/testlogs/e2e/** => testlogs.zip",
+    artifactRules = "+:%system.teamcity.build.checkoutDir%/bazel-testlogs/** => testlogs.zip",
     steps = {
         steps?.invoke(this)
         bazel {
