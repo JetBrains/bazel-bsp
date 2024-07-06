@@ -86,7 +86,7 @@ maven.install(
         "io.opentelemetry:opentelemetry-extension-kotlin:1.39.0",
         "io.opentelemetry:opentelemetry-exporter-otlp:1.39.0",
         "io.opentelemetry:opentelemetry-sdk:1.39.0",
-        "io.opentelemetry:opentelemetry-sdk-trace:1.39.0",
+        "io.opentelemetry:opentelemetry-sdk-trace:1.40.0",
         "io.opentelemetry.semconv:opentelemetry-semconv:1.25.0-alpha",
 
         # tests
