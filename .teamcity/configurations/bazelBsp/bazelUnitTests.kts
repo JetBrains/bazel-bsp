@@ -9,6 +9,7 @@ open class UnitTests(
 ): BaseConfiguration.BaseBuildType(
     name = "[unit tests] unit tests //...",
     setupSteps = true,
+    artifactRules = "+:%system.teamcity.build.checkoutDir%/bazel-testlogs/** => testlogs.zip",
     steps = {
         bazel {
             name = "bazel test //..."
