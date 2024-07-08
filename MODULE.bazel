@@ -82,11 +82,11 @@ maven.install(
         "com.google.protobuf:protobuf-java:3.25.3",
         "io.grpc:grpc-stub:1.65.0",
         "io.grpc:grpc-protobuf:1.65.0",
-        "io.opentelemetry:opentelemetry-api:1.39.0",
-        "io.opentelemetry:opentelemetry-extension-kotlin:1.39.0",
-        "io.opentelemetry:opentelemetry-exporter-otlp:1.39.0",
-        "io.opentelemetry:opentelemetry-sdk:1.39.0",
-        "io.opentelemetry:opentelemetry-sdk-trace:1.39.0",
+        "io.opentelemetry:opentelemetry-api:1.40.0",
+        "io.opentelemetry:opentelemetry-extension-kotlin:1.40.0",
+        "io.opentelemetry:opentelemetry-exporter-otlp:1.40.0",
+        "io.opentelemetry:opentelemetry-sdk:1.40.0",
+        "io.opentelemetry:opentelemetry-sdk-trace:1.40.0",
         "io.opentelemetry.semconv:opentelemetry-semconv:1.25.0-alpha",
 
         # tests
