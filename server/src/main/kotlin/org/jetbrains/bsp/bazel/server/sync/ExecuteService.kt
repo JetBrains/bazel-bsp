@@ -49,7 +49,6 @@ class ExecuteService(
     private val bazelPathsResolver: BazelPathsResolver,
     private val additionalBuildTargetsProvider: AdditionalAndroidBuildTargetsProvider,
     private val hasAnyProblems: MutableMap<Label, Set<TextDocumentIdentifier>>,
-    private val serverPid: Long,
 ) {
     private val debugRunner = DebugRunner(bazelRunner) { message, originId ->
         bspClientLogger.copy(originId = originId).error(message)
